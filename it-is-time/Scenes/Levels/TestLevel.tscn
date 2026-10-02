@@ -1,0 +1,39 @@
+[gd_scene format=3 uid="uid://bvfcjdn77c1kd"]
+
+[ext_resource type="PackedScene" uid="uid://dyn2d3vbcsssx" path="res://Assets/3DResources/Maps/Flat.fbx" id="1_ss4xl"]
+[ext_resource type="PackedScene" uid="uid://bhb8j74m7mfd6" path="res://Scenes/Creatures/Characters/Character_Test_2.tscn" id="2_7e5cw"]
+[ext_resource type="PackedScene" path="res://Scenes/Camera/DragCamera3D.tscn" id="3_iuug4"]
+[ext_resource type="NavigationMesh" path="res://Scenes/Levels/TestLevelNavigationMesh.tres" id="4_navigation"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/NavigationNPCSpawner3D.tscn" id="5_npc_spawner"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_flat_ground"]
+size = Vector3(200, 102, 200)
+
+[node name="TestLevel" type="Node3D" unique_id=1606515158]
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="." unique_id=555269644]
+navigation_mesh = ExtResource("4_navigation")
+
+[node name="NavigationNPCSpawner3D" parent="." instance=ExtResource("5_npc_spawner")]
+
+[node name="Flat" parent="." unique_id=1832489056 instance=ExtResource("1_ss4xl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.69153404, -4.7683716e-07, -0.6274371)
+
+[node name="CharacterTest2" parent="Flat" unique_id=2115838582 instance=ExtResource("2_7e5cw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 11.563919, 0)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Flat" groups=["navigation_source"] unique_id=760121635]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -50, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Flat/StaticBody3D" unique_id=675973055]
+shape = SubResource("BoxShape3D_flat_ground")
+
+[node name="DragCamera3D" parent="." unique_id=488829809 node_paths=PackedStringArray("follow_target") instance=ExtResource("3_iuug4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0036373, 1.4082642, 0)
+follow_target = NodePath("../Flat/CharacterTest2/Torso")
+maximum_distance = 100.0
+
+[node name="OmniLight3D" type="OmniLight3D" parent="." unique_id=518145540]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 43.19173, 0)
+light_energy = 5.0
+omni_range = 500.0

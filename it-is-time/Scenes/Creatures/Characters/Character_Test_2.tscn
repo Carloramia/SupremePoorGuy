@@ -1,0 +1,187 @@
+[gd_scene format=3 uid="uid://bhb8j74m7mfd6"]
+
+[ext_resource type="PackedScene" uid="uid://bxa3fvya47rtv" path="res://Scenes/VFX/Outline/AutoOutline.tscn" id="1_gn1tu"]
+[ext_resource type="PackedScene" uid="uid://uk1e0l8x2imw" path="res://Scenes/Creatures/Bodyparts/PhysicalTestCreatureParts/TestCrature_Part_Physic_Arm.tscn" id="2_acm7k"]
+[ext_resource type="PackedScene" uid="uid://xk1qpcjgdoe1" path="res://Scenes/Creatures/Bodyparts/PhysicalTestCreatureParts/TestCrature_Part_Physic_Torso.tscn" id="2_edqjf"]
+[ext_resource type="PackedScene" uid="uid://c2u27jpr7eljb" path="res://Scenes/Creatures/Bodyparts/PhysicalTestCreatureParts/TestCrature_Part_Physic_Head.tscn" id="3_auoa8"]
+[ext_resource type="PackedScene" uid="uid://b0u127crffjfb" path="res://Scenes/Creatures/Bodyparts/PhysicalTestCreatureParts/TestCrature_Part_Physic_Leg.tscn" id="3_edqjf"]
+[ext_resource type="Script" uid="uid://dewltnvucq5m3" path="res://Scripts/Creatures/PhysicalCharacterController.gd" id="4_controller"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/TorsoBalanceController3D.tscn" id="5_balance"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/LegStepMovementController3D.tscn" id="6_leg_movement"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_leg"]
+friction = 0.9
+rough = true
+
+[node name="CharacterTest2" type="Node3D" unique_id=2115838582]
+script = ExtResource("4_controller")
+
+[node name="Arm_R" parent="." unique_id=298589033 instance=ExtResource("2_acm7k")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 4.8, 0)
+tags = Array[int]([2])
+left_distance = 0.601
+right_distance = 0.601
+top_distance = 0.601
+bottom_distance = 0.601
+
+[node name="Arm_L" parent="." unique_id=269871980 instance=ExtResource("2_acm7k")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 4.8, 0)
+tags = Array[int]([2])
+left_distance = 0.601
+right_distance = 0.601
+top_distance = 0.601
+bottom_distance = 0.601
+
+[node name="Head" parent="." unique_id=278262865 instance=ExtResource("3_auoa8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7, 0)
+tags = Array[int]([3])
+
+[node name="AutoOutline" parent="." unique_id=937295706 instance=ExtResource("1_gn1tu")]
+
+[node name="LegStepMovementController3D" parent="." unique_id=1561372846 instance=ExtResource("6_leg_movement")]
+maximum_directional_projection_correction = 0.0
+slow_step_distance = 1.2
+use_slow_movement_scale = true
+slow_movement_scale = 2.0
+use_fast_movement_scale = true
+fast_movement_scale = 2.0
+
+[node name="Torso" parent="." unique_id=39849093 groups=["npc_navigation_target"] instance=ExtResource("2_edqjf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.946879, 0)
+axis_lock_angular_x = true
+axis_lock_angular_y = true
+mass = 2.0
+left_distance = 1.28
+top_distance = 1.501
+bottom_distance = 1.501
+collision_thickness = 0.2
+
+[node name="TorsoBalanceController3D" parent="Torso" unique_id=876632946 instance=ExtResource("5_balance")]
+balance_strength = 100.0
+
+[node name="Leg_R" parent="." unique_id=1858697676 instance=ExtResource("3_edqjf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4, 0.9, 0)
+axis_lock_angular_x = true
+axis_lock_angular_y = true
+physics_material_override = SubResource("PhysicsMaterial_leg")
+left_distance = 0.601
+right_distance = 0.601
+top_distance = 0.801
+bottom_distance = 0.801
+collision_thickness = 0.2
+
+[node name="Leg_L" parent="." unique_id=534532495 instance=ExtResource("3_edqjf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, 0.9, 0)
+axis_lock_angular_x = true
+axis_lock_angular_y = true
+physics_material_override = SubResource("PhysicsMaterial_leg")
+left_distance = 0.601
+right_distance = 0.601
+top_distance = 0.801
+bottom_distance = 0.801
+collision_thickness = 0.2
+
+[node name="HipJoint_R" type="Generic6DOFJoint3D" parent="." unique_id=1230318678]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.65, 2.416879, 0)
+node_a = NodePath("../Torso")
+node_b = NodePath("../Leg_R")
+linear_limit_x/upper_distance = 0.5
+linear_limit_x/lower_distance = -0.5
+linear_limit_y/upper_distance = 0.5
+linear_limit_y/lower_distance = -0.5
+linear_limit_z/upper_distance = 0.5
+linear_limit_z/lower_distance = -0.5
+linear_spring_z/damping = 0.1
+angular_limit_z/upper_angle = 0.43633232
+angular_limit_z/lower_angle = -0.43633232
+angular_spring_x/stiffness = 5.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 5.0
+angular_spring_y/damping = 5.0
+angular_spring_z/enabled = true
+angular_spring_z/stiffness = 120.0
+angular_spring_z/damping = 40.0
+
+[node name="HipJoint_L" type="Generic6DOFJoint3D" parent="." unique_id=1526041846]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.65, 2.416879, 0)
+node_a = NodePath("../Torso")
+node_b = NodePath("../Leg_L")
+linear_limit_x/upper_distance = 0.5
+linear_limit_x/lower_distance = -0.5
+linear_limit_y/upper_distance = 0.5
+linear_limit_y/lower_distance = -0.5
+linear_limit_z/upper_distance = 0.5
+linear_limit_z/lower_distance = -0.5
+linear_spring_z/damping = 0.1
+angular_limit_z/upper_angle = 0.43633232
+angular_limit_z/lower_angle = -0.43633232
+angular_spring_x/stiffness = 5.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 5.0
+angular_spring_y/damping = 5.0
+angular_spring_z/enabled = true
+angular_spring_z/stiffness = 120.0
+angular_spring_z/damping = 40.0
+
+[node name="ShoulderJoint_R" type="Generic6DOFJoint3D" parent="." unique_id=1609197538]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.59, 4.8, 0)
+node_a = NodePath("../Torso")
+node_b = NodePath("../Arm_R")
+linear_limit_x/upper_distance = 0.2
+linear_limit_x/lower_distance = -0.2
+linear_limit_y/upper_distance = 0.2
+linear_limit_y/lower_distance = -0.2
+linear_limit_z/upper_distance = 0.2
+linear_limit_z/lower_distance = -0.2
+linear_spring_z/damping = 0.1
+angular_limit_z/upper_angle = 0.7853982
+angular_limit_z/lower_angle = -0.7853982
+angular_spring_x/stiffness = 5.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 5.0
+angular_spring_y/damping = 5.0
+angular_spring_z/enabled = true
+angular_spring_z/stiffness = 80.0
+angular_spring_z/damping = 30.0
+
+[node name="ShoulderJoint_L" type="Generic6DOFJoint3D" parent="." unique_id=146033898]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.59, 4.8, 0)
+node_a = NodePath("../Torso")
+node_b = NodePath("../Arm_L")
+linear_limit_x/upper_distance = 0.2
+linear_limit_x/lower_distance = -0.2
+linear_limit_y/upper_distance = 0.2
+linear_limit_y/lower_distance = -0.2
+linear_limit_z/upper_distance = 0.2
+linear_limit_z/lower_distance = -0.2
+linear_spring_z/damping = 0.1
+angular_limit_z/upper_angle = 0.7853982
+angular_limit_z/lower_angle = -0.7853982
+angular_spring_x/stiffness = 5.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 5.0
+angular_spring_y/damping = 5.0
+angular_spring_z/enabled = true
+angular_spring_z/stiffness = 80.0
+angular_spring_z/damping = 30.0
+
+[node name="NeckJoint" type="Generic6DOFJoint3D" parent="." unique_id=1228248199]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.58, 0)
+node_a = NodePath("../Torso")
+node_b = NodePath("../Head")
+linear_limit_x/upper_distance = 0.15
+linear_limit_x/lower_distance = -0.15
+linear_limit_y/upper_distance = 0.15
+linear_limit_y/lower_distance = -0.15
+linear_limit_z/upper_distance = 0.15
+linear_limit_z/lower_distance = -0.15
+linear_spring_z/damping = 0.1
+angular_limit_z/upper_angle = 0.34906584
+angular_limit_z/lower_angle = -0.34906584
+angular_spring_x/stiffness = 5.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 5.0
+angular_spring_y/damping = 5.0
+angular_spring_z/enabled = true
+angular_spring_z/stiffness = 120.0
+angular_spring_z/damping = 40.0

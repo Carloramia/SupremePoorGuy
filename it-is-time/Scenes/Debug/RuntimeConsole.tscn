@@ -1,0 +1,92 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Debug/RuntimeConsole.gd" id="1_console"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_console"]
+bg_color = Color(0.025, 0.03, 0.04, 0.96)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.38, 0.72, 0.92, 0.9)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[node name="RuntimeConsole" type="CanvasLayer"]
+process_mode = 3
+layer = 1000
+script = ExtResource("1_console")
+
+[node name="ConsoleRoot" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="Shade" type="ColorRect" parent="ConsoleRoot"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0.32)
+
+[node name="Panel" type="PanelContainer" parent="ConsoleRoot"]
+layout_mode = 1
+anchors_preset = 12
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = -340.0
+offset_right = -16.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBox_console")
+
+[node name="Margin" type="MarginContainer" parent="ConsoleRoot/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 10
+
+[node name="VBox" type="VBoxContainer" parent="ConsoleRoot/Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="ConsoleRoot/Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.55, 0.82, 1, 1)
+theme_override_font_sizes/font_size = 18
+text = "Runtime Console"
+
+[node name="Output" type="RichTextLabel" parent="ConsoleRoot/Panel/Margin/VBox"]
+custom_minimum_size = Vector2(0, 230)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/default_color = Color(0.8, 0.88, 0.94, 1)
+theme_override_font_sizes/normal_font_size = 15
+scroll_following = true
+
+[node name="CommandRow" type="HBoxContainer" parent="ConsoleRoot/Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Prompt" type="Label" parent="ConsoleRoot/Panel/Margin/VBox/CommandRow"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.38, 0.85, 0.58, 1)
+text = ">"
+
+[node name="CommandInput" type="LineEdit" parent="ConsoleRoot/Panel/Margin/VBox/CommandRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Enter command (getlogs)"
+clear_button_enabled = true

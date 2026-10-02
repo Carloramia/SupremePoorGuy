@@ -1,0 +1,45 @@
+[gd_scene load_steps=5 format=3 uid="uid://dyy5u8wq5y3p1"]
+
+[ext_resource type="Script" path="res://Scripts/Workshop/PlayerWorkshopBackground.gd" id="1_background"]
+[ext_resource type="PackedScene" path="res://Scenes/Workshop/WorkshopRightpanel.tscn" id="2_right_panel"]
+[ext_resource type="Texture2D" path="res://Assets/2DResources/Samples/WhiteCube.png" id="3_white_cube"]
+[ext_resource type="PackedScene" path="res://Scenes/Workshop/WorkshopBuildButton.tscn" id="4_build_button"]
+
+[node name="PlayerWorkshop" type="CanvasLayer" groups=["player_workshop", "ui_interface_2d"] unique_id=998056823]
+process_mode = 3
+layer = 100
+script = ExtResource("1_background")
+
+[node name="WorkspaceContent" type="Node2D" parent="."]
+
+[node name="GridBackground" type="TileMapLayer" parent="WorkspaceContent"]
+z_index = -100
+
+[node name="MaterialGrid" type="TileMapLayer" parent="WorkspaceContent"]
+z_index = -90
+
+[node name="GridInput" type="Control" parent="."]
+z_index = -80
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+
+[node name="WorkshopRightpanel" parent="." instance=ExtResource("2_right_panel")]
+
+[node name="WorkshopBuildButton" parent="." instance=ExtResource("4_build_button")]
+
+[node name="MaterialCursorPreview" type="TextureRect" parent="."]
+z_index = 100
+custom_minimum_size = Vector2(32, 32)
+offset_right = 32.0
+offset_bottom = 32.0
+mouse_filter = 2
+modulate = Color(1, 1, 1, 0.75)
+texture = ExtResource("3_white_cube")
+expand_mode = 1
+stretch_mode = 5
+visible = false

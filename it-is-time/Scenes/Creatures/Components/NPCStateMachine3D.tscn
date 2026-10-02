@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Creatures/NPCStateMachine3D.gd" id="1_state"]
+
+[node name="NPCStateMachine3D" type="Node3D"]
+script = ExtResource("1_state")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+path_height_offset = 0.0
+path_desired_distance = 0.5
+target_desired_distance = 0.75
+radius = 0.75
+height = 3.0
+path_postprocessing = 1

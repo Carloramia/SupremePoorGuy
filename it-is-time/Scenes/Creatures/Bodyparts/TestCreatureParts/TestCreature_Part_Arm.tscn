@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://bg0v6dj34gno3"]
+
+[ext_resource type="PackedScene" uid="uid://cnv3jsbpaqvgd" path="res://Scenes/Creatures/Bodyparts/_SampleBodyParts.tscn" id="1_2emxe"]
+[ext_resource type="Shader" uid="uid://0h31275qrxho" path="res://Shaders/BodyPartOutline.gdshader" id="2_tppjr"]
+[ext_resource type="Texture2D" uid="uid://w8hh3xjagvuh" path="res://Assets/2DResources/Samples/WhiteCube.png" id="3_wd3p6"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_88i0t"]
+render_priority = 0
+shader = ExtResource("2_tppjr")
+shader_parameter/sprite_texture = ExtResource("3_wd3p6")
+shader_parameter/sprite_axis = 2
+
+[node name="SampleBodyParts" unique_id=705023200 instance=ExtResource("1_2emxe")]
+
+[node name="BodyPart" parent="." index="0" unique_id=1924050760]
+material_override = SubResource("ShaderMaterial_88i0t")
+
