@@ -1,5 +1,19 @@
 extends Node3D
 
+const PLAYER_CONTEXT = preload("res://Scripts/Player/PlayerControlContext.gd")
+
+@export_group("Activation")
+## Stops spawning and navigation sampling; existing NPCs remain in the level.
+@export var spawn_enabled: bool = true:
+	set(value):
+		if spawn_enabled == value: return
+		spawn_enabled = value
+		if not is_instance_valid(_spawn_timer) or not _spawn_timer.is_inside_tree(): return
+		if value:
+			_spawn_timer.start(maxf(initial_delay, 0.001))
+		else:
+			_spawn_timer.stop()
+
 @export_group("Spawn")
 @export var npc_scene: PackedScene = preload("res://Scenes/Creatures/Characters/Character_Test_NPC.tscn")
 @export_range(0.1, 3600.0, 0.1, "or_greater") var spawn_interval: float = 8.0
@@ -26,19 +40,22 @@ func _ready() -> void:
 	_spawn_timer.wait_time = spawn_interval
 	_spawn_timer.timeout.connect(_on_spawn_timer_timeout)
 	add_child(_spawn_timer)
-	_spawn_timer.start(maxf(initial_delay, 0.001))
+	if spawn_enabled:
+		_spawn_timer.start(maxf(initial_delay, 0.001))
 
 func _on_spawn_timer_timeout() -> void:
+	if not spawn_enabled: return
 	_spawn_timer.wait_time = spawn_interval
 	try_spawn_npc()
 
 func try_spawn_npc() -> Node3D:
+	if not spawn_enabled: return null
 	_remove_invalid_npcs()
 	if _spawned_npcs.size() >= maximum_npc_count or npc_scene == null:
 		return null
 	var region := get_node_or_null(navigation_region_path) as NavigationRegion3D
 	var spawn_parent := get_node_or_null(spawn_parent_path) as Node3D
-	var target := get_tree().get_first_node_in_group(target_group) as Node3D
+	var target := PLAYER_CONTEXT.anchor(self) if PLAYER_CONTEXT.controller(self) != null else get_tree().get_first_node_in_group(target_group) as Node3D
 	if not is_instance_valid(region) or not is_instance_valid(spawn_parent) or not is_instance_valid(target):
 		return null
 	var navigation_map: RID = region.get_navigation_map()

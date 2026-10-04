@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Combat/LimbSwingController3D.gd" id="1_controller"]
+[ext_resource type="Script" path="res://Scripts/Combat/SwingControlGroup.gd" id="2_group"]
+
+[sub_resource type="Resource" id="Resource_mouse_left_group"]
+script = ExtResource("2_group")
+group_name = &"PrimaryArm"
+enabled = true
+input_action = &"MouseLeft"
+
+[node name="LimbSwingController3D" type="Node3D"]
+script = ExtResource("1_controller")
+control_groups = Array[ExtResource("2_group")]([SubResource("Resource_mouse_left_group")])
+

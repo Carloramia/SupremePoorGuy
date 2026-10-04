@@ -21,12 +21,26 @@ func _physics_process(_delta: float) -> void:
 		_resolve_controlled_body()
 	if not is_instance_valid(_controlled_body):
 		return
+	if _controlled_body is PhysicalBodyPart3D and _controlled_body.is_broken:
+		return
 
-	var current_angle := _controlled_body.global_basis.get_euler().z
-	var torque := calculate_balance_torque(current_angle, _controlled_body.angular_velocity.z)
-	if not is_zero_approx(torque):
+	var torque := calculate_upright_torque(_controlled_body.global_basis, _controlled_body.angular_velocity)
+	if not torque.is_zero_approx():
 		_controlled_body.sleeping = false
-		_controlled_body.apply_torque(Vector3(0.0, 0.0, torque))
+		_controlled_body.apply_torque(torque)
+
+func calculate_upright_torque(body_basis: Basis, angular_velocity: Vector3) -> Vector3:
+	var gravity: Vector3 = ProjectSettings.get_setting("physics/3d/default_gravity_vector", Vector3.DOWN)
+	var up := -gravity.normalized() if not gravity.is_zero_approx() else Vector3.UP
+	var forward := body_basis.z.slide(up).normalized()
+	if forward.is_zero_approx():
+		forward = body_basis.x.cross(up).normalized()
+	var target_up := up.rotated(forward, deg_to_rad(target_angle_degrees))
+	var current_up := body_basis.y.normalized()
+	var cross := current_up.cross(target_up)
+	var error := cross.normalized() * atan2(cross.length(), current_up.dot(target_up))
+	var torque := error * balance_strength - angular_velocity.slide(up) * balance_damping
+	return torque.limit_length(maximum_balance_torque)
 
 func calculate_balance_torque(current_angle: float, angular_velocity: float) -> float:
 	var target_angle := deg_to_rad(target_angle_degrees)

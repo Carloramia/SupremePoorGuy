@@ -14,9 +14,15 @@ func _validate() -> void:
 	assert(state_machine.get("current_state") == state_machine.State.IDLE)
 	assert(movement_controller.get("_state_machine") == state_machine)
 	assert(movement_controller.get_input_movement_direction().is_zero_approx())
+	assert(not state_machine.is_fast_movement_requested())
+	assert(not movement_controller.is_fast_speed_active())
+	assert(movement_controller.get_current_speed_preset_name() == "SLOW")
 	state_machine.move_to_position(Vector3(5.0, 0.0, 0.0))
 	await physics_frame
 	assert(state_machine.get("current_state") == state_machine.State.MOVE_TO_TARGET)
+	assert(not state_machine.is_fast_movement_requested())
+	assert(not movement_controller.is_fast_speed_active())
+	assert(movement_controller.get_current_speed_preset_name() == "SLOW")
 	# Without a NavigationRegion in this isolated test, the controller must wait instead of walking directly.
 	assert(movement_controller.get_input_movement_direction().is_zero_approx())
 	state_machine.stop()

@@ -4,7 +4,13 @@ func _initialize() -> void:
 	call_deferred("_validate")
 
 func _validate() -> void:
-	var character: Node3D = load("res://Scenes/Creatures/Characters/Character_Test_2.tscn").instantiate()
+	var packed := load("res://Scenes/Creatures/Characters/Character_Test_2.tscn") as PackedScene
+	var base_state := packed.get_state().get_base_scene_state()
+	assert(base_state != null, "Character_Test_2 must be an inherited scene")
+	assert(base_state.get_path() == "res://Scenes/Creatures/Characters/_SampleCharacter.tscn")
+	var character: Node3D = packed.instantiate()
+	assert(character.name == &"CharacterTest2")
+	assert(character.get_script() == load("res://Scripts/Creatures/PhysicalCharacterController.gd"))
 	root.add_child(character)
 	await physics_frame
 	var torso := character.get_node("Torso") as RigidBody3D

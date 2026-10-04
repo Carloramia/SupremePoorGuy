@@ -1,0 +1,47 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Input/TerrainCursor3D.gd" id="1_cursor"]
+
+[sub_resource type="StandardMaterial3D" id="Material_ring"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(0.2, 0.9, 1, 0.95)
+emission_enabled = true
+emission = Color(0.1, 0.75, 1, 1)
+emission_energy_multiplier = 5.0
+no_depth_test = true
+
+[sub_resource type="TorusMesh" id="Torus_ring"]
+material = SubResource("Material_ring")
+inner_radius = 0.42
+outer_radius = 0.5
+rings = 48
+ring_segments = 12
+
+[sub_resource type="StandardMaterial3D" id="Material_glow"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(0.12, 0.75, 1, 0.16)
+emission_enabled = true
+emission = Color(0.08, 0.6, 1, 1)
+emission_energy_multiplier = 2.5
+no_depth_test = true
+
+[sub_resource type="TorusMesh" id="Torus_glow"]
+material = SubResource("Material_glow")
+inner_radius = 0.34
+outer_radius = 0.58
+rings = 48
+ring_segments = 8
+
+[node name="TerrainCursor3D" type="Node3D" groups=["terrain_cursor_3d"]]
+process_mode = 3
+script = ExtResource("1_cursor")
+
+[node name="Glow" type="MeshInstance3D" parent="."]
+cast_shadow = 0
+mesh = SubResource("Torus_glow")
+
+[node name="Ring" type="MeshInstance3D" parent="."]
+cast_shadow = 0
+mesh = SubResource("Torus_ring")

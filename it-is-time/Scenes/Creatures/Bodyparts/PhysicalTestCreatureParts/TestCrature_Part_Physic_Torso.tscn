@@ -4,11 +4,11 @@
 [ext_resource type="Shader" uid="uid://0h31275qrxho" path="res://Shaders/BodyPartOutline.gdshader" id="2_fww2e"]
 [ext_resource type="Texture2D" uid="uid://w8hh3xjagvuh" path="res://Assets/2DResources/Samples/WhiteCube.png" id="3_i0nd6"]
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_a2pvq"]
+[sub_resource type="BoxShape3D" id="BoxShape3D_fww2e"]
 resource_local_to_scene = true
 size = Vector3(2.5609999, 2.56, 1.001)
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_xg85a"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_i0nd6"]
 render_priority = 0
 shader = ExtResource("2_fww2e")
 shader_parameter/sprite_texture = ExtResource("3_i0nd6")
@@ -17,9 +17,11 @@ shader_parameter/edge_distances = Vector4(1.281, 1.28, 1.28, 1.28)
 
 [node name="PhysicalSampleBodyParts" unique_id=298589033 instance=ExtResource("1_tig3p")]
 tags = Array[int]([0])
+max_hp = 200.0
+armor = 15.0
 
 [node name="CollisionShape3D" parent="." index="0" unique_id=1899992271]
-shape = SubResource("BoxShape3D_a2pvq")
+shape = SubResource("BoxShape3D_fww2e")
 
 [node name="Sprite3D" parent="." index="1" unique_id=1806091758]
-material_override = SubResource("ShaderMaterial_xg85a")
+material_override = SubResource("ShaderMaterial_i0nd6")

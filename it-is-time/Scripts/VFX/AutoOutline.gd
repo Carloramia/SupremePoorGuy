@@ -6,6 +6,15 @@ const BASE_SCENES: Array[String] = [
 	"res://Scenes/Creatures/Bodyparts/_PhysicalSampleBodyParts.tscn",
 ]
 
+@export_group("Activation")
+## Stops target scanning and mesh rebuilding while disabled.
+@export var outline_enabled: bool = true:
+	set(value):
+		outline_enabled = value
+		set_process(value)
+		_set_entries_visible(value)
+
+@export_group("Appearance")
 @export var outline_color: Color = Color.BLACK
 ## Full stroke width in world units, independent of target and parent scale.
 @export_range(0.0, 1.0, 0.001, "or_greater") var outline_width: float = 0.04
@@ -18,17 +27,27 @@ var _entries: Dictionary = {}
 var _scene_matches: Dictionary = {}
 var _contours: Dictionary = {}
 var _material: StandardMaterial3D
+var _performance_tracking_enabled: bool = false
+var _performance_process_calls: int = 0
+var _performance_target_visits: int = 0
+var _performance_mesh_rebuilds: int = 0
+var _performance_total_usec: int = 0
+var _performance_max_usec: int = 0
 
 func _ready() -> void:
+	add_to_group(&"auto_outline_components")
 	process_priority = 10
 	_material = StandardMaterial3D.new()
 	_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	_material.cull_mode = BaseMaterial3D.CULL_DISABLED
 	_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	set_process(outline_enabled)
+	_set_entries_visible(outline_enabled)
 
 func _process(_delta: float) -> void:
-	if get_parent() == null or _material == null:
+	if not outline_enabled or get_parent() == null or _material == null:
 		return
+	var started_usec := Time.get_ticks_usec() if _performance_tracking_enabled else 0
 	_material.albedo_color = outline_color
 	var targets: Dictionary = {}
 	for sibling in get_parent().get_children():
@@ -40,6 +59,52 @@ func _process(_delta: float) -> void:
 			_entries.erase(sprite)
 	for sprite: Sprite3D in targets:
 		_update_outline(sprite, targets[sprite])
+	if _performance_tracking_enabled:
+		var elapsed_usec := Time.get_ticks_usec() - started_usec
+		_performance_process_calls += 1
+		_performance_target_visits += targets.size()
+		_performance_total_usec += elapsed_usec
+		_performance_max_usec = maxi(_performance_max_usec, elapsed_usec)
+
+func set_outline_enabled(enabled: bool) -> void:
+	outline_enabled = enabled
+
+func is_outline_enabled() -> bool:
+	return outline_enabled
+
+func set_performance_tracking_enabled(enabled: bool) -> void:
+	_performance_tracking_enabled = enabled
+	_reset_performance_stats()
+
+func is_performance_tracking_enabled() -> bool:
+	return _performance_tracking_enabled
+
+func consume_performance_stats() -> Dictionary:
+	var result := {
+		&"process_calls": _performance_process_calls,
+		&"target_visits": _performance_target_visits,
+		&"mesh_rebuilds": _performance_mesh_rebuilds,
+		&"total_usec": _performance_total_usec,
+		&"max_usec": _performance_max_usec,
+		&"entries": _entries.size(),
+		&"enabled": outline_enabled,
+	}
+	_reset_performance_stats()
+	return result
+
+func _reset_performance_stats() -> void:
+	_performance_process_calls = 0
+	_performance_target_visits = 0
+	_performance_mesh_rebuilds = 0
+	_performance_total_usec = 0
+	_performance_max_usec = 0
+
+func _set_entries_visible(enabled: bool) -> void:
+	for sprite: Variant in _entries:
+		var entry: Dictionary = _entries[sprite]
+		var container := entry.get("container") as Node3D
+		if is_instance_valid(container):
+			container.visible = enabled
 
 func _is_body_scene(path: String) -> bool:
 	if path.is_empty():
@@ -91,6 +156,8 @@ func _update_outline(sprite: Sprite3D, body: Node) -> void:
 		alpha_threshold, contour_simplification]
 	if entry.signature == signature:
 		return
+	if _performance_tracking_enabled:
+		_performance_mesh_rebuilds += 1
 	entry.signature = signature
 	for child in entry.container.get_children():
 		if child is Path3D:

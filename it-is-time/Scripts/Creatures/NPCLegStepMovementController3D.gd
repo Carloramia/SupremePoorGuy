@@ -10,6 +10,8 @@ func _ready() -> void:
 	super()
 
 func get_input_movement_direction() -> Vector3:
+	var source := get_player_command_source()
+	if source != null: return source.get_movement_direction()
 	if is_instance_valid(_state_machine) and _state_machine.has_method("get_movement_direction"):
 		var requested_direction: Variant = _state_machine.call("get_movement_direction")
 		if requested_direction is Vector3:
@@ -22,4 +24,5 @@ func is_fast_speed_active() -> bool:
 	return false
 
 func is_burst_requested() -> bool:
-	return false
+	var source := get_player_command_source()
+	return source != null and source.is_jump_requested()

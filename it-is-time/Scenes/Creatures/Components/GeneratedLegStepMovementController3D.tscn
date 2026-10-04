@@ -1,0 +1,24 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Scripts/Creatures/GeneratedLegStepMovementController3D.gd" id="1_controller"]
+
+[ext_resource type="Resource" path="res://Resources/Movement/GeneratedWalk.tres" id="2_gait"]
+
+[node name="GeneratedLegStepMovementController3D" type="Node"]
+script = ExtResource("1_controller")
+slow_gait_data = ExtResource("2_gait")
+parts_root_path = NodePath("../GeneratedParts")
+auto_expand_hip_limits = false
+scale_joint_angular_springs = false
+directional_projection_correction_enabled = false
+slow_step_duration = 0.45
+surface_adhesion_force = 80.0
+surface_adhesion_probe_distance = 0.5
+support_foot_stiffness = 250.0
+support_foot_damping = 40.0
+maximum_support_foot_force = 500.0
+leg_move_stiffness = 80.0
+leg_move_damping = 12.0
+maximum_leg_force = 150.0
+
+maximum_torso_force = 3000.0

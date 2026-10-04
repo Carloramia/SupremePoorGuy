@@ -1,5 +1,7 @@
-[gd_scene format=3 uid="uid://dd62pav1022fd"]
+[gd_scene load_steps=3 format=3 uid="uid://dd62pav1022fd"]
 
 [ext_resource type="PackedScene" uid="uid://ct5i18a0njdxn" path="res://Scenes/Items/_SampleWeapon.tscn" id="1_0oa3n"]
+[ext_resource type="Script" path="res://Scripts/Items/WeaponTest.gd" id="2_weapon_test"]
 
 [node name="WeaponTest" unique_id=1193065819 instance=ExtResource("1_0oa3n")]
+script = ExtResource("2_weapon_test")

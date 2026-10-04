@@ -54,9 +54,30 @@ func _validate() -> void:
 	assert(is_equal_approx(shoulder_l.get_param_x(Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT), 0.2))
 	assert(is_equal_approx(neck.get_param_x(Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT), 0.15))
 	assert(not torso.axis_lock_linear_z and not leg_r.axis_lock_linear_z and not leg_l.axis_lock_linear_z)
-	assert(torso.axis_lock_angular_x and torso.axis_lock_angular_y)
+	assert(torso.axis_lock_angular_x and not torso.axis_lock_angular_y)
+	assert(not leg_r.axis_lock_angular_y and not leg_l.axis_lock_angular_y)
+	assert(character.get_node_or_null("PhysicalFacingController3D") != null)
 	assert(leg_r.tags[0] == leg_r.BodyPartTag.Leg)
 	assert(leg_l.tags[0] == leg_l.BodyPartTag.Leg)
+	var movement_controller := character.get_node("LegStepMovementController3D")
+	movement_controller._expand_hip_joint_for_step(
+		leg_r,
+		leg_r.global_position + Vector3.RIGHT * 1.0
+	)
+	assert(joint_r.get_param_x(Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT) > 0.5)
+	assert(is_equal_approx(
+		joint_r.get_param_z(Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT),
+		0.5
+	))
+	assert(is_equal_approx(
+		joint_l.get_param_x(Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT),
+		0.5
+	))
+	movement_controller.restore_base_hip_joint_limits()
+	assert(is_equal_approx(
+		joint_r.get_param_x(Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT),
+		0.5
+	))
 	var leg_shape := leg_r.get_node("CollisionShape3D").shape as BoxShape3D
 	assert(leg_shape.size.is_equal_approx(Vector3(
 		leg_r.left_distance + leg_r.right_distance,

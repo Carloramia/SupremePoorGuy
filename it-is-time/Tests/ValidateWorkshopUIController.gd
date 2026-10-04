@@ -26,6 +26,8 @@ func _validate() -> void:
 
 	workshop.get_node("WorkshopRightpanel").select_test_material()
 	assert(workshop.place_selected_material_at_screen_position(Vector2(64.0, 64.0)))
+	workshop.get_node("WorkshopRightpanel").select_holder()
+	assert(workshop.place_attachment_at_screen_position(Vector2(64.0, 64.0)))
 	var build_button := workshop.get_node("WorkshopBuildButton") as Button
 	build_button.pressed.emit()
 	await create_timer(0.15).timeout
@@ -37,6 +39,8 @@ func _validate() -> void:
 	assert(weapon != null)
 	assert(weapon.get_material_cells().size() == 1)
 	assert(weapon.get_generated_collision_count() == 1)
+	assert(weapon.has_attachment_point)
+	assert(weapon.preferred_holder_name == &"Arm_R")
 	assert(is_equal_approx(weapon.global_position.x, player_target.global_position.x))
 	assert(is_equal_approx(weapon.global_position.z, player_target.global_position.z))
 	assert(weapon.global_position.y > player_target.global_position.y)

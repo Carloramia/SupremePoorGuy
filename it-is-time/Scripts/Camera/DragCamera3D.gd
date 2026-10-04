@@ -95,3 +95,6 @@ func set_distance(value: float) -> void:
 
 func get_distance() -> float:
 	return _distance
+
+func cancel_orbit() -> void:
+	_orbiting = false

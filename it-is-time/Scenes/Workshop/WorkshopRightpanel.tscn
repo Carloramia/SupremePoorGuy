@@ -1,7 +1,6 @@
-[gd_scene load_steps=8 format=3 uid="uid://ccn3tji5k6qbr"]
+[gd_scene load_steps=7 format=3 uid="uid://ccn3tji5k6qbr"]
 
 [ext_resource type="Script" path="res://Scripts/Workshop/WorkshopRightPanel.gd" id="1_panel"]
-[ext_resource type="Texture2D" path="res://Assets/2DResources/Samples/WhiteCube.png" id="2_white_cube"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBox_panel"]
 bg_color = Color(0.22, 0.235, 0.255, 0.98)
@@ -116,7 +115,6 @@ custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
 mouse_default_cursor_shape = 2
 toggle_mode = true
-icon = ExtResource("2_white_cube")
 icon_max_width = 48
 text = "TestMaterial"
 alignment = 0
@@ -124,6 +122,16 @@ theme_override_font_sizes/font_size = 18
 theme_override_styles/normal = SubResource("StyleBox_material")
 theme_override_styles/hover = SubResource("StyleBox_material_hover")
 theme_override_styles/pressed = SubResource("StyleBox_material_selected")
+
+[node name="HolderTitle" type="Label" parent="Panel/Margin/Content"]
+layout_mode = 2
+text = "持握连接点"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 17
+
+[node name="HolderOptions" type="VBoxContainer" parent="Panel/Margin/Content"]
+layout_mode = 2
+theme_override_constants/separation = 8
 
 [node name="TabButton" type="Button" parent="."]
 custom_minimum_size = Vector2(56, 128)

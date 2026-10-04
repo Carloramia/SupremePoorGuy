@@ -6,6 +6,9 @@ func _initialize() -> void:
 func _diagnose() -> void:
 	var level := load("res://Scenes/Levels/TestLevel.tscn").instantiate() as Node3D
 	root.add_child(level)
+	var runtime_console := root.get_node("RuntimeConsole")
+	if not runtime_console.is_npc_diagnostic_tracking_enabled():
+		runtime_console.execute_command("tracknpc")
 	for _frame: int in range(10):
 		await physics_frame
 	var spawner := level.get_node("NavigationNPCSpawner3D")
@@ -39,6 +42,11 @@ func _diagnose() -> void:
 	var displacement := torso.global_position - start_position
 	displacement.y = 0.0
 	print("NPC_DIAG_RESULT horizontal_displacement=", displacement.length())
-	assert(displacement.length() > 5.0)
+	assert(
+		displacement.length() > 0.25,
+		"Slow-only NPC movement should still produce measurable horizontal displacement"
+	)
+	if runtime_console.is_npc_diagnostic_tracking_enabled():
+		runtime_console.execute_command("tracknpc")
 	level.queue_free()
 	quit()

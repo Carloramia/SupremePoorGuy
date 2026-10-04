@@ -1,4 +1,4 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://dstgtopkigikh"]
 
 [ext_resource type="PackedScene" uid="uid://bxa3fvya47rtv" path="res://Scenes/VFX/Outline/AutoOutline.tscn" id="1_gn1tu"]
 [ext_resource type="PackedScene" uid="uid://uk1e0l8x2imw" path="res://Scenes/Creatures/Bodyparts/PhysicalTestCreatureParts/TestCrature_Part_Physic_Arm.tscn" id="2_acm7k"]
@@ -9,12 +9,13 @@
 [ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/TorsoBalanceController3D.tscn" id="5_balance"]
 [ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/NPCLegStepMovementController3D.tscn" id="6_leg_movement"]
 [ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/NPCStateMachine3D.tscn" id="7_npc_state"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/CharacterDamageController3D.tscn" id="8_damage"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_leg"]
 friction = 0.9
 rough = true
 
-[node name="CharacterTestNPC" type="Node3D"]
+[node name="CharacterTestNPC" type="Node3D" unique_id=418755916]
 script = ExtResource("4_controller")
 
 [node name="Arm_R" parent="." unique_id=298589033 instance=ExtResource("2_acm7k")]
@@ -38,11 +39,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7, 0)
 tags = Array[int]([3])
 
 [node name="AutoOutline" parent="." unique_id=937295706 instance=ExtResource("1_gn1tu")]
+outline_enabled = false
 
-[node name="NPCStateMachine3D" parent="." instance=ExtResource("7_npc_state")]
-use_fast_movement = true
+[node name="NPCStateMachine3D" parent="." unique_id=1791979637 instance=ExtResource("7_npc_state")]
 
-[node name="NPCLegStepMovementController3D" parent="." instance=ExtResource("6_leg_movement")]
+[node name="CharacterDamageController3D" parent="." instance=ExtResource("8_damage")]
+team_id = 1
+
+[node name="NPCLegStepMovementController3D" parent="." unique_id=1247757180 instance=ExtResource("6_leg_movement")]
 maximum_directional_projection_correction = 0.0
 slow_step_distance = 1.2
 use_slow_movement_scale = true
@@ -189,4 +193,3 @@ angular_spring_y/damping = 5.0
 angular_spring_z/enabled = true
 angular_spring_z/stiffness = 120.0
 angular_spring_z/damping = 40.0
-

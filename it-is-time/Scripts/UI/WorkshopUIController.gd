@@ -1,5 +1,7 @@
 extends Node
 
+const PLAYER_CONTEXT = preload("res://Scripts/Player/PlayerControlContext.gd")
+
 const WORKSHOP_SCENE: PackedScene = preload("res://Scenes/Workshop/Playerworkshop.tscn")
 const BLUR_MASK_SCENE: PackedScene = preload("res://Scenes/Masks/BlurMask.tscn")
 const WEAPON_TEST_SCENE: PackedScene = preload("res://Scenes/Items/Weapon_Test.tscn")
@@ -77,10 +79,19 @@ func _finish_close() -> void:
 func _finish_transition() -> void:
 	_transitioning = false
 
-func _on_weapon_build_requested(material_cells: Array[Vector2i]) -> void:
+func _on_weapon_build_requested(
+	material_cells: Array[Vector2i],
+	attachment_canvas_position: Vector2,
+	attachment_grid_position: Vector2,
+	item_rotation: float,
+	holder_name: StringName
+) -> void:
 	if _transitioning or material_cells.is_empty():
 		return
-	var player_target := get_tree().get_first_node_in_group(&"npc_navigation_target") as Node3D
+	var player_target := PLAYER_CONTEXT.anchor(self)
+	if PLAYER_CONTEXT.controller(self) != null and PLAYER_CONTEXT.controlled_character(self) == null:
+		push_warning("Cannot build an item while Controller is detached. Attach to a character first.")
+		return
 	if not is_instance_valid(player_target):
 		push_warning("Cannot build Weapon_Test: Character_Test_2 target was not found.")
 		return
@@ -89,7 +100,15 @@ func _on_weapon_build_requested(material_cells: Array[Vector2i]) -> void:
 		return
 	_get_ui_parent().add_child(weapon)
 	weapon.global_position = player_target.global_position + Vector3.UP * weapon_spawn_height
-	weapon.call(&"build_from_material_cells", material_cells)
+	weapon.call(
+		&"build_from_material_cells",
+		material_cells,
+		attachment_canvas_position,
+		attachment_grid_position,
+		item_rotation,
+		holder_name,
+		true
+	)
 	_close_workshop()
 
 func _reset_right_panel() -> void:

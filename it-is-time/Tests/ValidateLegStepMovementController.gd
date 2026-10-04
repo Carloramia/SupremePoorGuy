@@ -1,5 +1,13 @@
 extends SceneTree
 
+class TestCommandSource extends Node:
+	func get_movement_direction() -> Vector3:
+		return Vector3(Input.get_action_strength(&"Right") - Input.get_action_strength(&"Left"), 0, Input.get_action_strength(&"Down") - Input.get_action_strength(&"Up")).normalized()
+	func is_fast_requested() -> bool:
+		return Input.is_action_pressed(&"Shift")
+	func is_jump_requested() -> bool:
+		return false
+
 func _initialize() -> void:
 	call_deferred("_validate")
 
@@ -18,6 +26,9 @@ func _validate() -> void:
 	root.add_child(character)
 	await physics_frame
 	var controller := character.get_node("LegStepMovementController3D")
+	var commands := TestCommandSource.new()
+	character.add_child(commands)
+	controller.command_source = commands
 	var torso := character.get_node("Torso") as RigidBody3D
 	var leg_r := character.get_node("Leg_R") as RigidBody3D
 	var leg_l := character.get_node("Leg_L") as RigidBody3D
@@ -28,6 +39,14 @@ func _validate() -> void:
 	var legs: Array[RigidBody3D] = controller.get_leg_parts()
 	assert(legs.size() == 2)
 	assert(controller.is_in_group(&"leg_step_movement_controllers"))
+	controller.set_performance_tracking_enabled(true)
+	controller._begin_ground_probe_frame()
+	assert(controller.is_leg_grounded(leg_l))
+	assert(controller.is_leg_grounded(leg_l))
+	controller._get_surface_below_leg(leg_l, controller.surface_adhesion_probe_distance)
+	var cached_probe_stats: Dictionary = controller.consume_performance_stats()
+	assert(cached_probe_stats.ray_queries == 1, "Ground, adhesion and support reads must share one ray per Leg per physics frame")
+	controller.set_performance_tracking_enabled(false)
 	controller.update_leg_surface_adhesion()
 	var runtime_console := root.get_node("RuntimeConsole")
 	assert(runtime_console.execute_command("trackmotion").ends_with("enabled."))
@@ -199,6 +218,20 @@ func _validate() -> void:
 	leg_l.global_position += Vector3(0.1, 0.0, 0.0)
 	assert(controller.try_start_step(), "A supported character must be able to start a step")
 	assert(controller.get_active_leg() == leg_l, "The stable alternating order must start at the left leg")
+	var slight_navigation_turn := Vector3.RIGHT.rotated(Vector3.UP, deg_to_rad(2.0))
+	assert(
+		not controller._should_replan_active_step_direction(slight_navigation_turn),
+		"Small navigation direction changes must not restart the active step"
+	)
+	assert(
+		controller._should_replan_active_step_direction(Vector3.LEFT),
+		"A true direction reversal must bypass the ordinary replan cooldown"
+	)
+	controller._physics_elapsed += controller.replan_cooldown
+	assert(
+		controller._should_replan_active_step_direction(Vector3.FORWARD),
+		"A significant turn must replan after the cooldown"
+	)
 	controller.update_leg_surface_adhesion()
 	assert(
 		controller.get_leg_adhesion_surface_normal(leg_l).is_zero_approx(),
@@ -231,14 +264,27 @@ func _validate() -> void:
 	assert(controller.get_leg_adhesion_surface_normal(leg_l).is_zero_approx())
 	assert(controller.get_leg_adhesion_surface_normal(leg_r).is_zero_approx())
 
-	leg_l.global_position += Vector3(1.0, 0.5, 0.0)
-	leg_r.global_position += Vector3(0.5, -0.25, 0.0)
+	leg_l.global_position += Vector3(1.0, 0.0, 0.0)
+	leg_r.global_position += Vector3(0.5, 2.0, 0.0)
+	assert(controller.get_torso_movement_force_legs(false) == [leg_l])
 	var combined_offset: Vector3 = controller.get_combined_leg_offset()
-	assert(combined_offset.is_equal_approx(Vector3(1.5, 0.25, 0.0)))
+	assert(combined_offset.is_equal_approx(Vector3(1.0, 0.0, 0.0)))
 	var expected_force: Vector3 = combined_offset * float(controller.torso_force_per_unit)
 	if expected_force.length() > controller.maximum_torso_force:
 		expected_force = expected_force.normalized() * controller.maximum_torso_force
 	assert(controller.calculate_torso_force().is_equal_approx(expected_force))
+	leg_l.global_position += Vector3.UP * 2.0
+	assert(controller.get_torso_movement_force_legs(false).is_empty())
+	assert(controller.calculate_torso_force().is_zero_approx())
+	Input.action_press(&"Shift")
+	assert(controller.get_fast_airborne_force_grace_remaining() > 0.0)
+	assert(controller.get_torso_movement_force_legs(true) == [leg_l])
+	assert(not controller.calculate_torso_force().is_zero_approx())
+	controller._physics_elapsed += controller.fast_airborne_force_grace_duration + 0.01
+	assert(is_zero_approx(controller.get_fast_airborne_force_grace_remaining()))
+	assert(controller.get_torso_movement_force_legs(true).is_empty())
+	assert(controller.calculate_torso_force().is_zero_approx())
+	Input.action_release(&"Shift")
 	print("LEG_STEP_MOVEMENT_CONTROLLER_VALIDATION_PASSED")
 	character.queue_free()
 	ground.queue_free()

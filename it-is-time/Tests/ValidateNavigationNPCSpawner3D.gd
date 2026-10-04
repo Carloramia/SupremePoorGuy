@@ -5,14 +5,23 @@ func _initialize() -> void:
 
 func _validate() -> void:
 	var level := load("res://Scenes/Levels/TestLevel.tscn").instantiate() as Node3D
+	var spawner := level.get_node("NavigationNPCSpawner3D")
+	spawner.spawn_enabled = false
 	root.add_child(level)
 	for _frame: int in range(10):
 		await physics_frame
-	var spawner := level.get_node("NavigationNPCSpawner3D")
+	assert(spawner._spawn_timer.is_stopped())
+	assert(spawner.try_spawn_npc() == null and spawner.get_spawned_npc_count() == 0)
+	spawner.spawn_enabled = true
+	assert(not spawner._spawn_timer.is_stopped())
 	var npc := spawner.try_spawn_npc() as Node3D
 	assert(npc != null)
 	assert(npc.get_parent() == level.get_node("Flat"))
 	assert(spawner.get_spawned_npc_count() == 1)
+	spawner.spawn_enabled = false
+	assert(spawner._spawn_timer.is_stopped())
+	assert(spawner.try_spawn_npc() == null and spawner.get_spawned_npc_count() == 1)
+	assert(is_instance_valid(npc) and not npc.is_queued_for_deletion())
 	var navigation_mesh := (level.get_node("NavigationRegion3D") as NavigationRegion3D).navigation_mesh
 	var closest_point := NavigationServer3D.map_get_closest_point(
 		(level.get_node("NavigationRegion3D") as NavigationRegion3D).get_navigation_map(),
