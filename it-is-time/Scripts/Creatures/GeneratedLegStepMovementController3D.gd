@@ -1036,9 +1036,23 @@ func _get_projected_landing_rest_position(leg: RigidBody3D, movement_direction: 
 	if not _gallop_active(): return rest
 	if _get_gait_data().speed_based_gait:
 		var plan := _get_speed_leg_plan(leg)
-		if not plan.is_empty(): return rest + Vector3(plan.predicted_travel)
+		if not plan.is_empty():
+			var attachment: Vector3 = _chains[leg].root.to_global(_chains[leg].anchor)
+			var offset := _forward_landing_offset(leg,rest-attachment,movement_direction)
+			# The common sampler adds step distance. Keep its first candidate
+			# inside the leading reachable region rather than beyond the chain.
+			return attachment+offset+Vector3(plan.predicted_travel)-movement_direction*get_leg_step_distance(leg)
 	var duration := _motion_setting("swing_duration",slow_step_duration,leg)
 	return rest + movement_direction * get_expected_horizontal_speed() * duration * _get_gait_data().gallop_landing_prediction_ratio
+
+func _forward_landing_offset(leg: RigidBody3D, offset: Vector3, direction: Vector3) -> Vector3:
+	direction = direction.slide(Vector3.UP).normalized()
+	var sideways := offset.slide(Vector3.UP)-direction*offset.dot(direction)
+	var radius := float(_chains[leg].length)*chain_reach_ratio*0.95
+	var reach := sqrt(maxf(radius*radius-offset.y*offset.y-sideways.length_squared(),0.0))
+	var margin := maxf(float(_chains[leg].length)*0.05,0.05)
+	var usable := maxf(reach-margin,0.0)
+	return offset+direction*(usable*0.45-offset.dot(direction))
 
 ## Ground contacts remain the source of diagnostics; airborne assistance is reported separately.
 func get_torso_movement_force_legs(_fast_mode_active: bool = false) -> Array[RigidBody3D]:
@@ -2320,11 +2334,26 @@ func _update_gallop_tracking_profile(leg: RigidBody3D, target: Vector3) -> void:
 func _quadratic_step_position(progress: float) -> Vector3:
 	if not _current_step.extra.get("gallop_step",false): return super._quadratic_step_position(progress)
 	var t := smoothstep(0.0,1.0,progress)
+	if _current_step.extra.get("speed_gait",{}).get("automatic_flight",false):
+		var lift := _automatic_swing_lift(progress)
+		return _step_start.lerp(_step_target,t)+Vector3.UP*_get_effective_step_height()*lift.x
 	return _step_start.lerp(_step_target,t) + Vector3.UP * 4.0 * _get_effective_step_height() * progress * (1.0-progress)
 
 func _quadratic_step_velocity(progress: float, duration: float) -> Vector3:
 	if not _current_step.extra.get("gallop_step",false): return super._quadratic_step_velocity(progress,duration)
+	if _current_step.extra.get("speed_gait",{}).get("automatic_flight",false):
+		var lift := _automatic_swing_lift(progress)
+		return ((_step_target-_step_start)*6.0*progress*(1.0-progress)+Vector3.UP*_get_effective_step_height()*lift.y)/maxf(duration,MIN_STEP_TIME)
 	return ((_step_target-_step_start)*6.0*progress*(1.0-progress) + Vector3.UP*4.0*_get_effective_step_height()*(1.0-2.0*progress))/maxf(duration,MIN_STEP_TIME)
+
+## Height and derivative: maintain clearance through travel, descend only at the end.
+func _automatic_swing_lift(progress: float) -> Vector2:
+	if progress < 0.2:
+		var t := clampf(progress/0.2,0.0,1.0)
+		return Vector2(smoothstep(0.0,1.0,t),6.0*t*(1.0-t)/0.2)
+	if progress <= 0.65: return Vector2(1.0,0.0)
+	var t := clampf((progress-0.65)/0.35,0.0,1.0)
+	return Vector2(1.0-smoothstep(0.0,1.0,t),-6.0*t*(1.0-t)/0.35)
 
 func _update_active_step(delta: float) -> void:
 	var gallop_step: bool = is_instance_valid(_active_leg) and _current_step.extra.get("gallop_step",false) and _chain_is_intact(_active_leg)
@@ -2336,7 +2365,14 @@ func _update_active_step(delta: float) -> void:
 		var lift_position := _active_leg.global_position
 		lift_position.y = _step_start.y+maxf(_get_effective_step_height()*0.6,minimum_step_lift_clearance*2.0)
 		_apply_leg_tracking_force(lift_position,Vector3.ZERO)
-		if _step_has_lifted:
+		# The short adhesion probe may legitimately lose the ground after a
+		# successful lift. Measure clearance using a ray covering the lift arc.
+		var lift_probe := maxf(surface_adhesion_probe_distance,_get_effective_step_height()*2.0+_step_start_clearance+minimum_step_lift_clearance)
+		var surface := _get_surface_below_leg(_active_leg,lift_probe)
+		var clearance := 0.0 if surface.is_empty() else (_get_foot_world_position(_active_leg)-Vector3(surface.position)).dot(Vector3(surface.normal))
+		_current_step.extra["lift_clearance"] = clearance
+		var required_clearance := maxf(_get_effective_step_height()*0.5,minimum_step_lift_clearance*2.0)
+		if _step_has_lifted and clearance >= required_clearance:
 			_current_step.extra["liftoff_complete"] = true
 			_step_start = _active_leg.global_position
 			_step_elapsed = 0.0
@@ -2394,6 +2430,7 @@ func _update_active_step(delta: float) -> void:
 					_current_step.extra["gallop_braking_velocity"] = _active_leg.linear_velocity.slide(normal)
 					_current_step.extra["touchdown_normal"] = normal
 					_current_step.extra["gallop_touchdown_braking"] = true
+					_update_touchdown_support_pin(_active_leg,normal,delta)
 					_apply_leg_tracking_force(desired,Vector3.ZERO)
 					var slow := _active_leg.linear_velocity.slide(normal).length() <= float(_current_step.extra.gallop_touchdown_speed_limit) and absf(_active_leg.linear_velocity.dot(normal)) <= 0.7
 					_current_step.extra.gallop_contact_confirmation = float(_current_step.extra.gallop_contact_confirmation)+delta if slow else 0.0
@@ -2415,6 +2452,9 @@ func _update_active_step(delta: float) -> void:
 				_current_step.extra.erase("gallop_touchdown_point")
 			_current_step.extra["gallop_touchdown_braking"] = false
 			_current_step.extra.gallop_contact_confirmation = 0.0
+			_release_support_pin(_active_leg)
+			_current_step.extra.erase("touchdown_pin_elapsed")
+			_current_step.extra.erase("touchdown_pin")
 	super._update_active_step(delta)
 
 # Recompute the remaining root travel, rather than chasing a launch-time prediction.
@@ -2425,7 +2465,9 @@ func _retarget_adaptive_landing(delta: float) -> void:
 	var chain: Dictionary = _chains[_active_leg]
 	var attachment: Vector3 = chain.root.to_global(chain.anchor)
 	var predicted := attachment+_speed_smoothed_velocity.slide(Vector3.UP)*remaining
-	var desired: Vector3 = _active_leg.global_position if _step_state==StepState.LANDING else predicted+Vector3(_current_step.extra.gallop_rest_offset)
+	var offset := _forward_landing_offset(_active_leg,Vector3(_current_step.extra.gallop_rest_offset),_active_step_input_direction)
+	var desired: Vector3 = _active_leg.global_position if _step_state==StepState.LANDING else predicted+offset
+	_current_step.extra["landing_recovery"] = {"forward_offset": offset.dot(_active_step_input_direction),"predicted_attachment": predicted,"desired": desired}
 	var current: Vector3 = _current_step.extra.landing_surface_point
 	var foot_offset := _active_leg.global_position-_get_foot_world_position(_active_leg)+Vector3.UP*foot_ground_offset
 	var correction := (desired-foot_offset-current).slide(Vector3.UP)
@@ -2508,10 +2550,17 @@ func _apply_leg_tracking_force(desired_position: Vector3, desired_velocity: Vect
 		acceleration_limit = sqrt(data.touchdown_maximum_braking_acceleration*data.touchdown_maximum_braking_acceleration+acceleration_limit*acceleration_limit)
 		_current_step.extra["touchdown_brake"] = {"stop_time": data.touchdown_stop_time,"effective_stop_time": stop_time,"maximum_acceleration": data.touchdown_maximum_braking_acceleration,"effective_mass": _tracking_mass,"speed": tangent_velocity.length(),"requested_force": requested_brake*_tracking_mass,"acceleration_limited": requested_brake.length()>data.touchdown_maximum_braking_acceleration}
 	else:
-		acceleration = acceleration.limit_length(acceleration_limit)
+		if _step_state == StepState.MOVING and _current_step.extra.get("speed_gait",{}).get("automatic_flight",false):
+			# Horizontal pursuit must not consume the acceleration needed to stay airborne.
+			var vertical := clampf(acceleration.y,-acceleration_limit,acceleration_limit)
+			var horizontal := acceleration.slide(Vector3.UP).limit_length(sqrt(maxf(acceleration_limit*acceleration_limit-vertical*vertical,0.0)))
+			acceleration = horizontal+Vector3.UP*vertical
+		else:
+			acceleration = acceleration.limit_length(acceleration_limit)
 	# Fade weight feedforward during descent; landing applies no upward weight compensation.
 	var progress := clampf(_step_elapsed / maxf(_active_step_duration, MIN_STEP_TIME), 0.0, 1.0)
-	var gravity_weight := 1.0 - smoothstep(0.5, 1.0, progress) if _step_state == StepState.MOVING else 0.0
+	var descent_start := 0.65 if _current_step.extra.get("speed_gait",{}).get("automatic_flight",false) else 0.5
+	var gravity_weight := 1.0 - smoothstep(descent_start, 1.0, progress) if _step_state == StepState.MOVING else 0.0
 	_tracking_gravity_force = -_gravity_acceleration() * gravity_mass * gravity_weight if step_gravity_compensation else Vector3.ZERO
 	var requested := acceleration * _tracking_mass + _tracking_gravity_force
 	_tracking_force_limit = minf(maximum_mass_scaled_step_force, _tracking_mass*acceleration_limit+_tracking_gravity_force.length())
@@ -2599,6 +2648,40 @@ func _update_support_foot_lock(leg: RigidBody3D, normal: Vector3) -> void:
 		_release_support_pin(leg)
 		return
 	super._update_support_foot_lock(leg,normal)
+	if not is_leg_stepping(leg) and _support_pins.has(leg):
+		_set_touchdown_pin_slack(leg,0.0)
+
+func _set_touchdown_pin_slack(leg: RigidBody3D, slack: float) -> void:
+	if not _support_pins.has(leg): return
+	var pin: Generic6DOFJoint3D = _support_pins[leg].joint
+	for axis: String in ["x","y","z"]:
+		pin.call("set_param_"+axis,Generic6DOFJoint3D.PARAM_LINEAR_LOWER_LIMIT,-slack)
+		pin.call("set_param_"+axis,Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT,slack)
+
+func _update_touchdown_support_pin(leg: RigidBody3D, normal: Vector3, delta: float) -> void:
+	if _adhesion_release_time_remaining > 0.0:
+		_release_support_pin(leg)
+		return
+	_update_support_foot_lock(leg,normal)
+	if not _support_pins.has(leg): return
+	_leg_adhesion_surface_normals[leg] = normal
+	var elapsed := float(_current_step.extra.get("touchdown_pin_elapsed",0.0))
+	var data := _get_gait_data()
+	var progress := 1.0 if data.touchdown_pin_transition_time <= 0.0 else clampf(elapsed/data.touchdown_pin_transition_time,0.0,1.0)
+	var slack := data.touchdown_pin_initial_slack*(1.0-smoothstep(0.0,1.0,progress))
+	_set_touchdown_pin_slack(leg,slack)
+	_current_step.extra["touchdown_pin_elapsed"] = elapsed+delta
+	_current_step.extra["touchdown_pin"] = {"active": true,"progress": progress,"slack": slack,"anchor": _support_anchors[leg]}
+
+func _keep_touchdown_support_pin(leg: RigidBody3D) -> bool:
+	if not support_foot_lock_enabled or not surface_adhesion_enabled: return false
+	for motion: StepMotion in _active_steps:
+		if motion.leg != leg or motion.state != StepState.LANDING or not motion.extra.get("gallop_touchdown_braking",false): continue
+		var contact := _support_surface_contact(leg)
+		if contact.is_empty(): return false
+		var gap := (_get_foot_world_position(leg)-Vector3(contact.position)).dot(Vector3(contact.normal))
+		return _support_pins.has(leg) and absf(gap) <= 0.07 and not leg.freeze and not is_leg_slipping(leg) and not _is_body_broken(leg) and _adhesion_release_time_remaining <= 0.0
+	return false
 
 func update_leg_surface_adhesion() -> void:
 	super.update_leg_surface_adhesion()
@@ -2646,6 +2729,9 @@ func get_support_foot_diagnostics(leg: RigidBody3D) -> Dictionary:
 	result["gallop"]["admission"] = _extension_admission.get(leg,{}).duplicate()
 	if not result.gallop.admission.is_empty(): result.gallop.admission["age"] = _physics_elapsed-float(result.gallop.admission.time)
 	result["gallop"]["touchdown_brake"] = extra.get("touchdown_brake",{})
+	result["gallop"]["touchdown_pin"] = extra.get("touchdown_pin",{})
+	result["gallop"]["landing_recovery"] = extra.get("landing_recovery",{})
+	result["gallop"]["lift_clearance"] = extra.get("lift_clearance",0.0)
 	result["gallop"]["touchdown_swing_progress"] = extra.get("touchdown_swing_progress",-1.0)
 	result["gallop"]["liftoff_phase"] = extra.get("liftoff_phase","")
 	result["gallop"]["horizontal_tracking_weight"] = extra.get("horizontal_tracking_weight",1.0)

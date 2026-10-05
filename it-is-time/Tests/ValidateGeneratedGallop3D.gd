@@ -113,6 +113,7 @@ func run() -> void:
 		var touchdown_brake_frames := 0
 		var early_pins := 0
 		var pinned_drift := 0.0
+		var touchdown_pin_drift := 0.0
 		var previous_failure := 0
 		for frame: int in range(600):
 			# Poison the old admission gates: they must never delay extension events.
@@ -173,13 +174,17 @@ func run() -> void:
 					if foot.linear_velocity.slide(Vector3.UP).length() > 1.0: contact_slide_frames += 1
 				var foot_data: Dictionary = movement.get_support_foot_diagnostics(foot)
 				if foot_data.locked:
-					pinned_drift = maxf(pinned_drift,float(foot_data.drift))
+					if movement.is_leg_stepping(foot):
+						touchdown_pin_drift = maxf(touchdown_pin_drift,float(foot_data.drift))
+					else:
+						pinned_drift = maxf(pinned_drift,float(foot_data.drift))
 					if movement._physics_elapsed < movement._gallop_pin_release_until: early_pins += 1
 			if grounded == 0: air_frames += 1
 			if Vector3(movement._gallop_diagnostics.get("airborne_force",Vector3.ZERO)).length() > 0.001: assisted_frames += 1
 			maximum_height = maxf(maximum_height,movement._torso.global_position.y)
 			check(movement._active_steps.size() <= movement.get_maximum_stepping_feet(),"Gallop exceeded stepping budget frame=%s active=%s capacity=%s enabled=%s recovery=%s turn=%s" % [frame,movement._active_steps.size(),movement.get_maximum_stepping_feet(),movement._gallop_active(),movement.recovery_control_active,movement._turn_planning_active])
 		means.append(mean)
+		print("TOUCHDOWN_PIN max_transition_drift=",touchdown_pin_drift," max_stance_drift=",pinned_drift)
 		print("GALLOP_PHYSICS enabled=",enabled," requested=",data.target_speed," planned=",movement.get_expected_horizontal_speed()," mean_speed=",mean," takeoffs=",movement._gallop_takeoffs," all_air_frames=",air_frames," assisted_frames=",assisted_frames," max_height=",maximum_height," failures=",movement._failed_step_count," maximum_stepping=",maximum_stepping," maximum_batch=",maximum_batch," starts=",seen_sequences.size()," contact_slide_foot_frames=",contact_slide_frames," braking_foot_frames=",touchdown_brake_frames," restored_in_flight_window=",early_pins," max_pin_drift=",pinned_drift," max_foot_speed=",maximum_foot_speed)
 		if enabled:
 			# Sparse flight support must not invoke the fallen-body reduction, but
@@ -198,6 +203,7 @@ func run() -> void:
 			check(is_equal_approx(movement.get_expected_horizontal_speed(),requested_speed),"Gallop must preserve requested drive speed")
 			check(touchdown_brake_frames > 0,"Terrain landing must exercise braking")
 			check(pinned_drift < 0.08,"Pinned stance feet must remain close to anchors")
+			check(touchdown_pin_drift < data.touchdown_pin_initial_slack+maximum_foot_speed/60.0+0.05,"Landing constraint drift must stay within slack plus one solver-frame travel")
 			check(movement._gallop_takeoffs == 0,"Automatic swings must not impulsively release waiting stance feet")
 			check(maximum_batch>=1 and maximum_batch<=count,"Simultaneous extension events remain bounded by foot count")
 			check(maximum_stepping > data.calculate_support_capacity(count),"Gallop must permit more concurrent steps than walking")

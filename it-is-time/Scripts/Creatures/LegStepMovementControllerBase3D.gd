@@ -980,6 +980,8 @@ func update_leg_surface_adhesion() -> void:
 		return
 	for leg: RigidBody3D in _legs:
 		if is_leg_stepping(leg):
+			if _keep_touchdown_support_pin(leg):
+				continue
 			_release_support_pin(leg)
 			_leg_adhesion_surface_normals[leg] = Vector3.ZERO
 			continue
@@ -1036,6 +1038,10 @@ func _exit_tree() -> void:
 	release_all_support_pins()
 
 func _support_pin_z_free() -> bool:
+	return false
+
+## Generated landing phases may retain a real-contact pin before finishing a step.
+func _keep_touchdown_support_pin(_leg: RigidBody3D) -> bool:
 	return false
 
 func _update_support_foot_lock(leg: RigidBody3D, normal: Vector3) -> void:

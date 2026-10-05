@@ -62,10 +62,14 @@ extends Resource
 @export_range(0.01, 1.0, 0.01, "or_greater") var touchdown_stop_time: float = 0.04
 ## Tangential braking ceiling, independent of swing acceleration and speed presets.
 @export_range(1.0, 2000.0, 1.0, "or_greater") var touchdown_maximum_braking_acceleration: float = 300.0
+## A real touchdown immediately creates a ground constraint; its slack closes during this time.
+@export_range(0.0, 0.2, 0.01) var touchdown_pin_transition_time: float = 0.06
+@export_range(0.0, 0.08, 0.005) var touchdown_pin_initial_slack: float = 0.04
 @export_range(0.001, 1.0, 0.001) var landing_tolerance: float = 0.18
 @export_range(0.01, 5.0, 0.01) var landing_timeout: float = 1.0
 
 func is_valid() -> bool:
+	if not is_finite(touchdown_pin_transition_time) or touchdown_pin_transition_time < 0.0 or not is_finite(touchdown_pin_initial_slack) or touchdown_pin_initial_slack < 0.0: return false
 	if not is_finite(touchdown_stop_time) or touchdown_stop_time < 0.01 or not is_finite(touchdown_maximum_braking_acceleration) or touchdown_maximum_braking_acceleration <= 0.0: return false
 	if not is_finite(maximum_stepping_ratio) or maximum_stepping_ratio < 0.0 or maximum_stepping_ratio > 1.0 or maximum_simultaneous_steps < 0 or minimum_support_feet < 0: return false
 	for value: float in [gallop_target_freeze_progress, gallop_target_follow_length_ratio, gallop_touchdown_speed_limit, gallop_maximum_stepping_ratio, gallop_landing_confirmation, gallop_takeoff_velocity, gallop_airborne_duration, gallop_airborne_drive_ratio, gallop_airborne_support_ratio, gallop_landing_prediction_ratio]:
