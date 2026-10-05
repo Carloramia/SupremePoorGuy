@@ -60,6 +60,12 @@ h1, h2, p { margin: 0; }
 .legend-dot { width: 8px; height: 8px; border-radius: 2px; margin-left: 9px; background: #172029; border: 1px solid #3a4650; }
 .legend-dot--used { background: rgba(232,180,92,.2); border-color: var(--gold); }
 .board-wrap { min-height: 0; position: relative; overflow: hidden; background-image: linear-gradient(rgba(71,84,94,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(71,84,94,.035) 1px, transparent 1px); background-size: 32px 32px; }
+.help-button { position: absolute; z-index: 4; top: 22px; right: 24px; width: 184px; height: 64px; display: flex; align-items: center; gap: 13px; padding: 0 17px; border: 1px solid rgba(232,180,92,.52); border-radius: 10px; background: linear-gradient(135deg, rgba(232,180,92,.17), rgba(13,19,24,.91) 65%); color: var(--ink); text-align: left; cursor: pointer; box-shadow: 0 12px 32px rgba(0,0,0,.25), inset 0 0 22px rgba(232,180,92,.04); transition: transform .18s, border-color .18s, background .18s; }
+.help-button:hover { transform: translateY(-2px); border-color: var(--gold); background: linear-gradient(135deg, rgba(232,180,92,.24), rgba(13,19,24,.94) 68%); }
+.help-button > span:first-child { flex: 0 0 34px; width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid var(--gold); border-radius: 50%; color: var(--gold); font: 700 18px Georgia, serif; box-shadow: 0 0 13px rgba(232,180,92,.18); }
+.help-button strong, .help-button small { display: block; }
+.help-button strong { font-family: "Noto Serif SC", SimSun, serif; font-size: 16px; letter-spacing: .1em; }
+.help-button small { margin-top: 4px; color: #8f815f; font: 8px ui-monospace, monospace; letter-spacing: .16em; }
 .board-wrap::before { content: ""; position: absolute; inset: 4% 14%; background: radial-gradient(circle, rgba(63,108,117,.12), transparent 64%); pointer-events: none; }
 .ritual-rings, .ritual-rings span { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); border-radius: 50%; pointer-events: none; }
 .ritual-rings { width: min(71vh, 69vw); aspect-ratio: 1; border: 1px solid rgba(232,180,92,.45); box-shadow: 0 0 28px rgba(232,180,92,.06), inset 0 0 28px rgba(232,180,92,.05); }
@@ -166,6 +172,21 @@ dialog h2 { font-size: 20px; }
 dialog p { margin: 11px 0 22px; color: var(--muted); font-size: 13px; line-height: 1.65; }
 .dialog-actions { display: flex; justify-content: center; gap: 10px; }
 .dialog-actions .button--danger { margin-left: 0; }
+.help-dialog { width: min(820px, calc(100vw - 36px)); max-height: calc(100vh - 36px); text-align: left; }
+.help-dialog .help-sheet { padding: 0; }
+.help-sheet > header { height: 88px; display: flex; align-items: center; gap: 14px; padding: 0 24px; border-bottom: 1px solid #303a42; background: linear-gradient(110deg, rgba(232,180,92,.12), transparent 68%); }
+.help-sigil { width: 45px; height: 45px; display: grid; place-items: center; border: 1px solid var(--gold); border-radius: 50%; color: var(--gold); font: 700 22px Georgia, serif; }
+.help-sheet header h2 { margin-top: 3px; font-family: "Noto Serif SC", SimSun, serif; letter-spacing: .08em; }
+.help-close { margin-left: auto; width: 36px; height: 36px; border: 1px solid #3d474e; border-radius: 7px; background: #0e1419; color: #8c9599; font-size: 23px; cursor: pointer; }
+.help-close:hover { border-color: var(--gold); color: var(--gold); }
+.help-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: #2b343b; }
+.help-grid section { min-height: 130px; display: grid; grid-template-columns: 42px 1fr; gap: 13px; padding: 22px; background: #12191f; }
+.help-grid section b { color: var(--gold); font: 12px ui-monospace, monospace; letter-spacing: .12em; }
+.help-grid h3 { margin: 0 0 8px; font-size: 15px; letter-spacing: .05em; }
+.help-grid p { margin: 0; color: #929a9c; font-size: 12px; line-height: 1.65; }
+.help-sheet > footer { padding: 15px 22px; text-align: center; color: #798287; font-size: 11px; background: #0d1318; }
+.help-sheet footer kbd { display: inline-block; margin-right: 5px; padding: 3px 6px; border: 1px solid #3b464e; border-radius: 4px; background: #080c10; color: #b7bdbb; font: 10px ui-monospace, monospace; }
+.help-sheet footer i { display: inline-block; width: 3px; height: 3px; margin: 0 14px 3px; border-radius: 50%; background: #4b555b; }
 @media (max-height: 760px) {
   .topbar { height: 82px; flex-basis: 82px; }
   .workspace { padding: 10px; gap: 10px; }
@@ -206,4 +227,10 @@ dialog p { margin: 11px 0 22px; color: var(--muted); font-size: 13px; line-heigh
   .circle-panel { min-height: 570px; grid-template-rows: 52px 1fr auto; }
   .hex-board { transform: scale(.92); }
   .active-chip { height: 36px; }
+  .help-button { top: 10px; right: 10px; width: 48px; height: 48px; padding: 6px; }
+  .help-button > span:first-child { width: 32px; height: 32px; }
+  .help-button > span:last-child { display: none; }
+  .help-grid { grid-template-columns: 1fr; max-height: 65vh; overflow-y: auto; }
+  .help-grid section { min-height: 110px; }
+  .help-sheet > footer { display: none; }
 }

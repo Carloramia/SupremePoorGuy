@@ -53,6 +53,10 @@
         </div>
 
         <div class="board-wrap">
+          <button id="help-button" class="help-button" type="button" aria-label="打开玩法说明">
+            <span aria-hidden="true">?</span>
+            <span><strong>玩法说明</strong><small>HOW TO PLAY</small></span>
+          </button>
           <div class="ritual-rings" aria-hidden="true"><span></span><span></span><span></span></div>
           <svg id="hex-board" class="hex-board" viewBox="0 0 760 650" role="application" aria-label="六边形召唤阵。按住鼠标拖过相邻蜂窝来描画符文。"></svg>
           <div id="board-toast" class="board-toast" role="status">按住并拖过相邻蜂窝开始描画</div>
@@ -100,6 +104,25 @@
         <button id="confirm-clear" value="confirm" class="button button--danger">确认清空</button>
       </div>
     </form>
+  </dialog>
+
+  <dialog id="help-dialog" class="help-dialog">
+    <div class="help-sheet">
+      <header>
+        <span class="help-sigil" aria-hidden="true">?</span>
+        <div><span class="eyebrow">RITUAL MANUAL</span><h2>召唤阵玩法说明</h2></div>
+        <button id="close-help" class="help-close" type="button" aria-label="关闭玩法说明">×</button>
+      </header>
+      <div class="help-grid">
+        <section><b>01</b><div><h3>绘制符文</h3><p>按住并经过相邻蜂窝，或逐格点击。对照右侧符文书完成形状，再点击“刻入符文”。</p></div></section>
+        <section><b>02</b><div><h3>模拟绘画</h3><p>开启工具栏开关后，按住时显示真实抖动笔触；松手才会吸附为蜂窝并进行识别。</p></div></section>
+        <section><b>03</b><div><h3>放置奇物</h3><p>从左侧拖入预制组块。每件奇物独一无二，但可以同时放置多个不同奇物。</p></div></section>
+        <section><b>04</b><div><h3>规划空间</h3><p>符文与奇物可以穿插排布，但不能共用同一个蜂窝；越界或冲突时无法落位。</p></div></section>
+        <section><b>05</b><div><h3>调整效果</h3><p>顶部显示当前符文。取消勾选只会停用效果，删除或回收才会释放蜂窝。</p></div></section>
+        <section><b>06</b><div><h3>保存阵面</h3><p>点击右上角“保存魔法阵”，保存符文、奇物位置和启停状态，下次打开自动载入。</p></div></section>
+      </div>
+      <footer><kbd>Backspace</kbd> 撤回一格 <i></i><kbd>Esc</kbd> 取消笔画 <i></i><kbd>Enter</kbd> 尝试刻入</footer>
+    </div>
   </dialog>
 
   <!-- browser-bundle.js is generated from the modular sources so this page also

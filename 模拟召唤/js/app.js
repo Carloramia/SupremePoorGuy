@@ -17,6 +17,7 @@ const elements = {
   confirmClear: document.querySelector("#confirm-clear"), bookCount: document.querySelector("#book-count"),
   relicList: document.querySelector("#relic-list"),
   handdrawToggle: document.querySelector("#handdraw-toggle"), handdrawStatus: document.querySelector("#handdraw-status"),
+  helpButton: document.querySelector("#help-button"), helpDialog: document.querySelector("#help-dialog"), closeHelp: document.querySelector("#close-help"),
 };
 
 let isDrawing = false;
@@ -310,6 +311,11 @@ elements.handdrawToggle.addEventListener("change", () => {
   elements.handdrawStatus.textContent = freehandMode ? "开启" : "关闭";
   elements.handdrawStatus.classList.toggle("is-on", freehandMode);
   setToast(freehandMode ? "模拟绘画已开启：松手后才会吸附并识别" : "已切换回精准蜂窝模式", freehandMode ? "success" : "neutral");
+});
+elements.helpButton.addEventListener("click", () => elements.helpDialog.showModal());
+elements.closeHelp.addEventListener("click", () => elements.helpDialog.close());
+elements.helpDialog.addEventListener("click", (event) => {
+  if (event.target === elements.helpDialog) elements.helpDialog.close();
 });
 elements.book.addEventListener("click", (event) => {
   const card = event.target.closest("[data-rune]");
