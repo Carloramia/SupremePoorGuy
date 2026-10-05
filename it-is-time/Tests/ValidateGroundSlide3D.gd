@@ -1,5 +1,11 @@
 extends SceneTree
 
+class Commands extends Node:
+	func get_movement_direction() -> Vector3:
+		return Vector3(Input.get_action_strength("Right"), 0, -Input.get_action_strength("Up")).normalized()
+	func is_fast_requested() -> bool: return false
+	func is_jump_requested() -> bool: return false
+
 func _initialize() -> void:
 	call_deferred("_validate")
 
@@ -15,6 +21,9 @@ func _validate() -> void:
 	var character := load("res://Scenes/Creatures/Characters/Character_Test_2.tscn").instantiate() as Node3D
 	root.add_child(character)
 	var movement: Node = character.get_node("LegStepMovementController3D")
+	var commands := Commands.new()
+	character.add_child(commands)
+	movement.command_source = commands
 	var facing: Node = character.get_node("PhysicalFacingController3D")
 	facing.set_diagnostic_logging_enabled(false)
 	var torso := character.get_node("Torso") as RigidBody3D
@@ -61,7 +70,7 @@ func _validate() -> void:
 	print("GROUND_SLIDE_METRICS max_speed=%.3f expected=%.3f stopped_speed=%.3f mean_foot_drift=%.3f turns=%d" % [max_speed, movement.get_expected_horizontal_speed(), stopped_speed, mean_drift, starts.count])
 	print("MAXIMUM_SNAPSHOT=" + maximum_snapshot)
 	print("PEAK_HALF_SECOND_MEAN_SPEED=%.3f" % peak_mean_speed)
-	var passed: bool = peak_mean_speed < movement.get_expected_horizontal_speed() * 1.8
+	var passed: bool = peak_mean_speed > 0.1 and peak_mean_speed < movement.get_expected_horizontal_speed() * 1.8
 	passed = passed and stopped_speed < 0.5
 	passed = passed and samples > 100 and mean_drift < 0.35
 	passed = passed and starts.count == 0

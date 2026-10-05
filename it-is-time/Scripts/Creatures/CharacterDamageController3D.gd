@@ -72,7 +72,7 @@ func _get_connected_parts(part: PhysicalBodyPart3D) -> Array[PhysicalBodyPart3D]
 	var connected: Array[PhysicalBodyPart3D] = []
 	for node: Node in get_parent().find_children("*", "Joint3D", true, false):
 		var joint := node as Joint3D
-		if joint == null or joint.is_queued_for_deletion():
+		if joint == null or joint.is_queued_for_deletion() or joint.has_meta(&"planar_depth_guide"):
 			continue
 		var body_a := joint.get_node_or_null(joint.node_a) as PhysicalBodyPart3D
 		var body_b := joint.get_node_or_null(joint.node_b) as PhysicalBodyPart3D

@@ -18,7 +18,15 @@ signal wheel_action_requested(action: StringName, character: Node3D)
 @export var fast_action: StringName = &"Shift"
 @export var diagnostic_logging: bool = true
 
+@export_group("Generated Facing")
+@export_range(1.0, 179.0, 1.0) var generated_facing_sector_degrees: float = 120.0
+@export_range(0.0, 10.0, 0.01) var generated_facing_dead_zone: float = 0.5
+@export_range(0.0, 1.0, 0.01) var generated_facing_confirmation_time: float = 0.1
 @onready var wheel: CanvasLayer = $ControllerRadialMenu
+var _generated_right := Vector3.RIGHT
+var _generated_left := false
+var _generated_facing_candidate_time := 0.0
+
 var _character: Node3D
 var _movement: Node
 var _level: Node
@@ -113,6 +121,9 @@ func _perf_impl_attach_character(character: Node3D) -> bool:
 	_character = character
 	_movement = _find_movement(character)
 	_movement.command_source = self
+	_generated_right = character.global_basis.x.slide(Vector3.UP).normalized()
+	_generated_left = false
+	_generated_facing_candidate_time = 0.0
 	for node: Node in character.find_children("*", "", true, false):
 		if node.is_in_group(&"npc_state_machines"):
 			_ai_snapshot.append({"node": node, "physics": node.is_physics_processing(), "process": node.is_processing()})
@@ -194,6 +205,32 @@ func is_gameplay_action_pressed(action: StringName) -> bool:
 
 func get_movement_direction() -> Vector3:
 	return _direction if gameplay_input_allowed() else Vector3.ZERO
+
+## Generated bodies own their physical turn planner; this supplies only a heading command.
+func get_generated_facing_direction(delta: float) -> Vector3:
+	if not gameplay_input_allowed() or terrain_cursor == null:
+		_generated_facing_candidate_time = 0.0
+		return Vector3.ZERO
+	var center := get_control_anchor().global_position
+	if _movement != null and _movement.has_method("get_torso_parts"):
+		var weighted := Vector3.ZERO
+		var mass := 0.0
+		for body: RigidBody3D in _movement.get_torso_parts():
+			if body is PhysicalBodyPart3D and body.is_broken: continue
+			weighted += body.global_position * body.mass
+			mass += body.mass
+		if mass > 0.0: center = weighted / mass
+	var direction := (terrain_cursor.get_target_ground_position() - center).slide(Vector3.UP)
+	var opposite := _generated_right if _generated_left else -_generated_right
+	var threshold := cos(deg_to_rad(generated_facing_sector_degrees * 0.5))
+	if direction.length() > generated_facing_dead_zone and direction.normalized().dot(opposite) >= threshold:
+		_generated_facing_candidate_time += delta
+		if _generated_facing_candidate_time >= generated_facing_confirmation_time:
+			_generated_left = not _generated_left
+			_generated_facing_candidate_time = 0.0
+	else:
+		_generated_facing_candidate_time = 0.0
+	return -_generated_right if _generated_left else _generated_right
 
 func is_jump_requested() -> bool:
 	return _jump and gameplay_input_allowed()

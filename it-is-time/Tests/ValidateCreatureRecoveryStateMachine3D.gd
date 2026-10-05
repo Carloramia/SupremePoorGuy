@@ -16,15 +16,17 @@ func run() -> void:
 	ground.position.y = -0.5
 	root.add_child(ground)
 	var actor := CHARACTER.instantiate()
+	actor.zero_gravity_test_mode = false # This fixture exercises normal-gravity recovery.
 	actor.generate_on_ready = false
 	actor.position.y = 30.0
 	root.add_child(actor)
 	var generator := actor.get_node("CreatureGenerator")
-	generator.feets = 4
+	generator.rear_leg_count = maxi((4) - 2, 0)
+	generator.foreleg_count = mini((4), 2)
 	generator.overall_scale = 1.0
 	generator.unsymmetrie = 0.0
 	generator.neck_number = 0
-	generator.torso_core_extra_blocks = 0
+
 	generator._random.seed = 42
 	check(actor.generate_creature(), "Generation must succeed")
 	var machine := actor.get_node("CreatureRecoveryStateMachine3D")
@@ -52,6 +54,23 @@ func run() -> void:
 	check(movement.recovery_control_active, "Re-enable must reclaim active recovery")
 	machine._transition(machine.State.STANDING, &"test")
 	check(not movement.recovery_control_active and movement.get_active_leg() == null, "Recovered state must release movement and cancel stale steps")
+	# Pitch must recover at zero angular velocity, including while recovery owns gait.
+	var original_bases: Dictionary = {}
+	for body: RigidBody3D in movement.get_torso_parts():
+		original_bases[body] = body.global_basis
+		body.global_basis = Basis(Vector3.FORWARD, -0.2)
+		body.angular_velocity = Vector3.ZERO
+	movement._apply_segment_balance(1.0 / 60.0)
+	for segment: Dictionary in movement._segments.values():
+		check(segment.balance_torque.z < 0.0, "Static Z tilt must produce a restoring torque")
+	machine._transition(machine.State.FALLEN, &"pitch_test")
+	movement.set_physics_process(true)
+	movement._physics_process(1.0 / 60.0)
+	for segment: Dictionary in movement._segments.values():
+		check(segment.balance_torque.z < 0.0, "Recovery ownership must retain segment pitch correction")
+	movement.set_physics_process(false)
+	machine._transition(machine.State.STANDING, &"pitch_test")
+	for body: RigidBody3D in original_bases: body.global_basis = original_bases[body]
 	# Standalone attitude correction must apply finite torque even when upside down.
 	var torsos: Array[RigidBody3D] = movement.get_torso_parts()
 	for body: RigidBody3D in torsos: body.global_basis = Basis(Vector3.RIGHT, PI)
@@ -79,6 +98,14 @@ func run() -> void:
 	machine._physics_process(machine.fallen_pause_duration + 0.01)
 	check(machine.state == machine.State.ESTABLISH_SUPPORT, "Fallen pause must progress to support setup")
 	machine._physics_process(0.01)
+	var groups: Array[Dictionary] = machine._recovery_groups(torsos)
+	check(groups.size() > 1, "Recovery fixture must contain multiple segments")
+	for group: Dictionary in groups:
+		check(group.required == maxi(1, ceili(group.feet.size() * machine.minimum_support_ratio)), "Each region must use its own support quota")
+	machine._lift_torso(torsos, 1.0 / 60.0)
+	check(machine._segment_recovery_diagnostics.size() == groups.size(), "Every region must report its own recovery lift")
+	for data: Dictionary in machine._segment_recovery_diagnostics:
+		check(is_finite(data.lift_force) and data.lift_force > 0.0, "Supported regions must receive finite recovery lift")
 	check(machine.state == machine.State.RIGHTING, "Confirmed foot support must permit righting")
 	for body: RigidBody3D in torsos: body.global_basis = Basis.IDENTITY
 	await physics_frame

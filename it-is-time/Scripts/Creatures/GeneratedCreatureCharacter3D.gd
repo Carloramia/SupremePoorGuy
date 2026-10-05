@@ -7,6 +7,9 @@ var _control_perf: PERFORMANCE_STATS = PERFORMANCE_STATS.new()
 const PART_SCENE: PackedScene = preload("res://Scenes/Creatures/Bodyparts/PhysicalTestCreatureParts/TestCreature_Part.tscn")
 const DAMAGE_SCENE: PackedScene = preload("res://Scenes/Creatures/Components/CharacterDamageController3D.tscn")
 const GEOMETRY = preload("res://Scripts/Creatures/CreatureBoxGeometry.gd")
+const SEGMENT_CONSTRAINT = preload("res://Scripts/Creatures/SegmentConstraint3D.gd")
+const SEGMENT_SPRING = preload("res://Scripts/Creatures/SegmentDistanceSpring3D.gd")
+const PLANAR_CONSTRAINTS = preload("res://Scripts/Creatures/CreaturePlanarConstraints3D.gd")
 const BODY_PART = preload("res://Scripts/Creatures/PhysicalBodyParts.gd")
 
 @export_group("Generation")
@@ -20,6 +23,36 @@ const BODY_PART = preload("res://Scripts/Creatures/PhysicalBodyParts.gd")
 		var generator := get_node_or_null("CreatureGenerator") as Node3D
 		if generator != null:
 			generator.visible = value
+
+@export_group("Physics Test Mode")
+## Temporary isolation mode: no gravity, no weight/lift recovery servos.
+@export var zero_gravity_test_mode: bool = false:
+	set(value):
+		zero_gravity_test_mode = value
+		if is_node_ready(): _apply_physics_test_mode()
+
+@export_group("Planar Constraints")
+## Independent support and physical gait; inter-part joints are suspended and X/Y rotation stays locked.
+@export var planar_constraints_enabled: bool = true:
+	set(value):
+		planar_constraints_enabled = value
+		if is_node_ready() and not Engine.is_editor_hint(): _sync_planar_constraints()
+
+func is_planar_mode_active() -> bool:
+	return planar_constraints_enabled
+
+func _sync_planar_constraints() -> void:
+	var movement := get_node_or_null("GeneratedLegStepMovementController3D")
+	if movement != null and movement.has_method("prepare_planar_mode_change"): movement.prepare_planar_mode_change()
+	var guides := get_node_or_null("PlanarConstraints")
+	if guides == null:
+		guides = PLANAR_CONSTRAINTS.new()
+		guides.name = "PlanarConstraints"
+		add_child(guides)
+	guides.clear_constraints()
+	var container := get_node_or_null("GeneratedParts")
+	if planar_constraints_enabled and container != null: guides.configure(container)
+	_configure_body_part_collision_exceptions()
 
 @export_group("Physical Parts")
 ## Mass is density times volume, clamped to limit the mass ratio of small Neck and large Torso blocks.
@@ -35,13 +68,51 @@ const BODY_PART = preload("res://Scripts/Creatures/PhysicalBodyParts.gd")
 @export_range(0.0, 1000.0, 0.1, "or_greater") var angular_spring_stiffness: float = 30.0
 @export_range(0.0, 100.0, 0.1, "or_greater") var angular_spring_damping: float = 5.0
 
+@export_group("Passive Limb Links")
+## Passive angular damping on LegLimb bodies, without any rest-pose motors or springs.
+@export_range(0.0, 30.0, 0.1) var limb_hinge_damping: float = 3.0
+## Maximum pivot translation in either direction, along the joint-local X/Y/Z axes (Godot units).
+## Applies only between two LegLimb parts. Zero restores a rigid positional connection.
+@export var limb_joint_linear_slack: Vector3 = Vector3(0.03, 0.03, 0.0):
+	set(value):
+		if not value.is_finite(): return
+		limb_joint_linear_slack = value.max(Vector3.ZERO)
+		if is_node_ready(): _sync_limb_joint_sliding()
+
+
 @export_group("Body Segments")
-## One connected segment grows from each generated SubTorso.
+## Assignment uses generator-local X only; nearby seeds merge transitively.
 @export var segmented_torso_enabled: bool = true
-@export var segment_free_rotation: bool = false
-@export_range(0.0, 90.0, 0.5) var segment_angular_limit_degrees: float = 25.0
-@export_range(0.0, 1000.0, 0.1) var segment_angular_stiffness: float = 8.0
-@export_range(0.0, 100.0, 0.1) var segment_angular_damping: float = 5.0
+@export_range(0.0, 100.0, 0.1) var segment_merge_length_percent: float = 10.0
+@export_range(0.001, 1.0, 0.001) var segment_weight_decay_ratio: float = 0.2
+@export_group("Segment Rotation Constraints")
+## Preserve initial relative X/Y rotation; relative Z stays free.
+@export var segment_rotation_constraints_enabled: bool = true:
+	set(value):
+		segment_rotation_constraints_enabled = value
+		if is_node_ready() and has_node("GeneratedParts"):
+			_sync_segment_rotation_constraints(get_node("GeneratedParts"))
+
+@export_group("Segment Transverse Constraints")
+## X follows the initial connection frame; Y/Z limit anchor drift while X can slide.
+@export var segment_transverse_constraints_enabled: bool = true:
+	set(value):
+		segment_transverse_constraints_enabled = value
+		if is_node_ready() and has_node("GeneratedParts"):
+			_sync_segment_rotation_constraints(get_node("GeneratedParts"))
+@export_range(0.0, 2.0, 0.01, "or_greater") var segment_transverse_slack: float = 0.05:
+	set(value):
+		segment_transverse_slack = value
+		if is_node_ready() and has_node("GeneratedParts"):
+			_sync_segment_rotation_constraints(get_node("GeneratedParts"))
+
+@export_group("Segment Distance Springs")
+@export var segment_translation_springs_enabled: bool = true
+@export_range(0.0, 500.0, 0.1) var segment_spring_maximum_acceleration: float = 50.0
+@export var segment_maximum_distance_lock_enabled: bool = true
+@export_range(1.0, 3.0, 0.01, "or_greater") var segment_maximum_distance_ratio: float = 1.15
+@export_range(0.1, 20.0, 0.1) var segment_spring_frequency: float = 3.0
+@export_range(0.0, 2.0, 0.05) var segment_spring_damping_ratio: float = 1.0
 
 var _last_generation_succeeded: bool = false
 var _rebuilding: bool = false
@@ -96,6 +167,7 @@ func _perf_impl_generate_creature() -> bool:
 func _valid_settings(generator: Node3D) -> bool:
 	if not global_basis.get_scale().is_equal_approx(Vector3.ONE) or not generator.transform.basis.get_scale().is_equal_approx(Vector3.ONE):
 		return false
+	if not limb_joint_linear_slack.is_finite(): return false
 	for value: float in [mass_density, minimum_part_mass, maximum_part_mass, part_linear_damping, part_angular_damping, limb_angular_limit_degrees, neck_angular_limit_degrees, angular_spring_stiffness, angular_spring_damping]:
 		if not is_finite(value) or value < 0.0:
 			return false
@@ -134,6 +206,8 @@ func _perf_impl__on_framework_generated(plan: Dictionary) -> void:
 		previous.queue_free()
 	staging.name = "GeneratedParts"
 	add_child(staging)
+	_sync_segment_rotation_constraints(staging)
+	_apply_physics_test_mode()
 	var scene_owner := _scene_owner()
 	staging.owner = scene_owner
 	for part: Node in staging.get_children():
@@ -159,7 +233,10 @@ func _perf_impl__on_framework_generated(plan: Dictionary) -> void:
 		push_warning("[generated_collision] Internal collision exceptions are incomplete.")
 	_last_generation_succeeded = true
 	_rebuilding = false
-	print("[generated_creature] character=%s parts=%d joints=%d connected=true internal_collisions_ignored=%s" % [name, blueprint.parts.size(), blueprint.connections.size(), body_parts_ignore_each_other])
+	var springs := 0
+	for connection: Dictionary in blueprint.connections:
+		if connection.kind == "Segment": springs += 1
+	print("[generated_creature] character=%s parts=%d physical_joints=%d segment_springs=%d connected=true internal_collisions_ignored=%s" % [name, blueprint.parts.size(), blueprint.connections.size() - springs, springs, body_parts_ignore_each_other])
 
 func _scene_owner() -> Node:
 	if Engine.is_editor_hint():
@@ -179,50 +256,73 @@ func _reset_damage_controller() -> void:
 	damage.owner = _scene_owner()
 
 func _migrate_saved_body_segments(container: Node) -> void:
-	var bodies: Array[PhysicalBodyPart3D] = []
+	for link: Node in container.find_children("*", "", true, false):
+		if link.has_method("is_segment_spring"):
+			link.maximum_distance_lock_enabled = segment_maximum_distance_lock_enabled
+			link.maximum_distance_ratio = segment_maximum_distance_ratio
+	var bodies: Array[RigidBody3D] = []
 	var layouts: Array[Dictionary] = []
 	var indices: Array[int] = []
-	var needs_migration := false
+	var migrate := false
 	for node: Node in container.get_children():
 		if not node is PhysicalBodyPart3D or BODY_PART.BodyPartTag.Torso not in node.tags: continue
-		needs_migration = needs_migration or not node.has_meta(&"body_segment_id")
+		migrate = migrate or int(node.get_meta(&"segment_layout_version", 0)) < 3
 		indices.append(bodies.size())
 		bodies.append(node)
-		layouts.append({"sub_torso": BODY_PART.BodyPartTag.SubTorso in node.tags})
-	if not needs_migration or bodies.is_empty(): return
+		layouts.append({"sub_torso": BODY_PART.BodyPartTag.SubTorso in node.tags, "size": node.get_meta(&"generated_size", Vector3.ONE), "transform": node.transform})
+	if not migrate or bodies.is_empty(): return
 	var edges: Array[Dictionary] = []
+	var old_joints: Array[Node] = []
 	for node: Node in container.find_children("*", "Generic6DOFJoint3D", true, false):
-		var a := node.get_node_or_null(node.node_a) as PhysicalBodyPart3D
-		var b := node.get_node_or_null(node.node_b) as PhysicalBodyPart3D
+		if node.has_meta(&"segment_rotation_constraint"): continue
+		var a := node.get_node_or_null(node.node_a) as RigidBody3D
+		var b := node.get_node_or_null(node.node_b) as RigidBody3D
 		if a not in bodies or b not in bodies: continue
-		edges.append({"a": bodies.find(a), "b": bodies.find(b), "distance": a.position.distance_squared_to(b.position), "joint": node})
+		edges.append({"a": bodies.find(a), "b": bodies.find(b), "anchor": node.position, "distance": a.position.distance_squared_to(b.position)})
+		old_joints.append(node)
 	var owners := _partition_torso_graph(layouts, indices, edges)
-	if owners.is_empty(): return
-	for index: int in range(bodies.size()): bodies[index].set_meta(&"body_segment_id", owners[index])
+	_complete_segment_edges(layouts, indices, owners, edges)
+	for index: int in range(bodies.size()):
+		bodies[index].set_meta(&"body_segment_id", owners[index])
+		bodies[index].set_meta(&"segment_layout_version", 3)
+	for node: Node in old_joints:
+		node.get_parent().remove_child(node)
+		node.queue_free()
 	var parents: Array[int] = []
 	for index: int in range(bodies.size()): parents.append(index)
-	for cross_segment: bool in [false, true]:
+	var joints := container.get_node("Joints")
+	for cross: bool in [false, true]:
 		for edge: Dictionary in edges:
-			var crosses: bool = owners[edge.a] != owners[edge.b]
-			if crosses != cross_segment: continue
-			var a := _root(parents, edge.a)
-			var b := _root(parents, edge.b)
-			var joint: Generic6DOFJoint3D = edge.joint
-			if a == b:
-				joint.queue_free()
-				continue
-			parents[a] = b
-			if not crosses: continue
-			joint.name = str(joint.name).replace("_Torso", "_Segment")
-			for axis: String in ["x", "y", "z"]:
-				joint.call("set_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_LIMIT, not segment_free_rotation)
-				joint.call("set_param_" + axis, Generic6DOFJoint3D.PARAM_ANGULAR_LOWER_LIMIT, -deg_to_rad(segment_angular_limit_degrees))
-				joint.call("set_param_" + axis, Generic6DOFJoint3D.PARAM_ANGULAR_UPPER_LIMIT, deg_to_rad(segment_angular_limit_degrees))
-				joint.call("set_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_SPRING, not segment_free_rotation)
-				joint.call("set_param_" + axis, Generic6DOFJoint3D.PARAM_ANGULAR_SPRING_STIFFNESS, segment_angular_stiffness)
-				joint.call("set_param_" + axis, Generic6DOFJoint3D.PARAM_ANGULAR_SPRING_DAMPING, segment_angular_damping)
+			if (owners[edge.a] != owners[edge.b]) != cross: continue
+			var first := _root(parents, edge.a)
+			var second := _root(parents, edge.b)
+			if first == second: continue
+			parents[first] = second
+			var link: Node
+			if cross:
+				link = SEGMENT_SPRING.new()
+				link.rest_reference_yaw = global_basis.get_euler().y
+				link.enabled = segment_translation_springs_enabled
+				link.frequency = segment_spring_frequency
+				link.damping_ratio = segment_spring_damping_ratio
+				link.maximum_acceleration = segment_spring_maximum_acceleration
+				link.maximum_distance_lock_enabled = segment_maximum_distance_lock_enabled
+				link.maximum_distance_ratio = segment_maximum_distance_ratio
+			else:
+				var joint := Generic6DOFJoint3D.new()
+				joint.position = edge.anchor
+				joint.exclude_nodes_from_collision = true
+				link = joint
+			link.name = "BodyLink_%d_%d" % [edge.a, edge.b]
+			link.node_a = NodePath("../../" + str(bodies[edge.a].name))
+			link.node_b = NodePath("../../" + str(bodies[edge.b].name))
+			joints.add_child(link)
+			link.owner = _scene_owner()
+	# Removing a Joint can clear collision exceptions in the physics backend.
+	_configure_body_part_collision_exceptions()
 
 func _activate_parts(container: Node) -> void:
+	_apply_physics_test_mode()
 	for part: Node in container.get_children():
 		if part is PhysicalBodyPart3D:
 			# Migrate already-saved generated scenes as well as newly generated parts.
@@ -230,24 +330,130 @@ func _activate_parts(container: Node) -> void:
 				part.tags.append(BODY_PART.BodyPartTag.LegLimb)
 		if part is PhysicalBodyPart3D and str(part.name).begins_with("SubTorso") and BODY_PART.BodyPartTag.SubTorso not in part.tags:
 			part.tags.append(BODY_PART.BodyPartTag.SubTorso)
+		if part is PhysicalBodyPart3D:
+			part.sync_foot_rotation_lock()
+			if BODY_PART.BodyPartTag.LegLimb in part.tags:
+				part.angular_damp_mode = RigidBody3D.DAMP_MODE_REPLACE
+				part.angular_damp = 0.0
 		if part is RigidBody3D:
 			(part as RigidBody3D).freeze = false
 	_migrate_saved_body_segments(container)
+	_sync_segment_rotation_constraints(container)
 	for node: Node in container.find_children("*", "Generic6DOFJoint3D", true, false):
 		var joint := node as Generic6DOFJoint3D
 		var body_a := joint.get_node_or_null(joint.node_a) as PhysicalBodyPart3D
 		var body_b := joint.get_node_or_null(joint.node_b) as PhysicalBodyPart3D
 		if body_a == null or body_b == null: continue
+		if BODY_PART.BodyPartTag.LegLimb in body_a.tags or BODY_PART.BodyPartTag.LegLimb in body_b.tags:
+			for axis: String in ["x", "y", "z"]:
+				joint.call("set_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_SPRING, false)
+				joint.call("set_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_MOTOR, false)
+		if _is_limb_subtorso_pair(body_a, body_b): _lock_limb_root_yaw(joint)
 		if BODY_PART.BodyPartTag.LegLimb not in body_a.tags or BODY_PART.BodyPartTag.LegLimb not in body_b.tags: continue
-		for axis: String in ["x", "y"]:
-			joint.call("set_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_LIMIT, true)
-			joint.call("set_param_" + axis, Generic6DOFJoint3D.PARAM_ANGULAR_LOWER_LIMIT, 0.0)
-			joint.call("set_param_" + axis, Generic6DOFJoint3D.PARAM_ANGULAR_UPPER_LIMIT, 0.0)
-			joint.call("set_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_SPRING, false)
+		_configure_limb_joint_sliding(joint)
 	# Future optional controllers can refresh their queries after regeneration.
 	for node: Node in find_children("*", "", true, false):
 		if node.has_method("refresh_physics_query_cache"):
 			node.call("refresh_physics_query_cache")
+	_sync_planar_constraints()
+
+func _is_limb_subtorso_pair(a: PhysicalBodyPart3D, b: PhysicalBodyPart3D) -> bool:
+	return (BODY_PART.BodyPartTag.LegLimb in a.tags and BODY_PART.BodyPartTag.SubTorso in b.tags) or (BODY_PART.BodyPartTag.LegLimb in b.tags and BODY_PART.BodyPartTag.SubTorso in a.tags)
+
+func _lock_limb_root_yaw(joint: Generic6DOFJoint3D) -> void:
+	joint.set_flag_y(Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_LIMIT, true)
+	joint.set_param_y(Generic6DOFJoint3D.PARAM_ANGULAR_LOWER_LIMIT, 0.0)
+	joint.set_param_y(Generic6DOFJoint3D.PARAM_ANGULAR_UPPER_LIMIT, 0.0)
+	joint.set_flag_y(Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_SPRING, false)
+	joint.set_flag_y(Generic6DOFJoint3D.FLAG_ENABLE_MOTOR, false)
+
+func _configure_limb_joint_sliding(joint: Generic6DOFJoint3D) -> void:
+	var axes := ["x", "y", "z"]
+	for index: int in range(3):
+		var axis: String = axes[index]
+		var slack: float = limb_joint_linear_slack[index]
+		joint.call("set_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_LINEAR_LIMIT, true)
+		joint.call("set_param_" + axis, Generic6DOFJoint3D.PARAM_LINEAR_LOWER_LIMIT, -slack)
+		joint.call("set_param_" + axis, Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT, slack)
+		# Sliding is passive within hard bounds, without position motors or centering springs.
+		joint.call("set_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_LINEAR_MOTOR, false)
+		joint.call("set_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_LINEAR_SPRING, false)
+		if axis != "z":
+			joint.call("set_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_LIMIT, true)
+			joint.call("set_param_" + axis, Generic6DOFJoint3D.PARAM_ANGULAR_LOWER_LIMIT, 0.0)
+			joint.call("set_param_" + axis, Generic6DOFJoint3D.PARAM_ANGULAR_UPPER_LIMIT, 0.0)
+			joint.call("set_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_SPRING, false)
+
+func _sync_limb_joint_sliding() -> void:
+	var container := get_node_or_null("GeneratedParts")
+	if container == null: return
+	for node: Node in container.find_children("*", "Generic6DOFJoint3D", true, false):
+		var joint := node as Generic6DOFJoint3D
+		var a := joint.get_node_or_null(joint.node_a) as PhysicalBodyPart3D
+		var b := joint.get_node_or_null(joint.node_b) as PhysicalBodyPart3D
+		if a != null and b != null and BODY_PART.BodyPartTag.LegLimb in a.tags and BODY_PART.BodyPartTag.LegLimb in b.tags:
+			_configure_limb_joint_sliding(joint)
+
+func _apply_physics_test_mode() -> void:
+	var container := get_node_or_null("GeneratedParts")
+	if container != null:
+		for part: Node in container.get_children():
+			if not part is RigidBody3D: continue
+			if zero_gravity_test_mode:
+				if not part.has_meta(&"gravity_scale_before_test"): part.set_meta(&"gravity_scale_before_test", part.gravity_scale)
+				part.gravity_scale = 0.0
+			else:
+				part.gravity_scale = float(part.get_meta(&"gravity_scale_before_test", part.gravity_scale))
+				part.remove_meta(&"gravity_scale_before_test")
+	var movement := get_node_or_null("GeneratedLegStepMovementController3D")
+	if movement != null:
+		movement.set_simplified_physics_mode(zero_gravity_test_mode)
+		if zero_gravity_test_mode: movement.set_recovery_control_active(false)
+
+func _sync_segment_rotation_constraints(container: Node) -> void:
+	var joints := container.get_node_or_null("Joints")
+	if joints == null: return
+	for node: Node in joints.get_children():
+		if node.has_meta(&"segment_rotation_constraint") and not (segment_rotation_constraints_enabled or segment_transverse_constraints_enabled):
+			joints.remove_child(node)
+			node.queue_free()
+	if not (segment_rotation_constraints_enabled or segment_transverse_constraints_enabled): return
+	for spring: Node in joints.get_children():
+		if not spring.has_method("is_segment_spring") or spring.is_queued_for_deletion(): continue
+		var joint_name := "Rotation_" + str(spring.name)
+		var a := spring.get_node_or_null(spring.node_a) as RigidBody3D
+		var b := spring.get_node_or_null(spring.node_b) as RigidBody3D
+		if a == null or b == null or bool(a.get("is_broken")) or bool(b.get("is_broken")): continue
+		var joint := joints.get_node_or_null(NodePath(joint_name)) as Generic6DOFJoint3D
+		var created := joint == null
+		if created:
+			joint = SEGMENT_CONSTRAINT.new()
+			joint.name = joint_name
+			joint.set_meta(&"segment_rotation_constraint", true)
+			joint.node_a = spring.node_a
+			joint.node_b = spring.node_b
+			joint.position = (a.position + b.position) * 0.5
+			var generator := get_node_or_null("CreatureGenerator") as Node3D
+			joint.basis = generator.basis.orthonormalized() if generator != null else Basis.IDENTITY
+		elif joint.get_script() != SEGMENT_CONSTRAINT:
+			joint.set_script(SEGMENT_CONSTRAINT)
+		joint.exclude_nodes_from_collision = true
+		for axis: String in ["x", "y", "z"]:
+			var transverse := segment_transverse_constraints_enabled and axis != "x"
+			joint.call("set_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_LINEAR_LIMIT, transverse)
+			joint.call("set_param_" + axis, Generic6DOFJoint3D.PARAM_LINEAR_LOWER_LIMIT, -segment_transverse_slack)
+			joint.call("set_param_" + axis, Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT, segment_transverse_slack)
+			joint.call("set_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_LINEAR_SPRING, false)
+			joint.call("set_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_LINEAR_MOTOR, false)
+			joint.call("set_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_SPRING, false)
+			joint.call("set_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_MOTOR, false)
+			joint.call("set_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_LIMIT, segment_rotation_constraints_enabled and axis != "z")
+			joint.call("set_param_" + axis, Generic6DOFJoint3D.PARAM_ANGULAR_LOWER_LIMIT, 0.0)
+			joint.call("set_param_" + axis, Generic6DOFJoint3D.PARAM_ANGULAR_UPPER_LIMIT, 0.0)
+		if created:
+			joints.add_child(joint)
+			joint.owner = _scene_owner()
+		joint.call("capture_reference")
 
 func _append_part(parts: Array[Dictionary], node_name: String, role: String, size: Vector3, transform: Transform3D) -> int:
 	parts.append({"name": node_name, "role": role, "size": size, "transform": transform})
@@ -256,39 +462,67 @@ func _append_part(parts: Array[Dictionary], node_name: String, role: String, siz
 func _add_connection(connections: Array[Dictionary], first: int, second: int, anchor: Vector3, kind: String, basis: Basis = Basis.IDENTITY) -> void:
 	connections.append({"a": first, "b": second, "anchor": anchor, "kind": kind, "basis": basis})
 
-## Multi-source shortest-path growth keeps each seed's region connected.
-func _partition_torso_graph(parts: Array[Dictionary], indices: Array[int], edges: Array[Dictionary]) -> Array[int]:
+## Equal decay gives nearest-X ownership; merged regions use the strongest member.
+func _partition_torso_graph(parts: Array[Dictionary], indices: Array[int], _edges: Array[Dictionary]) -> Array[int]:
+	var seeds: Array[int] = []
+	var minimum := INF
+	var maximum := -INF
+	for index: int in range(indices.size()):
+		var part: Dictionary = parts[indices[index]]
+		var box := GEOMETRY.box(part.size, part.transform)
+		minimum = minf(minimum, box.aabb.position.x)
+		maximum = maxf(maximum, box.aabb.end.x)
+		if bool(part.get("sub_torso", false)): seeds.append(index)
+	if seeds.is_empty(): seeds.append(0)
+	var parents: Array[int] = []
+	for index: int in range(seeds.size()): parents.append(index)
+	var threshold := maxf(maximum - minimum, 0.001) * segment_merge_length_percent / 100.0
+	for first: int in range(seeds.size()):
+		for second: int in range(first):
+			var x_a: float = parts[indices[seeds[first]]].transform.origin.x
+			var x_b: float = parts[indices[seeds[second]]].transform.origin.x
+			if not segmented_torso_enabled or absf(x_a - x_b) < threshold:
+				parents[_root(parents, first)] = _root(parents, second)
+	var region_ids: Dictionary = {}
+	for index: int in range(seeds.size()):
+		var root_id := _root(parents, index)
+		if not region_ids.has(root_id): region_ids[root_id] = region_ids.size()
 	var owners: Array[int] = []
-	var distances: Array[float] = []
-	var visited: Array[bool] = []
-	var seed_count := 0
-	for index: int in indices:
-		var seed: bool = segmented_torso_enabled and bool(parts[index].get("sub_torso", false))
-		owners.append(seed_count if seed else -1)
-		distances.append(0.0 if seed else INF)
-		visited.append(false)
-		if seed: seed_count += 1
-	if seed_count == 0:
-		owners[0] = 0
-		distances[0] = 0.0
-	for iteration: int in range(indices.size()):
-		var nearest := -1
-		var best := INF
-		for index: int in range(indices.size()):
-			if not visited[index] and distances[index] < best:
-				nearest = index
-				best = distances[index]
-		if nearest < 0: return []
-		visited[nearest] = true
-		for edge: Dictionary in edges:
-			var other: int = edge.b if edge.a == nearest else (edge.a if edge.b == nearest else -1)
-			if other < 0 or visited[other]: continue
-			var cost := best + maxf(sqrt(float(edge.distance)), 0.0001)
-			if cost < distances[other]:
-				distances[other] = cost
-				owners[other] = owners[nearest]
-	for index: int in range(indices.size()): parts[indices[index]]["segment_id"] = owners[index]
+	var decay := maxf((maximum - minimum) * segment_weight_decay_ratio, 0.001)
+	for index: int in range(indices.size()):
+		var best_log_weight := -INF
+		var owner := 0
+		for seed: int in range(seeds.size()):
+			var delta: float = absf(parts[indices[index]].transform.origin.x - parts[indices[seeds[seed]]].transform.origin.x)
+			# Compare logarithms to avoid exponential underflow; ties use seed order.
+			var log_weight := -delta / decay
+			if log_weight > best_log_weight:
+				best_log_weight = log_weight
+				owner = region_ids[_root(parents, seed)]
+		owners.append(owner)
+		parts[indices[index]]["segment_id"] = owner
 	return owners
+
+## Supplement same-region edges so X-only assignment cannot leave a fragmented rigid segment.
+func _complete_segment_edges(parts: Array[Dictionary], indices: Array[int], owners: Array[int], edges: Array[Dictionary]) -> void:
+	for first: int in range(indices.size()):
+		for second: int in range(first):
+			if owners[first] != owners[second]: continue
+			var exists := false
+			for edge: Dictionary in edges:
+				if (edge.a == first and edge.b == second) or (edge.b == first and edge.a == second): exists = true; break
+			if exists: continue
+			var a := GEOMETRY.box(parts[indices[first]].size, parts[indices[first]].transform)
+			var b := GEOMETRY.box(parts[indices[second]].size, parts[indices[second]].transform)
+			var points := _nearest_box_points(a.aabb, b.aabb)
+			edges.append({"a": first, "b": second, "anchor": (points[0] + points[1]) * 0.5, "distance": points[0].distance_squared_to(points[1])})
+	edges.sort_custom(_body_edge_less)
+
+func _body_edge_less(a: Dictionary, b: Dictionary) -> bool:
+	var first_required: bool = a.get("required", false)
+	var second_required: bool = b.get("required", false)
+	if first_required != second_required: return first_required
+	return a.distance < b.distance
 
 func _build_blueprint(plan: Dictionary, connection_distance: float) -> Dictionary:
 	var parts: Array[Dictionary] = []
@@ -302,20 +536,35 @@ func _build_blueprint(plan: Dictionary, connection_distance: float) -> Dictionar
 			var node_name := ("SubTorso" if key == "torsos" else "Torso") + ("" if index == 0 else "_%d" % [index + 1])
 			var transform := Transform3D(layout.get("basis", Basis.IDENTITY), layout.position)
 			torso_indices.append(_append_part(parts, node_name, "Torso", layout.size, transform))
-			parts.back()["sub_torso"] = key == "torsos"
+			parts.back()["sub_torso"] = bool(layout.get("sub_torso", key == "torsos"))
 			torso_boxes.append(GEOMETRY.box(layout.size, transform))
 	if torso_indices.is_empty():
 		return {}
+	var separate_supports: bool = plan.get("separate_subtorsos", false)
+	var support_count: int = plan.torsos.size() if separate_supports else 0
 	# Kruskal: connect only legal body neighbors, with N-1 links instead of redundant loops.
 	var candidates: Array[Dictionary] = []
 	for first: int in range(torso_boxes.size()):
 		for second: int in range(first):
-			if GEOMETRY.connected(torso_boxes[first], torso_boxes[second], maxf(connection_distance, 0.0)):
+			var connected := GEOMETRY.connected(torso_boxes[first], torso_boxes[second], maxf(connection_distance, 0.0))
+			if separate_supports and second < support_count:
+				# Independent supports may be separated from the body shell. Their rigid attachment
+				# is intentional, and must not depend on the surface-distance cutoff.
+				connected = first >= support_count and first - support_count == int(plan.torsos[second].parent_torso_index)
+			if connected:
 				var points := _nearest_box_points(torso_boxes[first].aabb, torso_boxes[second].aabb)
-				candidates.append({"a": first, "b": second, "anchor": (points[0] + points[1]) * 0.5, "distance": points[0].distance_squared_to(points[1])})
-	candidates.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a.distance < b.distance)
+				candidates.append({"a": first, "b": second, "anchor": (points[0] + points[1]) * 0.5, "distance": points[0].distance_squared_to(points[1]), "required": separate_supports and second < support_count})
+	candidates.sort_custom(_body_edge_less)
 	var segments := _partition_torso_graph(parts, torso_indices, candidates)
 	if segments.is_empty(): return {}
+	if separate_supports:
+		# A support belongs to its attached Torso's segment. This prevents multiple feet
+		# attached to one body block from introducing springs inside that rigid unit.
+		for support: int in range(support_count):
+			var parent: int = support_count + int(plan.torsos[support].parent_torso_index)
+			segments[support] = segments[parent]
+			parts[torso_indices[support]]["segment_id"] = segments[parent]
+	_complete_segment_edges(parts, torso_indices, segments, candidates)
 	# First build a rigid tree inside every segment, then a tree between segments.
 	var parents: Array[int] = []
 	for index: int in range(torso_indices.size()): parents.append(index)
@@ -352,11 +601,16 @@ func _build_blueprint(plan: Dictionary, connection_distance: float) -> Dictionar
 			previous = next
 		var tip := position + points[-1]
 		var nearest := _nearest_torso(tip, torso_indices, torso_boxes)
+		if separate_supports and layout.has("sub_torso_index"):
+			var support: int = layout.sub_torso_index
+			nearest = {"index": torso_indices[support], "point": tip}
 		_add_connection(connections, int(nearest.index), previous, (tip + Vector3(nearest.point)) * 0.5, "Limb")
 	for index: int in range(plan.necks.size()):
 		var neck: Dictionary = plan.necks[index]
 		var points: PackedVector3Array = neck.points
-		var nearest := _nearest_torso(points[0], torso_indices, torso_boxes)
+		var neck_indices: Array[int] = torso_indices.slice(support_count)
+		var neck_boxes: Array[Dictionary] = torso_boxes.slice(support_count)
+		var nearest := _nearest_torso(points[0], neck_indices, neck_boxes)
 		var previous: int = nearest.index
 		for segment: int in range(neck.blocks.size()):
 			var block: Dictionary = neck.blocks[segment]
@@ -451,6 +705,7 @@ func _instantiate_blueprint(blueprint: Dictionary, generator_transform: Transfor
 			"Head": part.tags.append(BODY_PART.BodyPartTag.Head)
 		if bool(layout.get("sub_torso", false)): part.tags.append(BODY_PART.BodyPartTag.SubTorso)
 		if layout.has("segment_id"): part.set_meta(&"body_segment_id", int(layout.segment_id))
+		if layout.has("segment_id"): part.set_meta(&"segment_layout_version", 3)
 		part.set_meta(&"generated_role", layout.role)
 		part.set_meta(&"generated_size", size)
 		container.add_child(part)
@@ -460,6 +715,20 @@ func _instantiate_blueprint(blueprint: Dictionary, generator_transform: Transfor
 	container.add_child(joints)
 	for index: int in range(blueprint.connections.size()):
 		var connection: Dictionary = blueprint.connections[index]
+		if connection.kind == "Segment":
+			var spring := SEGMENT_SPRING.new()
+			spring.rest_reference_yaw = generator_transform.basis.get_euler().y
+			spring.name = "SegmentSpring_%03d" % [index + 1]
+			spring.node_a = NodePath("../../" + str(bodies[connection.a].name))
+			spring.node_b = NodePath("../../" + str(bodies[connection.b].name))
+			spring.enabled = segment_translation_springs_enabled
+			spring.frequency = segment_spring_frequency
+			spring.damping_ratio = segment_spring_damping_ratio
+			spring.maximum_acceleration = segment_spring_maximum_acceleration
+			spring.maximum_distance_lock_enabled = segment_maximum_distance_lock_enabled
+			spring.maximum_distance_ratio = segment_maximum_distance_ratio
+			joints.add_child(spring)
+			continue
 		var joint := Generic6DOFJoint3D.new()
 		joint.name = "Joint_%03d_%s" % [index + 1, connection.kind]
 		joint.transform = generator_transform * Transform3D(connection.basis, connection.anchor)
@@ -472,19 +741,22 @@ func _instantiate_blueprint(blueprint: Dictionary, generator_transform: Transfor
 		joint.set_meta(&"generated_rest_b_relative_a", rest_a.inverse() * rest_b)
 		joint.node_a = NodePath("../../" + str(a.name))
 		joint.node_b = NodePath("../../" + str(b.name))
-		var angle := 0.0 if connection.kind == "Torso" else deg_to_rad(segment_angular_limit_degrees if connection.kind == "Segment" else (neck_angular_limit_degrees if connection.kind == "Neck" else limb_angular_limit_degrees))
+		var angle := 0.0 if connection.kind == "Torso" else deg_to_rad(neck_angular_limit_degrees if connection.kind == "Neck" else limb_angular_limit_degrees)
 		for axis: String in ["x", "y", "z"]:
 			var locked_limb_axis: bool = axis != "z" and BODY_PART.BodyPartTag.LegLimb in a.tags and BODY_PART.BodyPartTag.LegLimb in b.tags
+			locked_limb_axis = locked_limb_axis or (axis == "y" and _is_limb_subtorso_pair(a, b))
 			var axis_angle := 0.0 if locked_limb_axis else angle
 			joint.call("set_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_LINEAR_LIMIT, true)
 			joint.call("set_param_" + axis, Generic6DOFJoint3D.PARAM_LINEAR_LOWER_LIMIT, 0.0)
 			joint.call("set_param_" + axis, Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT, 0.0)
-			joint.call("set_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_LIMIT, not (connection.kind == "Segment" and segment_free_rotation))
+			joint.call("set_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_LIMIT, true)
 			joint.call("set_param_" + axis, Generic6DOFJoint3D.PARAM_ANGULAR_LOWER_LIMIT, -axis_angle)
 			joint.call("set_param_" + axis, Generic6DOFJoint3D.PARAM_ANGULAR_UPPER_LIMIT, axis_angle)
-			joint.call("set_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_SPRING, connection.kind != "Torso" and not locked_limb_axis and not (connection.kind == "Segment" and segment_free_rotation))
-			joint.call("set_param_" + axis, Generic6DOFJoint3D.PARAM_ANGULAR_SPRING_STIFFNESS, segment_angular_stiffness if connection.kind == "Segment" else angular_spring_stiffness)
-			joint.call("set_param_" + axis, Generic6DOFJoint3D.PARAM_ANGULAR_SPRING_DAMPING, segment_angular_damping if connection.kind == "Segment" else angular_spring_damping)
+			joint.call("set_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_SPRING, connection.kind != "Torso" and not locked_limb_axis and BODY_PART.BodyPartTag.LegLimb not in a.tags and BODY_PART.BodyPartTag.LegLimb not in b.tags)
+			joint.call("set_param_" + axis, Generic6DOFJoint3D.PARAM_ANGULAR_SPRING_STIFFNESS, angular_spring_stiffness)
+			joint.call("set_param_" + axis, Generic6DOFJoint3D.PARAM_ANGULAR_SPRING_DAMPING, angular_spring_damping)
+		if BODY_PART.BodyPartTag.LegLimb in a.tags and BODY_PART.BodyPartTag.LegLimb in b.tags:
+			_configure_limb_joint_sliding(joint)
 		joints.add_child(joint)
 	return container
 

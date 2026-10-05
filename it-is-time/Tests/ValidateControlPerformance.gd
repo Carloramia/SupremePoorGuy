@@ -40,11 +40,12 @@ func _validate() -> void:
 	world.add_child(generated)
 	assert(generated._control_perf.enabled)
 	var generator := generated.get_node("CreatureGenerator")
-	generator.feets = 4
+	generator.rear_leg_count = maxi((4) - 2, 0)
+	generator.foreleg_count = mini((4), 2)
 	generator.unsymmetrie = 0.0
 	generator.neck_number = 1
-	generator.torso_core_extra_blocks = 0
-	generator.max_limb_end_height_difference = 0.3
+
+
 	generator._random.seed = 42
 	assert(generated.generate_creature())
 	var generation_stats: Dictionary = generated.consume_control_performance_stats()

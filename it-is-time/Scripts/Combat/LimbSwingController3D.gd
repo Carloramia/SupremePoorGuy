@@ -323,7 +323,12 @@ func _advance_released_member(group_index: int, state: Dictionary, delta: float)
 				_finish_member(group_index, state)
 				return
 
+func _planar_mode_active() -> bool:
+	var actor := get_parent()
+	return actor != null and actor.has_method("is_planar_mode_active") and actor.is_planar_mode_active()
+
 func _apply_release_direction_hold(state: Dictionary) -> void:
+	if _planar_mode_active(): return
 	var body := state.body as PhysicalBodyPart3D
 	var axis: Vector3 = state.release_axis_world
 	var current := (body.global_basis * (state.release_axis_body_local as Vector3)).normalized()
@@ -360,6 +365,7 @@ func _is_recovery_ready(state: Dictionary) -> bool:
 
 ## Returns true only if at least one charging Arm accepts the cursor drag.
 func adjust_charge_swing_angle(cursor: Node3D, target: Node3D, motion: Vector2) -> bool:
+	if _planar_mode_active(): return false
 	_ensure_runtime_states()
 	if _get_selected_aim_target() != target or terrain_cursor != cursor:
 		return false
@@ -416,6 +422,7 @@ func _get_charge_bank_target_basis(state: Dictionary, target_position: Vector3) 
 	return Basis(raised_direction, raised_up, normal) * local_frame.inverse()
 
 func _apply_charge_bank_pose(state: Dictionary, target_position: Vector3) -> void:
+	if _planar_mode_active(): return
 	var body := state.body as PhysicalBodyPart3D
 	var target := _get_charge_bank_target_basis(state, target_position)
 	var rotation := (target.get_rotation_quaternion() * body.global_basis.orthonormalized().get_rotation_quaternion().inverse()).normalized()
@@ -460,6 +467,9 @@ func _calculate_target_aim(member_state: Dictionary, target_position: Vector3) -
 	return {"axis": up, "error": angle, "torque": up * magnitude}
 
 func _apply_charge_target_aim(group_index: int, member_state: Dictionary, delta: float) -> void:
+	if _planar_mode_active():
+		_restore_target_aim_joint(member_state)
+		return
 	var preset := member_state.preset as LimbSwingPresetBase
 	var action := control_groups[group_index].input_action
 	var target := _get_selected_aim_target() if preset.target_aim_enabled and action in [&"MouseLeft", &"LeftMouse"] else null
