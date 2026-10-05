@@ -1,0 +1,748 @@
+{
+  "schema": "monster-work",
+  "version": 1,
+  "id": "242d4b86-6fd3-42ad-9021-a003c0f09190",
+  "name": "飞天毛毛虫",
+  "updatedAt": "2026-10-05T09:34:48.691Z",
+  "preview": "data:image/png;base64,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",
+  "project": {
+    "schema": "monster-assembly",
+    "version": 2,
+    "assets": [
+      {
+        "id": "ef57b026-b2ce-49b6-8cf0-958d31258505",
+        "type": "head",
+        "name": "头·示例 A",
+        "src": "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22200%22%20height%3D%22200%22%20viewBox%3D%220%200%20200%20200%22%3E%3Cg%20fill%3D%22%23ca9876%22%20stroke%3D%22%23303d3c%22%20stroke-width%3D%226%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M60%20144L36%2085L48%2037L72%2015L78%2050L130%2048L154%2018L153%2071L165%20116L123%20149Z%22%2F%3E%3Cpath%20d%3D%22M99%2096L141%2096L156%20115L130%20129L96%20123Z%22%20fill%3D%22%23dcccaa%22%2F%3E%3Ccircle%20cx%3D%2279%22%20cy%3D%2278%22%20r%3D%227%22%20fill%3D%22%23273338%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+        "ratio": 1
+      },
+      {
+        "id": "251f7b44-9ae6-4854-8120-0c5f984137db",
+        "type": "head",
+        "name": "头·示例 B",
+        "src": "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22200%22%20height%3D%22200%22%20viewBox%3D%220%200%20200%20200%22%3E%3Cg%20fill%3D%22%239ea9b4%22%20stroke%3D%22%23303d3c%22%20stroke-width%3D%226%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M45%20120L35%2057L50%2016L72%2042L128%2042L152%2016L169%2060L151%20119L105%20150Z%22%2F%3E%3Cpath%20d%3D%22M61%2073L90%2084M117%2084L145%2072%22%20stroke%3D%22%23e9d9b3%22%20stroke-width%3D%228%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+        "ratio": 1
+      },
+      {
+        "id": "8ba2fa31-f704-4e18-bac6-2bb2646f4a14",
+        "type": "body",
+        "name": "身·示例 A",
+        "src": "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22200%22%20height%3D%22200%22%20viewBox%3D%220%200%20200%20200%22%3E%3Cg%20fill%3D%22%23869779%22%20stroke%3D%22%23303d3c%22%20stroke-width%3D%226%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M55%2024Q100%205%20145%2024L158%20146Q125%20188%20100%20180Q65%20184%2042%20146Z%22%2F%3E%3Cpath%20d%3D%22M65%2057L135%2057M60%20120L140%20120%22%20fill%3D%22none%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+        "ratio": 1
+      },
+      {
+        "id": "d15099cc-52a3-40f3-85fa-128e2e05d61c",
+        "type": "body",
+        "name": "身·示例 B",
+        "src": "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22200%22%20height%3D%22200%22%20viewBox%3D%220%200%20200%20200%22%3E%3Cg%20fill%3D%22%23b59779%22%20stroke%3D%22%23303d3c%22%20stroke-width%3D%226%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M55%2024Q100%205%20145%2024L158%20146Q125%20188%20100%20180Q65%20184%2042%20146Z%22%2F%3E%3Cpath%20d%3D%22M65%2057L135%2057M60%20120L140%20120%22%20fill%3D%22none%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+        "ratio": 1
+      },
+      {
+        "id": "1945fa59-47c6-4b53-b33e-ba3a3eae2792",
+        "type": "arm",
+        "name": "手·示例 A",
+        "src": "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22200%22%20height%3D%22200%22%20viewBox%3D%220%200%20200%20200%22%3E%3Cg%20fill%3D%22%23b8a17b%22%20stroke%3D%22%23303d3c%22%20stroke-width%3D%226%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M76%2012L124%2012L143%2055L113%20102L126%20158L96%20180L58%20159L74%20103L52%2059Z%22%2F%3E%3Cpath%20d%3D%22M72%20100L116%20100%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+        "ratio": 1
+      },
+      {
+        "id": "b742d682-a6ba-4ae0-a7c0-536ebaaea817",
+        "type": "arm",
+        "name": "手·示例 B",
+        "src": "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22200%22%20height%3D%22200%22%20viewBox%3D%220%200%20200%20200%22%3E%3Cg%20fill%3D%22%23849b93%22%20stroke%3D%22%23303d3c%22%20stroke-width%3D%226%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M76%2012L124%2012L143%2055L113%20102L126%20158L96%20180L58%20159L74%20103L52%2059Z%22%2F%3E%3Cpath%20d%3D%22M72%20100L116%20100%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+        "ratio": 1
+      },
+      {
+        "id": "bce7d157-fb74-438a-bc4b-28bcde9ee2f1",
+        "type": "foot",
+        "name": "脚·示例 A",
+        "src": "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22200%22%20height%3D%22200%22%20viewBox%3D%220%200%20200%20200%22%3E%3Cg%20fill%3D%22%239b9275%22%20stroke%3D%22%23303d3c%22%20stroke-width%3D%226%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M72%2010L121%2010L131%20107L170%20138L167%20176L47%20176L39%20144L68%20105Z%22%2F%3E%3Cpath%20d%3D%22M72%20144L72%20171M104%20144L104%20172M139%20148L139%20172%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+        "ratio": 1
+      },
+      {
+        "id": "65960318-182c-4cb7-8138-24772c1753fe",
+        "type": "foot",
+        "name": "脚·示例 B",
+        "src": "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22200%22%20height%3D%22200%22%20viewBox%3D%220%200%20200%20200%22%3E%3Cg%20fill%3D%22%23a78872%22%20stroke%3D%22%23303d3c%22%20stroke-width%3D%226%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M72%2010L121%2010L131%20107L170%20138L167%20176L47%20176L39%20144L68%20105Z%22%2F%3E%3Cpath%20d%3D%22M72%20144L72%20171M104%20144L104%20172M139%20148L139%20172%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+        "ratio": 1
+      },
+      {
+        "id": "e5f1b872-e2be-4b38-b339-960ff3641d6e",
+        "type": "wing",
+        "name": "翅膀·示例 A",
+        "src": "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22200%22%20height%3D%22200%22%20viewBox%3D%220%200%20200%20200%22%3E%3Cg%20fill%3D%22%23bab8a0%22%20stroke%3D%22%23303d3c%22%20stroke-width%3D%226%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M178%20150L144%2053L91%2022L43%2026L18%2047L6%2097L51%2072L63%20111L94%2091L112%20132L143%20116Z%22%2F%3E%3Cpath%20d%3D%22M178%20150L43%2026M178%20150L18%2047M178%20150L6%2097%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+        "ratio": 1
+      },
+      {
+        "id": "a470d65d-e465-4a14-ae9e-5252650f2dad",
+        "type": "wing",
+        "name": "翅膀·示例 B",
+        "src": "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22200%22%20height%3D%22200%22%20viewBox%3D%220%200%20200%20200%22%3E%3Cg%20fill%3D%22%238fa3a8%22%20stroke%3D%22%23303d3c%22%20stroke-width%3D%226%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M177%20147L135%2036L68%2018L19%2046L6%20105L68%2078L96%20138Z%22%2F%3E%3Cpath%20d%3D%22M176%20147L69%2018M176%20147L19%2046M176%20147L6%20105%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+        "ratio": 1
+      }
+    ],
+    "parts": [
+      {
+        "id": "d9587a83-660c-4257-81ca-f0e38bfe9855",
+        "type": "body",
+        "name": "蛇形·第1段",
+        "assetId": "8ba2fa31-f704-4e18-bac6-2bb2646f4a14",
+        "width": 115,
+        "heightScale": 0.85,
+        "rotation": 0,
+        "offsetX": 0,
+        "offsetY": 0,
+        "z": 2,
+        "mirror": false,
+        "anchor": [
+          0.5,
+          0.5
+        ],
+        "mount": "",
+        "parentId": null,
+        "x": -240,
+        "y": 0,
+        "ports": {
+          "neck": [
+            0.24,
+            0.5
+          ],
+          "next": [
+            0.77,
+            0.5
+          ]
+        },
+        "portNames": {
+          "neck": "连接点 1",
+          "next": "连接点 2"
+        },
+        "portTypes": {
+          "neck": "any",
+          "next": "any"
+        },
+        "layerId": "a97eb1a7-5076-490f-93cd-303603591cfd",
+        "layerOrder": 0
+      },
+      {
+        "id": "91b72b4d-3e73-4939-b707-e2b8c1d21233",
+        "type": "body",
+        "name": "蛇形·第2段",
+        "assetId": "8ba2fa31-f704-4e18-bac6-2bb2646f4a14",
+        "width": 107,
+        "heightScale": 0.85,
+        "rotation": 6.731767878463172,
+        "offsetX": 0,
+        "offsetY": 0,
+        "z": 2,
+        "mirror": false,
+        "anchor": [
+          0.24,
+          0.5
+        ],
+        "mount": "next",
+        "parentId": "d9587a83-660c-4257-81ca-f0e38bfe9855",
+        "x": 0,
+        "y": 0,
+        "ports": {
+          "next": [
+            0.77,
+            0.5
+          ],
+          "point_688131cb-e2eb-48bc-a4d3-f8859885d2fd": [
+            0.4917219410529481,
+            0.16562437416360448
+          ],
+          "point_be0faec9-7d7d-44b6-9b02-dcef7b9129d4": [
+            0.3484085827765459,
+            0.19106125593672169
+          ]
+        },
+        "portNames": {
+          "next": "连接点 1",
+          "point_688131cb-e2eb-48bc-a4d3-f8859885d2fd": "连接点 2",
+          "point_be0faec9-7d7d-44b6-9b02-dcef7b9129d4": "连接点 3"
+        },
+        "portTypes": {
+          "next": "any",
+          "point_688131cb-e2eb-48bc-a4d3-f8859885d2fd": "any",
+          "point_be0faec9-7d7d-44b6-9b02-dcef7b9129d4": "any"
+        },
+        "layerId": "a97eb1a7-5076-490f-93cd-303603591cfd",
+        "layerOrder": 1
+      },
+      {
+        "id": "b0f86b77-37fd-445c-9a63-40046bc7baff",
+        "type": "body",
+        "name": "蛇形·第3段",
+        "assetId": "8ba2fa31-f704-4e18-bac6-2bb2646f4a14",
+        "width": 99,
+        "heightScale": 0.85,
+        "rotation": 7.274379414605454,
+        "offsetX": 0,
+        "offsetY": 0,
+        "z": 2,
+        "mirror": false,
+        "anchor": [
+          0.24,
+          0.5
+        ],
+        "mount": "next",
+        "parentId": "91b72b4d-3e73-4939-b707-e2b8c1d21233",
+        "x": 0,
+        "y": 0,
+        "ports": {
+          "next": [
+            0.77,
+            0.5
+          ]
+        },
+        "portNames": {
+          "next": "连接点 1"
+        },
+        "portTypes": {
+          "next": "any"
+        },
+        "layerId": "a97eb1a7-5076-490f-93cd-303603591cfd",
+        "layerOrder": 2
+      },
+      {
+        "id": "d67187db-7d17-47ea-a2b6-4d0ca4001b99",
+        "type": "body",
+        "name": "蛇形·第4段",
+        "assetId": "8ba2fa31-f704-4e18-bac6-2bb2646f4a14",
+        "width": 91,
+        "heightScale": 0.85,
+        "rotation": 1.1289600644789377,
+        "offsetX": 0,
+        "offsetY": 0,
+        "z": 2,
+        "mirror": false,
+        "anchor": [
+          0.24,
+          0.5
+        ],
+        "mount": "next",
+        "parentId": "b0f86b77-37fd-445c-9a63-40046bc7baff",
+        "x": 0,
+        "y": 0,
+        "ports": {
+          "next": [
+            0.77,
+            0.5
+          ]
+        },
+        "portNames": {
+          "next": "连接点 1"
+        },
+        "portTypes": {
+          "next": "any"
+        },
+        "layerId": "a97eb1a7-5076-490f-93cd-303603591cfd",
+        "layerOrder": 3
+      },
+      {
+        "id": "6a532898-3484-48dd-a23f-6132b5167f30",
+        "type": "body",
+        "name": "蛇形·第5段",
+        "assetId": "8ba2fa31-f704-4e18-bac6-2bb2646f4a14",
+        "width": 83,
+        "heightScale": 0.85,
+        "rotation": -6.054419962463426,
+        "offsetX": 0,
+        "offsetY": 0,
+        "z": 2,
+        "mirror": false,
+        "anchor": [
+          0.24,
+          0.5
+        ],
+        "mount": "next",
+        "parentId": "d67187db-7d17-47ea-a2b6-4d0ca4001b99",
+        "x": 0,
+        "y": 0,
+        "ports": {
+          "next": [
+            0.77,
+            0.5
+          ]
+        },
+        "portNames": {
+          "next": "连接点 1"
+        },
+        "portTypes": {
+          "next": "any"
+        },
+        "layerId": "a97eb1a7-5076-490f-93cd-303603591cfd",
+        "layerOrder": 4
+      },
+      {
+        "id": "548e040c-c2af-4730-8bf8-1aff5b8f680f",
+        "type": "body",
+        "name": "蛇形·第6段",
+        "assetId": "8ba2fa31-f704-4e18-bac6-2bb2646f4a14",
+        "width": 75,
+        "heightScale": 0.85,
+        "rotation": -7.671394197305108,
+        "offsetX": 0,
+        "offsetY": 0,
+        "z": 2,
+        "mirror": false,
+        "anchor": [
+          0.24,
+          0.5
+        ],
+        "mount": "next",
+        "parentId": "6a532898-3484-48dd-a23f-6132b5167f30",
+        "x": 0,
+        "y": 0,
+        "ports": {},
+        "portNames": {},
+        "portTypes": {},
+        "layerId": "a97eb1a7-5076-490f-93cd-303603591cfd",
+        "layerOrder": 5
+      },
+      {
+        "id": "8accbe51-2c40-462d-bbdf-ada1138d329d",
+        "type": "head",
+        "name": "头·示例 A",
+        "assetId": "ef57b026-b2ce-49b6-8cf0-958d31258505",
+        "width": 110,
+        "heightScale": 1,
+        "rotation": -90,
+        "offsetX": 0,
+        "offsetY": 0,
+        "z": 4,
+        "mirror": true,
+        "anchor": [
+          0.5,
+          0.75
+        ],
+        "mount": "neck",
+        "parentId": "d9587a83-660c-4257-81ca-f0e38bfe9855",
+        "x": 0,
+        "y": 0,
+        "layerId": "a63ca59c-5527-4e18-bd35-9cb61f0249cd",
+        "layerOrder": 0
+      },
+      {
+        "id": "c41ee4fe-d91b-43f5-b92f-cf69588492c0",
+        "type": "wing",
+        "name": "翅膀·示例 A",
+        "assetId": "e5f1b872-e2be-4b38-b339-960ff3641d6e",
+        "width": 190,
+        "heightScale": 1,
+        "rotation": 0,
+        "offsetX": 0,
+        "offsetY": 0,
+        "z": 3,
+        "mirror": true,
+        "anchor": [
+          0.88,
+          0.75
+        ],
+        "mount": "point_688131cb-e2eb-48bc-a4d3-f8859885d2fd",
+        "parentId": "91b72b4d-3e73-4939-b707-e2b8c1d21233",
+        "x": 0,
+        "y": 0,
+        "layerId": "0fb88cf1-20c9-4477-b1b5-633b73ff6883",
+        "layerOrder": 0
+      },
+      {
+        "id": "35198808-e989-4191-945e-f405a55dae96",
+        "type": "wing",
+        "name": "翅膀·示例 B",
+        "assetId": "a470d65d-e465-4a14-ae9e-5252650f2dad",
+        "width": 190,
+        "heightScale": 1,
+        "rotation": -20,
+        "offsetX": 0,
+        "offsetY": 0,
+        "z": 1,
+        "mirror": true,
+        "anchor": [
+          0.88,
+          0.75
+        ],
+        "mount": "point_be0faec9-7d7d-44b6-9b02-dcef7b9129d4",
+        "parentId": "91b72b4d-3e73-4939-b707-e2b8c1d21233",
+        "x": 0,
+        "y": 0,
+        "layerId": "e0c91d55-937b-486d-b485-aa3b9aafe367",
+        "layerOrder": 0
+      }
+    ],
+    "log": [
+      {
+        "at": "2026-10-05T08:45:27.976Z",
+        "action": "载入人形标准模板"
+      },
+      {
+        "at": "2026-10-05T08:45:30.760Z",
+        "action": "套用标准模板：蛇形"
+      },
+      {
+        "at": "2026-10-05T08:45:33.088Z",
+        "action": "拖动微调：蛇形·第2段"
+      },
+      {
+        "at": "2026-10-05T08:45:35.227Z",
+        "action": "拖动微调：蛇形·第1段"
+      },
+      {
+        "at": "2026-10-05T08:45:47.850Z",
+        "action": "拖动微调：蛇形·第1段"
+      },
+      {
+        "at": "2026-10-05T08:45:54.056Z",
+        "action": "拖动连接点：连接点 1"
+      },
+      {
+        "at": "2026-10-05T08:45:54.929Z",
+        "action": "拖动微调：蛇形·第1段"
+      },
+      {
+        "at": "2026-10-05T08:45:57.905Z",
+        "action": "拖动微调：蛇形·第2段"
+      },
+      {
+        "at": "2026-10-05T08:45:59.345Z",
+        "action": "拖动微调：蛇形·第1段"
+      },
+      {
+        "at": "2026-10-05T08:46:01.111Z",
+        "action": "拖动微调：蛇形·第2段"
+      },
+      {
+        "at": "2026-10-05T08:46:05.191Z",
+        "action": "拖动微调：蛇形·第2段"
+      },
+      {
+        "at": "2026-10-05T08:46:08.292Z",
+        "action": "右键位置新增连接点"
+      },
+      {
+        "at": "2026-10-05T08:46:11.485Z",
+        "action": "右键连接点挂接素材"
+      },
+      {
+        "at": "2026-10-05T08:46:14.448Z",
+        "action": "拖动微调：头·示例 A"
+      },
+      {
+        "at": "2026-10-05T08:46:19.425Z",
+        "action": "删除组件及其子结构：头·示例 A"
+      },
+      {
+        "at": "2026-10-05T08:46:24.551Z",
+        "action": "解除此点所挂部件"
+      },
+      {
+        "at": "2026-10-05T08:46:31.176Z",
+        "action": "删除组件及其子结构：蛇形·第1段"
+      },
+      {
+        "at": "2026-10-05T08:46:33.699Z",
+        "action": "拖动微调：头·示例 A"
+      },
+      {
+        "at": "2026-10-05T08:46:50.266Z",
+        "action": "调整 头·示例 A / rotation"
+      },
+      {
+        "at": "2026-10-05T08:46:53.125Z",
+        "action": "调整 头·示例 A / rotation"
+      },
+      {
+        "at": "2026-10-05T08:46:55.126Z",
+        "action": "拖动微调：头·示例 A"
+      },
+      {
+        "at": "2026-10-05T08:46:56.442Z",
+        "action": "重置偏移：头·示例 A"
+      },
+      {
+        "at": "2026-10-05T08:47:02.973Z",
+        "action": "右键位置新增连接点"
+      },
+      {
+        "at": "2026-10-05T08:47:08.703Z",
+        "action": "右键连接点挂接素材"
+      },
+      {
+        "at": "2026-10-05T08:47:13.405Z",
+        "action": "调整 翅膀·示例 B / width"
+      },
+      {
+        "at": "2026-10-05T08:47:13.642Z",
+        "action": "调整 翅膀·示例 B / width"
+      },
+      {
+        "at": "2026-10-05T08:47:13.832Z",
+        "action": "调整 翅膀·示例 B / width"
+      },
+      {
+        "at": "2026-10-05T08:47:14.019Z",
+        "action": "调整 翅膀·示例 B / width"
+      },
+      {
+        "at": "2026-10-05T08:47:14.213Z",
+        "action": "调整 翅膀·示例 B / width"
+      },
+      {
+        "at": "2026-10-05T08:47:14.415Z",
+        "action": "调整 翅膀·示例 B / width"
+      },
+      {
+        "at": "2026-10-05T08:47:16.073Z",
+        "action": "调整 翅膀·示例 B / width"
+      },
+      {
+        "at": "2026-10-05T08:47:16.823Z",
+        "action": "调整 翅膀·示例 B / width"
+      },
+      {
+        "at": "2026-10-05T08:47:17.025Z",
+        "action": "调整 翅膀·示例 B / width"
+      },
+      {
+        "at": "2026-10-05T08:47:17.198Z",
+        "action": "调整 翅膀·示例 B / width"
+      },
+      {
+        "at": "2026-10-05T08:47:17.376Z",
+        "action": "调整 翅膀·示例 B / width"
+      },
+      {
+        "at": "2026-10-05T08:47:17.564Z",
+        "action": "调整 翅膀·示例 B / width"
+      },
+      {
+        "at": "2026-10-05T08:47:24.517Z",
+        "action": "调整 翅膀·示例 B / heightScale"
+      },
+      {
+        "at": "2026-10-05T08:47:27.156Z",
+        "action": "调整 翅膀·示例 B / mirror"
+      },
+      {
+        "at": "2026-10-05T08:47:36.763Z",
+        "action": "右键位置新增连接点"
+      },
+      {
+        "at": "2026-10-05T08:47:41.528Z",
+        "action": "右键连接点挂接素材"
+      },
+      {
+        "at": "2026-10-05T08:47:44.625Z",
+        "action": "拖动微调：翅膀·示例 A"
+      },
+      {
+        "at": "2026-10-05T08:47:46.221Z",
+        "action": "重置偏移：翅膀·示例 A"
+      },
+      {
+        "at": "2026-10-05T08:47:50.014Z",
+        "action": "调整 翅膀·示例 B / heightScale"
+      },
+      {
+        "at": "2026-10-05T08:47:50.117Z",
+        "action": "重置偏移：翅膀·示例 B"
+      },
+      {
+        "at": "2026-10-05T08:48:23.169Z",
+        "action": "撤销"
+      },
+      {
+        "at": "2026-10-05T08:50:45.637Z",
+        "action": "导出整只怪物方案"
+      },
+      {
+        "at": "2026-10-05T08:50:49.436Z",
+        "action": "导出整只怪物方案"
+      },
+      {
+        "at": "2026-10-05T09:15:06.031Z",
+        "action": "调整层级组前后"
+      },
+      {
+        "at": "2026-10-05T09:15:07.630Z",
+        "action": "调整层级组前后"
+      },
+      {
+        "at": "2026-10-05T09:15:09.224Z",
+        "action": "调整层级组前后"
+      },
+      {
+        "at": "2026-10-05T09:15:15.006Z",
+        "action": "拖动微调：翅膀·示例 A"
+      },
+      {
+        "at": "2026-10-05T09:15:16.139Z",
+        "action": "拖动微调：翅膀·示例 B"
+      },
+      {
+        "at": "2026-10-05T09:16:14.889Z",
+        "action": "保存本地作品：飞天毛毛虫"
+      },
+      {
+        "at": "2026-10-05T09:16:23.864Z",
+        "action": "设置 身数量为 4"
+      },
+      {
+        "at": "2026-10-05T09:16:29.855Z",
+        "action": "套用标准模板：兽形"
+      },
+      {
+        "at": "2026-10-05T09:16:32.138Z",
+        "action": "设置 身数量为 2"
+      },
+      {
+        "at": "2026-10-05T09:16:32.888Z",
+        "action": "设置 身数量为 3"
+      },
+      {
+        "at": "2026-10-05T09:16:35.108Z",
+        "action": "拖动微调：身·示例 A"
+      },
+      {
+        "at": "2026-10-05T09:16:37.257Z",
+        "action": "拖动微调：身·示例 A"
+      },
+      {
+        "at": "2026-10-05T09:16:41.404Z",
+        "action": "右键删除连接点（保留部件）"
+      },
+      {
+        "at": "2026-10-05T09:16:43.490Z",
+        "action": "右键删除连接点（保留部件）"
+      },
+      {
+        "at": "2026-10-05T09:16:45.401Z",
+        "action": "套用标准模板：蛇形"
+      },
+      {
+        "at": "2026-10-05T09:16:47.762Z",
+        "action": "套用标准模板：人形"
+      },
+      {
+        "at": "2026-10-05T09:17:34.284Z",
+        "action": "设置 身数量为 2"
+      },
+      {
+        "at": "2026-10-05T09:17:36.034Z",
+        "action": "拖动微调：身·示例 A"
+      },
+      {
+        "at": "2026-10-05T09:17:40.337Z",
+        "action": "拖动微调：身·示例 A"
+      },
+      {
+        "at": "2026-10-05T09:18:16.488Z",
+        "action": "套用标准模板：蛇形"
+      },
+      {
+        "at": "2026-10-05T09:18:19.287Z",
+        "action": "拖动微调：蛇形·第2段"
+      },
+      {
+        "at": "2026-10-05T09:33:38.126Z",
+        "action": "拖动微调：蛇形·第1段"
+      },
+      {
+        "at": "2026-10-05T09:33:41.704Z",
+        "action": "套用标准模板：蛇形"
+      },
+      {
+        "at": "2026-10-05T09:33:50.837Z",
+        "action": "右键位置新增连接点"
+      },
+      {
+        "at": "2026-10-05T09:33:54.368Z",
+        "action": "右键连接点挂接素材"
+      },
+      {
+        "at": "2026-10-05T09:33:58.552Z",
+        "action": "调整 翅膀·示例 A / mirror"
+      },
+      {
+        "at": "2026-10-05T09:34:02.622Z",
+        "action": "右键位置新增连接点"
+      },
+      {
+        "at": "2026-10-05T09:34:07.058Z",
+        "action": "右键连接点挂接素材"
+      },
+      {
+        "at": "2026-10-05T09:34:10.085Z",
+        "action": "调整 翅膀·示例 B / mirror"
+      },
+      {
+        "at": "2026-10-05T09:34:15.789Z",
+        "action": "调整 翅膀·示例 B / rotation"
+      },
+      {
+        "at": "2026-10-05T09:34:20.719Z",
+        "action": "调整 翅膀·示例 B / rotation"
+      },
+      {
+        "at": "2026-10-05T09:34:29.260Z",
+        "action": "拖动层级排序"
+      },
+      {
+        "at": "2026-10-05T09:34:30.341Z",
+        "action": "拖动层级排序"
+      },
+      {
+        "at": "2026-10-05T09:34:34.207Z",
+        "action": "新建层级组"
+      },
+      {
+        "at": "2026-10-05T09:34:37.742Z",
+        "action": "拖动层级排序"
+      },
+      {
+        "at": "2026-10-05T09:34:40.727Z",
+        "action": "调整层级组前后"
+      },
+      {
+        "at": "2026-10-05T09:34:41.402Z",
+        "action": "调整层级组前后"
+      },
+      {
+        "at": "2026-10-05T09:34:42.287Z",
+        "action": "调整层级组前后"
+      },
+      {
+        "at": "2026-10-05T09:34:43.206Z",
+        "action": "调整层级组前后"
+      },
+      {
+        "at": "2026-10-05T09:34:45.031Z",
+        "action": "调整层级组前后"
+      }
+    ],
+    "template": "snake",
+    "layerGroups": [
+      {
+        "id": "e0c91d55-937b-486d-b485-aa3b9aafe367",
+        "name": "4"
+      },
+      {
+        "id": "a97eb1a7-5076-490f-93cd-303603591cfd",
+        "name": "2",
+        "legacyZ": 10
+      },
+      {
+        "id": "0fb88cf1-20c9-4477-b1b5-633b73ff6883",
+        "name": "1",
+        "legacyZ": -10
+      },
+      {
+        "id": "a63ca59c-5527-4e18-bd35-9cb61f0249cd",
+        "name": "3",
+        "legacyZ": 30
+      }
+    ],
+    "workspaceId": null,
+    "workspaceName": "飞天毛毛虫"
+  }
+}
