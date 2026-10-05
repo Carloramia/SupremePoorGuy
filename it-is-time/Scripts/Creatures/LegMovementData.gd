@@ -58,10 +58,15 @@ extends Resource
 @export_range(0, 10, 1) var maximum_simultaneous_steps: int = 1
 @export_range(0, 10, 1) var minimum_support_feet: int = 1
 @export_group("Landing")
+## Desired time to remove tangential velocity after real touchdown, in seconds.
+@export_range(0.01, 1.0, 0.01, "or_greater") var touchdown_stop_time: float = 0.04
+## Tangential braking ceiling, independent of swing acceleration and speed presets.
+@export_range(1.0, 2000.0, 1.0, "or_greater") var touchdown_maximum_braking_acceleration: float = 300.0
 @export_range(0.001, 1.0, 0.001) var landing_tolerance: float = 0.18
 @export_range(0.01, 5.0, 0.01) var landing_timeout: float = 1.0
 
 func is_valid() -> bool:
+	if not is_finite(touchdown_stop_time) or touchdown_stop_time < 0.01 or not is_finite(touchdown_maximum_braking_acceleration) or touchdown_maximum_braking_acceleration <= 0.0: return false
 	if not is_finite(maximum_stepping_ratio) or maximum_stepping_ratio < 0.0 or maximum_stepping_ratio > 1.0 or maximum_simultaneous_steps < 0 or minimum_support_feet < 0: return false
 	for value: float in [gallop_target_freeze_progress, gallop_target_follow_length_ratio, gallop_touchdown_speed_limit, gallop_maximum_stepping_ratio, gallop_landing_confirmation, gallop_takeoff_velocity, gallop_airborne_duration, gallop_airborne_drive_ratio, gallop_airborne_support_ratio, gallop_landing_prediction_ratio]:
 		if not is_finite(value): return false
@@ -198,5 +203,5 @@ func calculate_adaptive_flight_profile(length: float, foot_count: int, actual_sp
 		"landing_reserve": reserve,"landing_confirmation": confirmation,"observed_landing_time": observed_landing_time,"air_duration_limited": requested_air>geometric_air_limit+0.001,"walking_stride_limit": length*0.5,
 		"requires_flight": target_speed*cycle>length*0.5,"required_capacity": required_capacity,"maximum_capacity": capacity,
 		"covered_stride": covered,"distance_deficit": maxf(target_speed*cycle-covered,0.0),"lift": lift,
-		"lease_duration": minf(2.0,air+confirmation+0.12),"brake_time": clampf(air*0.2,0.08,0.18),
+		"lease_duration": minf(2.0,air+confirmation+0.12),"brake_time": touchdown_stop_time,
 		"touchdown_speed_limit": clampf(target_speed*0.15,0.3,1.5)}

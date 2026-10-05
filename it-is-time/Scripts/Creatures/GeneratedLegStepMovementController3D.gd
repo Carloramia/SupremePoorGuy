@@ -2359,12 +2359,14 @@ func _update_active_step(delta: float) -> void:
 				_current_step.extra.landing_surface_point = hit.position
 				_current_step.extra.gallop_target_shift = Vector3(hit.position)-Vector3(_current_step.extra.gallop_surface_start)
 				_step_target_normal = hit.normal
-		# Early descending contact ends the swing; do not drag a landed foot toward
-		# an outdated planned point. Braking below happens at this real contact.
+		# Once a foot has lifted, a real near-surface contact ends the swing
+		# immediately, even early in the trajectory or during a contact bounce.
+		# Landing below removes horizontal pursuit and brakes in this same tick.
 		var contact := _support_surface_contact(_active_leg)
-		if _step_has_lifted and progress >= 0.5 and not contact.is_empty():
+		if _step_has_lifted and not contact.is_empty():
 			var gap := (_get_foot_world_position(_active_leg)-Vector3(contact.position)).dot(Vector3(contact.normal))
-			if absf(gap) <= 0.04 and _active_leg.linear_velocity.dot(Vector3(contact.normal)) <= 0.05:
+			if absf(gap) <= 0.04:
+				_current_step.extra["touchdown_swing_progress"] = progress
 				_step_state = StepState.LANDING
 				_landing_elapsed = 0.0
 	if is_instance_valid(_active_leg) and _current_step.extra.has("landing_surface_point"):
@@ -2389,14 +2391,10 @@ func _update_active_step(delta: float) -> void:
 					# Remove pursuit: brake tangential motion at the actual contact,
 					# with a normal correction only, then create the native ground pin.
 					var desired := _active_leg.global_position + normal * (foot_ground_offset-gap)
-					var brake_profile: Dictionary = _current_step.extra.get("automatic_profile",{})
-					var brake_time := float(_current_step.extra.get("speed_gait",{}).get("brake_time",maxf(float(_current_step.extra.gallop_landing_confirmation)*0.5,0.03)))
-					if not brake_profile.is_empty():
-						brake_profile.velocity_gain = maxf(float(brake_profile.velocity_gain),2.0/brake_time)
-						brake_profile.step_acceleration = minf(180.0,maxf(float(brake_profile.step_acceleration),_active_leg.linear_velocity.length()/brake_time+20.0))
 					_current_step.extra["gallop_braking_velocity"] = _active_leg.linear_velocity.slide(normal)
-					_apply_leg_tracking_force(desired,Vector3.ZERO)
+					_current_step.extra["touchdown_normal"] = normal
 					_current_step.extra["gallop_touchdown_braking"] = true
+					_apply_leg_tracking_force(desired,Vector3.ZERO)
 					var slow := _active_leg.linear_velocity.slide(normal).length() <= float(_current_step.extra.gallop_touchdown_speed_limit) and absf(_active_leg.linear_velocity.dot(normal)) <= 0.7
 					_current_step.extra.gallop_contact_confirmation = float(_current_step.extra.gallop_contact_confirmation)+delta if slow else 0.0
 					_landing_elapsed += delta
@@ -2494,15 +2492,35 @@ func _apply_leg_tracking_force(desired_position: Vector3, desired_velocity: Vect
 			var damping := _step_motion_setting("velocity_gain",step_velocity_gain)*sqrt(_active_movement_scale)
 			acceleration.x = (acceleration.x+_active_leg.linear_velocity.x*damping)*horizontal_weight-_active_leg.linear_velocity.x*damping
 			acceleration.z = (acceleration.z+_active_leg.linear_velocity.z*damping)*horizontal_weight-_active_leg.linear_velocity.z*damping
-	acceleration = acceleration.limit_length(_step_motion_setting("step_acceleration", maximum_step_acceleration) * pow(_active_movement_scale, 1.5))
+	var acceleration_limit := _step_motion_setting("step_acceleration", maximum_step_acceleration)*pow(_active_movement_scale,1.5)
+	var touchdown_braking: bool = _step_state == StepState.LANDING and _current_step.extra.get("gallop_touchdown_braking",false)
+	if touchdown_braking:
+		var data := _get_gait_data()
+		var normal: Vector3 = _current_step.extra.touchdown_normal
+		var stop_time := maxf(data.touchdown_stop_time,maxf(_support_delta,1.0/60.0))
+		var tangent_velocity := _active_leg.linear_velocity.slide(normal)
+		var requested_brake := -tangent_velocity/stop_time
+		var braking_acceleration := requested_brake.limit_length(data.touchdown_maximum_braking_acceleration)
+		# Keep normal correction bounded by the existing landing servo; replace
+		# only tangential damping. This is one force application, not two servos.
+		var normal_acceleration := clampf(acceleration.dot(normal),-acceleration_limit,acceleration_limit)
+		acceleration = braking_acceleration+normal*normal_acceleration
+		acceleration_limit = sqrt(data.touchdown_maximum_braking_acceleration*data.touchdown_maximum_braking_acceleration+acceleration_limit*acceleration_limit)
+		_current_step.extra["touchdown_brake"] = {"stop_time": data.touchdown_stop_time,"effective_stop_time": stop_time,"maximum_acceleration": data.touchdown_maximum_braking_acceleration,"effective_mass": _tracking_mass,"speed": tangent_velocity.length(),"requested_force": requested_brake*_tracking_mass,"acceleration_limited": requested_brake.length()>data.touchdown_maximum_braking_acceleration}
+	else:
+		acceleration = acceleration.limit_length(acceleration_limit)
 	# Fade weight feedforward during descent; landing applies no upward weight compensation.
 	var progress := clampf(_step_elapsed / maxf(_active_step_duration, MIN_STEP_TIME), 0.0, 1.0)
 	var gravity_weight := 1.0 - smoothstep(0.5, 1.0, progress) if _step_state == StepState.MOVING else 0.0
 	_tracking_gravity_force = -_gravity_acceleration() * gravity_mass * gravity_weight if step_gravity_compensation else Vector3.ZERO
 	var requested := acceleration * _tracking_mass + _tracking_gravity_force
-	_tracking_force_limit = minf(maximum_mass_scaled_step_force, _tracking_mass * _step_motion_setting("step_acceleration", maximum_step_acceleration) * pow(_active_movement_scale, 1.5) + _tracking_gravity_force.length())
+	_tracking_force_limit = minf(maximum_mass_scaled_step_force, _tracking_mass*acceleration_limit+_tracking_gravity_force.length())
 	_tracking_force_limited = requested.length() > _tracking_force_limit
 	_tracking_force = requested.limit_length(_tracking_force_limit)
+	if touchdown_braking:
+		var normal: Vector3 = _current_step.extra.touchdown_normal
+		_current_step.extra.touchdown_brake["applied_force"] = _tracking_force.slide(normal)
+		_current_step.extra.touchdown_brake["force_limited"] = _tracking_force_limited
 	_active_leg.apply_central_force(_tracking_force)
 
 func _apply_turn_swing_orientation() -> void:
@@ -2627,6 +2645,8 @@ func get_support_foot_diagnostics(leg: RigidBody3D) -> Dictionary:
 	result["gallop"]["tracking_profile"] = extra.get("automatic_profile",{})
 	result["gallop"]["admission"] = _extension_admission.get(leg,{}).duplicate()
 	if not result.gallop.admission.is_empty(): result.gallop.admission["age"] = _physics_elapsed-float(result.gallop.admission.time)
+	result["gallop"]["touchdown_brake"] = extra.get("touchdown_brake",{})
+	result["gallop"]["touchdown_swing_progress"] = extra.get("touchdown_swing_progress",-1.0)
 	result["gallop"]["liftoff_phase"] = extra.get("liftoff_phase","")
 	result["gallop"]["horizontal_tracking_weight"] = extra.get("horizontal_tracking_weight",1.0)
 	result["gallop"]["predicted_attachment"] = extra.get("gallop_predicted_attachment",Vector3.ZERO)
