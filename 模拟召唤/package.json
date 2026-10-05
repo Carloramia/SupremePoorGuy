@@ -1,0 +1,10 @@
+{
+  "name": "summoning-circle-prototype",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node server.mjs",
+    "build": "node scripts/build-browser-bundle.mjs",
+    "check": "npm run build && node --check js/app.js && node --check js/rune-engine.js && node --check js/hex-grid.js && node --check js/relic-definitions.js && node --check js/browser-bundle.js && node tests/rune-engine.test.mjs"
+  }
+}
