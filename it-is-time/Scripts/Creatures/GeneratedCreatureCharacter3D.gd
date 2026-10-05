@@ -10,6 +10,7 @@ const GEOMETRY = preload("res://Scripts/Creatures/CreatureBoxGeometry.gd")
 const SEGMENT_CONSTRAINT = preload("res://Scripts/Creatures/SegmentConstraint3D.gd")
 const SEGMENT_SPRING = preload("res://Scripts/Creatures/SegmentDistanceSpring3D.gd")
 const PLANAR_CONSTRAINTS = preload("res://Scripts/Creatures/CreaturePlanarConstraints3D.gd")
+const HEAD_SUPPORT = preload("res://Scripts/Creatures/HeadPositionSupport3D.gd")
 const BODY_PART = preload("res://Scripts/Creatures/PhysicalBodyParts.gd")
 
 @export_group("Generation")
@@ -50,6 +51,7 @@ func _sync_planar_constraints() -> void:
 		guides.name = "PlanarConstraints"
 		add_child(guides)
 	guides.clear_constraints()
+	_sync_neck_joint_sliding()
 	var container := get_node_or_null("GeneratedParts")
 	if planar_constraints_enabled and container != null: guides.configure(container)
 	_configure_body_part_collision_exceptions()
@@ -67,6 +69,48 @@ func _sync_planar_constraints() -> void:
 @export_range(0.0, 90.0, 0.1) var neck_angular_limit_degrees: float = 20.0
 @export_range(0.0, 1000.0, 0.1, "or_greater") var angular_spring_stiffness: float = 30.0
 @export_range(0.0, 100.0, 0.1, "or_greater") var angular_spring_damping: float = 5.0
+
+@export_group("Neck Linear Springs")
+## Neck-Neck joints only; end connections to Torso/Head retain their current limits.
+@export var neck_linear_springs_enabled: bool = true:
+	set(value):
+		neck_linear_springs_enabled = value
+		if is_node_ready(): _sync_neck_joint_sliding()
+@export var neck_joint_linear_slack: Vector3 = Vector3(0.06,0.06,0.06):
+	set(value):
+		if not value.is_finite(): return
+		neck_joint_linear_slack = value.max(Vector3.ZERO)
+		if is_node_ready(): _sync_neck_joint_sliding()
+@export_range(0.0, 1000.0, 0.1, "or_greater") var neck_linear_spring_stiffness: float = 80.0:
+	set(value):
+		neck_linear_spring_stiffness = value
+		if is_node_ready(): _sync_neck_joint_sliding()
+@export_range(0.0, 100.0, 0.1, "or_greater") var neck_linear_spring_damping: float = 8.0:
+	set(value):
+		neck_linear_spring_damping = value
+		if is_node_ready(): _sync_neck_joint_sliding()
+
+func _sync_neck_joint_sliding() -> void:
+	var container := get_node_or_null("GeneratedParts")
+	if container == null: return
+	for node: Node in container.find_children("*","Generic6DOFJoint3D",true,false):
+		var joint := node as Generic6DOFJoint3D
+		if joint.is_queued_for_deletion(): continue
+		if PhysicsServer3D.joint_get_type(joint.get_rid()) == PhysicsServer3D.JOINT_TYPE_MAX: continue
+		var a := joint.get_node_or_null(joint.node_a)
+		var b := joint.get_node_or_null(joint.node_b)
+		if a == null or b == null: continue
+		if a.get_meta(&"generated_role","") != "Neck" or b.get_meta(&"generated_role","") != "Neck": continue
+		for index: int in range(3):
+			var axis: String = ["x","y","z"][index]
+			var slack: float = neck_joint_linear_slack[index] if neck_linear_springs_enabled else 0.0
+			joint.call("set_flag_"+axis,Generic6DOFJoint3D.FLAG_ENABLE_LINEAR_LIMIT,true)
+			joint.call("set_param_"+axis,Generic6DOFJoint3D.PARAM_LINEAR_LOWER_LIMIT,-slack)
+			joint.call("set_param_"+axis,Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT,slack)
+			joint.call("set_flag_"+axis,Generic6DOFJoint3D.FLAG_ENABLE_LINEAR_SPRING,neck_linear_springs_enabled and slack>0.0)
+			joint.call("set_param_"+axis,Generic6DOFJoint3D.PARAM_LINEAR_SPRING_STIFFNESS,maxf(neck_linear_spring_stiffness,0.0))
+			joint.call("set_param_"+axis,Generic6DOFJoint3D.PARAM_LINEAR_SPRING_DAMPING,maxf(neck_linear_spring_damping,0.0))
+			joint.call("set_param_"+axis,Generic6DOFJoint3D.PARAM_LINEAR_SPRING_EQUILIBRIUM_POINT,0.0)
 
 @export_group("Passive Limb Links")
 ## Passive angular damping on LegLimb bodies, without any rest-pose motors or springs.
@@ -339,6 +383,7 @@ func _activate_parts(container: Node) -> void:
 			(part as RigidBody3D).freeze = false
 	_migrate_saved_body_segments(container)
 	_sync_segment_rotation_constraints(container)
+	_sync_neck_joint_sliding()
 	for node: Node in container.find_children("*", "Generic6DOFJoint3D", true, false):
 		var joint := node as Generic6DOFJoint3D
 		var body_a := joint.get_node_or_null(joint.node_a) as PhysicalBodyPart3D
@@ -351,6 +396,11 @@ func _activate_parts(container: Node) -> void:
 		if _is_limb_subtorso_pair(body_a, body_b): _lock_limb_root_yaw(joint)
 		if BODY_PART.BodyPartTag.LegLimb not in body_a.tags or BODY_PART.BodyPartTag.LegLimb not in body_b.tags: continue
 		_configure_limb_joint_sliding(joint)
+	if get_node_or_null("HeadPositionSupport3D") == null:
+		var support := HEAD_SUPPORT.new()
+		support.name = "HeadPositionSupport3D"
+		add_child(support)
+	get_node("HeadPositionSupport3D").set_character_control_enabled(true)
 	# Future optional controllers can refresh their queries after regeneration.
 	for node: Node in find_children("*", "", true, false):
 		if node.has_method("refresh_physics_query_cache"):

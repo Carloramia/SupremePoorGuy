@@ -319,6 +319,11 @@ func _collect_motion_snapshot() -> Array[String]:
 				messages.append("[trackmotion] character=%s stance_support=%s" % [character.name, support])
 				for joint: Dictionary in joints:
 					messages.append("[trackmotion] character=%s stance_joint=%s" % [character.name, joint])
+	var head_support := character.get_node_or_null("HeadPositionSupport3D")
+	if head_support != null:
+		for row: Dictionary in head_support.get_head_support_diagnostics():
+			messages.append("[trackmotion] character=%s head_support=%s" % [character.name,row])
+
 	return messages
 
 func _collect_leg_motion_lines(controller: Node) -> Array[String]:

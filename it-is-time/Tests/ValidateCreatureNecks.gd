@@ -11,7 +11,8 @@ func _validate() -> void:
 	generator.head_minimum_size = Vector3.ONE * 0.3
 	generator.head_maximum_size = Vector3.ONE * 0.3
 	generator.neck_number = 3
-	for segments: int in range(4):
+	generator.unsymmetrie = 0.0
+	for segments: int in range(11):
 		generator.neck_segment_count = segments
 		generator._random.seed = 42
 		var plan: Dictionary = generator._create_valid_plan()
@@ -31,6 +32,8 @@ func _validate() -> void:
 		assert(restored.has_node("NeckLine/Head") and restored.has_node("NeckLine_3/Head"))
 		assert(restored.get_node("NeckLine").get_child_count() == segments + 1)
 		restored.free()
+	generator.neck_segment_count = 11
+	assert(generator._create_valid_plan().is_empty())
 	generator.label_font_size = 72
 	assert(generator.get_node("Torso/NameLabel").font_size == 72)
 	generator.free()

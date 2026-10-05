@@ -17,6 +17,7 @@ func run() -> void:
 	root.add_child(ground)
 	var actor = CHARACTER.instantiate()
 	actor.generate_on_ready = false
+	actor.planar_constraints_enabled = true
 	root.add_child(actor)
 	var generator = actor.get_node("CreatureGenerator")
 	generator.unsymmetrie = 0

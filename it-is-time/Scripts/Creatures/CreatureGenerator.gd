@@ -94,7 +94,7 @@ const max_neck_start_surface_distance: float = 0.0
 @export_range(0.01, 100.0, 0.01, "or_greater") var neck_minimum_length: float = 0.8
 @export_range(0.01, 100.0, 0.01, "or_greater") var neck_maximum_length: float = 2.0
 ## Zero attaches the Head directly to the front body surface, without any Neck block.
-@export_range(0, 3, 1) var neck_segment_count: int = 3
+@export_range(0, 10, 1) var neck_segment_count: int = 3
 @export_range(0.0, 85.0, 0.1) var neck_maximum_angle: float = 60.0
 @export_range(0.01, 10.0, 0.01, "or_greater") var neck_block_thickness: float = 0.4
 ## Maximum diameter of the overlap in the XY section; shared Z width does not enlarge this limit.
@@ -858,7 +858,7 @@ func _sample_neck_origin(torsos: Array[Dictionary]) -> Vector3:
 	return torso.position + Vector3(half.x, _random.randf_range(-half.y * 0.5, half.y * 0.5), _random.randf_range(-half.z, half.z))
 
 func _create_neck_points(origin: Vector3, total_length: float) -> PackedVector3Array:
-	var count := clampi(neck_segment_count, 0, 3)
+	var count := clampi(neck_segment_count, 0, 10)
 	var points := PackedVector3Array([origin])
 	var weights: Array[float] = []
 	var weight_sum := 0.0
@@ -875,7 +875,7 @@ func _create_neck_points(origin: Vector3, total_length: float) -> PackedVector3A
 
 func _create_valid_plan() -> Dictionary:
 	# Reject invalid scripted values rather than silently changing requested counts.
-	if rear_leg_count < 0 or rear_leg_count > 10 or foreleg_count < 0 or foreleg_count > 10 or torso_count < 1 or torso_count > 32 or neck_segment_count < 0 or neck_segment_count > 3:
+	if rear_leg_count < 0 or rear_leg_count > 10 or foreleg_count < 0 or foreleg_count > 10 or torso_count < 1 or torso_count > 32 or neck_segment_count < 0 or neck_segment_count > 10:
 		return {}
 	for property: Dictionary in get_property_list():
 		if (int(property.usage) & PROPERTY_USAGE_EDITOR) == 0: continue

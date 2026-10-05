@@ -171,6 +171,10 @@ var _last_step_failure: StringName = &""
 var _turn_leg_forces: Dictionary = {}
 var _speed_plan_frame: int = -1
 var _speed_plan_cache: Dictionary = {}
+var _landing_time_estimates: Dictionary = {}
+var _extension_start_times: Array[float] = []
+var _extension_rearm: Dictionary = {}
+var _extension_admission: Dictionary = {}
 var _gallop_reach_released: Dictionary = {}
 var _planar_slide_integral: float = 0.0
 var _planar_slide_frame: int = -1
@@ -540,6 +544,10 @@ func _capture_body_segments() -> void:
 	_reset_planar_slide_control()
 	_gallop_reach_released.clear()
 	_speed_plan_cache.clear()
+	_landing_time_estimates.clear()
+	_extension_start_times.clear()
+	_extension_rearm.clear()
+	_extension_admission.clear()
 	_speed_plan_frame = -1
 	_speed_smoothed_velocity = Vector3.ZERO
 	_speed_velocity_frame = -1
@@ -671,26 +679,36 @@ func _get_speed_leg_plan(leg: RigidBody3D) -> Dictionary:
 	var direction := get_input_movement_direction().slide(Vector3.UP).normalized()
 	if _planar_mode_active(): direction = Vector3(signf(direction.x),0,0)
 	if direction.is_zero_approx(): direction = Vector3.RIGHT
-	var chain: Dictionary = _chains[leg]
-	var root_body: RigidBody3D = chain.root
-	var attachment := root_body.to_global(chain.anchor)
-	var relative := leg.global_position-attachment
-	var sideways := relative.slide(Vector3.UP)-direction*relative.dot(direction)
-	var radius := float(chain.length)*chain_reach_ratio*0.95
-	var forward_reach := sqrt(maxf(radius*radius-relative.y*relative.y-sideways.length_squared(),0.0))
-	var margin := maxf(float(chain.length)*0.05,0.05)
-	var distance := maxf(relative.dot(direction)+forward_reach-margin,0.0)
-	var capacity := _get_gait_data().calculate_gallop_capacity(_legs.size(),false)
-	var plan := _get_gait_data().calculate_speed_gait_profile(_get_gait_reference_length(),_legs.size(),maxf(_speed_smoothed_velocity.dot(direction),0.0),distance,capacity)
-	if not plan.get("enabled",false): return {}
-	plan["forward_reach"] = maxf(forward_reach-margin,0.05)
-	plan["direction"] = direction
-	plan["predicted_travel"] = direction * float(plan.planning_speed) * float(plan.air_duration)
-	_speed_plan_cache[leg] = plan
-	return plan
+	# Build geometry once per frame using the common reference cadence.
+	# Landing delays no longer modify either cadence or swing duration.
+	var capacity := _legs.size() if _get_gait_data().gallop_allow_all_feet_airborne else maxi(_legs.size()-1,0)
+	var reference := _get_gait_reference_length()
+	var actual_speed := maxf(_speed_smoothed_velocity.dot(direction),0.0)
+	var geometry: Dictionary = {}
+	for foot: RigidBody3D in _legs:
+		if not _chain_is_intact(foot): continue
+		var chain: Dictionary = _chains[foot]
+		var attachment: Vector3 = chain.root.to_global(chain.anchor)
+		var relative := foot.global_position-attachment
+		var sideways := relative.slide(Vector3.UP)-direction*relative.dot(direction)
+		var radius := float(chain.length)*chain_reach_ratio*0.95
+		var forward_reach := sqrt(maxf(radius*radius-relative.y*relative.y-sideways.length_squared(),0.0))
+		var margin := maxf(float(chain.length)*0.05,0.05)
+		var distance := maxf(relative.dot(direction)+forward_reach-margin,0.0)
+		geometry[foot] = {"distance": distance,"reach": maxf(forward_reach-margin,0.05)}
+	for foot: RigidBody3D in geometry:
+		var plan := _get_gait_data().calculate_adaptive_flight_profile(reference,_legs.size(),actual_speed,float(geometry[foot].distance),capacity,float(_landing_time_estimates.get(foot,0.0)))
+		if not plan.get("enabled",false): continue
+		plan["forward_reach"] = geometry[foot].reach
+		plan["direction"] = direction
+		plan["predicted_travel"] = direction*float(plan.planning_speed)*float(plan.air_duration)
+		_speed_plan_cache[foot] = plan
+	return _speed_plan_cache.get(leg,{})
 
 func get_automatic_motion_diagnostics() -> Dictionary:
 	var result := super.get_automatic_motion_diagnostics()
+	result["step_start_policy"] = "extension" if _extension_gait_enabled() else "cadence"
+	result["actual_starts_last_second"] = _extension_start_times.filter(func(time): return _physics_elapsed-time < 1.0).size()
 	result["speed_based_gait"] = _automatic_motion_enabled() and _get_gait_data().speed_based_gait and _get_gait_data().gallop_enabled
 	for profile: Dictionary in result.legs:
 		for leg: RigidBody3D in _legs:
@@ -716,15 +734,131 @@ func get_maximum_stepping_feet() -> int:
 		for motion: StepMotion in _active_steps:
 			if motion.extra.get("gallop_step",false): return maxi(normal_capacity,_active_steps.size())
 		return normal_capacity
-	var capacity := _get_gait_data().calculate_gallop_capacity(_legs.size(),_gallop_flight_available())
+	var capacity := _automatic_flight_capacity() if _get_gait_data().speed_based_gait else _get_gait_data().calculate_gallop_capacity(_legs.size(),_gallop_flight_available())
 	# Let an already launched group land when its launch window expires; no new
 	# group can exceed the configured budget simply because old motions exist.
 	return maxi(capacity,_active_steps.size())
 
+func _automatic_flight_capacity() -> int:
+	# Admission is a support safety budget, independent of reference frequency.
+	var intact := 0
+	for foot: RigidBody3D in _legs:
+		if _chain_is_intact(foot): intact += 1
+	return intact if _get_gait_data().gallop_allow_all_feet_airborne else maxi(intact-1,0)
+
+func _extension_gait_enabled() -> bool:
+	var data := _get_gait_data()
+	return data != null and data.automatic_motion and data.speed_based_gait and data.target_speed > 0.0 and input_enabled and not get_input_movement_direction().is_zero_approx() and not _planar_mode_active() and not recovery_control_active and not simplified_physics_mode and _adhesion_release_time_remaining <= 0.0
+
 func _automatic_step_cadence_allows() -> bool:
-	return true if _gallop_starting_batch else super._automatic_step_cadence_allows()
+	return true if _extension_gait_enabled() or _gallop_starting_batch else super._automatic_step_cadence_allows()
+
+## Distance to the rear reach boundary, measured in the requested travel direction.
+## Use actual attachment/foot relative velocity, never target speed, to avoid
+## repeatedly lifting a stationary, already stretched foot.
+func _get_extension_step_demand(foot: RigidBody3D, direction: Vector3) -> Dictionary:
+	var result := {"policy": "extension", "requested": false, "reason": "inactive", "remaining_distance": 0.0, "approach_speed": 0.0, "time_to_limit": -1.0}
+	if not _extension_gait_enabled() or direction.is_zero_approx() or not _chain_is_intact(foot): return result
+	if is_leg_stepping(foot):
+		result.reason = "already_stepping"
+		return result
+	if not is_leg_grounded(foot):
+		result.reason = "not_grounded"
+		return result
+	var chain: Dictionary = _chains[foot]
+	var root_body: RigidBody3D = chain.root
+	var attachment: Vector3 = root_body.to_global(chain.anchor)
+	var attachment_velocity := root_body.linear_velocity + root_body.angular_velocity.cross(attachment-root_body.global_position)
+	var travel := direction.slide(Vector3.UP).normalized()
+	var relative := foot.global_position-attachment
+	var sideways := relative.slide(Vector3.UP)-travel*relative.dot(travel)
+	var length := float(chain.length)
+	var radius := length*chain_reach_ratio*0.95
+	var reach := sqrt(maxf(radius*radius-relative.y*relative.y-sideways.length_squared(),0.0))
+	var raw_remaining := relative.dot(travel)+reach-maxf(length*0.05,0.05)
+	var remaining := maxf(raw_remaining,0.0)
+	var approach := (attachment_velocity-foot.linear_velocity).dot(travel)
+	var plan := _get_speed_leg_plan(foot)
+	var lead := clampf(float(plan.get("air_duration",get_leg_motion_profile(foot).swing_duration))*0.15,0.06,0.18)
+	var threshold := maxf(length*0.12,0.03)
+	result.remaining_distance = remaining
+	result.approach_speed = approach
+	result.time_to_limit = remaining/approach if approach > 0.05 else -1.0
+	result["distance_threshold"] = threshold
+	result["lead_time"] = lead
+	result["reference_frequency"] = get_planned_step_frequency()
+	result["overextension"] = maxf(-raw_remaining,0.0)
+	result["rearm_progress"] = 0.0
+	result["rearm_required_progress"] = length*0.15
+	var emergency := remaining <= maxf(length*0.02,0.02)
+	var actually_moving := approach > 0.05 or (attachment_velocity.dot(travel)>0.1 and foot.linear_velocity.slide(Vector3.UP).length()>0.35)
+	result["emergency"] = emergency and actually_moving
+	if result.emergency:
+		if _extension_rearm.has(foot): result.rearm_progress = (attachment-Vector3(_extension_rearm[foot].origin)).dot(travel)
+		result.requested = true
+		result.reason = "extension_emergency"
+		return result
+	result.requested = approach > 0.05 and (remaining <= threshold or remaining/approach <= lead)
+	# Rearm through geometry/progress, not a timer or cadence credit. If a
+	# landing leaves the foot behind, allow a slower recovery after actual
+	# stance travel instead of rapid repeated normal swings.
+	if _extension_rearm.has(foot):
+		var stance: Dictionary = _extension_rearm[foot]
+		var progress := (attachment-Vector3(stance.origin)).dot(travel)
+		result.rearm_progress = progress
+		if remaining >= length*0.22 or travel.dot(Vector3(stance.direction)) < 0.5:
+			_extension_rearm.erase(foot)
+		elif progress < length*0.15:
+			result.requested = false
+			result.reason = "rearming_stance"
+			return result
+		elif result.requested:
+			result.reason = "reach_recovery"
+			return result
+	result.reason = "distance_limit" if result.requested and remaining <= threshold else ("predicted_limit" if result.requested else "holding")
+	return result
+
+func _update_extension_gait(delta: float, direction: Vector3) -> void:
+	_extension_start_times = _extension_start_times.filter(func(time): return _physics_elapsed-time < 1.0)
+	# Shared code still updates and finishes existing motions. Admission below
+	# ignores all shared/per-foot deadlines and the old cadence gates.
+	_gallop_updating_group = true
+	super._update_resource_gait(delta,direction)
+	_gallop_updating_group = false
+	var candidates := _legs.duplicate()
+	var demands: Dictionary = {}
+	for foot: RigidBody3D in candidates: demands[foot] = _get_extension_step_demand(foot,direction)
+	candidates.sort_custom(func(a,b): return float(demands[a].remaining_distance) < float(demands[b].remaining_distance))
+	var started := 0
+	for foot: RigidBody3D in candidates:
+		_extension_admission[foot] = {"time": _physics_elapsed,"reason": demands[foot].reason,"requested": demands[foot].requested}
+		if not demands[foot].requested: continue
+		if not _can_start_step_with_support(foot):
+			_extension_admission[foot].reason = "support_budget_or_ground_lease"
+			continue
+		_current_step = StepMotion.new()
+		_next_leg_index = _legs.find(foot)
+		if not try_start_step(direction):
+			_extension_admission[foot].reason = "landing_rejected"
+			_extension_admission[foot]["landing_rejection"] = _last_landing_rejection_reason
+			continue
+		_extension_admission[foot].reason = "started"
+		_extension_start_times.append(_physics_elapsed)
+		_current_step.extra["extension_trigger"] = demands[foot].duplicate()
+		if demands[foot].reason in ["reach_recovery","extension_emergency"] and _current_step.extra.has("speed_gait"):
+			_active_step_duration = maxf(_active_step_duration,0.55)
+			_current_step.extra.speed_gait.air_duration = _active_step_duration
+		_current_step.extra["gallop_group"] = _gallop_group_sequence+1
+		started += 1
+	if started > 0: _gallop_group_sequence += 1
+	_gallop_group_scheduler_active = false
+	_current_step = _active_steps[0] if not _active_steps.is_empty() else StepMotion.new()
+
 
 func _update_resource_gait(delta: float, direction: Vector3) -> void:
+	if _extension_gait_enabled():
+		_update_extension_gait(delta,direction)
+		return
 	if _planar_mode_active():
 		direction = Vector3(signf(direction.x),0,0)
 		if direction.is_zero_approx():
@@ -747,37 +881,23 @@ func _update_resource_gait(delta: float, direction: Vector3) -> void:
 	_gallop_updating_group = false
 	var frequency := get_planned_step_frequency()
 	if frequency <= 0.0: return
-	# Advance individual deadlines within the existing group cadence, never add
-	# extra starts beyond the total frequency budget.
-	for foot: RigidBody3D in _legs:
-		if is_leg_stepping(foot) or not _chain_is_intact(foot): continue
-		var plan := _get_speed_leg_plan(foot)
-		if plan.is_empty(): continue
-		var reach_time := float(plan.support_distance)/maxf(float(plan.planning_speed),0.05)
-		var deadline := _physics_elapsed + maxf(reach_time-0.08,0.0)
-		_automatic_next_steps[foot] = minf(float(_automatic_next_steps.get(foot,deadline)),deadline)
-		if reach_time <= 0.08 and is_leg_grounded(foot):
-			_gallop_reach_released[foot] = true
-			_release_support_pin(foot)
+	# Legacy/manual gallop retains its timed group policy. Automatic speed-based
+	# walking was handled by extension events above.
 	if _physics_elapsed < _gallop_next_group_time: return
 	var started := 0
 	var group_size := mini(_get_gait_data().gallop_step_group_size,_legs.size())
-	var candidates := _legs.duplicate()
-	candidates.sort_custom(func(a,b): return float(_automatic_next_steps.get(a,0.0)) < float(_automatic_next_steps.get(b,0.0)))
 	_gallop_starting_batch = true
-	for foot: RigidBody3D in candidates:
+	for foot: RigidBody3D in _legs:
 		if started >= group_size: break
-		if is_leg_stepping(foot) or _physics_elapsed < float(_automatic_next_steps.get(foot,0.0)): continue
+		if is_leg_stepping(foot): continue
 		_current_step = StepMotion.new()
 		_next_leg_index = _legs.find(foot)
 		if not try_start_step(direction): continue
-		_current_step.extra["gallop_group"] = _gallop_group_sequence + 1
-		var timing: Dictionary = _current_step.extra.get("speed_gait",{})
-		_automatic_next_steps[foot] = _physics_elapsed + float(timing.get("cycle",get_leg_motion_profile(foot).cycle))
+		_current_step.extra["gallop_group"] = _gallop_group_sequence+1
 		started += 1
 	_gallop_starting_batch = false
 	if started > 0: _gallop_group_sequence += 1
-	_gallop_next_group_time = _physics_elapsed + maxf(started,1) / frequency
+	_gallop_next_group_time = _physics_elapsed+maxf(started,1)/frequency
 	_next_resource_step_time = _gallop_next_group_time
 	_current_step = _active_steps[0] if not _active_steps.is_empty() else StepMotion.new()
 
@@ -788,11 +908,13 @@ func _gallop_intensity() -> float:
 	return clampf(_get_gait_data().target_speed / maxf(walking_speed,0.01) - 1.0,0.0,1.0)
 
 func _gallop_window() -> float:
+	if _automatic_motion_enabled() and _get_gait_data().speed_based_gait and not _legs.is_empty():
+		return float(_get_speed_leg_plan(_legs[0]).get("air_duration",0.15))
 	return _get_gait_data().gallop_airborne_duration * lerpf(0.5,1.0,_gallop_intensity())
 
 func _gallop_active() -> bool:
 	var data := _get_gait_data()
-	if data == null or not data.automatic_motion or not data.gallop_enabled or not input_enabled or recovery_control_active or simplified_physics_mode or _turn_planning_active or _adhesion_release_time_remaining > 0.0: return false
+	if data == null or not data.automatic_motion or not data.gallop_enabled or not input_enabled or recovery_control_active or simplified_physics_mode or (_turn_planning_active and not data.speed_based_gait) or _adhesion_release_time_remaining > 0.0: return false
 	if get_input_movement_direction().is_zero_approx() or _legs.is_empty(): return false
 	if data.speed_based_gait: return data.target_speed > 0.0
 	for foot: RigidBody3D in _legs:
@@ -800,6 +922,8 @@ func _gallop_active() -> bool:
 	return false
 
 func _try_gallop_takeoff(foot: RigidBody3D) -> void:
+	# Automatic gait lifts selected feet through tracking; never unpin waiting feet.
+	if _automatic_motion_enabled() and _get_gait_data().speed_based_gait: return
 	if not _gallop_active() or _physics_elapsed < _gallop_next_takeoff or _get_gait_data().gallop_takeoff_velocity <= 0.0: return
 	var supports := _contact_drive_supports(_legs)
 	if supports.size() < maxi(_get_gait_data().minimum_support_feet,1): return
@@ -840,12 +964,12 @@ func _update_gallop_contacts() -> void:
 		if not hit.is_empty():
 			var duration := _gallop_window()
 			var plan := _get_speed_leg_plan(foot)
-			if not plan.is_empty(): duration = clampf(float(plan.air_duration)+float(plan.landing_reserve),duration,_get_gait_data().gallop_maximum_airborne_duration)
+			if not plan.is_empty(): duration = float(plan.get("lease_duration",clampf(float(plan.air_duration)+float(plan.landing_reserve),duration,_get_gait_data().gallop_maximum_airborne_duration)))
 			_gallop_contacts[foot] = {"time": _physics_elapsed, "position": hit.position, "normal": hit.normal, "duration": duration}
 	for foot in _gallop_contacts.keys():
 		if not is_instance_valid(foot) or not _chain_is_intact(foot) or _physics_elapsed - float(_gallop_contacts[foot].time) >= _gallop_contact_duration(foot):
 			_gallop_contacts.erase(foot)
-	_gallop_diagnostics = {"active": true, "target_speed": _get_gait_data().target_speed, "window": _gallop_window(), "maximum_lease_duration": _get_gait_data().gallop_maximum_airborne_duration, "intensity": _gallop_intensity(), "walking_speed_limit": float(get_leg_motion_profile(_legs[0]).reachable_speed), "total_step_frequency": super.get_planned_step_frequency(), "remembered_contacts": _gallop_contacts.size(), "takeoffs": _gallop_takeoffs, "group_sequence": _gallop_group_sequence, "group_size": _get_gait_data().gallop_step_group_size, "stepping_capacity": get_maximum_stepping_feet(), "next_group_in": maxf(_gallop_next_group_time-_physics_elapsed,0.0), "phase": "flight" if _physics_elapsed < _gallop_pin_release_until else "landing_or_support", "pin_release_remaining": maxf(_gallop_pin_release_until - _physics_elapsed,0.0), "airborne_force": Vector3.ZERO, "airborne_support": Vector3.ZERO, "segments": []}
+	_gallop_diagnostics = {"active": true, "target_speed": _get_gait_data().target_speed, "window": _gallop_window(), "maximum_lease_duration": float(_get_speed_leg_plan(_legs[0]).get("lease_duration",_get_gait_data().gallop_maximum_airborne_duration)), "intensity": _gallop_intensity(), "walking_speed_limit": float(get_leg_motion_profile(_legs[0]).reachable_speed), "total_step_frequency": get_planned_step_frequency(), "remembered_contacts": _gallop_contacts.size(), "takeoffs": _gallop_takeoffs, "group_sequence": _gallop_group_sequence, "group_size": get_maximum_stepping_feet() if _get_gait_data().speed_based_gait else _get_gait_data().gallop_step_group_size, "stepping_capacity": get_maximum_stepping_feet(), "cadence_controls_admission": not _extension_gait_enabled(), "actual_starts_last_second": _extension_start_times.filter(func(time): return _physics_elapsed-time < 1.0).size(), "next_group_in": maxf(_gallop_next_group_time-_physics_elapsed,0.0), "phase": "flight" if _physics_elapsed < _gallop_pin_release_until else "landing_or_support", "pin_release_remaining": maxf(_gallop_pin_release_until - _physics_elapsed,0.0), "airborne_force": Vector3.ZERO, "airborne_support": Vector3.ZERO, "segments": []}
 
 func _gallop_contact_duration(foot: RigidBody3D) -> float:
 	return float(_gallop_contacts.get(foot,{}).get("duration",_gallop_window()))
@@ -861,6 +985,10 @@ func _gallop_contact_weight(foot: RigidBody3D) -> float:
 
 func _contact_drive_supports(feet: Array) -> Array[RigidBody3D]:
 	var result := super._contact_drive_supports(feet)
+	for motion: StepMotion in _active_steps:
+		if not feet.has(motion.leg) or motion.state != StepState.LANDING or not motion.extra.get("gallop_touchdown_braking",false): continue
+		if motion.leg.freeze or _is_body_broken(motion.leg) or is_leg_slipping(motion.leg) or not is_leg_grounded(motion.leg) or motion.leg.linear_velocity.length() > 1.5: continue
+		if not result.has(motion.leg): result.append(motion.leg)
 	if _gallop_active():
 		for index: int in range(result.size()-1,-1,-1):
 			if _gallop_reach_released.has(result[index]): result.remove_at(index)
@@ -895,7 +1023,7 @@ func _apply_contact_drive(feet: Array, requested: Vector3, carried_mass: float, 
 		bodies.append(driver)
 		mass += driver.mass
 	if mass <= 0.0: return Vector3.ZERO
-	var force: Vector3 = requested.slide(up).limit_length(maximum_contact_drive_force) * support.weight * _get_gait_data().gallop_airborne_drive_ratio * _gallop_intensity()
+	var force: Vector3 = requested.slide(up).limit_length(maximum_contact_drive_force) * support.weight * (0.65 if _get_gait_data().speed_based_gait else _get_gait_data().gallop_airborne_drive_ratio) * _gallop_intensity()
 	for body: RigidBody3D in bodies: body.apply_central_force(force * body.mass / mass)
 	_contact_drive_diagnostics.requested_force += requested
 	_contact_drive_diagnostics.applied_force += force
@@ -1077,7 +1205,7 @@ func _apply_torso_response() -> void:
 				var damping := 2.0 * sub_torso_damping_ratio * sqrt(sub_torso_height_gain)
 				var lift: float = segment.mass * (gravity.length() * sub_torso_weight_share + height_error * sub_torso_height_gain - vertical_speed / torso_mass * damping)
 				var support_limit := minf(sub_torso_maximum_weight_share, auxiliary_support_weight_limit)
-				if not grounded_support: support_limit = minf(support_limit,_get_gait_data().gallop_airborne_support_ratio * float(air_support.weight) * _gallop_intensity())
+				if not grounded_support: support_limit = minf(support_limit,(0.45 if _get_gait_data().speed_based_gait else _get_gait_data().gallop_airborne_support_ratio) * float(air_support.weight) * _gallop_intensity())
 				lift = clampf(lift, 0.0, segment.mass * gravity.length() * support_limit) * segment.support_blend
 				var blend := 1.0 if sub_torso_force_smoothing_time <= 0.0 else 1.0 - exp(-_support_delta / sub_torso_force_smoothing_time)
 				lift = minf(lerpf(previous_lift, lift, blend),segment.mass * gravity.length() * support_limit)
@@ -1689,7 +1817,7 @@ func _update_layout_turn_steps(delta: float) -> void:
 		if _chain_is_intact(foot) and is_leg_grounded(foot): grounded_feet += 1
 	if grounded_feet == 0:
 		if _layout_turn_owned:
-			cancel_step(&"turn_lost_ground")
+			if not _resource_turn_blending_enabled(): cancel_step(&"turn_lost_ground")
 			set_turn_planning_active(false)
 			_layout_turn_owned = false
 		_layout_turn_status = &"waiting_for_ground"
@@ -1703,7 +1831,7 @@ func _update_layout_turn_steps(delta: float) -> void:
 		if not supported: supported_segments = false
 	if grounded_feet < maxi(1, ceili(_legs.size() * turn_minimum_grounded_ratio)) or not supported_segments:
 		if _layout_turn_owned:
-			cancel_step(&"turn_support_insufficient")
+			if not _resource_turn_blending_enabled(): cancel_step(&"turn_support_insufficient")
 			set_turn_planning_active(false)
 			_layout_turn_owned = false
 		_layout_turn_status = &"waiting_for_support"
@@ -1868,14 +1996,14 @@ func get_planned_step_frequency() -> float:
 func _can_start_step_with_support(leg: RigidBody3D) -> bool:
 	if _gallop_active():
 		var flight := _gallop_flight_available()
-		var capacity := _get_gait_data().calculate_gallop_capacity(_legs.size(),flight)
+		var capacity := _automatic_flight_capacity() if _get_gait_data().speed_based_gait else _get_gait_data().calculate_gallop_capacity(_legs.size(),flight)
 		if is_leg_stepping(leg) or _active_steps.size() >= capacity: return false
 		var grounded := 0
 		for other: RigidBody3D in _legs:
 			if other != leg and not is_leg_stepping(other) and is_leg_grounded(other): grounded += 1
 		# All-air starts require a lease from real ground. An expired lease never
 		# authorizes a new launch, even with minimum_support_feet set to zero.
-		return grounded >= maxi(_get_gait_data().gallop_minimum_support_feet,1) or (_get_gait_data().gallop_allow_all_feet_airborne and _get_gait_data().gallop_minimum_support_feet == 0 and flight)
+		return grounded >= (1 if _get_gait_data().speed_based_gait else maxi(_get_gait_data().gallop_minimum_support_feet,1)) or (_get_gait_data().gallop_allow_all_feet_airborne and (_get_gait_data().speed_based_gait or _get_gait_data().gallop_minimum_support_feet == 0) and flight)
 	if not super._can_start_step_with_support(leg): return false
 	if not _layout_turn_owned: return true
 	var id := int(_chains[leg].root.get_meta(&"body_segment_id",0))
@@ -1884,7 +2012,7 @@ func _can_start_step_with_support(leg: RigidBody3D) -> bool:
 	return _segments[id].feet.size() <= 1
 
 func try_start_step(movement_direction: Vector3 = Vector3.RIGHT) -> bool:
-	if not _layout_turn_owned or not _resource_turn_blending_enabled(): return _try_start_walk_step(movement_direction)
+	if _gallop_active() or not _layout_turn_owned or not _resource_turn_blending_enabled(): return _try_start_walk_step(movement_direction)
 	if _legs.is_empty(): return false
 	var foot: RigidBody3D = _legs[_next_leg_index % _legs.size()]
 	if is_leg_stepping(foot) or not _can_start_step_with_support(foot): return false
@@ -2148,7 +2276,7 @@ func _begin_leg_motion(leg: RigidBody3D, target: Vector3, target_normal: Vector3
 			_active_step_duration = float(timing.air_duration)
 			# Longer air phases need real clearance; do not merely slow a shallow
 			# walking arc until it travels along the ground.
-			_external_step_height = minf(float(_chains[leg].length)*0.15,_get_gait_step_height()+_gravity_acceleration().length()*_active_step_duration*_active_step_duration*0.04)
+			_external_step_height = float(timing.get("lift",minf(float(_chains[leg].length)*0.15,_get_gait_step_height()+_gravity_acceleration().length()*_active_step_duration*_active_step_duration*0.04)))
 			_current_step.extra.speed_gait["lift"] = _external_step_height
 		_current_step.extra["landing_timeout"] = maxf(0.18,_get_gait_data().gallop_landing_confirmation*2.0)
 		_current_step.extra["gallop_contact_confirmation"] = 0.0
@@ -2156,6 +2284,14 @@ func _begin_leg_motion(leg: RigidBody3D, target: Vector3, target_normal: Vector3
 		_current_step.extra["gallop_freeze_progress"] = _get_gait_data().gallop_target_freeze_progress
 		_current_step.extra["gallop_follow_limit"] = 0.0 if not timing.is_empty() else float(_chains[leg].length) * _get_gait_data().gallop_target_follow_length_ratio
 		_current_step.extra["gallop_touchdown_speed_limit"] = _get_gait_data().gallop_touchdown_speed_limit
+		if timing.get("automatic_flight",false):
+			_current_step.extra["gallop_landing_confirmation"] = timing.landing_confirmation
+			_current_step.extra["gallop_touchdown_speed_limit"] = timing.touchdown_speed_limit
+			_current_step.extra["gallop_landing_started"] = -1.0
+			_current_step.extra["gallop_retargets"] = 0
+			_current_step.extra["gallop_rest_offset"] = target-_chains[leg].root.to_global(_chains[leg].anchor)-Vector3(timing.predicted_travel)
+			_current_step.extra["gallop_follow_limit"] = Vector3(timing.predicted_travel).length()+float(_chains[leg].length)*2.0
+			_current_step.extra["landing_timeout"] = maxf(0.5,float(timing.air_duration)*1.5)
 		_current_step.extra["gallop_target_frozen"] = false
 		_current_step.extra["gallop_target_shift"] = Vector3.ZERO
 		_update_gallop_tracking_profile(leg,target)
@@ -2166,15 +2302,18 @@ func _begin_leg_motion(leg: RigidBody3D, target: Vector3, target_normal: Vector3
 func _update_gallop_tracking_profile(leg: RigidBody3D, target: Vector3) -> void:
 	var profile: Dictionary = _current_step.extra.get("automatic_profile",{})
 	if profile.is_empty(): return
-	var duration := maxf(_active_step_duration,0.08)
-	var gain := clampf(16.0/(duration*duration),20.0,4000.0)
+	var duration := maxf(_active_step_duration,0.35) if _current_step.extra.has("speed_gait") else maxf(_active_step_duration,0.08)
+	var gain := clampf(16.0/(duration*duration),40.0,120.0) if _current_step.extra.has("speed_gait") else clampf(16.0/(duration*duration),20.0,4000.0)
 	profile.position_gain = gain
 	profile.velocity_gain = 2.0*sqrt(gain)
 	profile.step_acceleration = clampf(8.0*maxf((target-leg.global_position).length(),_get_effective_step_height())/(duration*duration)+9.8,30.0,2000.0)
 	if _current_step.extra.has("speed_gait"):
 		profile["vertical_position_gain"] = maxf(gain,100.0)
 		profile["vertical_velocity_gain"] = 2.0*sqrt(float(profile.vertical_position_gain))
-		profile.step_acceleration = maxf(float(profile.step_acceleration),60.0)
+		profile.step_acceleration = clampf(float(profile.step_acceleration),60.0,180.0)
+		if _current_step.extra.get("extension_trigger",{}).get("reason","") in ["reach_recovery","extension_emergency"]:
+			profile.position_gain = minf(float(profile.position_gain),80.0)
+			profile.step_acceleration = minf(float(profile.step_acceleration),120.0)
 
 # A smooth horizontal path has zero velocity at lift-off and touchdown. The
 # vertical arch uses the full configured gallop lift at midpoint.
@@ -2189,10 +2328,26 @@ func _quadratic_step_velocity(progress: float, duration: float) -> Vector3:
 
 func _update_active_step(delta: float) -> void:
 	var gallop_step: bool = is_instance_valid(_active_leg) and _current_step.extra.get("gallop_step",false) and _chain_is_intact(_active_leg)
+	if gallop_step and _current_step.extra.has("speed_gait") and _step_state == StepState.MOVING and not _current_step.extra.get("liftoff_complete",false):
+		# Lift is a separate bounded phase: it must not consume the horizontal
+		# swing clock and force the remaining travel into a catch-up burst.
+		_current_step.extra["liftoff_elapsed"] = float(_current_step.extra.get("liftoff_elapsed",0.0))+delta
+		_update_gallop_tracking_profile(_active_leg,_step_target)
+		var lift_position := _active_leg.global_position
+		lift_position.y = _step_start.y+maxf(_get_effective_step_height()*0.6,minimum_step_lift_clearance*2.0)
+		_apply_leg_tracking_force(lift_position,Vector3.ZERO)
+		if _step_has_lifted:
+			_current_step.extra["liftoff_complete"] = true
+			_step_start = _active_leg.global_position
+			_step_elapsed = 0.0
+		elif float(_current_step.extra.liftoff_elapsed) >= maxf(0.3,_active_step_duration*0.5):
+			_handle_step_timeout(is_leg_grounded(_active_leg))
+		return
+	if gallop_step and _current_step.extra.get("speed_gait",{}).get("automatic_flight",false): _retarget_adaptive_landing(delta)
 	if gallop_step and _step_state == StepState.MOVING:
 		var progress := _step_elapsed / maxf(_active_step_duration,MIN_STEP_TIME)
-		if progress >= float(_current_step.extra.gallop_freeze_progress): _current_step.extra.gallop_target_frozen = true
-		if _gallop_active() and not _current_step.extra.gallop_target_frozen:
+		if progress >= float(_current_step.extra.gallop_freeze_progress) and not _current_step.extra.get("speed_gait",{}).get("automatic_flight",false): _current_step.extra.gallop_target_frozen = true
+		if _gallop_active() and not _current_step.extra.gallop_target_frozen and not _current_step.extra.get("speed_gait",{}).get("automatic_flight",false):
 			var root_body: RigidBody3D = _chains[_active_leg].root
 			var offset: Vector3 = (root_body.global_position - Vector3(_current_step.extra.gallop_anchor_start)).slide(Vector3.UP)
 			offset = offset.limit_length(float(_current_step.extra.gallop_follow_limit))
@@ -2207,7 +2362,7 @@ func _update_active_step(delta: float) -> void:
 		# Early descending contact ends the swing; do not drag a landed foot toward
 		# an outdated planned point. Braking below happens at this real contact.
 		var contact := _support_surface_contact(_active_leg)
-		if _step_has_lifted and progress >= 0.8 and not contact.is_empty():
+		if _step_has_lifted and progress >= 0.5 and not contact.is_empty():
 			var gap := (_get_foot_world_position(_active_leg)-Vector3(contact.position)).dot(Vector3(contact.normal))
 			if absf(gap) <= 0.04 and _active_leg.linear_velocity.dot(Vector3(contact.normal)) <= 0.05:
 				_step_state = StepState.LANDING
@@ -2217,26 +2372,32 @@ func _update_active_step(delta: float) -> void:
 	if gallop_step:
 		_update_gallop_tracking_profile(_active_leg,_step_target)
 		if _step_state == StepState.LANDING:
+			if _current_step.extra.get("speed_gait",{}).get("automatic_flight",false):
+				if float(_current_step.extra.gallop_landing_started)<0: _current_step.extra.gallop_landing_started = _physics_elapsed
+				var observed := _physics_elapsed-float(_current_step.extra.gallop_landing_started)
+				_landing_time_estimates[_active_leg] = maxf(float(_landing_time_estimates.get(_active_leg,0)),minf(observed,2.0))
 			var contact := _support_surface_contact(_active_leg)
 			if not contact.is_empty():
 				var normal: Vector3 = contact.normal
 				var gap := (_get_foot_world_position(_active_leg)-Vector3(contact.position)).dot(normal)
-				if absf(gap) <= 0.04:
+				var contact_tolerance := minf(0.07,maxf(0.04,_get_effective_landing_tolerance())) if _current_step.extra.get("speed_gait",{}).get("automatic_flight",false) else 0.04
+				if absf(gap) <= contact_tolerance and is_leg_grounded(_active_leg):
 					if not _current_step.extra.has("gallop_touchdown_point"):
+						_current_step.extra["gallop_contact_epoch"] = int(_current_step.extra.get("gallop_contact_epoch",0))+1
 						_current_step.extra["gallop_touchdown_point"] = contact.position
 						_current_step.extra["gallop_target_frozen"] = true
 					# Remove pursuit: brake tangential motion at the actual contact,
 					# with a normal correction only, then create the native ground pin.
 					var desired := _active_leg.global_position + normal * (foot_ground_offset-gap)
 					var brake_profile: Dictionary = _current_step.extra.get("automatic_profile",{})
-					var brake_time := maxf(float(_current_step.extra.gallop_landing_confirmation)*0.5,0.03)
+					var brake_time := float(_current_step.extra.get("speed_gait",{}).get("brake_time",maxf(float(_current_step.extra.gallop_landing_confirmation)*0.5,0.03)))
 					if not brake_profile.is_empty():
-						brake_profile.velocity_gain = maxf(float(brake_profile.velocity_gain),1.0/brake_time)
-						brake_profile.step_acceleration = minf(2000.0,maxf(float(brake_profile.step_acceleration),_active_leg.linear_velocity.length()/brake_time+20.0))
+						brake_profile.velocity_gain = maxf(float(brake_profile.velocity_gain),2.0/brake_time)
+						brake_profile.step_acceleration = minf(180.0,maxf(float(brake_profile.step_acceleration),_active_leg.linear_velocity.length()/brake_time+20.0))
 					_current_step.extra["gallop_braking_velocity"] = _active_leg.linear_velocity.slide(normal)
 					_apply_leg_tracking_force(desired,Vector3.ZERO)
 					_current_step.extra["gallop_touchdown_braking"] = true
-					var slow := _active_leg.linear_velocity.slide(normal).length() <= float(_current_step.extra.gallop_touchdown_speed_limit) and absf(_active_leg.linear_velocity.dot(normal)) <= 0.5
+					var slow := _active_leg.linear_velocity.slide(normal).length() <= float(_current_step.extra.gallop_touchdown_speed_limit) and absf(_active_leg.linear_velocity.dot(normal)) <= 0.7
 					_current_step.extra.gallop_contact_confirmation = float(_current_step.extra.gallop_contact_confirmation)+delta if slow else 0.0
 					_landing_elapsed += delta
 					if float(_current_step.extra.gallop_contact_confirmation) >= float(_current_step.extra.gallop_landing_confirmation):
@@ -2245,13 +2406,53 @@ func _update_active_step(delta: float) -> void:
 						_finish_current_step()
 						_update_support_foot_lock(landed,normal)
 					elif _landing_elapsed >= _get_effective_landing_timeout():
-						# Keep braking real contact briefly rather than treating an
+						# Keep braking real contact rather than treating an
 						# obsolete positional error as an unsuccessful landing.
-						if _landing_elapsed >= maxf(_get_effective_landing_timeout(),0.5): _handle_step_timeout(true)
+						if _landing_elapsed >= maxf(_get_effective_landing_timeout(),0.5) and not _current_step.extra.get("speed_gait",{}).get("automatic_flight",false): _handle_step_timeout(true)
 					return
+			# A lost real contact invalidates the frozen point. Do not drag the
+			# foot back toward a point left behind by the moving torso.
+			if _current_step.extra.get("speed_gait",{}).get("automatic_flight",false):
+				_current_step.extra["gallop_target_frozen"] = false
+				_current_step.extra.erase("gallop_touchdown_point")
 			_current_step.extra["gallop_touchdown_braking"] = false
 			_current_step.extra.gallop_contact_confirmation = 0.0
 	super._update_active_step(delta)
+
+# Recompute the remaining root travel, rather than chasing a launch-time prediction.
+# Keep terrain validation and a bounded correction speed; actual contact freezes the point.
+func _retarget_adaptive_landing(delta: float) -> void:
+	if _current_step.extra.get("gallop_target_frozen",false): return
+	var remaining := maxf(_active_step_duration-_step_elapsed,0.0)
+	var chain: Dictionary = _chains[_active_leg]
+	var attachment: Vector3 = chain.root.to_global(chain.anchor)
+	var predicted := attachment+_speed_smoothed_velocity.slide(Vector3.UP)*remaining
+	var desired: Vector3 = _active_leg.global_position if _step_state==StepState.LANDING else predicted+Vector3(_current_step.extra.gallop_rest_offset)
+	var current: Vector3 = _current_step.extra.landing_surface_point
+	var foot_offset := _active_leg.global_position-_get_foot_world_position(_active_leg)+Vector3.UP*foot_ground_offset
+	var correction := (desired-foot_offset-current).slide(Vector3.UP)
+	var limit := maxf(float(_current_step.extra.speed_gait.budget_speed),float(chain.length))*delta
+	var sample := current+correction.limit_length(limit)
+	var query := PhysicsRayQueryParameters3D.create(sample+Vector3.UP*ray_start_height,sample+Vector3.DOWN*ray_length,terrain_collision_mask,_get_character_exclusion_rids())
+	var hit := _intersect_ray(query)
+	if not super._is_landing_point_valid(_active_leg,_get_foot_world_position(_active_leg),hit): return
+	var body_target := _body_position_for_ground_contact(_active_leg,hit.position)
+	if body_target.distance_to(predicted)>float(chain.length)*chain_reach_ratio: return
+	_current_step.extra.landing_surface_point = hit.position
+	_current_step.extra.gallop_target_shift = Vector3(hit.position)-Vector3(_current_step.extra.gallop_surface_start)
+	_current_step.extra["gallop_predicted_attachment"] = predicted
+	_current_step.extra["gallop_retargets"] += 1
+	_step_target_normal = hit.normal
+
+func _finish_current_step() -> void:
+	if _current_step.extra.has("extension_trigger") and _current_step.extra.has("speed_gait") and _chain_is_intact(_active_leg):
+		_extension_rearm[_active_leg] = {"origin": _chains[_active_leg].root.to_global(_chains[_active_leg].anchor), "direction": _active_step_input_direction.slide(Vector3.UP).normalized()}
+	if _current_step.extra.get("speed_gait",{}).get("automatic_flight",false):
+		var started := float(_current_step.extra.get("gallop_landing_started",-1.0))
+		if started>=0:
+			var observed := minf(_physics_elapsed-started,2.0)
+			_landing_time_estimates[_active_leg] = lerpf(float(_landing_time_estimates.get(_active_leg,observed)),observed,0.25)
+	super._finish_current_step()
 
 func _apply_leg_tracking_force(desired_position: Vector3, desired_velocity: Vector3) -> void:
 	_apply_turn_swing_orientation()
@@ -2271,12 +2472,28 @@ func _apply_leg_tracking_force(desired_position: Vector3, desired_velocity: Vect
 	var hit := _get_surface_below_leg(_active_leg, surface_adhesion_probe_distance)
 	var gap := INF if hit.is_empty() else (_get_foot_world_position(_active_leg) - Vector3(hit.position)).dot(Vector3(hit.normal))
 	if gap >= _step_start_clearance + minimum_step_lift_clearance: _step_has_lifted = true
+	var horizontal_weight := 1.0
+	if _current_step.extra.has("speed_gait") and _step_state == StepState.MOVING:
+		if not _step_has_lifted:
+			horizontal_weight = 0.0
+			desired_position.y = maxf(desired_position.y,_step_start.y+maxf(_get_effective_step_height()*0.6,minimum_step_lift_clearance*2.0))
+			_current_step.extra["liftoff_phase"] = "lifting"
+		else:
+			if not _current_step.extra.has("horizontal_release_time"): _current_step.extra["horizontal_release_time"] = _physics_elapsed
+			horizontal_weight = smoothstep(0.0,0.1,_physics_elapsed-float(_current_step.extra.horizontal_release_time))
+			_current_step.extra["liftoff_phase"] = "travelling"
+		_current_step.extra["horizontal_tracking_weight"] = horizontal_weight
 	_tracking_position_error = desired_position - _active_leg.global_position
 	var velocity_error := desired_velocity - _active_leg.linear_velocity
 	var acceleration := _tracking_position_error * _step_motion_setting("position_gain", step_position_gain) * _active_movement_scale + velocity_error * _step_motion_setting("velocity_gain", step_velocity_gain) * sqrt(_active_movement_scale)
 	if _current_step.extra.has("speed_gait") and not _current_step.extra.get("gallop_touchdown_braking",false):
 		var vertical := _tracking_position_error.y * _step_motion_setting("vertical_position_gain",step_position_gain) + velocity_error.y * _step_motion_setting("vertical_velocity_gain",step_velocity_gain)
 		acceleration.y = vertical
+		if _step_state == StepState.MOVING:
+			# Keep velocity damping while suppressing forward pursuit before lift.
+			var damping := _step_motion_setting("velocity_gain",step_velocity_gain)*sqrt(_active_movement_scale)
+			acceleration.x = (acceleration.x+_active_leg.linear_velocity.x*damping)*horizontal_weight-_active_leg.linear_velocity.x*damping
+			acceleration.z = (acceleration.z+_active_leg.linear_velocity.z*damping)*horizontal_weight-_active_leg.linear_velocity.z*damping
 	acceleration = acceleration.limit_length(_step_motion_setting("step_acceleration", maximum_step_acceleration) * pow(_active_movement_scale, 1.5))
 	# Fade weight feedforward during descent; landing applies no upward weight compensation.
 	var progress := clampf(_step_elapsed / maxf(_active_step_duration, MIN_STEP_TIME), 0.0, 1.0)
@@ -2349,6 +2566,7 @@ func _calculate_foot_alignment_torque(leg: RigidBody3D, normal: Vector3) -> Vect
 # Launch suppresses adhesion only until each foot has returned to a descending
 # terrain contact. A shared flight timer must not release a foot that has landed.
 func _gallop_foot_launch_pending(leg: RigidBody3D, normal: Vector3) -> bool:
+	if _automatic_motion_enabled() and _get_gait_data().speed_based_gait: return false
 	if not _gallop_active() or _physics_elapsed >= _gallop_pin_release_until or _gallop_landed_feet.has(leg): return false
 	var contact := _support_surface_contact(leg)
 	if not contact.is_empty() and _physics_elapsed-_gallop_launch_time >= 0.05 and leg.linear_velocity.dot(normal) <= 0.2:
@@ -2396,6 +2614,22 @@ func get_support_foot_diagnostics(leg: RigidBody3D) -> Dictionary:
 	result["alignment_torque"] = _foot_alignment_torques.get(leg, Vector3.ZERO)
 	var extra: Dictionary = get_leg_step_diagnostics(leg).extra
 	result["speed_gait"] = extra.get("speed_gait",_get_speed_leg_plan(leg))
+	result["extension_demand"] = _get_extension_step_demand(leg,get_input_movement_direction())
+	result["extension_trigger"] = extra.get("extension_trigger",{})
+	result["landing_time_estimate"] = _landing_time_estimates.get(leg,0.0)
+	result["gallop"]["landing_time_estimate"] = result["landing_time_estimate"]
+	result["gallop"]["retargets"] = extra.get("gallop_retargets",0)
+	result["gallop"]["next_step_in"] = 0.0 if _extension_gait_enabled() else maxf(float(_automatic_next_steps.get(leg,_physics_elapsed))-_physics_elapsed,0.0)
+	result["gallop"]["cadence_controls_admission"] = not _extension_gait_enabled()
+	result["gallop"]["extension_demand"] = result["extension_demand"]
+	result["gallop"]["extension_trigger"] = result["extension_trigger"]
+	result["gallop"]["contact_epoch"] = extra.get("gallop_contact_epoch",0)
+	result["gallop"]["tracking_profile"] = extra.get("automatic_profile",{})
+	result["gallop"]["admission"] = _extension_admission.get(leg,{}).duplicate()
+	if not result.gallop.admission.is_empty(): result.gallop.admission["age"] = _physics_elapsed-float(result.gallop.admission.time)
+	result["gallop"]["liftoff_phase"] = extra.get("liftoff_phase","")
+	result["gallop"]["horizontal_tracking_weight"] = extra.get("horizontal_tracking_weight",1.0)
+	result["gallop"]["predicted_attachment"] = extra.get("gallop_predicted_attachment",Vector3.ZERO)
 	result["gallop"]["speed_gait"] = result["speed_gait"]
 	result["gallop"]["group"] = extra.get("gallop_group",0)
 	result["gallop"]["landing_confirmation"] = extra.get("gallop_contact_confirmation",0.0)
