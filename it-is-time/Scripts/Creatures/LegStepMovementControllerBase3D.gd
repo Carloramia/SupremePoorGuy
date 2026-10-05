@@ -150,9 +150,9 @@ var _last_scheduler_resource: Resource
 @export_group("Support Foot Lock")
 ## Grounded support feet retain a landing anchor until they step or leave the surface.
 @export var support_foot_lock_enabled: bool = true
-@export_range(0.0, 2000.0, 1.0, "or_greater") var support_foot_stiffness: float = 250.0
-@export_range(0.0, 500.0, 1.0, "or_greater") var support_foot_damping: float = 40.0
-@export_range(0.0, 5000.0, 1.0, "or_greater") var maximum_support_foot_force: float = 500.0
+@export_storage var support_foot_stiffness: float = 250.0
+@export_storage var support_foot_damping: float = 40.0
+@export_storage var maximum_support_foot_force: float = 500.0
 
 @export_group("Ground Movement Brake")
 @export var ground_movement_brake_enabled: bool = true
@@ -191,14 +191,26 @@ var _last_scheduler_resource: Resource
 @export_group("Torso Response")
 @export var torso_response_enabled: bool = true
 @export var torso_path: NodePath = NodePath("../Torso")
-@export_range(0.0, 10000.0, 1.0, "or_greater") var torso_force_per_unit: float = 80.0
-@export_range(0.0, 10000.0, 1.0, "or_greater") var maximum_torso_force: float = 300.0
+@export_storage var torso_force_per_unit: float = 80.0
+@export_storage var maximum_torso_force: float = 300.0
+
+@export_group("Contact Movement Drive")
+## Velocity demand replaces foot-displacement feedback. Forces require real stance contact.
+@export_range(0.0, 50.0, 0.1) var contact_velocity_gain: float = 4.0
+@export_range(0.0, 30.0, 0.1) var contact_maximum_acceleration: float = 4.0
+@export_range(0.0, 100000.0, 1.0, "or_greater") var maximum_contact_drive_force: float = 20000.0
+@export_range(0.0, 3.0, 0.05) var contact_traction_coefficient: float = 0.8
+## Additional persistent world-space demand; clear explicitly after the requesting action ends.
+var _contact_extra_force: Vector3 = Vector3.ZERO
+var _contact_drive_diagnostics: Dictionary = {}
+var _contact_drive_frame: int = -1
+var _contact_drive_rows: Array[Dictionary] = []
 
 @export_group("Torso Ground Support")
-## When enabled, only grounded Legs may contribute movement force to the Torso.
-@export var torso_movement_force_requires_leg_support: bool = true
-## Fast mode may keep using the last grounded Legs briefly after all Legs leave the surface.
-@export_range(0.0, 2.0, 0.01, "or_greater") var fast_airborne_force_grace_duration: float = 0.18
+## Legacy setting retained for saved scenes; contact drive always requires stance contact.
+@export_storage var torso_movement_force_requires_leg_support: bool = true
+## Legacy setting retained for saved scenes; airborne contact drive is disabled.
+@export_storage var fast_airborne_force_grace_duration: float = 0.18
 
 @export_group("Diagnostics")
 @export var diagnostic_logging_enabled: bool = false
@@ -260,7 +272,7 @@ func set_turn_planning_active(active: bool) -> void:
 		return
 	_turn_planning_active = active
 	if active:
-		cancel_step(&"turn_planning_started")
+		if not _resource_turn_blending_enabled(): cancel_step(&"turn_planning_started")
 	else:
 		_turn_movement_multiplier = 1.0
 		restore_base_hip_joint_limits()
@@ -329,18 +341,62 @@ func _get_gait_data() -> GAIT_DATA:
 	var data := fast_gait_data if is_fast_speed_active() else slow_gait_data
 	return data if data != null and data.is_valid() else null
 
+var _automatic_profiles: Dictionary = {}
+var _automatic_profiles_frame: int = -1
+var _automatic_next_steps: Dictionary = {}
+
+func _automatic_motion_enabled() -> bool:
+	var data := _get_gait_data()
+	return data != null and data.automatic_motion
+
+func _get_leg_reference_length(leg: RigidBody3D) -> float:
+	return maxf(Vector3(_leg_initial_local_positions.get(leg, Vector3.ONE)).length(), 0.1)
+
+func _get_leg_turn_radius(leg: RigidBody3D) -> float:
+	return maxf(Vector3(_leg_initial_local_positions.get(leg, Vector3.ONE)).slide(Vector3.UP).length(), 0.1)
+
+func get_leg_motion_profile(leg: RigidBody3D) -> Dictionary:
+	if not _automatic_motion_enabled() or not is_instance_valid(leg): return {}
+	if _automatic_profiles_frame != Engine.get_physics_frames():
+		_automatic_profiles.clear()
+		_automatic_profiles_frame = Engine.get_physics_frames()
+	if not _automatic_profiles.has(leg):
+		_automatic_profiles[leg] = _get_gait_data().calculate_motion_profile(_get_leg_reference_length(leg), _get_leg_turn_radius(leg), _legs.size(), _get_gait_reference_length())
+	return _automatic_profiles[leg]
+
+func get_automatic_motion_diagnostics() -> Dictionary:
+	var legs: Array[Dictionary] = []
+	for leg: RigidBody3D in _legs:
+		var profile := get_leg_motion_profile(leg).duplicate()
+		if not profile.is_empty(): profile["foot"] = leg.name; legs.append(profile)
+	return {"enabled": _automatic_motion_enabled(), "requested_speed": _get_gait_data().target_speed if _automatic_motion_enabled() else get_expected_horizontal_speed(), "target_speed": get_expected_horizontal_speed(), "total_step_frequency": get_planned_step_frequency(), "legs": legs}
+
+func _step_motion_setting(key: String, fallback: float) -> float:
+	var profile: Dictionary = _current_step.extra.get("automatic_profile", {})
+	return float(profile.get(key, fallback))
+
+func _motion_setting(key: String, fallback: float, leg: RigidBody3D = null) -> float:
+	if not _automatic_motion_enabled(): return fallback
+	if leg == null: leg = _active_leg if is_instance_valid(_active_leg) else (_legs[0] if not _legs.is_empty() else null)
+	return float(get_leg_motion_profile(leg).get(key, fallback))
+
+func get_leg_step_distance(leg: RigidBody3D) -> float:
+	return _motion_setting("stride", get_current_step_distance(), leg)
+
 func _get_gait_reference_length() -> float:
 	var shortest := INF
 	for leg: RigidBody3D in _legs:
-		if _leg_initial_local_positions.has(leg): shortest = minf(shortest, _leg_initial_local_positions[leg].length())
+		shortest = minf(shortest, _get_leg_reference_length(leg))
 	return maxf(shortest, 0.01) if is_finite(shortest) else 1.0
 
 func _get_gait_step_distance() -> float:
+	if _automatic_motion_enabled(): return _motion_setting("stride", minimum_step_distance)
 	var data := _get_gait_data()
 	var distance := data.stride_length_ratio * _get_gait_reference_length() if data.use_limb_length_ratios else data.step_distance
 	return maxf(distance * sqrt(_get_configured_movement_scale()), minimum_step_distance)
 
 func _get_gait_step_height() -> float:
+	if _automatic_motion_enabled(): return _motion_setting("lift", 0.1)
 	var data := _get_gait_data()
 	var height := data.lift_length_ratio * _get_gait_reference_length() if data.use_limb_length_ratios else data.step_height
 	return minf(height * sqrt(_get_configured_movement_scale()), maximum_scaled_step_height)
@@ -348,11 +404,16 @@ func _get_gait_step_height() -> float:
 func get_maximum_stepping_feet() -> int:
 	var data := _get_gait_data()
 	if data == null: return 1
+	if data.automatic_motion: return data.calculate_support_capacity(_legs.size())
 	var count := mini(floori(_legs.size() * data.maximum_stepping_ratio), maxi(0, _legs.size() - data.minimum_support_feet))
 	if data.maximum_simultaneous_steps > 0: count = mini(count, data.maximum_simultaneous_steps)
 	return maxi(count, 0)
 
 func get_planned_step_frequency() -> float:
+	if _automatic_motion_enabled():
+		var frequency := 0.0
+		for foot: RigidBody3D in _legs: frequency += float(get_leg_motion_profile(foot).frequency)
+		return frequency
 	var data := _get_gait_data()
 	if data == null: return get_fast_step_frequency() if is_fast_speed_active() else 1.0 / maxf(get_current_step_duration(), MIN_STEP_TIME)
 	return minf(data.step_frequency * sqrt(_get_configured_movement_scale()), get_maximum_stepping_feet() / maxf(get_current_step_duration(), MIN_STEP_TIME))
@@ -372,6 +433,12 @@ func get_leg_step_diagnostics(leg: RigidBody3D) -> Dictionary:
 				"extra": motion.extra.duplicate()}
 	return {"sequence": 0, "state": "IDLE", "target": Vector3.ZERO, "normal": Vector3.ZERO, "distance": 0.0, "timeout": -1.0, "extra": {}}
 
+func _resource_turn_blending_enabled() -> bool:
+	return false
+
+func _has_resource_step_demand(direction: Vector3) -> bool:
+	return not direction.is_zero_approx()
+
 func _update_resource_gait(delta: float, direction: Vector3) -> void:
 	# Each foot retains its own swing/landing timers and generated-drive data.
 	_updating_steps = true
@@ -380,16 +447,24 @@ func _update_resource_gait(delta: float, direction: Vector3) -> void:
 		if not is_instance_valid(motion.leg) or _is_body_broken(motion.leg) or not _legs.has(motion.leg):
 			cancel_step(&"active_leg_invalid")
 			continue
-		if not direction.is_zero_approx() and _should_replan_active_step_direction(direction): replan_active_step(direction)
+		if not motion.extra.get("generated_turn_step", false) and not direction.is_zero_approx() and _should_replan_active_step_direction(direction): replan_active_step(direction)
 		_update_active_step(delta)
 	_updating_steps = false
 	var frequency := get_planned_step_frequency()
-	if not direction.is_zero_approx() and _adhesion_release_time_remaining <= 0.0 and frequency > 0.0 and _physics_elapsed >= _next_resource_step_time and _active_steps.size() < get_maximum_stepping_feet():
+	if _has_resource_step_demand(direction) and _adhesion_release_time_remaining <= 0.0 and frequency > 0.0 and _physics_elapsed >= _next_resource_step_time and _active_steps.size() < get_maximum_stepping_feet():
 		_current_step = StepMotion.new()
+		var candidates := _legs.duplicate()
+		if _automatic_motion_enabled():
+			candidates.sort_custom(func(a, b): return float(_automatic_next_steps.get(a, 0.0)) < float(_automatic_next_steps.get(b, 0.0)))
 		for attempt: int in range(_legs.size()):
+			if _automatic_motion_enabled():
+				var candidate: RigidBody3D = candidates[attempt]
+				if _physics_elapsed < float(_automatic_next_steps.get(candidate, 0.0)): continue
+				_next_leg_index = _legs.find(candidate)
 			var started := try_start_step(direction)
 			_next_leg_index = (_next_leg_index + 1) % maxi(_legs.size(), 1)
 			if started:
+				if _automatic_motion_enabled() and not _current_step.extra.get("generated_turn_step", false): _automatic_next_steps[_active_leg] = _physics_elapsed + float(get_leg_motion_profile(_active_leg).cycle)
 				_updating_steps = true
 				_update_active_step(delta)
 				_updating_steps = false
@@ -401,6 +476,7 @@ func _update_resource_gait(delta: float, direction: Vector3) -> void:
 	_last_fast_speed_active = is_fast_speed_active()
 
 func _ready() -> void:
+	_reset_contact_drive_diagnostics()
 	_movement_perf.register(self)
 	add_to_group(&"leg_step_movement_controllers")
 	var runtime_console := get_tree().root.get_node_or_null("RuntimeConsole")
@@ -429,10 +505,12 @@ func _physics_process(delta: float) -> void:
 	if selected_data != _last_scheduler_resource:
 		cancel_step(&"gait_resource_changed")
 		_last_scheduler_resource = selected_data
+		_automatic_next_steps.clear()
 	if _physics_query_cache_dirty:
 		_refresh_physics_query_cache()
 	_begin_ground_probe_frame()
 	_current_fast_landing_force = Vector3.ZERO
+	_reset_contact_drive_diagnostics()
 	_adhesion_release_time_remaining = maxf(_adhesion_release_time_remaining - delta, 0.0)
 	_update_joint_spring_scale(delta)
 	if input_enabled and is_burst_requested():
@@ -442,7 +520,7 @@ func _physics_process(delta: float) -> void:
 	var fast_speed_active := is_fast_speed_active() if input_enabled and not _turn_planning_active else false
 	_refresh_torso_force_support()
 	_update_fast_velocity_gait(delta, input_direction, fast_speed_active)
-	if _get_gait_data() != null and not _turn_planning_active:
+	if _get_gait_data() != null and (not _turn_planning_active or _resource_turn_blending_enabled()):
 		_update_resource_gait(delta, input_direction)
 	else:
 		if (
@@ -477,11 +555,7 @@ func _physics_process(delta: float) -> void:
 		var response_started: int = _movement_perf.start()
 		_apply_torso_response()
 		_movement_perf.finish(&"torso_response", response_started)
-		var brake_started: int = _movement_perf.start()
-		_apply_ground_movement_brake(input_direction)
-		_movement_perf.finish(&"ground_brake", brake_started)
-		if fast_speed_active:
-			_apply_fast_torso_velocity_drive()
+		# Contact velocity demand includes braking; do not stack legacy velocity drives.
 	if _performance_tracking_enabled:
 		var elapsed_usec := Time.get_ticks_usec() - started_usec
 		_performance_physics_frames += 1
@@ -586,7 +660,13 @@ func _apply_fast_torso_velocity_drive() -> void:
 	_torso.apply_central_force(force)
 
 ## Starts the next leg in the stable alternating order when it has a valid landing point.
+var _last_shared_step_start: float = -INF
+func _automatic_step_cadence_allows() -> bool:
+	if not _automatic_motion_enabled() or _get_gait_data().maximum_step_frequency <= 0.0: return true
+	return _physics_elapsed + 0.000001 >= _last_shared_step_start + 1.0 / _get_gait_data().maximum_step_frequency
+
 func try_start_step(movement_direction: Vector3 = Vector3.RIGHT) -> bool:
+	if not _automatic_step_cadence_allows(): return false
 	if _step_state != StepState.IDLE:
 		return false
 	movement_direction.y = 0.0
@@ -621,6 +701,7 @@ func try_start_step(movement_direction: Vector3 = Vector3.RIGHT) -> bool:
 
 ## Shares landing validation, swing tracking and contact confirmation with walking.
 func try_start_turn_step(leg: RigidBody3D, sample_position: Vector3, duration: float, height: float) -> bool:
+	if not _automatic_step_cadence_allows(): return false
 	if _step_state != StepState.IDLE or not is_instance_valid(leg) or _is_body_broken(leg):
 		return false
 	if not _can_start_step_with_support(leg):
@@ -633,8 +714,16 @@ func try_start_turn_step(leg: RigidBody3D, sample_position: Vector3, duration: f
 	if not _is_landing_point_valid(leg, foot, hit):
 		return false
 	_begin_leg_motion(leg, _body_position_for_ground_contact(leg, hit[&"position"]), hit[&"normal"])
+	if _automatic_motion_enabled() and _get_gait_data().maximum_step_frequency > 0.0:
+		_next_resource_step_time = _physics_elapsed + 1.0 / _get_gait_data().maximum_step_frequency
 	_active_step_duration = maxf(duration, MIN_STEP_TIME)
 	_external_step_height = maxf(height, 0.0)
+	if _automatic_motion_enabled():
+		var profile: Dictionary = _current_step.extra.automatic_profile
+		var gain := clampf(16.0 / (_active_step_duration * _active_step_duration), 20.0, 4000.0)
+		profile.position_gain = gain
+		profile.velocity_gain = 2.0 * sqrt(gain)
+		profile.step_acceleration = clampf(8.0 * maxf((_step_target - leg.global_position).length(), height) / (_active_step_duration * _active_step_duration) + 9.8, 30.0, 2000.0)
 	return true
 
 ## Keeps the same moving leg, but replaces its old target with one based on the new input.
@@ -684,7 +773,7 @@ func _should_replan_active_step_direction(new_direction: Vector3) -> bool:
 	# A reversal must react immediately even if the ordinary replan cooldown is active.
 	if direction_dot < 0.0:
 		return true
-	if _physics_elapsed - _last_replan_time < replan_cooldown:
+	if _physics_elapsed - _last_replan_time < _motion_setting("replan_cooldown", replan_cooldown):
 		return false
 	var minimum_dot := cos(deg_to_rad(replan_direction_angle_degrees))
 	return direction_dot < minimum_dot
@@ -705,7 +794,7 @@ func find_landing_point(leg: RigidBody3D, movement_direction: Vector3 = Vector3.
 	var sample_count := maxi(ceili(float(landing_search_samples) * sqrt(_get_configured_movement_scale())), 1)
 	for sample_index: int in range(sample_count):
 		var ratio := 0.0 if sample_count == 1 else float(sample_index) / float(sample_count - 1)
-		var forward_distance := lerpf(get_current_step_distance(), minimum_step_distance, ratio)
+		var forward_distance := lerpf(get_leg_step_distance(leg), minf(minimum_step_distance, get_leg_step_distance(leg)), ratio)
 		var sample_position := rest_position + movement_direction * forward_distance
 		if is_fast_speed_active() and fast_minimum_leg_target_advance > 0.0:
 			var current_forward_distance := (sample_position - foot_position).dot(movement_direction)
@@ -769,6 +858,7 @@ func get_current_step_distance() -> float:
 	return slow_step_distance * sqrt(_get_configured_movement_scale())
 
 func get_current_step_duration() -> float:
+	if _automatic_motion_enabled(): return _motion_setting("swing_duration", 0.35)
 	if _get_gait_data() != null: return _get_gait_data().swing_duration / sqrt(_get_configured_movement_scale())
 	if is_fast_speed_active():
 		return maxf(
@@ -784,7 +874,7 @@ func get_fast_step_frequency() -> float:
 	return _calculate_fast_step_frequency()
 
 func get_fast_step_interval() -> float:
-	return 1.0 / _calculate_fast_step_frequency()
+	return 1.0 / maxf(_calculate_fast_step_frequency(), MIN_STEP_TIME)
 
 func _get_fast_movement_scale() -> float:
 	return maxf(fast_movement_scale, 0.1) if use_fast_movement_scale else 1.0
@@ -798,6 +888,7 @@ func _calculate_fast_step_frequency() -> float:
 	)
 
 func _get_configured_movement_scale() -> float:
+	if _automatic_motion_enabled(): return 1.0
 	if is_fast_speed_active():
 		return maxf(fast_movement_scale, 0.1) if use_fast_movement_scale else 1.0
 	return maxf(slow_movement_scale, 0.1) if use_slow_movement_scale else 1.0
@@ -880,28 +971,28 @@ func update_leg_surface_adhesion() -> void:
 	_adhesion_forces.clear()
 	_remove_invalid_legs()
 	_support_forces.clear()
-	for previous_leg: RigidBody3D in _support_anchors.keys():
+	for previous_leg in _support_pins.keys():
 		if not is_instance_valid(previous_leg) or not _legs.has(previous_leg):
-			_support_anchors.erase(previous_leg)
+			_release_support_pin(previous_leg)
 	if _adhesion_release_time_remaining > 0.0:
 		_clear_leg_adhesion_surface_normals()
-		_support_anchors.clear()
+		release_all_support_pins()
 		return
 	for leg: RigidBody3D in _legs:
 		if is_leg_stepping(leg):
-			_support_anchors.erase(leg)
+			_release_support_pin(leg)
 			_leg_adhesion_surface_normals[leg] = Vector3.ZERO
 			continue
 		var hit := _get_surface_below_leg(leg, surface_adhesion_probe_distance)
 		if hit.is_empty():
-			_support_anchors.erase(leg)
+			_release_support_pin(leg)
 			_leg_adhesion_surface_normals[leg] = Vector3.ZERO
 			continue
 		var surface_normal: Vector3 = hit[&"normal"].normalized()
 		_leg_adhesion_surface_normals[leg] = surface_normal
 		_update_support_foot_lock(leg, surface_normal)
 		var adhesion_multiplier := fast_lift_adhesion_multiplier if _fast_lift_time_remaining > 0.0 else 1.0
-		if surface_adhesion_enabled:
+		if surface_adhesion_enabled and not _support_pins.has(leg):
 			var force := _calculate_leg_adhesion_force(leg, hit, adhesion_multiplier)
 			_adhesion_forces[leg] = force
 			if not force.is_zero_approx():
@@ -911,24 +1002,95 @@ func update_leg_surface_adhesion() -> void:
 func _calculate_leg_adhesion_force(_leg: RigidBody3D, hit: Dictionary, multiplier: float) -> Vector3:
 	return -Vector3(hit.normal).normalized() * surface_adhesion_force * _get_configured_movement_scale() * multiplier
 
+var _support_pins: Dictionary = {}
+
+func is_leg_slipping(leg: RigidBody3D) -> bool:
+	return is_instance_valid(leg) and leg.get("is_slipping") == true
+
+func set_leg_slipping(leg: RigidBody3D, slipping: bool) -> void:
+	if not is_instance_valid(leg) or not leg.has_signal("slipping_changed"): return
+	leg.set("is_slipping", slipping)
+	if slipping: _release_support_pin(leg)
+
+func _on_foot_slipping_changed(slipping: bool, leg: RigidBody3D) -> void:
+	if slipping: _release_support_pin(leg)
+
+func _on_pinned_foot_exiting(leg: RigidBody3D) -> void:
+	_release_support_pin(leg)
+
+func _on_pinned_foot_broken(_source: Node, leg: RigidBody3D) -> void:
+	_release_support_pin(leg)
+
+func _release_support_pin(leg) -> void:
+	if _support_pins.has(leg):
+		var pin: Generic6DOFJoint3D = _support_pins[leg].joint
+		if is_instance_valid(pin): pin.free()
+		_support_pins.erase(leg)
+	_support_anchors.erase(leg)
+
+func release_all_support_pins() -> void:
+	for leg in _support_pins.keys(): _release_support_pin(leg)
+	_support_anchors.clear()
+
+func _exit_tree() -> void:
+	release_all_support_pins()
+
+func _support_pin_z_free() -> bool:
+	return false
+
 func _update_support_foot_lock(leg: RigidBody3D, normal: Vector3) -> void:
-	if not support_foot_lock_enabled or not surface_adhesion_enabled or not is_leg_grounded(leg):
-		_support_anchors.erase(leg)
+	if not support_foot_lock_enabled or not surface_adhesion_enabled or leg.freeze or _is_body_broken(leg) or is_leg_slipping(leg) or not is_leg_grounded(leg):
+		_release_support_pin(leg)
 		return
-	if not _support_anchors.has(leg):
-		_support_anchors[leg] = leg.global_position
-	var error := (_support_anchors[leg] - leg.global_position).slide(normal)
-	var velocity := leg.linear_velocity.slide(normal)
-	var force := (error * support_foot_stiffness - velocity * support_foot_damping).limit_length(maximum_support_foot_force)
-	_support_forces[leg] = force
-	leg.apply_central_force(force)
+	var hit := _get_surface_below_leg(leg, surface_adhesion_probe_distance)
+	if hit.is_empty():
+		_release_support_pin(leg)
+		return
+	# A broad ground ray alone is insufficient: never pin a foot while still falling.
+	if absf((_get_foot_world_position(leg) - Vector3(hit.position)).dot(normal)) > 0.08:
+		_release_support_pin(leg)
+		return
+	var terrain := hit.get("collider") as PhysicsBody3D
+	if _support_pins.has(leg):
+		var entry: Dictionary = _support_pins[leg]
+		if not is_instance_valid(entry.joint) or (entry.terrain != null and not is_instance_valid(entry.terrain)) or entry.terrain != terrain:
+			_release_support_pin(leg)
+		else:
+			_support_anchors[leg] = terrain.to_global(entry.local_anchor) if terrain != null else entry.local_anchor
+			return
+	var pin := Generic6DOFJoint3D.new()
+	pin.name = "FootGroundPin_" + str(leg.get_instance_id())
+	pin.exclude_nodes_from_collision = false
+	pin.set_meta(&"foot_ground_pin", true)
+	for axis: String in ["x", "y", "z"]:
+		pin.call("set_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_LINEAR_LIMIT, not (axis == "z" and _support_pin_z_free()))
+		pin.call("set_param_" + axis, Generic6DOFJoint3D.PARAM_LINEAR_LOWER_LIMIT, 0.0)
+		pin.call("set_param_" + axis, Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT, 0.0)
+		pin.call("set_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_LIMIT, false)
+		pin.call("set_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_SPRING, false)
+		pin.call("set_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_MOTOR, false)
+	add_child(pin)
+	pin.global_position = leg.global_position
+	pin.node_a = pin.get_path_to(leg)
+	if terrain != null: pin.node_b = pin.get_path_to(terrain)
+	_support_pins[leg] = {"joint": pin, "terrain": terrain, "local_anchor": terrain.to_local(leg.global_position) if terrain != null else leg.global_position}
+	_support_anchors[leg] = leg.global_position
+	if leg.has_signal("slipping_changed"):
+		var callback := _on_foot_slipping_changed.bind(leg)
+		if not leg.is_connected("slipping_changed", callback): leg.connect("slipping_changed", callback)
+	if leg.has_signal("broken"):
+		var callback := _on_pinned_foot_broken.bind(leg)
+		if not leg.is_connected("broken", callback): leg.connect("broken", callback)
+	var exiting_callback := _on_pinned_foot_exiting.bind(leg)
+	if not leg.tree_exiting.is_connected(exiting_callback): leg.tree_exiting.connect(exiting_callback)
 
 func get_support_foot_diagnostics(leg: RigidBody3D) -> Dictionary:
 	return {
-		"locked": _support_anchors.has(leg),
+		"locked": _support_pins.has(leg), "slipping": is_leg_slipping(leg), "pin_kind": "linear_constraint" if _support_pins.has(leg) else "none",
 		"adhesion_force": _adhesion_forces.get(leg, Vector3.ZERO),
 		"anchor": _support_anchors.get(leg, leg.global_position),
-		"drift": (leg.global_position - _support_anchors.get(leg, leg.global_position)).slide(Vector3.UP).length(),
+		"drift": absf(leg.global_position.x - Vector3(_support_anchors.get(leg,leg.global_position)).x) if _support_pin_z_free() else (leg.global_position - _support_anchors.get(leg, leg.global_position)).slide(Vector3.UP).length(),
+		"z_free": _support_pin_z_free(),
 		"speed": leg.linear_velocity.slide(Vector3.UP).length(),
 		"force": _support_forces.get(leg, Vector3.ZERO),
 		"brake_force": _ground_brake_force,
@@ -965,6 +1127,7 @@ func try_surface_burst() -> bool:
 	if torsos.is_empty():
 		return false
 	burst_direction = burst_direction.normalized()
+	release_all_support_pins()
 	for torso: RigidBody3D in torsos:
 		torso.sleeping = false
 		torso.apply_central_impulse(burst_direction * surface_burst_impulse)
@@ -1175,30 +1338,15 @@ func get_combined_leg_offset() -> Vector3:
 	return combined_offset
 
 ## Returns Legs currently allowed to transfer movement force into the Torso.
-func get_torso_movement_force_legs(fast_mode_active: bool = false) -> Array[RigidBody3D]:
-	if not torso_movement_force_requires_leg_support:
-		return get_leg_parts()
-	var grounded_legs := _refresh_torso_force_support()
-	if not grounded_legs.is_empty():
-		return grounded_legs
-	if fast_mode_active and get_fast_airborne_force_grace_remaining() > 0.0:
-		var grace_legs: Array[RigidBody3D] = []
-		for leg: RigidBody3D in _last_grounded_force_legs:
-			if is_instance_valid(leg):
-				grace_legs.append(leg)
-		return grace_legs
-	return []
+func get_torso_movement_force_legs(_fast_mode_active: bool = false) -> Array[RigidBody3D]:
+	return _contact_drive_supports(get_leg_parts())
 
 func has_torso_movement_force_support(fast_mode_active: bool = false) -> bool:
 	return not get_torso_movement_force_legs(fast_mode_active).is_empty()
 
 func get_fast_airborne_force_grace_remaining() -> float:
-	if _last_ground_support_time < 0.0 or fast_airborne_force_grace_duration <= 0.0:
-		return 0.0
-	return maxf(
-		_last_ground_support_time + fast_airborne_force_grace_duration - _physics_elapsed,
-		0.0
-	)
+	# Kept for log/API compatibility. Airborne legs no longer provide contact drive.
+	return 0.0
 
 func _refresh_torso_force_support() -> Array[RigidBody3D]:
 	var grounded_legs: Array[RigidBody3D] = []
@@ -1210,13 +1358,88 @@ func _refresh_torso_force_support() -> Array[RigidBody3D]:
 		_last_ground_support_time = _physics_elapsed
 	return grounded_legs
 
+func set_contact_force_request(force: Vector3) -> void:
+	_contact_extra_force = force if force.is_finite() else Vector3.ZERO
+
+func clear_contact_force_request() -> void:
+	_contact_extra_force = Vector3.ZERO
+
+func _reset_contact_drive_diagnostics() -> void:
+	_contact_drive_frame = Engine.get_physics_frames()
+	_contact_drive_rows.clear()
+	_contact_drive_diagnostics = {"mode": "contact_velocity", "frame": _contact_drive_frame,
+		"requested_force": Vector3.ZERO, "applied_force": Vector3.ZERO, "supports": 0,
+		"extra_force": _contact_extra_force, "legs": _contact_drive_rows}
+
+func get_contact_drive_diagnostics() -> Dictionary:
+	var result := _contact_drive_diagnostics.duplicate(true)
+	result["age_frames"] = Engine.get_physics_frames() - _contact_drive_frame
+	result["unmet_force"] = Vector3(result.get("requested_force", Vector3.ZERO)) - Vector3(result.get("applied_force", Vector3.ZERO))
+	result["enabled"] = torso_response_enabled
+	return result
+
+func _get_contact_drive_body(foot: RigidBody3D) -> RigidBody3D:
+	return foot
+
+func _contact_drive_supports(feet: Array) -> Array[RigidBody3D]:
+	var result: Array[RigidBody3D] = []
+	if _adhesion_release_time_remaining > 0.0: return result
+	for foot: RigidBody3D in feet:
+		if not is_instance_valid(foot) or foot.freeze or _is_body_broken(foot) or is_leg_stepping(foot): continue
+		if is_leg_grounded(foot): result.append(foot)
+	return result
+
+func _contact_velocity_force(velocity: Vector3, mass: float, up: Vector3) -> Vector3:
+	var direction := get_input_movement_direction().slide(up) if input_enabled else Vector3.ZERO
+	var target := direction.limit_length(1.0) * get_expected_horizontal_speed()
+	_contact_drive_diagnostics["target_velocity"] = target
+	_contact_drive_diagnostics["actual_velocity"] = velocity.slide(up)
+	return ((target - velocity.slide(up)) * _motion_setting("contact_gain", contact_velocity_gain)).limit_length(_motion_setting("contact_acceleration", contact_maximum_acceleration)) * mass
+
 func calculate_torso_force() -> Vector3:
-	var scale := _get_configured_movement_scale()
-	var force := get_combined_leg_offset() * torso_force_per_unit * sqrt(scale)
-	var effective_maximum_force := maximum_torso_force * scale
-	if effective_maximum_force > 0.0 and force.length() > effective_maximum_force:
-		force = force.normalized() * effective_maximum_force
-	return force
+	if not torso_response_enabled or not is_instance_valid(_torso): return Vector3.ZERO
+	if _adhesion_release_time_remaining > 0.0 or _contact_drive_supports(get_leg_parts()).is_empty(): return Vector3.ZERO
+	var mass := 0.0
+	for body: RigidBody3D in _character_body_cache:
+		if is_instance_valid(body) and not _is_body_broken(body): mass += body.mass
+	return (_contact_velocity_force(_torso.linear_velocity, maxf(mass, _torso.mass), Vector3.UP) + _contact_extra_force).limit_length(maximum_contact_drive_force)
+
+## Allocate one region's demand to stance legs. No offset enters the demand calculation.
+func _apply_contact_drive(feet: Array, requested: Vector3, carried_mass: float, up: Vector3) -> Vector3:
+	if _contact_drive_frame != Engine.get_physics_frames(): _reset_contact_drive_diagnostics()
+	var supports := _contact_drive_supports(feet)
+	_contact_drive_diagnostics.requested_force += requested
+	if supports.is_empty(): return Vector3.ZERO
+	var applied := Vector3.ZERO
+	var load := carried_mass * float(ProjectSettings.get_setting("physics/3d/default_gravity", 9.8)) / float(supports.size())
+	for foot: RigidBody3D in supports:
+		var driver := _get_contact_drive_body(foot)
+		if not is_instance_valid(driver) or driver.freeze or _is_body_broken(driver): continue
+		var hit := _get_surface_below_leg(foot, ground_probe_distance)
+		if hit.is_empty(): continue
+		var normal: Vector3 = Vector3(hit.normal).normalized()
+		var share := requested / float(supports.size())
+		var normal_force := clampf(share.dot(normal), -surface_adhesion_force, load * 2.0)
+		var tangent_limit := load * contact_traction_coefficient
+		var force := share.slide(normal).limit_length(tangent_limit) + normal * normal_force
+		force = force.limit_length(maximum_contact_drive_force / float(supports.size()))
+		driver.apply_central_force(force)
+		applied += force
+		var row: Dictionary = {}
+		for existing: Dictionary in _contact_drive_rows:
+			if existing.foot == foot.name: row = existing; break
+		if row.is_empty():
+			row = {"foot": foot.name, "driver": driver.name, "normal": normal,
+				"requested": Vector3.ZERO, "applied": Vector3.ZERO, "limited": false,
+				"traction_limit": tangent_limit, "carried_mass": carried_mass,
+				"segment": int(foot.get_meta(&"body_segment_id", -1))}
+			_contact_drive_rows.append(row)
+		row.requested += share
+		row.applied += force
+		row.limited = row.limited or not force.is_equal_approx(share)
+	_contact_drive_diagnostics.supports = _contact_drive_rows.size()
+	_contact_drive_diagnostics.applied_force += applied
+	return applied
 
 func _begin_leg_motion(
 	leg: RigidBody3D,
@@ -1229,7 +1452,7 @@ func _begin_leg_motion(
 	_active_leg = leg
 	if not _active_steps.has(_current_step): _active_steps.append(_current_step)
 	_current_step.extra["resource_step"] = _get_gait_data() != null
-	_support_anchors.erase(leg)
+	_release_support_pin(leg)
 	_active_movement_scale = _get_configured_movement_scale()
 	_step_start = leg.global_position
 	_step_target = target
@@ -1251,12 +1474,14 @@ func _begin_leg_motion(
 	_active_step_duration = maxf(get_current_step_duration(), MIN_STEP_TIME)
 	if _get_gait_data() != null:
 		_external_step_height = _get_gait_step_height()
-		_current_step.extra["landing_tolerance"] = _get_gait_data().landing_tolerance
-		_current_step.extra["landing_timeout"] = _get_gait_data().landing_timeout
+		_current_step.extra["landing_tolerance"] = _motion_setting("landing_tolerance", _get_gait_data().landing_tolerance, leg)
+		_current_step.extra["landing_timeout"] = _motion_setting("landing_timeout", _get_gait_data().landing_timeout, leg)
+		_current_step.extra["automatic_profile"] = get_leg_motion_profile(leg).duplicate()
 	_expand_hip_joint_for_step(leg, target)
 	_step_state = StepState.MOVING
 	_active_leg.sleeping = false
 	if starts_new_step:
+		_last_shared_step_start = _physics_elapsed
 		_last_replan_time = _physics_elapsed
 		_step_sequence += 1
 		_current_step.sequence = _step_sequence
@@ -1331,15 +1556,16 @@ func _apply_leg_tracking_force(desired_position: Vector3, desired_velocity: Vect
 	var position_error := desired_position - _active_leg.global_position
 	var velocity_error := desired_velocity - _active_leg.linear_velocity
 	var root_scale := sqrt(_active_movement_scale)
-	var effective_stiffness := leg_move_stiffness * _active_movement_scale
-	var effective_damping := leg_move_damping * root_scale
-	var effective_maximum_force := maximum_leg_force * pow(_active_movement_scale, 1.5)
+	var effective_stiffness := _step_motion_setting("position_gain", leg_move_stiffness / maxf(_active_leg.mass, 0.001)) * _active_leg.mass * _active_movement_scale
+	var effective_damping := _step_motion_setting("velocity_gain", leg_move_damping / maxf(_active_leg.mass, 0.001)) * _active_leg.mass * root_scale
+	var effective_maximum_force := _step_motion_setting("step_acceleration", maximum_leg_force / maxf(_active_leg.mass, 0.001)) * _active_leg.mass * pow(_active_movement_scale, 1.5)
 	var force := position_error * effective_stiffness + velocity_error * effective_damping
 	if effective_maximum_force > 0.0:
 		force = force.limit_length(effective_maximum_force)
 	_active_leg.apply_central_force(force)
 
 func _apply_fast_landing_assist(progress: float) -> void:
+	if _automatic_motion_enabled(): return
 	if (
 		not fast_landing_assist_enabled
 		or not is_fast_speed_active()
@@ -1386,6 +1612,7 @@ func _get_effective_landing_tolerance() -> float:
 	return tolerance
 
 func _get_effective_landing_velocity_limit() -> float:
+	if _automatic_motion_enabled(): return maxf(0.2, _step_motion_setting("stride", 0.2) / maxf(_active_step_duration, MIN_STEP_TIME) * 0.25)
 	return landing_velocity_limit * _active_movement_scale
 
 func _get_effective_landing_timeout() -> float:
@@ -1409,6 +1636,7 @@ func _record_touchdown() -> void:
 	_last_touchdown_times_by_leg[_last_touchdown_leg] = _physics_elapsed
 
 func _start_fast_float_lift() -> void:
+	if _automatic_motion_enabled(): return
 	if not fast_float_enabled or not is_instance_valid(_torso):
 		return
 	_fast_lift_time_remaining = _active_step_duration * fast_lift_duration_ratio
@@ -1445,8 +1673,7 @@ func _update_fast_float_lift(delta: float, input_direction: Vector3, fast_speed_
 		lift_force = minf(lift_force, fast_maximum_lift_force)
 	if lift_force > 0.0:
 		_torso.sleeping = false
-		_torso.apply_central_force(Vector3.UP * lift_force)
-	_current_fast_lift_force = lift_force
+		_current_fast_lift_force = _apply_contact_drive(get_leg_parts(), Vector3.UP * lift_force, _torso.mass, Vector3.UP).dot(Vector3.UP)
 	_fast_lift_time_remaining = maxf(_fast_lift_time_remaining - delta, 0.0)
 
 func _has_enough_support(moving_leg: RigidBody3D) -> bool:
@@ -1576,6 +1803,7 @@ func _rebuild_character_exclusion_rids() -> void:
 			_character_body_cache.append(node as RigidBody3D)
 
 func refresh_physics_query_cache() -> void:
+	release_all_support_pins()
 	_refresh_physics_query_cache()
 
 func _refresh_physics_query_cache() -> void:
@@ -1731,20 +1959,14 @@ func _apply_joint_spring_scale(scale: float) -> void:
 		joint.set_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_SPRING_DAMPING, base_values.y * sqrt(scale))
 
 func _apply_torso_response() -> void:
-	if not torso_response_enabled or not is_instance_valid(_torso):
-		return
-	var force := calculate_torso_force()
-	if ground_movement_brake_enabled:
-		var velocity := _torso.linear_velocity.slide(Vector3.UP)
-		var expected := get_expected_horizontal_speed() if input_enabled and not get_input_movement_direction().is_zero_approx() else 0.0
-		if velocity.length() > maxf(expected, 0.2):
-			var along_velocity := force.dot(velocity.normalized())
-			if along_velocity > 0.0:
-				force -= velocity.normalized() * along_velocity
-	if force.is_zero_approx():
-		return
-	_torso.sleeping = false
-	_torso.apply_central_force(force)
+	if not torso_response_enabled or not is_instance_valid(_torso): return
+	var mass := 0.0
+	for body: RigidBody3D in _character_body_cache:
+		if is_instance_valid(body) and not _is_body_broken(body): mass += body.mass
+	mass = maxf(mass, _torso.mass)
+	var requested := (_contact_velocity_force(_torso.linear_velocity, mass, Vector3.UP) + _contact_extra_force).limit_length(maximum_contact_drive_force)
+	_contact_drive_diagnostics["target_velocity"] = (get_input_movement_direction() if input_enabled else Vector3.ZERO).limit_length(1.0) * get_expected_horizontal_speed()
+	_apply_contact_drive(get_leg_parts(), requested, mass, Vector3.UP)
 
 func _capture_leg_initial_positions() -> void:
 	_leg_initial_local_positions.clear()
@@ -1854,6 +2076,10 @@ func get_directional_projection_correction_strength() -> float:
 	return maximum_directional_projection_correction * smoothstep(0.0, 1.0, speed_ratio)
 
 func _get_expected_horizontal_speed() -> float:
+	if _automatic_motion_enabled():
+		var speed := _get_gait_data().target_speed
+		for leg: RigidBody3D in _legs: speed = minf(speed, float(get_leg_motion_profile(leg).reachable_speed))
+		return speed
 	if _get_gait_data() != null: return _get_gait_step_distance() * get_planned_step_frequency()
 	if is_fast_speed_active():
 		# The planned speed keeps landing selection stable while input acceleration catches up.

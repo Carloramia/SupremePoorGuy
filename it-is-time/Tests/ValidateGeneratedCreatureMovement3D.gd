@@ -22,10 +22,12 @@ func _validate() -> void:
 		character.generate_on_ready = false
 		root.add_child(character)
 		var generator := character.get_node("CreatureGenerator")
-		generator.feets = count
+		generator.rear_leg_count = maxi((count) - 2, 0)
+		generator.foreleg_count = mini((count), 2)
 		generator.unsymmetrie = 100.0 if "--asymmetric" in OS.get_cmdline_user_args() else 0.0
 		generator.neck_number = 0
-		generator.torso_core_extra_blocks = 0
+		generator.body_length = maxf(4.0, float(count) * 1.2)
+
 		generator._random.seed = 42
 		assert(character.generate_creature())
 		var controller := character.get_node("GeneratedLegStepMovementController3D")
@@ -46,7 +48,10 @@ func _validate() -> void:
 			var expected := 4 if 1 in foot.tags else 3
 			assert(chain.joints.size() == expected)
 			for joint: Generic6DOFJoint3D in chain.joints:
-				assert(is_zero_approx(joint.get_param_x(Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT)))
+				var a: Node = joint.get_node(joint.node_a)
+				var b: Node = joint.get_node(joint.node_b)
+				var expected_slack: float = character.limb_joint_linear_slack.x if 5 in a.tags and 5 in b.tags else 0.0
+				assert(is_equal_approx(joint.get_param_x(Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT), expected_slack))
 		Input.action_press("Right")
 		Input.action_press("Up")
 		assert(controller.get_input_movement_direction().is_equal_approx(Vector3(1, 0, -1).normalized()))
@@ -63,7 +68,19 @@ func _validate() -> void:
 		for frame: int in range(180): await physics_frame
 		var initial: Vector3 = controller._torso.global_position
 		Input.action_press("Right")
-		for frame: int in range(360): await physics_frame
+		var steady_speeds: Array[float] = []
+		for frame: int in range(360):
+			await physics_frame
+			if frame >= 240:
+				var velocity := Vector3.ZERO
+				var mass := 0.0
+				for body: RigidBody3D in controller.get_torso_parts():
+					velocity += body.linear_velocity * body.mass
+					mass += body.mass
+				steady_speeds.append((velocity / maxf(mass,0.001)).slide(Vector3.UP).length())
+		var mean_speed := 0.0
+		for speed: float in steady_speeds: mean_speed += speed / steady_speeds.size()
+		print("AUTOMATIC_WALK_SPEED requested=",controller.slow_gait_data.target_speed," planned=",controller._get_expected_horizontal_speed()," steady_mean=",mean_speed)
 		Input.action_release("Right")
 		var displacement: Vector3 = controller._torso.global_position - initial
 		print("[generated_gait_test] feet=%d steps=%d touchdown=%s displacement=%s diagnostics=%s" % [count, controller._step_sequence, controller._last_touchdown_leg, displacement, controller.get_generated_movement_diagnostics()])

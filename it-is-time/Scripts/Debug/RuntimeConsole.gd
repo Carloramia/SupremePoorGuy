@@ -291,19 +291,29 @@ func _collect_motion_snapshot() -> Array[String]:
 	for part: PhysicalBodyPart3D in parts:
 		var tags := PackedStringArray()
 		for tag: int in part.tags: tags.append(PhysicalBodyPart3D.BodyPartTag.keys()[tag])
-		messages.append("[trackmotion] character=%s part=%s path=%s id=%d tags=%s role=%s segment=%d position=%s local_position=%s rotation_degrees=%s velocity=%s linear_speed=%.3f angular_velocity=%s angular_speed=%.3f moving=%s sleeping=%s frozen=%s mass=%.3f hp=%.3f max_hp=%.3f broken=%s" % [
+		messages.append("[trackmotion] character=%s part=%s path=%s id=%d tags=%s role=%s segment=%d position=%s local_position=%s rotation_degrees=%s velocity=%s linear_speed=%.3f angular_velocity=%s angular_speed=%.3f moving=%s sleeping=%s frozen=%s mass=%.3f gravity_scale=%.3f hp=%.3f max_hp=%.3f broken=%s" % [
 			character.name, part.name, character.get_path_to(part), part.get_instance_id(), tags,
 			part.get_meta(&"generated_role", "BodyPart"), int(part.get_meta(&"body_segment_id", -1)), _format_vector3(part.global_position), _format_vector3(part.position),
 			_format_vector3(part.global_rotation * (180.0 / PI)), _format_vector3(part.linear_velocity), part.linear_velocity.length(),
 			_format_vector3(part.angular_velocity), part.angular_velocity.length(),
 			part.linear_velocity.length_squared() > 0.0001 or part.angular_velocity.length_squared() > 0.0001,
-			part.sleeping, part.freeze, part.mass, part.current_hp, part.max_hp, part.is_broken])
+			part.sleeping, part.freeze, part.mass, part.gravity_scale, part.current_hp, part.max_hp, part.is_broken])
 	# Preserve the detailed gait fields, limited to the selected actor's controllers.
 	for controller: Node in get_tree().get_nodes_in_group(&"leg_step_movement_controllers"):
 		if controller.get_parent() == character:
 			messages.append_array(_collect_leg_motion_lines(controller))
+			if controller.has_method("get_automatic_motion_diagnostics"):
+				messages.append("[trackmotion] character=%s automatic_motion=%s" % [character.name, controller.call("get_automatic_motion_diagnostics")])
+			if controller.has_method("get_contact_drive_diagnostics"):
+				messages.append("[trackmotion] character=%s contact_drive=%s" % [character.name, controller.call("get_contact_drive_diagnostics")])
 			if controller.has_method("get_stance_support_diagnostics"):
 				var support: Dictionary = controller.call("get_stance_support_diagnostics")
+				for foot: RigidBody3D in controller.call("get_leg_parts"):
+					messages.append("[trackmotion] character=%s foot=%s rotation_lock_x=%s rotation_lock_y=%s rotation_lock_z=%s slipping=%s ground_pin=%s anchor_drift=%.4f angular_velocity=%s" % [character.name, foot.name, foot.axis_lock_angular_x, foot.axis_lock_angular_y, foot.axis_lock_angular_z, controller.call("is_leg_slipping", foot), controller.call("get_support_foot_diagnostics", foot).locked, controller.call("get_support_foot_diagnostics", foot).drift, foot.angular_velocity])
+				var constraints: Array = support.get("segment_rotation_constraints", [])
+				support.erase("segment_rotation_constraints")
+				for constraint: Dictionary in constraints:
+					messages.append("[trackmotion] character=%s segment_constraint=%s" % [character.name, constraint])
 				var joints: Array = support.get("joints", [])
 				support.erase("joints")
 				messages.append("[trackmotion] character=%s stance_support=%s" % [character.name, support])
@@ -395,6 +405,8 @@ func _collect_leg_motion_lines(controller: Node) -> Array[String]:
 			message += " foot_locked=%s foot_anchor=%s foot_drift=%.3f foot_speed=%.3f support_force=%s brake_force=%s expected_speed=%.3f" % [
 				support.locked, _format_vector3(support.anchor), support.drift,
 				support.speed, _format_vector3(support.force), _format_vector3(support.brake_force), support.expected_speed]
+			if support.has("foot_heading"):
+				message += " foot_yaw_locked=%s foot_heading=%s" % [support.get("foot_yaw_locked", false), support.foot_heading]
 			message += " adhesion_force=%s ground_gap=%.3f alignment_torque=%s" % [
 				_format_vector3(support.get("adhesion_force", Vector3.ZERO)),
 				float(support.get("ground_gap", -1.0)),
@@ -405,6 +417,9 @@ func _collect_leg_motion_lines(controller: Node) -> Array[String]:
 					support.step_effective_mass, support.step_force_limit, support.step_force_limited,
 					_format_vector3(support.step_position_error), support.step_has_lifted,
 					support.failed_steps, support.last_step_failure]
+		if controller.has_method("get_support_foot_diagnostics"):
+			var gallop: Dictionary = controller.call("get_support_foot_diagnostics",leg).get("gallop",{})
+			if not gallop.is_empty(): message += " gallop=%s" % [gallop]
 		message += " stepping_limit=%d planned_frequency=%.3f" % [controller.call("get_maximum_stepping_feet"), controller.call("get_planned_step_frequency")]
 		messages.append(message)
 

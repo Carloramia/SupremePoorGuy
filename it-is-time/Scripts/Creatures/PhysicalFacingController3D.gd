@@ -97,9 +97,18 @@ func _ready() -> void:
 func _exit_tree() -> void:
 	_release_turn_planning()
 
+func _motion_setting(key: String, fallback: float) -> float:
+	if _movement_controller != null and _movement_controller.has_method("_motion_setting"):
+		return float(_movement_controller.call("_motion_setting", key, fallback))
+	return fallback
+
+func _planar_mode_active() -> bool:
+	var actor := get_parent()
+	return actor != null and actor.has_method("is_planar_mode_active") and actor.is_planar_mode_active()
+
 func _physics_process(delta: float) -> void:
 	_resolve_dependencies()
-	if not turning_enabled or not _can_control_torso() or not PLAYER_CONTEXT.input_allowed(self):
+	if _planar_mode_active() or _motion_setting("turning_speed_degrees", 1.0) <= 0.0 or not turning_enabled or not _can_control_torso() or not PLAYER_CONTEXT.input_allowed(self):
 		_release_turn_planning()
 		_is_turning = false
 		return
@@ -117,7 +126,7 @@ func _physics_process(delta: float) -> void:
 		_apply_leg_traction()
 
 func request_facing(target_facing: FacingDirection) -> bool:
-	if not _can_control_torso() or (target_facing == _facing and _is_turning):
+	if _planar_mode_active() or not _can_control_torso() or (target_facing == _facing and _is_turning):
 		return false
 	if target_facing == _facing and absf(get_turn_angle_error()) <= deg_to_rad(completion_angle_degrees):
 		return false
@@ -203,7 +212,7 @@ func _update_movement_lead() -> void:
 		return
 	var direction: Vector3 = _movement_controller.call("get_input_movement_direction")
 	var speed: float = _movement_controller.call("get_expected_horizontal_speed")
-	_movement_lead = direction.slide(_get_turn_axis()) * speed * turn_step_duration
+	_movement_lead = direction.slide(_get_turn_axis()) * speed * _motion_setting("turn_step_duration", turn_step_duration)
 
 func _try_request_turn_from_cursor(delta: float) -> void:
 	if not _is_cursor_available():
@@ -274,11 +283,11 @@ func _apply_leg_traction() -> void:
 			var lever := (rest - _torso.global_position).slide(axis)
 			var tangent := axis.cross(lever).normalized()
 			var speed := _torso.angular_velocity.dot(axis)
-			var pull := (leg.global_position - rest - common_offset).dot(tangent) * leg_torso_traction_strength
-			pull -= speed * lever.length() * leg_torso_traction_damping
-			if absf(speed) >= maximum_yaw_speed and signf(pull) == signf(speed):
-				pull = -speed * lever.length() * leg_torso_traction_damping
-			var traction := tangent * clampf(pull, -maximum_leg_torso_traction, maximum_leg_torso_traction)
+			var pull := (leg.global_position - rest - common_offset).dot(tangent) * _motion_setting("turn_gain", leg_torso_traction_strength / maxf(_torso.mass, 0.001)) * _torso.mass
+			pull -= speed * lever.length() * _motion_setting("turn_damping", leg_torso_traction_damping / maxf(_torso.mass, 0.001)) * _torso.mass
+			if absf(speed) >= deg_to_rad(_motion_setting("turning_speed_degrees", rad_to_deg(maximum_yaw_speed))) and signf(pull) == signf(speed):
+				pull = -speed * lever.length() * _motion_setting("turn_damping", leg_torso_traction_damping / maxf(_torso.mass, 0.001)) * _torso.mass
+			var traction := tangent * clampf(pull, -_motion_setting("turn_acceleration", maximum_leg_torso_traction / maxf(_torso.mass, 0.001)) * _torso.mass, _motion_setting("turn_acceleration", maximum_leg_torso_traction / maxf(_torso.mass, 0.001)) * _torso.mass)
 			_torso.apply_force(traction, lever)
 			net_traction += traction
 			_traction_torque += lever.cross(traction).dot(axis)
@@ -301,15 +310,15 @@ func _update_turn_steps() -> void:
 	if legs.is_empty():
 		return
 	var axis := _get_turn_axis()
-	var predicted_error := error - _torso.angular_velocity.dot(axis) * turn_step_duration
-	var right := _torso.global_basis.x.slide(axis).normalized().rotated(axis, clampf(predicted_error, -deg_to_rad(turn_step_angle_degrees), deg_to_rad(turn_step_angle_degrees)))
+	var predicted_error := error - _torso.angular_velocity.dot(axis) * _motion_setting("turn_step_duration", turn_step_duration)
+	var right := _torso.global_basis.x.slide(axis).normalized().rotated(axis, clampf(predicted_error, -deg_to_rad(_motion_setting("turn_step_angle", turn_step_angle_degrees)), deg_to_rad(_motion_setting("turn_step_angle", turn_step_angle_degrees))))
 	var basis := Basis(right, axis, right.cross(axis)).orthonormalized()
 	for offset: int in legs.size():
 		var index := (_turn_leg_index + offset) % legs.size()
 		var leg := legs[index]
 		var target := _torso.global_position + _movement_lead + basis * _leg_offsets[leg]
 		_planned_target = target
-		if bool(_movement_controller.call("try_start_turn_step", leg, target, turn_step_duration, turn_step_height)):
+		if bool(_movement_controller.call("try_start_turn_step", leg, target, _motion_setting("turn_step_duration", turn_step_duration), _motion_setting("turn_lift", turn_step_height))):
 			_turn_leg_index = (index + 1) % legs.size()
 			_planned_target = _movement_controller.call("get_step_target")
 			_log_turn("step_started_" + String(leg.name))
@@ -329,7 +338,7 @@ func _update_turn_watchdog(delta: float) -> void:
 	if _log_elapsed >= diagnostic_interval:
 		_log_elapsed = 0.0
 		_log_turn("progress")
-	if _turn_elapsed >= maximum_turn_duration or _no_progress_elapsed >= no_progress_timeout:
+	if _turn_elapsed >= _motion_setting("turn_timeout", maximum_turn_duration) or _no_progress_elapsed >= no_progress_timeout:
 		_is_turning = false
 		_retry_remaining = 1.0
 		if is_instance_valid(_movement_controller):

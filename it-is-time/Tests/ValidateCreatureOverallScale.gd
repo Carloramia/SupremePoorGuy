@@ -10,11 +10,12 @@ func _validate() -> void:
 	character.generate_on_ready = false
 	root.add_child(character)
 	var generator := character.get_node("CreatureGenerator")
-	generator.feets = 4
+	generator.rear_leg_count = maxi((4) - 2, 0)
+	generator.foreleg_count = mini((4), 2)
 	generator.unsymmetrie = 0.0
 	generator.neck_number = 1
-	generator.torso_core_extra_blocks = 0
-	generator.max_limb_end_height_difference = 0.3
+
+
 	generator.framework_generated.connect(func(plan: Dictionary) -> void: last_plan = plan)
 	var reference: Dictionary = {}
 	for multiplier: float in [1.0, 2.0, 0.5, 1.0]:
@@ -41,11 +42,16 @@ func _validate() -> void:
 		for index: int in range(blueprint.connections.size()):
 			assert(blueprint.connections[index].anchor.is_equal_approx(reference.connections[index].anchor * multiplier))
 		var joints := container.get_node("Joints")
-		for index: int in range(joints.get_child_count()):
-			assert(joints.get_child(index).position.is_equal_approx(blueprint.connections[index].anchor))
-			assert(joints.get_child(index).scale.is_equal_approx(Vector3.ONE))
+		for index: int in range(blueprint.connections.size()):
+			var connection: Dictionary = blueprint.connections[index]
+			if connection.kind == "Segment":
+				assert(joints.has_node("SegmentSpring_%03d" % [index + 1]))
+				continue
+			var joint := joints.get_node("Joint_%03d_%s" % [index + 1, connection.kind]) as Node3D
+			assert(joint.position.is_equal_approx(connection.anchor))
+			assert(joint.scale.is_equal_approx(Vector3.ONE))
 		# The preview and physical box must coincide after scaling, including the Head.
-		for preview_name: String in ["SubTorso", "Torso", "NeckLine/Head"]:
+		for preview_name: String in ["SubTorso", "Torso", "Torso_2", "NeckLine/Head"]:
 			var preview: MeshInstance3D = generator.get_node(preview_name if preview_name.contains("/") else preview_name + "/Wireframe")
 			var body_name := "Head_1" if preview_name.contains("/") else preview_name
 			var collision: CollisionShape3D = container.get_node(body_name + "/CollisionShape3D")

@@ -20,7 +20,8 @@ func run() -> void:
 	actor.position.y = 27.65
 	root.add_child(actor)
 	var generator := actor.get_node("CreatureGenerator")
-	generator.feets = 6
+	generator.rear_leg_count = maxi((6) - 2, 0)
+	generator.foreleg_count = mini((6), 2)
 	generator.overall_scale = 4.0
 	generator.unsymmetrie = 60.0
 	generator._random.seed = 42

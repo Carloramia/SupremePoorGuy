@@ -17,6 +17,7 @@ size = Vector3(200, 102, 200)
 
 [node name="Generate_Creature_Test" parent="." unique_id=1734874713 instance=ExtResource("1_1mv4x")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 27.657082, -25.698586)
+limb_joint_linear_slack = Vector3(0.03, 0.03, 0)
 
 [node name="Controller" parent="Generate_Creature_Test" unique_id=1212807446 node_paths=PackedStringArray("camera_rig", "terrain_cursor") instance=ExtResource("8_player_controller")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.69153404, -16.093163, 25.071148)
@@ -27,6 +28,7 @@ terrain_cursor = NodePath("../../TerrainCursor3D")
 navigation_mesh = ExtResource("4_navigation")
 
 [node name="NavigationNPCSpawner3D" parent="." unique_id=805504527 instance=ExtResource("5_npc_spawner")]
+spawn_enabled = false
 spawn_interval = 1.0
 maximum_npc_count = 1
 

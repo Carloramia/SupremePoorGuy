@@ -20,11 +20,12 @@ func run() -> void:
 	actor.generate_on_ready = false
 	root.add_child(actor)
 	var generator := actor.get_node("CreatureGenerator")
-	generator.feets = 4
+	generator.rear_leg_count = maxi((4) - 2, 0)
+	generator.foreleg_count = mini((4), 2)
 	generator.overall_scale = 1.0
 	generator.unsymmetrie = 0.0
 	generator.neck_number = 0
-	generator.torso_core_extra_blocks = 0
+
 	generator._random.seed = 42
 	check(actor.generate_creature(), "Generation failed")
 	var controller := actor.get_node("GeneratedLegStepMovementController3D")

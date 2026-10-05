@@ -266,20 +266,25 @@ func _validate() -> void:
 
 	leg_l.global_position += Vector3(1.0, 0.0, 0.0)
 	leg_r.global_position += Vector3(0.5, 2.0, 0.0)
-	assert(controller.get_torso_movement_force_legs(false) == [leg_l])
+	assert(controller.get_torso_movement_force_legs(false).is_empty(), "Jump release blocks contact drive")
 	var combined_offset: Vector3 = controller.get_combined_leg_offset()
-	assert(combined_offset.is_equal_approx(Vector3(1.0, 0.0, 0.0)))
-	var expected_force: Vector3 = combined_offset * float(controller.torso_force_per_unit)
-	if expected_force.length() > controller.maximum_torso_force:
-		expected_force = expected_force.normalized() * controller.maximum_torso_force
-	assert(controller.calculate_torso_force().is_equal_approx(expected_force))
+	assert(combined_offset.is_zero_approx(), "Released legs must not enter support diagnostics")
+	# Contact force no longer follows foot displacement, and jump release blocks it.
+	assert(controller.calculate_torso_force().is_zero_approx())
+	controller._adhesion_release_time_remaining = 0.0
+	leg_l.freeze = false
+	controller.set_contact_force_request(Vector3(20.0, 0.0, 0.0))
+	assert(controller.calculate_torso_force().is_equal_approx(Vector3(20.0, 0.0, 0.0)))
+	leg_l.global_position.x += 1.0
+	controller._begin_ground_probe_frame()
+	assert(controller.calculate_torso_force().is_equal_approx(Vector3(20.0, 0.0, 0.0)), "Foot offset must not determine drive force")
 	leg_l.global_position += Vector3.UP * 2.0
 	assert(controller.get_torso_movement_force_legs(false).is_empty())
 	assert(controller.calculate_torso_force().is_zero_approx())
 	Input.action_press(&"Shift")
-	assert(controller.get_fast_airborne_force_grace_remaining() > 0.0)
-	assert(controller.get_torso_movement_force_legs(true) == [leg_l])
-	assert(not controller.calculate_torso_force().is_zero_approx())
+	assert(is_zero_approx(controller.get_fast_airborne_force_grace_remaining()))
+	assert(controller.get_torso_movement_force_legs(true).is_empty())
+	assert(controller.calculate_torso_force().is_zero_approx(), "Legacy grace must not enable airborne contact drive")
 	controller._physics_elapsed += controller.fast_airborne_force_grace_duration + 0.01
 	assert(is_zero_approx(controller.get_fast_airborne_force_grace_remaining()))
 	assert(controller.get_torso_movement_force_legs(true).is_empty())

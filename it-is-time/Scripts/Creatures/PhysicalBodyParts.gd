@@ -4,6 +4,7 @@ extends RigidBody3D
 
 signal damaged(amount: float, remaining_hp: float, source: Node)
 signal broken(source: Node)
+signal slipping_changed(value: bool)
 
 const OUTLINE_SHADER: Shader = preload("res://Shaders/BodyPartOutline.gdshader")
 const DEFAULT_DAMAGE_NUMBER_SCENE: PackedScene = preload("res://Scenes/VFX/DamageNumber3D.tscn")
@@ -23,6 +24,21 @@ enum BodyPartTag {
 @export_group("Classification")
 ## A part may carry more than one classification tag.
 @export var tags: Array[BodyPartTag] = []
+
+@export_group("Foot Ground State")
+## External gameplay may enable slipping; an upright grounded foot is otherwise pinned.
+@export var is_slipping: bool = false:
+	set(value):
+		if is_slipping == value: return
+		is_slipping = value
+		slipping_changed.emit(value)
+
+@export_group("Foot Rotation Lock")
+## World X/Z locks keep Leg and ForeLeg soles upright; Y stays available for turning.
+@export var lock_foot_pitch_roll: bool = true:
+	set(value):
+		lock_foot_pitch_roll = value
+		if is_node_ready(): sync_foot_rotation_lock()
 
 @export_group("Arm Swing")
 ## Each entry assigns this part to one LimbSwingController3D control group.
@@ -71,6 +87,7 @@ var _damage_service: Node
 var _collision_logging_enabled: bool = false
 
 func _ready() -> void:
+	sync_foot_rotation_lock()
 	current_hp = 0.0 if is_broken else max_hp
 	contact_monitor = true
 	max_contacts_reported = maxi(max_contacts_reported, 8)
@@ -218,11 +235,25 @@ func _spawn_damage_number(amount: float, hit_position: Vector3) -> void:
 	if popup.has_method("setup_damage"):
 		popup.call("setup_damage", amount)
 
+func sync_foot_rotation_lock() -> void:
+	var enabled := lock_foot_pitch_roll and not is_broken and (BodyPartTag.Leg in tags or BodyPartTag.ForeLeg in tags)
+	if enabled:
+		if not has_meta(&"foot_previous_locks"):
+			set_meta(&"foot_previous_locks", Vector2i(int(axis_lock_angular_x), int(axis_lock_angular_z)))
+		axis_lock_angular_x = true
+		axis_lock_angular_z = true
+	elif has_meta(&"foot_previous_locks"):
+		var previous: Vector2i = get_meta(&"foot_previous_locks")
+		axis_lock_angular_x = previous.x != 0
+		axis_lock_angular_z = previous.y != 0
+		remove_meta(&"foot_previous_locks")
+
 func break_part(source: Node = null) -> void:
 	if is_broken:
 		return
 	current_hp = 0.0
 	is_broken = true
+	sync_foot_rotation_lock()
 	broken.emit(source)
 	if damage_logging_enabled:
 		print(

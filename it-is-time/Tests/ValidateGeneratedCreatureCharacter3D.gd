@@ -16,11 +16,12 @@ func _validate() -> void:
 	character.generate_on_ready = false
 	root.add_child(character)
 	var generator := character.get_node("CreatureGenerator")
-	generator.feets = 4
+	generator.rear_leg_count = maxi((4) - 2, 0)
+	generator.foreleg_count = mini((4), 2)
 	generator.unsymmetrie = 0.0
 	generator.neck_number = 1
-	generator.torso_core_extra_blocks = 0
-	generator.max_limb_end_height_difference = 0.3
+
+
 	generator.framework_generated.connect(func(plan: Dictionary) -> void: last_plan = plan)
 	generator._random.seed = 42
 	assert(character.generate_creature(), "Physics generation must succeed")
@@ -40,18 +41,23 @@ func _validate() -> void:
 		expected += neck.blocks.size()
 	assert(bodies.size() == expected, "Every framework box needs one physics part")
 	var joints := container.get_node("Joints")
-	assert(joints.get_child_count() == bodies.size() - 1, "Connected physics tree must have N-1 joints")
+	assert(blueprint.connections.size() == bodies.size() - 1, "Connected blueprint must have N-1 links")
 	var reached: Array[Node] = [bodies[0]]
 	for iteration: int in range(bodies.size()):
-		for joint: Generic6DOFJoint3D in joints.get_children():
+		for joint: Node in joints.get_children():
 			var a := joint.get_node_or_null(joint.node_a)
 			var b := joint.get_node_or_null(joint.node_b)
 			assert(a in bodies and b in bodies and a != b)
+			if joint.has_method("is_segment_spring") or joint.has_method("get_constraint_diagnostics"):
+				if a in reached and b not in reached: reached.append(b)
+				if b in reached and a not in reached: reached.append(a)
+				continue
 			assert(joint.get_flag_x(Generic6DOFJoint3D.FLAG_ENABLE_LINEAR_LIMIT))
-			assert(is_zero_approx(joint.get_param_x(Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT)))
+			var expected_slack: float = character.limb_joint_linear_slack.x if PART.BodyPartTag.LegLimb in a.tags and PART.BodyPartTag.LegLimb in b.tags else 0.0
+			assert(is_equal_approx(joint.get_param_x(Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT), expected_slack))
 			if str(joint.name).ends_with("Torso"):
 				assert(is_zero_approx(joint.get_param_x(Generic6DOFJoint3D.PARAM_ANGULAR_UPPER_LIMIT)))
-			else:
+			elif not (PART.BodyPartTag.LegLimb in a.tags and PART.BodyPartTag.LegLimb in b.tags):
 				assert(joint.get_param_x(Generic6DOFJoint3D.PARAM_ANGULAR_UPPER_LIMIT) > 0.0)
 			if a in reached and b not in reached:
 				reached.append(b)
@@ -97,7 +103,7 @@ func _validate() -> void:
 	await process_frame
 	await process_frame
 	assert(foot.is_broken)
-	for joint: Generic6DOFJoint3D in joints.get_children():
+	for joint: Node in joints.get_children():
 		assert(joint.get_node_or_null(joint.node_a) != foot and joint.get_node_or_null(joint.node_b) != foot)
 	generator._random.seed = 99
 	assert(character.generate_creature(), "Regeneration must replace the physics assembly")

@@ -6,17 +6,14 @@ signal framework_generated(plan: Dictionary)
 @export_group("Overall Size")
 ## Uniform size multiplier around the generator origin, applied after layout validation.
 ## Generate again to update the frame and the physical character. Does not scale the root Node3D.
-@export_range(0.1, 10.0, 0.05, "or_greater") var overall_scale: float = 1.0
+@export_range(0.1, 10.0, 0.05, "or_greater") var overall_scale: float = 4.0
+## Shared local Z size for Torso, SubTorso, feet, Limb blocks, Neck and Head.
+## Applied before Overall Scale; overrides Z in all per-part size settings and the Torso curve.
+@export_range(0.01, 100.0, 0.01, "or_greater") var part_width: float = 0.2
 
-@export_group("SubTorsoGeneration")
-## Dimensions are measured in local 3D units. Each axis is sampled independently.
-@export var minimum_size: Vector3 = Vector3(0.5, 0.5, 0.3)
-@export var maximum_size: Vector3 = Vector3(2, 2, 0.4)
-## Maximum 3D distance from each Limb endpoint to its nearest Torso surface, including inside points.
-@export_range(0.0, 100.0, 0.01, "or_greater") var max_limb_end_height_difference: float = 0.2
+@export_group("Framework Display")
 @export var wireframe_color: Color = Color(0.2, 0.9, 1, 1)
 @export var label_color: Color = Color(1, 1, 1, 1)
-## Shared font size for all labels in the generated frame; changes update existing labels too.
 @export_range(1, 256, 1, "or_greater") var label_font_size: int = 32:
 	set(value):
 		label_font_size = maxi(value, 1)
@@ -25,82 +22,90 @@ signal framework_generated(plan: Dictionary)
 @export_tool_button("将当前参数写为脚本默认值", "Save") var save_defaults_button: Callable = save_current_parameters_as_defaults
 
 @export_group("Feet Generation")
-@export_range(2, 10, 1) var feets: int = 6
-@export_range(0.0, 100.0, 0.1) var unsymmetrie: float = 0.0
-@export_range(0.0, 100.0, 0.1) var inhomogeneity: float = 0.0
-## Scales position ranges only: X multiplier = 1 + Narrowty / 100; Z is its reciprocal.
-@export_range(0.0, 100.0, 0.1, "or_greater") var narrowty: float = 33.6
-## X = length, Y = height, Z = width. At zero inhomogeneity every Feet uses this size.
-@export var base_foot_size: Vector3 = Vector3(0.6, 0.3, 0.4)
-@export var minimum_foot_size: Vector3 = Vector3(0.4, 0.6, 0.3)
-@export var maximum_foot_size: Vector3 = Vector3(0.8, 0.6, 0.5)
-## Horizontal surface-to-surface distance, not center-to-center distance.
+## Exact counts; Leg has three limb segments and ForeLeg has two. Odd counts include a center foot.
+@export_range(0, 10, 1) var rear_leg_count: int = 4
+@export_range(0, 10, 1) var foreleg_count: int = 2
+@export_range(0.0, 100.0, 0.1) var unsymmetrie: float = 50.0
+@export_range(0.0, 100.0, 0.1) var inhomogeneity: float = 50.0
+## Z is overridden by Part Width.
+@export var base_foot_size: Vector3 = Vector3(0.6, 0.3, 0.2)
+## Z is overridden by Part Width.
+@export var minimum_foot_size: Vector3 = Vector3(0.4, 0.6, 0.1)
+@export var maximum_foot_size: Vector3 = Vector3(0.8, 0.6, 0.2)
+## Minimum horizontal shell clearance. Too many feet for the body length makes the layout invalid.
 @export_range(0.0, 100.0, 0.01, "or_greater") var minimum_feet_distance: float = 0.2
 
+@export_group("Torso Generation")
+## Exact central Torso count; independent SubTorsos are generated for the feet.
+@export_range(1, 32, 1) var torso_count: int = 6
+## Full X extent of the torso chain, before Overall Scale; excludes head/neck/feet.
+@export_range(0.1, 100.0, 0.05, "or_greater") var body_length: float = 4.0
+## Adjacent X overlap / the smaller block X length. Central Torso centers stay on Z=0.
+@export_range(0.0, 95.0, 0.1) var torso_overlap_percent: float = 20.0
+## Curves are sampled from the rearmost Torso (0) to the foremost Torso (1).
+## Values are signed height offsets in units of the sampled reference height.
+## Upper - Lower sets height; their midpoint sets the body's vertical position.
+@export var torso_upper_curve: Curve = _make_torso_curve([[Vector2(0, 0.37377048), 0.0, 0.0, 0, 0], [Vector2(0.44817924, 1), 0.0, 0.0, 0, 0], [Vector2(1, 0.55081964), 0.0, 0.0, 0, 0]], 0.0, 1.0)
+@export var torso_lower_curve: Curve = _make_torso_curve([[Vector2(0, -0.32458997), 0.0, 0.0, 0, 0], [Vector2(0.4803922, -2.0163934), 0.0, 0.0, 0, 0], [Vector2(0.9397759, -0.60000014), 0.0, 0.0, 0, 0], [Vector2(1, -0.46229506), 0.0, 0.0, 0, 0]], -3.0, 3.0)
+
+## Moves each Torso vertically without changing its contour-defined size; reference-height units.
+@export var torso_height_offset_curve: Curve = _make_torso_curve([[Vector2(0, 0), 0.0, 0.0, 0, 0], [Vector2(1, 0), 0.0, 0.0, 0, 0]], -3.0, 3.0)
+
+@export_group("SubTorso Generation")
+## One support per foot, touching the parent Torso. Z is overridden by Part Width.
+## Feet retain the support X/Z; paired supports touch the sides; center supports start below the body and can slide upward.
+@export var sub_torso_size: Vector3 = Vector3(0.5, 0.4, 0.3)
+## Rear-to-front sample at the parent Torso: 0 aligns with its lower contour, 1 with its upper contour.
+## Values are clamped to 0..1; empty curves keep the lower attachment. Limb endpoints follow.
+@export var sub_torso_height_curve: Curve = _make_torso_curve([[Vector2(0, 0), 0.0, 0.0, 0, 0], [Vector2(1, 0), 0.0, 0.0, 0, 0]], 0.0, 1.0)
+
+@export_group("Torso Reference Height")
+## Sampled once as the vertical unit used by both contour curves.
+@export_range(0.01, 100.0, 0.01, "or_greater") var torso_minimum_height: float = 0.5
+@export_range(0.01, 100.0, 0.01, "or_greater") var torso_maximum_height: float = 0.7
+## Used by the physical character to identify adjacent body blocks.
+@export_range(0.0, 100.0, 0.01, "or_greater") var torso_connection_distance: float = 0.3
+
 @export_group("Limb Lines")
-## Sum of segment lengths. Inhomogeneity varies mirror pairs; Unsymmetrie varies each side.
-@export_range(0.01, 100.0, 0.01, "or_greater") var base_limb_length: float = 2.0
-## These ranges control shape proportions; the result is normalized to its total length.
+## Nominal reach controls torso clearance and bend size; endpoints are fitted to the body shell.
+@export_range(0.01, 100.0, 0.01, "or_greater") var base_limb_length: float = 1.5
 @export_range(0.01, 10.0, 0.01, "or_greater") var minimum_segment_height: float = 0.4
 @export_range(0.01, 10.0, 0.01, "or_greater") var maximum_segment_height: float = 0.8
 @export_range(0.01, 10.0, 0.01, "or_greater") var minimum_bend_offset: float = 0.1
-@export_range(0.01, 10.0, 0.01, "or_greater") var maximum_bend_offset: float = 0.3
+@export_range(0.01, 10.0, 0.01, "or_greater") var maximum_bend_offset: float = 0.4
 
 @export_group("Limb Block Generation")
-## Local Y runs along the segment; X/Z are the two cross-section dimensions.
-## Dimensions are independent of the line length; centers and joint anchors stay on the line.
-@export var limb_minimum_size: Vector3 = Vector3(0.4, 0.4, 0.2)
-@export var limb_maximum_size: Vector3 = Vector3(0.4, 0.8, 0.2)
-## Override only local Y with the corresponding segment length; X/Z retain their size ranges.
+## Z is overridden by Part Width.
+@export var limb_minimum_size: Vector3 = Vector3(0.4, 0.4, 0.15)
+@export var limb_maximum_size: Vector3 = Vector3(0.4, 0.8, 0.25)
 @export var limb_y_matches_segment: bool = true
 
-@export_group("Limb Network")
-## Merge junction endpoints closer than this 3D distance; original Limb tips remain connected.
+@export_group("Limb Network Preview")
+## The network remains a preview; it no longer decides body count or body placement.
 @export_range(0.0, 100.0, 0.01, "or_greater") var limb_endpoint_merge_distance: float = 0.2
-## Additional free vertices sampled inside the Limb-tip bounds expanded by Padding.
 @export_range(0, 32, 1) var network_extra_endpoint_count: int = 4
 @export_range(0.0, 100.0, 0.01, "or_greater") var network_extra_endpoint_padding: float = 0.5
-## Pull free endpoints toward the network center and favor connections through its core.
 @export_range(0.0, 1.0, 0.01) var network_center_bias: float = 0.65
 @export_range(0, 32, 1) var network_core_extra_connections: int = 3
 
-@export_group("TorsoGeneration")
-## Torso dimensions on generator X/Y/Z axes. Centers lie on network segments; edges need not follow them.
-@export var torso_minimum_size: Vector3 = Vector3(0.6, 0.6, 0.3)
-@export var torso_maximum_size: Vector3 = Vector3(1.4, 1.4, 0.5)
-@export_range(0.0, 100.0, 0.01, "or_greater") var torso_connection_distance: float = 0.4
-## Maximum pairwise intersection volume as a percentage of EACH Torso/SubTorso volume.
-## Equality is allowed; this is not the sum of overlaps with different boxes.
-@export_range(0.0, 100.0, 0.1) var max_torso_overlap_percent: float = 20.0
-@export_range(0.0, 1.0, 0.01) var torso_center_size_bias: float = 0.6
-@export_range(0.0, 1.0, 0.01) var torso_center_density_bias: float = 0.65
-## Additional legal connected blocks near the core after the body becomes connected.
-@export_range(0, 32, 1) var torso_core_extra_blocks: int = 6
-
 @export_group("Neck Generation")
-## Number of free NeckLines; roots must stay within the Torso surface-distance limit.
 @export_range(0, 256, 1) var neck_number: int = 1
-@export_range(0.0, 100.0, 0.01, "or_greater") var max_neck_start_surface_distance: float = 0.5
-@export_range(0.01, 100.0, 0.01, "or_greater") var neck_minimum_length: float = 1.0
-@export_range(0.01, 100.0, 0.01, "or_greater") var neck_maximum_length: float = 1.2
-@export_range(4, 32, 1) var neck_segment_count: int = 4
-## Maximum upward tangent angle; first and last segments stay parallel to +X.
+const max_neck_start_surface_distance: float = 0.0
+@export_range(0.01, 100.0, 0.01, "or_greater") var neck_minimum_length: float = 0.8
+@export_range(0.01, 100.0, 0.01, "or_greater") var neck_maximum_length: float = 2.0
+## Zero attaches the Head directly to the front body surface, without any Neck block.
+@export_range(0, 3, 1) var neck_segment_count: int = 3
 @export_range(0.0, 85.0, 0.1) var neck_maximum_angle: float = 60.0
-
-## Square cross-section of the cuboids following NeckLine.
-@export_range(0.01, 10.0, 0.01, "or_greater") var neck_block_thickness: float = 0.15
-## Maximum diameter of the actual overlap volume, including other body/neck/head blocks.
+@export_range(0.01, 10.0, 0.01, "or_greater") var neck_block_thickness: float = 0.4
+## Maximum diameter of the overlap in the XY section; shared Z width does not enlarge this limit.
 @export_range(0.0, 100.0, 0.01, "or_greater") var max_neck_overlap_diameter: float = 0.5
 @export_group("Head Generation")
+## Z is overridden by Part Width.
 @export var head_minimum_size: Vector3 = Vector3(0.3, 0.3, 0.3)
 @export var head_maximum_size: Vector3 = Vector3(0.7, 0.7, 0.7)
 
 const BOX_GEOMETRY = preload("res://Scripts/Creatures/CreatureBoxGeometry.gd")
-const MAX_NETWORK_TORSOS: int = 256
-const MAX_NETWORK_TORSO_ATTEMPTS: int = 4096
 const MAX_GENERATION_ATTEMPTS: int = 128
-const TORSO_CLEARANCE: float = 0.1
-
 var _random := RandomNumberGenerator.new()
 
 func _update_label_sizes(node: Node) -> void:
@@ -151,6 +156,14 @@ func _build_default_source(source: String) -> String:
 		var matched := matches[index]
 		var value: Variant = get(matched.get_string(2))
 		if value is Callable:
+			continue
+		if value == null and matched.get_string(2) in ["torso_upper_curve", "torso_lower_curve", "torso_height_offset_curve", "sub_torso_height_curve"]:
+			updated = updated.substr(0, matched.get_start(3)) + "null" + updated.substr(matched.get_end(3))
+			continue
+		if value is Curve:
+			var start := matched.get_start(3)
+			var end := matched.get_end(3)
+			updated = updated.substr(0, start) + _curve_default_source(value) + updated.substr(end)
 			continue
 		if typeof(value) not in [TYPE_INT, TYPE_FLOAT, TYPE_BOOL, TYPE_VECTOR3, TYPE_COLOR]:
 			push_error("[creature_generator] Unsupported default parameter: %s" % matched.get_string(2))
@@ -203,7 +216,7 @@ func generate_torso() -> bool:
 		return false
 	var plan := _create_valid_plan()
 	if plan.is_empty():
-		push_warning("[creature_generator] Generation failed: no legal layout; previous frame retained. Check sizes, Narrowty, minimum Feet distance, Limb endpoint distance, Torso overlap percentage and Neck/Head overlap constraints.")
+		push_warning("[creature_generator] Generation failed: no legal layout; previous frame retained. Check upper/lower contour order and connectivity, body length, foot counts/clearance and Neck/Head overlap constraints.")
 		return false
 	var material := StandardMaterial3D.new()
 	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
@@ -224,7 +237,7 @@ func generate_torso() -> bool:
 	_apply_framework_scale(overall_scale)
 	if Engine.is_editor_hint():
 		EditorInterface.mark_scene_as_unsaved()
-	print("[creature_generator] torsos=%d covered_parts=%d attempts=%d valid=true" % [plan.torsos.size(), plan.layouts.size(), plan.attempts])
+	print("[creature_generator] torsos=%d covered_parts=%d attempts=%d valid=true" % [plan.network_torsos.size(), plan.layouts.size(), plan.attempts])
 	print("[creature_generator] overall_scale=%.3f" % overall_scale)
 	framework_generated.emit(plan)
 	return true
@@ -260,15 +273,6 @@ func _nearest_neck_torso_distance(point: Vector3, torsos: Array[Dictionary]) -> 
 	return distance
 
 ## Prefer front surfaces but permit free points around them, rather than attaching to a body node.
-func _sample_neck_origin(torsos: Array[Dictionary]) -> Vector3:
-	var torso: Dictionary = torsos[_random.randi_range(0, torsos.size() - 1)]
-	var half: Vector3 = torso.size * 0.5
-	var point: Vector3 = torso.position + Vector3(half.x, _random.randf_range(-half.y, half.y), _random.randf_range(-half.z, half.z))
-	var direction := Vector3(_random.randf_range(-1.0, 1.0), _random.randf_range(-1.0, 1.0), _random.randf_range(-1.0, 1.0)).normalized()
-	return point + direction * _random.randf_range(0.0, maxf(max_neck_start_surface_distance, 0.0))
-
-## Clip the entire segment against the Y/Z projection and the region behind a block's front face.
-## This is a continuous +X visibility test, not endpoint-only sampling.
 func _neckline_front_clear(points: PackedVector3Array, blocks: Array[Dictionary]) -> bool:
 	for index: int in range(points.size() - 1):
 		var start := points[index]
@@ -319,16 +323,17 @@ func _plan_necks(torsos: Array[Dictionary], subtorsos: Array[Dictionary]) -> Arr
 		var single := result.is_empty() and count % 2 == 1
 		var accepted := false
 		for attempt: int in range(MAX_GENERATION_ATTEMPTS):
-			var origin := _sample_neck_origin(torsos)
+			var origin := _sample_neck_origin([torsos[-1]])
 			if single:
 				origin.z *= _asymmetry()
-			var total_length := _sample_dimension(neck_minimum_length, neck_maximum_length)
+			var total_length := 0.0 if neck_segment_count == 0 else _sample_dimension(neck_minimum_length, neck_maximum_length)
 			var head_size := _sample_size(head_minimum_size, head_maximum_size)
+			head_size.z = part_width
 			var batch: Array[Dictionary] = [{"points": _create_neck_points(origin, total_length), "length": total_length, "head_size": head_size}]
 			if not single:
-				var partner_origin := _mirror_point(origin).lerp(_sample_neck_origin(torsos), _asymmetry())
-				var partner_length := lerpf(total_length, _sample_dimension(neck_minimum_length, neck_maximum_length), _asymmetry())
-				batch.append({"points": _create_neck_points(partner_origin, partner_length), "length": partner_length, "head_size": head_size.lerp(_sample_size(head_minimum_size, head_maximum_size), _asymmetry())})
+				var partner_origin := _mirror_point(origin).lerp(_sample_neck_origin([torsos[-1]]), _asymmetry())
+				var partner_length := 0.0 if neck_segment_count == 0 else lerpf(total_length, _sample_dimension(neck_minimum_length, neck_maximum_length), _asymmetry())
+				batch.append({"points": _create_neck_points(partner_origin, partner_length), "length": partner_length, "head_size": Vector3(lerpf(head_size.x, _sample_dimension(head_minimum_size.x, head_maximum_size.x), _asymmetry()), lerpf(head_size.y, _sample_dimension(head_minimum_size.y, head_maximum_size.y), _asymmetry()), part_width)})
 			var test_boxes := boxes.duplicate()
 			var legal := true
 			for neck: Dictionary in batch:
@@ -343,7 +348,7 @@ func _plan_necks(torsos: Array[Dictionary], subtorsos: Array[Dictionary]) -> Arr
 				for block: Dictionary in neck.blocks:
 					var next := BOX_GEOMETRY.box(block.size, Transform3D(block.basis, block.position))
 					for existing: Dictionary in test_boxes:
-						if BOX_GEOMETRY.overlap_diameter(next, existing) > maxf(max_neck_overlap_diameter, 0.0) + 0.00001:
+						if _neck_overlap_diameter(next, existing) > maxf(max_neck_overlap_diameter, 0.0) + 0.00001:
 							legal = false
 							break
 					if not legal:
@@ -362,28 +367,22 @@ func _plan_necks(torsos: Array[Dictionary], subtorsos: Array[Dictionary]) -> Arr
 			return []
 	return result
 
+func _neck_overlap_diameter(first: Dictionary, second: Dictionary) -> float:
+	# All generated Neck/Head/body boxes rotate only in XY. Their intersection is
+	# an XY polygon extruded along Z, so remove that extrusion from its diameter.
+	var diameter := BOX_GEOMETRY.overlap_diameter(first, second)
+	var z_span := maxf(0.0, minf(first.aabb.end.z, second.aabb.end.z) - maxf(first.aabb.position.z, second.aabb.position.z))
+	return sqrt(maxf(diameter * diameter - z_span * z_span, 0.0))
+
 func _neck_blocks(points: PackedVector3Array, head_size: Vector3) -> Array[Dictionary]:
 	var blocks: Array[Dictionary] = []
 	var thickness := maxf(neck_block_thickness, 0.01)
+	head_size.z = part_width
 	for index: int in range(points.size() - 1):
 		var direction := points[index + 1] - points[index]
-		blocks.append({"name": "Neck" if index == 0 else "Neck_%d" % (index + 1), "size": Vector3(thickness, direction.length(), thickness), "position": (points[index] + points[index + 1]) * 0.5, "basis": Basis(Quaternion(Vector3.UP, direction.normalized()))})
+		blocks.append({"name": "Neck" if index == 0 else "Neck_%d" % (index + 1), "size": Vector3(thickness, direction.length(), part_width), "position": (points[index] + points[index + 1]) * 0.5, "basis": Basis(Quaternion(Vector3.UP, direction.normalized()))})
 	blocks.append({"name": "Head", "size": head_size, "position": points[-1] + Vector3(head_size.x * 0.5, 0, 0), "basis": Basis.IDENTITY})
 	return blocks
-
-func _create_neck_points(origin: Vector3, total_length: float) -> PackedVector3Array:
-	var count := clampi(neck_segment_count, 4, 32)
-	var points := PackedVector3Array([origin])
-	var weight_sum := float(count) * (1.0 + 0.35) * 0.5
-	for index: int in range(count):
-		var progress := float(index) / float(count - 1)
-		var length := total_length * lerpf(1.0, 0.35, progress) / weight_sum
-		var angle := deg_to_rad(clampf(neck_maximum_angle, 0.0, 85.0)) * sin(PI * progress)
-		# Make the two horizontal end segments exact, avoiding trigonometric roundoff.
-		if index == 0 or index == count - 1:
-			angle = 0.0
-		points.append(points[-1] + Vector3(cos(angle), sin(angle), 0.0) * length)
-	return points
 
 func _generate_necks(necks: Array[Dictionary], scene_owner: Node, material: Material) -> void:
 	for child: Node in get_children():
@@ -626,47 +625,6 @@ func _weighted_index(weights: Array[float]) -> int:
 			return index
 	return weights.size() - 1
 
-func _sample_profile_torso_size(position: Vector3, profile: Dictionary, fallback: float = 0.0) -> Vector3:
-	var bias := clampf(torso_center_size_bias, 0.0, 1.0)
-	var centrality := _core_weight(position, profile)
-	var size := Vector3.ZERO
-	for axis: int in range(3):
-		var low := maxf(minf(torso_minimum_size[axis], torso_maximum_size[axis]), 0.01)
-		var high := maxf(maxf(torso_minimum_size[axis], torso_maximum_size[axis]), low)
-		var lower_fraction := bias * centrality * (1.0 - fallback)
-		var upper_fraction := 1.0 - bias + bias * centrality
-		if centrality < 0.5:
-			upper_fraction *= 1.0 - bias * 0.5
-		lower_fraction = minf(lower_fraction, upper_fraction)
-		size[axis] = lerpf(low, high, _random.randf_range(lower_fraction, upper_fraction))
-	return size
-
-## Reuse a sampled quantile as the candidate moves, avoiding a new random size that opens gaps.
-func _profile_size_at_position(size: Vector3, from: Vector3, to: Vector3, profile: Dictionary, fallback: float) -> Vector3:
-	var bias := clampf(torso_center_size_bias, 0.0, 1.0)
-	var first := _core_weight(from, profile)
-	var second := _core_weight(to, profile)
-	var lower := bias * first * (1.0 - fallback)
-	var upper := 1.0 - bias + bias * first
-	if first < 0.5:
-		upper *= 1.0 - bias * 0.5
-	lower = minf(lower, upper)
-	var next_lower := bias * second * (1.0 - fallback)
-	var next_upper := 1.0 - bias + bias * second
-	if second < 0.5:
-		next_upper *= 1.0 - bias * 0.5
-	next_lower = minf(next_lower, next_upper)
-	var result := size
-	for axis: int in range(3):
-		var low := maxf(minf(torso_minimum_size[axis], torso_maximum_size[axis]), 0.01)
-		var high := maxf(maxf(torso_minimum_size[axis], torso_maximum_size[axis]), low)
-		if high - low < 0.000001:
-			continue
-		var fraction := (size[axis] - low) / (high - low)
-		var quantile := clampf((fraction - lower) / maxf(upper - lower, 0.000001), 0.0, 1.0)
-		result[axis] = lerpf(low, high, lerpf(next_lower, next_upper, quantile))
-	return result
-
 func _asymmetry() -> float:
 	return clampf(unsymmetrie / 100.0, 0.0, 1.0)
 
@@ -726,256 +684,6 @@ func _sample_network_extra_endpoints(limb_endpoints: PackedVector3Array) -> Pack
 	return extra
 
 ## Randomly visit network segments and cover each selected segment with overlapping boxes.
-func _plan_network_torsos(subtorsos: Array[Dictionary], vertices: PackedVector3Array) -> Array[Dictionary]:
-	var result: Array[Dictionary] = []
-	if vertices.is_empty():
-		return result
-	var boxes: Array[Dictionary] = []
-	var parents: Array[int] = []
-	for torso: Dictionary in subtorsos:
-		var sub_box := BOX_GEOMETRY.box(torso.size, Transform3D(Basis.IDENTITY, torso.position))
-		if not _torso_overlap_is_legal(sub_box.aabb, boxes):
-			return []
-		boxes.append(sub_box)
-		parents.append(parents.size())
-	var components := boxes.size()
-	var threshold := maxf(torso_connection_distance, 0.0)
-	for first: int in range(boxes.size()):
-		for second: int in range(first):
-			if _network_root(parents, first) != _network_root(parents, second) and BOX_GEOMETRY.connected(boxes[first], boxes[second], threshold):
-				parents[_network_root(parents, first)] = _network_root(parents, second)
-				components -= 1
-	var order: Array[int] = []
-	for segment: int in range(vertices.size() / 2):
-		order.append(segment)
-	var profile := _network_profile(vertices)
-	var attempted := 0
-	var rejected_overlap := 0
-	var passes := 0
-	# Keep accepted boxes and retry every segment until connected or a safety limit is reached.
-	while true:
-		passes += 1
-		for index: int in range(order.size() - 1, 0, -1):
-			var other := _random.randi_range(0, index)
-			var saved := order[index]
-			order[index] = order[other]
-			order[other] = saved
-		var priorities: Dictionary = {}
-		for segment: int in order:
-			var midpoint := (vertices[segment * 2] + vertices[segment * 2 + 1]) * 0.5
-			var weight := 1.0 + _core_weight(midpoint, profile) * clampf(torso_center_density_bias, 0.0, 1.0) * 8.0
-			priorities[segment] = -log(maxf(_random.randf(), 0.000001)) / weight
-		order.sort_custom(func(a: int, b: int) -> bool: return priorities[a] < priorities[b])
-		for segment: int in order:
-			var start := vertices[segment * 2]
-			var end := vertices[segment * 2 + 1]
-			if _random.randf() < 0.5:
-				var saved := start
-				start = end
-				end = saved
-			var direction := end - start
-			var length := direction.length()
-			var basis := Basis.IDENTITY
-			var unit_direction := direction / length
-			var travel := 0.0
-			var previous_span := 0.0
-			while true:
-				if result.size() >= MAX_NETWORK_TORSOS:
-					push_warning("[creature_generator] Torso network exceeded its generation limit after %d passes; remaining_components=%d, generated=%d, attempts=%d, overlap_rejections=%d." % [passes, components, result.size(), attempted, rejected_overlap])
-					return []
-				var accepted := false
-				var size := Vector3.ZERO
-				var span := 0.0
-				var position := Vector3.ZERO
-				var batch: Array[Dictionary] = []
-				for attempt: int in range(MAX_GENERATION_ATTEMPTS):
-					attempted += 1
-					if attempted > MAX_NETWORK_TORSO_ATTEMPTS:
-						push_warning("[creature_generator] Torso network exceeded the retry limit after %d passes; remaining_components=%d, generated=%d, attempts=%d, overlap_rejections=%d; previous frame retained." % [passes, components, result.size(), attempted, rejected_overlap])
-						return []
-					size = _sample_profile_torso_size(start + unit_direction * travel, profile, clampf(float(attempt) / 64.0, 0.0, 1.0))
-					span = INF
-					for axis: int in range(3):
-						if absf(unit_direction[axis]) > 0.000001:
-							span = minf(span, size[axis] / absf(unit_direction[axis]))
-					var candidate_travel := travel
-					var step_offset := 0.0
-					if previous_span > 0.0:
-						# Try overlap, exact contact, or a small legal gap along the segment.
-						var centrality := _core_weight(start + unit_direction * travel, profile)
-						var density := clampf(torso_center_density_bias, 0.0, 1.0)
-						var contact_step := (previous_span + span) * 0.5
-						var overlap := contact_step * minf(0.1, clampf(max_torso_overlap_percent, 0.0, 100.0) / 100.0 * 0.2) * centrality * density
-						var gap := threshold * lerpf(0.5, 0.95 * (1.0 - centrality), density)
-						var step := contact_step if attempt % 3 == 0 else _random.randf_range(contact_step - overlap, contact_step + gap)
-						step_offset = step - contact_step
-						candidate_travel = minf(travel + step, length)
-					elif attempt > 0:
-						# A strict volume percentage may require the first box to
-						# leave most of the anchor volume before it becomes legal.
-						candidate_travel = minf(travel + _random.randf_range(0.0, span), length)
-					position = start + direction * (candidate_travel / length)
-					var reference_size := size
-					var reference_position := start + unit_direction * travel
-					for refinement: int in range(4):
-						size = _profile_size_at_position(reference_size, reference_position, position, profile, clampf(float(attempt) / 64.0, 0.0, 1.0))
-						span = INF
-						for axis: int in range(3):
-							if absf(unit_direction[axis]) > 0.000001:
-								span = minf(span, size[axis] / absf(unit_direction[axis]))
-						if previous_span > 0.0:
-							candidate_travel = minf(travel + (previous_span + span) * 0.5 + step_offset, length)
-							position = start + unit_direction * candidate_travel
-					batch = [{"size": size, "position": position, "basis": basis, "source_segment": PackedVector3Array([start, end])}]
-					if _random.randf() >= _asymmetry():
-						var counterpart := _mirror_segment(start, end, vertices)
-						var other_position := counterpart[0].lerp(counterpart[1], candidate_travel / length)
-						var other_size := size.lerp(_sample_profile_torso_size(other_position, profile, clampf(float(attempt) / 64.0, 0.0, 1.0)), _asymmetry())
-
-						if position.distance_to(other_position) > 0.00001:
-							batch.append({"size": other_size, "position": other_position, "basis": basis, "source_segment": counterpart})
-					if result.size() + batch.size() > MAX_NETWORK_TORSOS:
-						continue
-					var candidate_boxes := boxes.duplicate()
-					var legal := true
-					for candidate: Dictionary in batch:
-						var next := BOX_GEOMETRY.box(candidate.size, Transform3D(candidate.basis, candidate.position))
-						if not _torso_overlap_is_legal(next.aabb, candidate_boxes):
-							legal = false
-							break
-						candidate_boxes.append(next)
-					if not legal:
-						rejected_overlap += 1
-						continue
-					travel = candidate_travel
-					accepted = true
-					break
-				if not accepted:
-					# Another segment or a later pass may provide a legal route.
-					break
-				for candidate: Dictionary in batch:
-					var next_box := BOX_GEOMETRY.box(candidate.size, Transform3D(candidate.basis, candidate.position))
-					var new_index := boxes.size()
-					parents.append(new_index)
-					components += 1
-					for existing: int in range(boxes.size()):
-						if _network_root(parents, new_index) != _network_root(parents, existing) and BOX_GEOMETRY.connected(next_box, boxes[existing], threshold):
-							parents[_network_root(parents, new_index)] = _network_root(parents, existing)
-							components -= 1
-					boxes.append(next_box)
-					result.append(candidate)
-				if components == 1:
-					print("[creature_generator] torso_overlap max_percent=%.2f rejected=%d attempts=%d passes=%d valid=true" % [max_torso_overlap_percent, rejected_overlap, attempted, passes])
-					_add_core_torsos(result, boxes, vertices, profile)
-					return result
-				if travel >= length:
-					break
-				previous_span = span
-		print("[creature_generator] torso_network pass=%d remaining_components=%d generated=%d attempts=%d overlap_rejections=%d retrying=true" % [passes, components, result.size(), attempted, rejected_overlap])
-	return []
-
-## Densify the core only with blocks attached to the already-connected body.
-## Both members of a mirror pair must pass overlap and connectivity checks together.
-func _add_core_torsos(result: Array[Dictionary], boxes: Array[Dictionary], vertices: PackedVector3Array, profile: Dictionary) -> void:
-	var added := 0
-	var target := clampi(torso_core_extra_blocks, 0, 32)
-	var weights: Array[float] = []
-	for index: int in range(0, vertices.size(), 2):
-		weights.append(0.01 + pow(_core_weight((vertices[index] + vertices[index + 1]) * 0.5, profile), 2.0))
-	for attempt: int in range(256):
-		if added >= target or result.size() >= MAX_NETWORK_TORSOS:
-			break
-		var segment := _weighted_index(weights) * 2
-		var start := vertices[segment]
-		var end := vertices[segment + 1]
-		var fraction := _random.randf()
-		var position := start.lerp(end, fraction)
-		if _core_weight(position, profile) < 0.5:
-			continue
-		var size := _sample_profile_torso_size(position, profile, clampf(float(attempt) / 256.0, 0.0, 0.75))
-		var batch: Array[Dictionary] = [{"size": size, "position": position, "basis": Basis.IDENTITY, "source_segment": PackedVector3Array([start, end])}]
-		if _random.randf() >= _asymmetry():
-			var counterpart := _mirror_segment(start, end, vertices)
-			var other_position := counterpart[0].lerp(counterpart[1], fraction)
-			if position.distance_to(other_position) > 0.00001:
-				var other_size := size.lerp(_sample_profile_torso_size(other_position, profile), _asymmetry())
-				batch.append({"size": other_size, "position": other_position, "basis": Basis.IDENTITY, "source_segment": counterpart})
-		if added + batch.size() > target or result.size() + batch.size() > MAX_NETWORK_TORSOS:
-			continue
-		var test_boxes := boxes.duplicate()
-		var legal := true
-		for candidate: Dictionary in batch:
-			if _core_weight(candidate.position, profile) < 0.5:
-				legal = false
-				break
-			var next := BOX_GEOMETRY.box(candidate.size, Transform3D(Basis.IDENTITY, candidate.position))
-			if not _torso_overlap_is_legal(next.aabb, test_boxes):
-				legal = false
-				break
-			var connected := false
-			for existing: Dictionary in test_boxes:
-				if candidate.position.distance_to(existing.transform.origin) < 0.00001:
-					legal = false
-					break
-				connected = connected or BOX_GEOMETRY.connected(next, existing, maxf(torso_connection_distance, 0.0))
-			if not legal or not connected:
-				legal = false
-				break
-			test_boxes.append(next)
-		if not legal:
-			continue
-		for candidate: Dictionary in batch:
-			boxes.append(BOX_GEOMETRY.box(candidate.size, Transform3D(Basis.IDENTITY, candidate.position)))
-			result.append(candidate)
-		added += batch.size()
-	var core_count := 0
-	var edge_count := 0
-	var core_volume := 0.0
-	var edge_volume := 0.0
-	for candidate: Dictionary in result:
-		var volume: float = candidate.size.x * candidate.size.y * candidate.size.z
-		if _core_weight(candidate.position, profile) >= 0.5:
-			core_count += 1
-			core_volume += volume
-		else:
-			edge_count += 1
-			edge_volume += volume
-	print("[creature_generator] torso_distribution core_count=%d edge_count=%d core_mean_volume=%.3f edge_mean_volume=%.3f core_added=%d/%d" % [core_count, edge_count, core_volume / maxi(core_count, 1), edge_volume / maxi(edge_count, 1), added, target])
-
-func _mirror_segment(start: Vector3, end: Vector3, vertices: PackedVector3Array) -> PackedVector3Array:
-	var best := PackedVector3Array([start, end])
-	var distance := INF
-	for index: int in range(0, vertices.size(), 2):
-		for reverse: bool in [false, true]:
-			var a := vertices[index + (1 if reverse else 0)]
-			var b := vertices[index + (0 if reverse else 1)]
-			var next := a.distance_squared_to(_mirror_point(start)) + b.distance_squared_to(_mirror_point(end))
-			if next < distance:
-				distance = next
-				best = PackedVector3Array([a, b])
-	return best
-
-## Torso generation uses axis-aligned boxes in generator-local coordinates.
-func _torso_overlap_volume(first: AABB, second: AABB) -> float:
-	var overlap_size := first.end.min(second.end) - first.position.max(second.position)
-	# Face/edge/point contact has no volume and remains legal at a zero threshold.
-	if overlap_size.x <= 0.0 or overlap_size.y <= 0.0 or overlap_size.z <= 0.0:
-		return 0.0
-	return overlap_size.x * overlap_size.y * overlap_size.z
-
-func _torso_overlap_is_legal(candidate: AABB, boxes: Array[Dictionary]) -> bool:
-	var candidate_volume := candidate.get_volume()
-	if candidate_volume <= 0.0: return false
-	var limit := clampf(max_torso_overlap_percent, 0.0, 100.0) / 100.0
-	for existing: Dictionary in boxes:
-		var bounds: AABB = existing.aabb
-		var existing_volume := bounds.get_volume()
-		if existing_volume <= 0.0: return false
-		var overlap := _torso_overlap_volume(candidate, bounds)
-		if overlap / candidate_volume > limit + 0.000001 or overlap / existing_volume > limit + 0.000001:
-			return false
-	return true
-
 func _sample_dimension(first: float, second: float) -> float:
 	var low := maxf(minf(first, second), 0.01)
 	var high := maxf(maxf(first, second), low)
@@ -1000,7 +708,8 @@ func _create_line_mesh(vertices: PackedVector3Array) -> ArrayMesh:
 	arrays.resize(Mesh.ARRAY_MAX)
 	arrays[Mesh.ARRAY_VERTEX] = vertices
 	var mesh := ArrayMesh.new()
-	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_LINES, arrays)
+	if not vertices.is_empty():
+		mesh.add_surface_from_arrays(Mesh.PRIMITIVE_LINES, arrays)
 	return mesh
 
 func _generate_feet(plan: Dictionary, scene_owner: Node, material: Material) -> void:
@@ -1016,25 +725,13 @@ func _generate_feet(plan: Dictionary, scene_owner: Node, material: Material) -> 
 		if child.name != &"VariationRange" and (child.has_meta(&"initial_position") or str(child.name).begins_with("Feet_") or str(child.name).begins_with("ForeLeg_") or str(child.name).begins_with("Arm_") or str(child.name).begins_with("Leg_")):
 			frames.remove_child(child)
 			child.queue_free()
-	frames.set_meta(&"extra_leg_count", plan.extra_leg_count)
+	for key: StringName in [&"extra_leg_count", &"variation_radius", &"distribution_scale", &"allowed_spread"]:
+		if frames.has_meta(key): frames.remove_meta(key)
 	var layouts: Array[Dictionary] = plan.layouts
-	var count := layouts.size()
-	var radius: float = plan.radius
-	frames.set_meta(&"variation_radius", radius)
-	frames.set_meta(&"distribution_scale", _get_distribution_scale())
-	frames.set_meta(&"allowed_spread", layouts[0].allowed_spread)
-	var range_circle := frames.get_node_or_null("VariationRange") as MeshInstance3D
-	if range_circle == null:
-		range_circle = MeshInstance3D.new()
-		range_circle.name = "VariationRange"
-		frames.add_child(range_circle)
-	range_circle.owner = scene_owner
-	range_circle.mesh = _create_range_circle(radius)
-	var range_material := StandardMaterial3D.new()
-	range_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	range_material.albedo_color = wireframe_color.darkened(0.5)
-	range_circle.material_override = range_material
-	range_circle.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	var old_range := frames.get_node_or_null("VariationRange")
+	if old_range != null:
+		frames.remove_child(old_range)
+		old_range.queue_free()
 	var name_counts := {"ForeLeg": 0, "Leg": 0}
 	for index: int in range(layouts.size()):
 		var layout := layouts[index]
@@ -1098,95 +795,7 @@ func _generate_feet(plan: Dictionary, scene_owner: Node, material: Material) -> 
 		label.font_size = label_font_size
 		label.pixel_size = 0.01
 		label.modulate = label_color
-	print("[creature_generator] feets=%d forelegs=%d legs=%d extra_legs=%d unsymmetrie=%.2f narrowty=%.2f allowed_xz=%s variation_radius=%.3f" % [count, name_counts.ForeLeg, name_counts.Leg, plan.extra_leg_count, unsymmetrie, narrowty, layouts[0].allowed_spread, radius])
-
-func _sample_feet_target(initial: Vector2, radius: float, strength: float) -> Vector2:
-	if strength <= 0.0:
-		return initial
-	# Uniform disk sampling, rejecting points outside the total variation circle.
-	for attempt: int in range(64):
-		var angle := _random.randf_range(0.0, TAU)
-		var distance := sqrt(_random.randf()) * radius * strength
-		var target := initial + Vector2(cos(angle), sin(angle)) * distance
-		if target.length_squared() <= radius * radius:
-			return target
-	return initial
-
-func _create_range_circle(radius: float) -> ArrayMesh:
-	var vertices := PackedVector3Array()
-	for segment: int in range(64):
-		var start := TAU * float(segment) / 64.0
-		var end := TAU * float(segment + 1) / 64.0
-		vertices.append(Vector3(cos(start) * radius, 0.0, sin(start) * radius))
-		vertices.append(Vector3(cos(end) * radius, 0.0, sin(end) * radius))
-	return _create_line_mesh(vertices)
-
-## Plan and validate before touching the saved scene or its previous meshes.
-func _create_valid_plan() -> Dictionary:
-	if not is_finite(network_center_bias) or not is_finite(torso_center_size_bias) or not is_finite(torso_center_density_bias) or not is_finite(max_neck_start_surface_distance) or not is_finite(neck_block_thickness) or not is_finite(max_neck_overlap_diameter) or not head_minimum_size.is_finite() or not head_maximum_size.is_finite() or not is_finite(neck_minimum_length) or not is_finite(neck_maximum_length) or not is_finite(neck_maximum_angle) or not minimum_size.is_finite() or not maximum_size.is_finite() or not base_foot_size.is_finite() or not minimum_foot_size.is_finite() or not maximum_foot_size.is_finite() or not is_finite(minimum_feet_distance) or not is_finite(inhomogeneity) or not is_finite(unsymmetrie) or not is_finite(narrowty) or not is_finite(base_limb_length) or not limb_minimum_size.is_finite() or not limb_maximum_size.is_finite() or not is_finite(max_limb_end_height_difference) or not is_finite(limb_endpoint_merge_distance) or not is_finite(network_extra_endpoint_padding) or not torso_minimum_size.is_finite() or not torso_maximum_size.is_finite() or not is_finite(torso_connection_distance) or not is_finite(max_torso_overlap_percent):
-		return {}
-	var gap := maxf(minimum_feet_distance, 0.0)
-	for attempt: int in range(MAX_GENERATION_ATTEMPTS):
-		# Feet distribution uses the configured size envelope, not a pre-generated Torso.
-		var layouts := _sample_initial_feet(minimum_size.max(maximum_size).max(Vector3.ONE * 0.01), gap)
-		if layouts.is_empty():
-			continue
-		var radius := _get_variation_radius(layouts)
-		if not _apply_feet_offsets(layouts, radius, gap):
-			continue
-		var extra_leg_count := _assign_limb_roles(layouts)
-		_assign_limb_lengths(layouts)
-		for index: int in range(layouts.size()):
-			var layout: Dictionary = layouts[index]
-			var size: Vector3 = layout.size
-			var points := _create_limb_points(layout.role, size.y, layout.limb_length)
-			if index % 2 == 1 and layouts[index - 1].role == layout.role:
-				var partner: PackedVector3Array = layouts[index - 1].limb_points
-				for point: int in range(1, points.size()):
-					var correlated: Vector3 = points[0] + (partner[point] - partner[0]) * (layout.limb_length / layouts[index - 1].limb_length)
-					points[point] = correlated.lerp(points[point], _asymmetry())
-				var length := 0.0
-				for point: int in range(1, points.size()):
-					length += points[point].distance_to(points[point - 1])
-				for point: int in range(1, points.size()):
-					points[point] = points[0] + (points[point] - points[0]) * layout.limb_length / length
-				if _asymmetry() == 0.0:
-					points = partner.duplicate()
-			layout.limb_points = points
-		# All Limb geometry is fixed before the first Torso is sampled.
-		var torsos := _plan_torsos(layouts)
-		if torsos.is_empty():
-			continue
-		var network := _build_limb_network(layouts)
-		var network_torsos := _plan_network_torsos(torsos, network.vertices)
-		if network_torsos.is_empty():
-			return {}
-		var necks := _plan_necks(network_torsos, torsos)
-		if necks.size() != clampi(neck_number, 0, 256):
-			continue
-		_assign_limb_block_sizes(layouts)
-		return {"necks": necks, "torsos": torsos, "network_torsos": network_torsos, "layouts": layouts, "limb_network": network, "extra_leg_count": extra_leg_count, "radius": radius, "attempts": attempt + 1}
-	return {}
-
-## Store samples in the plan so preview and physics consume identical dimensions.
-func _assign_limb_block_sizes(layouts: Array[Dictionary]) -> void:
-	for index: int in range(layouts.size()):
-		var layout: Dictionary = layouts[index]
-		var sizes: Array[Vector3] = []
-		var points: PackedVector3Array = layout.limb_points
-		for segment: int in range(points.size() - 1):
-			var size := _sample_size(limb_minimum_size, limb_maximum_size)
-			if index % 2 == 1 and layouts[index - 1].role == layout.role:
-				var partner: Vector3 = layouts[index - 1].limb_block_sizes[segment]
-				size = partner.lerp(size, _asymmetry())
-			if limb_y_matches_segment:
-				size.y = points[segment].distance_to(points[segment + 1])
-			sizes.append(size)
-		layout.limb_block_sizes = sizes
-
-## Strict interval overlap: touching edges alone does not cover a part.
-func _overlaps_x(a: AABB, b: AABB) -> bool:
-	return minf(a.end.x, b.end.x) > maxf(a.position.x, b.position.x)
+	print("[creature_generator] rear_legs=%d forelegs=%d torso_count=%d body_length=%.3f overlap_percent=%.2f" % [name_counts.Leg, name_counts.ForeLeg, torso_count, body_length, torso_overlap_percent])
 
 func _limb_endpoint(layout: Dictionary) -> Vector3:
 	var points: PackedVector3Array = layout.limb_points
@@ -1207,73 +816,6 @@ func _point_to_torso_distance(point: Vector3, bounds: AABB) -> float:
 func _sample_size(low: Vector3, high: Vector3) -> Vector3:
 	return Vector3(_sample_dimension(low.x, high.x), _sample_dimension(low.y, high.y), _sample_dimension(low.z, high.z))
 
-func _plan_torsos(layouts: Array[Dictionary]) -> Array[Dictionary]:
-	var torsos: Array[Dictionary] = []
-	var uncovered: Array[int] = []
-	var endpoints := PackedVector3Array()
-	var tallest := 0.0
-	for index: int in range(layouts.size()):
-		uncovered.append(index)
-		tallest = maxf(tallest, _foot_bounds(layouts[index]).end.y)
-		endpoints.append(_limb_endpoint(layouts[index]))
-	var distance_limit := maxf(max_limb_end_height_difference, 0.0) + 0.00001
-	while not uncovered.is_empty():
-		var accepted := false
-		for attempt: int in range(MAX_GENERATION_ATTEMPTS):
-			var target: Vector3 = endpoints[uncovered[_random.randi_range(0, uncovered.size() - 1)]]
-			var size := _sample_size(minimum_size, maximum_size)
-			var center := target + Vector3(_random.randf_range(-0.35, 0.35) * size.x, size.y * 0.5, _random.randf_range(-0.35, 0.35) * size.z)
-			center.y = maxf(target.y, tallest + TORSO_CLEARANCE) + size.y * 0.5
-			var batch: Array[Dictionary] = []
-			var paired := _random.randf() >= _asymmetry()
-			# A block crossing the mirror plane is represented once, centered on that plane.
-			if paired and absf(center.z) < size.z * 0.5:
-				center.z *= _asymmetry()
-				paired = false
-			batch.append({"size": size, "position": center})
-			if paired:
-				var partner_target := _nearest_mirror(target, endpoints, PackedVector3Array())
-				var other_size := size.lerp(_sample_size(minimum_size, maximum_size), _asymmetry())
-				var independent := partner_target + Vector3(_random.randf_range(-0.35, 0.35) * other_size.x, other_size.y * 0.5, _random.randf_range(-0.35, 0.35) * other_size.z)
-				independent.y = maxf(partner_target.y, tallest + TORSO_CLEARANCE) + other_size.y * 0.5
-				batch.append({"size": other_size, "position": _mirror_point(center).lerp(independent, _asymmetry())})
-			var lift := 0.0
-			for candidate: Dictionary in batch:
-				var bounds := AABB(candidate.position - candidate.size * 0.5, candidate.size)
-				for previous: Dictionary in torsos:
-					var old: AABB = previous.bounds
-					if _overlaps_x(bounds, old) and minf(bounds.end.z, old.end.z) > maxf(bounds.position.z, old.position.z):
-						lift = maxf(lift, old.end.y + TORSO_CLEARANCE - bounds.position.y)
-			var legal := true
-			var covers := false
-			for index: int in range(batch.size()):
-				var candidate: Dictionary = batch[index]
-				candidate.position.y += lift
-				candidate.bounds = AABB(candidate.position - candidate.size * 0.5, candidate.size)
-				candidate.covered_limb_count = 0
-				legal = legal and _is_layout_valid(candidate.bounds, layouts, maxf(minimum_feet_distance, 0.0))
-				for prior: int in range(index):
-					legal = legal and not candidate.bounds.intersects(batch[prior].bounds)
-				var has_endpoint := false
-				for endpoint: Vector3 in endpoints:
-					has_endpoint = has_endpoint or _point_to_torso_distance(endpoint, candidate.bounds) <= distance_limit
-				legal = legal and has_endpoint
-				for pending: int in uncovered:
-					covers = covers or _point_to_torso_distance(endpoints[pending], candidate.bounds) <= distance_limit
-			if not legal or not covers:
-				continue
-			for candidate: Dictionary in batch:
-				for index: int in range(uncovered.size() - 1, -1, -1):
-					if _point_to_torso_distance(endpoints[uncovered[index]], candidate.bounds) <= distance_limit:
-						uncovered.remove_at(index)
-						candidate.covered_limb_count += 1
-				torsos.append(candidate)
-			accepted = true
-			break
-		if not accepted:
-			return []
-	return torsos
-
 func _sample_foot_size() -> Vector3:
 	var strength := clampf(inhomogeneity / 100.0, 0.0, 1.0)
 	var size := Vector3.ZERO
@@ -1282,199 +824,9 @@ func _sample_foot_size() -> Vector3:
 		var low := maxf(minf(base, minf(minimum_foot_size[axis], maximum_foot_size[axis])), 0.01)
 		var high := maxf(base, maxf(minimum_foot_size[axis], maximum_foot_size[axis]))
 		size[axis] = lerpf(base, _random.randf_range(low, high), strength)
+	size.z = part_width
 	return size
 
-func _get_distribution_scale() -> Vector2:
-	var length_scale := 1.0 + maxf(narrowty, 0.0) / 100.0
-	return Vector2(length_scale, 1.0 / length_scale)
-
-func _sample_initial_feet(torso_size: Vector3, gap: float) -> Array[Dictionary]:
-	var count := clampi(feets, 2, 10)
-	var sizes: Array[Vector3] = []
-	var largest := Vector3.ZERO
-	for index: int in range(count):
-		var size := _sample_foot_size()
-		if index % 2 == 1:
-			size = sizes[index - 1].lerp(size, _asymmetry())
-		sizes.append(size)
-		largest = largest.max(size)
-	# Grow the sampling area with the count, dimensions and requested separation.
-	var rows := ceilf(sqrt(float(count)))
-	var distribution_scale := _get_distribution_scale()
-	var spread_x := maxf(torso_size.x, (largest.x + gap) * rows) * distribution_scale.x
-	var spread_z := maxf(torso_size.z * 1.5, (largest.z + gap) * rows) * distribution_scale.y
-	var minimum_z := (largest.z + gap) * 0.5 + 0.01
-	var layouts: Array[Dictionary] = []
-	# Do not expand the narrowed width to bypass the mirror separation requirement.
-	if spread_z < minimum_z:
-		return []
-	for pair: int in range(floori(float(count) * 0.5)):
-		var accepted := false
-		for attempt: int in range(64):
-			var position := Vector2(_random.randf_range(-spread_x, spread_x), _random.randf_range(minimum_z, spread_z))
-			var first := {"position": position, "final_position": position, "size": sizes[pair * 2]}
-			
-			# Vector2 stores X/Z: mirror across the local X-Y plane by reversing Z.
-			var mirrored := Vector2(position.x, -position.y)
-			var second := {"position": mirrored, "final_position": mirrored, "size": sizes[pair * 2 + 1]}
-			if _foot_fits(first, layouts, gap) and _foot_fits(second, layouts, gap) and _feet_separated(first, second, gap):
-				layouts.append(first)
-				layouts.append(second)
-				accepted = true
-				break
-		if not accepted:
-			return []
-	if count % 2 != 0:
-		for attempt: int in range(64):
-			var position := Vector2(_random.randf_range(-spread_x, spread_x), _random.randf_range(-spread_z, spread_z) * _asymmetry())
-			var extra := {"position": position, "final_position": position, "size": sizes[count - 1]}
-			if _foot_fits(extra, layouts, gap):
-				layouts.append(extra)
-				break
-	if layouts.size() != count:
-		return []
-	for layout: Dictionary in layouts:
-		layout.allowed_spread = Vector2(spread_x, spread_z)
-	return layouts
-
-func _get_variation_radius(layouts: Array[Dictionary]) -> float:
-	var radius := 0.0
-	for layout: Dictionary in layouts:
-		var size: Vector3 = layout.size
-		var position: Vector2 = layout.position
-		var half := Vector2(size.x, size.z) * 0.5
-		for corner: Vector2 in [Vector2(-half.x, -half.y), Vector2(half.x, -half.y), Vector2(half.x, half.y), Vector2(-half.x, half.y)]:
-			radius = maxf(radius, (position + corner).length())
-	return radius
-
-func _apply_feet_offsets(layouts: Array[Dictionary], radius: float, gap: float) -> bool:
-	var strength := clampf(unsymmetrie / 100.0, 0.0, 1.0)
-	var placed: Array[Dictionary] = []
-	for layout: Dictionary in layouts:
-		var accepted := false
-		for attempt: int in range(64):
-			var initial: Vector2 = layout.position
-			var target := _sample_feet_target(initial, radius, strength)
-			var fraction := _random.randf_range(0.0, strength)
-			layout.final_position = initial.lerp(target, fraction)
-			if _foot_fits(layout, placed, gap):
-				layout.target_position = target
-				layout.travel_fraction = fraction
-				placed.append(layout)
-				accepted = true
-				break
-		if not accepted:
-			return false
-	return true
-
-func _foot_bounds(layout: Dictionary) -> AABB:
-	var size: Vector3 = layout.size
-	var position: Vector2 = layout.final_position
-	return AABB(Vector3(position.x - size.x * 0.5, 0.0, position.y - size.z * 0.5), size)
-
-func _feet_separated(first: Dictionary, second: Dictionary, gap: float) -> bool:
-	var a := _foot_bounds(first)
-	var b := _foot_bounds(second)
-	if a.intersects(b):
-		return false
-	var dx := maxf(maxf(a.position.x - b.end.x, b.position.x - a.end.x), 0.0)
-	var dz := maxf(maxf(a.position.z - b.end.z, b.position.z - a.end.z), 0.0)
-	return Vector2(dx, dz).length() >= gap
-
-## At zero retain the original Unsymmetrie behavior; otherwise constrain final centers too.
-func _is_within_distribution(layout: Dictionary) -> bool:
-	if narrowty <= 0.0 or not layout.has("allowed_spread"):
-		return true
-	var position: Vector2 = layout.final_position
-	var limit: Vector2 = layout.allowed_spread
-	return absf(position.x) <= limit.x and absf(position.y) <= limit.y
-
-func _foot_fits(candidate: Dictionary, placed: Array[Dictionary], gap: float) -> bool:
-	if not _is_within_distribution(candidate):
-		return false
-	for other: Dictionary in placed:
-		if not _feet_separated(candidate, other, gap):
-			return false
-	return true
-
-func _is_layout_valid(torso_bounds: AABB, layouts: Array[Dictionary], gap: float) -> bool:
-	for index: int in range(layouts.size()):
-		var bounds := _foot_bounds(layouts[index])
-		if not _is_within_distribution(layouts[index]):
-			return false
-		if torso_bounds.position.y <= bounds.end.y or torso_bounds.intersects(bounds):
-			return false
-		for other_index: int in range(index):
-			if not _feet_separated(layouts[index], layouts[other_index], gap):
-				return false
-	return true
-
-## +X is front; classify only after all final horizontal offsets are known.
-func _assign_limb_roles(layouts: Array[Dictionary]) -> int:
-	var paired_layout := true
-	for index: int in range(0, layouts.size() - 1, 2):
-		var position: Vector2 = layouts[index].final_position
-		paired_layout = paired_layout and Vector2(position.x, -position.y).is_equal_approx(layouts[index + 1].final_position)
-	if _asymmetry() == 0.0 and paired_layout:
-		var pairs: Array[int] = []
-		for index: int in range(0, layouts.size() - 1, 2):
-			pairs.append(index)
-		pairs.sort_custom(func(a: int, b: int) -> bool: return layouts[a].final_position.x < layouts[b].final_position.x)
-		for index: int in range(layouts.size()):
-			layouts[index].role = "ForeLeg"
-		var rear: int = pairs.pop_front()
-		layouts[rear].role = "Leg"
-		layouts[rear + 1].role = "Leg"
-		if not pairs.is_empty():
-			pairs.pop_back() # Front pair remains ForeLeg.
-		var extra_pairs := _random.randi_range(0, pairs.size())
-		for index: int in range(extra_pairs):
-			var pair: int = pairs[index]
-			layouts[pair].role = "Leg"
-			layouts[pair + 1].role = "Leg"
-		return extra_pairs * 2
-	var remaining: Array[int] = []
-	for index: int in range(layouts.size()):
-		remaining.append(index)
-	remaining.sort_custom(func(first: int, second: int) -> bool:
-		var a: Vector2 = layouts[first].final_position
-		var b: Vector2 = layouts[second].final_position
-		# Preserve deterministic ordering for exact mirror pairs with the same X.
-		return first < second if a.x == b.x else a.x < b.x
-	)
-	for rear: int in range(mini(2, remaining.size())):
-		var index: int = remaining.pop_front()
-		layouts[index].role = "Leg"
-	for front: int in range(mini(2, remaining.size())):
-		var index: int = remaining.pop_back()
-		layouts[index].role = "ForeLeg"
-	var extra_count := _sample_extra_leg_count(remaining.size())
-	for extra: int in range(extra_count):
-		var index: int = remaining.pop_front()
-		layouts[index].role = "Leg"
-	for index: int in remaining:
-		layouts[index].role = "ForeLeg"
-	return extra_count
-
-func _sample_extra_leg_count(available: int) -> int:
-	if available <= 0:
-		return 0
-	var even_probability := 1.0 - clampf(unsymmetrie / 100.0, 0.0, 1.0)
-	if even_probability >= 1.0 or _random.randf() < even_probability:
-		return 2 * _random.randi_range(0, floori(float(available) * 0.5))
-	return 1 + 2 * _random.randi_range(0, floori(float(available - 1) * 0.5))
-
-## Initial ordering retains mirror partners at indices 2n / 2n+1, even after classification.
-func _assign_limb_lengths(layouts: Array[Dictionary]) -> void:
-	var size_strength := clampf(inhomogeneity / 100.0, 0.0, 1.0)
-	var asymmetry_strength := clampf(unsymmetrie / 100.0, 0.0, 1.0)
-	var pair_length := maxf(base_limb_length, 0.01)
-	for index: int in range(layouts.size()):
-		if index % 2 == 0:
-			pair_length = maxf(base_limb_length, 0.01) * (1.0 + _random.randf_range(-0.5, 0.5) * size_strength)
-		layouts[index].limb_length = pair_length * (1.0 + _random.randf_range(-0.5, 0.5) * asymmetry_strength)
-
-## Local points start at the cuboid top center and strictly rise at every segment.
 func _create_limb_points(role: String, foot_height: float, total_length: float) -> PackedVector3Array:
 	var start := Vector3(0.0, foot_height * 0.5, 0.0)
 	var points := PackedVector3Array([start])
@@ -1499,3 +851,232 @@ func _create_limb_points(role: String, foot_height: float, total_length: float) 
 		points[index] = start + (points[index] - start) * length_scale
 	return points
 
+func _sample_neck_origin(torsos: Array[Dictionary]) -> Vector3:
+	var torso: Dictionary = torsos[-1]
+	var half: Vector3 = torso.size * 0.5
+	# Every root starts on the foremost Torso front face; the first segment leaves horizontally.
+	return torso.position + Vector3(half.x, _random.randf_range(-half.y * 0.5, half.y * 0.5), _random.randf_range(-half.z, half.z))
+
+func _create_neck_points(origin: Vector3, total_length: float) -> PackedVector3Array:
+	var count := clampi(neck_segment_count, 0, 3)
+	var points := PackedVector3Array([origin])
+	var weights: Array[float] = []
+	var weight_sum := 0.0
+	for index: int in range(count):
+		var weight := lerpf(1.0, 0.35, float(index) / float(maxi(count - 1, 1)))
+		weights.append(weight)
+		weight_sum += weight
+	for index: int in range(count):
+		var angle := 0.0
+		if index > 0 and index < count - 1:
+			angle = deg_to_rad(clampf(neck_maximum_angle, 0.0, 85.0))
+		points.append(points[-1] + Vector3(cos(angle), sin(angle), 0.0) * total_length * weights[index] / weight_sum)
+	return points
+
+func _create_valid_plan() -> Dictionary:
+	# Reject invalid scripted values rather than silently changing requested counts.
+	if rear_leg_count < 0 or rear_leg_count > 10 or foreleg_count < 0 or foreleg_count > 10 or torso_count < 1 or torso_count > 32 or neck_segment_count < 0 or neck_segment_count > 3:
+		return {}
+	for property: Dictionary in get_property_list():
+		if (int(property.usage) & PROPERTY_USAGE_EDITOR) == 0: continue
+		var value: Variant = get(property.name)
+		if value is float and not is_finite(value): return {}
+		if value is Vector3 and not value.is_finite(): return {}
+	if part_width < 0.01 or body_length < 0.1 or base_limb_length <= 0.0 or torso_overlap_percent < 0.0 or torso_overlap_percent > 95.0: return {}
+	for attempt: int in range(MAX_GENERATION_ATTEMPTS):
+		var height := _sample_dimension(torso_minimum_height, torso_maximum_height)
+		var width := part_width
+		var layouts: Array[Dictionary] = []
+		_append_foot_group(layouts, rear_leg_count, "Leg", -1.0, width)
+		_append_foot_group(layouts, foreleg_count, "ForeLeg", 1.0, width)
+		var max_foot_height := 0.0
+		for layout: Dictionary in layouts: max_foot_height = maxf(max_foot_height, layout.size.y)
+		var bottom := max_foot_height + maxf(base_limb_length * 0.65, 0.1) + maxf(sub_torso_size.y, 0.01)
+		var torsos := _plan_body(height, width, bottom)
+		if torsos.is_empty(): return {}
+		var subtorsos := _plan_subtorsos(layouts, torsos, bottom)
+		if subtorsos.size() != layouts.size(): return {}
+		if not _feet_clear(layouts): continue
+		_fit_limbs(layouts, subtorsos)
+		_assign_limb_block_sizes(layouts)
+		var necks := _plan_necks(torsos, subtorsos)
+		if necks.size() != neck_number: continue
+		return {"torsos": subtorsos, "network_torsos": torsos, "separate_subtorsos": true, "layouts": layouts,
+			"limb_network": _build_limb_network(layouts), "necks": necks,
+			"attempts": attempt + 1, "extra_leg_count": 0, "radius": body_length * 0.5}
+	return {}
+
+static func _make_torso_curve(points: Array = [[Vector2(0, 1), 0.0, 0.0, 0, 0], [Vector2(1, 1), 0.0, 0.0, 0, 0]], lower: float = 0.05, upper: float = 3.0) -> Curve:
+	var curve := Curve.new()
+	curve.min_value = lower
+	curve.max_value = upper
+	for point: Array in points:
+		curve.add_point(point[0], point[1], point[2], point[3], point[4])
+	return curve
+
+func _curve_default_source(curve: Curve) -> String:
+	var points: Array = []
+	for index: int in range(curve.point_count):
+		points.append([curve.get_point_position(index), curve.get_point_left_tangent(index), curve.get_point_right_tangent(index), curve.get_point_left_mode(index), curve.get_point_right_mode(index)])
+	return "_make_torso_curve(%s, %s, %s)" % [var_to_str(points).replace("\n", " ").replace("\t", ""), var_to_str(curve.min_value), var_to_str(curve.max_value)]
+
+func _sample_contour(curve: Curve, progress: float, fallback: float) -> float:
+	return curve.sample(progress) if curve != null and curve.point_count > 0 else fallback
+
+func _plan_body(height: float, width: float, bottom: float) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	var lower_values: Array[float] = []
+	var upper_values: Array[float] = []
+	var lowest := INF
+	for index: int in range(torso_count):
+		var progress := float(index) / float(torso_count - 1) if torso_count > 1 else 0.5
+		var upper := _sample_contour(torso_upper_curve, progress, 1.0)
+		var lower := _sample_contour(torso_lower_curve, progress, 0.0)
+		var offset := _sample_contour(torso_height_offset_curve, progress, 0.0)
+		if not is_finite(offset) or not is_finite(upper) or not is_finite(lower) or (upper - lower) * height < 0.01:
+			push_warning("[creature_generator] Torso contours invalid at %.3f: upper=%.3f lower=%.3f; require upper above lower and height >= 0.01." % [progress, upper, lower])
+			return []
+		upper_values.append(upper + offset)
+		lower_values.append(lower + offset)
+		lowest = minf(lowest, lower + offset)
+	# Only the contours determine Y. Equal X spans retain the requested body length and overlap.
+	var overlap := torso_overlap_percent / 100.0
+	var length := body_length / (1.0 + float(torso_count - 1) * (1.0 - overlap))
+	var spacing := length * (1.0 - overlap)
+	# Raise the entire frame together if a lower contour dips below the leg-clearance baseline.
+	var baseline := bottom - minf(lowest, 0.0) * height
+	for index: int in range(torso_count):
+		var low := baseline + lower_values[index] * height
+		var high := baseline + upper_values[index] * height
+		var x := -body_length * 0.5 + length * 0.5 + float(index) * spacing
+		var size := Vector3(length, high - low, width)
+		var position := Vector3(x, (high + low) * 0.5, 0.0)
+		result.append({"size": size, "position": position, "source_segment": PackedVector3Array(),
+			"sub_torso": false, "upper_height": high, "lower_height": low,
+			"contour_progress": float(index) / float(torso_count - 1) if torso_count > 1 else 0.5})
+		if index > 0:
+			var previous: Dictionary = result[index - 1]
+			var first := BOX_GEOMETRY.box(previous.size, Transform3D(Basis.IDENTITY, previous.position))
+			var second := BOX_GEOMETRY.box(size, Transform3D(Basis.IDENTITY, position))
+			if not BOX_GEOMETRY.connected(first, second, maxf(torso_connection_distance, 0.0)):
+				push_warning("[creature_generator] Neighboring contour blocks %d/%d are disconnected; soften the contour or increase Torso Connection Distance." % [index, index + 1])
+				return []
+	return result
+
+func _plan_subtorsos(layouts: Array[Dictionary], torsos: Array[Dictionary], _bottom: float) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	var size := sub_torso_size.max(Vector3.ONE * 0.01)
+	size.z = part_width
+	for index: int in range(layouts.size()):
+		var foot: Dictionary = layouts[index]
+		var horizontal: Vector2 = foot.final_position
+		var parent_index := 0
+		var distance := INF
+		for torso: int in range(torsos.size()):
+			var next: float = absf(horizontal.x - torsos[torso].position.x)
+			if next < distance:
+				distance = next
+				parent_index = torso
+		var parent: Dictionary = torsos[parent_index]
+		var is_center: bool = is_zero_approx(foot.position.y)
+		var side := signf(foot.position.y)
+		# Equal widths imply side-touching centers are exactly one Part Width apart.
+		var x := clampf(horizontal.x, parent.position.x - parent.size.x * 0.5, parent.position.x + parent.size.x * 0.5)
+		var z := 0.0 if is_center else side * part_width
+		var progress: float = parent.contour_progress
+		var sampled := _sample_contour(sub_torso_height_curve, progress, 0.0)
+		if not is_finite(sampled):
+			push_warning("[creature_generator] SubTorso height curve must contain finite values.")
+			return []
+		var ratio := clampf(sampled, 0.0, 1.0)
+		var lower: float = parent.position.y - parent.size.y * 0.5
+		var upper: float = parent.position.y + parent.size.y * 0.5
+		# Account for support thickness: side supports align bottom/top faces to the contours.
+		# A center support retains its bottom-mounted connection at zero and slides upward with the curve.
+		var lower_center := lower + (size.y * -0.5 if is_center else size.y * 0.5)
+		var y := lerpf(lower_center, upper - size.y * 0.5, ratio)
+		foot.final_position = Vector2(x, z)
+		foot.target_position = foot.final_position
+		foot.sub_torso_index = index
+		result.append({"position": Vector3(x, y, z),
+			"size": size, "sub_torso": true, "parent_torso_index": parent_index,
+			"source_foot_index": index, "covered_limb_count": 1})
+	return result
+
+func _append_foot_group(layouts: Array[Dictionary], count: int, role: String, side: float, body_width: float) -> void:
+	var rows := ceili(float(count) / 2.0)
+	for row: int in range(rows):
+		var x := side * body_length * 0.25 if rows == 1 else lerpf(body_length * 0.08, body_length * 0.42, float(row) / float(rows - 1)) * side
+		var paired := row * 2 + 1 < count
+		var pair_size := _sample_foot_size()
+		var first_index := layouts.size()
+		for member: int in range(2 if paired else 1):
+			var size := pair_size.lerp(_sample_foot_size(), _asymmetry()) if member == 1 else pair_size
+			var z := body_width * 0.5 + size.z * 0.5 + maxf(minimum_feet_distance, 0.0) + 0.1
+			z *= (1.0 if member == 0 else -1.0) if paired else 0.0
+			var initial := Vector2(x, z)
+			var offset := Vector2(_random.randf_range(-1.0, 1.0), _random.randf_range(-1.0, 1.0)) * _asymmetry() * minf(body_length * 0.08, base_limb_length * 0.25)
+			layouts.append({"role": role, "position": initial, "target_position": initial + offset,
+				"final_position": initial + offset, "travel_fraction": 1.0, "size": size,
+				"partner_index": first_index if member == 1 else -1})
+
+func _feet_clear(layouts: Array[Dictionary]) -> bool:
+	for first: int in range(layouts.size()):
+		for second: int in range(first):
+			var a: Vector2 = layouts[first].final_position
+			var b: Vector2 = layouts[second].final_position
+			var sa: Vector3 = layouts[first].size
+			var sb: Vector3 = layouts[second].size
+			var dx := maxf(absf(a.x - b.x) - (sa.x + sb.x) * 0.5, 0.0)
+			var dz := maxf(absf(a.y - b.y) - (sa.z + sb.z) * 0.5, 0.0)
+			if Vector2(dx, dz).length() < maxf(minimum_feet_distance, 0.0) - 0.00001 or (dx == 0.0 and dz == 0.0): return false
+	return true
+
+func _fit_limbs(layouts: Array[Dictionary], torsos: Array[Dictionary]) -> void:
+	for index: int in range(layouts.size()):
+		var layout: Dictionary = layouts[index]
+		var partner: int = layout.get("partner_index", -1)
+		var sampled_length := base_limb_length * (1.0 + _random.randf_range(-0.25, 0.25) * clampf(inhomogeneity / 100.0, 0.0, 1.0))
+		var points := _create_limb_points(layout.role, layout.size.y, sampled_length)
+		if partner >= 0 and is_zero_approx(_asymmetry()):
+			points = layouts[partner].limb_points.duplicate()
+			for point: int in range(points.size()): points[point].z = -points[point].z
+		else:
+			var horizontal: Vector2 = layout.final_position
+			var origin := Vector3(horizontal.x, layout.size.y * 0.5, horizontal.y)
+			var tip := origin + points[-1]
+			var nearest := Vector3.ZERO
+			var distance := INF
+			var targets: Array[Dictionary] = []
+			if layout.has("sub_torso_index"):
+				targets.append(torsos[layout.sub_torso_index])
+			else:
+				targets = torsos
+			for torso: Dictionary in targets:
+				var candidate: Vector3 = tip.clamp(torso.position - torso.size * 0.5, torso.position + torso.size * 0.5)
+				# Attach to the lower shell even if the sampled tip starts inside the body.
+				candidate.y = torso.position.y - torso.size.y * 0.5
+				var next := tip.distance_squared_to(candidate)
+				if next < distance:
+					nearest = candidate
+					distance = next
+			var correction := nearest - origin - points[-1]
+			for point: int in range(1, points.size()): points[point] += correction * float(point) / float(points.size() - 1)
+		layout.limb_points = points
+		var actual_length := 0.0
+		for point: int in range(1, points.size()): actual_length += points[point].distance_to(points[point - 1])
+		layout.limb_length = actual_length
+
+func _assign_limb_block_sizes(layouts: Array[Dictionary]) -> void:
+	for layout: Dictionary in layouts:
+		var sizes: Array[Vector3] = []
+		var points: PackedVector3Array = layout.limb_points
+		for segment: int in range(points.size() - 1):
+			var size := _sample_size(limb_minimum_size, limb_maximum_size)
+			var partner: int = layout.get("partner_index", -1)
+			if partner >= 0:
+				size = layouts[partner].limb_block_sizes[segment].lerp(size, _asymmetry())
+			size.z = part_width
+			if limb_y_matches_segment: size.y = points[segment].distance_to(points[segment + 1])
+			sizes.append(size)
+		layout.limb_block_sizes = sizes

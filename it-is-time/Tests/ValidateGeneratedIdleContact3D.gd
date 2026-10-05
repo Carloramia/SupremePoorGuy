@@ -19,11 +19,12 @@ func run() -> void:
 	character.generate_on_ready = false
 	root.add_child(character)
 	var generator := character.get_node("CreatureGenerator")
-	generator.feets = 6
+	generator.rear_leg_count = maxi((6) - 2, 0)
+	generator.foreleg_count = mini((6), 2)
 	generator.unsymmetrie = 60.0
 	generator.overall_scale = 4.0
 	generator.neck_number = 1
-	generator.torso_core_extra_blocks = 6
+
 	var generated := false
 	for seed_value: int in range(43, 49):
 		generator._random.seed = seed_value
