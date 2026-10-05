@@ -5,13 +5,15 @@ extends Resource
 ## Derive gait and drive gains from speed, turning speed and cadence cap; manual groups are fallback settings.
 @export var automatic_motion: bool = false
 ## Generated gait: target speed and total cadence determine cycle displacement;
-## measured Torso speed and leg reach determine the stance/air split.
+## measured Torso speed and leg reach determine flight, capacity and touchdown braking.
+## With Gallop enabled, manual Gallop numbers are fallback values for legacy gait.
 @export var speed_based_gait: bool = true
 @export_range(0.0, 30.0, 0.05, "or_greater") var target_speed: float = 1.5
 ## Desired whole-character turn rate, degrees per second; physical support can reduce it.
 @export_range(0.0, 180.0, 0.5, "or_greater") var turning_speed_degrees: float = 10.0
-## Maximum average total step starts per second across all feet, including turning.
-## Gallop groups can start together; subsequent group spacing accounts for every start. Zero is unlimited.
+## Reference total step frequency for generated automatic speed-based walking.
+## It plans duration/stride, but reach-limit events decide when feet actually start.
+## Other controllers and pure turning retain the frequency admission limit. Zero is unlimited.
 @export_range(0.0, 60.0, 0.1, "or_greater") var maximum_step_frequency: float = 6.0
 
 @export_group("Gallop")
@@ -155,3 +157,46 @@ func calculate_speed_gait_profile(length: float, foot_count: int, actual_speed: 
 		"raw_stance_time": stance,"stance_duration": maxf(cycle-air-confirmation,0.0),"air_duration": air,
 		"landing_reserve": confirmation,"air_duration_limited": cycle-stance-confirmation > maximum_air,
 		"walking_stride_limit": length*0.5,"requires_flight": target_speed*cycle > length*0.5}
+
+## Automatic flight budget uses only speed/cadence, measured geometry and velocity.
+## capacity is a safety ceiling, not the manual stepping ratio.
+func calculate_adaptive_flight_profile(length: float, foot_count: int, actual_speed: float, support_distance: float, capacity: int, observed_landing_time: float = 0.0) -> Dictionary:
+	if target_speed<=0 or foot_count<=0 or capacity<=0: return {"enabled": false}
+	length = maxf(length,0.1)
+	var count := maxi(foot_count,1)
+	var desired_frequency := count*target_speed/maxf(length*0.4,0.05)
+	if maximum_step_frequency>0: desired_frequency = minf(desired_frequency,maximum_step_frequency)
+	var nominal_cycle := count/maxf(desired_frequency,0.001)
+	var confirmation := clampf(0.25/maxf(desired_frequency,0.01),0.03,0.08)
+	# Preserve measured landing time; a stuck foot cannot make the budget grow without bound.
+	var reserve := maxf(confirmation,clampf(observed_landing_time,0.0,2.0))
+	var budget_speed := maxf(actual_speed,target_speed)
+	var stance := maxf(support_distance,0.0)/maxf(budget_speed,0.05)
+	# Reference cadence sizes the swing. Measured landing latency is diagnostic;
+	# it must never squeeze the next swing into a violent catch-up motion.
+	var base_air := maxf(nominal_cycle*0.6,0.35)
+	var requested_air := base_air*1.12
+	var geometric_air_limit := maxf(0.15,sqrt(8.0*length*0.35/9.8))
+	var air := minf(requested_air,geometric_air_limit)
+	var added_air := maxf(air-minf(base_air,geometric_air_limit),0.0)
+	# Frequency is a motion reference only. Support admission is handled by the controller.
+	var frequency := desired_frequency
+	var cycle := count/maxf(frequency,0.001)
+	var required_capacity := clampi(ceili(frequency*(air+confirmation+0.02)-0.000001),1,capacity)
+	var drive_acceleration := clampf(target_speed*2.0,2.0,12.0)
+	var prediction_speed := minf(budget_speed,maxf(actual_speed,0.0)+drive_acceleration*air*0.5)
+	# Clearance depends on geometry and speed, not the square of flight duration.
+	# These are controlled swings, not ballistic jumps.
+	var speed_ratio := clampf(target_speed/sqrt(9.8*length),0.0,1.0)
+	var lift := length*lerpf(0.045,0.12,speed_ratio)
+	var covered := maxf(support_distance,0.0)+budget_speed*air
+	return {"enabled": true,"automatic_flight": true,"total_frequency": frequency,"cycle": cycle,"required_stride": target_speed*cycle,
+		"nominal_frequency": desired_frequency,"nominal_cycle": nominal_cycle,
+		"actual_speed": actual_speed,"planning_speed": prediction_speed,"budget_speed": budget_speed,"support_distance": support_distance,
+		"raw_stance_time": stance,"stance_duration": maxf(cycle-air-reserve,0),"base_air_duration": base_air,"air_margin": added_air,
+		"air_duration": air,"requested_air_duration": requested_air,
+		"landing_reserve": reserve,"landing_confirmation": confirmation,"observed_landing_time": observed_landing_time,"air_duration_limited": requested_air>geometric_air_limit+0.001,"walking_stride_limit": length*0.5,
+		"requires_flight": target_speed*cycle>length*0.5,"required_capacity": required_capacity,"maximum_capacity": capacity,
+		"covered_stride": covered,"distance_deficit": maxf(target_speed*cycle-covered,0.0),"lift": lift,
+		"lease_duration": minf(2.0,air+confirmation+0.12),"brake_time": clampf(air*0.2,0.08,0.18),
+		"touchdown_speed_limit": clampf(target_speed*0.15,0.3,1.5)}

@@ -45,6 +45,26 @@ enum BodyPartTag {
 ## Only entries on parts carrying the Arm tag are loaded by the controller.
 @export var arm_swing_bindings: Array[ArmSwingBinding] = []
 
+@export_group("Head Position Support")
+## Used by HeadPositionSupport3D only on Head-tagged parts outside planar mode.
+@export var head_position_support_enabled: bool = true
+@export_range(0.0, 200.0, 0.1) var head_position_gain: float = 120.0
+@export_range(0.0, 100.0, 0.1) var head_position_damping: float = 22.0
+@export_range(0.0, 200.0, 0.1) var head_no_neck_position_gain: float = 10.0
+@export_range(0.0, 100.0, 0.1) var head_no_neck_position_damping: float = 6.0
+## Maximum translation in either direction along each Head-Torso joint axis.
+@export var head_no_neck_linear_slack: Vector3 = Vector3(0.06,0.06,0.06)
+@export var head_gravity_compensation: bool = true
+@export_range(0.0, 500.0, 0.1) var head_maximum_support_acceleration: float = 60.0
+
+@export_group("Head Posture Damping")
+## Preserve the initial orientation relative to the connected Torso, with soft torque.
+@export var head_posture_damping_enabled: bool = true
+@export_range(0.0, 200.0, 0.1) var head_posture_gain: float = 60.0
+@export_range(0.0, 100.0, 0.1) var head_posture_damping: float = 16.0
+@export_range(0.0, 500.0, 0.1) var head_maximum_angular_acceleration: float = 40.0
+@export_range(0.0, 100000.0, 1.0) var head_maximum_posture_torque: float = 500.0
+
 @export_group("Durability")
 @export_range(1.0, 100000.0, 1.0, "or_greater") var max_hp: float = 100.0
 @export_range(0.0, 10000.0, 0.1, "or_greater") var armor: float = 10.0
