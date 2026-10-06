@@ -3,7 +3,7 @@ extends SceneTree
 const PLAYER_SCENE = preload("res://Scenes/Player/Controller.tscn")
 const CHARACTER_SCENE = preload("res://Scenes/Creatures/Characters/Character_Test_2.tscn")
 const NPC_SCENE = preload("res://Scenes/Creatures/Characters/Character_Test_NPC.tscn")
-const GENERATED_SCENE = preload("res://Scenes/Creatures/Characters/Generate_Creature_Test.tscn")
+const GENERATED_SCENE = preload("res://Scenes/Creatures/Characters/Generate_Beast.tscn")
 const CONTEXT = preload("res://Scripts/Player/PlayerControlContext.gd")
 
 func _initialize() -> void:
@@ -34,7 +34,21 @@ func _validate() -> void:
 	var player := PLAYER_SCENE.instantiate() as Node3D
 	player.camera_rig = camera
 	player.terrain_cursor = cursor
-	character.add_child(player)
+	player.position = Vector3(12,1,2)
+	world.add_child(player)
+	await process_frame
+	await physics_frame
+	assert(not player.is_attached() and player.get_parent() == world,
+		"A level containing characters must not be mistaken for a character")
+	assert(cursor.controlled_character == null and cursor.movement_anchor == player)
+	assert(not cursor.follow_anchor_translation and camera.follow_target == player)
+	assert(character.get_node("LegStepMovementController3D").command_source == null)
+	cursor.set_cursor_world_position(Vector3(15,0,2))
+	player._physics_process(1.0 / 60.0)
+	assert(is_equal_approx(player.global_position.x,15),"An unattached controller must immediately follow its free cursor")
+	assert(player.open_wheel() and player.wheel.options[0].display_name == "接入")
+	player.close_wheel(false)
+	assert(player.attach_character(character))
 	await process_frame
 	await physics_frame
 	assert(player.get_controlled_character() == character and player.get_parent() == character)
@@ -155,6 +169,25 @@ func _validate() -> void:
 	assert(not player.is_attached() and player.is_processing() and player.is_physics_processing())
 	assert(not player.can_attach_character(character))
 	world.queue_free()
+	await process_frame
+	# A standalone Controller scene must detach to the tree root, never itself.
+	var standalone := PLAYER_SCENE.instantiate() as Node3D
+	root.add_child(standalone)
+	await process_frame
+	assert(not standalone.is_attached() and standalone.get_parent() == root)
+	standalone.queue_free()
+	await process_frame
+	# Parent character registration happens after a child Controller's _ready.
+	var parent_character := CHARACTER_SCENE.instantiate() as Node3D
+	var child_controller := PLAYER_SCENE.instantiate() as Node3D
+	parent_character.add_child(child_controller)
+	root.add_child(parent_character)
+	await process_frame
+	assert(child_controller.get_controlled_character() == parent_character)
+	child_controller.detach_character()
+	assert(child_controller.get_parent() == root)
+	child_controller.queue_free()
+	parent_character.queue_free()
 	await process_frame
 	print("PLAYER_CONTROLLER_VALIDATION_PASSED")
 	quit()

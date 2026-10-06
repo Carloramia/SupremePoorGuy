@@ -1,5 +1,5 @@
 extends SceneTree
-const GENERATED = preload("res://Scenes/Creatures/Characters/Generate_Creature_Test.tscn")
+const GENERATED = preload("res://Scenes/Creatures/Characters/Generate_Beast.tscn")
 const PART = preload("res://Scenes/Creatures/Bodyparts/PhysicalTestCreatureParts/TestCreature_Part.tscn")
 class SelectionSource extends Node3D:
 	var target: Node3D

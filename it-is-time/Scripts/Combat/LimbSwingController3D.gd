@@ -16,6 +16,96 @@ var _states: Array[Dictionary] = []
 var _body_owner_group: Dictionary = {}
 var _rest_geometry_by_binding: Dictionary = {}
 var _active_damage_swings: int = 0
+var _npc_group := -1
+var _npc_charge_remaining := 0.0
+var _npc_target: Node3D
+const HIT_PREDICTION = preload("res://Scripts/Creatures/NPCAttackPrediction3D.gd")
+
+func predict_npc_attack(action_id: StringName, target: Node3D, charge: float, samples: int = 24, margin: float = 0.1) -> Dictionary:
+	samples = clampi(samples,8,48)
+	var reason := &"trajectory_misses"
+	if not has_npc_attack(action_id): return {"hit":false,"reason":&"unavailable_arm"}
+	var space := get_world_3d().direct_space_state
+	var excluded: Array[RID] = []
+	for actor: Node in [get_parent(), target.get_parent()]:
+		for body: Node in actor.find_children("*","PhysicsBody3D",true,false): excluded.append(body.get_rid())
+	for index: int in range(control_groups.size()):
+		if control_groups[index] == null or control_groups[index].group_name != action_id: continue
+		for member: Dictionary in _states[index].members:
+			var body := member.body as RigidBody3D
+			var anchor := member.anchor_body as RigidBody3D
+			if not is_instance_valid(body) or body.is_broken or not is_instance_valid(anchor) or int(member.mode) != SwingState.IDLE: continue
+			var preset := member.preset as LimbSwingPresetBase
+			if charge < preset.minimum_charge_time: reason = &"charge_too_short"; continue
+			var pivot := anchor.to_global(member.anchor_local_position)
+			var axis: Vector3 = (anchor.global_basis*Vector3(member.axis_local)).normalized()
+			var lever: Vector3 = anchor.global_basis*Vector3(member.rest_lever_local)
+			var rest := Transform3D(anchor.global_basis*Basis(member.rest_basis_local),pivot+lever)
+			var up := -_get_gravity_direction(body)
+			if preset.target_aim_enabled:
+				var aim := (target.global_position+HIT_PREDICTION.velocity(target)*charge-pivot).slide(up).normalized()
+				var facing := lever.slide(up).normalized()
+				if not aim.is_zero_approx() and not facing.is_zero_approx():
+					var yaw := Basis(up,atan2(up.dot(facing.cross(aim)),facing.dot(aim)))
+					axis = yaw*axis
+					lever = yaw*lever
+					rest = Transform3D(yaw*rest.basis,pivot+lever)
+			var sign_lift: float = _get_point_direction_diagnostics(pivot+lever,pivot,axis,-up).lift_sign
+			var inertia := maxf(body.mass*lever.length_squared(),0.1)
+			var inverse_inertia := axis.dot(body.get_inverse_inertia_tensor()*axis)
+			if inverse_inertia > 0.0001:
+				var center := body.global_transform*body.center_of_mass
+				inertia = 1.0/inverse_inertia+body.mass*(center-pivot).cross(axis).length_squared()
+			var lift := deg_to_rad(preset.lift_angle_degrees)*(1.0-exp(-sqrt(maxf(preset.lift_spring_stiffness,0.0)/inertia)*charge))
+			var torque := lerpf(preset.minimum_swing_torque,preset.maximum_swing_torque,clampf(charge/maxf(preset.maximum_charge_time,0.001),0.0,1.0))
+			var duration := minf(preset.swing_duration+maxf(preset.minimum_follow_through_time,preset.swing_duration*preset.follow_through_ratio),2.0)
+			var collisions := HIT_PREDICTION.shapes(body)
+			# Equipped weapon cells are merged onto Arm by the rigid attachment system.
+			for sample: int in range(samples+1):
+				var time := duration*float(sample)/samples
+				var drive_time := minf(time,preset.swing_duration)
+				var angle := torque/inertia*(drive_time*time-0.5*drive_time*drive_time)
+				if preset.sustained_swing_enabled:
+					var sustained := minf(time,preset.sustained_swing_duration)
+					angle += preset.sustained_swing_torque/inertia*(sustained*time-0.5*sustained*sustained)
+				var rotation := Basis(axis,sign_lift*(lift-minf(angle,PI*1.5)))
+				var pose := Transform3D(rotation*rest.basis,pivot+rotation*lever+anchor.linear_velocity*(charge+time))
+				var blocked := false
+				for collision: CollisionShape3D in collisions:
+					var shape_pose := pose*(body.global_transform.affine_inverse()*collision.global_transform)
+					if HIT_PREDICTION.terrain_blocked(space,collision.shape,shape_pose,excluded): blocked = true; reason = &"terrain_blocks_swing"; break
+					if HIT_PREDICTION.target_hit(space,collision.shape,shape_pose,target,charge+time,margin):
+						return {"hit":true,"reason":&"predicted_shape_contact","time":charge+time,"arm":body.name,"confidence":0.7}
+				if blocked: break
+	return {"hit":false,"reason":reason}
+
+func has_npc_attack(action_id: StringName) -> bool:
+	for index: int in range(control_groups.size()):
+		var group := control_groups[index]
+		if group == null or not group.enabled or group.group_name != action_id or index >= _states.size(): continue
+		for member: Dictionary in _states[index].members:
+			if is_instance_valid(member.body) and not member.body.is_broken and is_instance_valid(member.joint): return true
+	return false
+
+func try_start_npc_attack(action_id: StringName, target: Node3D, charge: float) -> bool:
+	if PLAYER_CONTEXT.controlled_character(self) == get_parent() or is_npc_attack_active(): return false
+	for index: int in range(control_groups.size()):
+		var group := control_groups[index]
+		if group != null and group.enabled and group.group_name == action_id and begin_charge(index):
+			_npc_group = index
+			_npc_target = target
+			_npc_charge_remaining = maxf(charge,0.0)
+			return true
+	return false
+
+func is_npc_attack_active() -> bool:
+	return _npc_group >= 0 and get_group_state(_npc_group) != SwingState.IDLE
+
+func cancel_npc_attack() -> void:
+	if _npc_group >= 0: _cancel_group(_npc_group)
+	_npc_group = -1
+	_npc_target = null
+	_npc_charge_remaining = 0.0
 
 func _ready() -> void:
 	add_to_group(&"limb_swing_controllers")
@@ -29,16 +119,18 @@ func _ready() -> void:
 		character.child_exiting_tree.connect(_on_character_child_changed)
 
 func _physics_process(delta: float) -> void:
-	if not PLAYER_CONTEXT.input_allowed(self):
+	var npc_control := get_parent().has_node("NPCStateMachine3D") and PLAYER_CONTEXT.controlled_character(self) != get_parent()
+	if not npc_control and not PLAYER_CONTEXT.input_allowed(self):
 		_cancel_all_members()
 		return
 	_ensure_runtime_states()
+	if npc_control: _npc_charge_remaining = maxf(_npc_charge_remaining-delta,0.0)
 	for group_index: int in range(control_groups.size()):
 		var group := control_groups[group_index]
 		if group == null or not group.enabled:
 			_cancel_group(group_index)
 			continue
-		var pressed := PLAYER_CONTEXT.action_pressed(self, group.input_action)
+		var pressed := group_index == _npc_group and _npc_charge_remaining > 0.0 if npc_control else PLAYER_CONTEXT.action_pressed(self, group.input_action)
 		for member_state: Dictionary in _states[group_index].members:
 			_process_member(group_index, member_state, pressed, delta)
 
@@ -434,6 +526,8 @@ func _apply_charge_bank_pose(state: Dictionary, target_position: Vector3) -> voi
 	body.apply_torque(torque.limit_length(preset.maximum_charge_bank_torque))
 
 func _get_selected_aim_target() -> Node3D:
+	if _npc_group >= 0 and is_instance_valid(_npc_target): return _npc_target.get_combat_anchor() if _npc_target.has_method("get_combat_anchor") else _npc_target
+	if get_parent().has_node("NPCStateMachine3D") and PLAYER_CONTEXT.controlled_character(self) != get_parent(): return null
 	if not is_instance_valid(terrain_cursor):
 		terrain_cursor = get_tree().get_first_node_in_group(&"terrain_cursor_3d") as Node3D
 	if not is_instance_valid(terrain_cursor) or not terrain_cursor.has_method("get_selected_character"):
@@ -484,7 +578,8 @@ func _apply_charge_target_aim(group_index: int, member_state: Dictionary, delta:
 			member_state.charge_bank_angle = 0.0
 		_restore_target_aim_joint(member_state)
 		return
-	var target_position: Vector3 = terrain_cursor.call("get_target_ground_position")
+	var target_position: Vector3 = target.global_position
+	if _npc_group < 0 and is_instance_valid(terrain_cursor): target_position = terrain_cursor.call("get_target_ground_position")
 	var aim := _calculate_target_aim(member_state, target_position)
 	_enable_target_aim_joint(member_state, aim.axis)
 	var changed: bool = member_state.aim_target != target
@@ -1029,4 +1124,5 @@ func _log_direction_diagnostics(group_index: int, member_state: Dictionary) -> v
 		)
 
 func cancel_player_actions() -> void:
+	cancel_npc_attack()
 	_cancel_all_members()

@@ -40,6 +40,25 @@ var _next_resource_step_time: float = 0.0
 var _last_scheduler_resource: Resource
 
 
+@export_group("Walk Start Stagger")
+@export var walk_start_stagger_enabled: bool = true
+## First-start spacing references cadence; normal gait is unchanged after the first cycle.
+@export_range(0.0, 2.0, 0.05) var walk_start_interval_ratio: float = 0.5
+@export_range(0.01, 0.5, 0.01) var walk_start_maximum_interval: float = 0.12
+@export_range(0.0, 2.0, 0.05) var walk_start_speed_threshold: float = 0.4
+@export_range(0.0, 1.0, 0.01) var walk_start_stop_speed: float = 0.15
+@export_range(0.0, 1.0, 0.05) var walk_start_stop_confirmation: float = 0.2
+var _walk_start_pending: Array[RigidBody3D] = []
+var _walk_start_due: Dictionary = {}
+var _walk_start_input_active := false
+var _walk_start_stop_elapsed := 0.0
+var _walk_start_direction := Vector3.ZERO
+var _walk_start_interval := 0.0
+var _walk_start_last_start := -INF
+var _walk_start_last_frame := -1
+var _walk_start_status: StringName = &"idle"
+var _walk_start_bypasses := 0
+
 @export_group("Control")
 @export var input_enabled: bool = true
 ## Player input is supplied by a separate Controller; NPCs may keep their state-machine source.
@@ -454,12 +473,16 @@ func _update_resource_gait(delta: float, direction: Vector3) -> void:
 	if _has_resource_step_demand(direction) and _adhesion_release_time_remaining <= 0.0 and frequency > 0.0 and _physics_elapsed >= _next_resource_step_time and _active_steps.size() < get_maximum_stepping_feet():
 		_current_step = StepMotion.new()
 		var candidates := _legs.duplicate()
-		if _automatic_motion_enabled():
-			candidates.sort_custom(func(a, b): return float(_automatic_next_steps.get(a, 0.0)) < float(_automatic_next_steps.get(b, 0.0)))
+		if _automatic_motion_enabled() or not _walk_start_pending.is_empty():
+			candidates.sort_custom(func(a,b):
+				var a_rank := _walk_start_pending.find(a)
+				var b_rank := _walk_start_pending.find(b)
+				if a_rank>=0 or b_rank>=0: return a_rank<b_rank if a_rank>=0 and b_rank>=0 else a_rank>=0
+				return float(_automatic_next_steps.get(a,0.0))<float(_automatic_next_steps.get(b,0.0)))
 		for attempt: int in range(_legs.size()):
-			if _automatic_motion_enabled():
+			if _automatic_motion_enabled() or not _walk_start_pending.is_empty():
 				var candidate: RigidBody3D = candidates[attempt]
-				if _physics_elapsed < float(_automatic_next_steps.get(candidate, 0.0)): continue
+				if not _walk_start_pending.has(candidate) and _physics_elapsed < float(_automatic_next_steps.get(candidate, 0.0)): continue
 				_next_leg_index = _legs.find(candidate)
 			var started := try_start_step(direction)
 			_next_leg_index = (_next_leg_index + 1) % maxi(_legs.size(), 1)
@@ -517,6 +540,7 @@ func _physics_process(delta: float) -> void:
 		try_surface_burst()
 
 	var input_direction := get_input_movement_direction() if input_enabled else Vector3.ZERO
+	_update_walk_start_stagger(delta,input_direction)
 	var fast_speed_active := is_fast_speed_active() if input_enabled and not _turn_planning_active else false
 	_refresh_torso_force_support()
 	_update_fast_velocity_gait(delta, input_direction, fast_speed_active)
@@ -545,7 +569,9 @@ func _physics_process(delta: float) -> void:
 			_update_fast_gait_clock(input_direction)
 		elif not _turn_planning_active and _step_state == StepState.IDLE and _adhesion_release_time_remaining <= 0.0:
 			if not input_direction.is_zero_approx():
-				try_start_step(input_direction)
+				for attempt: int in range(maxi(_walk_start_pending.size(),1)):
+					if try_start_step(input_direction): break
+					if not _legs.is_empty(): _next_leg_index = (_next_leg_index+1)%_legs.size()
 		if _step_state != StepState.IDLE:
 			_update_active_step(delta)
 	_update_fast_float_lift(delta, input_direction, fast_speed_active)
@@ -662,6 +688,7 @@ func _apply_fast_torso_velocity_drive() -> void:
 ## Starts the next leg in the stable alternating order when it has a valid landing point.
 var _last_shared_step_start: float = -INF
 func _automatic_step_cadence_allows() -> bool:
+	if not _walk_start_pending.is_empty() and not is_finite(_walk_start_last_start): return true
 	if not _automatic_motion_enabled() or _get_gait_data().maximum_step_frequency <= 0.0: return true
 	return _physics_elapsed + 0.000001 >= _last_shared_step_start + 1.0 / _get_gait_data().maximum_step_frequency
 
@@ -679,6 +706,7 @@ func try_start_step(movement_direction: Vector3 = Vector3.RIGHT) -> bool:
 	if _legs.is_empty():
 		return false
 	var candidate := _legs[_next_leg_index % _legs.size()]
+	if not _walk_start_stagger_allows(candidate): return false
 	if is_leg_stepping(candidate) or not _can_start_step_with_support(candidate):
 		_log_gait_event(&"step_rejected", candidate, &"no_support", movement_direction)
 		return false
@@ -942,6 +970,7 @@ func get_current_fast_landing_force() -> Vector3:
 	return _current_fast_landing_force
 
 func cancel_step(reason: StringName = &"unspecified") -> void:
+	if reason in [&"flight",&"landed",&"recovery",&"character_disabled",&"generated_parts_refreshed",&"physics_test_mode_changed"]: _reset_walk_start_stagger(reason)
 	if reason != &"completed":
 		if _updating_steps:
 			if is_instance_valid(_active_leg): _log_gait_event(&"step_cancelled", _active_leg, reason, _last_input_direction, _step_target)
@@ -979,6 +1008,7 @@ func update_leg_surface_adhesion() -> void:
 		release_all_support_pins()
 		return
 	for leg: RigidBody3D in _legs:
+		if _is_leg_action_controlled(leg): continue
 		if is_leg_stepping(leg):
 			if _keep_touchdown_support_pin(leg):
 				continue
@@ -1034,6 +1064,15 @@ func release_all_support_pins() -> void:
 	for leg in _support_pins.keys(): _release_support_pin(leg)
 	_support_anchors.clear()
 
+## External attacks release stance pins without adding the jump's own impulse.
+func release_support_for_impact(duration: float) -> void:
+	release_all_support_pins()
+	cancel_step(&"external_impact")
+	_fast_lift_time_remaining = 0.0
+	_current_fast_lift_force = 0.0
+	_adhesion_release_time_remaining = maxf(_adhesion_release_time_remaining,maxf(duration,0.0))
+	_clear_leg_adhesion_surface_normals()
+
 func _exit_tree() -> void:
 	release_all_support_pins()
 
@@ -1044,8 +1083,11 @@ func _support_pin_z_free() -> bool:
 func _keep_touchdown_support_pin(_leg: RigidBody3D) -> bool:
 	return false
 
+func _is_leg_action_controlled(_leg: RigidBody3D) -> bool:
+	return false
+
 func _update_support_foot_lock(leg: RigidBody3D, normal: Vector3) -> void:
-	if not support_foot_lock_enabled or not surface_adhesion_enabled or leg.freeze or _is_body_broken(leg) or is_leg_slipping(leg) or not is_leg_grounded(leg):
+	if _adhesion_release_time_remaining > 0.0 or not support_foot_lock_enabled or not surface_adhesion_enabled or leg.freeze or _is_body_broken(leg) or is_leg_slipping(leg) or not is_leg_grounded(leg):
 		_release_support_pin(leg)
 		return
 	var hit := _get_surface_below_leg(leg, surface_adhesion_probe_distance)
@@ -1397,7 +1439,7 @@ func _contact_drive_supports(feet: Array) -> Array[RigidBody3D]:
 
 func _contact_velocity_force(velocity: Vector3, mass: float, up: Vector3) -> Vector3:
 	var direction := get_input_movement_direction().slide(up) if input_enabled else Vector3.ZERO
-	var target := direction.limit_length(1.0) * get_expected_horizontal_speed()
+	var target := direction.limit_length(1.0) * get_expected_horizontal_speed() * _walk_start_drive_scale()
 	_contact_drive_diagnostics["target_velocity"] = target
 	_contact_drive_diagnostics["actual_velocity"] = velocity.slide(up)
 	return ((target - velocity.slide(up)) * _motion_setting("contact_gain", contact_velocity_gain)).limit_length(_motion_setting("contact_acceleration", contact_maximum_acceleration)) * mass
@@ -1487,6 +1529,7 @@ func _begin_leg_motion(
 	_step_state = StepState.MOVING
 	_active_leg.sleeping = false
 	if starts_new_step:
+		if not input_direction.is_zero_approx(): _record_walk_start(leg)
 		_last_shared_step_start = _physics_elapsed
 		_last_replan_time = _physics_elapsed
 		_step_sequence += 1
@@ -1809,6 +1852,7 @@ func _rebuild_character_exclusion_rids() -> void:
 			_character_body_cache.append(node as RigidBody3D)
 
 func refresh_physics_query_cache() -> void:
+	_reset_walk_start_stagger(&"structure_changed")
 	release_all_support_pins()
 	_refresh_physics_query_cache()
 
@@ -1861,8 +1905,11 @@ func _capture_joint_spring_settings() -> void:
 				joint.get_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_SPRING_DAMPING)
 			)
 
+var _hip_reference_frames: Dictionary = {}
+
 func _capture_hip_joint_limits() -> void:
 	_hip_joints_by_leg.clear()
+	_hip_reference_frames.clear()
 	_hip_joint_base_limits.clear()
 	var parts_root := get_node_or_null(parts_root_path)
 	if parts_root == null:
@@ -1873,12 +1920,49 @@ func _capture_hip_joint_limits() -> void:
 		if not is_instance_valid(body_b) or not _has_leg_tag(body_b):
 			continue
 		_hip_joints_by_leg[body_b] = joint
+		var body_a := joint.get_node_or_null(joint.node_a) as RigidBody3D
+		if is_instance_valid(body_a):
+			_hip_reference_frames[joint] = {"a": body_a.to_local(joint.global_position), "b": body_b.to_local(joint.global_position), "basis_a": body_a.global_basis.inverse() * joint.global_basis}
 		_hip_joint_base_limits[joint] = Vector4(
 			joint.get_param_x(Generic6DOFJoint3D.PARAM_LINEAR_LOWER_LIMIT),
 			joint.get_param_x(Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT),
 			joint.get_param_z(Generic6DOFJoint3D.PARAM_LINEAR_LOWER_LIMIT),
 			joint.get_param_z(Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT)
 		)
+
+## Read-only diagnostics. Submitted forces are not measured solver reaction forces.
+func get_npc_motion_execution_diagnostics() -> Dictionary:
+	var rows: Array[Dictionary] = []
+	for foot: RigidBody3D in get_leg_parts():
+		if not is_instance_valid(foot): continue
+		var driver := _get_contact_drive_body(foot)
+		var row := {"foot": foot.name, "driver": driver.name if is_instance_valid(driver) else &"none",
+			"stepping": is_leg_stepping(foot), "grounded": is_leg_grounded(foot),
+			"foot_position": foot.global_position, "foot_velocity": foot.linear_velocity,
+			"driver_is_torso": driver == _torso, "pin_active": _support_pins.has(foot)}
+		if is_instance_valid(driver):
+			row.driver_frozen = driver.freeze
+			row.driver_linear_locks = Vector3i(int(driver.axis_lock_linear_x), int(driver.axis_lock_linear_y), int(driver.axis_lock_linear_z))
+		if _support_pins.has(foot):
+			var pin := _support_pins[foot].joint as Generic6DOFJoint3D
+			if is_instance_valid(pin):
+				row.pin_basis = pin.global_basis
+				row.pin_linear_locks = Vector3i(int(pin.get_flag_x(Generic6DOFJoint3D.FLAG_ENABLE_LINEAR_LIMIT)), int(pin.get_flag_y(Generic6DOFJoint3D.FLAG_ENABLE_LINEAR_LIMIT)), int(pin.get_flag_z(Generic6DOFJoint3D.FLAG_ENABLE_LINEAR_LIMIT)))
+		var joint := _hip_joints_by_leg.get(foot) as Generic6DOFJoint3D
+		if is_instance_valid(joint) and _hip_reference_frames.has(joint):
+			var a := joint.get_node_or_null(joint.node_a) as RigidBody3D
+			var ref: Dictionary = _hip_reference_frames[joint]
+			if is_instance_valid(a):
+				var frame: Basis = a.global_basis * ref.basis_a
+				row.hip_anchor_offset = frame.inverse() * (foot.to_global(ref.b) - a.to_global(ref.a))
+				row.hip_joint = joint.name
+				row.hip_limits_xz = _get_current_hip_limits(foot)
+				row.hip_limits_y = Vector2(joint.get_param_y(Generic6DOFJoint3D.PARAM_LINEAR_LOWER_LIMIT), joint.get_param_y(Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT))
+				row.hip_spring_z = Vector2(joint.get_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_SPRING_STIFFNESS), joint.get_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_SPRING_DAMPING))
+		rows.append(row)
+	return {"frame": Engine.get_physics_frames(), "input": get_last_input_direction(),
+		"contact_gain": _motion_setting("contact_gain", contact_velocity_gain), "acceleration_cap": _motion_setting("contact_acceleration", contact_maximum_acceleration),
+		"force_meaning": "submitted_to_body_not_measured_solver_force", "legs": rows}
 
 func _expand_hip_joint_for_step(leg: RigidBody3D, target: Vector3) -> void:
 	if (
@@ -2115,3 +2199,121 @@ func set_control_performance_tracking_enabled(enabled: bool) -> void:
 
 func consume_control_performance_stats() -> Dictionary:
 	return _movement_perf.consume()
+
+func _walk_start_stagger_ready() -> bool:
+	return input_enabled and _adhesion_release_time_remaining <= 0.0
+
+func _walk_start_leg_available(leg: RigidBody3D) -> bool:
+	return is_instance_valid(leg) and not leg.is_queued_for_deletion() and not leg.freeze and not _is_body_broken(leg)
+
+func _walk_start_priority(leg: RigidBody3D, direction: Vector3) -> float:
+	return (leg.global_position-_torso.global_position).dot(direction) if is_instance_valid(_torso) else 0.0
+
+func _walk_start_emergency(leg: RigidBody3D) -> bool:
+	if not is_instance_valid(_torso) or not is_instance_valid(leg) or maximum_horizontal_leg_reach<=0.0: return false
+	var relative := (leg.global_position-_torso.global_position).slide(Vector3.UP)
+	var approach := (_torso.linear_velocity-leg.linear_velocity).dot(_walk_start_direction)
+	return approach>0.05 and relative.dot(_walk_start_direction)<0.0 and relative.length()>=maximum_horizontal_leg_reach*0.95
+
+func _reset_walk_start_stagger(reason: StringName = &"idle") -> void:
+	_walk_start_pending.clear()
+	_walk_start_due.clear()
+	_walk_start_input_active = false
+	_walk_start_stop_elapsed = 0.0
+	_walk_start_last_start = -INF
+	_walk_start_last_frame = -1
+	_walk_start_status = reason
+
+func _sort_walk_start_pending(direction: Vector3) -> void:
+	_walk_start_pending.sort_custom(func(a,b):
+		var difference := _walk_start_priority(a,direction)-_walk_start_priority(b,direction)
+		return difference<0.0 if absf(difference)>0.001 else str(a.name)<str(b.name))
+	# Keep urgency first, but alternate equally urgent sides of the support center.
+	var center := Vector3.ZERO
+	for leg: RigidBody3D in _walk_start_pending: center += leg.global_position
+	center /= maxf(_walk_start_pending.size(),1)
+	var side_axis := direction.cross(Vector3.UP)
+	for index: int in range(1,_walk_start_pending.size()):
+		var previous := _walk_start_pending[index-1]
+		var next := _walk_start_pending[index]
+		if (previous.global_position-center).dot(side_axis)*(next.global_position-center).dot(side_axis)<=0.0: continue
+		for candidate: int in range(index+1,_walk_start_pending.size()):
+			var other := _walk_start_pending[candidate]
+			if absf(_walk_start_priority(other,direction)-_walk_start_priority(next,direction))>0.001: break
+			if (previous.global_position-center).dot(side_axis)*(other.global_position-center).dot(side_axis)<0.0:
+				_walk_start_pending[index] = other
+				_walk_start_pending[candidate] = next
+				break
+
+func _schedule_walk_start_pending() -> void:
+	_walk_start_due.clear()
+	for index: int in range(_walk_start_pending.size()):
+		_walk_start_due[_walk_start_pending[index]] = _walk_start_last_start+(index+1)*_walk_start_interval if is_finite(_walk_start_last_start) else _physics_elapsed
+
+func _update_walk_start_stagger(delta: float, direction: Vector3) -> void:
+	if not walk_start_stagger_enabled or not _walk_start_stagger_ready():
+		_reset_walk_start_stagger(&"disabled_or_suspended")
+		return
+	var old_count := _walk_start_pending.size()
+	_walk_start_pending = _walk_start_pending.filter(func(leg): return _walk_start_leg_available(leg) and _legs.has(leg))
+	if old_count != _walk_start_pending.size(): _schedule_walk_start_pending()
+	var speed := _torso.linear_velocity.slide(Vector3.UP).length() if is_instance_valid(_torso) else 0.0
+	if direction.is_zero_approx():
+		_walk_start_stop_elapsed = _walk_start_stop_elapsed+delta if speed<=walk_start_stop_speed else 0.0
+		if _walk_start_stop_elapsed>=walk_start_stop_confirmation: _reset_walk_start_stagger()
+		return
+	_walk_start_stop_elapsed = 0.0
+	var travel := direction.slide(Vector3.UP).normalized()
+	if not _walk_start_input_active:
+		_walk_start_input_active = true
+		_walk_start_direction = travel
+		_walk_start_bypasses = 0
+		if speed>walk_start_speed_threshold:
+			_walk_start_status = &"already_moving"
+			return
+		for leg: RigidBody3D in _legs:
+			if _walk_start_leg_available(leg) and not is_leg_stepping(leg): _walk_start_pending.append(leg)
+		_walk_start_interval = clampf(walk_start_interval_ratio/maxf(get_planned_step_frequency(),0.01),0.01,maxf(walk_start_maximum_interval,0.01))
+		_sort_walk_start_pending(travel)
+		_schedule_walk_start_pending()
+		_next_resource_step_time = _physics_elapsed
+		_next_fast_step_start_time = _physics_elapsed
+		if _active_steps.is_empty(): _automatic_next_steps.clear()
+		_walk_start_status = &"staggering"
+		if not _walk_start_pending.is_empty(): _next_leg_index = _legs.find(_walk_start_pending[0])
+	elif not _walk_start_pending.is_empty() and travel.dot(_walk_start_direction)<0.5:
+		# Reorder only unstarted legs; keep all running swings and elapsed eligibility.
+		_walk_start_direction = travel
+		_sort_walk_start_pending(travel)
+		_schedule_walk_start_pending()
+	if _walk_start_pending.is_empty(): _walk_start_status = &"complete"
+
+func _walk_start_stagger_allows(leg: RigidBody3D) -> bool:
+	if not walk_start_stagger_enabled: return true
+	# At most one launch in a frame during startup, including emergency overrides.
+	if _walk_start_last_frame == Engine.get_physics_frames(): return false
+	if not _walk_start_pending.has(leg): return true
+	if _walk_start_emergency(leg): return true
+	return _physics_elapsed>=float(_walk_start_due.get(leg,_physics_elapsed))
+
+func _record_walk_start(leg: RigidBody3D) -> void:
+	if not _walk_start_pending.has(leg): return
+	if _walk_start_emergency(leg) and _physics_elapsed<float(_walk_start_due.get(leg,_physics_elapsed)): _walk_start_bypasses += 1
+	_walk_start_pending.erase(leg)
+	_walk_start_last_start = _physics_elapsed
+	_walk_start_last_frame = Engine.get_physics_frames()
+	_schedule_walk_start_pending()
+	_walk_start_status = &"complete" if _walk_start_pending.is_empty() else &"staggering"
+
+func _walk_start_drive_scale() -> float:
+	# Reduce only commanded walking speed, never static support or zero-input braking.
+	for leg: RigidBody3D in _walk_start_pending:
+		if _walk_start_leg_available(leg) and _walk_start_emergency(leg) and not _can_start_step_with_support(leg): return 0.35
+	return 1.0
+
+func get_walk_start_stagger_diagnostics() -> Dictionary:
+	var pending: Array[Dictionary] = []
+	for leg: RigidBody3D in _walk_start_pending:
+		if not is_instance_valid(leg): continue
+		pending.append({"foot":str(leg.name),"remaining_delay":maxf(float(_walk_start_due.get(leg,_physics_elapsed))-_physics_elapsed,0.0),"emergency":_walk_start_emergency(leg)})
+	return {"enabled":walk_start_stagger_enabled,"status":_walk_start_status,"interval":_walk_start_interval,"direction":_walk_start_direction,"stop_elapsed":_walk_start_stop_elapsed,"emergency_bypasses":_walk_start_bypasses,"pending":pending}

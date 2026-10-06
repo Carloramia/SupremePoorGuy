@@ -1,12 +1,11 @@
 [gd_scene format=3 uid="uid://bvfcjdn77c1kd"]
 
-[ext_resource type="PackedScene" uid="uid://cg0oywp0k4bqc" path="res://Scenes/Creatures/Characters/Generate_Creature_Test.tscn" id="1_1mv4x"]
 [ext_resource type="PackedScene" uid="uid://dyn2d3vbcsssx" path="res://Assets/3DResources/Maps/Flat.fbx" id="1_ss4xl"]
-[ext_resource type="PackedScene" uid="uid://bhb8j74m7mfd6" path="res://Scenes/Creatures/Characters/Character_Test_2.tscn" id="2_7e5cw"]
 [ext_resource type="PackedScene" path="res://Scenes/Camera/DragCamera3D.tscn" id="3_iuug4"]
 [ext_resource type="NavigationMesh" uid="uid://cgsuu2ydrehpm" path="res://Scenes/Levels/TestLevelNavigationMesh.tres" id="4_navigation"]
 [ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/NavigationNPCSpawner3D.tscn" id="5_npc_spawner"]
 [ext_resource type="PackedScene" path="res://Scenes/Input/TerrainCursor3D.tscn" id="6_terrain_cursor"]
+[ext_resource type="PackedScene" uid="uid://b0j2xkqx4q8k2" path="res://Scenes/Creatures/Characters/Generate_Bird.tscn" id="7_1mv4x"]
 [ext_resource type="PackedScene" path="res://Scenes/VFX/TerrainArcIndicator3D.tscn" id="7_terrain_arc"]
 [ext_resource type="PackedScene" path="res://Scenes/Player/Controller.tscn" id="8_player_controller"]
 
@@ -15,15 +14,6 @@ size = Vector3(200, 102, 200)
 
 [node name="TestLevel" type="Node3D" unique_id=1606515158]
 
-[node name="Generate_Creature_Test" parent="." unique_id=1734874713 instance=ExtResource("1_1mv4x")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 27.657082, -25.698586)
-limb_joint_linear_slack = Vector3(0.03, 0.03, 0)
-
-[node name="Controller" parent="Generate_Creature_Test" unique_id=1212807446 node_paths=PackedStringArray("camera_rig", "terrain_cursor") instance=ExtResource("8_player_controller")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.69153404, -16.093163, 25.071148)
-camera_rig = NodePath("../../DragCamera3D")
-terrain_cursor = NodePath("../../TerrainCursor3D")
-
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="." unique_id=555269644]
 navigation_mesh = ExtResource("4_navigation")
 
@@ -31,9 +21,6 @@ navigation_mesh = ExtResource("4_navigation")
 spawn_enabled = false
 spawn_interval = 1.0
 maximum_npc_count = 1
-
-[node name="CharacterTest2" parent="." unique_id=2115838582 instance=ExtResource("2_7e5cw")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.69153404, 11.563919, -0.6274371)
 
 [node name="Flat" parent="." unique_id=1832489056 instance=ExtResource("1_ss4xl")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.69153404, -4.7683716e-07, -0.6274371)
@@ -46,14 +33,12 @@ shape = SubResource("BoxShape3D_flat_ground")
 
 [node name="DragCamera3D" parent="." unique_id=488829809 node_paths=PackedStringArray("follow_target") instance=ExtResource("3_iuug4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0036373, 1.4082642, 0)
-follow_target = NodePath("../Generate_Creature_Test/Controller")
+follow_target = NodePath("../Generate_Bird/Controller")
 maximum_distance = 100.0
 
-[node name="TerrainCursor3D" parent="." unique_id=338512563 node_paths=PackedStringArray("movement_anchor") instance=ExtResource("6_terrain_cursor")]
-movement_anchor = NodePath("../CharacterTest2/Torso")
+[node name="TerrainCursor3D" parent="." unique_id=338512563 instance=ExtResource("6_terrain_cursor")]
 
-[node name="TerrainArcIndicator3D" parent="." unique_id=188665134 node_paths=PackedStringArray("movement_anchor", "terrain_cursor") instance=ExtResource("7_terrain_arc")]
-movement_anchor = NodePath("../CharacterTest2/Torso")
+[node name="TerrainArcIndicator3D" parent="." unique_id=188665134 node_paths=PackedStringArray("terrain_cursor") instance=ExtResource("7_terrain_arc")]
 terrain_cursor = NodePath("../TerrainCursor3D")
 radius = 5.0
 
@@ -61,3 +46,13 @@ radius = 5.0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 43.19173, 0)
 light_energy = 5.0
 omni_range = 500.0
+
+[node name="Generate_Bird" parent="." unique_id=2072678134 instance=ExtResource("7_1mv4x")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.205346, 22.191113, 46.551823)
+density_data = null
+mass_limits_enabled = null
+
+[node name="Controller" parent="Generate_Bird" unique_id=1212807446 node_paths=PackedStringArray("camera_rig", "terrain_cursor") instance=ExtResource("8_player_controller")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.513812, -10.627193, -47.17926)
+camera_rig = NodePath("../../DragCamera3D")
+terrain_cursor = NodePath("../../TerrainCursor3D")

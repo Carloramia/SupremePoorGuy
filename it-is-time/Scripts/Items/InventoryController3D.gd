@@ -6,6 +6,7 @@ signal inventory_changed(items: Array, selected_slot: int)
 signal pickup_rejected(reason: String)
 
 @export_range(1, 16, 1) var capacity: int = 4
+@export var inventory_ui_enabled: bool = true
 @export var pickup_action: StringName = &"EPressed"
 @export var slot_actions: Array[StringName] = [&"1", &"2", &"3", &"4"]
 @export_range(0.5, 50.0, 0.5, "or_greater") var pickup_radius: float = 6.0
@@ -48,6 +49,7 @@ func _physics_process(_delta: float) -> void:
 		_pickup_area.global_position = _torso.global_position
 
 func _unhandled_input(event: InputEvent) -> void:
+	if get_parent().has_node("NPCStateMachine3D") and PLAYER_CONTEXT.controlled_character(self) != get_parent(): return
 	if PLAYER_CONTEXT.controller(self) != null: return
 	if _is_external_interface_open():
 		return
@@ -102,6 +104,46 @@ func get_selected_slot() -> int:
 func get_equipped_item() -> SampleItem3D:
 	return _equipped_item
 
+## Spawn equipment directly into an empty slot, without proximity pickup or slot toggling.
+func equip_initial_weapon(scene: PackedScene) -> bool:
+	if scene == null or is_instance_valid(_equipped_item): return false
+	var slot := _find_empty_slot()
+	if slot < 0: return false
+	var instance := scene.instantiate()
+	if not instance is SampleWeapon3D:
+		instance.free()
+		_reject_pickup("Initial equipment scene must inherit SampleWeapon3D.")
+		return false
+	var weapon := instance as SampleWeapon3D
+	var holder: RigidBody3D
+	var preferred := get_parent().get_node_or_null(NodePath(weapon.preferred_holder_name)) if not weapon.preferred_holder_name.is_empty() else null
+	if _is_available_initial_holder(preferred): holder = preferred
+	if holder == null:
+		for part: Node in get_parent().find_children("*","PhysicalBodyPart3D",true,false):
+			if _is_available_initial_holder(part): holder = part; break
+	if holder == null:
+		weapon.free()
+		_reject_pickup("No living Arm with a swing binding is available.")
+		return false
+	weapon.preferred_holder_name = StringName(str(get_parent().get_path_to(holder)))
+	# Freeze before entering the tree, so equipment cannot fall during initialization.
+	weapon.freeze = true
+	_inventory_items.add_child(weapon)
+	var has_collision := false
+	for node: Node in weapon.get_children():
+		if node is CollisionShape3D and node.shape != null and not node.disabled: has_collision = true; break
+	if not has_collision:
+		weapon.queue_free()
+		_reject_pickup("Initial weapon has no active CollisionShape3D; export a built weapon scene.")
+		return false
+	_selected_slot = slot
+	_store_item(weapon,slot)
+	print("[npc_equipment] character=",get_parent().get_path()," slot=",slot," holder=",holder.name," weapon_scene=",scene.resource_path)
+	return _equipped_item == weapon
+
+func _is_available_initial_holder(part: Node) -> bool:
+	return part is PhysicalBodyPart3D and not part.is_broken and not part.is_queued_for_deletion() and PhysicalBodyPart3D.BodyPartTag.Arm in part.tags and not part.arm_swing_bindings.is_empty()
+
 func _store_item(item: SampleItem3D, slot_index: int) -> void:
 	item.set_meta(&"inventory_collision_layer", item.collision_layer)
 	item.set_meta(&"inventory_collision_mask", item.collision_mask)
@@ -121,6 +163,7 @@ func _store_item(item: SampleItem3D, slot_index: int) -> void:
 	_generate_item_icon(item)
 
 func _generate_item_icon(item: SampleItem3D) -> void:
+	if not inventory_ui_enabled: return
 	await item.create_item_image()
 	if is_instance_valid(item):
 		inventory_changed.emit(_items.duplicate(), _selected_slot)

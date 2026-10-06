@@ -19,6 +19,9 @@ enum BodyPartTag {
 	ForeLeg,
 	LegLimb,
 	SubTorso,
+	Wing, # All wing blocks; intermediate blocks additionally carry WingLimb.
+	WingLimb,
+	Feather,
 }
 
 @export_group("Classification")
@@ -105,6 +108,34 @@ var _last_signature: Array = []
 var current_hp: float = 100.0
 var _damage_service: Node
 var _collision_logging_enabled: bool = false
+var _foot_contact_samples: Array[Dictionary] = []
+
+## Actual solver impulses, not the movement controller's commanded force.
+func _record_foot_contacts(state: PhysicsDirectBodyState3D) -> void:
+	if BodyPartTag.Leg not in tags and BodyPartTag.ForeLeg not in tags: return
+	var frame := Engine.get_physics_frames()
+	while not _foot_contact_samples.is_empty() and int(_foot_contact_samples[0].frame) < frame-4:
+		_foot_contact_samples.pop_front()
+	var contacts: Dictionary = {}
+	for index: int in range(state.get_contact_count()):
+		if SampleWeapon3D.from_contact(self,state.get_contact_local_shape(index)) != null: continue
+		var id := state.get_contact_collider_id(index)
+		var impulse := state.get_contact_impulse(index).length()
+		if not contacts.has(id): contacts[id] = {"frame":frame,"collider_id":id,"impulse":0.0,"weighted_position":Vector3.ZERO}
+		contacts[id].impulse += impulse
+		contacts[id].weighted_position += state.get_contact_collider_position(index)*impulse
+	for sample: Dictionary in contacts.values():
+		sample["position"] = sample.weighted_position/maxf(float(sample.impulse),0.000001)
+		_foot_contact_samples.append(sample)
+
+## Peak single-tick contact-manifold impulse within the touchdown window.
+func get_foot_contact_impact(collider: Object, since_frame: int) -> Dictionary:
+	var best: Dictionary = {}
+	if not is_instance_valid(collider): return best
+	for sample: Dictionary in _foot_contact_samples:
+		if int(sample.frame) >= since_frame and int(sample.collider_id) == collider.get_instance_id() and float(sample.impulse) > float(best.get("impulse",0.0)):
+			best = sample.duplicate()
+	return best
 
 func _ready() -> void:
 	sync_foot_rotation_lock()
@@ -189,6 +220,7 @@ func _log_collision_event(event_name: String, body: Node3D) -> void:
 func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
 	if Engine.is_editor_hint() or is_broken:
 		return
+	_record_foot_contacts(state)
 	var weapon_impulses: Dictionary = {}
 	for contact_index: int in range(state.get_contact_count()):
 		# Hits against the held weapon geometry do not damage the holder's own body part.
@@ -302,10 +334,14 @@ func _get_configuration_warnings() -> PackedStringArray:
 	return warnings
 
 func _is_friendly_weapon(weapon: SampleWeapon3D) -> bool:
+	if weapon.wielder_character == get_parent(): return true
 	var coordinator := get_parent().get_node_or_null("CharacterDamageController3D")
 	if coordinator == null:
 		return weapon.wielder_character == get_parent()
-	return weapon.wielder_team_id >= 0 and weapon.wielder_team_id == int(coordinator.get("team_id"))
+	var source_team := weapon.wielder_team_id
+	if is_instance_valid(weapon.wielder_character) and weapon.wielder_character.has_method("get_faction_id"):
+		source_team = weapon.wielder_character.get_faction_id()
+	return source_team >= 0 and source_team == int(coordinator.get("team_id"))
 
 func _process(_delta: float) -> void:
 	_sync_geometry()

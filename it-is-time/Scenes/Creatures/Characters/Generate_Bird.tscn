@@ -1,0 +1,74 @@
+[gd_scene format=3 uid="uid://b0j2xkqx4q8k2"]
+
+[ext_resource type="PackedScene" uid="uid://cxif8fjbfymmg" path="res://Scenes/Creatures/Characters/_SampleCharacter.tscn" id="1_base"]
+[ext_resource type="Script" uid="uid://ctnhv1466mp6l" path="res://Scripts/Creatures/GeneratedCreatureCharacter3D.gd" id="2_character"]
+[ext_resource type="PackedScene" uid="uid://bo4votgicjac" path="res://Scenes/Creatures/Generators/BirdGenerator.tscn" id="3_generator"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/GeneratedLegStepMovementController3D.tscn" id="4_movement"]
+[ext_resource type="Resource" uid="uid://vm2r7a3jebd2" path="res://Resources/Movement/GeneratedMultiLegWalk.tres" id="5_gait"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/CreatureRecoveryStateMachine3D.tscn" id="6_recovery"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/CreatureActionController3D.tscn" id="7_action"]
+[ext_resource type="Resource" uid="uid://dtcceqxofackn" path="res://Resources/Creatures/BirdDensity.tres" id="density_preset"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/BirdFlightController3D.tscn" id="flight_controller"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/WingPoseController3D.tscn" id="wing_controller"]
+
+[node name="Generate_Bird" unique_id=1071077287 instance=ExtResource("1_base")]
+script = ExtResource("2_character")
+generator_path = NodePath("BirdGenerator")
+generate_on_ready = true
+show_framework = false
+zero_gravity_test_mode = false
+planar_constraints_enabled = false
+density_data = ExtResource("density_preset")
+mass_density = 1.0
+minimum_part_mass = 0.1
+minimum_feather_mass = 0.005
+maximum_part_mass = 10.0
+part_linear_damping = 0.15
+part_angular_damping = 1.0
+limb_angular_limit_degrees = 35.0
+neck_angular_limit_degrees = 20.0
+angular_spring_stiffness = 30.0
+angular_spring_damping = 5.0
+wing_joint_limits_enabled = true
+wing_root_limit_margin_degrees = 10.0
+wing_middle_limit_margin_degrees = 10.0
+wing_tip_limit_margin_degrees = 10.0
+neck_linear_springs_enabled = true
+neck_joint_linear_slack = Vector3(0.06, 0.06, 0.06)
+neck_linear_spring_stiffness = 80.0
+neck_linear_spring_damping = 8.0
+limb_hinge_damping = 3.0
+limb_joint_linear_slack = Vector3(0.03, 0.03, 0)
+segmented_torso_enabled = true
+segment_merge_length_percent = 10.0
+segment_weight_decay_ratio = 0.2
+segment_rotation_constraints_enabled = true
+segment_transverse_constraints_enabled = true
+segment_transverse_slack = 0.05
+segment_translation_springs_enabled = true
+segment_spring_maximum_acceleration = 50.0
+segment_maximum_distance_lock_enabled = true
+segment_maximum_distance_ratio = 1.15
+segment_spring_frequency = 3.0
+segment_spring_damping_ratio = 1.0
+
+[node name="BirdGenerator" parent="." index="0" unique_id=1245314506 instance=ExtResource("3_generator")]
+visible = false
+
+[node name="GeneratedLegStepMovementController3D" parent="." index="1" unique_id=63359102 instance=ExtResource("4_movement")]
+stance_load_safety_factor = 5.0
+slow_gait_data = ExtResource("5_gait")
+fast_gait_data = ExtResource("5_gait")
+
+[node name="CreatureRecoveryStateMachine3D" parent="." index="2" unique_id=1172503862 instance=ExtResource("6_recovery")]
+
+[node name="GeneratedParts" type="Node3D" parent="." index="3" unique_id=1126936149]
+
+[node name="CreatureActionController3D" parent="." index="4" unique_id=1338268193 instance=ExtResource("7_action")]
+
+[node name="WingPoseController3D" parent="." index="5" unique_id=1184170244 instance=ExtResource("wing_controller")]
+fold_transition_time = null
+hinge_only_pose = null
+torque_load_factor_limit = null
+
+[node name="BirdFlightController3D" parent="." index="6" unique_id=1856448162 instance=ExtResource("flight_controller")]

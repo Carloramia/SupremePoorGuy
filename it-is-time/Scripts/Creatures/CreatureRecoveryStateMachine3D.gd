@@ -185,6 +185,8 @@ func _transition(next: State, reason: StringName) -> void:
 		print("[creature_recovery] character=", get_parent().name, " from=", State.keys()[previous], " to=", State.keys()[state], " reason=", reason, " metrics=", _metrics, " attempt=", _attempts)
 
 func _physics_process(delta: float) -> void:
+	var flight := get_parent().get_node_or_null("BirdFlightController3D")
+	if flight != null and flight.is_airborne(): return
 	if is_instance_valid(_movement) and (_movement.simplified_physics_mode or _movement._planar_mode_active()):
 		_movement.set_recovery_control_active(false)
 		state = State.STANDING
@@ -381,3 +383,16 @@ func _lift_torso(torsos: Array[RigidBody3D], delta: float) -> void:
 
 func get_recovery_diagnostics() -> Dictionary:
 	return {"paused_for_zero_gravity": is_instance_valid(_movement) and _movement.simplified_physics_mode,"state": State.keys()[state], "attempt": _attempts, "elapsed": _elapsed, "reference_height": _reference_height, "targets": _targets.size(), "height_ratio": float(_metrics.get("height", 0.0)) / maxf(_reference_height, 0.001), "fall_confirmation": _fall_elapsed, "lift_force": _last_lift_force, "lift_force_limited": _lift_force_limited, "segments": _segment_recovery_diagnostics, "metrics": _metrics}
+
+func resume_ground_after_flight() -> void:
+	# Keep the generated standing height and foot layout instead of adopting a compressed landing pose.
+	_transition(State.STANDING,&"landed")
+	if is_instance_valid(_movement): _movement.set_recovery_control_active(false)
+	_metrics.clear()
+	_segment_rise_heights.clear()
+	_segment_recovery_diagnostics.clear()
+	_elapsed = 0.0
+	_fall_elapsed = 0.0
+	_stable_elapsed = 0.0
+	_targets.clear()
+	_target_surfaces.clear()

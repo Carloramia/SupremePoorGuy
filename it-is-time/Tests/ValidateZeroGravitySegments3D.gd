@@ -1,5 +1,5 @@
 extends SceneTree
-const SCENE = preload("res://Scenes/Creatures/Characters/Generate_Creature_Test.tscn")
+const SCENE = preload("res://Scenes/Creatures/Characters/Generate_Beast.tscn")
 var failed := false
 func check(value: bool, message: String) -> void:
 	if not value: failed = true; push_error(message)

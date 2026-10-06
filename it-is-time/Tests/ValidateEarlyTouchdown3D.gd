@@ -1,5 +1,5 @@
 extends SceneTree
-const CHARACTER = preload("res://Scenes/Creatures/Characters/Generate_Creature_Test.tscn")
+const CHARACTER = preload("res://Scenes/Creatures/Characters/Generate_Beast.tscn")
 const BASE = preload("res://Scripts/Creatures/LegStepMovementControllerBase3D.gd")
 var failed := false
 func check(value: bool, message: String) -> void:

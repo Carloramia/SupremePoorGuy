@@ -1,7 +1,7 @@
 extends SceneTree
 
 const GENERATOR = preload("res://Scripts/Creatures/CreatureGenerator.gd")
-const CHARACTER = preload("res://Scenes/Creatures/Characters/Generate_Creature_Test.tscn")
+const CHARACTER = preload("res://Scenes/Creatures/Characters/Generate_Beast.tscn")
 
 func _initialize() -> void:
 	call_deferred("_validate")
@@ -60,15 +60,9 @@ func _validate() -> void:
 	var restored = packed.instantiate()
 	assert(is_equal_approx(restored.get_node("CreatureGenerator").torso_lower_curve.sample(0),-0.2))
 	restored.free()
-	var source: String = embedded._build_default_source(FileAccess.get_file_as_string("res://Scripts/Creatures/CreatureGenerator.gd"))
-	var candidate := GDScript.new()
-	candidate.source_code = source
-	assert(candidate.reload() == OK)
-	var defaults = candidate.new()
+	var defaults: Dictionary = embedded._capture_default_parameters()
 	assert(is_equal_approx(defaults.torso_lower_curve.sample(0),-0.2))
 	assert(is_equal_approx(defaults.torso_upper_curve.sample(1),1.5))
-	assert(defaults._build_default_source(source) == source)
-	defaults.free()
 	actor.free()
 	generator.free()
 	print("TORSO_CONTOURS_PASSED")

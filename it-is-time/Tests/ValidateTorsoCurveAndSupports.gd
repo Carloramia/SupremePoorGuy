@@ -1,7 +1,7 @@
 extends SceneTree
 
 const GENERATOR = preload("res://Scripts/Creatures/CreatureGenerator.gd")
-const CHARACTER = preload("res://Scenes/Creatures/Characters/Generate_Creature_Test.tscn")
+const CHARACTER = preload("res://Scenes/Creatures/Characters/Generate_Beast.tscn")
 
 func _initialize() -> void:
 	call_deferred("_validate")
@@ -18,6 +18,8 @@ func _validate() -> void:
 	generator.rear_leg_count = 3
 	generator.foreleg_count = 2
 	generator.body_length = 8.0
+	# Isolate the expected 4:1 height ratio from saved species contour overrides.
+	generator.torso_lower_curve = GENERATOR._make_torso_curve([[Vector2(0,0),0.0,0.0,0,0], [Vector2(1,0),0.0,0.0,0,0]],0.0,1.0)
 	generator.torso_upper_curve = GENERATOR._make_torso_curve([[Vector2(0,0.5),0.0,0.0,0,0], [Vector2(1,2.0),0.0,0.0,0,0]])
 	generator._random.seed = 43
 	var plan: Dictionary = generator._create_valid_plan()
@@ -59,16 +61,10 @@ func _validate() -> void:
 	var restored = packed.instantiate()
 	assert(is_equal_approx(restored.get_node("CreatureGenerator").torso_upper_curve.sample(1.0), 2.0))
 	restored.free()
-	# The script-default button must preserve curve shape and tangent modes.
+	# Preset snapshots must preserve curve shape and tangent modes.
 	generator.torso_upper_curve.set_point_right_tangent(0, 0.75)
-	var source: String = generator._build_default_source(FileAccess.get_file_as_string("res://Scripts/Creatures/CreatureGenerator.gd"))
-	var candidate := GDScript.new()
-	candidate.source_code = source
-	assert(candidate.reload() == OK)
-	var saved = candidate.new()
+	var saved: Dictionary = generator._capture_default_parameters()
 	assert(saved.torso_upper_curve.get_point_right_tangent(0) == 0.75)
-	assert(saved._build_default_source(source) == source)
-	saved.free()
 	generator.torso_count = 1
 	generator.rear_leg_count = 2
 	generator.foreleg_count = 2

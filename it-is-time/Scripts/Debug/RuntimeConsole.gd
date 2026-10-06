@@ -6,12 +6,16 @@ const COMMAND_HELP: Array[Dictionary] = [
 	{&"name": "help", &"description": "List all available console commands."},
 	{&"name": "getlogs", &"description": "Pack runtime logs into a ZIP in the project root."},
 	{&"name": "trackgenerated", &"description": "Toggle generated creature foot, limb-chain and gait diagnostics."},
+	{&"name": "trackflight [on|off]", &"description": "Track controlled bird flight, landing, wing torques and feather errors every 0.1s."},
 	{&"name": "trackmotion", &"description": "Toggle all BodyPart motion tracking for the currently controlled character."},
 	{&"name": "trackcontrolperf", &"description": "Toggle Controller, cursor, arc and generation timings (inclusive) and frame spikes."},
 	{&"name": "trackperformance", &"description": "Toggle runtime performance summaries."},
 	{&"name": "tracknpc", &"description": "Toggle NPC navigation and gait diagnostics."},
+	{&"name": "tracknpcmotion [on|off] [filter]", &"description": "Track all NPC BodyParts and gait every 0.1s; filter by name, path or instance ID."},
+	{&"name": "tracknpcstate [on|off] [filter]", &"description": "Track FSM changes and snapshots; filter by NPC name, full path or instance ID."},
+	{&"name": "npcstates [filter]", &"description": "Print a one-time NPC state-machine snapshot."},
 	{&"name": "trackcollision", &"description": "Toggle BodyPart contact enter/exit and collision configuration logs."},
-	{&"name": "trackdamage", &"description": "Toggle weapon impact, HP, break, and joint-removal logs."},
+	{&"name": "trackdamage", &"description": "Toggle weapon/shockwave impact, HP, break, and joint-removal logs."},
 	{&"name": "trackturn", &"description": "Toggle facing decisions, combined walking/turning targets and Leg traction logs."},
 	{&"name": "trackswing", &"description": "Toggle Arm swing direction, load, and Joint diagnostics."},
 ]
@@ -35,12 +39,21 @@ var _control_perf_slow_frames: int = 0
 var _output_lines: Array[String] = []
 var _previous_mouse_mode: Input.MouseMode = Input.MOUSE_MODE_VISIBLE
 var _generated_motion_tracking_enabled: bool = false
+var _flight_tracking_enabled := false
+var _flight_tracking_elapsed := 0.0
 var _motion_tracking_enabled: bool = false
 var _motion_tracking_elapsed: float = 0.0
 var _motion_snapshot_sequence: int = 0
 var _performance_tracking_enabled: bool = false
 var _performance_tracking_elapsed: float = 0.0
 var _npc_diagnostic_tracking_enabled: bool = false
+var _npc_motion_tracking_enabled: bool = false
+var _npc_motion_filter: String = ""
+var _npc_motion_elapsed: float = 0.0
+var _npc_state_tracking_enabled := false
+var _npc_state_filter := ""
+var _npc_state_elapsed := 0.0
+@export_range(0.1,10.0,0.1) var npc_state_tracking_interval: float = 0.5
 var _collision_tracking_enabled: bool = false
 var _damage_tracking_enabled: bool = false
 var _swing_tracking_enabled: bool = false
@@ -58,6 +71,21 @@ func _input(event: InputEvent) -> void:
 		set_console_open(not visible)
 
 func _process(delta: float) -> void:
+	if _flight_tracking_enabled and not _motion_tracking_enabled:
+		_flight_tracking_elapsed += delta
+		if _flight_tracking_elapsed >= motion_tracking_interval:
+			_flight_tracking_elapsed = 0.0
+			_emit_flight_snapshot()
+	if _npc_motion_tracking_enabled:
+		_npc_motion_elapsed += delta
+		if _npc_motion_elapsed >= motion_tracking_interval:
+			_npc_motion_elapsed = 0.0
+			_emit_npc_motion_snapshot()
+	if _npc_state_tracking_enabled:
+		_npc_state_elapsed += delta
+		if _npc_state_elapsed >= npc_state_tracking_interval:
+			_npc_state_elapsed = 0.0
+			_emit_npc_state_snapshot(_npc_state_filter)
 	if _control_performance_tracking_enabled:
 		_control_perf_elapsed += delta
 		_control_perf_frames += 1
@@ -93,6 +121,40 @@ func is_console_open() -> bool:
 	return visible
 
 func execute_command(command: String) -> String:
+	var args := command.strip_edges().split(" ",false)
+	if not args.is_empty() and args[0].to_lower() == "trackflight":
+		if args.size() == 1: _flight_tracking_enabled = not _flight_tracking_enabled
+		elif args.size() == 2 and args[1].to_lower() in ["on","off"]: _flight_tracking_enabled = args[1].to_lower() == "on"
+		else: return "Usage: trackflight [on|off]"
+		_flight_tracking_elapsed = 0.0
+		_sync_bird_diagnostic_tracking()
+		if _flight_tracking_enabled: _emit_flight_snapshot()
+		return "Bird flight tracking %s; interval=%.2fs" % ["enabled" if _flight_tracking_enabled else "disabled",motion_tracking_interval]
+	if not args.is_empty() and args[0].to_lower() == "tracknpcmotion":
+		if args.size() == 1:
+			_npc_motion_tracking_enabled = not _npc_motion_tracking_enabled
+			_npc_motion_filter = ""
+		elif args[1].to_lower() in ["on", "off"]:
+			_npc_motion_tracking_enabled = args[1].to_lower() == "on"
+			_npc_motion_filter = " ".join(args.slice(2))
+		else:
+			return "Usage: tracknpcmotion [on|off] [NPC name, path or instance ID]"
+		_npc_motion_elapsed = 0.0
+		var count := _emit_npc_motion_snapshot() if _npc_motion_tracking_enabled else 0
+		return "NPC motion tracking %s; filter=%s; matched=%d; interval=%.2fs" % ["enabled" if _npc_motion_tracking_enabled else "disabled", _npc_motion_filter if not _npc_motion_filter.is_empty() else "all", count, motion_tracking_interval]
+	if not args.is_empty() and args[0].to_lower() == "npcstates":
+		return "NPC state snapshots: %d" % _emit_npc_state_snapshot(" ".join(args.slice(1)))
+	if not args.is_empty() and args[0].to_lower() == "tracknpcstate":
+		if args.size() == 1:
+			_npc_state_tracking_enabled = not _npc_state_tracking_enabled
+			_npc_state_filter = ""
+		elif args[1].to_lower() in ["on","off"]:
+			_npc_state_tracking_enabled = args[1].to_lower() == "on"
+			_npc_state_filter = " ".join(args.slice(2))
+		else: return "Usage: tracknpcstate [on|off] [NPC name, path or instance ID]"
+		_npc_state_elapsed = 0.0
+		if _npc_state_tracking_enabled: _emit_npc_state_snapshot(_npc_state_filter)
+		return "NPC FSM tracking %s; filter=%s; interval=%.2fs" % ["enabled" if _npc_state_tracking_enabled else "disabled",_npc_state_filter if not _npc_state_filter.is_empty() else "all",npc_state_tracking_interval]
 	var normalized := command.strip_edges().to_lower()
 	match normalized:
 		"help":
@@ -113,6 +175,7 @@ func execute_command(command: String) -> String:
 		"trackmotion":
 			_motion_tracking_enabled = not _motion_tracking_enabled
 			_motion_tracking_elapsed = 0.0
+			_sync_bird_diagnostic_tracking()
 			if _motion_tracking_enabled:
 				_emit_motion_snapshot()
 				return "Controlled character BodyPart motion tracking enabled."
@@ -169,6 +232,28 @@ func _get_help_text() -> String:
 	for entry: Dictionary in COMMAND_HELP:
 		lines.append("  %-16s %s" % [entry.name, entry.description])
 	return "\n".join(lines)
+
+func _npc_matches(machine: Node, filter: String) -> bool:
+	var actor := machine.get_parent()
+	return filter.is_empty() or filter.to_lower() == "all" or str(actor.name).to_lower() == filter.to_lower() or str(actor.get_path()) == filter or str(actor.get_instance_id()) == filter or str(machine.get_path()) == filter
+
+func is_npc_state_tracking_enabled(machine: Node) -> bool:
+	return _npc_state_tracking_enabled and _npc_matches(machine,_npc_state_filter)
+
+func _emit_npc_state_snapshot(filter: String) -> int:
+	var messages: Array[String] = []
+	var count := 0
+	for machine: Node in get_tree().get_nodes_in_group(&"npc_state_machines"):
+		if not _npc_matches(machine,filter): continue
+		count += 1
+		messages.append("[npc_state] event=snapshot data=%s" % machine.get_state_diagnostics())
+		messages.append("[npc_state] event=attack_ranges data=%s" % machine.get_attack_range_diagnostics())
+	if not messages.is_empty():
+		_output_lines.append_array(messages)
+		while _output_lines.size() > maximum_output_lines: _output_lines.pop_front()
+		if is_instance_valid(_output): _output.text = "\n".join(_output_lines)
+		print("\n".join(messages))
+	return count
 
 ## Packs user://logs into a ZIP. Tests may pass different writable source and output directories.
 func create_logs_archive(output_directory: String = "", log_directory: String = "user://logs") -> String:
@@ -268,15 +353,45 @@ func get_runtime_log_directory() -> String:
 
 func _emit_motion_snapshot() -> void:
 	var messages := _collect_motion_snapshot()
+	_emit_motion_lines(messages)
+
+func _emit_motion_lines(messages: Array[String]) -> void:
+	if messages.is_empty(): return
 	# Refresh the visible log once per snapshot rather than once per body.
 	_output_lines.append_array(messages)
 	while _output_lines.size() > maximum_output_lines: _output_lines.pop_front()
 	if is_instance_valid(_output): _output.text = "\n".join(_output_lines)
 	print("\n".join(messages))
 
-func _collect_motion_snapshot() -> Array[String]:
+func _collect_npc_motion_snapshot() -> Array[String]:
 	var messages: Array[String] = []
-	var character := MOTION_PLAYER_CONTEXT.controlled_character(self)
+	var visited: Dictionary = {}
+	for machine: Node in get_tree().get_nodes_in_group(&"npc_state_machines"):
+		var actor := machine.get_parent() as Node3D
+		if not is_instance_valid(actor) or actor.is_queued_for_deletion() or visited.has(actor) or not _npc_matches(machine, _npc_motion_filter): continue
+		visited[actor] = true
+		var identity := "[npc_motion] npc_path=%s npc_id=%d" % [actor.get_path(), actor.get_instance_id()]
+		messages.append("%s state=%s" % [identity, machine.get_state_diagnostics()])
+		messages.append("%s attack_ranges=%s" % [identity, machine.get_attack_range_diagnostics()])
+		messages.append("%s navigation=%s" % [identity, machine.get_navigation_motion_diagnostics()])
+		for controller: Node in get_tree().get_nodes_in_group(&"leg_step_movement_controllers"):
+			if controller.get_parent() == actor and controller.has_method("get_npc_motion_execution_diagnostics"):
+				messages.append("%s execution=%s" % [identity, controller.get_npc_motion_execution_diagnostics()])
+		for line: String in _collect_motion_snapshot(actor):
+			messages.append(line.replace("[trackmotion]", identity))
+	return messages
+
+func _emit_npc_motion_snapshot() -> int:
+	var messages := _collect_npc_motion_snapshot()
+	var count := 0
+	for line: String in messages:
+		if " snapshot=" in line: count += 1
+	_emit_motion_lines(messages)
+	return count
+
+func _collect_motion_snapshot(character: Node3D = null) -> Array[String]:
+	var messages: Array[String] = []
+	if character == null: character = MOTION_PLAYER_CONTEXT.controlled_character(self)
 	if not is_instance_valid(character):
 		messages.append("[trackmotion] No controlled character (Controller detached or no target).")
 		return messages
@@ -301,7 +416,12 @@ func _collect_motion_snapshot() -> Array[String]:
 	# Preserve the detailed gait fields, limited to the selected actor's controllers.
 	for controller: Node in get_tree().get_nodes_in_group(&"leg_step_movement_controllers"):
 		if controller.get_parent() == character:
+			if controller.has_method("get_creature_action_controller"):
+				var action: Node = controller.get_creature_action_controller()
+				if action != null: messages.append("[trackmotion] character=%s creature_action=%s" % [character.name,action.get_action_diagnostics()])
 			messages.append_array(_collect_leg_motion_lines(controller))
+			if controller.has_method("get_walk_start_stagger_diagnostics"):
+				messages.append("[trackmotion] character=%s walk_start_stagger=%s" % [character.name,controller.get_walk_start_stagger_diagnostics()])
 			if controller.has_method("get_automatic_motion_diagnostics"):
 				messages.append("[trackmotion] character=%s automatic_motion=%s" % [character.name, controller.call("get_automatic_motion_diagnostics")])
 			if controller.has_method("get_contact_drive_diagnostics"):
@@ -324,6 +444,7 @@ func _collect_motion_snapshot() -> Array[String]:
 		for row: Dictionary in head_support.get_head_support_diagnostics():
 			messages.append("[trackmotion] character=%s head_support=%s" % [character.name,row])
 
+	messages.append_array(_collect_bird_motion_lines(character,"[trackmotion]"))
 	return messages
 
 func _collect_leg_motion_lines(controller: Node) -> Array[String]:
@@ -609,3 +730,34 @@ func _emit_control_performance_snapshot() -> void:
 			target = " selected=%s" % [selected.name if selected != null else &"none"]
 		_append_log_output("[trackcontrolperf] component=%s%s phases=[%s] counters=%s" % [component.get_path(), target, "; ".join(phases), stats.counters])
 	_reset_control_performance_window()
+
+func is_bird_physics_tracking_enabled() -> bool:
+	return _flight_tracking_enabled or _motion_tracking_enabled
+
+func _sync_bird_diagnostic_tracking() -> void:
+	for component: Node in get_tree().get_nodes_in_group(&"bird_physics_diagnostics"):
+		component.set_diagnostic_tracking_enabled(is_bird_physics_tracking_enabled())
+
+func _emit_flight_snapshot() -> void:
+	var character := MOTION_PLAYER_CONTEXT.controlled_character(self)
+	_emit_motion_lines(_collect_bird_motion_lines(character,"[trackflight]"))
+
+func _collect_bird_motion_lines(character: Node3D, prefix: String) -> Array[String]:
+	var lines: Array[String] = []
+	if not is_instance_valid(character):
+		lines.append("%s No controlled character." % prefix)
+		return lines
+	for component: Node in character.get_children():
+		var method := "get_flight_diagnostics" if component.has_method("get_flight_diagnostics") else "get_wing_diagnostics"
+		if not component.has_method(method): continue
+		var data: Dictionary = component.call(method)
+		var legs: Array = data.get("legs",[])
+		var joints: Array = data.get("joints",[])
+		var wings: Array = data.get("wings",[])
+		data.erase("legs"); data.erase("joints"); data.erase("wings")
+		var header := "%s physics_frame=%d time_ms=%d character=%s component=%s" % [prefix,Engine.get_physics_frames(),Time.get_ticks_msec(),character.get_path(),component.name]
+		lines.append("%s summary=%s" % [header,data])
+		for row: Dictionary in legs: lines.append("%s flight_leg=%s" % [header,row])
+		for row: Dictionary in joints: lines.append("%s flight_joint=%s" % [header,row])
+		for row: Dictionary in wings: lines.append("%s wing_pose=%s" % [header,row])
+	return lines

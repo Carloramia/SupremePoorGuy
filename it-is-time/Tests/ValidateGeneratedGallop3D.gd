@@ -1,5 +1,5 @@
 extends SceneTree
-const CHARACTER = preload("res://Scenes/Creatures/Characters/Generate_Creature_Test.tscn")
+const CHARACTER = preload("res://Scenes/Creatures/Characters/Generate_Beast.tscn")
 var failed := false
 func check(condition: bool, message: String) -> void:
 	if not condition:
@@ -164,7 +164,7 @@ func run() -> void:
 			check(new_steps<=count,"Extension events may only start each idle foot once per frame")
 			for step in movement._active_steps:
 				check(step.extra.has("extension_trigger"),"Automatic walking must start from an extension event")
-				check(step.extra.extension_trigger.requested and (step.extra.extension_trigger.approach_speed>0.05 or step.extra.extension_trigger.get("emergency",false)),"Start requires actual approach to the reach limit")
+				check(step.extra.extension_trigger.requested and (step.extra.extension_trigger.approach_speed>0.05 or step.extra.extension_trigger.get("emergency",false) or step.extra.extension_trigger.reason=="startup"),"Start requires a safe startup or actual approach to the reach limit")
 			maximum_batch = maxi(maximum_batch,new_steps)
 			var grounded := 0
 			for foot: RigidBody3D in movement._legs:

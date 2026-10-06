@@ -6,6 +6,9 @@ func _initialize() -> void:
 func _validate() -> void:
 	var weapon := load("res://Scenes/Items/Weapon_Test.tscn").instantiate() as RigidBody3D
 	root.add_child(weapon)
+	# The user's inherited scene may choose Mesh by default; isolate this Sprite test.
+	weapon.sprite_visible = true
+	weapon.mesh_visible = false
 	assert(weapon is SampleItem3D)
 	assert(weapon.can_be_picked_up)
 	weapon.freeze = true

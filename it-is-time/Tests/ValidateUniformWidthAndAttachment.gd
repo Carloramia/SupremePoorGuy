@@ -1,7 +1,7 @@
 extends SceneTree
 
 const GENERATOR = preload("res://Scripts/Creatures/CreatureGenerator.gd")
-const CHARACTER = preload("res://Scenes/Creatures/Characters/Generate_Creature_Test.tscn")
+const CHARACTER = preload("res://Scenes/Creatures/Characters/Generate_Beast.tscn")
 const GEOMETRY = preload("res://Scripts/Creatures/CreatureBoxGeometry.gd")
 
 func _initialize() -> void:

@@ -1,0 +1,1750 @@
+[gd_scene format=4 uid="uid://cg0oywp0k4bqc"]
+
+[ext_resource type="PackedScene" uid="uid://cxif8fjbfymmg" path="res://Scenes/Creatures/Characters/_SampleCharacter.tscn" id="1_base"]
+[ext_resource type="Script" uid="uid://ctnhv1466mp6l" path="res://Scripts/Creatures/GeneratedCreatureCharacter3D.gd" id="2_character"]
+[ext_resource type="Script" uid="uid://cby8nj4lggg60" path="res://Scripts/Creatures/CreatureGenerator.gd" id="3_generator"]
+[ext_resource type="PackedScene" uid="uid://bxchfdbxm5uur" path="res://Scenes/Creatures/Bodyparts/PhysicalTestCreatureParts/TestCreature_Part.tscn" id="4_04tpq"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/GeneratedLegStepMovementController3D.tscn" id="4_movement"]
+[ext_resource type="Resource" uid="uid://vm2r7a3jebd2" path="res://Resources/Movement/GeneratedMultiLegWalk.tres" id="5_4el8i"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/CreatureRecoveryStateMachine3D.tscn" id="5_recovery"]
+[ext_resource type="Script" uid="uid://662b3wq7iue7" path="res://Scripts/Creatures/SegmentDistanceSpring3D.gd" id="9_7smi1"]
+[ext_resource type="Script" uid="uid://clvkyuw7044hl" path="res://Scripts/Creatures/SegmentConstraint3D.gd" id="10_rux7j"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/CreatureActionController3D.tscn" id="action_module"]
+[ext_resource type="Resource" path="res://Resources/Creatures/BeastDensity.tres" id="density_preset"]
+
+[sub_resource type="Curve" id="Curve_3wfe7"]
+_data = [Vector2(0, 0.36721307), 0.0, 0.0, 0, 0, Vector2(0.605042, 0.7901639), 0.45677695, 0.45677695, 0, 0, Vector2(0.91036415, 0.8721311), 0.0, 0.0, 0, 0, Vector2(1, 0.7377049), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="Curve" id="Curve_a3iul"]
+_limits = [-3.0, 3.0, 0.0, 1.0]
+_data = [Vector2(0, -0.24590158), 0.0, 0.0, 0, 0, Vector2(0.07142857, -0.7180326), 0.0, 0.0, 0, 0, Vector2(0.50840336, -0.30769253), 0.0, 0.0, 0, 0, Vector2(0.9047619, -1.4065573), 0.0, 0.0, 0, 0, Vector2(1, -0.87540984), 0.0, 0.0, 0, 0]
+point_count = 5
+
+[sub_resource type="Curve" id="Curve_vn1ud"]
+_limits = [-3.0, 3.0, 0.0, 1.0]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_7smi1"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vn1ud"]
+shading_mode = 0
+albedo_color = Color(0.2, 0.9, 1, 1)
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_7smi1"]
+_surfaces = [{
+"aabb": AABB(-0.32213628, -0.287309, -0.1, 0.64427257, 0.574618, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("DO+kvioak77NzMy9DO+kPioak77NzMy9DO+kPioak77NzMy9DO+kPioakz7NzMy9DO+kPioakz7NzMy9DO+kvioakz7NzMy9DO+kvioakz7NzMy9DO+kvioak77NzMy9DO+kvioak77NzMw9DO+kPioak77NzMw9DO+kPioak77NzMw9DO+kPioakz7NzMw9DO+kPioakz7NzMw9DO+kvioakz7NzMw9DO+kvioakz7NzMw9DO+kvioak77NzMw9DO+kvioak77NzMy9DO+kvioak77NzMw9DO+kPioak77NzMy9DO+kPioak77NzMw9DO+kPioakz7NzMy9DO+kPioakz7NzMw9DO+kvioakz7NzMy9DO+kvioakz7NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_rux7j"]
+_surfaces = [{
+"aabb": AABB(-0.06763227, 0.287309, 0, 0.06763227, 0.98296446, 1e-05),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 6,
+"vertex_data": PackedByteArray("AAAAACoakz4AAAAAyoKKveHnHj8AAAAAyoKKveHnHj8AAAAARfbDvLZAeD8AAAAARfbDvLZAeD8AAAAAAKZCvVKYoj8AAAAA")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_iva4f"]
+_surfaces = [{
+"aabb": AABB(-0.2, -0.17010352, -0.1, 0.4, 0.34020704, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("zcxMvp4vLr7NzMy9zcxMPp4vLr7NzMy9zcxMPp4vLr7NzMy9zcxMPp4vLj7NzMy9zcxMPp4vLj7NzMy9zcxMvp4vLj7NzMy9zcxMvp4vLj7NzMy9zcxMvp4vLr7NzMy9zcxMvp4vLr7NzMw9zcxMPp4vLr7NzMw9zcxMPp4vLr7NzMw9zcxMPp4vLj7NzMw9zcxMPp4vLj7NzMw9zcxMvp4vLj7NzMw9zcxMvp4vLj7NzMw9zcxMvp4vLr7NzMw9zcxMvp4vLr7NzMy9zcxMvp4vLr7NzMw9zcxMPp4vLr7NzMy9zcxMPp4vLr7NzMw9zcxMPp4vLj7NzMy9zcxMPp4vLj7NzMw9zcxMvp4vLj7NzMy9zcxMvp4vLj7NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_rfocr"]
+_surfaces = [{
+"aabb": AABB(-0.2, -0.17586915, -0.1, 0.4, 0.3517383, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("zcxMvgsXNL7NzMy9zcxMPgsXNL7NzMy9zcxMPgsXNL7NzMy9zcxMPgsXND7NzMy9zcxMPgsXND7NzMy9zcxMvgsXND7NzMy9zcxMvgsXND7NzMy9zcxMvgsXNL7NzMy9zcxMvgsXNL7NzMw9zcxMPgsXNL7NzMw9zcxMPgsXNL7NzMw9zcxMPgsXND7NzMw9zcxMPgsXND7NzMw9zcxMvgsXND7NzMw9zcxMvgsXND7NzMw9zcxMvgsXNL7NzMw9zcxMvgsXNL7NzMy9zcxMvgsXNL7NzMw9zcxMPgsXNL7NzMy9zcxMPgsXNL7NzMw9zcxMPgsXND7NzMy9zcxMPgsXND7NzMw9zcxMvgsXND7NzMy9zcxMvgsXND7NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_1h6nb"]
+_surfaces = [{
+"aabb": AABB(-0.2, -0.15073062, -0.1, 0.4, 0.30146125, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("zcxMviFZGr7NzMy9zcxMPiFZGr7NzMy9zcxMPiFZGr7NzMy9zcxMPiFZGj7NzMy9zcxMPiFZGj7NzMy9zcxMviFZGj7NzMy9zcxMviFZGj7NzMy9zcxMviFZGr7NzMy9zcxMviFZGr7NzMw9zcxMPiFZGr7NzMw9zcxMPiFZGr7NzMw9zcxMPiFZGj7NzMw9zcxMPiFZGj7NzMw9zcxMviFZGj7NzMw9zcxMviFZGj7NzMw9zcxMviFZGr7NzMw9zcxMviFZGr7NzMy9zcxMviFZGr7NzMw9zcxMPiFZGr7NzMy9zcxMPiFZGr7NzMw9zcxMPiFZGj7NzMy9zcxMPiFZGj7NzMw9zcxMviFZGj7NzMy9zcxMviFZGj7NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_vgwi0"]
+_surfaces = [{
+"aabb": AABB(-0.3855778, -0.1675536, -0.1, 0.7711556, 0.3351072, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("dGrFviyTK77NzMy9dGrFPiyTK77NzMy9dGrFPiyTK77NzMy9dGrFPiyTKz7NzMy9dGrFPiyTKz7NzMy9dGrFviyTKz7NzMy9dGrFviyTKz7NzMy9dGrFviyTK77NzMy9dGrFviyTK77NzMw9dGrFPiyTK77NzMw9dGrFPiyTK77NzMw9dGrFPiyTKz7NzMw9dGrFPiyTKz7NzMw9dGrFviyTKz7NzMw9dGrFviyTKz7NzMw9dGrFviyTK77NzMw9dGrFviyTK77NzMy9dGrFviyTK77NzMw9dGrFPiyTK77NzMy9dGrFPiyTK77NzMw9dGrFPiyTKz7NzMy9dGrFPiyTKz7NzMw9dGrFviyTKz7NzMy9dGrFviyTKz7NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_d5dh2"]
+_surfaces = [{
+"aabb": AABB(-0.10943233, 0.1675536, 0, 0.10943233, 1.222475, 1e-05),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 6,
+"vertex_data": PackedByteArray("AAAAACyTKz4AAAAADx7gvaLoED8AAAAADx7gvaLoED8AAAAAmu4cvfgOez8AAAAAmu4cvfgOez8AAAAAAGehvXbssT8AAAAA")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_7eawe"]
+_surfaces = [{
+"aabb": AABB(-0.2, -0.2066244, -0.1, 0.4, 0.4132488, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("zcxMvlmVU77NzMy9zcxMPlmVU77NzMy9zcxMPlmVU77NzMy9zcxMPlmVUz7NzMy9zcxMPlmVUz7NzMy9zcxMvlmVUz7NzMy9zcxMvlmVUz7NzMy9zcxMvlmVU77NzMy9zcxMvlmVU77NzMw9zcxMPlmVU77NzMw9zcxMPlmVU77NzMw9zcxMPlmVUz7NzMw9zcxMPlmVUz7NzMw9zcxMvlmVUz7NzMw9zcxMvlmVUz7NzMw9zcxMvlmVU77NzMw9zcxMvlmVU77NzMy9zcxMvlmVU77NzMw9zcxMPlmVU77NzMy9zcxMPlmVU77NzMw9zcxMPlmVUz7NzMy9zcxMPlmVUz7NzMw9zcxMvlmVUz7NzMy9zcxMvlmVUz7NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_vmlyw"]
+_surfaces = [{
+"aabb": AABB(-0.2, -0.21035114, -0.1, 0.4, 0.42070228, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("zcxMvkpmV77NzMy9zcxMPkpmV77NzMy9zcxMPkpmV77NzMy9zcxMPkpmVz7NzMy9zcxMPkpmVz7NzMy9zcxMvkpmVz7NzMy9zcxMvkpmVz7NzMy9zcxMvkpmV77NzMy9zcxMvkpmV77NzMw9zcxMPkpmV77NzMw9zcxMPkpmV77NzMw9zcxMPkpmVz7NzMw9zcxMPkpmVz7NzMw9zcxMvkpmVz7NzMw9zcxMvkpmVz7NzMw9zcxMvkpmV77NzMw9zcxMvkpmV77NzMy9zcxMvkpmV77NzMw9zcxMPkpmV77NzMy9zcxMPkpmV77NzMw9zcxMPkpmVz7NzMy9zcxMPkpmVz7NzMw9zcxMvkpmVz7NzMy9zcxMvkpmVz7NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_bay1f"]
+_surfaces = [{
+"aabb": AABB(-0.2, -0.20566493, -0.1, 0.4, 0.41132987, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("zcxMvtSZUr7NzMy9zcxMPtSZUr7NzMy9zcxMPtSZUr7NzMy9zcxMPtSZUj7NzMy9zcxMPtSZUj7NzMy9zcxMvtSZUj7NzMy9zcxMvtSZUj7NzMy9zcxMvtSZUr7NzMy9zcxMvtSZUr7NzMw9zcxMPtSZUr7NzMw9zcxMPtSZUr7NzMw9zcxMPtSZUj7NzMw9zcxMPtSZUj7NzMw9zcxMvtSZUj7NzMw9zcxMvtSZUj7NzMw9zcxMvtSZUr7NzMw9zcxMvtSZUr7NzMy9zcxMvtSZUr7NzMw9zcxMPtSZUr7NzMy9zcxMPtSZUr7NzMw9zcxMPtSZUj7NzMy9zcxMPtSZUj7NzMw9zcxMvtSZUj7NzMy9zcxMvtSZUj7NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_j7wdj"]
+_surfaces = [{
+"aabb": AABB(-0.21898802, -0.22390813, -0.1, 0.43797603, 0.44781625, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("ZT5gvixIZb7NzMy9ZT5gPixIZb7NzMy9ZT5gPixIZb7NzMy9ZT5gPixIZT7NzMy9ZT5gPixIZT7NzMy9ZT5gvixIZT7NzMy9ZT5gvixIZT7NzMy9ZT5gvixIZb7NzMy9ZT5gvixIZb7NzMw9ZT5gPixIZb7NzMw9ZT5gPixIZb7NzMw9ZT5gPixIZT7NzMw9ZT5gPixIZT7NzMw9ZT5gvixIZT7NzMw9ZT5gvixIZT7NzMw9ZT5gvixIZb7NzMw9ZT5gvixIZb7NzMy9ZT5gvixIZb7NzMw9ZT5gPixIZb7NzMy9ZT5gPixIZb7NzMw9ZT5gPixIZT7NzMy9ZT5gPixIZT7NzMw9ZT5gvixIZT7NzMy9ZT5gvixIZT7NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_wtak7"]
+_surfaces = [{
+"aabb": AABB(-0.15607747, 0.22390813, 0, 0.15607747, 0.72180164, 1e-05),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 4,
+"vertex_data": PackedByteArray("AAAAACxIZT4AAAAAxtIfvrMgEj8AAAAAxtIfvrMgEj8AAAAAiL7RvQkacj8AAAAA")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_36l68"]
+_surfaces = [{
+"aabb": AABB(-0.2, -0.19019864, -0.1, 0.4, 0.3803973, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("zcxMvm/DQr7NzMy9zcxMPm/DQr7NzMy9zcxMPm/DQr7NzMy9zcxMPm/DQj7NzMy9zcxMPm/DQj7NzMy9zcxMvm/DQj7NzMy9zcxMvm/DQj7NzMy9zcxMvm/DQr7NzMy9zcxMvm/DQr7NzMw9zcxMPm/DQr7NzMw9zcxMPm/DQr7NzMw9zcxMPm/DQj7NzMw9zcxMPm/DQj7NzMw9zcxMvm/DQj7NzMw9zcxMvm/DQj7NzMw9zcxMvm/DQr7NzMw9zcxMvm/DQr7NzMy9zcxMvm/DQr7NzMw9zcxMPm/DQr7NzMy9zcxMPm/DQr7NzMw9zcxMPm/DQj7NzMy9zcxMPm/DQj7NzMw9zcxMvm/DQj7NzMy9zcxMvm/DQj7NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_cwu07"]
+_surfaces = [{
+"aabb": AABB(-0.2, -0.18935978, -0.1, 0.4, 0.37871957, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("zcxMvojnQb7NzMy9zcxMPojnQb7NzMy9zcxMPojnQb7NzMy9zcxMPojnQT7NzMy9zcxMPojnQT7NzMy9zcxMvojnQT7NzMy9zcxMvojnQT7NzMy9zcxMvojnQb7NzMy9zcxMvojnQb7NzMw9zcxMPojnQb7NzMw9zcxMPojnQb7NzMw9zcxMPojnQT7NzMw9zcxMPojnQT7NzMw9zcxMvojnQT7NzMw9zcxMvojnQT7NzMw9zcxMvojnQb7NzMw9zcxMvojnQb7NzMy9zcxMvojnQb7NzMw9zcxMPojnQb7NzMy9zcxMPojnQb7NzMw9zcxMPojnQT7NzMy9zcxMPojnQT7NzMw9zcxMvojnQT7NzMy9zcxMvojnQT7NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_kpgsv"]
+_surfaces = [{
+"aabb": AABB(-0.26766372, -0.2082122, -0.1, 0.53532743, 0.4164244, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("OAuJvpQ1Vb7NzMy9OAuJPpQ1Vb7NzMy9OAuJPpQ1Vb7NzMy9OAuJPpQ1VT7NzMy9OAuJPpQ1VT7NzMy9OAuJvpQ1VT7NzMy9OAuJvpQ1VT7NzMy9OAuJvpQ1Vb7NzMy9OAuJvpQ1Vb7NzMw9OAuJPpQ1Vb7NzMw9OAuJPpQ1Vb7NzMw9OAuJPpQ1VT7NzMw9OAuJPpQ1VT7NzMw9OAuJvpQ1VT7NzMw9OAuJvpQ1VT7NzMw9OAuJvpQ1Vb7NzMw9OAuJvpQ1Vb7NzMy9OAuJvpQ1Vb7NzMw9OAuJPpQ1Vb7NzMy9OAuJPpQ1Vb7NzMw9OAuJPpQ1VT7NzMy9OAuJPpQ1VT7NzMw9OAuJvpQ1VT7NzMy9OAuJvpQ1VT7NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_xf0eb"]
+_surfaces = [{
+"aabb": AABB(-0.1458022, 0.2082122, 0, 0.1458022, 0.7531935, 1e-05),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 4,
+"vertex_data": PackedByteArray("AAAAAJQ1VT4AAAAALE0VvqjhGz8AAAAALE0VvqjhGz8AAAAA0PZ+va8edj8AAAAA")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_qads3"]
+_surfaces = [{
+"aabb": AABB(-0.2, -0.21320097, -0.1, 0.4, 0.42640194, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("zcxMvltRWr7NzMy9zcxMPltRWr7NzMy9zcxMPltRWr7NzMy9zcxMPltRWj7NzMy9zcxMPltRWj7NzMy9zcxMvltRWj7NzMy9zcxMvltRWj7NzMy9zcxMvltRWr7NzMy9zcxMvltRWr7NzMw9zcxMPltRWr7NzMw9zcxMPltRWr7NzMw9zcxMPltRWj7NzMw9zcxMPltRWj7NzMw9zcxMvltRWj7NzMw9zcxMvltRWj7NzMw9zcxMvltRWr7NzMw9zcxMvltRWr7NzMy9zcxMvltRWr7NzMw9zcxMPltRWr7NzMy9zcxMPltRWr7NzMw9zcxMPltRWj7NzMy9zcxMPltRWj7NzMw9zcxMvltRWj7NzMy9zcxMvltRWj7NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_j12pt"]
+_surfaces = [{
+"aabb": AABB(-0.2, -0.18113066, -0.1, 0.4, 0.36226133, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("zcxMvlF6Ob7NzMy9zcxMPlF6Ob7NzMy9zcxMPlF6Ob7NzMy9zcxMPlF6OT7NzMy9zcxMPlF6OT7NzMy9zcxMvlF6OT7NzMy9zcxMvlF6OT7NzMy9zcxMvlF6Ob7NzMy9zcxMvlF6Ob7NzMw9zcxMPlF6Ob7NzMw9zcxMPlF6Ob7NzMw9zcxMPlF6OT7NzMw9zcxMPlF6OT7NzMw9zcxMvlF6OT7NzMw9zcxMvlF6OT7NzMw9zcxMvlF6Ob7NzMw9zcxMvlF6Ob7NzMy9zcxMvlF6Ob7NzMw9zcxMPlF6Ob7NzMy9zcxMPlF6Ob7NzMw9zcxMPlF6OT7NzMy9zcxMPlF6OT7NzMw9zcxMvlF6OT7NzMy9zcxMvlF6OT7NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_fglsk"]
+_surfaces = [{
+"aabb": AABB(-1.083561, 1.1696179, -0.2, 1.9968414, 0.3879645, 0.4),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 18,
+"vertex_data": PackedByteArray("Lv8Wv0Y4rD9A1Qu+kI3bPinHrz9CXLe9Lv8Wv0Y4rD9A1Qu+lCAcPmsmtz8MyR8+Lv8Wv0Y4rD9A1Qu+119ePwq2lT/NzEy+Lv8Wv0Y4rD9A1Qu+otyIv9xexz/NzEw+8vHEvpzimz9EFBy+lCAcPmsmtz8MyR8+Lv8Wv0Y4rD9A1Qu+ILKKv9xexz/NzEy+lCAcPmsmtz8MyR8+v8xpPwq2lT/NzEw+kI3bPinHrz9CXLe9lCAcPmsmtz8MyR8+8vHEvpzimz9EFBy+Lv8Wv0Y4rD9A1Qu+")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_emw40"]
+_surfaces = [{
+"aabb": AABB(-0.25, -0.2, -0.1, 0.5, 0.4, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("AACAvs3MTL7NzMy9AACAPs3MTL7NzMy9AACAPs3MTL7NzMy9AACAPs3MTD7NzMy9AACAPs3MTD7NzMy9AACAvs3MTD7NzMy9AACAvs3MTD7NzMy9AACAvs3MTL7NzMy9AACAvs3MTL7NzMw9AACAPs3MTL7NzMw9AACAPs3MTL7NzMw9AACAPs3MTD7NzMw9AACAPs3MTD7NzMw9AACAvs3MTD7NzMw9AACAvs3MTD7NzMw9AACAvs3MTL7NzMw9AACAvs3MTL7NzMy9AACAvs3MTL7NzMw9AACAPs3MTL7NzMy9AACAPs3MTL7NzMw9AACAPs3MTD7NzMy9AACAPs3MTD7NzMw9AACAvs3MTD7NzMy9AACAvs3MTD7NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_ynijc"]
+_surfaces = [{
+"aabb": AABB(-0.25, -0.2, -0.1, 0.5, 0.4, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("AACAvs3MTL7NzMy9AACAPs3MTL7NzMy9AACAPs3MTL7NzMy9AACAPs3MTD7NzMy9AACAPs3MTD7NzMy9AACAvs3MTD7NzMy9AACAvs3MTD7NzMy9AACAvs3MTL7NzMy9AACAvs3MTL7NzMw9AACAPs3MTL7NzMw9AACAPs3MTL7NzMw9AACAPs3MTD7NzMw9AACAPs3MTD7NzMw9AACAvs3MTD7NzMw9AACAvs3MTD7NzMw9AACAvs3MTL7NzMw9AACAvs3MTL7NzMy9AACAvs3MTL7NzMw9AACAPs3MTL7NzMy9AACAPs3MTL7NzMw9AACAPs3MTD7NzMy9AACAPs3MTD7NzMw9AACAvs3MTD7NzMy9AACAvs3MTD7NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_vhe8g"]
+_surfaces = [{
+"aabb": AABB(-0.25, -0.2, -0.1, 0.5, 0.4, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("AACAvs3MTL7NzMy9AACAPs3MTL7NzMy9AACAPs3MTL7NzMy9AACAPs3MTD7NzMy9AACAPs3MTD7NzMy9AACAvs3MTD7NzMy9AACAvs3MTD7NzMy9AACAvs3MTL7NzMy9AACAvs3MTL7NzMw9AACAPs3MTL7NzMw9AACAPs3MTL7NzMw9AACAPs3MTD7NzMw9AACAPs3MTD7NzMw9AACAvs3MTD7NzMw9AACAvs3MTD7NzMw9AACAvs3MTL7NzMw9AACAvs3MTL7NzMy9AACAvs3MTL7NzMw9AACAPs3MTL7NzMy9AACAPs3MTL7NzMw9AACAPs3MTD7NzMy9AACAPs3MTD7NzMw9AACAvs3MTD7NzMy9AACAvs3MTD7NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_qwnyj"]
+_surfaces = [{
+"aabb": AABB(-0.25, -0.2, -0.1, 0.5, 0.4, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("AACAvs3MTL7NzMy9AACAPs3MTL7NzMy9AACAPs3MTL7NzMy9AACAPs3MTD7NzMy9AACAPs3MTD7NzMy9AACAvs3MTD7NzMy9AACAvs3MTD7NzMy9AACAvs3MTL7NzMy9AACAvs3MTL7NzMw9AACAPs3MTL7NzMw9AACAPs3MTL7NzMw9AACAPs3MTD7NzMw9AACAPs3MTD7NzMw9AACAvs3MTD7NzMw9AACAvs3MTD7NzMw9AACAvs3MTL7NzMw9AACAvs3MTL7NzMy9AACAvs3MTL7NzMw9AACAPs3MTL7NzMy9AACAPs3MTL7NzMw9AACAPs3MTD7NzMy9AACAPs3MTD7NzMw9AACAvs3MTD7NzMy9AACAvs3MTD7NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_qmv4n"]
+_surfaces = [{
+"aabb": AABB(-0.4, -0.20348866, -0.1, 0.8, 0.40697733, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("zczMvlVfUL7NzMy9zczMPlVfUL7NzMy9zczMPlVfUL7NzMy9zczMPlVfUD7NzMy9zczMPlVfUD7NzMy9zczMvlVfUD7NzMy9zczMvlVfUD7NzMy9zczMvlVfUL7NzMy9zczMvlVfUL7NzMw9zczMPlVfUL7NzMw9zczMPlVfUL7NzMw9zczMPlVfUD7NzMw9zczMPlVfUD7NzMw9zczMvlVfUD7NzMw9zczMvlVfUD7NzMw9zczMvlVfUL7NzMw9zczMvlVfUL7NzMy9zczMvlVfUL7NzMw9zczMPlVfUL7NzMy9zczMPlVfUL7NzMw9zczMPlVfUD7NzMy9zczMPlVfUD7NzMw9zczMvlVfUD7NzMy9zczMvlVfUD7NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_nulkr"]
+_surfaces = [{
+"aabb": AABB(-0.4, -0.36091852, -0.1, 0.8, 0.72183704, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("zczMvlDKuL7NzMy9zczMPlDKuL7NzMy9zczMPlDKuL7NzMy9zczMPlDKuD7NzMy9zczMPlDKuD7NzMy9zczMvlDKuD7NzMy9zczMvlDKuD7NzMy9zczMvlDKuL7NzMy9zczMvlDKuL7NzMw9zczMPlDKuL7NzMw9zczMPlDKuL7NzMw9zczMPlDKuD7NzMw9zczMPlDKuD7NzMw9zczMvlDKuD7NzMw9zczMvlDKuD7NzMw9zczMvlDKuL7NzMw9zczMvlDKuL7NzMy9zczMvlDKuL7NzMw9zczMPlDKuL7NzMy9zczMPlDKuL7NzMw9zczMPlDKuD7NzMy9zczMPlDKuD7NzMw9zczMvlDKuD7NzMy9zczMvlDKuD7NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_oqpyx"]
+_surfaces = [{
+"aabb": AABB(-0.4, -0.3343333, -0.1, 0.8, 0.6686666, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("zczMvrwtq77NzMy9zczMPrwtq77NzMy9zczMPrwtq77NzMy9zczMPrwtqz7NzMy9zczMPrwtqz7NzMy9zczMvrwtqz7NzMy9zczMvrwtqz7NzMy9zczMvrwtq77NzMy9zczMvrwtq77NzMw9zczMPrwtq77NzMw9zczMPrwtq77NzMw9zczMPrwtqz7NzMw9zczMPrwtqz7NzMw9zczMvrwtqz7NzMw9zczMvrwtqz7NzMw9zczMvrwtq77NzMw9zczMvrwtq77NzMy9zczMvrwtq77NzMw9zczMPrwtq77NzMy9zczMPrwtq77NzMw9zczMPrwtqz7NzMy9zczMPrwtqz7NzMw9zczMvrwtqz7NzMy9zczMvrwtqz7NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_pk50i"]
+_surfaces = [{
+"aabb": AABB(-0.4, -0.41301978, -0.1, 0.8, 0.82603955, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("zczMvlR3077NzMy9zczMPlR3077NzMy9zczMPlR3077NzMy9zczMPlR30z7NzMy9zczMPlR30z7NzMy9zczMvlR30z7NzMy9zczMvlR30z7NzMy9zczMvlR3077NzMy9zczMvlR3077NzMw9zczMPlR3077NzMw9zczMPlR3077NzMw9zczMPlR30z7NzMw9zczMPlR30z7NzMw9zczMvlR30z7NzMw9zczMvlR30z7NzMw9zczMvlR3077NzMw9zczMvlR3077NzMy9zczMvlR3077NzMw9zczMPlR3077NzMy9zczMPlR3077NzMw9zczMPlR30z7NzMy9zczMPlR30z7NzMw9zczMvlR30z7NzMy9zczMvlR30z7NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_7t40c"]
+_surfaces = [{
+"aabb": AABB(-0.4, -0.68908244, -0.1, 0.8, 1.3781649, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("zczMvrVnML/NzMy9zczMPrVnML/NzMy9zczMPrVnML/NzMy9zczMPrVnMD/NzMy9zczMPrVnMD/NzMy9zczMvrVnMD/NzMy9zczMvrVnMD/NzMy9zczMvrVnML/NzMy9zczMvrVnML/NzMw9zczMPrVnML/NzMw9zczMPrVnML/NzMw9zczMPrVnMD/NzMw9zczMPrVnMD/NzMw9zczMvrVnMD/NzMw9zczMvrVnMD/NzMw9zczMvrVnML/NzMw9zczMvrVnML/NzMy9zczMvrVnML/NzMw9zczMPrVnML/NzMy9zczMPrVnML/NzMw9zczMPrVnMD/NzMy9zczMPrVnMD/NzMw9zczMvrVnMD/NzMy9zczMvrVnMD/NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_txscu"]
+_surfaces = [{
+"aabb": AABB(-0.4, -0.53538203, -0.1, 0.8, 1.0707641, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("zczMvswOCb/NzMy9zczMPswOCb/NzMy9zczMPswOCb/NzMy9zczMPswOCT/NzMy9zczMPswOCT/NzMy9zczMvswOCT/NzMy9zczMvswOCT/NzMy9zczMvswOCb/NzMy9zczMvswOCb/NzMw9zczMPswOCb/NzMw9zczMPswOCb/NzMw9zczMPswOCT/NzMw9zczMPswOCT/NzMw9zczMvswOCT/NzMw9zczMvswOCT/NzMw9zczMvswOCb/NzMw9zczMvswOCb/NzMy9zczMvswOCb/NzMw9zczMPswOCb/NzMy9zczMPswOCb/NzMw9zczMPswOCT/NzMy9zczMPswOCT/NzMw9zczMvswOCT/NzMy9zczMvswOCT/NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_0h6uj"]
+_surfaces = [{
+"aabb": AABB(2, 1.6991127, -0.0010781214, 1.0298786, 0.35676026, 1e-05),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 6,
+"vertex_data": PackedByteArray("AAAAQIZ82T/AT426IQ8nQIZ82T/AT426IQ8nQIZ82T/AT4261j00QGyTA0DAT4261j00QGyTA0DAT426iOlBQGyTA0DAT426")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_om6xh"]
+_surfaces = [{
+"aabb": AABB(-0.2, -0.3051492, -0.1, 0.4, 0.6102984, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("zcxMvoQ8nL7NzMy9zcxMPoQ8nL7NzMy9zcxMPoQ8nL7NzMy9zcxMPoQ8nD7NzMy9zcxMPoQ8nD7NzMy9zcxMvoQ8nD7NzMy9zcxMvoQ8nD7NzMy9zcxMvoQ8nL7NzMy9zcxMvoQ8nL7NzMw9zcxMPoQ8nL7NzMw9zcxMPoQ8nL7NzMw9zcxMPoQ8nD7NzMw9zcxMPoQ8nD7NzMw9zcxMvoQ8nD7NzMw9zcxMvoQ8nD7NzMw9zcxMvoQ8nL7NzMw9zcxMvoQ8nL7NzMy9zcxMvoQ8nL7NzMw9zcxMPoQ8nL7NzMy9zcxMPoQ8nL7NzMw9zcxMPoQ8nD7NzMy9zcxMPoQ8nD7NzMw9zcxMvoQ8nD7NzMy9zcxMvoQ8nD7NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_4qpku"]
+_surfaces = [{
+"aabb": AABB(-0.2, -0.20597567, -0.1, 0.4, 0.41195133, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("zcxMvknrUr7NzMy9zcxMPknrUr7NzMy9zcxMPknrUr7NzMy9zcxMPknrUj7NzMy9zcxMPknrUj7NzMy9zcxMvknrUj7NzMy9zcxMvknrUj7NzMy9zcxMvknrUr7NzMy9zcxMvknrUr7NzMw9zcxMPknrUr7NzMw9zcxMPknrUr7NzMw9zcxMPknrUj7NzMw9zcxMPknrUj7NzMw9zcxMvknrUj7NzMw9zcxMvknrUj7NzMw9zcxMvknrUr7NzMw9zcxMvknrUr7NzMy9zcxMvknrUr7NzMw9zcxMPknrUr7NzMy9zcxMPknrUr7NzMw9zcxMPknrUj7NzMy9zcxMPknrUj7NzMw9zcxMvknrUj7NzMy9zcxMvknrUj7NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_cbecc"]
+_surfaces = [{
+"aabb": AABB(-0.2, -0.106802225, -0.1, 0.4, 0.21360445, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("zcxMviC72r3NzMy9zcxMPiC72r3NzMy9zcxMPiC72r3NzMy9zcxMPiC72j3NzMy9zcxMPiC72j3NzMy9zcxMviC72j3NzMy9zcxMviC72j3NzMy9zcxMviC72r3NzMy9zcxMviC72r3NzMw9zcxMPiC72r3NzMw9zcxMPiC72r3NzMw9zcxMPiC72j3NzMw9zcxMPiC72j3NzMw9zcxMviC72j3NzMw9zcxMviC72j3NzMw9zcxMviC72r3NzMw9zcxMviC72r3NzMy9zcxMviC72r3NzMw9zcxMPiC72r3NzMy9zcxMPiC72r3NzMw9zcxMPiC72j3NzMy9zcxMPiC72j3NzMw9zcxMviC72j3NzMy9zcxMviC72j3NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_vmjad"]
+_surfaces = [{
+"aabb": AABB(-0.34148115, -0.3193407, -0.1, 0.6829623, 0.6386814, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("ntauvqCAo77NzMy9ntauPqCAo77NzMy9ntauPqCAo77NzMy9ntauPqCAoz7NzMy9ntauPqCAoz7NzMy9ntauvqCAoz7NzMy9ntauvqCAoz7NzMy9ntauvqCAo77NzMy9ntauvqCAo77NzMw9ntauPqCAo77NzMw9ntauPqCAo77NzMw9ntauPqCAoz7NzMw9ntauPqCAoz7NzMw9ntauvqCAoz7NzMw9ntauvqCAoz7NzMw9ntauvqCAo77NzMw9ntauvqCAo77NzMy9ntauvqCAo77NzMw9ntauPqCAo77NzMy9ntauPqCAo77NzMw9ntauPqCAoz7NzMy9ntauPqCAoz7NzMw9ntauvqCAoz7NzMy9ntauvqCAoz7NzMw9")
+}]
+
+[node name="Generate_Beast" unique_id=1734874713 instance=ExtResource("1_base")]
+script = ExtResource("2_character")
+density_data = ExtResource("density_preset")
+planar_constraints_enabled = false
+
+[node name="CreatureGenerator" type="Node3D" parent="." index="0" unique_id=556450124]
+visible = false
+script = ExtResource("3_generator")
+overall_scale = 6.0
+rear_leg_count = 2
+unsymmetrie = 100.0
+inhomogeneity = 100.0
+torso_upper_curve = SubResource("Curve_3wfe7")
+torso_lower_curve = SubResource("Curve_a3iul")
+torso_height_offset_curve = SubResource("Curve_vn1ud")
+sub_torso_height_curve = SubResource("Curve_7smi1")
+base_limb_length = 1.0
+maximum_bend_offset = 0.85
+
+[node name="Feets" type="Node3D" parent="CreatureGenerator" index="0" unique_id=945280423]
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 0, 0, 0)
+
+[node name="Leg_1" type="Node3D" parent="CreatureGenerator/Feets" index="0" unique_id=1203689763]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0217116, 0.287309, 0.2)
+metadata/foot_index = 0
+metadata/limb_type = "Leg"
+metadata/initial_position = Vector2(-1, 0.5)
+metadata/target_position = Vector2(-1.0217116, 0.2)
+metadata/travel_fraction = 1.0
+metadata/limb_length = 0.9934066
+metadata/limb_points = PackedVector3Array(0, 0.287309, 0, -0.06763227, 0.6207257, 0, -0.023921141, 0.9697374, 0, -0.04752159, 1.2702734, 0)
+metadata/limb_block_sizes = Array[Vector3]([Vector3(0.4, 0.34020704, 0.2), Vector3(0.4, 0.3517383, 0.2), Vector3(0.4, 0.30146125, 0.2)])
+
+[node name="Wireframe" type="MeshInstance3D" parent="CreatureGenerator/Feets/Leg_1" index="0" unique_id=1791424816]
+material_override = SubResource("StandardMaterial3D_vn1ud")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_7smi1")
+
+[node name="Limb" type="MeshInstance3D" parent="CreatureGenerator/Feets/Leg_1" index="1" unique_id=1481943027]
+material_override = SubResource("StandardMaterial3D_vn1ud")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_rux7j")
+
+[node name="Segment_1" type="MeshInstance3D" parent="CreatureGenerator/Feets/Leg_1/Limb" index="0" unique_id=1775548235]
+transform = Transform3D(0.9800406, -0.1987974, 0, 0.1987974, 0.9800406, 0, 0, 0, 1, -0.033816136, 0.45401734, 0)
+material_override = SubResource("StandardMaterial3D_vn1ud")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_iva4f")
+metadata/generated_limb_block = true
+metadata/block_size = Vector3(0.4, 0.34020704, 0.2)
+
+[node name="Segment_2" type="MeshInstance3D" parent="CreatureGenerator/Feets/Leg_1/Limb" index="1" unique_id=1895788081]
+transform = Transform3D(0.99224824, 0.12427174, 0, -0.12427174, 0.99224824, 0, 0, 0, 1, -0.045776706, 0.7952316, 0)
+material_override = SubResource("StandardMaterial3D_vn1ud")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_rfocr")
+metadata/generated_limb_block = true
+metadata/block_size = Vector3(0.4, 0.3517383, 0.2)
+
+[node name="Segment_3" type="MeshInstance3D" parent="CreatureGenerator/Feets/Leg_1/Limb" index="2" unique_id=2106950710]
+transform = Transform3D(0.9969309, -0.07828684, 0, 0.07828684, 0.9969309, 0, 0, 0, 1, -0.035721365, 1.1200054, 0)
+material_override = SubResource("StandardMaterial3D_vn1ud")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_1h6nb")
+metadata/generated_limb_block = true
+metadata/block_size = Vector3(0.4, 0.30146125, 0.2)
+
+[node name="NameLabel" type="Label3D" parent="CreatureGenerator/Feets/Leg_1" index="2" unique_id=668812373]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.48730898, 0)
+pixel_size = 0.01
+billboard = 1
+no_depth_test = true
+text = "Leg_1"
+
+[node name="Leg_2" type="Node3D" parent="CreatureGenerator/Feets" index="1" unique_id=1692364562]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0047512, 0.1675536, -0.2)
+metadata/foot_index = 1
+metadata/limb_type = "Leg"
+metadata/initial_position = Vector2(-1, -0.5)
+metadata/target_position = Vector2(-1.0047512, -0.2)
+metadata/travel_fraction = 1.0
+metadata/limb_length = 1.2452809512615204
+metadata/limb_points = PackedVector3Array(0, 0.1675536, 0, -0.10943233, 0.5660497, 0, -0.038313486, 0.98069715, 0, -0.07880974, 1.3900287, 0)
+metadata/limb_block_sizes = Array[Vector3]([Vector3(0.4, 0.4132488, 0.2), Vector3(0.4, 0.42070228, 0.2), Vector3(0.4, 0.41132987, 0.2)])
+
+[node name="Wireframe" type="MeshInstance3D" parent="CreatureGenerator/Feets/Leg_2" index="0" unique_id=13117541]
+material_override = SubResource("StandardMaterial3D_vn1ud")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_vgwi0")
+
+[node name="Limb" type="MeshInstance3D" parent="CreatureGenerator/Feets/Leg_2" index="1" unique_id=351799256]
+material_override = SubResource("StandardMaterial3D_vn1ud")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_d5dh2")
+
+[node name="Segment_1" type="MeshInstance3D" parent="CreatureGenerator/Feets/Leg_2/Limb" index="0" unique_id=824371930]
+transform = Transform3D(0.9643007, -0.2648098, 0, 0.2648098, 0.9643007, 0, 0, 0, 1, -0.054716166, 0.36680165, 0)
+material_override = SubResource("StandardMaterial3D_vn1ud")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_7eawe")
+metadata/generated_limb_block = true
+metadata/block_size = Vector3(0.4, 0.4132488, 0.2)
+
+[node name="Segment_2" type="MeshInstance3D" parent="CreatureGenerator/Feets/Leg_2/Limb" index="1" unique_id=883704400]
+transform = Transform3D(0.98560786, 0.16904792, 0, -0.16904792, 0.98560786, 0, 0, 0, 1, -0.07387291, 0.7733734, 0)
+material_override = SubResource("StandardMaterial3D_vn1ud")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_vmlyw")
+metadata/generated_limb_block = true
+metadata/block_size = Vector3(0.4, 0.42070228, 0.2)
+
+[node name="Segment_3" type="MeshInstance3D" parent="CreatureGenerator/Feets/Leg_2/Limb" index="2" unique_id=954560549]
+transform = Transform3D(0.9951418, -0.09845201, 0, 0.09845201, 0.9951418, 0, 0, 0, 1, -0.058561612, 1.1853629, 0)
+material_override = SubResource("StandardMaterial3D_vn1ud")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_bay1f")
+metadata/generated_limb_block = true
+metadata/block_size = Vector3(0.4, 0.41132987, 0.2)
+
+[node name="NameLabel" type="Label3D" parent="CreatureGenerator/Feets/Leg_2" index="2" unique_id=1613319699]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3675536, 0)
+pixel_size = 0.01
+billboard = 1
+no_depth_test = true
+text = "Leg_2"
+
+[node name="ForeLeg_1" type="Node3D" parent="CreatureGenerator/Feets" index="2" unique_id=228560080]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0156946, 0.22390813, 0.2)
+metadata/foot_index = 2
+metadata/limb_type = "ForeLeg"
+metadata/initial_position = Vector2(1, 0.5)
+metadata/target_position = Vector2(1.0156946, 0.2)
+metadata/travel_fraction = 1.0
+metadata/limb_length = 0.7591168582439423
+metadata/limb_points = PackedVector3Array(0, 0.22390813, 0, -0.15607747, 0.57081145, 0, -0.10241419, 0.94570976, 0)
+metadata/limb_block_sizes = Array[Vector3]([Vector3(0.4, 0.3803973, 0.2), Vector3(0.4, 0.37871957, 0.2)])
+
+[node name="Wireframe" type="MeshInstance3D" parent="CreatureGenerator/Feets/ForeLeg_1" index="0" unique_id=193992620]
+material_override = SubResource("StandardMaterial3D_vn1ud")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_j7wdj")
+
+[node name="Limb" type="MeshInstance3D" parent="CreatureGenerator/Feets/ForeLeg_1" index="1" unique_id=965829011]
+material_override = SubResource("StandardMaterial3D_vn1ud")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_wtak7")
+
+[node name="Segment_1" type="MeshInstance3D" parent="CreatureGenerator/Feets/ForeLeg_1/Limb" index="0" unique_id=1517261157]
+transform = Transform3D(0.91195005, -0.41030124, 0, 0.41030124, 0.91195005, 0, 0, 0, 1, -0.07803874, 0.3973598, 0)
+material_override = SubResource("StandardMaterial3D_vn1ud")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_36l68")
+metadata/generated_limb_block = true
+metadata/block_size = Vector3(0.4, 0.3803973, 0.2)
+
+[node name="Segment_2" type="MeshInstance3D" parent="CreatureGenerator/Feets/ForeLeg_1/Limb" index="1" unique_id=1625974749]
+transform = Transform3D(0.9899101, 0.14169665, 0, -0.14169665, 0.9899101, 0, 0, 0, 1, -0.12924583, 0.7582606, 0)
+material_override = SubResource("StandardMaterial3D_vn1ud")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_cwu07")
+metadata/generated_limb_block = true
+metadata/block_size = Vector3(0.4, 0.37871957, 0.2)
+
+[node name="NameLabel" type="Label3D" parent="CreatureGenerator/Feets/ForeLeg_1" index="2" unique_id=654911185]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4239081, 0)
+pixel_size = 0.01
+billboard = 1
+no_depth_test = true
+text = "ForeLeg_1"
+
+[node name="ForeLeg_2" type="Node3D" parent="CreatureGenerator/Feets" index="3" unique_id=1837559101]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.930897, 0.2082122, -0.2)
+metadata/foot_index = 3
+metadata/limb_type = "ForeLeg"
+metadata/initial_position = Vector2(1, -0.5)
+metadata/target_position = Vector2(0.930897, -0.2)
+metadata/travel_fraction = 1.0
+metadata/limb_length = 0.78866327
+metadata/limb_points = PackedVector3Array(0, 0.2082122, 0, -0.1458022, 0.608912, 0, -0.062247097, 0.9614057, 0)
+metadata/limb_block_sizes = Array[Vector3]([Vector3(0.4, 0.42640194, 0.2), Vector3(0.4, 0.36226133, 0.2)])
+
+[node name="Wireframe" type="MeshInstance3D" parent="CreatureGenerator/Feets/ForeLeg_2" index="0" unique_id=1120712086]
+material_override = SubResource("StandardMaterial3D_vn1ud")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_kpgsv")
+
+[node name="Limb" type="MeshInstance3D" parent="CreatureGenerator/Feets/ForeLeg_2" index="1" unique_id=1965639539]
+material_override = SubResource("StandardMaterial3D_vn1ud")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_xf0eb")
+
+[node name="Segment_1" type="MeshInstance3D" parent="CreatureGenerator/Feets/ForeLeg_2/Limb" index="0" unique_id=1409100771]
+transform = Transform3D(0.93972325, -0.34193602, 0, 0.34193602, 0.93972325, 0, 0, 0, 1, -0.0729011, 0.4085621, 0)
+material_override = SubResource("StandardMaterial3D_vn1ud")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_qads3")
+metadata/generated_limb_block = true
+metadata/block_size = Vector3(0.4, 0.42640194, 0.2)
+
+[node name="Segment_2" type="MeshInstance3D" parent="CreatureGenerator/Feets/ForeLeg_2/Limb" index="1" unique_id=1053358331]
+transform = Transform3D(0.97303706, 0.23064871, 0, -0.23064871, 0.97303706, 0, 0, 0, 1, -0.10402465, 0.7851589, 0)
+material_override = SubResource("StandardMaterial3D_vn1ud")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_j12pt")
+metadata/generated_limb_block = true
+metadata/block_size = Vector3(0.4, 0.36226133, 0.2)
+
+[node name="NameLabel" type="Label3D" parent="CreatureGenerator/Feets/ForeLeg_2" index="2" unique_id=1567428990]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.40821218, 0)
+pixel_size = 0.01
+billboard = 1
+no_depth_test = true
+text = "ForeLeg_2"
+
+[node name="LimbNetwork" type="MeshInstance3D" parent="CreatureGenerator" index="1" unique_id=1248427673]
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 0, 0, 0)
+material_override = SubResource("StandardMaterial3D_vn1ud")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_fglsk")
+metadata/limb_endpoints = PackedVector3Array(-1.0692332, 1.5575824, 0.2, -1.083561, 1.5575824, -0.2, 0.9132804, 1.1696179, 0.2, 0.8686499, 1.1696179, -0.2)
+metadata/extra_endpoints = PackedVector3Array(0.15246803, 1.4308599, 0.15604037, 0.4288144, 1.3732654, -0.08953144, -0.3846584, 1.2178531, -0.15242106, -0.58983123, 1.3454673, -0.13655567)
+metadata/junctions = PackedVector3Array(-1.0692332, 1.5575824, 0.2, -1.083561, 1.5575824, -0.2, 0.9132804, 1.1696179, 0.2, 0.8686499, 1.1696179, -0.2, 0.15246803, 1.4308599, 0.15604037, 0.4288144, 1.3732654, -0.08953144, -0.3846584, 1.2178531, -0.15242106, -0.58983123, 1.3454673, -0.13655567)
+
+[node name="SubTorso" type="Node3D" parent="CreatureGenerator" index="2" unique_id=1690186888]
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, -4.0868464, 7.0303297, 0.8)
+metadata/generated_torso = true
+metadata/covered_limb_count = 1
+
+[node name="Wireframe" type="MeshInstance3D" parent="CreatureGenerator/SubTorso" index="0" unique_id=127603224]
+material_override = SubResource("StandardMaterial3D_vn1ud")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_emw40")
+
+[node name="NameLabel" type="Label3D" parent="CreatureGenerator/SubTorso" index="1" unique_id=1990740087]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+pixel_size = 0.01
+billboard = 1
+no_depth_test = true
+text = "SubTorso"
+
+[node name="SubTorso_2" type="Node3D" parent="CreatureGenerator" index="3" unique_id=843271688]
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, -4.019005, 7.0303297, -0.8)
+metadata/generated_torso = true
+metadata/covered_limb_count = 1
+
+[node name="Wireframe" type="MeshInstance3D" parent="CreatureGenerator/SubTorso_2" index="0" unique_id=1328896437]
+material_override = SubResource("StandardMaterial3D_vn1ud")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_ynijc")
+
+[node name="NameLabel" type="Label3D" parent="CreatureGenerator/SubTorso_2" index="1" unique_id=1681486222]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+pixel_size = 0.01
+billboard = 1
+no_depth_test = true
+text = "SubTorso_2"
+
+[node name="SubTorso_3" type="Node3D" parent="CreatureGenerator" index="4" unique_id=1122277612]
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 4.0627785, 5.4784718, 0.8)
+metadata/generated_torso = true
+metadata/covered_limb_count = 1
+
+[node name="Wireframe" type="MeshInstance3D" parent="CreatureGenerator/SubTorso_3" index="0" unique_id=1482888667]
+material_override = SubResource("StandardMaterial3D_vn1ud")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_vhe8g")
+
+[node name="NameLabel" type="Label3D" parent="CreatureGenerator/SubTorso_3" index="1" unique_id=19952281]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+pixel_size = 0.01
+billboard = 1
+no_depth_test = true
+text = "SubTorso_3"
+
+[node name="SubTorso_4" type="Node3D" parent="CreatureGenerator" index="5" unique_id=975325431]
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 3.723588, 5.4784718, -0.8)
+metadata/generated_torso = true
+metadata/covered_limb_count = 1
+
+[node name="Wireframe" type="MeshInstance3D" parent="CreatureGenerator/SubTorso_4" index="0" unique_id=303175301]
+material_override = SubResource("StandardMaterial3D_vn1ud")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_qwnyj")
+
+[node name="NameLabel" type="Label3D" parent="CreatureGenerator/SubTorso_4" index="1" unique_id=252899055]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+pixel_size = 0.01
+billboard = 1
+no_depth_test = true
+text = "SubTorso_4"
+
+[node name="Torso" type="Node3D" parent="CreatureGenerator" index="6" unique_id=684234347]
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, -6.4, 8.070402, 0)
+metadata/generated_network_torso = true
+metadata/source_segment = PackedVector3Array()
+
+[node name="Wireframe" type="MeshInstance3D" parent="CreatureGenerator/Torso" index="0" unique_id=1131733292]
+material_override = SubResource("StandardMaterial3D_vn1ud")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_qmv4n")
+
+[node name="NameLabel" type="Label3D" parent="CreatureGenerator/Torso" index="1" unique_id=145010418]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.50348866, 0)
+pixel_size = 0.01
+billboard = 1
+no_depth_test = true
+text = "Torso"
+
+[node name="Torso_2" type="Node3D" parent="CreatureGenerator" index="7" unique_id=1037558849]
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, -3.84, 7.6740036, 0)
+metadata/generated_network_torso = true
+metadata/source_segment = PackedVector3Array()
+
+[node name="Wireframe" type="MeshInstance3D" parent="CreatureGenerator/Torso_2" index="0" unique_id=118020835]
+material_override = SubResource("StandardMaterial3D_vn1ud")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_nulkr")
+
+[node name="NameLabel" type="Label3D" parent="CreatureGenerator/Torso_2" index="1" unique_id=870895506]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.66091853, 0)
+pixel_size = 0.01
+billboard = 1
+no_depth_test = true
+text = "Torso_2"
+
+[node name="Torso_3" type="Node3D" parent="CreatureGenerator" index="8" unique_id=2036177783]
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, -1.28, 8.261831, 0)
+metadata/generated_network_torso = true
+metadata/source_segment = PackedVector3Array()
+
+[node name="Wireframe" type="MeshInstance3D" parent="CreatureGenerator/Torso_3" index="0" unique_id=1591183669]
+material_override = SubResource("StandardMaterial3D_vn1ud")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_oqpyx")
+
+[node name="NameLabel" type="Label3D" parent="CreatureGenerator/Torso_3" index="1" unique_id=1290475953]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6343333, 0)
+pixel_size = 0.01
+billboard = 1
+no_depth_test = true
+text = "Torso_3"
+
+[node name="Torso_4" type="Node3D" parent="CreatureGenerator" index="9" unique_id=719503663]
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 1.28, 8.349028, 0)
+metadata/generated_network_torso = true
+metadata/source_segment = PackedVector3Array()
+
+[node name="Wireframe" type="MeshInstance3D" parent="CreatureGenerator/Torso_4" index="0" unique_id=598440707]
+material_override = SubResource("StandardMaterial3D_vn1ud")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_pk50i")
+
+[node name="NameLabel" type="Label3D" parent="CreatureGenerator/Torso_4" index="1" unique_id=667616435]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7130198, 0)
+pixel_size = 0.01
+billboard = 1
+no_depth_test = true
+text = "Torso_4"
+
+[node name="Torso_5" type="Node3D" parent="CreatureGenerator" index="10" unique_id=1422619020]
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 3.84, 7.4348016, 0)
+metadata/generated_network_torso = true
+metadata/source_segment = PackedVector3Array()
+
+[node name="Wireframe" type="MeshInstance3D" parent="CreatureGenerator/Torso_5" index="0" unique_id=1034406807]
+material_override = SubResource("StandardMaterial3D_vn1ud")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_7t40c")
+
+[node name="NameLabel" type="Label3D" parent="CreatureGenerator/Torso_5" index="1" unique_id=916970855]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.98908246, 0)
+pixel_size = 0.01
+billboard = 1
+no_depth_test = true
+text = "Torso_5"
+
+[node name="Torso_6" type="Node3D" parent="CreatureGenerator" index="11" unique_id=186690828]
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 6.4, 7.726539, 0)
+metadata/generated_network_torso = true
+metadata/source_segment = PackedVector3Array()
+
+[node name="Wireframe" type="MeshInstance3D" parent="CreatureGenerator/Torso_6" index="0" unique_id=536005180]
+material_override = SubResource("StandardMaterial3D_vn1ud")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_txscu")
+
+[node name="NameLabel" type="Label3D" parent="CreatureGenerator/Torso_6" index="1" unique_id=609605501]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.83538204, 0)
+pixel_size = 0.01
+billboard = 1
+no_depth_test = true
+text = "Torso_6"
+
+[node name="NeckLine" type="MeshInstance3D" parent="CreatureGenerator" index="12" unique_id=1526112202]
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 0, 0, 0)
+material_override = SubResource("StandardMaterial3D_vn1ud")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_0h6uj")
+metadata/generated_neck_line = true
+metadata/neck_points = PackedVector3Array(2, 1.6991127, -0.0010781214, 2.6102984, 1.6991127, -0.0010781214, 2.8162742, 2.055873, -0.0010781214, 3.0298786, 2.055873, -0.0010781214)
+metadata/neck_length = 1.2358543
+
+[node name="Neck" type="MeshInstance3D" parent="CreatureGenerator/NeckLine" index="0" unique_id=341822555]
+transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 2.305149, 1.6991127, -0.0010781214)
+material_override = SubResource("StandardMaterial3D_vn1ud")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_om6xh")
+metadata/generated_neck_block = true
+metadata/generated_head = false
+metadata/block_size = Vector3(0.4, 0.6102984, 0.2)
+
+[node name="Neck_2" type="MeshInstance3D" parent="CreatureGenerator/NeckLine" index="1" unique_id=1696755567]
+transform = Transform3D(0.8660252, 0.5000003, 0, -0.5000003, 0.8660252, 0, 0, 0, 1, 2.7132864, 1.8774928, -0.0010781214)
+material_override = SubResource("StandardMaterial3D_vn1ud")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_4qpku")
+metadata/generated_neck_block = true
+metadata/generated_head = false
+metadata/block_size = Vector3(0.4, 0.41195133, 0.2)
+
+[node name="Neck_3" type="MeshInstance3D" parent="CreatureGenerator/NeckLine" index="2" unique_id=1229516374]
+transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 2.9230764, 2.055873, -0.0010781214)
+material_override = SubResource("StandardMaterial3D_vn1ud")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_cbecc")
+metadata/generated_neck_block = true
+metadata/generated_head = false
+metadata/block_size = Vector3(0.4, 0.21360445, 0.2)
+
+[node name="Head" type="MeshInstance3D" parent="CreatureGenerator/NeckLine" index="3" unique_id=1823561794]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.3713598, 2.055873, -0.0010781214)
+material_override = SubResource("StandardMaterial3D_vn1ud")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_vmjad")
+metadata/generated_neck_block = false
+metadata/generated_head = true
+metadata/block_size = Vector3(0.6829623, 0.6386814, 0.2)
+
+[node name="GeneratedLegStepMovementController3D" parent="." index="1" unique_id=1664046872 instance=ExtResource("4_movement")]
+stance_load_safety_factor = 5.0
+slow_gait_data = ExtResource("5_4el8i")
+fast_gait_data = ExtResource("5_4el8i")
+
+[node name="CreatureRecoveryStateMachine3D" parent="." index="2" unique_id=1480614708 instance=ExtResource("5_recovery")]
+
+[node name="GeneratedParts" type="Node3D" parent="." index="3" unique_id=78179]
+
+[node name="SubTorso" parent="GeneratedParts" index="0" unique_id=298589033 instance=ExtResource("4_04tpq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.0868464, 7.0303297, 0.8)
+mass = 2.5600002
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([0, 6])
+sprite_visible = false
+left_distance = 1.0
+right_distance = 1.0
+top_distance = 0.8
+bottom_distance = 0.8
+collision_thickness = 0.8
+metadata/body_segment_id = 0
+metadata/segment_layout_version = 3
+metadata/generated_role = "Torso"
+metadata/generated_size = Vector3(2, 1.6, 0.8)
+
+[node name="SubTorso_2" parent="GeneratedParts" index="1" unique_id=2020785987 instance=ExtResource("4_04tpq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.019005, 7.0303297, -0.8)
+mass = 2.5600002
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([0, 6])
+sprite_visible = false
+left_distance = 1.0
+right_distance = 1.0
+top_distance = 0.8
+bottom_distance = 0.8
+collision_thickness = 0.8
+metadata/body_segment_id = 0
+metadata/segment_layout_version = 3
+metadata/generated_role = "Torso"
+metadata/generated_size = Vector3(2, 1.6, 0.8)
+
+[node name="SubTorso_3" parent="GeneratedParts" index="2" unique_id=899305679 instance=ExtResource("4_04tpq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.0627785, 5.4784718, 0.8)
+mass = 2.5600002
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([0, 6])
+sprite_visible = false
+left_distance = 1.0
+right_distance = 1.0
+top_distance = 0.8
+bottom_distance = 0.8
+collision_thickness = 0.8
+metadata/body_segment_id = 1
+metadata/segment_layout_version = 3
+metadata/generated_role = "Torso"
+metadata/generated_size = Vector3(2, 1.6, 0.8)
+
+[node name="SubTorso_4" parent="GeneratedParts" index="3" unique_id=1218525781 instance=ExtResource("4_04tpq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.723588, 5.4784718, -0.8)
+mass = 2.5600002
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([0, 6])
+sprite_visible = false
+left_distance = 1.0
+right_distance = 1.0
+top_distance = 0.8
+bottom_distance = 0.8
+collision_thickness = 0.8
+metadata/body_segment_id = 1
+metadata/segment_layout_version = 3
+metadata/generated_role = "Torso"
+metadata/generated_size = Vector3(2, 1.6, 0.8)
+
+[node name="Torso" parent="GeneratedParts" index="4" unique_id=1362496302 instance=ExtResource("4_04tpq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.4, 8.070402, 0)
+mass = 4.167448
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([0])
+sprite_visible = false
+left_distance = 1.6
+right_distance = 1.6
+top_distance = 0.81395465
+bottom_distance = 0.81395465
+collision_thickness = 0.8
+metadata/body_segment_id = 0
+metadata/segment_layout_version = 3
+metadata/generated_role = "Torso"
+metadata/generated_size = Vector3(3.2, 1.6279093, 0.8)
+
+[node name="Torso_2" parent="GeneratedParts" index="5" unique_id=1819774320 instance=ExtResource("4_04tpq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.84, 7.6740036, 0)
+mass = 7.3916116
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([0])
+sprite_visible = false
+left_distance = 1.6
+right_distance = 1.6
+top_distance = 1.4436741
+bottom_distance = 1.4436741
+collision_thickness = 0.8
+metadata/body_segment_id = 0
+metadata/segment_layout_version = 3
+metadata/generated_role = "Torso"
+metadata/generated_size = Vector3(3.2, 2.8873482, 0.8)
+
+[node name="Torso_3" parent="GeneratedParts" index="6" unique_id=776542664 instance=ExtResource("4_04tpq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.28, 8.261831, 0)
+mass = 6.847146
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([0])
+sprite_visible = false
+left_distance = 1.6
+right_distance = 1.6
+top_distance = 1.3373332
+bottom_distance = 1.3373332
+collision_thickness = 0.8
+metadata/body_segment_id = 0
+metadata/segment_layout_version = 3
+metadata/generated_role = "Torso"
+metadata/generated_size = Vector3(3.2, 2.6746664, 0.8)
+
+[node name="Torso_4" parent="GeneratedParts" index="7" unique_id=2013884229 instance=ExtResource("4_04tpq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.28, 8.349028, 0)
+mass = 8.458645
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([0])
+sprite_visible = false
+left_distance = 1.6
+right_distance = 1.6
+top_distance = 1.6520791
+bottom_distance = 1.6520791
+collision_thickness = 0.8
+metadata/body_segment_id = 1
+metadata/segment_layout_version = 3
+metadata/generated_role = "Torso"
+metadata/generated_size = Vector3(3.2, 3.3041582, 0.8)
+
+[node name="Torso_5" parent="GeneratedParts" index="8" unique_id=1626511869 instance=ExtResource("4_04tpq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.84, 7.4348016, 0)
+mass = 10.0
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([0])
+sprite_visible = false
+left_distance = 1.6
+right_distance = 1.6
+top_distance = 2.7563298
+bottom_distance = 2.7563298
+collision_thickness = 0.8
+metadata/body_segment_id = 1
+metadata/segment_layout_version = 3
+metadata/generated_role = "Torso"
+metadata/generated_size = Vector3(3.2, 5.5126595, 0.8)
+
+[node name="Torso_6" parent="GeneratedParts" index="9" unique_id=559525775 instance=ExtResource("4_04tpq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.4, 7.726539, 0)
+mass = 10.0
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([0])
+sprite_visible = false
+left_distance = 1.6
+right_distance = 1.6
+top_distance = 2.1415281
+bottom_distance = 2.1415281
+collision_thickness = 0.8
+metadata/body_segment_id = 1
+metadata/segment_layout_version = 3
+metadata/generated_role = "Torso"
+metadata/generated_size = Vector3(3.2, 4.2830563, 0.8)
+
+[node name="Leg_1" parent="GeneratedParts" index="10" unique_id=100286703 instance=ExtResource("4_04tpq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.0868464, 1.149236, 0.8)
+axis_lock_angular_x = true
+axis_lock_angular_z = true
+mass = 4.7386956
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([1])
+sprite_visible = false
+left_distance = 1.2885451
+right_distance = 1.2885451
+top_distance = 1.149236
+bottom_distance = 1.149236
+collision_thickness = 0.8
+metadata/generated_role = "Leg"
+metadata/generated_size = Vector3(2.5770903, 2.298472, 0.8)
+metadata/foot_previous_locks = Vector2i(0, 0)
+
+[node name="Leg_1_Limb_1" parent="GeneratedParts" index="11" unique_id=808930530 instance=ExtResource("4_04tpq")]
+transform = Transform3D(0.98004055, -0.19879754, 0, 0.19879754, 0.98004055, 0, 0, 0, 1, -4.2221107, 2.9653053, 0.8)
+mass = 1.7418602
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([5])
+sprite_visible = false
+left_distance = 0.8
+right_distance = 0.8
+top_distance = 0.6804141
+bottom_distance = 0.6804141
+collision_thickness = 0.8
+metadata/generated_role = "Limb"
+metadata/generated_size = Vector3(1.6, 1.3608282, 0.8)
+
+[node name="Leg_1_Limb_2" parent="GeneratedParts" index="12" unique_id=1361817199 instance=ExtResource("4_04tpq")]
+transform = Transform3D(0.9922482, 0.12427188, 0, -0.12427188, 0.9922482, 0, 0, 0, 1, -4.2699533, 4.330162, 0.8)
+mass = 1.8009002
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([5])
+sprite_visible = false
+left_distance = 0.8
+right_distance = 0.8
+top_distance = 0.7034766
+bottom_distance = 0.7034766
+collision_thickness = 0.8
+metadata/generated_role = "Limb"
+metadata/generated_size = Vector3(1.6, 1.4069532, 0.8)
+
+[node name="Leg_1_Limb_3" parent="GeneratedParts" index="13" unique_id=1685352793 instance=ExtResource("4_04tpq")]
+transform = Transform3D(0.9969309, -0.07828691, 0, 0.07828691, 0.9969309, 0, 0, 0, 1, -4.2297316, 5.6292577, 0.8)
+mass = 1.5434816
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([5])
+sprite_visible = false
+left_distance = 0.8
+right_distance = 0.8
+top_distance = 0.6029225
+bottom_distance = 0.6029225
+collision_thickness = 0.8
+metadata/generated_role = "Limb"
+metadata/generated_size = Vector3(1.6, 1.205845, 0.8)
+
+[node name="Leg_2" parent="GeneratedParts" index="14" unique_id=687182982 instance=ExtResource("4_04tpq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.019005, 0.6702144, -0.8)
+axis_lock_angular_x = true
+axis_lock_angular_z = true
+mass = 3.3077734
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([1])
+sprite_visible = false
+left_distance = 1.5423112
+right_distance = 1.5423112
+top_distance = 0.6702144
+bottom_distance = 0.6702144
+collision_thickness = 0.8
+metadata/generated_role = "Leg"
+metadata/generated_size = Vector3(3.0846224, 1.3404288, 0.8)
+metadata/foot_previous_locks = Vector2i(0, 0)
+
+[node name="Leg_2_Limb_1" parent="GeneratedParts" index="15" unique_id=928766410 instance=ExtResource("4_04tpq")]
+transform = Transform3D(0.9643007, -0.2648098, 0, 0.2648098, 0.9643007, 0, 0, 0, 1, -4.2378693, 2.1374211, -0.8)
+mass = 2.115834
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([5])
+sprite_visible = false
+left_distance = 0.8
+right_distance = 0.8
+top_distance = 0.8264976
+bottom_distance = 0.8264976
+collision_thickness = 0.8
+metadata/generated_role = "Limb"
+metadata/generated_size = Vector3(1.6, 1.6529952, 0.8)
+
+[node name="Leg_2_Limb_2" parent="GeneratedParts" index="16" unique_id=1742151274 instance=ExtResource("4_04tpq")]
+transform = Transform3D(0.98560786, 0.16904786, 0, -0.16904786, 0.98560786, 0, 0, 0, 1, -4.3144965, 3.763708, -0.8)
+mass = 2.1539958
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([5])
+sprite_visible = false
+left_distance = 0.8
+right_distance = 0.8
+top_distance = 0.84140456
+bottom_distance = 0.84140456
+collision_thickness = 0.8
+metadata/generated_role = "Limb"
+metadata/generated_size = Vector3(1.6, 1.6828091, 0.8)
+
+[node name="Leg_2_Limb_3" parent="GeneratedParts" index="17" unique_id=1464854874 instance=ExtResource("4_04tpq")]
+transform = Transform3D(0.9951418, -0.09845196, 0, 0.09845196, 0.9951418, 0, 0, 0, 1, -4.253251, 5.4116664, -0.8)
+mass = 2.106009
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([5])
+sprite_visible = false
+left_distance = 0.8
+right_distance = 0.8
+top_distance = 0.82265973
+bottom_distance = 0.82265973
+collision_thickness = 0.8
+metadata/generated_role = "Limb"
+metadata/generated_size = Vector3(1.6, 1.6453195, 0.8)
+
+[node name="ForeLeg_1" parent="GeneratedParts" index="18" unique_id=1798333276 instance=ExtResource("4_04tpq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.0627785, 0.8956325, 0.8)
+axis_lock_angular_x = true
+axis_lock_angular_z = true
+mass = 2.5104997
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([4])
+sprite_visible = false
+left_distance = 0.87595206
+right_distance = 0.87595206
+top_distance = 0.8956325
+bottom_distance = 0.8956325
+collision_thickness = 0.8
+metadata/generated_role = "ForeLeg"
+metadata/generated_size = Vector3(1.7519041, 1.791265, 0.8)
+metadata/foot_previous_locks = Vector2i(0, 0)
+
+[node name="ForeLeg_1_Limb_1" parent="GeneratedParts" index="19" unique_id=1615179426 instance=ExtResource("4_04tpq")]
+transform = Transform3D(0.91195, -0.4103013, 0, 0.4103013, 0.91195, 0, 0, 0, 1, 3.7506235, 2.4850717, 0.8)
+mass = 1.9476342
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([5])
+sprite_visible = false
+left_distance = 0.8
+right_distance = 0.8
+top_distance = 0.7607946
+bottom_distance = 0.7607946
+collision_thickness = 0.8
+metadata/generated_role = "Limb"
+metadata/generated_size = Vector3(1.6, 1.5215892, 0.8)
+
+[node name="ForeLeg_1_Limb_2" parent="GeneratedParts" index="20" unique_id=247643348 instance=ExtResource("4_04tpq")]
+transform = Transform3D(0.9899101, 0.14169672, 0, -0.14169672, 0.9899101, 0, 0, 0, 1, 3.545795, 3.928675, 0.8)
+mass = 1.9390442
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([5])
+sprite_visible = false
+left_distance = 0.8
+right_distance = 0.8
+top_distance = 0.75743914
+bottom_distance = 0.75743914
+collision_thickness = 0.8
+metadata/generated_role = "Limb"
+metadata/generated_size = Vector3(1.6, 1.5148783, 0.8)
+
+[node name="ForeLeg_2" parent="GeneratedParts" index="21" unique_id=1505698780 instance=ExtResource("4_04tpq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.723588, 0.8328488, -0.8)
+axis_lock_angular_x = true
+axis_lock_angular_z = true
+mass = 2.8534195
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([4])
+sprite_visible = false
+left_distance = 1.0706549
+right_distance = 1.0706549
+top_distance = 0.8328488
+bottom_distance = 0.8328488
+collision_thickness = 0.8
+metadata/generated_role = "ForeLeg"
+metadata/generated_size = Vector3(2.1413097, 1.6656976, 0.8)
+metadata/foot_previous_locks = Vector2i(0, 0)
+
+[node name="ForeLeg_2_Limb_1" parent="GeneratedParts" index="22" unique_id=1910524584 instance=ExtResource("4_04tpq")]
+transform = Transform3D(0.93972325, -0.34193602, 0, 0.34193602, 0.93972325, 0, 0, 0, 1, 3.4319835, 2.4670973, -0.8)
+mass = 2.183178
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([5])
+sprite_visible = false
+left_distance = 0.8
+right_distance = 0.8
+top_distance = 0.8528039
+bottom_distance = 0.8528039
+collision_thickness = 0.8
+metadata/generated_role = "Limb"
+metadata/generated_size = Vector3(1.6, 1.7056078, 0.8)
+
+[node name="ForeLeg_2_Limb_2" parent="GeneratedParts" index="23" unique_id=35596850 instance=ExtResource("4_04tpq")]
+transform = Transform3D(0.97303706, 0.23064871, 0, -0.23064871, 0.97303706, 0, 0, 0, 1, 3.3074894, 3.973484, -0.8)
+mass = 1.854778
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([5])
+sprite_visible = false
+left_distance = 0.8
+right_distance = 0.8
+top_distance = 0.72452265
+bottom_distance = 0.72452265
+collision_thickness = 0.8
+metadata/generated_role = "Limb"
+metadata/generated_size = Vector3(1.6, 1.4490453, 0.8)
+
+[node name="Neck_1_1" parent="GeneratedParts" index="24" unique_id=1268380779 instance=ExtResource("4_04tpq")]
+transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 9.220596, 6.7964506, -0.0043124855)
+mass = 3.124728
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+sprite_visible = false
+left_distance = 0.8
+right_distance = 0.8
+top_distance = 1.2205968
+bottom_distance = 1.2205968
+collision_thickness = 0.8
+metadata/generated_role = "Neck"
+metadata/generated_size = Vector3(1.6, 2.4411936, 0.8)
+
+[node name="Neck_1_2" parent="GeneratedParts" index="25" unique_id=1586864620 instance=ExtResource("4_04tpq")]
+transform = Transform3D(0.8660252, 0.5000003, 0, -0.5000003, 0.8660252, 0, 0, 0, 1, 10.853146, 7.509971, -0.0043124855)
+mass = 2.109191
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+sprite_visible = false
+left_distance = 0.8
+right_distance = 0.8
+top_distance = 0.82390267
+bottom_distance = 0.82390267
+collision_thickness = 0.8
+metadata/generated_role = "Neck"
+metadata/generated_size = Vector3(1.6, 1.6478053, 0.8)
+
+[node name="Neck_1_3" parent="GeneratedParts" index="26" unique_id=494399502 instance=ExtResource("4_04tpq")]
+transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 11.692306, 8.223492, -0.0043124855)
+mass = 1.0936549
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+sprite_visible = false
+left_distance = 0.8
+right_distance = 0.8
+top_distance = 0.4272089
+bottom_distance = 0.4272089
+collision_thickness = 0.8
+metadata/generated_role = "Neck"
+metadata/generated_size = Vector3(1.6, 0.8544178, 0.8)
+
+[node name="Head_1" parent="GeneratedParts" index="27" unique_id=1893572344 instance=ExtResource("4_04tpq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.485439, 8.223492, -0.0043124855)
+mass = 5.5833
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([3])
+sprite_visible = false
+left_distance = 1.3659246
+right_distance = 1.3659246
+top_distance = 1.2773628
+bottom_distance = 1.2773628
+collision_thickness = 0.8
+metadata/generated_role = "Head"
+metadata/generated_size = Vector3(2.7318492, 2.5547256, 0.8)
+
+[node name="Joints" type="Node3D" parent="GeneratedParts" index="28" unique_id=62241736]
+
+[node name="Joint_001_Torso" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="0" unique_id=610940265]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.0868464, 7.0303297, 0.4)
+node_a = NodePath("../../Torso_2")
+node_b = NodePath("../../SubTorso")
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0, 1)
+
+[node name="Joint_002_Torso" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="1" unique_id=1253999128]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.019005, 7.0303297, -0.39999998)
+node_a = NodePath("../../Torso_2")
+node_b = NodePath("../../SubTorso_2")
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0, 1)
+
+[node name="Joint_003_Torso" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="2" unique_id=1188109976]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.0627785, 5.4784718, 0.4)
+node_a = NodePath("../../Torso_5")
+node_b = NodePath("../../SubTorso_3")
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0, 1)
+
+[node name="Joint_004_Torso" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="3" unique_id=1102741976]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.723588, 5.4784718, -0.39999998)
+node_a = NodePath("../../Torso_5")
+node_b = NodePath("../../SubTorso_4")
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0, 1)
+
+[node name="Joint_005_Torso" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="4" unique_id=293050786]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.9095025, 7.5433884, -0.39999998)
+node_a = NodePath("../../Torso")
+node_b = NodePath("../../SubTorso_2")
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0, 1)
+
+[node name="Joint_006_Torso" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="5" unique_id=1697237543]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.9313893, 5.9317417, 0.4)
+node_a = NodePath("../../Torso_6")
+node_b = NodePath("../../SubTorso_3")
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0, 1)
+
+[node name="Joint_007_Torso" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="6" unique_id=1157597083]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.56, 8.349028, 0)
+node_a = NodePath("../../Torso_5")
+node_b = NodePath("../../Torso_4")
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0, 1)
+
+[node name="Joint_008_Torso" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="7" unique_id=1472540471]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.56, 8.021088, 0)
+node_a = NodePath("../../Torso_3")
+node_b = NodePath("../../Torso_2")
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0, 1)
+
+[node name="SegmentSpring_009" type="Node" parent="GeneratedParts/Joints" index="8" unique_id=1224831130]
+script = ExtResource("9_7smi1")
+node_a = NodePath("../../Torso_4")
+node_b = NodePath("../../Torso_3")
+rest_distance = 7.5672026
+
+[node name="Joint_010_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="9" unique_id=1828426931]
+transform = Transform3D(0.98004055, -0.19879754, 0, 0.19879754, 0.98004055, 0, 0, 0, 1, -4.0868464, 2.298472, 0.8)
+node_a = NodePath("../../Leg_1")
+node_b = NodePath("../../Leg_1_Limb_1")
+angular_limit_x/upper_angle = 0.61086524
+angular_limit_x/lower_angle = -0.61086524
+angular_limit_y/upper_angle = 0.61086524
+angular_limit_y/lower_angle = -0.61086524
+angular_limit_z/upper_angle = 0.61086524
+angular_limit_z/lower_angle = -0.61086524
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.09989851, 0.9949976)
+
+[node name="Joint_011_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="10" unique_id=478386527]
+transform = Transform3D(0.9922482, 0.12427188, 0, -0.12427188, 0.9922482, 0, 0, 0, 1, -4.3573756, 3.6321387, 0.8)
+node_a = NodePath("../../Leg_1_Limb_1")
+node_b = NodePath("../../Leg_1_Limb_2")
+linear_limit_x/upper_distance = 0.03
+linear_limit_x/lower_distance = -0.03
+linear_limit_y/upper_distance = 0.03
+linear_limit_y/lower_distance = -0.03
+angular_limit_z/upper_angle = 0.61086524
+angular_limit_z/lower_angle = -0.61086524
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, -0.16165, 0.9868482)
+
+[node name="Joint_012_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="11" unique_id=835466775]
+transform = Transform3D(0.9969309, -0.07828691, 0, 0.07828691, 0.9969309, 0, 0, 0, 1, -4.182531, 5.028186, 0.8)
+node_a = NodePath("../../Leg_1_Limb_2")
+node_b = NodePath("../../Leg_1_Limb_3")
+linear_limit_x/upper_distance = 0.03
+linear_limit_x/lower_distance = -0.03
+linear_limit_y/upper_distance = 0.03
+linear_limit_y/lower_distance = -0.03
+angular_limit_z/upper_angle = 0.61086524
+angular_limit_z/lower_angle = -0.61086524
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.10130645, 0.9948552)
+
+[node name="Joint_013_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="12" unique_id=1067019166]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.2769327, 6.2303295, 0.8)
+node_a = NodePath("../../SubTorso")
+node_b = NodePath("../../Leg_1_Limb_3")
+angular_limit_x/upper_angle = 0.61086524
+angular_limit_x/lower_angle = -0.61086524
+angular_limit_z/upper_angle = 0.61086524
+angular_limit_z/lower_angle = -0.61086524
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.039173525, 0.9992324)
+
+[node name="Joint_014_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="13" unique_id=604163804]
+transform = Transform3D(0.9643007, -0.2648098, 0, 0.2648098, 0.9643007, 0, 0, 0, 1, -4.019005, 1.3404288, -0.8)
+node_a = NodePath("../../Leg_2")
+node_b = NodePath("../../Leg_2_Limb_1")
+angular_limit_x/upper_angle = 0.61086524
+angular_limit_x/lower_angle = -0.61086524
+angular_limit_y/upper_angle = 0.61086524
+angular_limit_y/lower_angle = -0.61086524
+angular_limit_z/upper_angle = 0.61086524
+angular_limit_z/lower_angle = -0.61086524
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.13360263, 0.991035)
+
+[node name="Joint_015_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="14" unique_id=525264561]
+transform = Transform3D(0.98560786, 0.16904786, 0, -0.16904786, 0.98560786, 0, 0, 0, 1, -4.456734, 2.9344132, -0.8)
+node_a = NodePath("../../Leg_2_Limb_1")
+node_b = NodePath("../../Leg_2_Limb_2")
+linear_limit_x/upper_distance = 0.03
+linear_limit_x/lower_distance = -0.03
+linear_limit_y/upper_distance = 0.03
+linear_limit_y/lower_distance = -0.03
+angular_limit_z/upper_angle = 0.61086524
+angular_limit_z/lower_angle = -0.61086524
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, -0.21719025, 0.9761293)
+
+[node name="Joint_016_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="15" unique_id=969379115]
+transform = Transform3D(0.9951418, -0.09845196, 0, 0.09845196, 0.9951418, 0, 0, 0, 1, -4.172259, 4.5930033, -0.8)
+node_a = NodePath("../../Leg_2_Limb_2")
+node_b = NodePath("../../Leg_2_Limb_3")
+linear_limit_x/upper_distance = 0.03
+linear_limit_x/lower_distance = -0.03
+linear_limit_y/upper_distance = 0.03
+linear_limit_y/lower_distance = -0.03
+angular_limit_z/upper_angle = 0.61086524
+angular_limit_z/lower_angle = -0.61086524
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.13383482, 0.99100363)
+
+[node name="Joint_017_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="16" unique_id=502984127]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.334244, 6.2303295, -0.8)
+node_a = NodePath("../../SubTorso_2")
+node_b = NodePath("../../Leg_2_Limb_3")
+angular_limit_x/upper_angle = 0.61086524
+angular_limit_x/lower_angle = -0.61086524
+angular_limit_z/upper_angle = 0.61086524
+angular_limit_z/lower_angle = -0.61086524
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.049285874, 0.9987847)
+
+[node name="Joint_018_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="17" unique_id=1281085647]
+transform = Transform3D(0.91195, -0.4103013, 0, 0.4103013, 0.91195, 0, 0, 0, 1, 4.0627785, 1.791265, 0.8)
+node_a = NodePath("../../ForeLeg_1")
+node_b = NodePath("../../ForeLeg_1_Limb_1")
+angular_limit_x/upper_angle = 0.61086524
+angular_limit_x/lower_angle = -0.61086524
+angular_limit_y/upper_angle = 0.61086524
+angular_limit_y/lower_angle = -0.61086524
+angular_limit_z/upper_angle = 0.61086524
+angular_limit_z/lower_angle = -0.61086524
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.20982134, 0.97773975)
+
+[node name="Joint_019_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="18" unique_id=1987123223]
+transform = Transform3D(0.9899101, 0.14169672, 0, -0.14169672, 0.9899101, 0, 0, 0, 1, 3.4384685, 3.1788783, 0.8)
+node_a = NodePath("../../ForeLeg_1_Limb_1")
+node_b = NodePath("../../ForeLeg_1_Limb_2")
+linear_limit_x/upper_distance = 0.03
+linear_limit_x/lower_distance = -0.03
+linear_limit_y/upper_distance = 0.03
+linear_limit_y/lower_distance = -0.03
+angular_limit_z/upper_angle = 0.61086524
+angular_limit_z/lower_angle = -0.61086524
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, -0.27873805, 0.96036714)
+
+[node name="Joint_020_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="19" unique_id=1842434480]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6531217, 4.6784716, 0.8)
+node_a = NodePath("../../SubTorso_3")
+node_b = NodePath("../../ForeLeg_1_Limb_2")
+angular_limit_x/upper_angle = 0.61086524
+angular_limit_x/lower_angle = -0.61086524
+angular_limit_z/upper_angle = 0.61086524
+angular_limit_z/lower_angle = -0.61086524
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, -0.071027756, 0.9974743)
+
+[node name="Joint_021_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="20" unique_id=149835782]
+transform = Transform3D(0.93972325, -0.34193602, 0, 0.34193602, 0.93972325, 0, 0, 0, 1, 3.723588, 1.6656976, -0.8)
+node_a = NodePath("../../ForeLeg_2")
+node_b = NodePath("../../ForeLeg_2_Limb_1")
+angular_limit_x/upper_angle = 0.61086524
+angular_limit_x/lower_angle = -0.61086524
+angular_limit_y/upper_angle = 0.61086524
+angular_limit_y/lower_angle = -0.61086524
+angular_limit_z/upper_angle = 0.61086524
+angular_limit_z/lower_angle = -0.61086524
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.17360409, 0.98481554)
+
+[node name="Joint_022_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="21" unique_id=2131660849]
+transform = Transform3D(0.97303706, 0.23064871, 0, -0.23064871, 0.97303706, 0, 0, 0, 1, 3.1403792, 3.2684968, -0.8)
+node_a = NodePath("../../ForeLeg_2_Limb_1")
+node_b = NodePath("../../ForeLeg_2_Limb_2")
+linear_limit_x/upper_distance = 0.03
+linear_limit_x/lower_distance = -0.03
+linear_limit_y/upper_distance = 0.03
+linear_limit_y/lower_distance = -0.03
+angular_limit_z/upper_angle = 0.61086524
+angular_limit_z/lower_angle = -0.61086524
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, -0.2867765, 0.95799756)
+
+[node name="Joint_023_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="22" unique_id=1798662775]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.4745996, 4.6784716, -0.8)
+node_a = NodePath("../../SubTorso_4")
+node_b = NodePath("../../ForeLeg_2_Limb_2")
+angular_limit_x/upper_angle = 0.61086524
+angular_limit_x/lower_angle = -0.61086524
+angular_limit_z/upper_angle = 0.61086524
+angular_limit_z/lower_angle = -0.61086524
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, -0.11610968, 0.9932364)
+
+[node name="Joint_024_Neck" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="23" unique_id=1838691540]
+transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 8, 6.7964506, -0.0043124855)
+node_a = NodePath("../../Torso_6")
+node_b = NodePath("../../Neck_1_1")
+angular_limit_x/upper_angle = 0.34906584
+angular_limit_x/lower_angle = -0.34906584
+angular_limit_y/upper_angle = 0.34906584
+angular_limit_y/lower_angle = -0.34906584
+angular_limit_z/upper_angle = 0.34906584
+angular_limit_z/lower_angle = -0.34906584
+angular_spring_x/enabled = true
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/enabled = true
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/enabled = true
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, -0.70710677, 0.70710677)
+
+[node name="Joint_025_Neck" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="24" unique_id=389921887]
+transform = Transform3D(0.8660252, 0.5000003, 0, -0.5000003, 0.8660252, 0, 0, 0, 1, 10.441194, 6.7964506, -0.0043124855)
+node_a = NodePath("../../Neck_1_1")
+node_b = NodePath("../../Neck_1_2")
+angular_limit_x/upper_angle = 0.34906584
+angular_limit_x/lower_angle = -0.34906584
+angular_limit_y/upper_angle = 0.34906584
+angular_limit_y/lower_angle = -0.34906584
+angular_limit_z/upper_angle = 0.34906584
+angular_limit_z/lower_angle = -0.34906584
+angular_spring_x/enabled = true
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/enabled = true
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/enabled = true
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.49999982, 0.8660255)
+
+[node name="Joint_026_Neck" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="25" unique_id=890014174]
+transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 11.265097, 8.223492, -0.0043124855)
+node_a = NodePath("../../Neck_1_2")
+node_b = NodePath("../../Neck_1_3")
+angular_limit_x/upper_angle = 0.34906584
+angular_limit_x/lower_angle = -0.34906584
+angular_limit_y/upper_angle = 0.34906584
+angular_limit_y/lower_angle = -0.34906584
+angular_limit_z/upper_angle = 0.34906584
+angular_limit_z/lower_angle = -0.34906584
+angular_spring_x/enabled = true
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/enabled = true
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/enabled = true
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, -0.49999982, 0.8660255)
+
+[node name="Joint_027_Neck" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="26" unique_id=764975404]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.119514, 8.223492, -0.0043124855)
+node_a = NodePath("../../Neck_1_3")
+node_b = NodePath("../../Head_1")
+angular_limit_x/upper_angle = 0.34906584
+angular_limit_x/lower_angle = -0.34906584
+angular_limit_y/upper_angle = 0.34906584
+angular_limit_y/lower_angle = -0.34906584
+angular_limit_z/upper_angle = 0.34906584
+angular_limit_z/lower_angle = -0.34906584
+angular_spring_x/enabled = true
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/enabled = true
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/enabled = true
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.70710677, 0.70710677)
+
+[node name="Rotation_SegmentSpring_009" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="27" unique_id=1249379132]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8.305429, 0)
+node_a = NodePath("../../Torso_4")
+node_b = NodePath("../../Torso_3")
+linear_limit_x/enabled = false
+linear_limit_x/upper_distance = 0.05
+linear_limit_x/lower_distance = -0.05
+linear_limit_y/upper_distance = 0.05
+linear_limit_y/lower_distance = -0.05
+linear_limit_z/upper_distance = 0.05
+linear_limit_z/lower_distance = -0.05
+angular_limit_z/enabled = false
+script = ExtResource("10_rux7j")
+metadata/segment_rotation_constraint = true
+metadata/constraint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.28, -0.043598175, 0)
+metadata/constraint_frame_b = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.28, 0.043598175, 0)
+
+[node name="CreatureActionController3D" parent="." index="4" unique_id=1806185200 instance=ExtResource("action_module")]
