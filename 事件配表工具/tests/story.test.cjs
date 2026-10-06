@@ -1,0 +1,15 @@
+const assert=require('node:assert/strict');
+require('../schema.js');require('../seed.js');const W=require('../story.js');const M=require('../model.js');
+const p=M.normalize(EventSeed),id=p.tables.events[0].id;
+W.ensure(p,id)[0].text='我的情节\n【待定】 <不是条件>';W.ensure(p,id)[0].stage='完成前一事件后10日';
+assert.equal(M.normalize(JSON.parse(JSON.stringify(p))).stories[id][0].text,'我的情节\n【待定】 <不是条件>');
+const copy=M.cloneEvent(p,id);assert.deepEqual(p.stories[copy],p.stories[id]);p.stories[copy][0].text='副本';assert.notEqual(p.stories[copy][0].text,p.stories[id][0].text);
+M.rename(p,'events',id,'EVENT_RENAMED');p.tables.events.find(e=>e.id===id).id='EVENT_RENAMED';assert(p.stories.EVENT_RENAMED);assert(!p.stories[id]);
+const handwritten=M.fromSheets([{name:'工作表1',rows:[['事件名','概览','地点','所处阶段','对话对象','内容','奖励','效果','需要内容'],['新事件','概览','小屋','进入游戏','特使','第一句','信件','通行','立绘'],['','','','任务完成','玩家选项','签名','100魔力','','待写']]}]);
+assert.equal(handwritten.stories.EVENT_001.length,2);assert.equal(handwritten.stories.EVENT_001[0].text,'第一句');assert.equal(handwritten.stories.EVENT_001[1].reward,'100魔力');
+const sheets=Object.entries(EventSchema).map(([key,t])=>({name:t.label,rows:[t.fields.map(f=>f.label),...p.tables[key].map(r=>t.fields.map(f=>r[f.key]))]}));
+const round=M.fromSheets([W.sheet(p),...sheets]);assert.deepEqual(round.tables,p.tables);assert.equal(round.stories.EVENT_RENAMED[0].text,p.stories.EVENT_RENAMED[0].text);
+p.stories.EVENT_RENAMED=[];assert(W.sheet(p).rows.some(r=>r[0]===p.tables.events[0].name));
+assert.throws(()=>M.normalize({...p,stories:{EVENT_BAD:[{text:{invalid:true}}]}}));
+globalThis.JSZip=require('../vendor/jszip.min.js');require('../xlsx.js');
+(async()=>{const zip=await JSZip.loadAsync(await (await EventXlsx.write(p)).arrayBuffer());assert((await zip.file('xl/workbook.xml').async('string')).includes('情节写作'));assert(zip.file('xl/worksheets/sheet9.xml'));console.log('PASS: story JSON, nine-column import including first dialogue, clone, rename, structured roundtrip, empty event, XLSX writing sheet.');})().catch(e=>{console.error(e);process.exitCode=1});
