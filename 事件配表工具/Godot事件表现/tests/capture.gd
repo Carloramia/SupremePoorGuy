@@ -24,9 +24,11 @@ func _run() -> void:
 	await create_timer(0.6).timeout
 	await RenderingServer.frame_post_draw
 	root.get_texture().get_image().save_png("res://tests/03_reward.png")
+	var title_position: Vector2 = ui._title.global_position
 	ui._scroll.scroll_vertical = 0
 	await create_timer(0.5).timeout
 	await RenderingServer.frame_post_draw
 	root.get_texture().get_image().save_png("res://tests/04_history.png")
+	assert(ui._title.global_position.is_equal_approx(title_position), "Scrolling must not move the fixed header")
 	print("RENDER_CAPTURE_PASSED")
 	quit(0)

@@ -219,7 +219,11 @@ func _scroll_to_latest(generation: int) -> void:
 
 func _update_history_hint(_value: float = 0) -> void:
 	var bar := _scroll.get_v_scroll_bar()
-	_latest.visible = bar.max_value - bar.page - bar.value > 24
+	var show_latest := bar.max_value - bar.page - bar.value > 24
+	# Reserve its layout even when hidden, so header/footer never shift on scrolling.
+	_latest.modulate.a = 1.0 if show_latest else 0.0
+	_latest.disabled = not show_latest
+	_latest.mouse_filter = Control.MOUSE_FILTER_STOP if show_latest else Control.MOUSE_FILTER_IGNORE
 
 func _build() -> void:
 	_root = Control.new()
@@ -259,6 +263,9 @@ func _build() -> void:
 	_scroll.add_child(_log)
 	_scroll.get_v_scroll_bar().value_changed.connect(_update_history_hint)
 	_scroll.get_v_scroll_bar().changed.connect(_update_history_hint)
+	_scroll.gui_input.connect(func(event: InputEvent):
+		if _scroll_tween and (event is InputEventMouseButton or event is InputEventPanGesture):
+			_scroll_tween.kill())
 	column.add_child(HSeparator.new())
 	var footer := HBoxContainer.new()
 	footer.add_theme_constant_override("separation", 12)
@@ -273,7 +280,8 @@ func _build() -> void:
 	_latest.custom_minimum_size.y = 32
 	help.add_child(_latest)
 	_latest.pressed.connect(func(): _scroll_to_latest(_generation))
-	_latest.hide()
+	_latest.modulate.a = 0.0
+	_latest.disabled = true
 	_continue = _button("继续 ↓")
 	_continue.custom_minimum_size = Vector2(210, 52)
 	footer.add_child(_continue)
