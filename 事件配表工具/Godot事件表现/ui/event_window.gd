@@ -271,13 +271,13 @@ func _build() -> void:
 	footer.add_theme_constant_override("separation", 12)
 	column.add_child(footer)
 	var help := VBoxContainer.new()
-	help.custom_minimum_size.y = 56
+	help.custom_minimum_size.y = 76
 	help.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	footer.add_child(help)
 	_hint = _label("", 14, Color("a3b0a6"))
 	help.add_child(_hint)
 	_latest = _button("回到最新 ↓")
-	_latest.custom_minimum_size.y = 32
+	_latest.custom_minimum_size.y = 48
 	help.add_child(_latest)
 	_latest.pressed.connect(func(): _scroll_to_latest(_generation))
 	_latest.modulate.a = 0.0

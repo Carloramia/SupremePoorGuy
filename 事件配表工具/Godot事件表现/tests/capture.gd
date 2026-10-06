@@ -29,6 +29,9 @@ func _run() -> void:
 	await create_timer(0.5).timeout
 	await RenderingServer.frame_post_draw
 	root.get_texture().get_image().save_png("res://tests/04_history.png")
-	assert(ui._title.global_position.is_equal_approx(title_position), "Scrolling must not move the fixed header")
+	if not ui._title.global_position.is_equal_approx(title_position):
+		push_error("Scrolling moved header: %s -> %s" % [title_position, ui._title.global_position])
+		quit(1)
+		return
 	print("RENDER_CAPTURE_PASSED")
 	quit(0)
