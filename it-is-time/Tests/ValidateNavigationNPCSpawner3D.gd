@@ -28,10 +28,12 @@ func _validate() -> void:
 		npc.global_position
 	)
 	assert(is_equal_approx(npc.global_position.y - closest_point.y, spawner.spawn_height))
-	await physics_frame
+	# Combat acquisition respects height and visibility; allow the airborne spawn to settle.
+	for frame: int in range(180): await physics_frame
 	var state_machine := npc.get_node("NPCStateMachine3D")
-	assert(state_machine.get("current_state") == state_machine.State.MOVE_TO_TARGET)
-	assert(state_machine.get("_target") == level.get_node("Flat/CharacterTest2/Torso"))
+	assert(state_machine.get("current_state") in [state_machine.State.MOVE_TO_TARGET,state_machine.State.ATTACK,state_machine.State.WAITING])
+	assert(state_machine._is_enemy(state_machine._enemy))
+	assert(state_machine.get("_target") == state_machine._enemy.get_combat_anchor())
 	assert(navigation_mesh.get_polygon_count() > 0)
 	print("NAVIGATION_NPC_SPAWNER_VALIDATION_PASSED")
 	level.queue_free()

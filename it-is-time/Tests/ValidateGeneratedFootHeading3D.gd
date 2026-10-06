@@ -1,7 +1,7 @@
 extends SceneTree
 
 const CONTROLLER = preload("res://Scripts/Creatures/GeneratedLegStepMovementController3D.gd")
-const CHARACTER = preload("res://Scenes/Creatures/Characters/Generate_Creature_Test.tscn")
+const CHARACTER = preload("res://Scenes/Creatures/Characters/Generate_Beast.tscn")
 
 class HeadingFixture extends CONTROLLER:
 	var heading: float = 0.0

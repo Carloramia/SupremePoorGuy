@@ -1,7 +1,7 @@
 extends SceneTree
 
 const GENERATOR = preload("res://Scripts/Creatures/CreatureGenerator.gd")
-const CHARACTER = preload("res://Scenes/Creatures/Characters/Generate_Creature_Test.tscn")
+const CHARACTER = preload("res://Scenes/Creatures/Characters/Generate_Beast.tscn")
 
 func _initialize() -> void:
 	call_deferred("_validate")
@@ -10,6 +10,7 @@ func _validate() -> void:
 	var generator = GENERATOR.new()
 	root.add_child(generator)
 	generator._random.seed = 417
+	generator.unsymmetrie = 0.0
 	for counts: Vector2i in [Vector2i(2, 2), Vector2i(3, 1), Vector2i(0, 4), Vector2i(4, 0), Vector2i(0, 0), Vector2i(10, 10)]:
 		generator.rear_leg_count = counts.x
 		generator.foreleg_count = counts.y
@@ -61,6 +62,16 @@ func _validate() -> void:
 		var second: Dictionary = plan.network_torsos[1]
 		var intersection: float = first.position.x + first.size.x * 0.5 - second.position.x + second.size.x * 0.5
 		assert(is_equal_approx(intersection / first.size.x, overlap / 100.0))
+	# X offsets move supports and feet together, while retaining contact at body ends.
+	var test_torsos: Array[Dictionary] = [{"position": Vector3(0, 2, 0), "size": Vector3(4, 1, 0.2), "contour_progress": 0.5}]
+	for offset: float in [-0.5, 0.0, 0.5, 100.0, -100.0]:
+		generator.sub_torso_x_offset = offset
+		var test_feet: Array[Dictionary] = [{"final_position": Vector2(-0.5, 0.2), "position": Vector2(-0.5, 0.2)}]
+		var supports: Array[Dictionary] = generator._plan_subtorsos(test_feet, test_torsos, 0.0)
+		assert(is_equal_approx(supports[0].position.x, clampf(-0.5 + offset, -2.0, 2.0)))
+		assert(is_equal_approx(test_feet[0].final_position.x, supports[0].position.x))
+		assert(generator._nearest_neck_torso_distance(supports[0].position, test_torsos) <= supports[0].size.z * 0.5 + 0.0001)
+	generator.sub_torso_x_offset = 0.0
 	# Test actual saved scene overrides and the physical blueprint, including head-only necks.
 	var actor = CHARACTER.instantiate()
 	actor.generate_on_ready = false

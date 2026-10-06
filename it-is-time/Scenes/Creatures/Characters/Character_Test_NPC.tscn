@@ -3,13 +3,23 @@
 [ext_resource type="PackedScene" uid="uid://bxa3fvya47rtv" path="res://Scenes/VFX/Outline/AutoOutline.tscn" id="1_gn1tu"]
 [ext_resource type="PackedScene" uid="uid://uk1e0l8x2imw" path="res://Scenes/Creatures/Bodyparts/PhysicalTestCreatureParts/TestCrature_Part_Physic_Arm.tscn" id="2_acm7k"]
 [ext_resource type="PackedScene" uid="uid://xk1qpcjgdoe1" path="res://Scenes/Creatures/Bodyparts/PhysicalTestCreatureParts/TestCrature_Part_Physic_Torso.tscn" id="2_edqjf"]
+[ext_resource type="PackedScene" uid="uid://dgim20101j674" path="res://Scenes/Items/CustomWeapon_1.tscn" id="2_ofqpj"]
 [ext_resource type="PackedScene" uid="uid://c2u27jpr7eljb" path="res://Scenes/Creatures/Bodyparts/PhysicalTestCreatureParts/TestCrature_Part_Physic_Head.tscn" id="3_auoa8"]
 [ext_resource type="PackedScene" uid="uid://b0u127crffjfb" path="res://Scenes/Creatures/Bodyparts/PhysicalTestCreatureParts/TestCrature_Part_Physic_Leg.tscn" id="3_edqjf"]
-[ext_resource type="Script" uid="uid://dewltnvucq5m3" path="res://Scripts/Creatures/PhysicalCharacterController.gd" id="4_controller"]
+[ext_resource type="Script" uid="uid://dqc11cah10not" path="res://Scripts/Creatures/NPCCharacter3D.gd" id="4_controller"]
 [ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/TorsoBalanceController3D.tscn" id="5_balance"]
 [ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/NPCLegStepMovementController3D.tscn" id="6_leg_movement"]
 [ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/NPCStateMachine3D.tscn" id="7_npc_state"]
 [ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/CharacterDamageController3D.tscn" id="8_damage"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/LimbSwingController3D.tscn" id="9_swing"]
+[ext_resource type="Script" uid="uid://gwu5sejp2a3y" path="res://Scripts/Combat/ArmSwingBinding.gd" id="10_binding"]
+[ext_resource type="Resource" uid="uid://b037rsu81uy22" path="res://Resources/Combat/PrimaryArmSwing.tres" id="11_preset"]
+[ext_resource type="Resource" uid="uid://c7pwi1l10hn4a" path="res://Resources/AI/DefaultArmNPC.tres" id="12_behavior"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/InventoryController3D.tscn" id="13_inventory"]
+
+[sub_resource type="Resource" id="ArmBinding"]
+script = ExtResource("10_binding")
+swing_preset = ExtResource("11_preset")
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_leg"]
 friction = 0.9
@@ -17,10 +27,13 @@ rough = true
 
 [node name="CharacterTestNPC" type="Node3D" unique_id=418755916]
 script = ExtResource("4_controller")
+initial_weapon_scene = ExtResource("2_ofqpj")
+faction_id = 1
 
 [node name="Arm_R" parent="." unique_id=298589033 instance=ExtResource("2_acm7k")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 4.8, 0)
 tags = Array[int]([2])
+arm_swing_bindings = Array[ExtResource("10_binding")]([SubResource("ArmBinding")])
 left_distance = 0.601
 right_distance = 0.601
 top_distance = 0.601
@@ -42,8 +55,15 @@ tags = Array[int]([3])
 outline_enabled = false
 
 [node name="NPCStateMachine3D" parent="." unique_id=1791979637 instance=ExtResource("7_npc_state")]
+behavior = ExtResource("12_behavior")
 
-[node name="CharacterDamageController3D" parent="." instance=ExtResource("8_damage")]
+[node name="LimbSwingController3D" parent="." unique_id=926103929 instance=ExtResource("9_swing")]
+
+[node name="InventoryController3D" parent="." unique_id=1783241615 instance=ExtResource("13_inventory")]
+inventory_ui_enabled = false
+attachment_debug_logging = false
+
+[node name="CharacterDamageController3D" parent="." unique_id=2104343030 instance=ExtResource("8_damage")]
 team_id = 1
 
 [node name="NPCLegStepMovementController3D" parent="." unique_id=1247757180 instance=ExtResource("6_leg_movement")]
@@ -71,23 +91,27 @@ balance_strength = 100.0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4, 0.9, 0)
 axis_lock_angular_x = true
 axis_lock_angular_y = true
+axis_lock_angular_z = true
 physics_material_override = SubResource("PhysicsMaterial_leg")
 left_distance = 0.601
 right_distance = 0.601
 top_distance = 0.801
 bottom_distance = 0.801
 collision_thickness = 0.2
+metadata/foot_previous_locks = Vector2i(1, 0)
 
 [node name="Leg_L" parent="." unique_id=534532495 instance=ExtResource("3_edqjf")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, 0.9, 0)
 axis_lock_angular_x = true
 axis_lock_angular_y = true
+axis_lock_angular_z = true
 physics_material_override = SubResource("PhysicsMaterial_leg")
 left_distance = 0.601
 right_distance = 0.601
 top_distance = 0.801
 bottom_distance = 0.801
 collision_thickness = 0.2
+metadata/foot_previous_locks = Vector2i(1, 0)
 
 [node name="HipJoint_R" type="Generic6DOFJoint3D" parent="." unique_id=1230318678]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.65, 2.416879, 0)

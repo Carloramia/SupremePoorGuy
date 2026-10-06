@@ -1,6 +1,8 @@
 @tool
 extends "res://Scripts/Creatures/PhysicalCharacterController.gd"
 
+signal creature_generation_finished(succeeded: bool)
+
 const PERFORMANCE_STATS = preload("res://Scripts/Debug/ControlPerformanceStats.gd")
 var _control_perf: PERFORMANCE_STATS = PERFORMANCE_STATS.new()
 
@@ -12,8 +14,11 @@ const SEGMENT_SPRING = preload("res://Scripts/Creatures/SegmentDistanceSpring3D.
 const PLANAR_CONSTRAINTS = preload("res://Scripts/Creatures/CreaturePlanarConstraints3D.gd")
 const HEAD_SUPPORT = preload("res://Scripts/Creatures/HeadPositionSupport3D.gd")
 const BODY_PART = preload("res://Scripts/Creatures/PhysicalBodyParts.gd")
+const DENSITY_DATA = preload("res://Scripts/Creatures/GeneratedCreatureDensityData.gd")
+const FEATHER_GEOMETRY = preload("res://Scripts/Creatures/Generators/BirdFeatherGeometry.gd")
 
 @export_group("Generation")
+@export var generator_path: NodePath = ^"CreatureGenerator"
 @export_tool_button("生成框架与物理角色", "Node3D") var generate_character_button: Callable:
 	get:
 		return generate_creature
@@ -21,7 +26,7 @@ const BODY_PART = preload("res://Scripts/Creatures/PhysicalBodyParts.gd")
 @export var show_framework: bool = false:
 	set(value):
 		show_framework = value
-		var generator := get_node_or_null("CreatureGenerator") as Node3D
+		var generator := get_node_or_null(generator_path) as Node3D
 		if generator != null:
 			generator.visible = value
 
@@ -57,9 +62,14 @@ func _sync_planar_constraints() -> void:
 	_configure_body_part_collision_exceptions()
 
 @export_group("Physical Parts")
-## Mass is density times volume, clamped to limit the mass ratio of small Neck and large Torso blocks.
+## Optional species preset; matched by generated type, independently of overlapping physics tags.
+@export var density_data: DENSITY_DATA
+## Mass is density times volume; optional limits apply to all generated parts, including feathers.
 @export_range(0.01, 100.0, 0.01, "or_greater") var mass_density: float = 1.0
+@export var mass_limits_enabled: bool = true
 @export_range(0.01, 10.0, 0.01, "or_greater") var minimum_part_mass: float = 0.1
+## Thin feathers need a smaller mass floor than structural body blocks.
+@export_range(0.001, 1.0, 0.001, "or_greater") var minimum_feather_mass: float = 0.005
 @export_range(0.01, 100.0, 0.01, "or_greater") var maximum_part_mass: float = 10.0
 @export_range(0.0, 10.0, 0.01, "or_greater") var part_linear_damping: float = 0.15
 @export_range(0.0, 10.0, 0.01, "or_greater") var part_angular_damping: float = 1.0
@@ -69,6 +79,13 @@ func _sync_planar_constraints() -> void:
 @export_range(0.0, 90.0, 0.1) var neck_angular_limit_degrees: float = 20.0
 @export_range(0.0, 1000.0, 0.1, "or_greater") var angular_spring_stiffness: float = 30.0
 @export_range(0.0, 100.0, 0.1, "or_greater") var angular_spring_damping: float = 5.0
+
+@export_group("Wing Joint Limits")
+@export var wing_joint_limits_enabled: bool = true
+## Extra rotation beyond the generated folded/open poses. X/Y remain locked.
+@export_range(0.0, 90.0, 0.1) var wing_root_limit_margin_degrees: float = 10.0
+@export_range(0.0, 90.0, 0.1) var wing_middle_limit_margin_degrees: float = 10.0
+@export_range(0.0, 90.0, 0.1) var wing_tip_limit_margin_degrees: float = 10.0
 
 @export_group("Neck Linear Springs")
 ## Neck-Neck joints only; end connections to Torso/Head retain their current limits.
@@ -181,7 +198,7 @@ func _ready() -> void:
 			_activate_parts(get_node("GeneratedParts"))
 
 func _connect_generator() -> void:
-	var generator := get_node_or_null("CreatureGenerator") as Node3D
+	var generator := get_node_or_null(generator_path) as Node3D
 	if generator == null:
 		return
 	generator.visible = show_framework
@@ -193,12 +210,13 @@ func generate_creature() -> bool:
 	var started: int = _control_perf.start()
 	var result: bool = _perf_impl_generate_creature()
 	_control_perf.finish(&"generation_total", started)
+	if not result: creature_generation_finished.emit(false)
 	return result
 
 func _perf_impl_generate_creature() -> bool:
 	if not is_inside_tree() or _rebuilding:
 		return false
-	var generator := get_node_or_null("CreatureGenerator") as Node3D
+	var generator := get_node_or_null(generator_path) as Node3D
 	if generator == null or not _valid_settings(generator):
 		push_warning("[generated_creature] Invalid settings or scaled character/generator; previous physics retained.")
 		return false
@@ -209,13 +227,18 @@ func _perf_impl_generate_creature() -> bool:
 	return _last_generation_succeeded
 
 func _valid_settings(generator: Node3D) -> bool:
+	if mass_limits_enabled:
+		for value: float in [minimum_part_mass, minimum_feather_mass, maximum_part_mass]:
+			if not is_finite(value) or value <= 0.0: return false
+		if maximum_part_mass < maxf(minimum_part_mass, minimum_feather_mass): return false
+	if density_data != null and not density_data.is_valid(): return false
 	if not global_basis.get_scale().is_equal_approx(Vector3.ONE) or not generator.transform.basis.get_scale().is_equal_approx(Vector3.ONE):
 		return false
 	if not limb_joint_linear_slack.is_finite(): return false
-	for value: float in [mass_density, minimum_part_mass, maximum_part_mass, part_linear_damping, part_angular_damping, limb_angular_limit_degrees, neck_angular_limit_degrees, angular_spring_stiffness, angular_spring_damping]:
+	for value: float in [mass_density, part_linear_damping, part_angular_damping, limb_angular_limit_degrees, neck_angular_limit_degrees, angular_spring_stiffness, angular_spring_damping]:
 		if not is_finite(value) or value < 0.0:
 			return false
-	return mass_density > 0.0 and minimum_part_mass > 0.0 and maximum_part_mass >= minimum_part_mass
+	return mass_density > 0.0
 
 func _on_framework_generated(plan: Dictionary) -> void:
 	_ensure_control_performance_stats()
@@ -226,7 +249,7 @@ func _on_framework_generated(plan: Dictionary) -> void:
 func _perf_impl__on_framework_generated(plan: Dictionary) -> void:
 	if _rebuilding:
 		return
-	var generator := get_node("CreatureGenerator") as Node3D
+	var generator := get_node(generator_path) as Node3D
 	if not _valid_settings(generator):
 		push_warning("[generated_creature] Physics assembly requires unit scale and finite settings.")
 		return
@@ -245,6 +268,10 @@ func _perf_impl__on_framework_generated(plan: Dictionary) -> void:
 		_rebuilding = false
 		return
 	var previous := get_node_or_null("GeneratedParts")
+	# The runtime-only action script is a placeholder while generating in the editor.
+	if not Engine.is_editor_hint():
+		var action := get_node_or_null("CreatureActionController3D")
+		if action != null: action.cancel_action(&"regenerated")
 	if previous != null:
 		remove_child(previous)
 		previous.queue_free()
@@ -281,6 +308,7 @@ func _perf_impl__on_framework_generated(plan: Dictionary) -> void:
 	for connection: Dictionary in blueprint.connections:
 		if connection.kind == "Segment": springs += 1
 	print("[generated_creature] character=%s parts=%d physical_joints=%d segment_springs=%d connected=true internal_collisions_ignored=%s" % [name, blueprint.parts.size(), blueprint.connections.size() - springs, springs, body_parts_ignore_each_other])
+	creature_generation_finished.emit(true)
 
 func _scene_owner() -> Node:
 	if Engine.is_editor_hint():
@@ -456,7 +484,7 @@ func _apply_physics_test_mode() -> void:
 				part.gravity_scale = float(part.get_meta(&"gravity_scale_before_test", part.gravity_scale))
 				part.remove_meta(&"gravity_scale_before_test")
 	var movement := get_node_or_null("GeneratedLegStepMovementController3D")
-	if movement != null:
+	if movement != null and not Engine.is_editor_hint():
 		movement.set_simplified_physics_mode(zero_gravity_test_mode)
 		if zero_gravity_test_mode: movement.set_recovery_control_active(false)
 
@@ -483,7 +511,7 @@ func _sync_segment_rotation_constraints(container: Node) -> void:
 			joint.node_a = spring.node_a
 			joint.node_b = spring.node_b
 			joint.position = (a.position + b.position) * 0.5
-			var generator := get_node_or_null("CreatureGenerator") as Node3D
+			var generator := get_node_or_null(generator_path) as Node3D
 			joint.basis = generator.basis.orthonormalized() if generator != null else Basis.IDENTITY
 		elif joint.get_script() != SEGMENT_CONSTRAINT:
 			joint.set_script(SEGMENT_CONSTRAINT)
@@ -673,6 +701,29 @@ func _build_blueprint(plan: Dictionary, connection_distance: float) -> Dictionar
 			_add_connection(connections, previous, next, anchor, "Neck", block.basis)
 			previous = next
 	# Bake size into geometry/positions; rigid bodies and joint bases retain unit scale.
+	for index: int in range(plan.get("wings",[]).size()):
+		var wing: Dictionary = plan.wings[index]
+		var previous: int = torso_indices[support_count+int(wing.parent_torso_index)]
+		for segment: int in range(wing.blocks.size()):
+			var block: Dictionary = wing.blocks[segment]
+			var tip: bool = segment == wing.blocks.size()-1
+			var next := _append_part(parts,"Wing_%d_%s_%d" % [index+1,block.get("section","Segment"),segment+1],"Wing" if tip else "WingLimb",block.size,Transform3D(block.basis,block.position))
+			parts[next]["wing_section"] = str(block.get("section", ""))
+			# Expanded sections align with the wing root within its generated XY plane.
+			parts[next]["wing_open_basis"] = wing.blocks[0].basis
+			_add_connection(connections,previous,next,wing.points[segment],"Wing",block.basis)
+			for feather_index: int in range(block.get("feathers",[]).size()):
+				var feather: Dictionary = block.feathers[feather_index]
+				var wing_transform := Transform3D(block.basis,block.position)
+				var feather_root: Transform3D = wing_transform * Transform3D(feather.transform)
+				var torso_basis: Basis = parts[torso_indices[support_count+int(wing.parent_torso_index)]].transform.basis
+				var folded_root := Transform3D(torso_basis*Basis(Vector3.BACK,PI*0.5),feather_root.origin)
+				var center := folded_root * Transform3D(Basis.IDENTITY,Vector3(0,feather.size.y*0.5,0))
+				var feather_part := _append_part(parts,"Feather_%d_%d_%03d" % [index+1,segment+1,feather_index+1],"Feather",feather.size,center)
+				parts[feather_part]["feather_color"] = feather.get("color",Color.WHITE)
+				parts[feather_part]["feather_open_basis"] = feather_root.basis
+				_add_connection(connections,next,feather_part,feather_root.origin,"Feather",block.basis)
+			previous = next
 	var multiplier: float = plan.get(&"overall_scale", 1.0)
 	for part: Dictionary in parts:
 		part.size *= multiplier
@@ -724,6 +775,15 @@ func _nearest_torso(point: Vector3, indices: Array[int], boxes: Array[Dictionary
 			result = {"index": indices[index], "point": closest}
 	return result
 
+func _get_generated_part_type(layout: Dictionary) -> String:
+	if bool(layout.get("sub_torso", false)): return "SubTorso"
+	var role := str(layout.role)
+	if role == "Limb": return "LegLimb"
+	if role == "Wing" or role == "WingLimb":
+		var section := str(layout.get("wing_section", ""))
+		if section in ["Root", "Middle", "Tip"]: return "Wing" + section
+	return role
+
 func _instantiate_blueprint(blueprint: Dictionary, generator_transform: Transform3D) -> Node3D:
 	var container := Node3D.new()
 	var bodies: Array[RigidBody3D] = []
@@ -743,7 +803,18 @@ func _instantiate_blueprint(blueprint: Dictionary, generator_transform: Transfor
 		part.collision_thickness = size.z
 		part.sprite_visible = false
 		part.mesh_visible = true
-		part.mass = clampf(size.x * size.y * size.z * mass_density, minimum_part_mass, maximum_part_mass)
+		if layout.role == "Feather":
+			var mesh := part.get_node("MeshInstance3D") as MeshInstance3D
+			mesh.mesh = FEATHER_GEOMETRY.create_mesh(size)
+			var material := StandardMaterial3D.new()
+			material.albedo_color = layout.get("feather_color",Color.WHITE)
+			material.roughness = 0.9
+			mesh.material_override = material
+		var part_type := _get_generated_part_type(layout)
+		var density := mass_density if density_data == null else density_data.get_density(part_type, mass_density)
+		var minimum_mass := minimum_feather_mass if layout.role == "Feather" else minimum_part_mass
+		var calculated_mass := size.x * size.y * size.z * density
+		part.mass = clampf(calculated_mass, minimum_mass, maximum_part_mass) if mass_limits_enabled else calculated_mass
 		part.linear_damp = part_linear_damping
 		part.angular_damp = part_angular_damping
 		part.tags.clear()
@@ -752,11 +823,18 @@ func _instantiate_blueprint(blueprint: Dictionary, generator_transform: Transfor
 			"Leg": part.tags.append(BODY_PART.BodyPartTag.Leg)
 			"ForeLeg": part.tags.append(BODY_PART.BodyPartTag.ForeLeg)
 			"Limb": part.tags.append(BODY_PART.BodyPartTag.LegLimb)
+			"Wing": part.tags.append(BODY_PART.BodyPartTag.Wing)
+			"WingLimb":
+				part.tags.append(BODY_PART.BodyPartTag.Wing)
+				part.tags.append(BODY_PART.BodyPartTag.WingLimb)
 			"Head": part.tags.append(BODY_PART.BodyPartTag.Head)
+			"Feather": part.tags.append(BODY_PART.BodyPartTag.Feather)
 		if bool(layout.get("sub_torso", false)): part.tags.append(BODY_PART.BodyPartTag.SubTorso)
 		if layout.has("segment_id"): part.set_meta(&"body_segment_id", int(layout.segment_id))
 		if layout.has("segment_id"): part.set_meta(&"segment_layout_version", 3)
 		part.set_meta(&"generated_role", layout.role)
+		part.set_meta(&"generated_part_type", part_type)
+		part.set_meta(&"generated_density", density)
 		part.set_meta(&"generated_size", size)
 		container.add_child(part)
 		bodies.append(part)
@@ -789,6 +867,19 @@ func _instantiate_blueprint(blueprint: Dictionary, generator_transform: Transfor
 		var rest_a := a.basis.orthonormalized().get_rotation_quaternion()
 		var rest_b := b.basis.orthonormalized().get_rotation_quaternion()
 		joint.set_meta(&"generated_rest_b_relative_a", rest_a.inverse() * rest_b)
+		joint.set_meta(&"generated_joint_frame_a", a.transform.affine_inverse()*joint.transform)
+		joint.set_meta(&"generated_joint_frame_b", b.transform.affine_inverse()*joint.transform)
+		if connection.kind == "Feather":
+			var open_basis: Basis = blueprint.parts[connection.b].feather_open_basis
+			var wing_basis: Basis = blueprint.parts[connection.a].transform.basis
+			joint.set_meta(&"feather_open_relative_a", (wing_basis.inverse()*open_basis).get_rotation_quaternion())
+		if connection.kind == "Wing":
+			var open_a: Basis = blueprint.parts[connection.a].get("wing_open_basis", a.basis)
+			var open_b: Basis = blueprint.parts[connection.b].wing_open_basis
+			# Root Torso and open wing bases must share the generator's coordinate system.
+			if not blueprint.parts[connection.a].has("wing_open_basis"):
+				open_a = blueprint.parts[connection.a].transform.basis
+			joint.set_meta(&"wing_open_relative_a", (open_a.orthonormalized().inverse() * open_b.orthonormalized()).get_rotation_quaternion())
 		joint.node_a = NodePath("../../" + str(a.name))
 		joint.node_b = NodePath("../../" + str(b.name))
 		var angle := 0.0 if connection.kind == "Torso" else deg_to_rad(neck_angular_limit_degrees if connection.kind == "Neck" else limb_angular_limit_degrees)
@@ -796,19 +887,38 @@ func _instantiate_blueprint(blueprint: Dictionary, generator_transform: Transfor
 			var locked_limb_axis: bool = axis != "z" and BODY_PART.BodyPartTag.LegLimb in a.tags and BODY_PART.BodyPartTag.LegLimb in b.tags
 			locked_limb_axis = locked_limb_axis or (axis == "y" and _is_limb_subtorso_pair(a, b))
 			var axis_angle := 0.0 if locked_limb_axis else angle
+			if connection.kind in ["Wing","Feather"]: axis_angle = PI if axis == "z" else 0.0
 			joint.call("set_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_LINEAR_LIMIT, true)
 			joint.call("set_param_" + axis, Generic6DOFJoint3D.PARAM_LINEAR_LOWER_LIMIT, 0.0)
 			joint.call("set_param_" + axis, Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT, 0.0)
 			joint.call("set_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_LIMIT, true)
 			joint.call("set_param_" + axis, Generic6DOFJoint3D.PARAM_ANGULAR_LOWER_LIMIT, -axis_angle)
 			joint.call("set_param_" + axis, Generic6DOFJoint3D.PARAM_ANGULAR_UPPER_LIMIT, axis_angle)
-			joint.call("set_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_SPRING, connection.kind != "Torso" and not locked_limb_axis and BODY_PART.BodyPartTag.LegLimb not in a.tags and BODY_PART.BodyPartTag.LegLimb not in b.tags)
+			joint.call("set_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_SPRING, connection.kind not in ["Torso", "Wing", "Feather"] and not locked_limb_axis and BODY_PART.BodyPartTag.LegLimb not in a.tags and BODY_PART.BodyPartTag.LegLimb not in b.tags)
 			joint.call("set_param_" + axis, Generic6DOFJoint3D.PARAM_ANGULAR_SPRING_STIFFNESS, angular_spring_stiffness)
 			joint.call("set_param_" + axis, Generic6DOFJoint3D.PARAM_ANGULAR_SPRING_DAMPING, angular_spring_damping)
+		if connection.kind == "Wing":
+			_configure_wing_joint_limits(joint, str(blueprint.parts[connection.b].get("wing_section", "Root")))
 		if BODY_PART.BodyPartTag.LegLimb in a.tags and BODY_PART.BodyPartTag.LegLimb in b.tags:
 			_configure_limb_joint_sliding(joint)
 		joints.add_child(joint)
 	return container
+
+func _configure_wing_joint_limits(joint: Generic6DOFJoint3D, section: String) -> void:
+	joint.set_flag_z(Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_LIMIT, wing_joint_limits_enabled)
+	if not wing_joint_limits_enabled: return
+	var margin_degrees := wing_root_limit_margin_degrees
+	if section == "Middle": margin_degrees = wing_middle_limit_margin_degrees
+	elif section == "Tip": margin_degrees = wing_tip_limit_margin_degrees
+	var margin := deg_to_rad(clampf(margin_degrees, 0.0, 90.0)) if is_finite(margin_degrees) else 0.0
+	var closed: Quaternion = joint.get_meta(&"generated_rest_b_relative_a")
+	var opened: Quaternion = joint.get_meta(&"wing_open_relative_a")
+	# Joint frames coincide at creation. Their relative angle is the negative of B's
+	# rotation from rest; both generated endpoints must stay inside the allowed arc.
+	var delta := Basis(closed.inverse() * opened)
+	var open_angle := -atan2(delta.x.y, delta.x.x)
+	joint.set_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_LOWER_LIMIT, maxf(-PI, minf(0.0, open_angle) - margin))
+	joint.set_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_UPPER_LIMIT, minf(PI, maxf(0.0, open_angle) + margin))
 
 func set_control_performance_tracking_enabled(enabled: bool) -> void:
 	_ensure_control_performance_stats()

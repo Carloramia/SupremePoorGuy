@@ -1,5 +1,7 @@
 [gd_scene format=4 uid="uid://faau3dba2wd1"]
 
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Generators/BeastGenerator.tscn" id="2_beast_compat"]
+
 [ext_resource type="Script" uid="uid://cby8nj4lggg60" path="res://Scripts/Creatures/CreatureGenerator.gd" id="1_generator"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6o6b0"]
@@ -420,7 +422,7 @@ _surfaces = [{
 "vertex_data": PackedByteArray("JKBZvtfiPb6Iw0a+JKBZPtfiPb6Iw0a+JKBZPtfiPb6Iw0a+JKBZPtfiPT6Iw0a+JKBZPtfiPT6Iw0a+JKBZvtfiPT6Iw0a+JKBZvtfiPT6Iw0a+JKBZvtfiPb6Iw0a+JKBZvtfiPb6Iw0Y+JKBZPtfiPb6Iw0Y+JKBZPtfiPb6Iw0Y+JKBZPtfiPT6Iw0Y+JKBZPtfiPT6Iw0Y+JKBZvtfiPT6Iw0Y+JKBZvtfiPT6Iw0Y+JKBZvtfiPb6Iw0Y+JKBZvtfiPb6Iw0a+JKBZvtfiPb6Iw0Y+JKBZPtfiPb6Iw0a+JKBZPtfiPb6Iw0Y+JKBZPtfiPT6Iw0a+JKBZPtfiPT6Iw0Y+JKBZvtfiPT6Iw0a+JKBZvtfiPT6Iw0Y+")
 }]
 
-[node name="CreatureGenerator" type="Node3D" unique_id=259714522]
+[node name="CreatureGenerator" unique_id=259714522 instance=ExtResource("2_beast_compat")]
 script = ExtResource("1_generator")
 
 [node name="Feets" type="Node3D" parent="." unique_id=907510481]

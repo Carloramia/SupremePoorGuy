@@ -1,0 +1,93 @@
+[gd_resource type="Resource" format=3 uid="uid://d3l2df6fqfnqj"]
+
+[ext_resource type="Script" uid="uid://c4l6ywxm51pi" path="res://Scripts/Creatures/Generators/CreatureGeneratorDefaults.gd" id="1_3v2qm"]
+
+[sub_resource type="Curve" id="Curve_3v2qm"]
+_data = [Vector2(0, 0.19101131), 0.0, 0.0, 0, 0, Vector2(0.44957983, 0.77528095), 0.0, 0.0, 0, 0, Vector2(1, 0.3370787), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Curve" id="Curve_fiup2"]
+_limits = [-3.0, 3.0, 0.0, 1.0]
+_data = [Vector2(0, -0.32458997), 0.0, 0.0, 0, 0, Vector2(0.4873949, -0.9101124), 0.0, 0.0, 0, 0, Vector2(0.9397759, -0.60000014), 0.0, 0.0, 0, 0, Vector2(1, -0.46229506), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="Curve" id="Curve_0hq6g"]
+_limits = [-3.0, 3.0, 0.0, 1.0]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_3u5is"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[resource]
+script = ExtResource("1_3v2qm")
+parameters = {
+"base_foot_size": Vector3(0.6, 0.3, 0.2),
+"base_limb_length": 0.6,
+"body_length": 2.0,
+"feather_color": Color(0.9, 0.92, 0.96, 1),
+"feather_lean_degrees": 15.0,
+"feather_length": 1.5,
+"feather_spacing": 0.3,
+"feather_spread_degrees": 6.0,
+"feather_thickness": 0.025,
+"feather_tip_alignment_enabled": true,
+"feather_tip_alignment_falloff": 2.0,
+"feather_tip_length_multiplier": 1.5,
+"feather_width": 0.28,
+"feathers_enabled": true,
+"head_maximum_size": Vector3(0.7, 0.3, 0.7),
+"head_minimum_size": Vector3(0.7, 0.3, 0.3),
+"inhomogeneity": 0.0,
+"label_color": Color(1, 1, 1, 1),
+"label_font_size": 32,
+"limb_endpoint_merge_distance": 0.2,
+"limb_maximum_size": Vector3(0.3, 0.3, 0.15),
+"limb_minimum_size": Vector3(0.3, 0.3, 0.15),
+"limb_y_matches_segment": true,
+"max_neck_overlap_diameter": 0.5,
+"maximum_bend_offset": 0.5,
+"maximum_foot_size": Vector3(0.6, 0.3, 0.2),
+"maximum_segment_height": 0.8,
+"minimum_bend_offset": 0.5,
+"minimum_feet_distance": 0.2,
+"minimum_foot_size": Vector3(0.6, 0.3, 0.2),
+"minimum_segment_height": 0.4,
+"neck_block_thickness": 0.4,
+"neck_maximum_angle": 60.0,
+"neck_maximum_length": 0.4,
+"neck_minimum_length": 0.2,
+"neck_number": 1,
+"neck_segment_count": 1,
+"network_center_bias": 0.65,
+"network_core_extra_connections": 3,
+"network_extra_endpoint_count": 4,
+"network_extra_endpoint_padding": 0.5,
+"overall_scale": 1.5,
+"part_width": 0.2,
+"sub_torso_height_curve": SubResource("Curve_3u5is"),
+"sub_torso_size": Vector3(0.5, 0.4, 0.3),
+"sub_torso_x_offset": 0.5,
+"torso_connection_distance": 0.3,
+"torso_count": 6,
+"torso_height_offset_curve": SubResource("Curve_0hq6g"),
+"torso_lower_curve": SubResource("Curve_fiup2"),
+"torso_maximum_height": 0.7,
+"torso_minimum_height": 0.5,
+"torso_overlap_percent": 20.0,
+"torso_upper_curve": SubResource("Curve_3v2qm"),
+"unsymmetrie": 0.0,
+"wing_chord": 0.6,
+"wing_count": 2,
+"wing_elevation_degrees": 30.0,
+"wing_fold_degrees": 170.0,
+"wing_middle_length": 1.5,
+"wing_root_height": 0.75,
+"wing_root_length": 1.2,
+"wing_segment_count": 6,
+"wing_thickness": 0.08,
+"wing_tip_fold_degrees": 160.0,
+"wing_tip_length": 1.7,
+"wireframe_color": Color(0.2, 0.9, 1, 1)
+}

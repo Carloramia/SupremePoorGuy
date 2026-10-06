@@ -1,6 +1,6 @@
 @tool
 extends Node
-const CHARACTER = preload("res://Scenes/Creatures/Characters/Generate_Creature_Test.tscn")
+const CHARACTER = preload("res://Scenes/Creatures/Characters/Generate_Beast.tscn")
 var failed := false
 func check(value: bool, message: String) -> void:
 	if not value:
@@ -34,5 +34,11 @@ func run() -> void:
 	actor.set_control_performance_tracking_enabled(false)
 	actor._control_perf.count(&"disabled")
 	check(actor.consume_control_performance_stats().counters.is_empty(), "Disabled tracking must remain inert")
+	var bird := preload("res://Scenes/Creatures/Characters/Generate_Bird.tscn").instantiate()
+	bird.generate_on_ready = false
+	add_child(bird)
+	check(bird.generate_creature(), "Bird editor generation must succeed with its tool wing controller")
+	check(not bird.get_node("WingPoseController3D").bindings.is_empty(), "Editor generation must refresh wing bindings without calling placeholder scripts")
+	check(not bird.get_node("WingPoseController3D").feather_bindings.is_empty(), "Editor character generation must include physical feather bindings")
 	if not failed: print("GENERATED_EDITOR_PERFORMANCE_VALIDATION_PASSED")
 	get_tree().quit(1 if failed else 0)

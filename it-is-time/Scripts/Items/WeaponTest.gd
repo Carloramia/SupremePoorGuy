@@ -1,4 +1,11 @@
 extends "res://Scripts/Items/SampleWeapon3D.gd"
+const CELL_BUILDER = preload("res://Scripts/Items/WeaponCellBuilder.gd")
+@export var weapon_layout: WeaponLayout
+
+func _ready() -> void:
+	super._ready()
+	if weapon_layout != null:
+		_material_cells = weapon_layout.cells.duplicate()
 
 @export_custom(PROPERTY_HINT_RESOURCE_TYPE, "SampleMaterial")
 var default_material: Resource = preload("res://Resources/Materials/TestMaterial.tres")
@@ -24,6 +31,7 @@ func build_from_material_cells(
 	connection_is_set: bool = false
 ) -> void:
 	_temporary_item_image = null
+	weapon_layout = null
 	_clear_generated_cells()
 	_material_cells = cells.duplicate()
 	if _material_cells.is_empty():
@@ -74,41 +82,8 @@ func get_generated_collision_count() -> int:
 			count += 1
 	return count
 
-func _add_material_cell(
-	cell: Vector2i,
-	local_position: Vector3,
-	material_data: Resource
-) -> void:
-	var texture: Texture2D = material_data.get_display_texture()
-	var sprite := Sprite3D.new()
-	sprite.name = "Material_%d_%d" % [cell.x, cell.y]
-	sprite.texture = texture
-	sprite.pixel_size = material_data.cell_size / maxf(texture.get_width(), 1.0)
-	sprite.position = local_position
-	sprite.visible = sprite_visible
-	add_child(sprite)
-	var collision := CollisionShape3D.new()
-	collision.name = "Collision_%d_%d" % [cell.x, cell.y]
-	var shape := BoxShape3D.new()
-	shape.size = Vector3(
-		material_data.cell_size,
-		material_data.cell_size,
-		material_data.collision_thickness
-	)
-	var mesh_instance := MeshInstance3D.new()
-	mesh_instance.name = "MaterialMesh_%d_%d" % [cell.x, cell.y]
-	var box_mesh := BoxMesh.new()
-	box_mesh.size = shape.size
-	var mesh_material := StandardMaterial3D.new()
-	mesh_material.albedo_texture = texture
-	box_mesh.material = mesh_material
-	mesh_instance.mesh = box_mesh
-	mesh_instance.position = local_position
-	mesh_instance.visible = mesh_visible
-	add_child(mesh_instance)
-	collision.shape = shape
-	collision.position = local_position
-	add_child(collision)
+func _add_material_cell(cell: Vector2i, local_position: Vector3, material_data: Resource) -> void:
+	CELL_BUILDER.add_cell(self,cell,local_position,material_data,sprite_visible,mesh_visible)
 
 func _clear_generated_cells() -> void:
 	for child: Node in get_children():

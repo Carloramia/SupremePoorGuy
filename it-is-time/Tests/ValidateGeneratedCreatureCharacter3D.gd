@@ -1,6 +1,6 @@
 extends SceneTree
 
-const CHARACTER = preload("res://Scenes/Creatures/Characters/Generate_Creature_Test.tscn")
+const CHARACTER = preload("res://Scenes/Creatures/Characters/Generate_Beast.tscn")
 const PART = preload("res://Scripts/Creatures/PhysicalBodyParts.gd")
 
 var last_plan: Dictionary = {}
@@ -54,6 +54,8 @@ func _validate() -> void:
 				continue
 			assert(joint.get_flag_x(Generic6DOFJoint3D.FLAG_ENABLE_LINEAR_LIMIT))
 			var expected_slack: float = character.limb_joint_linear_slack.x if PART.BodyPartTag.LegLimb in a.tags and PART.BodyPartTag.LegLimb in b.tags else 0.0
+			if a.get_meta("generated_role","")=="Neck" and b.get_meta("generated_role","")=="Neck" and character.neck_linear_springs_enabled:
+				expected_slack = character.neck_joint_linear_slack.x
 			assert(is_equal_approx(joint.get_param_x(Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT), expected_slack))
 			if str(joint.name).ends_with("Torso"):
 				assert(is_zero_approx(joint.get_param_x(Generic6DOFJoint3D.PARAM_ANGULAR_UPPER_LIMIT)))

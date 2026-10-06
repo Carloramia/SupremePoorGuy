@@ -35,7 +35,7 @@ func _validate() -> void:
 	assert(controller_stats.timings.anchor_lookup.calls > 0)
 	assert(controller_stats.timings.movement_lookup.calls > 0)
 	assert(controller_stats.counters.movement_lookup_nodes > 0)
-	var generated: Node3D = load("res://Scenes/Creatures/Characters/Generate_Creature_Test.tscn").instantiate()
+	var generated: Node3D = load("res://Scenes/Creatures/Characters/Generate_Beast.tscn").instantiate()
 	generated.generate_on_ready = false
 	world.add_child(generated)
 	assert(generated._control_perf.enabled)

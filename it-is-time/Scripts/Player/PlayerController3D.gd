@@ -28,6 +28,7 @@ var _generated_left := false
 var _generated_facing_candidate_time := 0.0
 
 var _character: Node3D
+var _pending_initial_character: Node3D
 var _movement: Node
 var _level: Node
 var _wheel_target: Node3D
@@ -44,19 +45,41 @@ func _ready() -> void:
 	process_priority = -100
 	process_physics_priority = -100
 	add_to_group(&"player_controller_3d")
-	_level = self
-	while _level.get_parent() != get_tree().root:
+	_level = get_parent()
+	while _level != get_tree().root and _level.get_parent() != get_tree().root:
 		_level = _level.get_parent()
-	if initial_character == null: initial_character = get_parent() as Node3D
-	if _level == initial_character: _level = get_tree().root
 	wheel.option_chosen.connect(_on_wheel_option)
 	call_deferred("_initialize_controller")
 
 func _initialize_controller() -> void:
+	# Parent _ready has now run, so the character group is registered. A level
+	# may contain characters, but it must never itself become the control target.
+	if initial_character == null and get_parent().is_in_group(&"physical_characters_3d"):
+		initial_character = get_parent() as Node3D
+	if _level == initial_character: _level = get_tree().root
 	if terrain_cursor == null:
 		terrain_cursor = get_tree().get_first_node_in_group(&"terrain_cursor_3d") as TerrainCursor3D
 	if is_instance_valid(camera_rig): camera_rig.follow_target = self
-	if not attach_character(initial_character): detach_character()
+	if attach_character(initial_character): return
+	if is_instance_valid(initial_character) and initial_character.has_signal(&"creature_generation_finished") and initial_character.get("generate_on_ready") == true:
+		_pending_initial_character = initial_character
+		initial_character.connect(&"creature_generation_finished",_on_initial_generation_finished)
+		_log("waiting_for_generation",initial_character)
+	else:
+		detach_character()
+
+func _clear_initial_generation_wait() -> void:
+	if is_instance_valid(_pending_initial_character) and _pending_initial_character.is_connected(&"creature_generation_finished",_on_initial_generation_finished):
+		_pending_initial_character.disconnect(&"creature_generation_finished",_on_initial_generation_finished)
+	_pending_initial_character = null
+
+func _on_initial_generation_finished(succeeded: bool) -> void:
+	var target := _pending_initial_character
+	_clear_initial_generation_wait()
+	if not succeeded or not attach_character(target): detach_character()
+
+func _exit_tree() -> void:
+	_clear_initial_generation_wait()
 
 func get_controlled_character() -> Node3D:
 	return _character if is_instance_valid(_character) else null
@@ -116,6 +139,7 @@ func attach_character(character: Node3D) -> bool:
 
 func _perf_impl_attach_character(character: Node3D) -> bool:
 	if not can_attach_character(character): return false
+	_clear_initial_generation_wait()
 	if character == get_controlled_character(): return true
 	_release_character()
 	_character = character
@@ -141,6 +165,7 @@ func _perf_impl_attach_character(character: Node3D) -> bool:
 	return true
 
 func detach_character() -> void:
+	_clear_initial_generation_wait()
 	var departing := get_controlled_character()
 	var location := global_position
 	_release_character()
@@ -201,6 +226,9 @@ func gameplay_input_allowed() -> bool:
 	return is_attached() and not wheel.visible and not _external_interface_open()
 
 func is_gameplay_action_pressed(action: StringName) -> bool:
+	if is_instance_valid(_character):
+		var module := _character.get_node_or_null("CreatureActionController3D")
+		if module != null and module.has_input_action(action): return false
 	return gameplay_input_allowed() and not _blocked_actions.has(action) and Input.is_action_pressed(action)
 
 func get_movement_direction() -> Vector3:
@@ -289,6 +317,10 @@ func _input(event: InputEvent) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not gameplay_input_allowed() or event.is_echo(): return
+	var module := _character.get_node_or_null("CreatureActionController3D")
+	if module != null and module.handle_input(event):
+		get_viewport().set_input_as_handled()
+		return
 	var inventory := _character.get_node_or_null("InventoryController3D")
 	if inventory == null: return
 	if event.is_action_pressed(inventory.pickup_action):

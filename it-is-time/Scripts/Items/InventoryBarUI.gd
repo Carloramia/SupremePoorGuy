@@ -7,6 +7,10 @@ var _slots: Array[PanelContainer] = []
 var _icons: Array[TextureRect] = []
 
 func _ready() -> void:
+	if not bool(get_parent().get("inventory_ui_enabled")):
+		visible = false
+		set_process(false)
+		return
 	layer = 50
 	_build_ui()
 

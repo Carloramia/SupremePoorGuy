@@ -7,6 +7,8 @@ func _initialize() -> void:
 
 func _make_character(extra_head: bool = false, no_head: bool = false) -> Node3D:
 	var character := CHARACTER.instantiate() as Node3D
+	# This test isolates the legacy Head/Torso cascades from the new connectivity rule.
+	character.require_head_and_torso_connectivity = false
 	var head := character.get_node("Head") as PhysicalBodyPart3D
 	if extra_head:
 		var second_head := head.duplicate() as PhysicalBodyPart3D

@@ -1,5 +1,5 @@
 extends SceneTree
-const CHARACTER = preload("res://Scenes/Creatures/Characters/Generate_Creature_Test.tscn")
+const CHARACTER = preload("res://Scenes/Creatures/Characters/Generate_Beast.tscn")
 const PLAYER = preload("res://Scenes/Player/Controller.tscn")
 const CURSOR = preload("res://Scenes/Input/TerrainCursor3D.tscn")
 var failed := false

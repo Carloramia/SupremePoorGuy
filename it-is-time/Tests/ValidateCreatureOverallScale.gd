@@ -6,7 +6,7 @@ func _initialize() -> void:
 	call_deferred("_validate")
 
 func _validate() -> void:
-	var character: Node3D = load("res://Scenes/Creatures/Characters/Generate_Creature_Test.tscn").instantiate()
+	var character: Node3D = load("res://Scenes/Creatures/Characters/Generate_Beast.tscn").instantiate()
 	character.generate_on_ready = false
 	root.add_child(character)
 	var generator := character.get_node("CreatureGenerator")

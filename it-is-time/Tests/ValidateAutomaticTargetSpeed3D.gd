@@ -1,6 +1,6 @@
 extends SceneTree
 const DATA = preload("res://Scripts/Creatures/LegMovementData.gd")
-const CHARACTER = preload("res://Scenes/Creatures/Characters/Generate_Creature_Test.tscn")
+const CHARACTER = preload("res://Scenes/Creatures/Characters/Generate_Beast.tscn")
 func _initialize() -> void: call_deferred("run")
 func run() -> void:
 	var data = DATA.new()
