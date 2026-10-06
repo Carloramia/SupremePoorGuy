@@ -8,10 +8,14 @@ func _initialize() -> void:
 	call_deferred("_run")
 
 func _run() -> void:
+	create_timer(15).timeout.connect(func():
+		push_error("Validation timed out")
+		quit(1))
 	var window = WINDOW.instantiate()
 	root.add_child(window)
 	await process_frame
 	var data: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/library_demo.json"))
+	data.reward_mode = "auto" # Compatibility contract: old definitions remain automatic.
 	window.reward_requested.connect(func(id, _rewards):
 		requests += 1
 		request_id = id)
@@ -26,6 +30,8 @@ func _run() -> void:
 	window.advance()
 	window.advance()
 	assert(window.get_state() == "choice")
+	assert(window._choices.columns == 2)
+	assert(window._choices.get_child_count() == 2)
 	assert(window.transcript.size() == 3)
 	window.advance()
 	window.select_choice("missing")
@@ -69,6 +75,28 @@ func _run() -> void:
 	assert(window.acknowledge_reward(request_id, true))
 	window.advance()
 	assert(closes == 2)
+	# Manual collection: preview and glossary never request or award rewards.
+	data.reward_mode = "manual"
+	assert(window.open_event(data, "manual") == OK)
+	window.advance()
+	window.advance()
+	window.advance()
+	window.select_choice("take")
+	window.advance()
+	window.advance()
+	assert(window.get_state() == "reward_ready")
+	assert(requests == 2)
+	window._info.open_details("说明", [{"title": "只读", "text": "说明不发奖"}])
+	window.advance()
+	assert(window.get_state() == "reward_ready" and requests == 2)
+	window._info.close()
+	window.advance()
+	assert(window.get_state() == "reward_pending" and requests == 3)
+	window.advance()
+	assert(requests == 3)
+	assert(window.acknowledge_reward(request_id, true))
+	window.advance()
+	assert(closes == 3)
 	# Host simulation: repeated requests must not duplicate awards.
 	var demo = load("res://demo/demo.tscn").instantiate()
 	root.add_child(demo)
@@ -80,6 +108,8 @@ func _run() -> void:
 	ui.advance()
 	ui.select_choice("take")
 	ui.advance()
+	ui.advance()
+	assert(demo.mana == 320 and ui.get_state() == "reward_ready")
 	ui.advance()
 	assert(demo.mana == 420)
 	assert(demo.unlocked_runes.size() == 4)

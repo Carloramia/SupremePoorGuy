@@ -2,13 +2,14 @@
   "id": "library_open_day",
   "title": "图书馆开门日",
   "start": "greeting",
+  "reward_mode": "manual",
   "nodes": {
     "greeting": {"type": "line", "speaker": "罗瓦", "text": "我猜你是为了召唤手记而来的，让我找找。", "next": "stew"},
     "stew": {"type": "line", "speaker": "罗瓦", "text": "哦，我用它来垫炖菜了。你知道的，我老婆做的炖菜比双头龙喷出的熔岩还要烫。", "next": "question"},
     "question": {"type": "line", "speaker": "罗瓦", "text": "你想先拿回手记，还是问问它为什么会出现在餐桌上？", "next": "choose"},
     "choose": {"type": "choice", "options": [
-      {"id": "take", "text": "拿回我的手记。", "next": "return"},
-      {"id": "ask", "text": "先问问手记的用途。", "next": "explain"}
+      {"id": "take", "text": "拿回我的手记。", "title": "拿回召唤手记", "summary": "让罗瓦直接归还手记，继续了解其中的符文。", "tag": "直接返还 · 无消耗", "action": "拿回手记", "next": "return"},
+      {"id": "ask", "text": "先问问手记的用途。", "title": "问问手记的用途", "summary": "听听它为什么出现在餐桌上，再拿回手记。", "tag": "额外对话 · 无消耗", "action": "先问问他", "next": "explain"}
     ]},
     "explain": {"type": "line", "speaker": "罗瓦", "text": "桌脚短了一截，锅底又太烫。你的召唤术，至少救过我们家的餐桌。", "next": "return"},
     "return": {"type": "line", "speaker": "罗瓦", "text": "当然，物归原主。", "next": "money"},
