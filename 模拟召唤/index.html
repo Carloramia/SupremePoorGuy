@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="以六边形蜂窝绘制、识别和组合符文的召唤阵玩法原型。" />
+  <title>六相召唤阵 · 玩法原型</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230a0f14'/%3E%3Cpath d='M16 4l10 6v12l-10 6L6 22V10z' fill='none' stroke='%23e8b45c' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='3' fill='%2364d8d2'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div class="brand-block">
+        <div class="brand-mark" aria-hidden="true"><span></span></div>
+        <div>
+          <h1>六相召唤阵</h1>
+          <p>HEX RITUAL WORKBENCH <i></i> 玩法验证原型</p>
+        </div>
+      </div>
+
+      <section class="active-runes" aria-labelledby="active-title">
+        <span class="eyebrow" id="active-title">当前生效</span>
+        <div id="active-list" class="active-list"></div>
+      </section>
+
+      <div class="save-block">
+        <span id="save-status">本机草稿 · 未修改</span>
+        <button id="save-button" class="button button--save" type="button">
+          <span class="save-icon" aria-hidden="true"></span>保存魔法阵
+        </button>
+      </div>
+    </header>
+
+    <section class="workspace">
+      <aside class="relic-tray" aria-labelledby="relic-title">
+        <header class="relic-header">
+          <span class="relic-header-icon" aria-hidden="true">◇</span>
+          <div><span class="eyebrow">RELIC CASE</span><h2 id="relic-title">奇物匣</h2></div>
+        </header>
+        <p class="relic-instruction">拖动整块奇物放入阵面。每件奇物独一无二，但可同时放置不同奇物。</p>
+        <div id="relic-list" class="relic-list"></div>
+        <footer class="relic-footer"><span>独一物</span><p>奇物不可重复获得，也不能与符文或其他奇物共用蜂窝。</p></footer>
+      </aside>
+
+      <section class="circle-panel" aria-label="召唤阵绘制区">
+        <div class="panel-caption">
+          <div>
+            <span class="eyebrow">阵面 · 61 个蜂窝</span>
+            <strong id="draw-state">等待落笔</strong>
+          </div>
+          <div class="legend"><span class="legend-dot legend-dot--free"></span>空闲 <span class="legend-dot legend-dot--used"></span>占用</div>
+        </div>
+
+        <div class="board-wrap">
+          <button id="help-button" class="help-button" type="button" aria-label="打开玩法说明">
+            <span aria-hidden="true">?</span>
+            <span><strong>玩法说明</strong><small>HOW TO PLAY</small></span>
+          </button>
+          <div class="ritual-rings" aria-hidden="true"><span></span><span></span><span></span></div>
+          <svg id="hex-board" class="hex-board" viewBox="0 0 760 650" role="application" aria-label="六边形召唤阵。按住鼠标拖过相邻蜂窝来描画符文。"></svg>
+          <div id="board-toast" class="board-toast" role="status">按住并拖过相邻蜂窝开始描画</div>
+        </div>
+
+        <footer class="tool-dock">
+          <label class="draw-mode-toggle" title="开启后，松手时才将自由笔触吸附为蜂窝连线">
+            <input id="handdraw-toggle" type="checkbox" />
+            <span class="toggle-track"><i></i></span>
+            <span><strong>模拟绘画</strong><small id="handdraw-status">关闭</small></span>
+          </label>
+          <button id="commit-button" class="button button--primary" type="button" disabled>
+            <span class="seal-icon" aria-hidden="true"></span>刻入符文
+          </button>
+          <button id="undo-button" class="button button--ghost" type="button" disabled>撤回一格 <kbd>⌫</kbd></button>
+          <button id="cancel-button" class="button button--ghost" type="button" disabled>取消笔画 <kbd>Esc</kbd></button>
+          <span class="tool-spacer"></span>
+          <button id="clear-button" class="button button--danger" type="button">清空阵面</button>
+        </footer>
+      </section>
+
+      <aside class="runebook" aria-labelledby="book-title">
+        <header class="book-header">
+          <div class="book-symbol" aria-hidden="true">⌬</div>
+          <div><span class="eyebrow">RUNE CODEX</span><h2 id="book-title">符文书</h2></div>
+          <span id="book-count" class="book-count">07</span>
+        </header>
+        <p class="book-instruction">照着形状连续经过蜂窝。可以旋转或镜像，但不可复用已占用的蜂窝。</p>
+        <div id="rune-book-list" class="rune-book-list"></div>
+        <footer class="book-footer">
+          <span class="interlace-icon" aria-hidden="true">⌁</span>
+          <p><strong>穿插规则</strong>符文可以交错排布；一枚蜂窝只能属于一个符文。</p>
+        </footer>
+      </aside>
+    </section>
+  </main>
+
+  <dialog id="clear-dialog">
+    <form method="dialog">
+      <span class="dialog-sigil" aria-hidden="true">×</span>
+      <h2>清空整个阵面？</h2>
+      <p>所有已刻入符文和当前笔画都会移除。本机已保存的版本不会改变，直到你再次点击保存。</p>
+      <div class="dialog-actions">
+        <button value="cancel" class="button button--ghost">保留阵面</button>
+        <button id="confirm-clear" value="confirm" class="button button--danger">确认清空</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="help-dialog" class="help-dialog">
+    <div class="help-sheet">
+      <header>
+        <span class="help-sigil" aria-hidden="true">?</span>
+        <div><span class="eyebrow">RITUAL MANUAL</span><h2>召唤阵玩法说明</h2></div>
+        <button id="close-help" class="help-close" type="button" aria-label="关闭玩法说明">×</button>
+      </header>
+      <div class="help-grid">
+        <section><b>01</b><div><h3>绘制符文</h3><p>按住并经过相邻蜂窝，或逐格点击。对照右侧符文书完成形状，再点击“刻入符文”。</p></div></section>
+        <section><b>02</b><div><h3>模拟绘画</h3><p>开启工具栏开关后，按住时显示真实抖动笔触；松手才会吸附为蜂窝并进行识别。</p></div></section>
+        <section><b>03</b><div><h3>放置奇物</h3><p>从左侧拖入预制组块。每件奇物独一无二，但可以同时放置多个不同奇物。</p></div></section>
+        <section><b>04</b><div><h3>规划空间</h3><p>符文与奇物可以穿插排布，但不能共用同一个蜂窝；越界或冲突时无法落位。</p></div></section>
+        <section><b>05</b><div><h3>调整效果</h3><p>顶部显示当前符文。取消勾选只会停用效果，删除或回收才会释放蜂窝。</p></div></section>
+        <section><b>06</b><div><h3>保存阵面</h3><p>点击右上角“保存魔法阵”，保存符文、奇物位置和启停状态，下次打开自动载入。</p></div></section>
+      </div>
+      <footer><kbd>Backspace</kbd> 撤回一格 <i></i><kbd>Esc</kbd> 取消笔画 <i></i><kbd>Enter</kbd> 尝试刻入</footer>
+    </div>
+  </dialog>
+
+  <!-- browser-bundle.js is generated from the modular sources so this page also
+       works when it is opened directly as a local file. -->
+  <script defer src="js/browser-bundle.js"></script>
+</body>
+</html>
