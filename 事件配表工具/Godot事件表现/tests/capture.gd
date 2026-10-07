@@ -4,6 +4,7 @@ func _initialize() -> void:
 	call_deferred("_run")
 
 func _run() -> void:
+	root.content_scale_size = Vector2i(1280, 720)
 	create_timer(15).timeout.connect(func():
 		push_error("Capture timed out")
 		quit(1))

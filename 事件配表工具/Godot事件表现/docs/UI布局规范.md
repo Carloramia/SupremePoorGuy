@@ -1,6 +1,6 @@
 ---
 id: UI_MAIN_EVENT_EXPLORATION
-version: 0.2
+version: 0.3
 status: prototype
 author: Codex
 created: 2026-10-07
@@ -13,7 +13,7 @@ updated: 2026-10-07
 
 - 界面 ID：`UI_MAIN_EVENT_EXPLORATION`。
 - 分类与类型：主界面 HUD + 事件 overlay + 说明 popup。
-- 入口：独立工程主场景；事件入口为底部“进入图书馆”。
+- 入口：F5 打开事件开发工作台，默认显示调试面板；纯表现入口为 `demo/demo.tscn`（F6 运行当前场景）。
 - 父界面：探索示意；不依赖主游戏工程。
 - 原型截图：`tests/00_shell.png`、`02_choices.png`、`02b_reward_preview.png`、`03_reward.png`、`05_glossary.png`。
 - 参考来源：用户提供的 8 张“多少兄弟”截图。只归纳图中可见排版，不推定该游戏内部实现。
@@ -75,6 +75,15 @@ updated: 2026-10-07
 6. 风格替换【应该/SHOULD】。
    - 当/WHEN：后续确定正式美术。
    - 则/THEN：先替换共享样式与图标，保留分区与节点接口。
+7. 调试工作台【必须/MUST】。
+   - 当/WHEN：运行开发主场景。
+   - 则/THEN：左侧显示事件预览，右侧默认展开节点编辑面板；F1 仅收起或展开面板。
+   - 且/AND：编辑、预览不写入文件；模拟领奖不发正式奖励，停止预览不记为事件完成。
+8. 明确保存与正式输入【必须/MUST】。
+   - 当/WHEN：手动保存草稿。
+   - 则/THEN：通过统一 JSON 端口校验并写入，覆盖前确认并保留 `.bak`；外部修改冲突拒绝覆盖。
+   - 当/WHEN：点击“按磁盘 JSON 运行”。
+   - 则/THEN：读取已保存文件，不代入未保存草稿；宿主负责奖励回执。
 
 ## 界面元素
 
@@ -94,12 +103,18 @@ updated: 2026-10-07
 | btn_info | button | 显示解释，不改变剧情 | ui.info.open |
 | btn_info_close | button | 关闭最高说明层 | ui.info.close |
 | btn_reset_demo | button | 重置测试状态，非存档操作 | ui.demo.reset |
+| pnl_event_debug | panel | 默认展开的事件编辑面板 | ui.debug.event_panel |
+| txt_node_body | multiline_input | 当前节点正文编辑 | ui.debug.node_body |
+| txt_node_json | code_input | 分支、奖励与扩展字段编辑 | ui.debug.node_json |
+| btn_preview | button | 隔离预览草稿 / 从节点预览 | ui.debug.preview |
+| btn_save_json | button | 校验并保存 JSON，非游戏存档 | ui.debug.save_json |
+| btn_run_file | button | 通过正式输入端口读取磁盘 JSON | ui.debug.run_file |
 
-ID 是规范的逻辑标识，控件由脚本创建；本地化键仅预留，尚未接翻译表。
+ID 是规范的逻辑标识。主要控件保存在 `.tscn` 场景树中，可直接在 Godot 编辑器调整；对话条目、选择卡与奖励卡使用可编辑的独立场景动态实例化。本地化键仅预留，尚未接翻译表。
 
 ## 视觉规格
 
-1280×720 横屏基准。侧栏约 23%，右侧为主区域。标题 29–39px，正文 21px，卡片标题 23px，辅助信息 14–17px。分组内间距 6–12px，主分组间距 12–16px。灰阶纯色与细线用于验证结构，非最终颜色/材质。
+事件表现按 1280×720 横屏基准。工作台按 1600×900 基准，左侧通过 SubViewportContainer 等比嵌入预览，右侧显示调试面板。侧栏约 23%，右侧为主区域。标题 29–39px，正文 21px，卡片标题 23px，辅助信息 14–17px。分组内间距 6–12px，主分组间距 12–16px。灰阶纯色与细线用于验证结构，非最终颜色/材质。
 
 ## 导航流程
 
@@ -114,3 +129,4 @@ ID 是规范的逻辑标识，控件由脚本创建；本地化键仅预留，�
 - 路线、队伍与章节是演示数据，不意味着已实现地图或战斗系统。
 - 仅保留本次事件记录，不提供永久历史库。
 - 验收：两分支、旧自动奖励兼容、预览不发奖、重复回执不发奖、浮层和历史不推进、标题不随滚动移动。
+- 开发入口、场景调整位置、JSON 规范、正式接入步骤与发行边界见 [开发与接入说明](开发与接入说明.md)。

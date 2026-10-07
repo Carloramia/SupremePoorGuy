@@ -5,7 +5,20 @@
   if(!raw||typeof raw!=='object'||Array.isArray(raw))throw Error('项目必须是JSON对象。');
   if(raw.schema_version!==undefined&&raw.schema_version!==1)throw Error('暂不支持此项目版本。');
   const source=raw.tables||raw.data;if(!source||!Array.isArray(source.events))throw Error('不是事件项目：缺少 events 表。');
-  const project={schema_version:1,name:String(raw.name||'我的叙事事件').slice(0,150),tables:{},stories:root.EventStory?root.EventStory.clean(raw.stories):raw.stories||{}};
+  const project={schema_version:1,name:String(raw.name||'我的叙事事件').slice(0,150),tables:{},stories:root.EventStory?root.EventStory.clean(raw.stories):raw.stories||{},flows:root.EventFlow?root.EventFlow.clean(raw.flows):copy(raw.flows||{}),flow_notes:copy(raw.flow_notes||{})};
+  project.flow_layouts={};
+  const layouts=raw.flow_layouts??{};
+  if(!layouts||typeof layouts!=='object'||Array.isArray(layouts))throw Error('节点布局格式错误');
+  for(const [event,positions]of Object.entries(layouts)){
+   if(!positions||typeof positions!=='object'||Array.isArray(positions)||Object.keys(positions).length>5000)throw Error('节点布局格式错误');
+   const cleaned={};for(const [id,p]of Object.entries(positions)){
+    if(!p||![p.x,p.y].every(v=>Number.isFinite(v)&&v>=14&&v<=100000))throw Error('节点坐标须为14至100000之间的有限数值');
+    if(Object.hasOwn(project.flows[event]?.nodes||{},id))Object.defineProperty(cleaned,id,{value:{x:p.x,y:p.y},enumerable:true,writable:true,configurable:true});
+   }
+   Object.defineProperty(project.flow_layouts,event,{value:cleaned,enumerable:true,writable:true,configurable:true});
+  }
+  if(!project.flow_notes||typeof project.flow_notes!=='object'||Array.isArray(project.flow_notes))throw Error('节点备注格式错误');
+  for(const note of Object.values(project.flow_notes))if(typeof note!=='string'||note.length>100000)throw Error('节点备注须为文本，不超过10万字');
   for(const [key,table] of Object.entries(S)){
    const rows=source[key]||[];if(!Array.isArray(rows)||rows.length>5000)throw Error(`${table.label}表格式错误或超过5000行。`);
    project.tables[key]=rows.map(row=>{
@@ -15,6 +28,7 @@
   }
   if(!project.tables.events.length)throw Error('项目至少需要一个事件。');
   const existingEvents=new Set(project.tables.events.map(e=>e.id));for(const id of Object.keys(project.stories))if(!existingEvents.has(id))delete project.stories[id];
+  for(const records of [project.flows,project.flow_notes,project.flow_layouts])for(const id of Object.keys(records))if(!existingEvents.has(id))delete records[id];
   const nodes=new Map(project.tables.nodes.map(r=>[r.id,r.event_id]));for(const r of project.tables.choices)if(!r.event_id)r.event_id=nodes.get(r.node_id)||'';
   return project;
  }
@@ -28,6 +42,7 @@
  }
  function rename(project,key,oldId,newId){if(!/^[A-Za-z][A-Za-z0-9_.:-]*$/.test(newId))throw Error('ID须以英文字母开头，只包含英文、数字、下划线、点、冒号或短横线。');if(project.tables[key].some(r=>r.id===newId&&r.id!==oldId))throw Error('同表已有这个ID。');
   if(key==='events'&&project.stories?.[oldId]){project.stories[newId]=project.stories[oldId];delete project.stories[oldId];}
+  if(key==='events')for(const records of [project.flows,project.flow_notes,project.flow_layouts])if(records&&Object.hasOwn(records,oldId)){records[newId]=records[oldId];delete records[oldId];if(records===project.flows)records[newId].id=newId;}
   for(const [table,rows] of Object.entries(project.tables))for(const row of rows)for(const f of S[table].fields){if(f.key==='id')continue;if(f.ref===key&&row[f.key]===oldId)row[f.key]=newId;
    if(table==='conditions'&&f.key==='field'&&typeof row.field==='string'&&row.field.startsWith(oldId+'.'))row.field=newId+row.field.slice(oldId.length);
    if(table==='actions'&&f.key==='target'&&row.target===oldId&&['完成事件','开放事件'].includes(row.type))row.target=newId;
@@ -38,7 +53,7 @@
   for(const key of Object.keys(S))if(key!=='events'){owned[key]=project.tables[key].filter(r=>r.event_id===eventId).map(copy);for(const r of owned[key]){let id=r.id+'_COPY';let n=1;while(project.tables[key].some(x=>x.id===id)||[...map.values()].includes(id))id=r.id+'_COPY_'+n++;map.set(r.id,id);for(const field of ['stage_id','group_id'])if(r[field]&&!map.has(r[field]))map.set(r[field],r[field]+'_'+newId);if(r.once_key)map.set(r.once_key,r.once_key+'_'+newId);}}
   function translate(row,key){for(const f of S[key].fields){const v=row[f.key];if(map.has(v))row[f.key]=map.get(v);else if(key==='conditions'&&f.key==='field'&&typeof v==='string')for(const [old,neo] of map)if(v.startsWith(old+'.')){row[f.key]=neo+v.slice(old.length);break;}}return row;}
   const e=translate(copy(source),'events');e.id=newId;e.name=source.name+'（副本）';e.status='草稿';project.tables.events.push(e);
-  for(const [key,rows]of Object.entries(owned))project.tables[key].push(...rows.map(r=>translate(r,key)));if(project.stories?.[eventId])project.stories[newId]=copy(project.stories[eventId]);return newId;
+  for(const [key,rows]of Object.entries(owned))project.tables[key].push(...rows.map(r=>translate(r,key)));if(project.stories?.[eventId])project.stories[newId]=copy(project.stories[eventId]);if(project.flows?.[eventId]){project.flows[newId]=copy(project.flows[eventId]);project.flows[newId].id=newId;project.flows[newId].title=e.name;}if(project.flow_notes&&Object.hasOwn(project.flow_notes,eventId))project.flow_notes[newId]=project.flow_notes[eventId];if(project.flow_layouts?.[eventId])project.flow_layouts[newId]=copy(project.flow_layouts[eventId]);return newId;
  }
  function validate(project){const issues=[],add=(level,table,row,field,message)=>issues.push({level,table,id:row.id,event_id:table==='events'?row.id:row.event_id,field,message});
   for(const [key,table]of Object.entries(S)){
@@ -83,6 +98,8 @@
   return issues;
  }
  function fromSheets(sheets){
+  const flowSheet=sheets.find(s=>s.name==='节点编排');
+  if(flowSheet){const p=fromSheets(sheets.filter(s=>s!==flowSheet));for(const row of flowSheet.rows.slice(1))if(row[0]&&row[1]){const id=String(row[0]);if(!p.tables.events.some(e=>e.id===id))throw Error('节点编排引用不存在的事件：'+id);p.flows[id]=JSON.parse(String(row[1]));p.flow_notes[id]=String(row[2]||'');if(row[3])p.flow_layouts[id]=JSON.parse(String(row[3]));}return normalize(p);}
   const writing=sheets.find(s=>s.rows[0]?.includes('所处阶段')&&s.rows[0]?.includes('对话对象')&&s.rows[0]?.includes('事件名'));
   if(writing){
    const p={schema_version:1,name:sheets.find(s=>s.name==='字段说明')?.rows.find(r=>r[0]==='项目名称')?.[1]||'导入的情节稿',tables:{},stories:{}};for(const key of Object.keys(S))p.tables[key]=[];
