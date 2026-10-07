@@ -1,0 +1,25 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Characters/_SampleCharacter.tscn" id="1"]
+[ext_resource type="Script" path="res://Scripts/Creatures/GeneratedCreatureCharacter3D.gd" id="2"]
+[ext_resource type="Script" path="res://Scripts/Creatures/Generators/StumpBeastGenerator.gd" id="3"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/GeneratedLegStepMovementController3D.tscn" id="4"]
+[ext_resource type="Resource" path="res://Resources/Movement/GeneratedMultiLegWalk.tres" id="5"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/CreatureRecoveryStateMachine3D.tscn" id="6"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/CreatureActionController3D.tscn" id="7"]
+[ext_resource type="Resource" path="res://Resources/Creatures/BeastDensity.tres" id="8"]
+
+[node name="GenerateStumpBeast" instance=ExtResource("1")]
+script = ExtResource("2")
+generator_path = NodePath("StumpBeastGenerator")
+density_data = ExtResource("8")
+
+[node name="StumpBeastGenerator" type="Node3D" parent="."]
+script = ExtResource("3")
+
+[node name="GeneratedLegStepMovementController3D" parent="." instance=ExtResource("4")]
+slow_gait_data = ExtResource("5")
+
+[node name="CreatureRecoveryStateMachine3D" parent="." instance=ExtResource("6")]
+
+[node name="CreatureActionController3D" parent="." instance=ExtResource("7")]

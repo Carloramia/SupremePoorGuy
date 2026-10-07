@@ -7,7 +7,8 @@ signal state_changed(previous: int, current: int)
 @export var ascend_action: StringName = &"Space"
 @export var descend_action: StringName = &"Ctrl"
 @export_group("Flight Motion")
-@export_range(0.0, 30.0, 0.1) var horizontal_speed: float = 5.0
+## Airborne horizontal target speed, independent of the walking controller gait preset.
+@export_range(0.0, 30.0, 0.1, "or_greater") var horizontal_speed: float = 5.0
 @export_range(0.0, 30.0, 0.1) var ascent_speed: float = 3.0
 @export_range(0.0, 30.0, 0.1) var descent_speed: float = 3.0
 @export_range(0.1, 30.0, 0.1) var velocity_response: float = 5.0
@@ -39,9 +40,17 @@ signal state_changed(previous: int, current: int)
 ## Desired angular acceleration, converted through the foot/support inertia tensors.
 @export_range(0.0, 500.0, 1.0, "or_greater") var maximum_leg_pose_acceleration: float = 100.0
 @export_range(0.0, 10000.0, 1.0) var maximum_pose_torque: float = 1000.0
+@export_group("Flight Posture")
+@export_range(0.0, 200.0, 0.1) var flight_pose_strength: float = 30.0
+@export_range(0.0, 100.0, 0.1) var flight_pose_damping: float = 10.0
+## Flight torque follows the inertia of the whole living structure, including wings.
+@export_range(0.0, 500.0, 1.0, "or_greater") var maximum_flight_pose_acceleration: float = 60.0
+## Enable only when an absolute torque ceiling is wanted; it can weaken large creatures.
+@export var flight_absolute_torque_limit_enabled: bool = false
 @export var diagnostic_logging_enabled: bool = false
 var _diagnostic_tracking := false
 var _last_command: Dictionary = {}
+var _structure_velocity := Vector3.ZERO
 var state: State = State.GROUNDED
 var _character_enabled := true
 var _parts: Array[PhysicalBodyPart3D] = []
@@ -81,6 +90,7 @@ func refresh_physics_query_cache() -> void:
 	_landing_transition = false
 	_landing_elapsed = 0.0
 	_parts.clear(); _legs.clear(); _joints.clear(); _excluded.clear()
+	_structure_velocity = Vector3.ZERO
 	_torso = null
 	state = State.GROUNDED
 	_elapsed = 0.0
@@ -194,6 +204,9 @@ func _physics_process(delta: float) -> void:
 		return
 	var ascend := InputMap.has_action(ascend_action) and PLAYER_CONTEXT.action_pressed(self,ascend_action)
 	var descend := InputMap.has_action(descend_action) and PLAYER_CONTEXT.action_pressed(self,descend_action) and not ascend
+	var npc := get_parent().get_node_or_null("NPCStateMachine3D")
+	var npc_vertical_speed: float = npc.get_npc_flight_vertical_speed() if npc != null and npc.has_method("get_npc_flight_vertical_speed") else 0.0
+	ascend = ascend or npc_vertical_speed > 0.0
 	var clearance := _ground_clearance()
 	_elapsed += delta
 	if state == State.GROUNDED:
@@ -202,6 +215,13 @@ func _physics_process(delta: float) -> void:
 			if _elapsed>=airborne_confirmation_time: _initial_state_pending = false
 			_update_landing_transition(delta)
 			return
+	var dive := get_parent().get_node_or_null("BirdDiveAttackController3D")
+	if dive != null and dive.is_active():
+		# The attack owns translation, gravity compensation, and posture until pull-up ends.
+		_fold_ratio = move_toward(_fold_ratio,1.0,delta/maxf(leg_fold_time,0.1))
+		_apply_leg_tuck(delta)
+		if _diagnostic_tracking: _last_command = {"frame":Engine.get_physics_frames(),"action_override":dive.get_dive_diagnostics()}
+		return
 	_standing_contact_elapsed = _standing_contact_elapsed+delta if descend and has_standing_leg_contacts() else 0.0
 	if descend and _elapsed>0.3 and _standing_contact_elapsed>=maxf(standing_contact_confirmation_time,delta):
 		_set_state(State.GROUNDED, "confirmed_foot_contacts")
@@ -210,7 +230,10 @@ func _physics_process(delta: float) -> void:
 	var direction: Vector3 = _movement.get_input_movement_direction() if is_instance_valid(_movement) else Vector3.ZERO
 	var target_velocity := direction.slide(Vector3.UP).limit_length(1.0)*horizontal_speed
 	target_velocity.y = ascent_speed if ascend else (-descent_speed if descend else 0.0)
-	var acceleration := ((target_velocity-_torso.linear_velocity)*velocity_response).limit_length(maximum_acceleration)
+	if not is_zero_approx(npc_vertical_speed): target_velocity.y = npc_vertical_speed
+	var structure := _flight_structure()
+	_structure_velocity = structure.velocity
+	var acceleration := ((target_velocity-Vector3(structure.velocity))*velocity_response).limit_length(maximum_acceleration)
 	if _diagnostic_tracking:
 		_last_command = {"frame":Engine.get_physics_frames(),"target_velocity":target_velocity,"acceleration":acceleration,"clearance":clearance,"ascend":ascend,"descend":descend,"submitted_force_total":Vector3.ZERO,"gravity_compensation_total":Vector3.ZERO,"torso_torque_total":Vector3.ZERO}
 	for body: PhysicalBodyPart3D in _parts:
@@ -221,14 +244,89 @@ func _physics_process(delta: float) -> void:
 		if _diagnostic_tracking:
 			_last_command["submitted_force_total"] += (acceleration-direct.total_gravity)*body.mass
 			_last_command["gravity_compensation_total"] += -direct.total_gravity*body.mass
-		if PhysicalBodyPart3D.BodyPartTag.Torso in body.tags:
-			var correction := body.global_basis.y.normalized().cross(Vector3.UP)*pose_strength-body.angular_velocity.slide(Vector3.UP)*pose_damping
-			body.apply_torque((correction*body.mass).limit_length(maximum_pose_torque))
-			if _diagnostic_tracking: _last_command["torso_torque_total"] += (correction*body.mass).limit_length(maximum_pose_torque)
+	_apply_flight_posture(delta, structure)
 	# Ctrl deploys the legs regardless of altitude; actual foot contacts decide landing.
 	var fold_target := 0.0 if descend else 1.0
 	_fold_ratio = move_toward(_fold_ratio,fold_target,delta/maxf(leg_fold_time,0.1))
 	_apply_leg_tuck(delta)
+
+
+func get_flight_velocity() -> Vector3:
+	return _structure_velocity if is_airborne() else Vector3.ZERO
+
+func _flight_structure() -> Dictionary:
+	var mass := 0.0
+	var center := Vector3.ZERO
+	var velocity := Vector3.ZERO
+	var torso_mass := 0.0
+	var angular_velocity := Vector3.ZERO
+	var up := Vector3.ZERO
+	for body: PhysicalBodyPart3D in _parts:
+		if not _alive(body) or body.freeze or body.custom_integrator: continue
+		var direct := PhysicsServer3D.body_get_direct_state(body.get_rid())
+		var point := body.global_transform*direct.center_of_mass_local if direct != null else body.global_position
+		mass += body.mass
+		center += point*body.mass
+		velocity += body.linear_velocity*body.mass
+		if PhysicalBodyPart3D.BodyPartTag.Torso in body.tags:
+			torso_mass += body.mass
+			angular_velocity += body.angular_velocity*body.mass
+			up += body.global_basis.y.normalized()*body.mass
+	if mass > 0.0:
+		center /= mass
+		velocity /= mass
+	if torso_mass > 0.0: angular_velocity /= torso_mass
+	var inertia := Basis(Vector3.ZERO,Vector3.ZERO,Vector3.ZERO)
+	for body: PhysicalBodyPart3D in _parts:
+		if not _alive(body) or body.freeze or body.custom_integrator: continue
+		var inverse := body.get_inverse_inertia_tensor()
+		if inverse.determinant() == 0.0: continue
+		var direct := PhysicsServer3D.body_get_direct_state(body.get_rid())
+		var point := body.global_transform*direct.center_of_mass_local if direct != null else body.global_position
+		var r := point-center
+		var rr := Basis(r*r.x,r*r.y,r*r.z)
+		var local_inertia := inverse.inverse()
+		var distance_squared := r.length_squared()
+		inertia.x += local_inertia.x+(Vector3.RIGHT*distance_squared-rr.x)*body.mass
+		inertia.y += local_inertia.y+(Vector3.UP*distance_squared-rr.y)*body.mass
+		inertia.z += local_inertia.z+(Vector3.BACK*distance_squared-rr.z)*body.mass
+	return {"mass":mass,"center":center,"velocity":velocity,"torso_mass":torso_mass,"angular_velocity":angular_velocity,"inertia":inertia,"up":up.normalized()}
+
+func _apply_flight_posture(delta: float, structure: Dictionary) -> void:
+	if float(structure.torso_mass) <= 0.0: return
+	var up: Vector3 = structure.up
+	var axis := up.cross(Vector3.UP)
+	var angle := atan2(axis.length(),up.dot(Vector3.UP))
+	# A fully inverted body still needs a deterministic recovery axis.
+	if axis.length_squared() < 0.00000001 and up.dot(Vector3.UP) < 0.0: axis = _torso.global_basis.z
+	var error := axis.normalized()*angle
+	var denominator := 1.0+flight_pose_damping*delta+flight_pose_strength*delta*delta
+	var correction := ((error*flight_pose_strength-Vector3(structure.angular_velocity).slide(Vector3.UP)*(flight_pose_damping+flight_pose_strength*delta))/denominator).limit_length(maximum_flight_pose_acceleration)
+	var torque: Vector3 = Basis(structure.inertia)*correction
+	if flight_absolute_torque_limit_enabled: torque = torque.limit_length(maximum_pose_torque)
+	var submitted_torque := Vector3.ZERO
+	var maximum_error := 0.0
+	for body: PhysicalBodyPart3D in _parts:
+		if not _alive(body) or body.freeze or body.custom_integrator: continue
+		if PhysicalBodyPart3D.BodyPartTag.Torso in body.tags:
+			maximum_error = maxf(maximum_error,rad_to_deg(acos(clampf(body.global_basis.y.normalized().dot(Vector3.UP),-1.0,1.0))))
+			var local_error := body.global_basis.y.normalized().cross(up)
+			var local_correction := (local_error*flight_pose_strength-(body.angular_velocity-Vector3(structure.angular_velocity)).slide(Vector3.UP)*(flight_pose_damping+flight_pose_strength*delta))/denominator
+			var inverse := body.get_inverse_inertia_tensor()
+			var local_torque := Vector3.ZERO
+			if inverse.determinant() != 0.0: local_torque = inverse.inverse()*local_correction.limit_length(maximum_flight_pose_acceleration)
+			var body_torque := torque*(body.mass/float(structure.torso_mass))+local_torque
+			if flight_absolute_torque_limit_enabled: body_torque = body_torque.limit_length(maximum_pose_torque*body.mass/float(structure.torso_mass))
+			body.apply_torque(body_torque)
+			submitted_torque += body_torque
+	if _diagnostic_tracking:
+		_last_command["torso_torque_total"] = submitted_torque
+		_last_command["maximum_torso_error_degrees"] = maximum_error
+		_last_command["posture_error_degrees"] = rad_to_deg(angle)
+		_last_command["structure_mass"] = structure.mass
+		_last_command["structure_velocity"] = structure.velocity
+		_last_command["posture_acceleration"] = correction
+		_last_command["absolute_torque_limit_enabled"] = flight_absolute_torque_limit_enabled
 
 func get_leg_tuck_target(leg: Dictionary) -> Vector3:
 	var support: PhysicalBodyPart3D = leg.support
@@ -351,7 +449,7 @@ func get_flight_diagnostics() -> Dictionary:
 	for binding: Dictionary in _joints:
 		if not is_instance_valid(binding.joint) or not _alive(binding.a) or not _alive(binding.b): continue
 		joints.append({"joint":str(binding.joint.name),"a":str(binding.a.name),"b":str(binding.b.name),"visual_position":binding.joint.global_position,"distance_to_a":binding.joint.global_position.distance_to(binding.a.global_position),"distance_to_b":binding.joint.global_position.distance_to(binding.b.global_position),"z_lower":binding.joint.get_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_LOWER_LIMIT),"z_upper":binding.joint.get_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_UPPER_LIMIT)})
-	return {"state":State.keys()[state],"airborne":is_airborne(),"enabled":enabled,"character_enabled":_character_enabled,"elapsed":_elapsed,"fold_ratio":_fold_ratio,"standing_contact_elapsed":_standing_contact_elapsed,"landing_transition":_landing_transition,"landing_elapsed":_landing_elapsed,"ground_control_blend":get_ground_control_blend(),"contact_confirmation_required":standing_contact_confirmation_time,"gait_paused_by_flight":is_airborne(),"recovery_paused_by_flight":is_airborne(),"standing_contacts":has_standing_leg_contacts(),"minimum_standing_ratio":minimum_standing_leg_ratio,"raw_space":InputMap.has_action(ascend_action) and Input.is_action_pressed(ascend_action),"raw_ctrl":InputMap.has_action(descend_action) and Input.is_action_pressed(descend_action),"gated_space":InputMap.has_action(ascend_action) and PLAYER_CONTEXT.action_pressed(self,ascend_action),"gated_ctrl":InputMap.has_action(descend_action) and PLAYER_CONTEXT.action_pressed(self,descend_action),"force_semantics":"submitted commands, not solver impulses; only active in AIRBORNE","last_command":_last_command,"command_age_frames":Engine.get_physics_frames()-int(_last_command.get("frame",Engine.get_physics_frames())),"legs":rows,"joints":joints}
+	return {"state":State.keys()[state],"horizontal_target_speed":horizontal_speed,"airborne":is_airborne(),"enabled":enabled,"character_enabled":_character_enabled,"elapsed":_elapsed,"fold_ratio":_fold_ratio,"standing_contact_elapsed":_standing_contact_elapsed,"landing_transition":_landing_transition,"landing_elapsed":_landing_elapsed,"ground_control_blend":get_ground_control_blend(),"contact_confirmation_required":standing_contact_confirmation_time,"gait_paused_by_flight":is_airborne(),"recovery_paused_by_flight":is_airborne(),"standing_contacts":has_standing_leg_contacts(),"minimum_standing_ratio":minimum_standing_leg_ratio,"raw_space":InputMap.has_action(ascend_action) and Input.is_action_pressed(ascend_action),"raw_ctrl":InputMap.has_action(descend_action) and Input.is_action_pressed(descend_action),"gated_space":InputMap.has_action(ascend_action) and PLAYER_CONTEXT.action_pressed(self,ascend_action),"gated_ctrl":InputMap.has_action(descend_action) and PLAYER_CONTEXT.action_pressed(self,descend_action),"force_semantics":"submitted commands, not solver impulses; only active in AIRBORNE","last_command":_last_command,"command_age_frames":Engine.get_physics_frames()-int(_last_command.get("frame",Engine.get_physics_frames())),"legs":rows,"joints":joints}
 
 func get_ground_control_blend() -> float:
 	if not enabled or not _character_enabled or get_parent().is_planar_mode_active(): return 1.0

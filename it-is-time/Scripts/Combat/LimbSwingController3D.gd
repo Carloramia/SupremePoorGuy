@@ -12,6 +12,14 @@ const ARM_TAG: int = 2
 @export var diagnostic_logging: bool = false
 @export var terrain_cursor: Node3D
 
+@export_group("NPC Aiming")
+## Keep aiming during charge; allow a bounded extra wait before releasing.
+@export var npc_wait_for_aim: bool = true
+@export var npc_geometry_attack_range_enabled: bool = true
+@export_range(1.0, 90.0, 1.0) var npc_aim_tolerance_degrees: float = 12.0
+@export_range(0.0, 3.0, 0.01) var npc_aim_confirmation_time: float = 0.1
+@export_range(0.0, 5.0, 0.05) var npc_maximum_aim_wait: float = 1.0
+
 var _states: Array[Dictionary] = []
 var _body_owner_group: Dictionary = {}
 var _rest_geometry_by_binding: Dictionary = {}
@@ -19,6 +27,45 @@ var _active_damage_swings: int = 0
 var _npc_group := -1
 var _npc_charge_remaining := 0.0
 var _npc_target: Node3D
+var _npc_requested_charge := 0.0
+var _npc_aim_wait_elapsed := 0.0
+var _npc_aim_stable_elapsed := 0.0
+var _npc_aim_release_reason: StringName = &"charging"
+var _npc_reach_frame := -1
+var _npc_reach_cache: Dictionary = {}
+
+## Conservative broad-phase reach. Only the existing trajectory prediction
+## can authorize an attack inside this envelope.
+func get_npc_attack_maximum_range(action_id: StringName, target: Node3D) -> float:
+	if not npc_geometry_attack_range_enabled: return 0.0
+	if _npc_reach_frame != Engine.get_physics_frames():
+		_npc_reach_frame = Engine.get_physics_frames()
+		_npc_reach_cache.clear()
+	if not _npc_reach_cache.has(action_id):
+		var reach := 0.0
+		var origin := get_parent().get_node_or_null("Torso") as Node3D
+		for index: int in control_groups.size():
+			if control_groups[index] == null or control_groups[index].group_name != action_id or index >= _states.size(): continue
+			for member: Dictionary in _states[index].members:
+				var body := member.body as RigidBody3D
+				var anchor := member.anchor_body as RigidBody3D
+				if not is_instance_valid(body) or body.is_broken or not is_instance_valid(anchor): continue
+				var pivot := anchor.to_global(member.anchor_local_position)
+				var offset := (pivot - (origin.global_position if is_instance_valid(origin) else anchor.global_position)).slide(Vector3.UP).length()
+				for shape: CollisionShape3D in HIT_PREDICTION.shapes(body):
+					var bounds := shape.shape.get_debug_mesh().get_aabb()
+					var local_pose := body.global_transform.affine_inverse() * shape.global_transform
+					for corner: int in range(8):
+						var point := bounds.get_endpoint(corner)
+						var lever: Vector3 = Vector3(member.rest_lever_local) + Basis(member.rest_basis_local) * (local_pose * point)
+						reach = maxf(reach, offset + lever.length())
+		_npc_reach_cache[action_id] = reach
+	var target_radius := 0.0
+	for shape: CollisionShape3D in HIT_PREDICTION.shapes(target):
+		var bounds := shape.shape.get_debug_mesh().get_aabb()
+		for corner: int in range(8):
+			target_radius = maxf(target_radius, ((shape.global_transform * bounds.get_endpoint(corner)) - target.global_position).slide(Vector3.UP).length())
+	return float(_npc_reach_cache[action_id]) + target_radius
 const HIT_PREDICTION = preload("res://Scripts/Creatures/NPCAttackPrediction3D.gd")
 
 func predict_npc_attack(action_id: StringName, target: Node3D, charge: float, samples: int = 24, margin: float = 0.1) -> Dictionary:
@@ -95,6 +142,10 @@ func try_start_npc_attack(action_id: StringName, target: Node3D, charge: float) 
 			_npc_group = index
 			_npc_target = target
 			_npc_charge_remaining = maxf(charge,0.0)
+			_npc_requested_charge = _npc_charge_remaining
+			_npc_aim_wait_elapsed = 0.0
+			_npc_aim_stable_elapsed = 0.0
+			_npc_aim_release_reason = &"charging"
 			return true
 	return false
 
@@ -106,6 +157,42 @@ func cancel_npc_attack() -> void:
 	_npc_group = -1
 	_npc_target = null
 	_npc_charge_remaining = 0.0
+	_npc_aim_wait_elapsed = 0.0
+	_npc_aim_stable_elapsed = 0.0
+	_npc_aim_release_reason = &"cancelled"
+
+func _npc_should_hold_charge(delta: float) -> bool:
+	if _npc_group < 0 or get_group_state(_npc_group) != SwingState.CHARGING:
+		return false
+	var target := _get_selected_aim_target()
+	if not is_instance_valid(target) or target.is_queued_for_deletion() or (target is PhysicalBodyPart3D and target.is_broken):
+		cancel_npc_attack()
+		return false
+	var aligned := true
+	if npc_wait_for_aim and not _planar_mode_active():
+		for member: Dictionary in _states[_npc_group].members:
+			if int(member.mode) != SwingState.CHARGING or not member.preset.target_aim_enabled:
+				continue
+			if not is_instance_valid(member.body) or not is_instance_valid(member.anchor_body) or member.body.is_broken or member.anchor_body.is_broken:
+				continue
+			var aim := _calculate_target_aim(member, target.global_position)
+			if not aim.valid or absf(float(aim.error)) > deg_to_rad(npc_aim_tolerance_degrees):
+				aligned = false
+	_npc_aim_stable_elapsed = _npc_aim_stable_elapsed + delta if aligned else 0.0
+	if _npc_charge_remaining > 0.0:
+		return true
+	if _npc_aim_release_reason != &"charging":
+		return false
+	_npc_aim_wait_elapsed += delta
+	if aligned and _npc_aim_stable_elapsed >= npc_aim_confirmation_time:
+		_npc_aim_release_reason = &"aligned"
+	elif _npc_aim_wait_elapsed >= npc_maximum_aim_wait or not npc_wait_for_aim or _planar_mode_active():
+		_npc_aim_release_reason = &"aim_timeout"
+	else:
+		return true
+	if diagnostic_logging:
+		print("[npc_swing_aim] character=%s target=%s reason=%s extra_wait=%.3f charge=%.3f" % [get_parent().name, target.name, _npc_aim_release_reason, _npc_aim_wait_elapsed, _npc_requested_charge])
+	return false
 
 func _ready() -> void:
 	add_to_group(&"limb_swing_controllers")
@@ -125,12 +212,13 @@ func _physics_process(delta: float) -> void:
 		return
 	_ensure_runtime_states()
 	if npc_control: _npc_charge_remaining = maxf(_npc_charge_remaining-delta,0.0)
+	var npc_pressed := _npc_should_hold_charge(delta) if npc_control else false
 	for group_index: int in range(control_groups.size()):
 		var group := control_groups[group_index]
 		if group == null or not group.enabled:
 			_cancel_group(group_index)
 			continue
-		var pressed := group_index == _npc_group and _npc_charge_remaining > 0.0 if npc_control else PLAYER_CONTEXT.action_pressed(self, group.input_action)
+		var pressed := group_index == _npc_group and npc_pressed if npc_control else PLAYER_CONTEXT.action_pressed(self, group.input_action)
 		for member_state: Dictionary in _states[group_index].members:
 			_process_member(group_index, member_state, pressed, delta)
 
@@ -358,6 +446,9 @@ func _process_member(group_index: int, member_state: Dictionary, pressed: bool, 
 				_begin_member(group_index, member_state)
 		SwingState.CHARGING:
 			member_state.charge_time = minf(float(member_state.charge_time) + delta, maxf(preset.maximum_charge_time, preset.minimum_charge_time))
+			# Extra aiming time must not increase the configured attack's power.
+			if group_index == _npc_group:
+				member_state.charge_time = minf(float(member_state.charge_time), _npc_requested_charge)
 			if not pressed:
 				_release_member(group_index, member_state)
 			else:
@@ -548,7 +639,7 @@ func _calculate_target_aim(member_state: Dictionary, target_position: Vector3) -
 	var desired := (target_position - pivot).slide(up)
 	# A vertical Arm has no reliable horizontal heading; wait instead of choosing a random yaw.
 	if current.length_squared() < 0.0025 or desired.length_squared() < 0.0025:
-		return {"axis": up, "error": 0.0, "torque": Vector3.ZERO}
+		return {"valid": false, "axis": up, "error": 0.0, "torque": Vector3.ZERO}
 	current = current.normalized()
 	desired = desired.normalized()
 	var angle := atan2(up.dot(current.cross(desired)), clampf(current.dot(desired), -1.0, 1.0))
@@ -558,7 +649,7 @@ func _calculate_target_aim(member_state: Dictionary, target_position: Vector3) -
 	var relative_speed := (body.angular_velocity - anchor.angular_velocity).dot(up)
 	var magnitude := clampf(angle * preset.target_aim_stiffness - relative_speed * preset.target_aim_damping,
 		-preset.maximum_target_aim_torque, preset.maximum_target_aim_torque)
-	return {"axis": up, "error": angle, "torque": up * magnitude}
+	return {"valid": true, "axis": up, "error": angle, "torque": up * magnitude}
 
 func _apply_charge_target_aim(group_index: int, member_state: Dictionary, delta: float) -> void:
 	if _planar_mode_active():
@@ -566,7 +657,7 @@ func _apply_charge_target_aim(group_index: int, member_state: Dictionary, delta:
 		return
 	var preset := member_state.preset as LimbSwingPresetBase
 	var action := control_groups[group_index].input_action
-	var target := _get_selected_aim_target() if preset.target_aim_enabled and action in [&"MouseLeft", &"LeftMouse"] else null
+	var target := _get_selected_aim_target() if preset.target_aim_enabled and (group_index == _npc_group or action in [&"MouseLeft", &"LeftMouse"]) else null
 	var body := member_state.body as PhysicalBodyPart3D
 	var anchor := member_state.anchor_body as PhysicalBodyPart3D
 	if target == null or not is_instance_valid(anchor) or anchor.is_broken or body.is_broken:

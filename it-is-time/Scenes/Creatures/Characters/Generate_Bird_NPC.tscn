@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://kqb762mb5qvy"]
+
+[ext_resource type="PackedScene" uid="uid://b0j2xkqx4q8k2" path="res://Scenes/Creatures/Characters/Generate_Bird.tscn" id="1"]
+[ext_resource type="Script" uid="uid://dxxq5i44pbc7t" path="res://Scripts/Creatures/BirdNPCStateMachine3D.gd" id="2"]
+
+[node name="Generate_Bird_NPC" unique_id=46177130 instance=ExtResource("1")]
+faction_id = 1
+
+[node name="NPCStateMachine3D" parent="." index="8" unique_id=1086112578]
+script = ExtResource("2")
+automatic_takeoff = true
+attack_altitude = 8.0
+approach_distance = 8.0
+altitude_tolerance = 0.5
+obstacle_clearance = 2.0
+flight_obstacle_mask = 1
+use_attack_preferences = true
+preferred_attack_angle_degrees = 45.0
+preferred_attack_distance = 90.1
+attack_angle_tolerance_degrees = 10.0
+attack_distance_tolerance = 10.0
+maximum_preference_wait = 6.0

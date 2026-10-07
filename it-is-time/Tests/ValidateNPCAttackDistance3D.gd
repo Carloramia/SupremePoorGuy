@@ -64,11 +64,11 @@ func run() -> void:
 	ai._enemy = null
 	ai._scan_elapsed = 0.0
 	ai._update_combat(0.1)
-	check(ai._enemy == null,"Detection radius must limit acquisition independently of attack range")
+	check(ai._enemy == enemy,"Scene-wide perception must ignore the legacy detection radius")
 	data.detection_radius = 7.0
 	ai._scan_elapsed = 0.0
 	ai._update_combat(0.1)
-	check(ai._enemy == enemy,"Increasing detection radius must allow acquisition")
+	check(ai._enemy == enemy,"Legacy radius edits must not change scene-wide perception")
 	var ranged = ATTACK.new()
 	ranged.receiver_path = ^"AttackProbe"
 	ranged.action_id = &"ranged"

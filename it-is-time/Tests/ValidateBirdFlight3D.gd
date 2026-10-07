@@ -34,6 +34,10 @@ func run() -> void:
 	var flight := bird.get_node("BirdFlightController3D")
 	flight.diagnostic_logging_enabled = true
 	var movement := bird.get_node("GeneratedLegStepMovementController3D")
+	bird.get_node("NPCStateMachine3D").enabled = false
+	var commands := preload("res://Tests/InputMovementCommandSource.gd").new()
+	root.add_child(commands)
+	movement.command_source = commands
 	var original_geometry: Dictionary = {}
 	for foot: RigidBody3D in movement._chains:
 		original_geometry[foot] = {"length":movement._chains[foot].length,"anchor":movement._chains[foot].anchor}

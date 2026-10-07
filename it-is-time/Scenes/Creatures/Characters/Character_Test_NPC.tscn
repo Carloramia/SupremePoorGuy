@@ -16,6 +16,7 @@
 [ext_resource type="Resource" uid="uid://b037rsu81uy22" path="res://Resources/Combat/PrimaryArmSwing.tres" id="11_preset"]
 [ext_resource type="Resource" uid="uid://c7pwi1l10hn4a" path="res://Resources/AI/DefaultArmNPC.tres" id="12_behavior"]
 [ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/InventoryController3D.tscn" id="13_inventory"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/PhysicalFacingController3D.tscn" id="14_facing"]
 
 [sub_resource type="Resource" id="ArmBinding"]
 script = ExtResource("10_binding")
@@ -56,6 +57,7 @@ outline_enabled = false
 
 [node name="NPCStateMachine3D" parent="." unique_id=1791979637 instance=ExtResource("7_npc_state")]
 behavior = ExtResource("12_behavior")
+humanoid_xz_positioning = true
 
 [node name="LimbSwingController3D" parent="." unique_id=926103929 instance=ExtResource("9_swing")]
 
@@ -73,6 +75,9 @@ use_slow_movement_scale = true
 slow_movement_scale = 2.0
 use_fast_movement_scale = true
 fast_movement_scale = 2.0
+
+[node name="PhysicalFacingController3D" parent="." instance=ExtResource("14_facing")]
+movement_controller_path = NodePath("../NPCLegStepMovementController3D")
 
 [node name="Torso" parent="." unique_id=39849093 instance=ExtResource("2_edqjf")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.946879, 0)

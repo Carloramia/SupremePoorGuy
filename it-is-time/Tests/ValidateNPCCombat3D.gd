@@ -27,6 +27,8 @@ func actor(id: int, at: Vector3) -> Node3D:
 	var node := Node3D.new()
 	node.set_script(CHARACTER)
 	node.faction_id = id
+	# Combat-decision fixtures intentionally use roots/isolated Torso probes, not full anatomy.
+	node.require_head_and_torso_connectivity = false
 	root.add_child(node)
 	node.position = at
 	return node
@@ -85,7 +87,7 @@ func run() -> void:
 	root.add_child(wall)
 	wall.position = Vector3(2,3,0)
 	for frame: int in range(10): await physics_frame
-	check(not ai._visible(other) and ai._enemy == null,"An obstacle must block acquisition and attacks")
+	check(not ai._visible(other) and ai._enemy == other and not receiver.active,"Walls must prevent attacks but not scene-wide awareness")
 	wall.queue_free()
 	for frame: int in range(10): await physics_frame
 	check(ai._enemy == other,"Removing the obstacle must allow acquisition")

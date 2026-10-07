@@ -1,0 +1,40 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/PaperParts/ToSplit_1/Base/02_body_main.tscn" id="1_part"]
+
+[sub_resource type="Environment" id="Environment_preview"]
+background_mode = 1
+background_color = Color(0.1, 0.11, 0.13, 1)
+
+[node name="PaperVolumePreview" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_preview")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+position = Vector3(0, 0, 20)
+projection = 1
+size = 15.0
+current = true
+
+[node name="Front" parent="." instance=ExtResource("1_part")]
+position = Vector3(-2.226, -0.395, -1.494)
+rotation = Vector3(0, 0.7, 0)
+freeze = true
+paper_volume_thickness = 0.3
+
+[node name="Back" parent="." instance=ExtResource("1_part")]
+position = Vector3(2.214, -0.395, -1.479)
+rotation = Vector3(0, 2.45, 0)
+freeze = true
+paper_volume_thickness = 0.3
+
+[node name="FrontLabel" type="Label3D" parent="."]
+position = Vector3(-4, 3.4, 0)
+text = "正面 / Front"
+font_size = 48
+
+[node name="BackLabel" type="Label3D" parent="."]
+position = Vector3(4, 3.4, 0)
+text = "背面 / Back"
+font_size = 48

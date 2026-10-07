@@ -113,6 +113,8 @@ func handle_input(event: InputEvent) -> bool:
 	return false
 
 func try_start_action(action_id: StringName = &"foreleg_stomp") -> bool:
+	var dive := get_parent().get_node_or_null("BirdDiveAttackController3D")
+	if dive != null and dive.is_active(): return _reject(&"bird_dive_active")
 	_movement = get_node_or_null(movement_path)
 	if not enabled or is_active() or _cooldown > 0.0 or _movement == null or not _action_input_allowed(): return _reject(&"busy_or_input_blocked")
 	if not _movement.is_physics_processing() or _movement.recovery_control_active or _movement.simplified_physics_mode or _movement._planar_mode_active() or _movement._adhesion_release_time_remaining > 0.0: return _reject(&"physics_mode_or_recovery")

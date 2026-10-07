@@ -88,9 +88,11 @@ func _chain_intact(binding: Dictionary) -> bool:
 		if not is_instance_valid(joint) or joint.is_queued_for_deletion(): return false
 	return true
 
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:
 	diagnostics.clear()
 	if not enabled or not _character_enabled or _planar_active(): return
+	var dive := get_parent().get_node_or_null("BirdDiveAttackController3D")
+	if dive != null and dive.is_active(): return
 	for binding: Dictionary in bindings:
 		if not _chain_intact(binding): continue
 		_sync_direct_head_slack(binding)
@@ -105,7 +107,11 @@ func _physics_process(_delta: float) -> void:
 		var gain: float = head.head_position_gain if binding.has_neck else head.head_no_neck_position_gain
 		var damping: float = head.head_position_damping if binding.has_neck else head.head_no_neck_position_damping
 		var acceleration := position_error*maxf(gain,0.0)+velocity_error*maxf(damping,0.0)
-		if head.head_gravity_compensation: acceleration -= head.get_gravity()
+		var flight := get_parent().get_node_or_null("BirdFlightController3D")
+		var flight_owns_gravity: bool = flight != null and flight.is_airborne()
+		if flight_owns_gravity:
+			acceleration = (position_error*maxf(gain,0.0)+velocity_error*(maxf(damping,0.0)+maxf(gain,0.0)*delta))/(1.0+maxf(damping,0.0)*delta+maxf(gain,0.0)*delta*delta)
+		if head.head_gravity_compensation and not flight_owns_gravity: acceleration -= head.get_gravity()
 		var force := acceleration.limit_length(maxf(head.head_maximum_support_acceleration,0.0))*head.mass
 		if not head.head_position_support_enabled: force = Vector3.ZERO
 		head.apply_central_force(force)
@@ -117,11 +123,15 @@ func _physics_process(_delta: float) -> void:
 		var torque := Vector3.ZERO
 		if head.head_posture_damping_enabled:
 			var angular_acceleration := (error_vector*maxf(head.head_posture_gain,0.0)+angular_velocity_error*maxf(head.head_posture_damping,0.0)).limit_length(maxf(head.head_maximum_angular_acceleration,0.0))
+			if flight_owns_gravity:
+				var stiffness := maxf(head.head_posture_gain,0.0)
+				var angular_damping := maxf(head.head_posture_damping,0.0)
+				angular_acceleration = ((error_vector*stiffness+angular_velocity_error*(angular_damping+stiffness*delta))/(1.0+angular_damping*delta+stiffness*delta*delta)).limit_length(maxf(head.head_maximum_angular_acceleration,0.0))
 			var inverse := head.get_inverse_inertia_tensor()
 			if absf(inverse.determinant())>0.000000001:
 				torque = (inverse.inverse()*angular_acceleration).limit_length(maxf(head.head_maximum_posture_torque,0.0))
 			head.apply_torque(torque)
-		diagnostics.append({"head": head.name,"torso": torso.name,"has_neck": binding.has_neck,"position_error": position_error,"velocity_error": velocity_error,"force": force,"rotation_error_degrees": error_vector*(180.0/PI),"angular_velocity_error": angular_velocity_error,"posture_torque": torque,"linear_slack": binding.slack if not binding.has_neck else Vector3.ZERO})
+		diagnostics.append({"head": head.name,"torso": torso.name,"has_neck": binding.has_neck,"position_error": position_error,"velocity_error": velocity_error,"force": force,"gravity_compensation_owner": "flight" if flight_owns_gravity else "head","rotation_error_degrees": error_vector*(180.0/PI),"angular_velocity_error": angular_velocity_error,"posture_torque": torque,"linear_slack": binding.slack if not binding.has_neck else Vector3.ZERO})
 
 func get_head_support_diagnostics() -> Array[Dictionary]:
 	return diagnostics

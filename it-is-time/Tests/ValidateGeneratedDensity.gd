@@ -4,12 +4,25 @@ const CHARACTER = preload("res://Scripts/Creatures/GeneratedCreatureCharacter3D.
 const DATA = preload("res://Scripts/Creatures/GeneratedCreatureDensityData.gd")
 const BEAST = preload("res://Scenes/Creatures/Characters/Generate_Beast.tscn")
 const BIRD = preload("res://Scenes/Creatures/Characters/Generate_Bird.tscn")
+const BASE = preload("res://Scenes/Creatures/Characters/_SampleCharacter.tscn")
 
 func _initialize() -> void: call_deferred("run")
 
 func run() -> void:
+	var base := BASE.instantiate()
+	assert(base.mass_limits_enabled, "Base character must expose the enabled-by-default switch")
+	base.mass_limits_enabled = false
+	var packed := PackedScene.new()
+	assert(packed.pack(base) == OK)
+	var restored := packed.instantiate()
+	assert(not restored.mass_limits_enabled, "Base scene must preserve an overridden mass-limit switch")
+	restored.free()
+	base.free()
 	var beast := BEAST.instantiate()
 	var bird := BIRD.instantiate()
+	assert(beast.mass_limits_enabled and bird.mass_limits_enabled, "Both species must inherit the switch")
+	beast.mass_limits_enabled = false
+	assert(bird.mass_limits_enabled, "Each character must keep its own switch value")
 	assert(beast.density_data != null and bird.density_data != null)
 	assert(beast.density_data != bird.density_data, "Species must have separate presets")
 	beast.free()

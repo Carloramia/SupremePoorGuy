@@ -3,6 +3,40 @@ extends Node3D
 
 signal framework_generated(plan: Dictionary)
 
+const PART_SCENE_RULE = preload("res://Scripts/Creatures/Generators/GeneratedPartSceneRule.gd")
+@export_group("Physical Part Scenes")
+## Persistent rules; exact Part Name wins over Part Type. First match wins within each level.
+## Missing types use the character's standard TestCreature_Part scene.
+@export var part_scene_rules: Array[PART_SCENE_RULE] = []
+
+func get_part_scene_rule(part_type: String, part_name: String, part_key: String = "") -> PART_SCENE_RULE:
+	for rule: PART_SCENE_RULE in part_scene_rules:
+		if rule != null and not rule.part_key.is_empty() and rule.part_key == part_key: return rule
+	for rule: PART_SCENE_RULE in part_scene_rules:
+		if rule != null and rule.part_key.is_empty() and not rule.part_name.is_empty() and rule.matches(part_type, part_name): return rule
+	for rule: PART_SCENE_RULE in part_scene_rules:
+		if rule != null and rule.part_key.is_empty() and rule.part_name.is_empty() and rule.matches(part_type, part_name): return rule
+	return null
+
+## Clone mutable settings without duplicating immutable scene assets.
+static func _copy_default_value(value: Variant) -> Variant:
+	if value is PackedScene: return value
+	if value is PART_SCENE_RULE:
+		var copy := PART_SCENE_RULE.new()
+		for key: String in ["part_name", "part_key", "part_type", "part_scene", "size_mode", "size_multiplier", "use_joint_markers"]:
+			copy.set(key, value.get(key))
+		return copy
+	if value is Resource: return value.duplicate(true)
+	if value is Array:
+		var copy: Array = value.duplicate()
+		for index: int in copy.size(): copy[index] = _copy_default_value(value[index])
+		return copy
+	if value is Dictionary:
+		var copy: Dictionary = value.duplicate()
+		for key: Variant in copy: copy[key] = _copy_default_value(value[key])
+		return copy
+	return value
+
 @export_group("Overall Size")
 ## Uniform size multiplier around the generator origin, applied after layout validation.
 ## Generate again to update the frame and the physical character. Does not scale the root Node3D.
@@ -119,34 +153,78 @@ func _update_label_sizes(node: Node) -> void:
 func _ready() -> void:
 	_random.randomize()
 	_update_label_sizes(self)
+	if Engine.is_editor_hint():
+		var filesystem := EditorInterface.get_resource_filesystem()
+		if not filesystem.filesystem_changed.is_connected(_on_defaults_filesystem_changed):
+			filesystem.filesystem_changed.connect(_on_defaults_filesystem_changed)
+		if not filesystem.resources_reload.is_connected(_on_defaults_resources_changed):
+			filesystem.resources_reload.connect(_on_defaults_resources_changed)
+		if not filesystem.resources_reimported.is_connected(_on_defaults_resources_changed):
+			filesystem.resources_reimported.connect(_on_defaults_resources_changed)
 
 const DEFAULTS_DATA = preload("res://Scripts/Creatures/Generators/CreatureGeneratorDefaults.gd")
+
+# Keep a strong reference: ResourceLoader's path cache alone does not retain this snapshot.
+var _defaults_preset: DEFAULTS_DATA
+var _defaults_cached_path: String = ""
+var _defaults_loaded: bool = false
+var _defaults_modified_time: int = 0
+
+func _get_default_preset(force_reload: bool = false) -> DEFAULTS_DATA:
+	var path := _get_defaults_path()
+	if _defaults_loaded and path == _defaults_cached_path and not force_reload:
+		return _defaults_preset
+	if _defaults_preset != null and _defaults_preset.changed.is_connected(_on_default_preset_changed):
+		_defaults_preset.changed.disconnect(_on_default_preset_changed)
+	_defaults_preset = null
+	_defaults_cached_path = path
+	_defaults_loaded = true
+	_defaults_modified_time = 0
+	if not path.is_empty() and FileAccess.file_exists(path):
+		var mode := ResourceLoader.CACHE_MODE_REPLACE if force_reload else ResourceLoader.CACHE_MODE_REUSE
+		_defaults_preset = ResourceLoader.load(path, "", mode) as DEFAULTS_DATA
+		_defaults_modified_time = FileAccess.get_modified_time(path)
+		if _defaults_preset != null:
+			_defaults_preset.changed.connect(_on_default_preset_changed)
+	return _defaults_preset
+
+func _on_default_preset_changed() -> void:
+	# Refresh revert controls, never overwrite existing scene/instance settings.
+	notify_property_list_changed()
+
+func _on_defaults_filesystem_changed() -> void:
+	if not _defaults_loaded or _defaults_cached_path.is_empty(): return
+	var modified := FileAccess.get_modified_time(_defaults_cached_path) if FileAccess.file_exists(_defaults_cached_path) else 0
+	if modified == _defaults_modified_time: return
+	_get_default_preset(true)
+	notify_property_list_changed()
+
+func _on_defaults_resources_changed(paths: PackedStringArray) -> void:
+	if _defaults_cached_path.is_empty() or _defaults_cached_path not in paths: return
+	_get_default_preset(true)
+	notify_property_list_changed()
 
 func _get_defaults_path() -> String:
 	return ""
 
 func _property_can_revert(property: StringName) -> bool:
-	var path := _get_defaults_path()
-	if path.is_empty() or not FileAccess.file_exists(path): return false
-	var preset := load(path) as DEFAULTS_DATA
+	var preset := _get_default_preset()
 	return preset != null and preset.parameters.has(property)
 
 func _property_get_revert(property: StringName) -> Variant:
-	var preset := load(_get_defaults_path()) as DEFAULTS_DATA
+	var preset := _get_default_preset()
 	if preset == null: return null
 	var value: Variant = preset.parameters.get(property)
-	return value.duplicate(true) if value is Resource else value
+	return _copy_default_value(value)
 
 func _apply_default_preset() -> void:
-	var path := _get_defaults_path()
-	if path.is_empty() or not FileAccess.file_exists(path): return
-	var preset := load(path) as DEFAULTS_DATA
+	var preset := _get_default_preset()
 	if preset == null: return
 	for property: Dictionary in get_property_list():
 		if (int(property.usage) & PROPERTY_USAGE_EDITOR) == 0: continue
 		if not preset.parameters.has(property.name): continue
 		var value: Variant = preset.parameters[property.name]
-		set(property.name,value.duplicate(true) if value is Resource else value)
+		set(property.name, _copy_default_value(value))
 
 func _capture_default_parameters() -> Dictionary:
 	var parameters: Dictionary = {}
@@ -154,8 +232,7 @@ func _capture_default_parameters() -> Dictionary:
 		if (int(property.usage) & PROPERTY_USAGE_EDITOR) == 0 or (int(property.usage) & PROPERTY_USAGE_SCRIPT_VARIABLE) == 0: continue
 		var value: Variant = get(property.name)
 		if value is Callable: continue
-		if value is Resource: value = value.duplicate(true)
-		parameters[property.name] = value
+		parameters[property.name] = _copy_default_value(value)
 	return parameters
 
 func _save_default_preset(path: String) -> bool:
@@ -168,7 +245,10 @@ func _save_default_preset(path: String) -> bool:
 		return false
 	# Refresh cached defaults for subsequent instances without changing their live values.
 	var cached := load(path) as DEFAULTS_DATA
-	if cached != null: cached.parameters = preset.parameters.duplicate(true)
+	if cached != null: cached.parameters = _copy_default_value(preset.parameters)
+	if path == _get_defaults_path():
+		_get_default_preset()
+		_defaults_modified_time = FileAccess.get_modified_time(path)
 	notify_property_list_changed()
 	return true
 

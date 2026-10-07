@@ -33,7 +33,10 @@ func _validate() -> void:
 	var state_machine := npc.get_node("NPCStateMachine3D")
 	assert(state_machine.get("current_state") in [state_machine.State.MOVE_TO_TARGET,state_machine.State.ATTACK,state_machine.State.WAITING])
 	assert(state_machine._is_enemy(state_machine._enemy))
-	assert(state_machine.get("_target") == state_machine._enemy.get_combat_anchor())
+	# Combat selects a nearby Torso; multi-Torso enemies need not target the largest-mass anchor.
+	var target: PhysicalBodyPart3D = state_machine.get("_target")
+	assert(target != null and target in state_machine._enemy._get_physical_body_parts())
+	assert(PhysicalBodyPart3D.BodyPartTag.Torso in target.tags and not target.is_broken)
 	assert(navigation_mesh.get_polygon_count() > 0)
 	print("NAVIGATION_NPC_SPAWNER_VALIDATION_PASSED")
 	level.queue_free()

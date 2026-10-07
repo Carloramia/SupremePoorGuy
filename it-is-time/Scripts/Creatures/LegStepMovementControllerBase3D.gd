@@ -729,10 +729,15 @@ func try_start_step(movement_direction: Vector3 = Vector3.RIGHT) -> bool:
 
 ## Shares landing validation, swing tracking and contact confirmation with walking.
 func try_start_turn_step(leg: RigidBody3D, sample_position: Vector3, duration: float, height: float) -> bool:
-	if not _automatic_step_cadence_allows(): return false
+	_last_landing_rejection_reason = &""
+	if not _automatic_step_cadence_allows():
+		_last_landing_rejection_reason = &"cadence_wait"
+		return false
 	if _step_state != StepState.IDLE or not is_instance_valid(leg) or _is_body_broken(leg):
+		_last_landing_rejection_reason = &"step_busy_or_invalid_leg"
 		return false
 	if not _can_start_step_with_support(leg):
+		_last_landing_rejection_reason = &"insufficient_support"
 		return false
 	var foot := _get_foot_world_position(leg)
 	var ray_from := Vector3(sample_position.x, foot.y + ray_start_height, sample_position.z)
@@ -753,6 +758,9 @@ func try_start_turn_step(leg: RigidBody3D, sample_position: Vector3, duration: f
 		profile.velocity_gain = 2.0 * sqrt(gain)
 		profile.step_acceleration = clampf(8.0 * maxf((_step_target - leg.global_position).length(), height) / (_active_step_duration * _active_step_duration) + 9.8, 30.0, 2000.0)
 	return true
+
+func get_turn_step_rejection_reason() -> StringName:
+	return _last_landing_rejection_reason
 
 ## Keeps the same moving leg, but replaces its old target with one based on the new input.
 func replan_active_step(new_direction: Vector3) -> bool:
@@ -1805,6 +1813,20 @@ func _get_foot_world_position(leg: RigidBody3D) -> Vector3:
 	if collision == null:
 		return leg.global_position
 	var box := collision.shape as BoxShape3D
+	if collision.shape is ConvexPolygonShape3D:
+		# Imported paper feet use an offset polygon, not a centered box.
+		var points := (collision.shape as ConvexPolygonShape3D).points
+		var lowest := INF
+		for point: Vector3 in points:
+			lowest = minf(lowest,(collision.global_transform * point).y)
+		var sole := Vector3.ZERO
+		var count := 0
+		for point: Vector3 in points:
+			var world_point := collision.global_transform * point
+			if world_point.y <= lowest + 0.001:
+				sole += world_point
+				count += 1
+		return sole / float(count) if count > 0 else collision.global_position
 	if box == null:
 		return collision.global_position
 	return collision.global_transform * Vector3(0.0, -box.size.y * 0.5, 0.0)

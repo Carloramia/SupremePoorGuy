@@ -1,15 +1,481 @@
-[gd_scene format=3 uid="uid://b0j2xkqx4q8k2"]
+[gd_scene format=4 uid="uid://b0j2xkqx4q8k2"]
 
 [ext_resource type="PackedScene" uid="uid://cxif8fjbfymmg" path="res://Scenes/Creatures/Characters/_SampleCharacter.tscn" id="1_base"]
 [ext_resource type="Script" uid="uid://ctnhv1466mp6l" path="res://Scripts/Creatures/GeneratedCreatureCharacter3D.gd" id="2_character"]
-[ext_resource type="PackedScene" uid="uid://bo4votgicjac" path="res://Scenes/Creatures/Generators/BirdGenerator.tscn" id="3_generator"]
+[ext_resource type="Script" uid="uid://c1k5qhc2uqp5n" path="res://Scripts/Creatures/Generators/BirdGenerator.gd" id="3_generator"]
 [ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/GeneratedLegStepMovementController3D.tscn" id="4_movement"]
-[ext_resource type="Resource" uid="uid://vm2r7a3jebd2" path="res://Resources/Movement/GeneratedMultiLegWalk.tres" id="5_gait"]
+[ext_resource type="Resource" path="res://Resources/Movement/BirdGroundWalk.tres" id="5_gait"]
 [ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/CreatureRecoveryStateMachine3D.tscn" id="6_recovery"]
 [ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/CreatureActionController3D.tscn" id="7_action"]
+[ext_resource type="PackedScene" uid="uid://bxchfdbxm5uur" path="res://Scenes/Creatures/Bodyparts/PhysicalTestCreatureParts/TestCreature_Part.tscn" id="11_fivow"]
+[ext_resource type="Resource" path="res://Resources/AI/BirdDiveBehavior.tres" id="bird_behavior"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/NPCStateMachine3D.tscn" id="bird_npc"]
 [ext_resource type="Resource" uid="uid://dtcceqxofackn" path="res://Resources/Creatures/BirdDensity.tres" id="density_preset"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/BirdDiveAttackController3D.tscn" id="dive_controller"]
 [ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/BirdFlightController3D.tscn" id="flight_controller"]
 [ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/WingPoseController3D.tscn" id="wing_controller"]
+
+[sub_resource type="Curve" id="Curve_yi0ms"]
+_data = [Vector2(0, 0.19101131), 0.0, 0.0, 0, 0, Vector2(0.44957983, 0.77528095), 0.0, 0.0, 0, 0, Vector2(1, 0.3370787), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Curve" id="Curve_p8iwf"]
+_limits = [-3.0, 3.0, 0.0, 1.0]
+_data = [Vector2(0, -0.32458997), 0.0, 0.0, 0, 0, Vector2(0.4873949, -0.9101124), 0.0, 0.0, 0, 0, Vector2(0.9397759, -0.60000014), 0.0, 0.0, 0, 0, Vector2(1, -0.46229506), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="Curve" id="Curve_2l0wg"]
+_limits = [-3.0, 3.0, 0.0, 1.0]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_x21g4"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fivow"]
+shading_mode = 0
+albedo_color = Color(0.2, 0.9, 1, 1)
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_ndxdj"]
+_surfaces = [{
+"aabb": AABB(-0.3, -0.15, -0.1, 0.6, 0.3, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("mpmZvpqZGb7NzMy9mpmZPpqZGb7NzMy9mpmZPpqZGb7NzMy9mpmZPpqZGT7NzMy9mpmZPpqZGT7NzMy9mpmZvpqZGT7NzMy9mpmZvpqZGT7NzMy9mpmZvpqZGb7NzMy9mpmZvpqZGb7NzMw9mpmZPpqZGb7NzMw9mpmZPpqZGb7NzMw9mpmZPpqZGT7NzMw9mpmZPpqZGT7NzMw9mpmZvpqZGT7NzMw9mpmZvpqZGT7NzMw9mpmZvpqZGb7NzMw9mpmZvpqZGb7NzMy9mpmZvpqZGb7NzMw9mpmZPpqZGb7NzMy9mpmZPpqZGb7NzMw9mpmZPpqZGT7NzMy9mpmZPpqZGT7NzMw9mpmZvpqZGT7NzMy9mpmZvpqZGT7NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_fxk61"]
+_surfaces = [{
+"aabb": AABB(-0.18402512, 0.15, 0, 0.18402512, 0.7910273, 1e-05),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 4,
+"vertex_data": PackedByteArray("AAAAAJqZGT4AAAAAFXE8vgrOBD8AAAAAFXE8vgrOBD8AAAAAf+2cvSrncD8AAAAA")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_3stvl"]
+_surfaces = [{
+"aabb": AABB(-0.15, -0.2060678, -0.1, 0.3, 0.4121356, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("mpkZvnADU77NzMy9mpkZPnADU77NzMy9mpkZPnADU77NzMy9mpkZPnADUz7NzMy9mpkZPnADUz7NzMy9mpkZvnADUz7NzMy9mpkZvnADUz7NzMy9mpkZvnADU77NzMy9mpkZvnADU77NzMw9mpkZPnADU77NzMw9mpkZPnADU77NzMw9mpkZPnADUz7NzMw9mpkZPnADUz7NzMw9mpkZvnADUz7NzMw9mpkZvnADUz7NzMw9mpkZvnADU77NzMw9mpkZvnADU77NzMy9mpkZvnADU77NzMw9mpkZPnADU77NzMy9mpkZPnADU77NzMw9mpkZPnADUz7NzMy9mpkZPnADUz7NzMw9mpkZvnADUz7NzMy9mpkZvnADUz7NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_xlmb8"]
+_surfaces = [{
+"aabb": AABB(-0.15, -0.21785142, -0.1, 0.3, 0.43570283, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("mpkZvnEUX77NzMy9mpkZPnEUX77NzMy9mpkZPnEUX77NzMy9mpkZPnEUXz7NzMy9mpkZPnEUXz7NzMy9mpkZvnEUXz7NzMy9mpkZvnEUXz7NzMy9mpkZvnEUX77NzMy9mpkZvnEUX77NzMw9mpkZPnEUX77NzMw9mpkZPnEUX77NzMw9mpkZPnEUXz7NzMw9mpkZPnEUXz7NzMw9mpkZvnEUXz7NzMw9mpkZvnEUXz7NzMw9mpkZvnEUX77NzMw9mpkZvnEUX77NzMy9mpkZvnEUX77NzMw9mpkZPnEUX77NzMy9mpkZPnEUX77NzMw9mpkZPnEUXz7NzMy9mpkZPnEUXz7NzMw9mpkZvnEUXz7NzMy9mpkZvnEUXz7NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_y7fa1"]
+_surfaces = [{
+"aabb": AABB(-0.3, -0.15, -0.1, 0.6, 0.3, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("mpmZvpqZGb7NzMy9mpmZPpqZGb7NzMy9mpmZPpqZGb7NzMy9mpmZPpqZGT7NzMy9mpmZPpqZGT7NzMy9mpmZvpqZGT7NzMy9mpmZvpqZGT7NzMy9mpmZvpqZGb7NzMy9mpmZvpqZGb7NzMw9mpmZPpqZGb7NzMw9mpmZPpqZGb7NzMw9mpmZPpqZGT7NzMw9mpmZPpqZGT7NzMw9mpmZvpqZGT7NzMw9mpmZvpqZGT7NzMw9mpmZvpqZGb7NzMw9mpmZvpqZGb7NzMy9mpmZvpqZGb7NzMw9mpmZPpqZGb7NzMy9mpmZPpqZGb7NzMw9mpmZPpqZGT7NzMy9mpmZPpqZGT7NzMw9mpmZvpqZGT7NzMy9mpmZvpqZGT7NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_uy5o8"]
+_surfaces = [{
+"aabb": AABB(-0.18402512, 0.15, 0, 0.18402512, 0.7910273, 1e-05),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 4,
+"vertex_data": PackedByteArray("AAAAAJqZGT4AAACAFXE8vgrOBD8AAACAFXE8vgrOBD8AAACAf+2cvSrncD8AAACA")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_b1e11"]
+_surfaces = [{
+"aabb": AABB(-0.15, -0.2060678, -0.1, 0.3, 0.4121356, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("mpkZvnADU77NzMy9mpkZPnADU77NzMy9mpkZPnADU77NzMy9mpkZPnADUz7NzMy9mpkZPnADUz7NzMy9mpkZvnADUz7NzMy9mpkZvnADUz7NzMy9mpkZvnADU77NzMy9mpkZvnADU77NzMw9mpkZPnADU77NzMw9mpkZPnADU77NzMw9mpkZPnADUz7NzMw9mpkZPnADUz7NzMw9mpkZvnADUz7NzMw9mpkZvnADUz7NzMw9mpkZvnADU77NzMw9mpkZvnADU77NzMy9mpkZvnADU77NzMw9mpkZPnADU77NzMy9mpkZPnADU77NzMw9mpkZPnADUz7NzMy9mpkZPnADUz7NzMw9mpkZvnADUz7NzMy9mpkZvnADUz7NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_joxlc"]
+_surfaces = [{
+"aabb": AABB(-0.15, -0.21785142, -0.1, 0.3, 0.43570283, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("mpkZvnEUX77NzMy9mpkZPnEUX77NzMy9mpkZPnEUX77NzMy9mpkZPnEUXz7NzMy9mpkZPnEUXz7NzMy9mpkZvnEUXz7NzMy9mpkZvnEUXz7NzMy9mpkZvnEUX77NzMy9mpkZvnEUX77NzMw9mpkZPnEUX77NzMw9mpkZPnEUX77NzMw9mpkZPnEUXz7NzMw9mpkZPnEUXz7NzMw9mpkZvnEUXz7NzMw9mpkZvnEUXz7NzMw9mpkZvnEUX77NzMw9mpkZvnEUX77NzMy9mpkZvnEUX77NzMw9mpkZPnEUX77NzMy9mpkZPnEUX77NzMw9mpkZPnEUXz7NzMy9mpkZPnEUXz7NzMw9mpkZvnEUXz7NzMy9mpkZvnEUXz7NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_bfaxg"]
+_surfaces = [{
+"aabb": AABB(-0.21185246, 1.0033101, -0.2232554, 0.2028633, 0.19175053, 0.4465108),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 20,
+"vertex_data": PackedByteArray("f+2cvcimiz/NzEw+CBLLvQBZjD8AAAAAf+2cvcimiz/NzEy+CBLLvQBZjD8AAAAAQEcTvL/3mD8QnWQ+CBLLvQBZjD8AAAAAQEcTvL/3mD8QnWS+CBLLvQBZjD8AAAAA2u9YvndsgD9YPai9CBLLvQBZjD8AAAAA2u9YvndsgD9YPag9CBLLvQBZjD8AAAAAQEcTvL/3mD8QnWQ+QEcTvL/3mD8QnWS+QEcTvL/3mD8QnWS+2u9YvndsgD9YPai92u9YvndsgD9YPai92u9YvndsgD9YPag9QEcTvL/3mD8QnWQ+2u9YvndsgD9YPag9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_5psgi"]
+_surfaces = [{
+"aabb": AABB(-0.25, -0.2, -0.1, 0.5, 0.4, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("AACAvs3MTL7NzMy9AACAPs3MTL7NzMy9AACAPs3MTL7NzMy9AACAPs3MTD7NzMy9AACAPs3MTD7NzMy9AACAvs3MTD7NzMy9AACAvs3MTD7NzMy9AACAvs3MTL7NzMy9AACAvs3MTL7NzMw9AACAPs3MTL7NzMw9AACAPs3MTL7NzMw9AACAPs3MTD7NzMw9AACAPs3MTD7NzMw9AACAvs3MTD7NzMw9AACAvs3MTD7NzMw9AACAvs3MTL7NzMw9AACAvs3MTL7NzMy9AACAvs3MTL7NzMw9AACAPs3MTL7NzMy9AACAPs3MTL7NzMw9AACAPs3MTD7NzMy9AACAPs3MTD7NzMw9AACAvs3MTD7NzMy9AACAvs3MTD7NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_shpsr"]
+_surfaces = [{
+"aabb": AABB(-0.25, -0.2, -0.1, 0.5, 0.4, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("AACAvs3MTL7NzMy9AACAPs3MTL7NzMy9AACAPs3MTL7NzMy9AACAPs3MTD7NzMy9AACAPs3MTD7NzMy9AACAvs3MTD7NzMy9AACAvs3MTD7NzMy9AACAvs3MTL7NzMy9AACAvs3MTL7NzMw9AACAPs3MTL7NzMw9AACAPs3MTL7NzMw9AACAPs3MTD7NzMw9AACAPs3MTD7NzMw9AACAvs3MTD7NzMw9AACAvs3MTD7NzMw9AACAvs3MTL7NzMw9AACAvs3MTL7NzMy9AACAvs3MTL7NzMw9AACAPs3MTL7NzMy9AACAPs3MTL7NzMw9AACAPs3MTD7NzMy9AACAPs3MTD7NzMw9AACAvs3MTD7NzMy9AACAvs3MTD7NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_ulsgl"]
+_surfaces = [{
+"aabb": AABB(-0.2, -0.1606519, -0.1, 0.4, 0.3213038, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("zcxMvu+BJL7NzMy9zcxMPu+BJL7NzMy9zcxMPu+BJL7NzMy9zcxMPu+BJD7NzMy9zcxMPu+BJD7NzMy9zcxMvu+BJD7NzMy9zcxMvu+BJD7NzMy9zcxMvu+BJL7NzMy9zcxMvu+BJL7NzMw9zcxMPu+BJL7NzMw9zcxMPu+BJL7NzMw9zcxMPu+BJD7NzMw9zcxMPu+BJD7NzMw9zcxMvu+BJD7NzMw9zcxMvu+BJD7NzMw9zcxMvu+BJL7NzMw9zcxMvu+BJL7NzMy9zcxMvu+BJL7NzMw9zcxMPu+BJL7NzMy9zcxMPu+BJL7NzMw9zcxMPu+BJD7NzMy9zcxMPu+BJD7NzMw9zcxMvu+BJD7NzMy9zcxMvu+BJD7NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_b7t5a"]
+_surfaces = [{
+"aabb": AABB(-0.2, -0.3036268, -0.1, 0.4, 0.6072536, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("zcxMvvl0m77NzMy9zcxMPvl0m77NzMy9zcxMPvl0m77NzMy9zcxMPvl0mz7NzMy9zcxMPvl0mz7NzMy9zcxMvvl0mz7NzMy9zcxMvvl0mz7NzMy9zcxMvvl0m77NzMy9zcxMvvl0m77NzMw9zcxMPvl0m77NzMw9zcxMPvl0m77NzMw9zcxMPvl0mz7NzMw9zcxMPvl0mz7NzMw9zcxMvvl0mz7NzMw9zcxMvvl0mz7NzMw9zcxMvvl0m77NzMw9zcxMvvl0m77NzMy9zcxMvvl0m77NzMw9zcxMPvl0m77NzMy9zcxMPvl0m77NzMw9zcxMPvl0mz7NzMy9zcxMPvl0mz7NzMw9zcxMvvl0mz7NzMy9zcxMvvl0mz7NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_cn110"]
+_surfaces = [{
+"aabb": AABB(-0.2, -0.5034902, -0.1, 0.4, 1.0069804, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("zcxMvrzkAL/NzMy9zcxMPrzkAL/NzMy9zcxMPrzkAL/NzMy9zcxMPrzkAD/NzMy9zcxMPrzkAD/NzMy9zcxMvrzkAD/NzMy9zcxMvrzkAD/NzMy9zcxMvrzkAL/NzMy9zcxMvrzkAL/NzMw9zcxMPrzkAL/NzMw9zcxMPrzkAL/NzMw9zcxMPrzkAD/NzMw9zcxMPrzkAD/NzMw9zcxMvrzkAD/NzMw9zcxMvrzkAD/NzMw9zcxMvrzkAL/NzMw9zcxMvrzkAL/NzMy9zcxMvrzkAL/NzMw9zcxMPrzkAL/NzMy9zcxMPrzkAL/NzMw9zcxMPrzkAD/NzMy9zcxMPrzkAD/NzMw9zcxMvrzkAD/NzMy9zcxMvrzkAD/NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_jlmt3"]
+_surfaces = [{
+"aabb": AABB(-0.2, -0.48513997, -0.1, 0.4, 0.97027993, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("zcxMvkRk+L7NzMy9zcxMPkRk+L7NzMy9zcxMPkRk+L7NzMy9zcxMPkRk+D7NzMy9zcxMPkRk+D7NzMy9zcxMvkRk+D7NzMy9zcxMvkRk+D7NzMy9zcxMvkRk+L7NzMy9zcxMvkRk+L7NzMw9zcxMPkRk+L7NzMw9zcxMPkRk+L7NzMw9zcxMPkRk+D7NzMw9zcxMPkRk+D7NzMw9zcxMvkRk+D7NzMw9zcxMvkRk+D7NzMw9zcxMvkRk+L7NzMw9zcxMvkRk+L7NzMy9zcxMvkRk+L7NzMw9zcxMPkRk+L7NzMy9zcxMPkRk+L7NzMw9zcxMPkRk+D7NzMy9zcxMPkRk+D7NzMw9zcxMvkRk+D7NzMy9zcxMvkRk+D7NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_qsmex"]
+_surfaces = [{
+"aabb": AABB(-0.2, -0.35492986, -0.1, 0.4, 0.7098597, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("zcxMvl65tb7NzMy9zcxMPl65tb7NzMy9zcxMPl65tb7NzMy9zcxMPl65tT7NzMy9zcxMPl65tT7NzMy9zcxMvl65tT7NzMy9zcxMvl65tT7NzMy9zcxMvl65tb7NzMy9zcxMvl65tb7NzMw9zcxMPl65tb7NzMw9zcxMPl65tb7NzMw9zcxMPl65tT7NzMw9zcxMPl65tT7NzMw9zcxMvl65tT7NzMw9zcxMvl65tT7NzMw9zcxMvl65tb7NzMw9zcxMvl65tb7NzMy9zcxMvl65tb7NzMw9zcxMPl65tb7NzMy9zcxMPl65tb7NzMw9zcxMPl65tT7NzMy9zcxMPl65tT7NzMw9zcxMvl65tT7NzMy9zcxMvl65tT7NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_mxrad"]
+_surfaces = [{
+"aabb": AABB(-0.2, -0.24907021, -0.1, 0.4, 0.49814042, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("zcxMvkMMf77NzMy9zcxMPkMMf77NzMy9zcxMPkMMf77NzMy9zcxMPkMMfz7NzMy9zcxMPkMMfz7NzMy9zcxMvkMMfz7NzMy9zcxMvkMMfz7NzMy9zcxMvkMMf77NzMy9zcxMvkMMf77NzMw9zcxMPkMMf77NzMw9zcxMPkMMf77NzMw9zcxMPkMMfz7NzMw9zcxMPkMMfz7NzMw9zcxMvkMMfz7NzMw9zcxMvkMMfz7NzMw9zcxMvkMMf77NzMw9zcxMvkMMf77NzMy9zcxMvkMMf77NzMw9zcxMPkMMf77NzMy9zcxMPkMMf77NzMw9zcxMPkMMfz7NzMy9zcxMPkMMfz7NzMw9zcxMvkMMfz7NzMy9zcxMvkMMfz7NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_6v28v"]
+_surfaces = [{
+"aabb": AABB(1, 1.6636776, 0, 0.3943436, 1e-05, 1e-05),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 2,
+"vertex_data": PackedByteArray("AACAP2Pz1D8AAACA2nmyP2Pz1D8AAAAA")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_v503r"]
+_surfaces = [{
+"aabb": AABB(-0.2, -0.1971718, -0.1, 0.4, 0.3943436, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("zcxMvmjnSb7NzMy9zcxMPmjnSb7NzMy9zcxMPmjnSb7NzMy9zcxMPmjnST7NzMy9zcxMPmjnST7NzMy9zcxMvmjnST7NzMy9zcxMvmjnST7NzMy9zcxMvmjnSb7NzMy9zcxMvmjnSb7NzMw9zcxMPmjnSb7NzMw9zcxMPmjnSb7NzMw9zcxMPmjnST7NzMw9zcxMPmjnST7NzMw9zcxMvmjnST7NzMw9zcxMvmjnST7NzMw9zcxMvmjnSb7NzMw9zcxMvmjnSb7NzMy9zcxMvmjnSb7NzMw9zcxMPmjnSb7NzMy9zcxMPmjnSb7NzMw9zcxMPmjnST7NzMy9zcxMPmjnST7NzMw9zcxMvmjnST7NzMy9zcxMvmjnST7NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_m2cno"]
+_surfaces = [{
+"aabb": AABB(-0.35, -0.15, -0.1, 0.7, 0.3, 0.2),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("MzOzvpqZGb7NzMy9MzOzPpqZGb7NzMy9MzOzPpqZGb7NzMy9MzOzPpqZGT7NzMy9MzOzPpqZGT7NzMy9MzOzvpqZGT7NzMy9MzOzvpqZGT7NzMy9MzOzvpqZGb7NzMy9MzOzvpqZGb7NzMw9MzOzPpqZGb7NzMw9MzOzPpqZGb7NzMw9MzOzPpqZGT7NzMw9MzOzPpqZGT7NzMw9MzOzvpqZGT7NzMw9MzOzvpqZGT7NzMw9MzOzvpqZGb7NzMw9MzOzvpqZGb7NzMy9MzOzvpqZGb7NzMw9MzOzPpqZGb7NzMy9MzOzPpqZGb7NzMw9MzOzPpqZGT7NzMy9MzOzPpqZGT7NzMw9MzOzvpqZGT7NzMy9MzOzvpqZGT7NzMw9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_iyy8r"]
+_surfaces = [{
+"aabb": AABB(-0.3, -0.3, -0.04, 0.6, 0.6, 0.08),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("mpmZvpqZmb4K1yO9mpmZPpqZmb4K1yO9mpmZPpqZmb4K1yO9mpmZPpqZmT4K1yO9mpmZPpqZmT4K1yO9mpmZvpqZmT4K1yO9mpmZvpqZmT4K1yO9mpmZvpqZmb4K1yO9mpmZvpqZmb4K1yM9mpmZPpqZmb4K1yM9mpmZPpqZmb4K1yM9mpmZPpqZmT4K1yM9mpmZPpqZmT4K1yM9mpmZvpqZmT4K1yM9mpmZvpqZmT4K1yM9mpmZvpqZmb4K1yM9mpmZvpqZmb4K1yO9mpmZvpqZmb4K1yM9mpmZPpqZmb4K1yO9mpmZPpqZmb4K1yM9mpmZPpqZmT4K1yO9mpmZPpqZmT4K1yM9mpmZvpqZmT4K1yO9mpmZvpqZmT4K1yM9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_3ymce"]
+_surfaces = [{
+"aabb": AABB(-0.14, 0, -0.0125, 0.28, 1.5000001, 0.025),
+"format": 34359738375,
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 84,
+"vertex_data": PackedByteArray("AAAAAAAAAADNzEy8ObTIvXI9ij7NzEy8KVwPvgEAQD/NzEy8AAAAAAAAAADNzEw8KVwPvgEAQD/NzEw8ObTIvXI9ij7NzEw8AAAAAAAAAADNzEy8KVwPvgEAQD/NzEy8KVyPvTQzoz/NzEy8AAAAAAAAAADNzEw8KVyPvTQzoz/NzEw8KVwPvgEAQD/NzEw8AAAAAAAAAADNzEy8KVyPvTQzoz/NzEy8AAAAAAEAwD/NzEy8AAAAAAAAAADNzEw8AAAAAAEAwD/NzEw8KVyPvTQzoz/NzEw8AAAAAAAAAADNzEy8AAAAAAEAwD/NzEy8KVyPPTQzoz/NzEy8AAAAAAAAAADNzEw8KVyPPTQzoz/NzEw8AAAAAAEAwD/NzEw8AAAAAAAAAADNzEy8KVyPPTQzoz/NzEy8KVwPPgEAQD/NzEy8AAAAAAAAAADNzEw8KVwPPgEAQD/NzEw8KVyPPTQzoz/NzEw8AAAAAAAAAADNzEy8KVwPPgEAQD/NzEy8ObTIPXI9ij7NzEy8AAAAAAAAAADNzEw8ObTIPXI9ij7NzEw8KVwPPgEAQD/NzEw8AAAAAAAAAADNzEy8AAAAAAAAAADNzEw8ObTIvXI9ij7NzEw8AAAAAAAAAADNzEy8ObTIvXI9ij7NzEw8ObTIvXI9ij7NzEy8ObTIvXI9ij7NzEy8ObTIvXI9ij7NzEw8KVwPvgEAQD/NzEw8ObTIvXI9ij7NzEy8KVwPvgEAQD/NzEw8KVwPvgEAQD/NzEy8KVwPvgEAQD/NzEy8KVwPvgEAQD/NzEw8KVyPvTQzoz/NzEw8KVwPvgEAQD/NzEy8KVyPvTQzoz/NzEw8KVyPvTQzoz/NzEy8KVyPvTQzoz/NzEy8KVyPvTQzoz/NzEw8AAAAAAEAwD/NzEw8KVyPvTQzoz/NzEy8AAAAAAEAwD/NzEw8AAAAAAEAwD/NzEy8AAAAAAEAwD/NzEy8AAAAAAEAwD/NzEw8KVyPPTQzoz/NzEw8AAAAAAEAwD/NzEy8KVyPPTQzoz/NzEw8KVyPPTQzoz/NzEy8KVyPPTQzoz/NzEy8KVyPPTQzoz/NzEw8KVwPPgEAQD/NzEw8KVyPPTQzoz/NzEy8KVwPPgEAQD/NzEw8KVwPPgEAQD/NzEy8KVwPPgEAQD/NzEy8KVwPPgEAQD/NzEw8ObTIPXI9ij7NzEw8KVwPPgEAQD/NzEy8ObTIPXI9ij7NzEw8ObTIPXI9ij7NzEy8ObTIPXI9ij7NzEy8ObTIPXI9ij7NzEw8AAAAAAAAAADNzEw8ObTIPXI9ij7NzEy8AAAAAAAAAADNzEw8AAAAAAAAAADNzEy8G49zkHBu/5Fi1NWOE2CMwvLJmXu6V8awcxDj8Lxgv4js/gK07Ki1ssvqwLCTmg7HG49zkHBu/5HyyZl7ulfGsPvBem88VtmrcxDj8Lxgv4jt8l9E86G/ruz+ArTsqLWyG49zkHBu/5H7wXpvPFbZqzhgVmKAseaNcxDj8Lxgv4hW4scfe5AmnO3yX0Tzob+uG49zkHBu/5E4YFZigLHmjZ877nIorjy2cxDj8Lxgv4iFEPxBN1NMuVbixx97kCacG49zkHBu/5GfO+5yKK48tgI0EoEFqCiycxDj8Lxgv4hlBPJJ+lYbtIUQ/EE3U0y5G49zkHBu/5ECNBKBBagossAwM5UalNqxcxDj8Lxgv4jVDpyrUWJXtGUE8kn6Vhu0G49zkHBu/5FzEOPwvGC/iMvqwLCTmg7HG49zkHBu/5HL6sCwk5oOx2LU1Y4TYIzCYtTVjhNgjMLL6sCwk5oOx+z+ArTsqLWyYtTVjhNgjMLs/gK07Ki1svLJmXu6V8aw8smZe7pXxrDs/gK07Ki1su3yX0Tzob+u8smZe7pXxrDt8l9E86G/rvvBem88Vtmr+8F6bzxW2avt8l9E86G/rlbixx97kCac+8F6bzxW2atW4scfe5AmnDhgVmKAseaNOGBWYoCx5o1W4scfe5AmnIUQ/EE3U0y5OGBWYoCx5o2FEPxBN1NMuZ877nIorjy2nzvuciiuPLaFEPxBN1NMuWUE8kn6Vhu0nzvuciiuPLZlBPJJ+lYbtAI0EoEFqCiyAjQSgQWoKLJlBPJJ+lYbtNUOnKtRYle0AjQSgQWoKLLVDpyrUWJXtMAwM5UalNqxwDAzlRqU2rHVDpyrUWJXtHMQ4/C8YL+IwDAzlRqU2rFzEOPwvGC/iBuPc5Bwbv+R")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_r64gu"]
+_surfaces = [{
+"aabb": AABB(-0.2825, -0.29999998, -0.04, 0.565, 0.59999996, 0.08),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("16OQvpmZmb4K1yO916OQPpmZmb4K1yO916OQPpmZmb4K1yO916OQPpmZmT4K1yO916OQPpmZmT4K1yO916OQvpmZmT4K1yO916OQvpmZmT4K1yO916OQvpmZmb4K1yO916OQvpmZmb4K1yM916OQPpmZmb4K1yM916OQPpmZmb4K1yM916OQPpmZmT4K1yM916OQPpmZmT4K1yM916OQvpmZmT4K1yM916OQvpmZmT4K1yM916OQvpmZmb4K1yM916OQvpmZmb4K1yO916OQvpmZmb4K1yM916OQPpmZmb4K1yO916OQPpmZmb4K1yM916OQPpmZmT4K1yO916OQPpmZmT4K1yM916OQvpmZmT4K1yO916OQvpmZmT4K1yM9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_qit5r"]
+_surfaces = [{
+"aabb": AABB(-0.14, 0, -0.0125, 0.28, 1.9675555, 0.025),
+"format": 34359738375,
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 84,
+"vertex_data": PackedByteArray("AAAAAAAAAADNzEy8ObTIvXZUtT7NzEy8KVwPvtzYez/NzEy8AAAAAAAAAADNzEw8KVwPvtzYez/NzEw8ObTIvXZUtT7NzEw8AAAAAAAAAADNzEy8KVwPvtzYez/NzEy8KVyPve8R1j/NzEy8AAAAAAAAAADNzEw8KVyPve8R1j/NzEw8KVwPvtzYez/NzEw8AAAAAAAAAADNzEy8KVyPve8R1j/NzEy8AAAAANzY+z/NzEy8AAAAAAAAAADNzEw8AAAAANzY+z/NzEw8KVyPve8R1j/NzEw8AAAAAAAAAADNzEy8AAAAANzY+z/NzEy8KVyPPe8R1j/NzEy8AAAAAAAAAADNzEw8KVyPPe8R1j/NzEw8AAAAANzY+z/NzEw8AAAAAAAAAADNzEy8KVyPPe8R1j/NzEy8KVwPPtzYez/NzEy8AAAAAAAAAADNzEw8KVwPPtzYez/NzEw8KVyPPe8R1j/NzEw8AAAAAAAAAADNzEy8KVwPPtzYez/NzEy8ObTIPXZUtT7NzEy8AAAAAAAAAADNzEw8ObTIPXZUtT7NzEw8KVwPPtzYez/NzEw8AAAAAAAAAADNzEy8AAAAAAAAAADNzEw8ObTIvXZUtT7NzEw8AAAAAAAAAADNzEy8ObTIvXZUtT7NzEw8ObTIvXZUtT7NzEy8ObTIvXZUtT7NzEy8ObTIvXZUtT7NzEw8KVwPvtzYez/NzEw8ObTIvXZUtT7NzEy8KVwPvtzYez/NzEw8KVwPvtzYez/NzEy8KVwPvtzYez/NzEy8KVwPvtzYez/NzEw8KVyPve8R1j/NzEw8KVwPvtzYez/NzEy8KVyPve8R1j/NzEw8KVyPve8R1j/NzEy8KVyPve8R1j/NzEy8KVyPve8R1j/NzEw8AAAAANzY+z/NzEw8KVyPve8R1j/NzEy8AAAAANzY+z/NzEw8AAAAANzY+z/NzEy8AAAAANzY+z/NzEy8AAAAANzY+z/NzEw8KVyPPe8R1j/NzEw8AAAAANzY+z/NzEy8KVyPPe8R1j/NzEw8KVyPPe8R1j/NzEy8KVyPPe8R1j/NzEy8KVyPPe8R1j/NzEw8KVwPPtzYez/NzEw8KVyPPe8R1j/NzEy8KVwPPtzYez/NzEw8KVwPPtzYez/NzEy8KVwPPtzYez/NzEy8KVwPPtzYez/NzEw8ObTIPXZUtT7NzEw8KVwPPtzYez/NzEy8ObTIPXZUtT7NzEw8ObTIPXZUtT7NzEy8ObTIPXZUtT7NzEy8ObTIPXZUtT7NzEw8AAAAAAAAAADNzEw8ObTIPXZUtT7NzEy8AAAAAAAAAADNzEw8AAAAAAAAAADNzEy8448wjaVuaZDk1ryL9F/wwKPKm3y7VzKxMA0b8ABku4gu/8izyqitsgbvQK0dnUjE448wjaVuaZCjypt8u1cysWXE6XINV1GtMA0b8ABku4i59UhGiaOiry7/yLPKqK2y448wjaVuaZBlxOlyDVdRrQRe0mearvGRMA0b8ABku4jR5/ohKJawnLn1SEaJo6Kv448wjaVuaZAEXtJnmq7xkbc5uXXfrF+1MA0b8ABku4gWDWVEr1TNt9Hn+iEolrCc448wjaVuaZC3Obl136xftckz0IAbqEKyMA0b8ABku4hjA6NKKFfAsxYNZUSvVM23448wjaVuaZDJM9CAG6hCskEt95CtltGzMA0b8ABku4i9CxmpxWLEtWMDo0ooV8Cz448wjaVuaZAwDRvwAGS7iAbvQK0dnUjE448wjaVuaZAG70CtHZ1IxOTWvIv0X/DA5Na8i/Rf8MAG70CtHZ1IxC7/yLPKqK2y5Na8i/Rf8MAu/8izyqitsqPKm3y7VzKxo8qbfLtXMrEu/8izyqitsrn1SEaJo6Kvo8qbfLtXMrG59UhGiaOir2XE6XINV1GtZcTpcg1XUa259UhGiaOir9Hn+iEolrCcZcTpcg1XUa3R5/ohKJawnARe0mearvGRBF7SZ5qu8ZHR5/ohKJawnBYNZUSvVM23BF7SZ5qu8ZEWDWVEr1TNt7c5uXXfrF+1tzm5dd+sX7UWDWVEr1TNt2MDo0ooV8Cztzm5dd+sX7VjA6NKKFfAs8kz0IAbqEKyyTPQgBuoQrJjA6NKKFfAs70LGanFYsS1yTPQgBuoQrK9CxmpxWLEtUEt95CtltGzQS33kK2W0bO9CxmpxWLEtTANG/AAZLuIQS33kK2W0bMwDRvwAGS7iOOPMI2lbmmQ")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_u5os1"]
+_surfaces = [{
+"aabb": AABB(-0.265, -0.375, -0.04, 0.53, 0.75, 0.08),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("FK6HvgAAwL4K1yO9FK6HPgAAwL4K1yO9FK6HPgAAwL4K1yO9FK6HPgAAwD4K1yO9FK6HPgAAwD4K1yO9FK6HvgAAwD4K1yO9FK6HvgAAwD4K1yO9FK6HvgAAwL4K1yO9FK6HvgAAwL4K1yM9FK6HPgAAwL4K1yM9FK6HPgAAwL4K1yM9FK6HPgAAwD4K1yM9FK6HPgAAwD4K1yM9FK6HvgAAwD4K1yM9FK6HvgAAwD4K1yM9FK6HvgAAwL4K1yM9FK6HvgAAwL4K1yO9FK6HvgAAwL4K1yM9FK6HPgAAwL4K1yO9FK6HPgAAwL4K1yM9FK6HPgAAwD4K1yO9FK6HPgAAwD4K1yM9FK6HvgAAwD4K1yO9FK6HvgAAwD4K1yM9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_l8bst"]
+_surfaces = [{
+"aabb": AABB(-0.14, 0, -0.0125, 0.28, 2.247559, 0.025),
+"format": 34359738375,
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 84,
+"vertex_data": PackedByteArray("AAAAAAAAAADNzEy8ObTIvZMizz7NzEy8KVwPvgLYjz/NzEy8AAAAAAAAAADNzEw8KVwPvgLYjz/NzEw8ObTIvZMizz7NzEw8AAAAAAAAAADNzEy8KVwPvgLYjz/NzEy8KVyPvdGI9D/NzEy8AAAAAAAAAADNzEw8KVyPvdGI9D/NzEw8KVwPvgLYjz/NzEw8AAAAAAAAAADNzEy8KVyPvdGI9D/NzEy8AAAAAALYD0DNzEy8AAAAAAAAAADNzEw8AAAAAALYD0DNzEw8KVyPvdGI9D/NzEw8AAAAAAAAAADNzEy8AAAAAALYD0DNzEy8KVyPPdGI9D/NzEy8AAAAAAAAAADNzEw8KVyPPdGI9D/NzEw8AAAAAALYD0DNzEw8AAAAAAAAAADNzEy8KVyPPdGI9D/NzEy8KVwPPgLYjz/NzEy8AAAAAAAAAADNzEw8KVwPPgLYjz/NzEw8KVyPPdGI9D/NzEw8AAAAAAAAAADNzEy8KVwPPgLYjz/NzEy8ObTIPZMizz7NzEy8AAAAAAAAAADNzEw8ObTIPZMizz7NzEw8KVwPPgLYjz/NzEw8AAAAAAAAAADNzEy8AAAAAAAAAADNzEw8ObTIvZMizz7NzEw8AAAAAAAAAADNzEy8ObTIvZMizz7NzEw8ObTIvZMizz7NzEy8ObTIvZMizz7NzEy8ObTIvZMizz7NzEw8KVwPvgLYjz/NzEw8ObTIvZMizz7NzEy8KVwPvgLYjz/NzEw8KVwPvgLYjz/NzEy8KVwPvgLYjz/NzEy8KVwPvgLYjz/NzEw8KVyPvdGI9D/NzEw8KVwPvgLYjz/NzEy8KVyPvdGI9D/NzEw8KVyPvdGI9D/NzEy8KVyPvdGI9D/NzEy8KVyPvdGI9D/NzEw8AAAAAALYD0DNzEw8KVyPvdGI9D/NzEy8AAAAAALYD0DNzEw8AAAAAALYD0DNzEy8AAAAAALYD0DNzEy8AAAAAALYD0DNzEw8KVyPPdGI9D/NzEw8AAAAAALYD0DNzEy8KVyPPdGI9D/NzEw8KVyPPdGI9D/NzEy8KVyPPdGI9D/NzEy8KVyPPdGI9D/NzEw8KVwPPgLYjz/NzEw8KVyPPdGI9D/NzEy8KVwPPgLYjz/NzEw8KVwPPgLYjz/NzEy8KVwPPgLYjz/NzEy8KVwPPgLYjz/NzEw8ObTIPZMizz7NzEw8KVwPPgLYjz/NzEy8ObTIPZMizz7NzEw8ObTIPZMizz7NzEy8ObTIPZMizz7NzEy8ObTIPZMizz7NzEw8AAAAAAAAAADNzEw8ObTIPZMizz7NzEy8AAAAAAAAAADNzEw8AAAAAAAAAADNzEy8M5DFi7Fuu4/x122K0l87wOnKBH26V16xxgvL72Zlv4hI/7OzvaiqstnwxasHniPDM5DFi7Fuu4/pygR9uldesWPFXXRMV+6txgvL72Zlv4jk9hBHKqT+r0j/s7O9qKqyM5DFi7Fuu49jxV10TFfurRRdP2oJrVWTxgvL72Zlv4g+6usiR5jPnOT2EEcqpP6vM5DFi7Fuu48UXT9qCa1Vk+845XZYrAa1xgvL72Zlv4ihC2NFNVUttz7q6yJHmM+cM5DFi7Fuu4/vOOV2WKwGtbMztYAlqEyyxgvL72Zlv4j6AupKOVeas6ELY0U1VS23M5DFi7Fuu4+zM7WAJahMssYrJY+nl6K0xgvL72Zlv4htCg2o42JftvoC6ko5V5qzM5DFi7Fuu4/GC8vvZmW/iNnwxasHniPDM5DFi7Fuu4/Z8MWrB54jw/HXbYrSXzvA8ddtitJfO8DZ8MWrB54jw0j/s7O9qKqy8ddtitJfO8BI/7OzvaiqsunKBH26V16x6coEfbpXXrFI/7OzvaiqsuT2EEcqpP6v6coEfbpXXrHk9hBHKqT+r2PFXXRMV+6tY8VddExX7q3k9hBHKqT+rz7q6yJHmM+cY8VddExX7q0+6usiR5jPnBRdP2oJrVWTFF0/agmtVZM+6usiR5jPnKELY0U1VS23FF0/agmtVZOhC2NFNVUtt+845XZYrAa17zjldlisBrWhC2NFNVUtt/oC6ko5V5qz7zjldlisBrX6AupKOVeas7MztYAlqEyyszO1gCWoTLL6AupKOVeas20KDajjYl+2szO1gCWoTLJtCg2o42JftsYrJY+nl6K0xislj6eXorRtCg2o42JftsYLy+9mZb+Ixislj6eXorTGC8vvZmW/iDOQxYuxbruP")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_8tu6w"]
+_surfaces = [{
+"aabb": AABB(-0.2475, -0.37500003, -0.04, 0.495, 0.75000006, 0.08),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("pHB9vgEAwL4K1yO9pHB9PgEAwL4K1yO9pHB9PgEAwL4K1yO9pHB9PgEAwD4K1yO9pHB9PgEAwD4K1yO9pHB9vgEAwD4K1yO9pHB9vgEAwD4K1yO9pHB9vgEAwL4K1yO9pHB9vgEAwL4K1yM9pHB9PgEAwL4K1yM9pHB9PgEAwL4K1yM9pHB9PgEAwD4K1yM9pHB9PgEAwD4K1yM9pHB9vgEAwD4K1yM9pHB9vgEAwD4K1yM9pHB9vgEAwL4K1yM9pHB9vgEAwL4K1yO9pHB9vgEAwL4K1yM9pHB9PgEAwL4K1yO9pHB9PgEAwL4K1yM9pHB9PgEAwD4K1yO9pHB9PgEAwD4K1yM9pHB9vgEAwD4K1yO9pHB9vgEAwD4K1yM9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_de4uy"]
+_surfaces = [{
+"aabb": AABB(-0.14, 0, -0.0125, 0.28, 2.664391, 0.025),
+"format": 34359738375,
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 84,
+"vertex_data": PackedByteArray("AAAAAAAAAADNzEy8ObTIveCM9T7NzEy8KVwPvmKFqj/NzEy8AAAAAAAAAADNzEw8KVwPvmKFqj/NzEw8ObTIveCM9T7NzEw8AAAAAAAAAADNzEy8KVwPvmKFqj/NzEy8KVyPvWDxEEDNzEy8AAAAAAAAAADNzEw8KVyPvWDxEEDNzEw8KVwPvmKFqj/NzEw8AAAAAAAAAADNzEy8KVyPvWDxEEDNzEy8AAAAAGKFKkDNzEy8AAAAAAAAAADNzEw8AAAAAGKFKkDNzEw8KVyPvWDxEEDNzEw8AAAAAAAAAADNzEy8AAAAAGKFKkDNzEy8KVyPPWDxEEDNzEy8AAAAAAAAAADNzEw8KVyPPWDxEEDNzEw8AAAAAGKFKkDNzEw8AAAAAAAAAADNzEy8KVyPPWDxEEDNzEy8KVwPPmKFqj/NzEy8AAAAAAAAAADNzEw8KVwPPmKFqj/NzEw8KVyPPWDxEEDNzEw8AAAAAAAAAADNzEy8KVwPPmKFqj/NzEy8ObTIPeCM9T7NzEy8AAAAAAAAAADNzEw8ObTIPeCM9T7NzEw8KVwPPmKFqj/NzEw8AAAAAAAAAADNzEy8AAAAAAAAAADNzEw8ObTIveCM9T7NzEw8AAAAAAAAAADNzEy8ObTIveCM9T7NzEw8ObTIveCM9T7NzEy8ObTIveCM9T7NzEy8ObTIveCM9T7NzEw8KVwPvmKFqj/NzEw8ObTIveCM9T7NzEy8KVwPvmKFqj/NzEw8KVwPvmKFqj/NzEy8KVwPvmKFqj/NzEy8KVwPvmKFqj/NzEw8KVyPvWDxEEDNzEw8KVwPvmKFqj/NzEy8KVyPvWDxEEDNzEw8KVyPvWDxEEDNzEy8KVyPvWDxEEDNzEy8KVyPvWDxEEDNzEw8AAAAAGKFKkDNzEw8KVyPvWDxEEDNzEy8AAAAAGKFKkDNzEw8AAAAAGKFKkDNzEy8AAAAAGKFKkDNzEy8AAAAAGKFKkDNzEw8KVyPPWDxEEDNzEw8AAAAAGKFKkDNzEy8KVyPPWDxEEDNzEw8KVyPPWDxEEDNzEy8KVyPPWDxEEDNzEy8KVyPPWDxEEDNzEw8KVwPPmKFqj/NzEw8KVyPPWDxEEDNzEy8KVwPPmKFqj/NzEw8KVwPPmKFqj/NzEy8KVwPPmKFqj/NzEy8KVwPPmKFqj/NzEw8ObTIPeCM9T7NzEw8KVwPPmKFqj/NzEy8ObTIPeCM9T7NzEw8ObTIPeCM9T7NzEy8ObTIPeCM9T7NzEy8ObTIPeCM9T7NzEw8AAAAAAAAAADNzEw8ObTIPeCM9T7NzEy8AAAAAAAAAADNzEw8AAAAAAAAAADNzEy8ipAjirdu9Y4f2e+IMWBrvzbLeH24V42xJApz7/5mx4hl/5yzr6imsvDyF6r5ntrBipAjirdu9Y42y3h9uFeNsX/GBXaEV56uJApz7/5mx4g3+O5H2aRjsGX/nLOvqKayipAjirdu9Y5/xgV2hFeergBcFW0Fq7iUJApz7/5mx4gV7f4jgprfnDf47kfZpGOwipAjirdu9Y4AXBVtBau4lBA4N3jBq6O0JApz7/5mx4j6CYBGvVV5thXt/iOCmt+cipAjirdu9Y4QODd4waujtJwzmYAvqFeyJApz7/5mx4iGAjdLSldxs/oJgEa9VXm2ipAjirdu9Y6cM5mAL6hXshgqDY2wmI+1JApz7/5mx4jwCN+m+GIOt4YCN0tKV3GzipAjirdu9Y4kCnPv/mbHiPDyF6r5ntrBipAjirdu9Y7w8heq+Z7awR/Z74gxYGu/H9nviDFga7/w8heq+Z7awWX/nLOvqKayH9nviDFga79l/5yzr6imsjbLeH24V42xNst4fbhXjbFl/5yzr6imsjf47kfZpGOwNst4fbhXjbE3+O5H2aRjsH/GBXaEV56uf8YFdoRXnq43+O5H2aRjsBXt/iOCmt+cf8YFdoRXnq4V7f4jgprfnABcFW0Fq7iUAFwVbQWruJQV7f4jgprfnPoJgEa9VXm2AFwVbQWruJT6CYBGvVV5thA4N3jBq6O0EDg3eMGro7T6CYBGvVV5toYCN0tKV3GzEDg3eMGro7SGAjdLSldxs5wzmYAvqFeynDOZgC+oV7KGAjdLSldxs/AI36b4Yg63nDOZgC+oV7LwCN+m+GIOtxgqDY2wmI+1GCoNjbCYj7XwCN+m+GIOtyQKc+/+ZseIGCoNjbCYj7UkCnPv/mbHiIqQI4q3bvWO")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_u0uot"]
+_surfaces = [{
+"aabb": AABB(-0.23, -0.42499998, -0.04, 0.46, 0.84999996, 0.08),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("H4VrvpmZ2b4K1yO9H4VrPpmZ2b4K1yO9H4VrPpmZ2b4K1yO9H4VrPpmZ2T4K1yO9H4VrPpmZ2T4K1yO9H4VrvpmZ2T4K1yO9H4VrvpmZ2T4K1yO9H4VrvpmZ2b4K1yO9H4VrvpmZ2b4K1yM9H4VrPpmZ2b4K1yM9H4VrPpmZ2b4K1yM9H4VrPpmZ2T4K1yM9H4VrPpmZ2T4K1yM9H4VrvpmZ2T4K1yM9H4VrvpmZ2T4K1yM9H4VrvpmZ2b4K1yM9H4VrvpmZ2b4K1yO9H4VrvpmZ2b4K1yM9H4VrPpmZ2b4K1yO9H4VrPpmZ2b4K1yM9H4VrPpmZ2T4K1yO9H4VrPpmZ2T4K1yM9H4VrvpmZ2T4K1yO9H4VrvpmZ2T4K1yM9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_ky3sb"]
+_surfaces = [{
+"aabb": AABB(-0.14, 0, -0.0125, 0.28, 2.7858088, 0.025),
+"format": 34359738375,
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 84,
+"vertex_data": PackedByteArray("AAAAAAAAAADNzEy8ObTIvb1eAD/NzEy8KVwPvrFKsj/NzEy8AAAAAAAAAADNzEw8KVwPvrFKsj/NzEw8ObTIvb1eAD/NzEw8AAAAAAAAAADNzEy8KVwPvrFKsj/NzEy8KVyPvUqMF0DNzEy8AAAAAAAAAADNzEw8KVyPvUqMF0DNzEw8KVwPvrFKsj/NzEw8AAAAAAAAAADNzEy8KVyPvUqMF0DNzEy8AAAAALFKMkDNzEy8AAAAAAAAAADNzEw8AAAAALFKMkDNzEw8KVyPvUqMF0DNzEw8AAAAAAAAAADNzEy8AAAAALFKMkDNzEy8KVyPPUqMF0DNzEy8AAAAAAAAAADNzEw8KVyPPUqMF0DNzEw8AAAAALFKMkDNzEw8AAAAAAAAAADNzEy8KVyPPUqMF0DNzEy8KVwPPrFKsj/NzEy8AAAAAAAAAADNzEw8KVwPPrFKsj/NzEw8KVyPPUqMF0DNzEw8AAAAAAAAAADNzEy8KVwPPrFKsj/NzEy8ObTIPb1eAD/NzEy8AAAAAAAAAADNzEw8ObTIPb1eAD/NzEw8KVwPPrFKsj/NzEw8AAAAAAAAAADNzEy8AAAAAAAAAADNzEw8ObTIvb1eAD/NzEw8AAAAAAAAAADNzEy8ObTIvb1eAD/NzEw8ObTIvb1eAD/NzEy8ObTIvb1eAD/NzEy8ObTIvb1eAD/NzEw8KVwPvrFKsj/NzEw8ObTIvb1eAD/NzEy8KVwPvrFKsj/NzEw8KVwPvrFKsj/NzEy8KVwPvrFKsj/NzEy8KVwPvrFKsj/NzEw8KVyPvUqMF0DNzEw8KVwPvrFKsj/NzEy8KVyPvUqMF0DNzEw8KVyPvUqMF0DNzEy8KVyPvUqMF0DNzEy8KVyPvUqMF0DNzEw8AAAAALFKMkDNzEw8KVyPvUqMF0DNzEy8AAAAALFKMkDNzEw8AAAAALFKMkDNzEy8AAAAALFKMkDNzEy8AAAAALFKMkDNzEw8KVyPPUqMF0DNzEw8AAAAALFKMkDNzEy8KVyPPUqMF0DNzEw8KVyPPUqMF0DNzEy8KVyPPUqMF0DNzEy8KVyPPUqMF0DNzEw8KVwPPrFKsj/NzEw8KVyPPUqMF0DNzEy8KVwPPrFKsj/NzEw8KVwPPrFKsj/NzEy8KVwPPrFKsj/NzEy8KVwPPrFKsj/NzEw8ObTIPb1eAD/NzEw8KVwPPrFKsj/NzEy8ObTIPb1eAD/NzEw8ObTIPb1eAD/NzEy8ObTIPb1eAD/NzEy8ObTIPb1eAD/NzEw8AAAAAAAAAADNzEw8ObTIPb1eAD/NzEy8AAAAAAAAAADNzEw8AAAAAAAAAADNzEy8n5C+ibduxY5n2ZSIU2A7v0jLlH23V5ixvwlf72Bnyohr/5ezrKiksnLzsKkwn4vBn5C+ibduxY5Iy5R9t1eYscPGa3aOV8iuvwlf72BnyoiI+CNIAqV6sGv/l7OsqKSyn5C+ibduxY7Dxmt2jlfIrr5bx21/qgWVvwlf72BnyojG7UEkBZvgnIj4I0gCpXqwn5C+ibduxY6+W8dtf6oFldw3iHidq4u0vwlf72BnyoiUCcNG21VOtsbtQSQFm+Ccn5C+ibduxY7cN4h4nauLtJczkoAxqFmyvwlf72BnyohrAklLTldns5QJw0bbVU62n5C+ibduxY6XM5KAMahZsrApjIztmMe1vwlf72BnyoiUCJam+2I4t2sCSUtOV2ezn5C+ibduxY6/CV/vYGfKiHLzsKkwn4vBn5C+ibduxY5y87CpMJ+LwWfZlIhTYDu/Z9mUiFNgO79y87CpMJ+LwWv/l7OsqKSyZ9mUiFNgO79r/5ezrKikskjLlH23V5ixSMuUfbdXmLFr/5ezrKiksoj4I0gCpXqwSMuUfbdXmLGI+CNIAqV6sMPGa3aOV8iuw8Zrdo5XyK6I+CNIAqV6sMbtQSQFm+Ccw8Zrdo5XyK7G7UEkBZvgnL5bx21/qgWVvlvHbX+qBZXG7UEkBZvgnJQJw0bbVU62vlvHbX+qBZWUCcNG21VOttw3iHidq4u03DeIeJ2ri7SUCcNG21VOtmsCSUtOV2ez3DeIeJ2ri7RrAklLTldns5czkoAxqFmylzOSgDGoWbJrAklLTldns5QIlqb7Yji3lzOSgDGoWbKUCJam+2I4t7ApjIztmMe1sCmMjO2Yx7WUCJam+2I4t78JX+9gZ8qIsCmMjO2Yx7W/CV/vYGfKiJ+Qvom3bsWO")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_memqp"]
+_surfaces = [{
+"aabb": AABB(-0.2125, -0.425, -0.04, 0.425, 0.85, 0.08),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("mplZvpqZ2b4K1yO9mplZPpqZ2b4K1yO9mplZPpqZ2b4K1yO9mplZPpqZ2T4K1yO9mplZPpqZ2T4K1yO9mplZvpqZ2T4K1yO9mplZvpqZ2T4K1yO9mplZvpqZ2b4K1yO9mplZvpqZ2b4K1yM9mplZPpqZ2b4K1yM9mplZPpqZ2b4K1yM9mplZPpqZ2T4K1yM9mplZPpqZ2T4K1yM9mplZvpqZ2T4K1yM9mplZvpqZ2T4K1yM9mplZvpqZ2b4K1yM9mplZvpqZ2b4K1yO9mplZvpqZ2b4K1yM9mplZPpqZ2b4K1yO9mplZPpqZ2b4K1yM9mplZPpqZ2T4K1yO9mplZPpqZ2T4K1yM9mplZvpqZ2T4K1yO9mplZvpqZ2T4K1yM9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_25lvj"]
+_surfaces = [{
+"aabb": AABB(-0.14, 0, -0.0125, 0.28, 2.5471857, 0.025),
+"format": 34359738375,
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 84,
+"vertex_data": PackedByteArray("AAAAAAAAAADNzEy8ObTIvae/6j7NzEy8KVwPvhcFoz/NzEy8AAAAAAAAAADNzEw8KVwPvhcFoz/NzEw8ObTIvae/6j7NzEw8AAAAAAAAAADNzEy8KVwPvhcFoz/NzEy8KVyPvSGRCkDNzEy8AAAAAAAAAADNzEw8KVyPvSGRCkDNzEw8KVwPvhcFoz/NzEw8AAAAAAAAAADNzEy8KVyPvSGRCkDNzEy8AAAAABcFI0DNzEy8AAAAAAAAAADNzEw8AAAAABcFI0DNzEw8KVyPvSGRCkDNzEw8AAAAAAAAAADNzEy8AAAAABcFI0DNzEy8KVyPPSGRCkDNzEy8AAAAAAAAAADNzEw8KVyPPSGRCkDNzEw8AAAAABcFI0DNzEw8AAAAAAAAAADNzEy8KVyPPSGRCkDNzEy8KVwPPhcFoz/NzEy8AAAAAAAAAADNzEw8KVwPPhcFoz/NzEw8KVyPPSGRCkDNzEw8AAAAAAAAAADNzEy8KVwPPhcFoz/NzEy8ObTIPae/6j7NzEy8AAAAAAAAAADNzEw8ObTIPae/6j7NzEw8KVwPPhcFoz/NzEw8AAAAAAAAAADNzEy8AAAAAAAAAADNzEw8ObTIvae/6j7NzEw8AAAAAAAAAADNzEy8ObTIvae/6j7NzEw8ObTIvae/6j7NzEy8ObTIvae/6j7NzEy8ObTIvae/6j7NzEw8KVwPvhcFoz/NzEw8ObTIvae/6j7NzEy8KVwPvhcFoz/NzEw8KVwPvhcFoz/NzEy8KVwPvhcFoz/NzEy8KVwPvhcFoz/NzEw8KVyPvSGRCkDNzEw8KVwPvhcFoz/NzEy8KVyPvSGRCkDNzEw8KVyPvSGRCkDNzEy8KVyPvSGRCkDNzEy8KVyPvSGRCkDNzEw8AAAAABcFI0DNzEw8KVyPvSGRCkDNzEy8AAAAABcFI0DNzEw8AAAAABcFI0DNzEy8AAAAABcFI0DNzEy8AAAAABcFI0DNzEw8KVyPPSGRCkDNzEw8AAAAABcFI0DNzEy8KVyPPSGRCkDNzEw8KVyPPSGRCkDNzEy8KVyPPSGRCkDNzEy8KVyPPSGRCkDNzEw8KVwPPhcFoz/NzEw8KVyPPSGRCkDNzEy8KVwPPhcFoz/NzEw8KVwPPhcFoz/NzEy8KVwPPhcFoz/NzEy8KVwPPhcFoz/NzEw8ObTIPae/6j7NzEw8KVwPPhcFoz/NzEy8ObTIPae/6j7NzEw8ObTIPae/6j7NzEy8ObTIPae/6j7NzEy8ObTIPae/6j7NzEw8AAAAAAAAAADNzEw8ObTIPae/6j7NzEy8AAAAAAAAAADNzEw8AAAAAAAAAADNzEy8dZCNirduJ4/T2E+JC2CfvyPLW324V4GxjQqJ75dmxIhe/6Gzs6insmnyg6q/nizCdZCNirduJ48jy1t9uFeBsTjGmnV3V3KujQqJ75dmxIji97dHrqRKsF7/obOzqKeydZCNirduJ484xpp1d1dyrkZcXGyMq2OUjQqJ75dmxIhc7Lkj95ndnOL3t0eupEqwdZCNirduJ49GXFxsjKtjlEg443fmq7u0jQqJ75dmxIhkCjlGnFWmtlzsuSP3md2cdZCNirduJ49IOON35qu7tKIzoIAsqFSyjQqJ75dmxIijAiNLRld7s2QKOUacVaa2dZCNirduJ4+iM6CALKhUsoQqlI1vmFS1jQqJ75dmxIhQCSqn9GLitqMCI0tGV3uzdZCNirduJ4+NConvl2bEiGnyg6q/nizCdZCNirduJ49p8oOqv54swtPYT4kLYJ+/09hPiQtgn79p8oOqv54swl7/obOzqKey09hPiQtgn79e/6Gzs6insiPLW324V4GxI8tbfbhXgbFe/6Gzs6insuL3t0eupEqwI8tbfbhXgbHi97dHrqRKsDjGmnV3V3KuOMaadXdXcq7i97dHrqRKsFzsuSP3md2cOMaadXdXcq5c7Lkj95ndnEZcXGyMq2OURlxcbIyrY5Rc7Lkj95ndnGQKOUacVaa2RlxcbIyrY5RkCjlGnFWmtkg443fmq7u0SDjjd+aru7RkCjlGnFWmtqMCI0tGV3uzSDjjd+aru7SjAiNLRld7s6IzoIAsqFSyojOggCyoVLKjAiNLRld7s1AJKqf0YuK2ojOggCyoVLJQCSqn9GLitoQqlI1vmFS1hCqUjW+YVLVQCSqn9GLito0Kie+XZsSIhCqUjW+YVLWNConvl2bEiHWQjYq3bieP")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_yvlq6"]
+_surfaces = [{
+"aabb": AABB(-0.3, -0.3, -0.04, 0.6, 0.6, 0.08),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("mpmZvpqZmb4K1yO9mpmZPpqZmb4K1yO9mpmZPpqZmb4K1yO9mpmZPpqZmT4K1yO9mpmZPpqZmT4K1yO9mpmZvpqZmT4K1yO9mpmZvpqZmT4K1yO9mpmZvpqZmb4K1yO9mpmZvpqZmb4K1yM9mpmZPpqZmb4K1yM9mpmZPpqZmb4K1yM9mpmZPpqZmT4K1yM9mpmZPpqZmT4K1yM9mpmZvpqZmT4K1yM9mpmZvpqZmT4K1yM9mpmZvpqZmb4K1yM9mpmZvpqZmb4K1yO9mpmZvpqZmb4K1yM9mpmZPpqZmb4K1yO9mpmZPpqZmb4K1yM9mpmZPpqZmT4K1yO9mpmZPpqZmT4K1yM9mpmZvpqZmT4K1yO9mpmZvpqZmT4K1yM9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_n33wq"]
+_surfaces = [{
+"aabb": AABB(-0.14, 0, -0.0125, 0.28, 1.5000001, 0.025),
+"format": 34359738375,
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 84,
+"vertex_data": PackedByteArray("AAAAAAAAAADNzEy8ObTIvXI9ij7NzEy8KVwPvgEAQD/NzEy8AAAAAAAAAADNzEw8KVwPvgEAQD/NzEw8ObTIvXI9ij7NzEw8AAAAAAAAAADNzEy8KVwPvgEAQD/NzEy8KVyPvTQzoz/NzEy8AAAAAAAAAADNzEw8KVyPvTQzoz/NzEw8KVwPvgEAQD/NzEw8AAAAAAAAAADNzEy8KVyPvTQzoz/NzEy8AAAAAAEAwD/NzEy8AAAAAAAAAADNzEw8AAAAAAEAwD/NzEw8KVyPvTQzoz/NzEw8AAAAAAAAAADNzEy8AAAAAAEAwD/NzEy8KVyPPTQzoz/NzEy8AAAAAAAAAADNzEw8KVyPPTQzoz/NzEw8AAAAAAEAwD/NzEw8AAAAAAAAAADNzEy8KVyPPTQzoz/NzEy8KVwPPgEAQD/NzEy8AAAAAAAAAADNzEw8KVwPPgEAQD/NzEw8KVyPPTQzoz/NzEw8AAAAAAAAAADNzEy8KVwPPgEAQD/NzEy8ObTIPXI9ij7NzEy8AAAAAAAAAADNzEw8ObTIPXI9ij7NzEw8KVwPPgEAQD/NzEw8AAAAAAAAAADNzEy8AAAAAAAAAADNzEw8ObTIvXI9ij7NzEw8AAAAAAAAAADNzEy8ObTIvXI9ij7NzEw8ObTIvXI9ij7NzEy8ObTIvXI9ij7NzEy8ObTIvXI9ij7NzEw8KVwPvgEAQD/NzEw8ObTIvXI9ij7NzEy8KVwPvgEAQD/NzEw8KVwPvgEAQD/NzEy8KVwPvgEAQD/NzEy8KVwPvgEAQD/NzEw8KVyPvTQzoz/NzEw8KVwPvgEAQD/NzEy8KVyPvTQzoz/NzEw8KVyPvTQzoz/NzEy8KVyPvTQzoz/NzEy8KVyPvTQzoz/NzEw8AAAAAAEAwD/NzEw8KVyPvTQzoz/NzEy8AAAAAAEAwD/NzEw8AAAAAAEAwD/NzEy8AAAAAAEAwD/NzEy8AAAAAAEAwD/NzEw8KVyPPTQzoz/NzEw8AAAAAAEAwD/NzEy8KVyPPTQzoz/NzEw8KVyPPTQzoz/NzEy8KVyPPTQzoz/NzEy8KVyPPTQzoz/NzEw8KVwPPgEAQD/NzEw8KVyPPTQzoz/NzEy8KVwPPgEAQD/NzEw8KVwPPgEAQD/NzEy8KVwPPgEAQD/NzEy8KVwPPgEAQD/NzEw8ObTIPXI9ij7NzEw8KVwPPgEAQD/NzEy8ObTIPXI9ij7NzEw8ObTIPXI9ij7NzEy8ObTIPXI9ij7NzEy8ObTIPXI9ij7NzEw8AAAAAAAAAADNzEw8ObTIPXI9ij7NzEy8AAAAAAAAAADNzEw8AAAAAAAAAADNzEy8G49zkHBu/5Fi1NWOE2CMwvLJmXu6V8awcxDj8Lxgv4js/gK07Ki1ssvqwLCTmg7HG49zkHBu/5HyyZl7ulfGsPvBem88VtmrcxDj8Lxgv4jt8l9E86G/ruz+ArTsqLWyG49zkHBu/5H7wXpvPFbZqzhgVmKAseaNcxDj8Lxgv4hW4scfe5AmnO3yX0Tzob+uG49zkHBu/5E4YFZigLHmjZ877nIorjy2cxDj8Lxgv4iFEPxBN1NMuVbixx97kCacG49zkHBu/5GfO+5yKK48tgI0EoEFqCiycxDj8Lxgv4hlBPJJ+lYbtIUQ/EE3U0y5G49zkHBu/5ECNBKBBagossAwM5UalNqxcxDj8Lxgv4jVDpyrUWJXtGUE8kn6Vhu0G49zkHBu/5FzEOPwvGC/iMvqwLCTmg7HG49zkHBu/5HL6sCwk5oOx2LU1Y4TYIzCYtTVjhNgjMLL6sCwk5oOx+z+ArTsqLWyYtTVjhNgjMLs/gK07Ki1svLJmXu6V8aw8smZe7pXxrDs/gK07Ki1su3yX0Tzob+u8smZe7pXxrDt8l9E86G/rvvBem88Vtmr+8F6bzxW2avt8l9E86G/rlbixx97kCac+8F6bzxW2atW4scfe5AmnDhgVmKAseaNOGBWYoCx5o1W4scfe5AmnIUQ/EE3U0y5OGBWYoCx5o2FEPxBN1NMuZ877nIorjy2nzvuciiuPLaFEPxBN1NMuWUE8kn6Vhu0nzvuciiuPLZlBPJJ+lYbtAI0EoEFqCiyAjQSgQWoKLJlBPJJ+lYbtNUOnKtRYle0AjQSgQWoKLLVDpyrUWJXtMAwM5UalNqxwDAzlRqU2rHVDpyrUWJXtHMQ4/C8YL+IwDAzlRqU2rFzEOPwvGC/iBuPc5Bwbv+R")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_elv1o"]
+_surfaces = [{
+"aabb": AABB(-0.2825, -0.29999998, -0.04, 0.565, 0.59999996, 0.08),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("16OQvpmZmb4K1yO916OQPpmZmb4K1yO916OQPpmZmb4K1yO916OQPpmZmT4K1yO916OQPpmZmT4K1yO916OQvpmZmT4K1yO916OQvpmZmT4K1yO916OQvpmZmb4K1yO916OQvpmZmb4K1yM916OQPpmZmb4K1yM916OQPpmZmb4K1yM916OQPpmZmT4K1yM916OQPpmZmT4K1yM916OQvpmZmT4K1yM916OQvpmZmT4K1yM916OQvpmZmb4K1yM916OQvpmZmb4K1yO916OQvpmZmb4K1yM916OQPpmZmb4K1yO916OQPpmZmb4K1yM916OQPpmZmT4K1yO916OQPpmZmT4K1yM916OQvpmZmT4K1yO916OQvpmZmT4K1yM9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_w2wvb"]
+_surfaces = [{
+"aabb": AABB(-0.14, 0, -0.0125, 0.28, 1.9675555, 0.025),
+"format": 34359738375,
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 84,
+"vertex_data": PackedByteArray("AAAAAAAAAADNzEy8ObTIvXZUtT7NzEy8KVwPvtzYez/NzEy8AAAAAAAAAADNzEw8KVwPvtzYez/NzEw8ObTIvXZUtT7NzEw8AAAAAAAAAADNzEy8KVwPvtzYez/NzEy8KVyPve8R1j/NzEy8AAAAAAAAAADNzEw8KVyPve8R1j/NzEw8KVwPvtzYez/NzEw8AAAAAAAAAADNzEy8KVyPve8R1j/NzEy8AAAAANzY+z/NzEy8AAAAAAAAAADNzEw8AAAAANzY+z/NzEw8KVyPve8R1j/NzEw8AAAAAAAAAADNzEy8AAAAANzY+z/NzEy8KVyPPe8R1j/NzEy8AAAAAAAAAADNzEw8KVyPPe8R1j/NzEw8AAAAANzY+z/NzEw8AAAAAAAAAADNzEy8KVyPPe8R1j/NzEy8KVwPPtzYez/NzEy8AAAAAAAAAADNzEw8KVwPPtzYez/NzEw8KVyPPe8R1j/NzEw8AAAAAAAAAADNzEy8KVwPPtzYez/NzEy8ObTIPXZUtT7NzEy8AAAAAAAAAADNzEw8ObTIPXZUtT7NzEw8KVwPPtzYez/NzEw8AAAAAAAAAADNzEy8AAAAAAAAAADNzEw8ObTIvXZUtT7NzEw8AAAAAAAAAADNzEy8ObTIvXZUtT7NzEw8ObTIvXZUtT7NzEy8ObTIvXZUtT7NzEy8ObTIvXZUtT7NzEw8KVwPvtzYez/NzEw8ObTIvXZUtT7NzEy8KVwPvtzYez/NzEw8KVwPvtzYez/NzEy8KVwPvtzYez/NzEy8KVwPvtzYez/NzEw8KVyPve8R1j/NzEw8KVwPvtzYez/NzEy8KVyPve8R1j/NzEw8KVyPve8R1j/NzEy8KVyPve8R1j/NzEy8KVyPve8R1j/NzEw8AAAAANzY+z/NzEw8KVyPve8R1j/NzEy8AAAAANzY+z/NzEw8AAAAANzY+z/NzEy8AAAAANzY+z/NzEy8AAAAANzY+z/NzEw8KVyPPe8R1j/NzEw8AAAAANzY+z/NzEy8KVyPPe8R1j/NzEw8KVyPPe8R1j/NzEy8KVyPPe8R1j/NzEy8KVyPPe8R1j/NzEw8KVwPPtzYez/NzEw8KVyPPe8R1j/NzEy8KVwPPtzYez/NzEw8KVwPPtzYez/NzEy8KVwPPtzYez/NzEy8KVwPPtzYez/NzEw8ObTIPXZUtT7NzEw8KVwPPtzYez/NzEy8ObTIPXZUtT7NzEw8ObTIPXZUtT7NzEy8ObTIPXZUtT7NzEy8ObTIPXZUtT7NzEw8AAAAAAAAAADNzEw8ObTIPXZUtT7NzEy8AAAAAAAAAADNzEw8AAAAAAAAAADNzEy8448wjaVuaZDk1ryL9F/wwKPKm3y7VzKxMA0b8ABku4gu/8izyqitsgbvQK0dnUjE448wjaVuaZCjypt8u1cysWXE6XINV1GtMA0b8ABku4i59UhGiaOiry7/yLPKqK2y448wjaVuaZBlxOlyDVdRrQRe0mearvGRMA0b8ABku4jR5/ohKJawnLn1SEaJo6Kv448wjaVuaZAEXtJnmq7xkbc5uXXfrF+1MA0b8ABku4gWDWVEr1TNt9Hn+iEolrCc448wjaVuaZC3Obl136xftckz0IAbqEKyMA0b8ABku4hjA6NKKFfAsxYNZUSvVM23448wjaVuaZDJM9CAG6hCskEt95CtltGzMA0b8ABku4i9CxmpxWLEtWMDo0ooV8Cz448wjaVuaZAwDRvwAGS7iAbvQK0dnUjE448wjaVuaZAG70CtHZ1IxOTWvIv0X/DA5Na8i/Rf8MAG70CtHZ1IxC7/yLPKqK2y5Na8i/Rf8MAu/8izyqitsqPKm3y7VzKxo8qbfLtXMrEu/8izyqitsrn1SEaJo6Kvo8qbfLtXMrG59UhGiaOir2XE6XINV1GtZcTpcg1XUa259UhGiaOir9Hn+iEolrCcZcTpcg1XUa3R5/ohKJawnARe0mearvGRBF7SZ5qu8ZHR5/ohKJawnBYNZUSvVM23BF7SZ5qu8ZEWDWVEr1TNt7c5uXXfrF+1tzm5dd+sX7UWDWVEr1TNt2MDo0ooV8Cztzm5dd+sX7VjA6NKKFfAs8kz0IAbqEKyyTPQgBuoQrJjA6NKKFfAs70LGanFYsS1yTPQgBuoQrK9CxmpxWLEtUEt95CtltGzQS33kK2W0bO9CxmpxWLEtTANG/AAZLuIQS33kK2W0bMwDRvwAGS7iOOPMI2lbmmQ")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_6t4ng"]
+_surfaces = [{
+"aabb": AABB(-0.265, -0.375, -0.04, 0.53, 0.75, 0.08),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("FK6HvgAAwL4K1yO9FK6HPgAAwL4K1yO9FK6HPgAAwL4K1yO9FK6HPgAAwD4K1yO9FK6HPgAAwD4K1yO9FK6HvgAAwD4K1yO9FK6HvgAAwD4K1yO9FK6HvgAAwL4K1yO9FK6HvgAAwL4K1yM9FK6HPgAAwL4K1yM9FK6HPgAAwL4K1yM9FK6HPgAAwD4K1yM9FK6HPgAAwD4K1yM9FK6HvgAAwD4K1yM9FK6HvgAAwD4K1yM9FK6HvgAAwL4K1yM9FK6HvgAAwL4K1yO9FK6HvgAAwL4K1yM9FK6HPgAAwL4K1yO9FK6HPgAAwL4K1yM9FK6HPgAAwD4K1yO9FK6HPgAAwD4K1yM9FK6HvgAAwD4K1yO9FK6HvgAAwD4K1yM9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_aat3q"]
+_surfaces = [{
+"aabb": AABB(-0.14, 0, -0.0125, 0.28, 2.247559, 0.025),
+"format": 34359738375,
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 84,
+"vertex_data": PackedByteArray("AAAAAAAAAADNzEy8ObTIvZMizz7NzEy8KVwPvgLYjz/NzEy8AAAAAAAAAADNzEw8KVwPvgLYjz/NzEw8ObTIvZMizz7NzEw8AAAAAAAAAADNzEy8KVwPvgLYjz/NzEy8KVyPvdGI9D/NzEy8AAAAAAAAAADNzEw8KVyPvdGI9D/NzEw8KVwPvgLYjz/NzEw8AAAAAAAAAADNzEy8KVyPvdGI9D/NzEy8AAAAAALYD0DNzEy8AAAAAAAAAADNzEw8AAAAAALYD0DNzEw8KVyPvdGI9D/NzEw8AAAAAAAAAADNzEy8AAAAAALYD0DNzEy8KVyPPdGI9D/NzEy8AAAAAAAAAADNzEw8KVyPPdGI9D/NzEw8AAAAAALYD0DNzEw8AAAAAAAAAADNzEy8KVyPPdGI9D/NzEy8KVwPPgLYjz/NzEy8AAAAAAAAAADNzEw8KVwPPgLYjz/NzEw8KVyPPdGI9D/NzEw8AAAAAAAAAADNzEy8KVwPPgLYjz/NzEy8ObTIPZMizz7NzEy8AAAAAAAAAADNzEw8ObTIPZMizz7NzEw8KVwPPgLYjz/NzEw8AAAAAAAAAADNzEy8AAAAAAAAAADNzEw8ObTIvZMizz7NzEw8AAAAAAAAAADNzEy8ObTIvZMizz7NzEw8ObTIvZMizz7NzEy8ObTIvZMizz7NzEy8ObTIvZMizz7NzEw8KVwPvgLYjz/NzEw8ObTIvZMizz7NzEy8KVwPvgLYjz/NzEw8KVwPvgLYjz/NzEy8KVwPvgLYjz/NzEy8KVwPvgLYjz/NzEw8KVyPvdGI9D/NzEw8KVwPvgLYjz/NzEy8KVyPvdGI9D/NzEw8KVyPvdGI9D/NzEy8KVyPvdGI9D/NzEy8KVyPvdGI9D/NzEw8AAAAAALYD0DNzEw8KVyPvdGI9D/NzEy8AAAAAALYD0DNzEw8AAAAAALYD0DNzEy8AAAAAALYD0DNzEy8AAAAAALYD0DNzEw8KVyPPdGI9D/NzEw8AAAAAALYD0DNzEy8KVyPPdGI9D/NzEw8KVyPPdGI9D/NzEy8KVyPPdGI9D/NzEy8KVyPPdGI9D/NzEw8KVwPPgLYjz/NzEw8KVyPPdGI9D/NzEy8KVwPPgLYjz/NzEw8KVwPPgLYjz/NzEy8KVwPPgLYjz/NzEy8KVwPPgLYjz/NzEw8ObTIPZMizz7NzEw8KVwPPgLYjz/NzEy8ObTIPZMizz7NzEw8ObTIPZMizz7NzEy8ObTIPZMizz7NzEy8ObTIPZMizz7NzEw8AAAAAAAAAADNzEw8ObTIPZMizz7NzEy8AAAAAAAAAADNzEw8AAAAAAAAAADNzEy8M5DFi7Fuu4/x122K0l87wOnKBH26V16xxgvL72Zlv4hI/7OzvaiqstnwxasHniPDM5DFi7Fuu4/pygR9uldesWPFXXRMV+6txgvL72Zlv4jk9hBHKqT+r0j/s7O9qKqyM5DFi7Fuu49jxV10TFfurRRdP2oJrVWTxgvL72Zlv4g+6usiR5jPnOT2EEcqpP6vM5DFi7Fuu48UXT9qCa1Vk+845XZYrAa1xgvL72Zlv4ihC2NFNVUttz7q6yJHmM+cM5DFi7Fuu4/vOOV2WKwGtbMztYAlqEyyxgvL72Zlv4j6AupKOVeas6ELY0U1VS23M5DFi7Fuu4+zM7WAJahMssYrJY+nl6K0xgvL72Zlv4htCg2o42JftvoC6ko5V5qzM5DFi7Fuu4/GC8vvZmW/iNnwxasHniPDM5DFi7Fuu4/Z8MWrB54jw/HXbYrSXzvA8ddtitJfO8DZ8MWrB54jw0j/s7O9qKqy8ddtitJfO8BI/7OzvaiqsunKBH26V16x6coEfbpXXrFI/7OzvaiqsuT2EEcqpP6v6coEfbpXXrHk9hBHKqT+r2PFXXRMV+6tY8VddExX7q3k9hBHKqT+rz7q6yJHmM+cY8VddExX7q0+6usiR5jPnBRdP2oJrVWTFF0/agmtVZM+6usiR5jPnKELY0U1VS23FF0/agmtVZOhC2NFNVUtt+845XZYrAa17zjldlisBrWhC2NFNVUtt/oC6ko5V5qz7zjldlisBrX6AupKOVeas7MztYAlqEyyszO1gCWoTLL6AupKOVeas20KDajjYl+2szO1gCWoTLJtCg2o42JftsYrJY+nl6K0xislj6eXorRtCg2o42JftsYLy+9mZb+Ixislj6eXorTGC8vvZmW/iDOQxYuxbruP")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_rb8ib"]
+_surfaces = [{
+"aabb": AABB(-0.2475, -0.37500003, -0.04, 0.495, 0.75000006, 0.08),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("pHB9vgEAwL4K1yO9pHB9PgEAwL4K1yO9pHB9PgEAwL4K1yO9pHB9PgEAwD4K1yO9pHB9PgEAwD4K1yO9pHB9vgEAwD4K1yO9pHB9vgEAwD4K1yO9pHB9vgEAwL4K1yO9pHB9vgEAwL4K1yM9pHB9PgEAwL4K1yM9pHB9PgEAwL4K1yM9pHB9PgEAwD4K1yM9pHB9PgEAwD4K1yM9pHB9vgEAwD4K1yM9pHB9vgEAwD4K1yM9pHB9vgEAwL4K1yM9pHB9vgEAwL4K1yO9pHB9vgEAwL4K1yM9pHB9PgEAwL4K1yO9pHB9PgEAwL4K1yM9pHB9PgEAwD4K1yO9pHB9PgEAwD4K1yM9pHB9vgEAwD4K1yO9pHB9vgEAwD4K1yM9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_sj3ry"]
+_surfaces = [{
+"aabb": AABB(-0.14, 0, -0.0125, 0.28, 2.664391, 0.025),
+"format": 34359738375,
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 84,
+"vertex_data": PackedByteArray("AAAAAAAAAADNzEy8ObTIveCM9T7NzEy8KVwPvmKFqj/NzEy8AAAAAAAAAADNzEw8KVwPvmKFqj/NzEw8ObTIveCM9T7NzEw8AAAAAAAAAADNzEy8KVwPvmKFqj/NzEy8KVyPvWDxEEDNzEy8AAAAAAAAAADNzEw8KVyPvWDxEEDNzEw8KVwPvmKFqj/NzEw8AAAAAAAAAADNzEy8KVyPvWDxEEDNzEy8AAAAAGKFKkDNzEy8AAAAAAAAAADNzEw8AAAAAGKFKkDNzEw8KVyPvWDxEEDNzEw8AAAAAAAAAADNzEy8AAAAAGKFKkDNzEy8KVyPPWDxEEDNzEy8AAAAAAAAAADNzEw8KVyPPWDxEEDNzEw8AAAAAGKFKkDNzEw8AAAAAAAAAADNzEy8KVyPPWDxEEDNzEy8KVwPPmKFqj/NzEy8AAAAAAAAAADNzEw8KVwPPmKFqj/NzEw8KVyPPWDxEEDNzEw8AAAAAAAAAADNzEy8KVwPPmKFqj/NzEy8ObTIPeCM9T7NzEy8AAAAAAAAAADNzEw8ObTIPeCM9T7NzEw8KVwPPmKFqj/NzEw8AAAAAAAAAADNzEy8AAAAAAAAAADNzEw8ObTIveCM9T7NzEw8AAAAAAAAAADNzEy8ObTIveCM9T7NzEw8ObTIveCM9T7NzEy8ObTIveCM9T7NzEy8ObTIveCM9T7NzEw8KVwPvmKFqj/NzEw8ObTIveCM9T7NzEy8KVwPvmKFqj/NzEw8KVwPvmKFqj/NzEy8KVwPvmKFqj/NzEy8KVwPvmKFqj/NzEw8KVyPvWDxEEDNzEw8KVwPvmKFqj/NzEy8KVyPvWDxEEDNzEw8KVyPvWDxEEDNzEy8KVyPvWDxEEDNzEy8KVyPvWDxEEDNzEw8AAAAAGKFKkDNzEw8KVyPvWDxEEDNzEy8AAAAAGKFKkDNzEw8AAAAAGKFKkDNzEy8AAAAAGKFKkDNzEy8AAAAAGKFKkDNzEw8KVyPPWDxEEDNzEw8AAAAAGKFKkDNzEy8KVyPPWDxEEDNzEw8KVyPPWDxEEDNzEy8KVyPPWDxEEDNzEy8KVyPPWDxEEDNzEw8KVwPPmKFqj/NzEw8KVyPPWDxEEDNzEy8KVwPPmKFqj/NzEw8KVwPPmKFqj/NzEy8KVwPPmKFqj/NzEy8KVwPPmKFqj/NzEw8ObTIPeCM9T7NzEw8KVwPPmKFqj/NzEy8ObTIPeCM9T7NzEw8ObTIPeCM9T7NzEy8ObTIPeCM9T7NzEy8ObTIPeCM9T7NzEw8AAAAAAAAAADNzEw8ObTIPeCM9T7NzEy8AAAAAAAAAADNzEw8AAAAAAAAAADNzEy8ipAjirdu9Y4f2e+IMWBrvzbLeH24V42xJApz7/5mx4hl/5yzr6imsvDyF6r5ntrBipAjirdu9Y42y3h9uFeNsX/GBXaEV56uJApz7/5mx4g3+O5H2aRjsGX/nLOvqKayipAjirdu9Y5/xgV2hFeergBcFW0Fq7iUJApz7/5mx4gV7f4jgprfnDf47kfZpGOwipAjirdu9Y4AXBVtBau4lBA4N3jBq6O0JApz7/5mx4j6CYBGvVV5thXt/iOCmt+cipAjirdu9Y4QODd4waujtJwzmYAvqFeyJApz7/5mx4iGAjdLSldxs/oJgEa9VXm2ipAjirdu9Y6cM5mAL6hXshgqDY2wmI+1JApz7/5mx4jwCN+m+GIOt4YCN0tKV3GzipAjirdu9Y4kCnPv/mbHiPDyF6r5ntrBipAjirdu9Y7w8heq+Z7awR/Z74gxYGu/H9nviDFga7/w8heq+Z7awWX/nLOvqKayH9nviDFga79l/5yzr6imsjbLeH24V42xNst4fbhXjbFl/5yzr6imsjf47kfZpGOwNst4fbhXjbE3+O5H2aRjsH/GBXaEV56uf8YFdoRXnq43+O5H2aRjsBXt/iOCmt+cf8YFdoRXnq4V7f4jgprfnABcFW0Fq7iUAFwVbQWruJQV7f4jgprfnPoJgEa9VXm2AFwVbQWruJT6CYBGvVV5thA4N3jBq6O0EDg3eMGro7T6CYBGvVV5toYCN0tKV3GzEDg3eMGro7SGAjdLSldxs5wzmYAvqFeynDOZgC+oV7KGAjdLSldxs/AI36b4Yg63nDOZgC+oV7LwCN+m+GIOtxgqDY2wmI+1GCoNjbCYj7XwCN+m+GIOtyQKc+/+ZseIGCoNjbCYj7UkCnPv/mbHiIqQI4q3bvWO")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_1ysi6"]
+_surfaces = [{
+"aabb": AABB(-0.23, -0.42499998, -0.04, 0.46, 0.84999996, 0.08),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("H4VrvpmZ2b4K1yO9H4VrPpmZ2b4K1yO9H4VrPpmZ2b4K1yO9H4VrPpmZ2T4K1yO9H4VrPpmZ2T4K1yO9H4VrvpmZ2T4K1yO9H4VrvpmZ2T4K1yO9H4VrvpmZ2b4K1yO9H4VrvpmZ2b4K1yM9H4VrPpmZ2b4K1yM9H4VrPpmZ2b4K1yM9H4VrPpmZ2T4K1yM9H4VrPpmZ2T4K1yM9H4VrvpmZ2T4K1yM9H4VrvpmZ2T4K1yM9H4VrvpmZ2b4K1yM9H4VrvpmZ2b4K1yO9H4VrvpmZ2b4K1yM9H4VrPpmZ2b4K1yO9H4VrPpmZ2b4K1yM9H4VrPpmZ2T4K1yO9H4VrPpmZ2T4K1yM9H4VrvpmZ2T4K1yO9H4VrvpmZ2T4K1yM9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_wts6w"]
+_surfaces = [{
+"aabb": AABB(-0.14, 0, -0.0125, 0.28, 2.7858088, 0.025),
+"format": 34359738375,
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 84,
+"vertex_data": PackedByteArray("AAAAAAAAAADNzEy8ObTIvb1eAD/NzEy8KVwPvrFKsj/NzEy8AAAAAAAAAADNzEw8KVwPvrFKsj/NzEw8ObTIvb1eAD/NzEw8AAAAAAAAAADNzEy8KVwPvrFKsj/NzEy8KVyPvUqMF0DNzEy8AAAAAAAAAADNzEw8KVyPvUqMF0DNzEw8KVwPvrFKsj/NzEw8AAAAAAAAAADNzEy8KVyPvUqMF0DNzEy8AAAAALFKMkDNzEy8AAAAAAAAAADNzEw8AAAAALFKMkDNzEw8KVyPvUqMF0DNzEw8AAAAAAAAAADNzEy8AAAAALFKMkDNzEy8KVyPPUqMF0DNzEy8AAAAAAAAAADNzEw8KVyPPUqMF0DNzEw8AAAAALFKMkDNzEw8AAAAAAAAAADNzEy8KVyPPUqMF0DNzEy8KVwPPrFKsj/NzEy8AAAAAAAAAADNzEw8KVwPPrFKsj/NzEw8KVyPPUqMF0DNzEw8AAAAAAAAAADNzEy8KVwPPrFKsj/NzEy8ObTIPb1eAD/NzEy8AAAAAAAAAADNzEw8ObTIPb1eAD/NzEw8KVwPPrFKsj/NzEw8AAAAAAAAAADNzEy8AAAAAAAAAADNzEw8ObTIvb1eAD/NzEw8AAAAAAAAAADNzEy8ObTIvb1eAD/NzEw8ObTIvb1eAD/NzEy8ObTIvb1eAD/NzEy8ObTIvb1eAD/NzEw8KVwPvrFKsj/NzEw8ObTIvb1eAD/NzEy8KVwPvrFKsj/NzEw8KVwPvrFKsj/NzEy8KVwPvrFKsj/NzEy8KVwPvrFKsj/NzEw8KVyPvUqMF0DNzEw8KVwPvrFKsj/NzEy8KVyPvUqMF0DNzEw8KVyPvUqMF0DNzEy8KVyPvUqMF0DNzEy8KVyPvUqMF0DNzEw8AAAAALFKMkDNzEw8KVyPvUqMF0DNzEy8AAAAALFKMkDNzEw8AAAAALFKMkDNzEy8AAAAALFKMkDNzEy8AAAAALFKMkDNzEw8KVyPPUqMF0DNzEw8AAAAALFKMkDNzEy8KVyPPUqMF0DNzEw8KVyPPUqMF0DNzEy8KVyPPUqMF0DNzEy8KVyPPUqMF0DNzEw8KVwPPrFKsj/NzEw8KVyPPUqMF0DNzEy8KVwPPrFKsj/NzEw8KVwPPrFKsj/NzEy8KVwPPrFKsj/NzEy8KVwPPrFKsj/NzEw8ObTIPb1eAD/NzEw8KVwPPrFKsj/NzEy8ObTIPb1eAD/NzEw8ObTIPb1eAD/NzEy8ObTIPb1eAD/NzEy8ObTIPb1eAD/NzEw8AAAAAAAAAADNzEw8ObTIPb1eAD/NzEy8AAAAAAAAAADNzEw8AAAAAAAAAADNzEy8n5C+ibduxY5n2ZSIU2A7v0jLlH23V5ixvwlf72Bnyohr/5ezrKiksnLzsKkwn4vBn5C+ibduxY5Iy5R9t1eYscPGa3aOV8iuvwlf72BnyoiI+CNIAqV6sGv/l7OsqKSyn5C+ibduxY7Dxmt2jlfIrr5bx21/qgWVvwlf72BnyojG7UEkBZvgnIj4I0gCpXqwn5C+ibduxY6+W8dtf6oFldw3iHidq4u0vwlf72BnyoiUCcNG21VOtsbtQSQFm+Ccn5C+ibduxY7cN4h4nauLtJczkoAxqFmyvwlf72BnyohrAklLTldns5QJw0bbVU62n5C+ibduxY6XM5KAMahZsrApjIztmMe1vwlf72BnyoiUCJam+2I4t2sCSUtOV2ezn5C+ibduxY6/CV/vYGfKiHLzsKkwn4vBn5C+ibduxY5y87CpMJ+LwWfZlIhTYDu/Z9mUiFNgO79y87CpMJ+LwWv/l7OsqKSyZ9mUiFNgO79r/5ezrKikskjLlH23V5ixSMuUfbdXmLFr/5ezrKiksoj4I0gCpXqwSMuUfbdXmLGI+CNIAqV6sMPGa3aOV8iuw8Zrdo5XyK6I+CNIAqV6sMbtQSQFm+Ccw8Zrdo5XyK7G7UEkBZvgnL5bx21/qgWVvlvHbX+qBZXG7UEkBZvgnJQJw0bbVU62vlvHbX+qBZWUCcNG21VOttw3iHidq4u03DeIeJ2ri7SUCcNG21VOtmsCSUtOV2ez3DeIeJ2ri7RrAklLTldns5czkoAxqFmylzOSgDGoWbJrAklLTldns5QIlqb7Yji3lzOSgDGoWbKUCJam+2I4t7ApjIztmMe1sCmMjO2Yx7WUCJam+2I4t78JX+9gZ8qIsCmMjO2Yx7W/CV/vYGfKiJ+Qvom3bsWO")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_2c5yp"]
+_surfaces = [{
+"aabb": AABB(-0.2125, -0.425, -0.04, 0.425, 0.85, 0.08),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("mplZvpqZ2b4K1yO9mplZPpqZ2b4K1yO9mplZPpqZ2b4K1yO9mplZPpqZ2T4K1yO9mplZPpqZ2T4K1yO9mplZvpqZ2T4K1yO9mplZvpqZ2T4K1yO9mplZvpqZ2b4K1yO9mplZvpqZ2b4K1yM9mplZPpqZ2b4K1yM9mplZPpqZ2b4K1yM9mplZPpqZ2T4K1yM9mplZPpqZ2T4K1yM9mplZvpqZ2T4K1yM9mplZvpqZ2T4K1yM9mplZvpqZ2b4K1yM9mplZvpqZ2b4K1yO9mplZvpqZ2b4K1yM9mplZPpqZ2b4K1yO9mplZPpqZ2b4K1yM9mplZPpqZ2T4K1yO9mplZPpqZ2T4K1yM9mplZvpqZ2T4K1yO9mplZvpqZ2T4K1yM9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_hjh1y"]
+_surfaces = [{
+"aabb": AABB(-0.14, 0, -0.0125, 0.28, 2.5471857, 0.025),
+"format": 34359738375,
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 84,
+"vertex_data": PackedByteArray("AAAAAAAAAADNzEy8ObTIvae/6j7NzEy8KVwPvhcFoz/NzEy8AAAAAAAAAADNzEw8KVwPvhcFoz/NzEw8ObTIvae/6j7NzEw8AAAAAAAAAADNzEy8KVwPvhcFoz/NzEy8KVyPvSGRCkDNzEy8AAAAAAAAAADNzEw8KVyPvSGRCkDNzEw8KVwPvhcFoz/NzEw8AAAAAAAAAADNzEy8KVyPvSGRCkDNzEy8AAAAABcFI0DNzEy8AAAAAAAAAADNzEw8AAAAABcFI0DNzEw8KVyPvSGRCkDNzEw8AAAAAAAAAADNzEy8AAAAABcFI0DNzEy8KVyPPSGRCkDNzEy8AAAAAAAAAADNzEw8KVyPPSGRCkDNzEw8AAAAABcFI0DNzEw8AAAAAAAAAADNzEy8KVyPPSGRCkDNzEy8KVwPPhcFoz/NzEy8AAAAAAAAAADNzEw8KVwPPhcFoz/NzEw8KVyPPSGRCkDNzEw8AAAAAAAAAADNzEy8KVwPPhcFoz/NzEy8ObTIPae/6j7NzEy8AAAAAAAAAADNzEw8ObTIPae/6j7NzEw8KVwPPhcFoz/NzEw8AAAAAAAAAADNzEy8AAAAAAAAAADNzEw8ObTIvae/6j7NzEw8AAAAAAAAAADNzEy8ObTIvae/6j7NzEw8ObTIvae/6j7NzEy8ObTIvae/6j7NzEy8ObTIvae/6j7NzEw8KVwPvhcFoz/NzEw8ObTIvae/6j7NzEy8KVwPvhcFoz/NzEw8KVwPvhcFoz/NzEy8KVwPvhcFoz/NzEy8KVwPvhcFoz/NzEw8KVyPvSGRCkDNzEw8KVwPvhcFoz/NzEy8KVyPvSGRCkDNzEw8KVyPvSGRCkDNzEy8KVyPvSGRCkDNzEy8KVyPvSGRCkDNzEw8AAAAABcFI0DNzEw8KVyPvSGRCkDNzEy8AAAAABcFI0DNzEw8AAAAABcFI0DNzEy8AAAAABcFI0DNzEy8AAAAABcFI0DNzEw8KVyPPSGRCkDNzEw8AAAAABcFI0DNzEy8KVyPPSGRCkDNzEw8KVyPPSGRCkDNzEy8KVyPPSGRCkDNzEy8KVyPPSGRCkDNzEw8KVwPPhcFoz/NzEw8KVyPPSGRCkDNzEy8KVwPPhcFoz/NzEw8KVwPPhcFoz/NzEy8KVwPPhcFoz/NzEy8KVwPPhcFoz/NzEw8ObTIPae/6j7NzEw8KVwPPhcFoz/NzEy8ObTIPae/6j7NzEw8ObTIPae/6j7NzEy8ObTIPae/6j7NzEy8ObTIPae/6j7NzEw8AAAAAAAAAADNzEw8ObTIPae/6j7NzEy8AAAAAAAAAADNzEw8AAAAAAAAAADNzEy8dZCNirduJ4/T2E+JC2CfvyPLW324V4GxjQqJ75dmxIhe/6Gzs6insmnyg6q/nizCdZCNirduJ48jy1t9uFeBsTjGmnV3V3KujQqJ75dmxIji97dHrqRKsF7/obOzqKeydZCNirduJ484xpp1d1dyrkZcXGyMq2OUjQqJ75dmxIhc7Lkj95ndnOL3t0eupEqwdZCNirduJ49GXFxsjKtjlEg443fmq7u0jQqJ75dmxIhkCjlGnFWmtlzsuSP3md2cdZCNirduJ49IOON35qu7tKIzoIAsqFSyjQqJ75dmxIijAiNLRld7s2QKOUacVaa2dZCNirduJ4+iM6CALKhUsoQqlI1vmFS1jQqJ75dmxIhQCSqn9GLitqMCI0tGV3uzdZCNirduJ4+NConvl2bEiGnyg6q/nizCdZCNirduJ49p8oOqv54swtPYT4kLYJ+/09hPiQtgn79p8oOqv54swl7/obOzqKey09hPiQtgn79e/6Gzs6insiPLW324V4GxI8tbfbhXgbFe/6Gzs6insuL3t0eupEqwI8tbfbhXgbHi97dHrqRKsDjGmnV3V3KuOMaadXdXcq7i97dHrqRKsFzsuSP3md2cOMaadXdXcq5c7Lkj95ndnEZcXGyMq2OURlxcbIyrY5Rc7Lkj95ndnGQKOUacVaa2RlxcbIyrY5RkCjlGnFWmtkg443fmq7u0SDjjd+aru7RkCjlGnFWmtqMCI0tGV3uzSDjjd+aru7SjAiNLRld7s6IzoIAsqFSyojOggCyoVLKjAiNLRld7s1AJKqf0YuK2ojOggCyoVLJQCSqn9GLitoQqlI1vmFS1hCqUjW+YVLVQCSqn9GLito0Kie+XZsSIhCqUjW+YVLWNConvl2bEiHWQjYq3bieP")
+}]
 
 [node name="Generate_Bird" unique_id=1071077287 instance=ExtResource("1_base")]
 script = ExtResource("2_character")
@@ -51,9 +517,567 @@ segment_maximum_distance_lock_enabled = true
 segment_maximum_distance_ratio = 1.15
 segment_spring_frequency = 3.0
 segment_spring_damping_ratio = 1.0
+mass_limits_enabled = false
 
-[node name="BirdGenerator" parent="." index="0" unique_id=1245314506 instance=ExtResource("3_generator")]
+[node name="BirdGenerator" type="Node3D" parent="." index="0" unique_id=1245314506]
 visible = false
+script = ExtResource("3_generator")
+wing_root_length = 1.2
+wing_middle_length = 1.5
+wing_tip_length = 1.7
+wing_elevation_degrees = 30.0
+overall_scale = 1.0
+torso_upper_curve = SubResource("Curve_yi0ms")
+torso_lower_curve = SubResource("Curve_p8iwf")
+torso_height_offset_curve = SubResource("Curve_2l0wg")
+sub_torso_height_curve = SubResource("Curve_x21g4")
+head_minimum_size = Vector3(0.7, 0.3, 0.3)
+head_maximum_size = Vector3(0.7, 0.3, 0.7)
+
+[node name="Feets" type="Node3D" parent="BirdGenerator" index="0" unique_id=778824641]
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 0, 0, 0)
+
+[node name="Leg_1" type="Node3D" parent="BirdGenerator/Feets" index="0" unique_id=1551777153]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0.2)
+metadata/foot_index = 0
+metadata/limb_type = "Leg"
+metadata/initial_position = Vector2(-0.5, 0.5)
+metadata/target_position = Vector2(0, 0.2)
+metadata/travel_fraction = 1.0
+metadata/limb_length = 0.847838431596756
+metadata/limb_points = PackedVector3Array(0, 0.15, 0, -0.18402512, 0.5187689, 0, -0.07662486, 0.9410273, 0)
+metadata/limb_block_sizes = Array[Vector3]([Vector3(0.3, 0.4121356, 0.2), Vector3(0.3, 0.43570283, 0.2)])
+
+[node name="Wireframe" type="MeshInstance3D" parent="BirdGenerator/Feets/Leg_1" index="0" unique_id=1853164731]
+material_override = SubResource("StandardMaterial3D_fivow")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_ndxdj")
+
+[node name="Limb" type="MeshInstance3D" parent="BirdGenerator/Feets/Leg_1" index="1" unique_id=1266839931]
+material_override = SubResource("StandardMaterial3D_fivow")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_fxk61")
+
+[node name="Segment_1" type="MeshInstance3D" parent="BirdGenerator/Feets/Leg_1/Limb" index="0" unique_id=825337872]
+transform = Transform3D(0.8947757, -0.44651598, 0, 0.44651598, 0.8947757, 0, 0, 0, 1, -0.09201256, 0.33438444, 0)
+material_override = SubResource("StandardMaterial3D_fivow")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_3stvl")
+metadata/generated_limb_block = true
+metadata/block_size = Vector3(0.3, 0.4121356, 0.2)
+
+[node name="Segment_2" type="MeshInstance3D" parent="BirdGenerator/Feets/Leg_1/Limb" index="1" unique_id=2062930301]
+transform = Transform3D(0.9691431, 0.24649888, 0, -0.24649888, 0.9691431, 0, 0, 0, 1, -0.13032499, 0.7298981, 0)
+material_override = SubResource("StandardMaterial3D_fivow")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_xlmb8")
+metadata/generated_limb_block = true
+metadata/block_size = Vector3(0.3, 0.43570283, 0.2)
+
+[node name="NameLabel" type="Label3D" parent="BirdGenerator/Feets/Leg_1" index="2" unique_id=1706423248]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, 0)
+pixel_size = 0.01
+billboard = 1
+no_depth_test = true
+text = "Leg_1"
+
+[node name="Leg_2" type="Node3D" parent="BirdGenerator/Feets" index="1" unique_id=96487986]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, -0.2)
+metadata/foot_index = 1
+metadata/limb_type = "Leg"
+metadata/initial_position = Vector2(-0.5, -0.5)
+metadata/target_position = Vector2(0, -0.2)
+metadata/travel_fraction = 1.0
+metadata/limb_length = 0.847838431596756
+metadata/limb_points = PackedVector3Array(0, 0.15, 0, -0.18402512, 0.5187689, 0, -0.07662486, 0.9410273, 0)
+metadata/limb_block_sizes = Array[Vector3]([Vector3(0.3, 0.4121356, 0.2), Vector3(0.3, 0.43570283, 0.2)])
+
+[node name="Wireframe" type="MeshInstance3D" parent="BirdGenerator/Feets/Leg_2" index="0" unique_id=1836798483]
+material_override = SubResource("StandardMaterial3D_fivow")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_y7fa1")
+
+[node name="Limb" type="MeshInstance3D" parent="BirdGenerator/Feets/Leg_2" index="1" unique_id=1220514257]
+material_override = SubResource("StandardMaterial3D_fivow")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_uy5o8")
+
+[node name="Segment_1" type="MeshInstance3D" parent="BirdGenerator/Feets/Leg_2/Limb" index="0" unique_id=290558370]
+transform = Transform3D(0.8947757, -0.44651598, 0, 0.44651598, 0.8947757, 0, 0, 0, 1, -0.09201256, 0.33438444, 0)
+material_override = SubResource("StandardMaterial3D_fivow")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_b1e11")
+metadata/generated_limb_block = true
+metadata/block_size = Vector3(0.3, 0.4121356, 0.2)
+
+[node name="Segment_2" type="MeshInstance3D" parent="BirdGenerator/Feets/Leg_2/Limb" index="1" unique_id=485213356]
+transform = Transform3D(0.9691431, 0.24649888, 0, -0.24649888, 0.9691431, 0, 0, 0, 1, -0.13032499, 0.7298981, 0)
+material_override = SubResource("StandardMaterial3D_fivow")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_joxlc")
+metadata/generated_limb_block = true
+metadata/block_size = Vector3(0.3, 0.43570283, 0.2)
+
+[node name="NameLabel" type="Label3D" parent="BirdGenerator/Feets/Leg_2" index="2" unique_id=1808151192]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, 0)
+pixel_size = 0.01
+billboard = 1
+no_depth_test = true
+text = "Leg_2"
+
+[node name="LimbNetwork" type="MeshInstance3D" parent="BirdGenerator" index="1" unique_id=601483805]
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 0, 0, 0)
+material_override = SubResource("StandardMaterial3D_fivow")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_bfaxg")
+metadata/limb_endpoints = PackedVector3Array(-0.07662486, 1.0910273, 0.2, -0.07662486, 1.0910273, -0.2)
+metadata/extra_endpoints = PackedVector3Array(-0.008989155, 1.1950606, 0.2232554, -0.008989155, 1.1950606, -0.2232554, -0.21185246, 1.0033101, -0.082148254, -0.21185246, 1.0033101, 0.082148254)
+metadata/junctions = PackedVector3Array(-0.099155486, 1.0964661, 0)
+
+[node name="SubTorso" type="Node3D" parent="BirdGenerator" index="2" unique_id=445980550]
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 0, 5.164109, 0.8)
+metadata/generated_torso = true
+metadata/covered_limb_count = 1
+
+[node name="Wireframe" type="MeshInstance3D" parent="BirdGenerator/SubTorso" index="0" unique_id=426171370]
+material_override = SubResource("StandardMaterial3D_fivow")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_5psgi")
+
+[node name="NameLabel" type="Label3D" parent="BirdGenerator/SubTorso" index="1" unique_id=2059233514]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+pixel_size = 0.01
+billboard = 1
+no_depth_test = true
+text = "SubTorso"
+
+[node name="SubTorso_2" type="Node3D" parent="BirdGenerator" index="3" unique_id=1875750484]
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 0, 5.164109, -0.8)
+metadata/generated_torso = true
+metadata/covered_limb_count = 1
+
+[node name="Wireframe" type="MeshInstance3D" parent="BirdGenerator/SubTorso_2" index="0" unique_id=1582343862]
+material_override = SubResource("StandardMaterial3D_fivow")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_shpsr")
+
+[node name="NameLabel" type="Label3D" parent="BirdGenerator/SubTorso_2" index="1" unique_id=1375939178]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+pixel_size = 0.01
+billboard = 1
+no_depth_test = true
+text = "SubTorso_2"
+
+[node name="Torso" type="Node3D" parent="BirdGenerator" index="4" unique_id=1096870969]
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, -3.2, 6.342271, 0)
+metadata/generated_network_torso = true
+metadata/source_segment = PackedVector3Array()
+
+[node name="Wireframe" type="MeshInstance3D" parent="BirdGenerator/Torso" index="0" unique_id=1302356533]
+material_override = SubResource("StandardMaterial3D_fivow")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_ulsgl")
+
+[node name="NameLabel" type="Label3D" parent="BirdGenerator/Torso" index="1" unique_id=1549705199]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4606519, 0)
+pixel_size = 0.01
+billboard = 1
+no_depth_test = true
+text = "Torso"
+
+[node name="Torso_2" type="Node3D" parent="BirdGenerator" index="5" unique_id=645094684]
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, -1.92, 6.378593, 0)
+metadata/generated_network_torso = true
+metadata/source_segment = PackedVector3Array()
+
+[node name="Wireframe" type="MeshInstance3D" parent="BirdGenerator/Torso_2" index="0" unique_id=508985103]
+material_override = SubResource("StandardMaterial3D_fivow")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_b7t5a")
+
+[node name="NameLabel" type="Label3D" parent="BirdGenerator/Torso_2" index="1" unique_id=1601764796]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6036268, 0)
+pixel_size = 0.01
+billboard = 1
+no_depth_test = true
+text = "Torso_2"
+
+[node name="Torso_3" type="Node3D" parent="BirdGenerator" index="6" unique_id=1354395260]
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, -0.64, 6.37807, 0)
+metadata/generated_network_torso = true
+metadata/source_segment = PackedVector3Array()
+
+[node name="Wireframe" type="MeshInstance3D" parent="BirdGenerator/Torso_3" index="0" unique_id=219078708]
+material_override = SubResource("StandardMaterial3D_fivow")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_cn110")
+
+[node name="NameLabel" type="Label3D" parent="BirdGenerator/Torso_3" index="1" unique_id=507195963]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8034902, 0)
+pixel_size = 0.01
+billboard = 1
+no_depth_test = true
+text = "Torso_3"
+
+[node name="Torso_4" type="Node3D" parent="BirdGenerator" index="7" unique_id=1164216404]
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 0.64, 6.30056, 0)
+metadata/generated_network_torso = true
+metadata/source_segment = PackedVector3Array()
+
+[node name="Wireframe" type="MeshInstance3D" parent="BirdGenerator/Torso_4" index="0" unique_id=1629815725]
+material_override = SubResource("StandardMaterial3D_fivow")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_jlmt3")
+
+[node name="NameLabel" type="Label3D" parent="BirdGenerator/Torso_4" index="1" unique_id=764476471]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.78514, 0)
+pixel_size = 0.01
+billboard = 1
+no_depth_test = true
+text = "Torso_4"
+
+[node name="Torso_5" type="Node3D" parent="BirdGenerator" index="8" unique_id=1030152939]
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 1.92, 6.257094, 0)
+metadata/generated_network_torso = true
+metadata/source_segment = PackedVector3Array()
+
+[node name="Wireframe" type="MeshInstance3D" parent="BirdGenerator/Torso_5" index="0" unique_id=220030686]
+material_override = SubResource("StandardMaterial3D_fivow")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_qsmex")
+
+[node name="NameLabel" type="Label3D" parent="BirdGenerator/Torso_5" index="1" unique_id=697463714]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6549299, 0)
+pixel_size = 0.01
+billboard = 1
+no_depth_test = true
+text = "Torso_5"
+
+[node name="Torso_6" type="Node3D" parent="BirdGenerator" index="9" unique_id=2119758332]
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 3.2, 6.352693, 0)
+metadata/generated_network_torso = true
+metadata/source_segment = PackedVector3Array()
+
+[node name="Wireframe" type="MeshInstance3D" parent="BirdGenerator/Torso_6" index="0" unique_id=1688610103]
+material_override = SubResource("StandardMaterial3D_fivow")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_mxrad")
+
+[node name="NameLabel" type="Label3D" parent="BirdGenerator/Torso_6" index="1" unique_id=432932580]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.54907024, 0)
+pixel_size = 0.01
+billboard = 1
+no_depth_test = true
+text = "Torso_6"
+
+[node name="NeckLine" type="MeshInstance3D" parent="BirdGenerator" index="10" unique_id=1169020058]
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 0, 0, 0)
+material_override = SubResource("StandardMaterial3D_fivow")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_6v28v")
+metadata/generated_neck_line = true
+metadata/neck_points = PackedVector3Array(1, 1.6636776, 0, 1.3943436, 1.6636776, 0)
+metadata/neck_length = 0.39434358
+
+[node name="Neck" type="MeshInstance3D" parent="BirdGenerator/NeckLine" index="0" unique_id=1645579925]
+transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 1.1971718, 1.6636776, 0)
+material_override = SubResource("StandardMaterial3D_fivow")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_v503r")
+metadata/generated_neck_block = true
+metadata/generated_head = false
+metadata/block_size = Vector3(0.4, 0.3943436, 0.2)
+
+[node name="Head" type="MeshInstance3D" parent="BirdGenerator/NeckLine" index="1" unique_id=1045757038]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7443436, 1.6636776, 0)
+material_override = SubResource("StandardMaterial3D_fivow")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_m2cno")
+metadata/generated_neck_block = false
+metadata/generated_head = true
+metadata/block_size = Vector3(0.7, 0.3, 0.2)
+
+[node name="Wings" type="Node3D" parent="BirdGenerator" index="11" unique_id=14388969]
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 0, 0, 0)
+metadata/generated_wings = true
+
+[node name="Wing_1_Root_1" type="MeshInstance3D" parent="BirdGenerator/Wings" index="0" unique_id=965023203]
+transform = Transform3D(0.49999997, -0.86602545, 0, 0.86602545, 0.49999997, 0, 0, 0, 1, -0.25980762, 1.9962626, 0.1)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_iyy8r")
+
+[node name="Feathers" type="Node3D" parent="BirdGenerator/Wings/Wing_1_Root_1" index="0" unique_id=895413770]
+metadata/generated_feathers = true
+
+[node name="Feather_001" type="MeshInstance3D" parent="BirdGenerator/Wings/Wing_1_Root_1/Feathers" index="0" unique_id=669147717]
+transform = Transform3D(0.86602545, -0.5, 0, 0.5, 0.86602545, 0, 0, 0, 1, -0.3, -0.2, 0)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_3ymce")
+
+[node name="Feather_002" type="MeshInstance3D" parent="BirdGenerator/Wings/Wing_1_Root_1/Feathers" index="1" unique_id=2017731407]
+transform = Transform3D(0.86602545, -0.5, 0, 0.5, 0.86602545, 0, 0, 0, 1, -0.3, 0, 0)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_3ymce")
+
+[node name="Feather_003" type="MeshInstance3D" parent="BirdGenerator/Wings/Wing_1_Root_1/Feathers" index="2" unique_id=1755597270]
+transform = Transform3D(0.86602545, -0.5, 0, 0.5, 0.86602545, 0, 0, 0, 1, -0.3, 0.2, 0)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_3ymce")
+
+[node name="Wing_1_Root_2" type="MeshInstance3D" parent="BirdGenerator/Wings" index="1" unique_id=1986402572]
+transform = Transform3D(0.49999997, -0.86602545, 0, 0.86602545, 0.49999997, 0, 0, 0, 1, -0.7794229, 2.2962627, 0.1)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_r64gu")
+
+[node name="Feathers" type="Node3D" parent="BirdGenerator/Wings/Wing_1_Root_2" index="0" unique_id=442501813]
+metadata/generated_feathers = true
+
+[node name="Feather_001" type="MeshInstance3D" parent="BirdGenerator/Wings/Wing_1_Root_2/Feathers" index="0" unique_id=1632861234]
+transform = Transform3D(0.86602545, -0.5, 0, 0.5, 0.86602545, 0, 0, 0, 1, -0.2825, -0.14999999, 0)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_qit5r")
+
+[node name="Feather_002" type="MeshInstance3D" parent="BirdGenerator/Wings/Wing_1_Root_2/Feathers" index="1" unique_id=558280639]
+transform = Transform3D(0.86602545, -0.5, 0, 0.5, 0.86602545, 0, 0, 0, 1, -0.2825, 0.14999999, 0)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_qit5r")
+
+[node name="Wing_1_Middle_3" type="MeshInstance3D" parent="BirdGenerator/Wings" index="2" unique_id=2049158711]
+transform = Transform3D(-0.34202012, 0.9396926, 0, -0.9396926, -0.34202012, 0, 0, 0, 1, -0.6868457, 2.318005, 0.1)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_u5os1")
+
+[node name="Feathers" type="Node3D" parent="BirdGenerator/Wings/Wing_1_Middle_3" index="0" unique_id=1650010218]
+metadata/generated_feathers = true
+
+[node name="Feather_001" type="MeshInstance3D" parent="BirdGenerator/Wings/Wing_1_Middle_3/Feathers" index="0" unique_id=1939095910]
+transform = Transform3D(-0.93969274, 0.34202018, 0, -0.34202018, -0.93969274, 0, 0, 0, 1, -0.265, -0.25, 0)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_l8bst")
+
+[node name="Feather_002" type="MeshInstance3D" parent="BirdGenerator/Wings/Wing_1_Middle_3/Feathers" index="1" unique_id=1012571493]
+transform = Transform3D(-0.93969274, 0.34202018, 0, -0.34202018, -0.93969274, 0, 0, 0, 1, -0.265, 0, 0)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_l8bst")
+
+[node name="Feather_003" type="MeshInstance3D" parent="BirdGenerator/Wings/Wing_1_Middle_3/Feathers" index="2" unique_id=1276607440]
+transform = Transform3D(-0.93969274, 0.34202018, 0, -0.34202018, -0.93969274, 0, 0, 0, 1, -0.265, 0.25, 0)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_l8bst")
+
+[node name="Wing_1_Middle_4" type="MeshInstance3D" parent="BirdGenerator/Wings" index="3" unique_id=130240195]
+transform = Transform3D(-0.34202012, 0.9396926, 0, -0.9396926, -0.34202012, 0, 0, 0, 1, 0.017923772, 2.06149, 0.1)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_8tu6w")
+
+[node name="Feathers" type="Node3D" parent="BirdGenerator/Wings/Wing_1_Middle_4" index="0" unique_id=369766313]
+metadata/generated_feathers = true
+
+[node name="Feather_001" type="MeshInstance3D" parent="BirdGenerator/Wings/Wing_1_Middle_4/Feathers" index="0" unique_id=2110119110]
+transform = Transform3D(-0.93969274, 0.34202018, 0, -0.34202018, -0.93969274, 0, 0, 0, 1, -0.2475, -0.25000003, 0)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_de4uy")
+
+[node name="Feather_002" type="MeshInstance3D" parent="BirdGenerator/Wings/Wing_1_Middle_4/Feathers" index="1" unique_id=291032341]
+transform = Transform3D(-0.93969274, 0.34202018, 0, -0.34202018, -0.93969274, 0, 0, 0, 1, -0.2475, 0, 0)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_de4uy")
+
+[node name="Feather_003" type="MeshInstance3D" parent="BirdGenerator/Wings/Wing_1_Middle_4/Feathers" index="2" unique_id=1017344034]
+transform = Transform3D(-0.93969274, 0.34202018, 0, -0.34202018, -0.93969274, 0, 0, 0, 1, -0.2475, 0.25000003, 0)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_de4uy")
+
+[node name="Wing_1_Tip_5" type="MeshInstance3D" parent="BirdGenerator/Wings" index="4" unique_id=382681088]
+transform = Transform3D(0.64278764, -0.76604444, 0, 0.76604444, 0.64278764, 0, 0, 0, 1, 0.044739634, 2.206417, 0.1)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_u0uot")
+
+[node name="Feathers" type="Node3D" parent="BirdGenerator/Wings/Wing_1_Tip_5" index="0" unique_id=602230009]
+metadata/generated_feathers = true
+
+[node name="Feather_001" type="MeshInstance3D" parent="BirdGenerator/Wings/Wing_1_Tip_5/Feathers" index="0" unique_id=344212314]
+transform = Transform3D(0.76604444, -0.6427877, 0, 0.6427877, 0.76604444, 0, 0, 0, 1, -0.23, -0.28333333, 0)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_ky3sb")
+
+[node name="Feather_002" type="MeshInstance3D" parent="BirdGenerator/Wings/Wing_1_Tip_5/Feathers" index="1" unique_id=572829327]
+transform = Transform3D(0.76604444, -0.6427877, 0, 0.6427877, 0.76604444, 0, 0, 0, 1, -0.23, 0, 0)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_ky3sb")
+
+[node name="Feather_003" type="MeshInstance3D" parent="BirdGenerator/Wings/Wing_1_Tip_5/Feathers" index="2" unique_id=1197455612]
+transform = Transform3D(0.76604444, -0.6427877, 0, 0.6427877, 0.76604444, 0, 0, 0, 1, -0.23, 0.28333333, 0)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_ky3sb")
+
+[node name="Wing_1_Tip_6" type="MeshInstance3D" parent="BirdGenerator/Wings" index="5" unique_id=816418453]
+transform = Transform3D(0.64278764, -0.76604444, 0, 0.76604444, 0.64278764, 0, 0, 0, 1, -0.6063981, 2.7527866, 0.1)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_memqp")
+
+[node name="Feathers" type="Node3D" parent="BirdGenerator/Wings/Wing_1_Tip_6" index="0" unique_id=1103567366]
+metadata/generated_feathers = true
+
+[node name="Feather_001" type="MeshInstance3D" parent="BirdGenerator/Wings/Wing_1_Tip_6/Feathers" index="0" unique_id=908961223]
+transform = Transform3D(0.76604444, -0.6427877, 0, 0.6427877, 0.76604444, 0, 0, 0, 1, -0.2125, -0.28333333, 0)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_25lvj")
+
+[node name="Feather_002" type="MeshInstance3D" parent="BirdGenerator/Wings/Wing_1_Tip_6/Feathers" index="1" unique_id=740175929]
+transform = Transform3D(0.76604444, -0.6427877, 0, 0.6427877, 0.76604444, 0, 0, 0, 1, -0.2125, 0, 0)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_25lvj")
+
+[node name="Feather_003" type="MeshInstance3D" parent="BirdGenerator/Wings/Wing_1_Tip_6/Feathers" index="2" unique_id=1582147106]
+transform = Transform3D(0.76604444, -0.6427877, 0, 0.6427877, 0.76604444, 0, 0, 0, 1, -0.2125, 0.28333333, 0)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_25lvj")
+
+[node name="@Label3D@50120" type="Label3D" parent="BirdGenerator/Wings" index="6" unique_id=1356694447]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.931967, 3.2259715, 0.1)
+pixel_size = 0.01
+billboard = 1
+text = "Wing_1"
+
+[node name="Wing_2_Root_1" type="MeshInstance3D" parent="BirdGenerator/Wings" index="7" unique_id=1205434517]
+transform = Transform3D(0.49999997, -0.86602545, 0, 0.86602545, 0.49999997, 0, 0, 0, 1, -0.25980762, 1.9962626, -0.1)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_yvlq6")
+
+[node name="Feathers" type="Node3D" parent="BirdGenerator/Wings/Wing_2_Root_1" index="0" unique_id=1182385189]
+metadata/generated_feathers = true
+
+[node name="Feather_001" type="MeshInstance3D" parent="BirdGenerator/Wings/Wing_2_Root_1/Feathers" index="0" unique_id=1068275170]
+transform = Transform3D(0.86602545, -0.5, 0, 0.5, 0.86602545, 0, 0, 0, 1, -0.3, -0.2, 0)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_n33wq")
+
+[node name="Feather_002" type="MeshInstance3D" parent="BirdGenerator/Wings/Wing_2_Root_1/Feathers" index="1" unique_id=511515025]
+transform = Transform3D(0.86602545, -0.5, 0, 0.5, 0.86602545, 0, 0, 0, 1, -0.3, 0, 0)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_n33wq")
+
+[node name="Feather_003" type="MeshInstance3D" parent="BirdGenerator/Wings/Wing_2_Root_1/Feathers" index="2" unique_id=1819690767]
+transform = Transform3D(0.86602545, -0.5, 0, 0.5, 0.86602545, 0, 0, 0, 1, -0.3, 0.2, 0)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_n33wq")
+
+[node name="Wing_2_Root_2" type="MeshInstance3D" parent="BirdGenerator/Wings" index="8" unique_id=1569508490]
+transform = Transform3D(0.49999997, -0.86602545, 0, 0.86602545, 0.49999997, 0, 0, 0, 1, -0.7794229, 2.2962627, -0.1)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_elv1o")
+
+[node name="Feathers" type="Node3D" parent="BirdGenerator/Wings/Wing_2_Root_2" index="0" unique_id=530154242]
+metadata/generated_feathers = true
+
+[node name="Feather_001" type="MeshInstance3D" parent="BirdGenerator/Wings/Wing_2_Root_2/Feathers" index="0" unique_id=174059946]
+transform = Transform3D(0.86602545, -0.5, 0, 0.5, 0.86602545, 0, 0, 0, 1, -0.2825, -0.14999999, 0)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_w2wvb")
+
+[node name="Feather_002" type="MeshInstance3D" parent="BirdGenerator/Wings/Wing_2_Root_2/Feathers" index="1" unique_id=993652764]
+transform = Transform3D(0.86602545, -0.5, 0, 0.5, 0.86602545, 0, 0, 0, 1, -0.2825, 0.14999999, 0)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_w2wvb")
+
+[node name="Wing_2_Middle_3" type="MeshInstance3D" parent="BirdGenerator/Wings" index="9" unique_id=855523033]
+transform = Transform3D(-0.34202012, 0.9396926, 0, -0.9396926, -0.34202012, 0, 0, 0, 1, -0.6868457, 2.318005, -0.1)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_6t4ng")
+
+[node name="Feathers" type="Node3D" parent="BirdGenerator/Wings/Wing_2_Middle_3" index="0" unique_id=1794211901]
+metadata/generated_feathers = true
+
+[node name="Feather_001" type="MeshInstance3D" parent="BirdGenerator/Wings/Wing_2_Middle_3/Feathers" index="0" unique_id=121067454]
+transform = Transform3D(-0.93969274, 0.34202018, 0, -0.34202018, -0.93969274, 0, 0, 0, 1, -0.265, -0.25, 0)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_aat3q")
+
+[node name="Feather_002" type="MeshInstance3D" parent="BirdGenerator/Wings/Wing_2_Middle_3/Feathers" index="1" unique_id=1786458415]
+transform = Transform3D(-0.93969274, 0.34202018, 0, -0.34202018, -0.93969274, 0, 0, 0, 1, -0.265, 0, 0)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_aat3q")
+
+[node name="Feather_003" type="MeshInstance3D" parent="BirdGenerator/Wings/Wing_2_Middle_3/Feathers" index="2" unique_id=305195267]
+transform = Transform3D(-0.93969274, 0.34202018, 0, -0.34202018, -0.93969274, 0, 0, 0, 1, -0.265, 0.25, 0)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_aat3q")
+
+[node name="Wing_2_Middle_4" type="MeshInstance3D" parent="BirdGenerator/Wings" index="10" unique_id=823131993]
+transform = Transform3D(-0.34202012, 0.9396926, 0, -0.9396926, -0.34202012, 0, 0, 0, 1, 0.017923772, 2.06149, -0.1)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_rb8ib")
+
+[node name="Feathers" type="Node3D" parent="BirdGenerator/Wings/Wing_2_Middle_4" index="0" unique_id=1336707929]
+metadata/generated_feathers = true
+
+[node name="Feather_001" type="MeshInstance3D" parent="BirdGenerator/Wings/Wing_2_Middle_4/Feathers" index="0" unique_id=715224296]
+transform = Transform3D(-0.93969274, 0.34202018, 0, -0.34202018, -0.93969274, 0, 0, 0, 1, -0.2475, -0.25000003, 0)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_sj3ry")
+
+[node name="Feather_002" type="MeshInstance3D" parent="BirdGenerator/Wings/Wing_2_Middle_4/Feathers" index="1" unique_id=1018207467]
+transform = Transform3D(-0.93969274, 0.34202018, 0, -0.34202018, -0.93969274, 0, 0, 0, 1, -0.2475, 0, 0)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_sj3ry")
+
+[node name="Feather_003" type="MeshInstance3D" parent="BirdGenerator/Wings/Wing_2_Middle_4/Feathers" index="2" unique_id=374517758]
+transform = Transform3D(-0.93969274, 0.34202018, 0, -0.34202018, -0.93969274, 0, 0, 0, 1, -0.2475, 0.25000003, 0)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_sj3ry")
+
+[node name="Wing_2_Tip_5" type="MeshInstance3D" parent="BirdGenerator/Wings" index="11" unique_id=1036671103]
+transform = Transform3D(0.64278764, -0.76604444, 0, 0.76604444, 0.64278764, 0, 0, 0, 1, 0.044739634, 2.206417, -0.1)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_1ysi6")
+
+[node name="Feathers" type="Node3D" parent="BirdGenerator/Wings/Wing_2_Tip_5" index="0" unique_id=1108512980]
+metadata/generated_feathers = true
+
+[node name="Feather_001" type="MeshInstance3D" parent="BirdGenerator/Wings/Wing_2_Tip_5/Feathers" index="0" unique_id=923935387]
+transform = Transform3D(0.76604444, -0.6427877, 0, 0.6427877, 0.76604444, 0, 0, 0, 1, -0.23, -0.28333333, 0)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_wts6w")
+
+[node name="Feather_002" type="MeshInstance3D" parent="BirdGenerator/Wings/Wing_2_Tip_5/Feathers" index="1" unique_id=1742399335]
+transform = Transform3D(0.76604444, -0.6427877, 0, 0.6427877, 0.76604444, 0, 0, 0, 1, -0.23, 0, 0)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_wts6w")
+
+[node name="Feather_003" type="MeshInstance3D" parent="BirdGenerator/Wings/Wing_2_Tip_5/Feathers" index="2" unique_id=957608700]
+transform = Transform3D(0.76604444, -0.6427877, 0, 0.6427877, 0.76604444, 0, 0, 0, 1, -0.23, 0.28333333, 0)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_wts6w")
+
+[node name="Wing_2_Tip_6" type="MeshInstance3D" parent="BirdGenerator/Wings" index="12" unique_id=207243754]
+transform = Transform3D(0.64278764, -0.76604444, 0, 0.76604444, 0.64278764, 0, 0, 0, 1, -0.6063981, 2.7527866, -0.1)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_2c5yp")
+
+[node name="Feathers" type="Node3D" parent="BirdGenerator/Wings/Wing_2_Tip_6" index="0" unique_id=868336312]
+metadata/generated_feathers = true
+
+[node name="Feather_001" type="MeshInstance3D" parent="BirdGenerator/Wings/Wing_2_Tip_6/Feathers" index="0" unique_id=1206270127]
+transform = Transform3D(0.76604444, -0.6427877, 0, 0.6427877, 0.76604444, 0, 0, 0, 1, -0.2125, -0.28333333, 0)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_hjh1y")
+
+[node name="Feather_002" type="MeshInstance3D" parent="BirdGenerator/Wings/Wing_2_Tip_6/Feathers" index="1" unique_id=1728514634]
+transform = Transform3D(0.76604444, -0.6427877, 0, 0.6427877, 0.76604444, 0, 0, 0, 1, -0.2125, 0, 0)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_hjh1y")
+
+[node name="Feather_003" type="MeshInstance3D" parent="BirdGenerator/Wings/Wing_2_Tip_6/Feathers" index="2" unique_id=1716413601]
+transform = Transform3D(0.76604444, -0.6427877, 0, 0.6427877, 0.76604444, 0, 0, 0, 1, -0.2125, 0.28333333, 0)
+material_override = SubResource("StandardMaterial3D_fivow")
+mesh = SubResource("ArrayMesh_hjh1y")
+
+[node name="@Label3D@50121" type="Label3D" parent="BirdGenerator/Wings" index="13" unique_id=1812099721]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.931967, 3.2259715, -0.1)
+pixel_size = 0.01
+billboard = 1
+text = "Wing_2"
 
 [node name="GeneratedLegStepMovementController3D" parent="." index="1" unique_id=63359102 instance=ExtResource("4_movement")]
 stance_load_safety_factor = 5.0
@@ -62,13 +1086,2198 @@ fast_gait_data = ExtResource("5_gait")
 
 [node name="CreatureRecoveryStateMachine3D" parent="." index="2" unique_id=1172503862 instance=ExtResource("6_recovery")]
 
-[node name="GeneratedParts" type="Node3D" parent="." index="3" unique_id=1126936149]
+[node name="CreatureActionController3D" parent="." index="3" unique_id=1338268193 instance=ExtResource("7_action")]
 
-[node name="CreatureActionController3D" parent="." index="4" unique_id=1338268193 instance=ExtResource("7_action")]
+[node name="WingPoseController3D" parent="." index="4" unique_id=1184170244 instance=ExtResource("wing_controller")]
 
-[node name="WingPoseController3D" parent="." index="5" unique_id=1184170244 instance=ExtResource("wing_controller")]
-fold_transition_time = null
-hinge_only_pose = null
-torque_load_factor_limit = null
+[node name="BirdFlightController3D" parent="." index="5" unique_id=1856448162 instance=ExtResource("flight_controller")]
 
-[node name="BirdFlightController3D" parent="." index="6" unique_id=1856448162 instance=ExtResource("flight_controller")]
+[node name="GeneratedParts" type="Node3D" parent="." index="6" unique_id=51968246]
+
+[node name="SubTorso" parent="GeneratedParts" index="0" unique_id=298589033 instance=ExtResource("11_fivow")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.164109, 0.8)
+mass = 2.5600002
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([0, 6])
+sprite_visible = false
+left_distance = 1.0
+right_distance = 1.0
+top_distance = 0.8
+bottom_distance = 0.8
+collision_thickness = 0.8
+metadata/body_segment_id = 0
+metadata/segment_layout_version = 3
+metadata/generated_role = "Torso"
+metadata/generated_part_type = "SubTorso"
+metadata/generated_density = 1.0
+metadata/generated_size = Vector3(2, 1.6, 0.8)
+
+[node name="SubTorso_2" parent="GeneratedParts" index="1" unique_id=1080687176 instance=ExtResource("11_fivow")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.164109, -0.8)
+mass = 2.5600002
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([0, 6])
+sprite_visible = false
+left_distance = 1.0
+right_distance = 1.0
+top_distance = 0.8
+bottom_distance = 0.8
+collision_thickness = 0.8
+metadata/body_segment_id = 0
+metadata/segment_layout_version = 3
+metadata/generated_role = "Torso"
+metadata/generated_part_type = "SubTorso"
+metadata/generated_density = 1.0
+metadata/generated_size = Vector3(2, 1.6, 0.8)
+
+[node name="Torso" parent="GeneratedParts" index="2" unique_id=5681453 instance=ExtResource("11_fivow")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2, 6.342271, 0)
+mass = 1.6450756
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([0])
+sprite_visible = false
+left_distance = 0.8
+right_distance = 0.8
+top_distance = 0.6426076
+bottom_distance = 0.6426076
+collision_thickness = 0.8
+metadata/body_segment_id = 0
+metadata/segment_layout_version = 3
+metadata/generated_role = "Torso"
+metadata/generated_part_type = "Torso"
+metadata/generated_density = 1.0
+metadata/generated_size = Vector3(1.6, 1.2852153, 0.8)
+
+[node name="Torso_2" parent="GeneratedParts" index="3" unique_id=156358612 instance=ExtResource("11_fivow")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.92, 6.378593, 0)
+mass = 3.1091385
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([0])
+sprite_visible = false
+left_distance = 0.8
+right_distance = 0.8
+top_distance = 1.2145072
+bottom_distance = 1.2145072
+collision_thickness = 0.8
+metadata/body_segment_id = 0
+metadata/segment_layout_version = 3
+metadata/generated_role = "Torso"
+metadata/generated_part_type = "Torso"
+metadata/generated_density = 1.0
+metadata/generated_size = Vector3(1.6, 2.4290144, 0.8)
+
+[node name="Torso_3" parent="GeneratedParts" index="4" unique_id=1769918881 instance=ExtResource("11_fivow")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.64, 6.37807, 0)
+mass = 5.15574
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([0])
+sprite_visible = false
+left_distance = 0.8
+right_distance = 0.8
+top_distance = 2.0139608
+bottom_distance = 2.0139608
+collision_thickness = 0.8
+metadata/body_segment_id = 0
+metadata/segment_layout_version = 3
+metadata/generated_role = "Torso"
+metadata/generated_part_type = "Torso"
+metadata/generated_density = 1.0
+metadata/generated_size = Vector3(1.6, 4.0279217, 0.8)
+
+[node name="Torso_4" parent="GeneratedParts" index="5" unique_id=1765266699 instance=ExtResource("11_fivow")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.64, 6.30056, 0)
+mass = 4.9678335
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([0])
+sprite_visible = false
+left_distance = 0.8
+right_distance = 0.8
+top_distance = 1.9405599
+bottom_distance = 1.9405599
+collision_thickness = 0.8
+metadata/body_segment_id = 0
+metadata/segment_layout_version = 3
+metadata/generated_role = "Torso"
+metadata/generated_part_type = "Torso"
+metadata/generated_density = 1.0
+metadata/generated_size = Vector3(1.6, 3.8811197, 0.8)
+
+[node name="Torso_5" parent="GeneratedParts" index="6" unique_id=1804278508 instance=ExtResource("11_fivow")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.92, 6.257094, 0)
+mass = 3.634482
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([0])
+sprite_visible = false
+left_distance = 0.8
+right_distance = 0.8
+top_distance = 1.4197195
+bottom_distance = 1.4197195
+collision_thickness = 0.8
+metadata/body_segment_id = 0
+metadata/segment_layout_version = 3
+metadata/generated_role = "Torso"
+metadata/generated_part_type = "Torso"
+metadata/generated_density = 1.0
+metadata/generated_size = Vector3(1.6, 2.839439, 0.8)
+
+[node name="Torso_6" parent="GeneratedParts" index="7" unique_id=1686182223 instance=ExtResource("11_fivow")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2, 6.352693, 0)
+mass = 2.550479
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([0])
+sprite_visible = false
+left_distance = 0.8
+right_distance = 0.8
+top_distance = 0.99628085
+bottom_distance = 0.99628085
+collision_thickness = 0.8
+metadata/body_segment_id = 0
+metadata/segment_layout_version = 3
+metadata/generated_role = "Torso"
+metadata/generated_part_type = "Torso"
+metadata/generated_density = 1.0
+metadata/generated_size = Vector3(1.6, 1.9925617, 0.8)
+
+[node name="Leg_1" parent="GeneratedParts" index="8" unique_id=664538974 instance=ExtResource("11_fivow")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0.8)
+axis_lock_angular_x = true
+axis_lock_angular_z = true
+mass = 2.3040001
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([1])
+sprite_visible = false
+left_distance = 1.2
+right_distance = 1.2
+top_distance = 0.6
+bottom_distance = 0.6
+collision_thickness = 0.8
+metadata/generated_role = "Leg"
+metadata/generated_part_type = "Leg"
+metadata/generated_density = 1.0
+metadata/generated_size = Vector3(2.4, 1.2, 0.8)
+metadata/foot_previous_locks = Vector2i(0, 0)
+
+[node name="Leg_1_Limb_1" parent="GeneratedParts" index="9" unique_id=1693319827 instance=ExtResource("11_fivow")]
+transform = Transform3D(0.8947756, -0.44651604, 0, 0.44651604, 0.8947756, 0, 0, 0, 1, -0.36805025, 1.9375378, 0.8)
+mass = 1.5826008
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([5])
+sprite_visible = false
+left_distance = 0.6
+right_distance = 0.6
+top_distance = 0.8242712
+bottom_distance = 0.8242712
+collision_thickness = 0.8
+metadata/generated_role = "Limb"
+metadata/generated_part_type = "LegLimb"
+metadata/generated_density = 1.0
+metadata/generated_size = Vector3(1.2, 1.6485424, 0.8)
+
+[node name="Leg_1_Limb_2" parent="GeneratedParts" index="10" unique_id=1286964216 instance=ExtResource("11_fivow")]
+transform = Transform3D(0.9691431, 0.24649888, 0, -0.24649888, 0.9691431, 0, 0, 0, 1, -0.52129996, 3.5195923, 0.8)
+mass = 1.6730989
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([5])
+sprite_visible = false
+left_distance = 0.6
+right_distance = 0.6
+top_distance = 0.87140566
+bottom_distance = 0.87140566
+collision_thickness = 0.8
+metadata/generated_role = "Limb"
+metadata/generated_part_type = "LegLimb"
+metadata/generated_density = 1.0
+metadata/generated_size = Vector3(1.2, 1.7428113, 0.8)
+
+[node name="Leg_2" parent="GeneratedParts" index="11" unique_id=940733739 instance=ExtResource("11_fivow")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, -0.8)
+axis_lock_angular_x = true
+axis_lock_angular_z = true
+mass = 2.3040001
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([1])
+sprite_visible = false
+left_distance = 1.2
+right_distance = 1.2
+top_distance = 0.6
+bottom_distance = 0.6
+collision_thickness = 0.8
+metadata/generated_role = "Leg"
+metadata/generated_part_type = "Leg"
+metadata/generated_density = 1.0
+metadata/generated_size = Vector3(2.4, 1.2, 0.8)
+metadata/foot_previous_locks = Vector2i(0, 0)
+
+[node name="Leg_2_Limb_1" parent="GeneratedParts" index="12" unique_id=1486633314 instance=ExtResource("11_fivow")]
+transform = Transform3D(0.8947756, -0.44651604, 0, 0.44651604, 0.8947756, 0, 0, 0, 1, -0.36805025, 1.9375378, -0.8)
+mass = 1.5826008
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([5])
+sprite_visible = false
+left_distance = 0.6
+right_distance = 0.6
+top_distance = 0.8242712
+bottom_distance = 0.8242712
+collision_thickness = 0.8
+metadata/generated_role = "Limb"
+metadata/generated_part_type = "LegLimb"
+metadata/generated_density = 1.0
+metadata/generated_size = Vector3(1.2, 1.6485424, 0.8)
+
+[node name="Leg_2_Limb_2" parent="GeneratedParts" index="13" unique_id=21508579 instance=ExtResource("11_fivow")]
+transform = Transform3D(0.9691431, 0.24649888, 0, -0.24649888, 0.9691431, 0, 0, 0, 1, -0.52129996, 3.5195923, -0.8)
+mass = 1.6730989
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([5])
+sprite_visible = false
+left_distance = 0.6
+right_distance = 0.6
+top_distance = 0.87140566
+bottom_distance = 0.87140566
+collision_thickness = 0.8
+metadata/generated_role = "Limb"
+metadata/generated_part_type = "LegLimb"
+metadata/generated_density = 1.0
+metadata/generated_size = Vector3(1.2, 1.7428113, 0.8)
+
+[node name="Neck_1_1" parent="GeneratedParts" index="14" unique_id=854501113 instance=ExtResource("11_fivow")]
+transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 4.788687, 6.6547103, 0)
+mass = 2.0190394
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+sprite_visible = false
+left_distance = 0.8
+right_distance = 0.8
+top_distance = 0.7886872
+bottom_distance = 0.7886872
+collision_thickness = 0.8
+metadata/generated_role = "Neck"
+metadata/generated_part_type = "Neck"
+metadata/generated_density = 1.0
+metadata/generated_size = Vector3(1.6, 1.5773745, 0.8)
+
+[node name="Head_1" parent="GeneratedParts" index="15" unique_id=730243044 instance=ExtResource("11_fivow")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.9773746, 6.6547103, 0)
+mass = 2.6880002
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([3])
+sprite_visible = false
+left_distance = 1.4
+right_distance = 1.4
+top_distance = 0.6
+bottom_distance = 0.6
+collision_thickness = 0.8
+metadata/generated_role = "Head"
+metadata/generated_part_type = "Head"
+metadata/generated_density = 1.0
+metadata/generated_size = Vector3(2.8, 1.2, 0.8)
+
+[node name="Wing_1_Root_1" parent="GeneratedParts" index="16" unique_id=795556596 instance=ExtResource("11_fivow")]
+transform = Transform3D(0.49999997, -0.86602545, 0, 0.86602545, 0.49999997, 0, 0, 0, 1, -1.0392305, 7.98505, 0.4)
+mass = 0.18432002
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([7, 8])
+sprite_visible = false
+left_distance = 1.2
+right_distance = 1.2
+top_distance = 1.2
+bottom_distance = 1.2
+collision_thickness = 0.32
+metadata/generated_role = "WingLimb"
+metadata/generated_part_type = "WingRoot"
+metadata/generated_density = 0.1
+metadata/generated_size = Vector3(2.4, 2.4, 0.32)
+
+[node name="Feather_1_1_001" parent="GeneratedParts" index="17" unique_id=1079687679 instance=ExtResource("11_fivow")]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -3.9464102, 6.5458198, 0.4)
+mass = 0.006720001
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([9])
+sprite_visible = false
+left_distance = 0.56
+right_distance = 0.56
+top_distance = 3.0000002
+bottom_distance = 3.0000002
+collision_thickness = 0.1
+metadata/generated_role = "Feather"
+metadata/generated_part_type = "Feather"
+metadata/generated_density = 0.01
+metadata/generated_size = Vector3(1.12, 6.0000005, 0.1)
+
+[node name="Feather_1_1_002" parent="GeneratedParts" index="18" unique_id=1082018361 instance=ExtResource("11_fivow")]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -4.9254746, 6.94582, 0.4)
+mass = 0.007361187
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([9])
+sprite_visible = false
+left_distance = 0.56
+right_distance = 0.56
+top_distance = 3.2862442
+bottom_distance = 3.2862442
+collision_thickness = 0.1
+metadata/generated_role = "Feather"
+metadata/generated_part_type = "Feather"
+metadata/generated_density = 0.01
+metadata/generated_size = Vector3(1.12, 6.5724883, 0.1)
+
+[node name="Feather_1_1_003" parent="GeneratedParts" index="19" unique_id=1236926911 instance=ExtResource("11_fivow")]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -5.941948, 7.3458195, 0.4)
+mass = 0.008086169
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([9])
+sprite_visible = false
+left_distance = 0.56
+right_distance = 0.56
+top_distance = 3.609897
+bottom_distance = 3.609897
+collision_thickness = 0.1
+metadata/generated_role = "Feather"
+metadata/generated_part_type = "Feather"
+metadata/generated_density = 0.01
+metadata/generated_size = Vector3(1.12, 7.219794, 0.1)
+
+[node name="Wing_1_Root_2" parent="GeneratedParts" index="20" unique_id=391450816 instance=ExtResource("11_fivow")]
+transform = Transform3D(0.49999997, -0.86602545, 0, 0.86602545, 0.49999997, 0, 0, 0, 1, -3.1176915, 9.185051, 0.4)
+mass = 0.17356798
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([7, 8])
+sprite_visible = false
+left_distance = 1.13
+right_distance = 1.13
+top_distance = 1.1999999
+bottom_distance = 1.1999999
+collision_thickness = 0.32
+metadata/generated_role = "WingLimb"
+metadata/generated_part_type = "WingRoot"
+metadata/generated_density = 0.1
+metadata/generated_size = Vector3(2.26, 2.3999999, 0.32)
+
+[node name="Feather_1_2_001" parent="GeneratedParts" index="21" unique_id=1972361824 instance=ExtResource("11_fivow")]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -7.0981874, 7.906442, 0.4)
+mass = 0.008814649
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([9])
+sprite_visible = false
+left_distance = 0.56
+right_distance = 0.56
+top_distance = 3.935111
+bottom_distance = 3.935111
+collision_thickness = 0.1
+metadata/generated_role = "Feather"
+metadata/generated_part_type = "Feather"
+metadata/generated_density = 0.01
+metadata/generated_size = Vector3(1.12, 7.870222, 0.1)
+
+[node name="Feather_1_2_002" parent="GeneratedParts" index="22" unique_id=892101757 instance=ExtResource("11_fivow")]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -8.386429, 8.506442, 0.4)
+mass = 0.009372435
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([9])
+sprite_visible = false
+left_distance = 0.56
+right_distance = 0.56
+top_distance = 4.1841226
+bottom_distance = 4.1841226
+collision_thickness = 0.1
+metadata/generated_role = "Feather"
+metadata/generated_part_type = "Feather"
+metadata/generated_density = 0.01
+metadata/generated_size = Vector3(1.12, 8.368245, 0.1)
+
+[node name="Wing_1_Middle_3" parent="GeneratedParts" index="23" unique_id=529946130 instance=ExtResource("11_fivow")]
+transform = Transform3D(-0.34202012, 0.9396926, 0, -0.9396926, -0.34202012, 0, 0, 0, 1, -2.7473829, 9.27202, 0.4)
+mass = 0.20351999
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([7, 8])
+sprite_visible = false
+left_distance = 1.06
+right_distance = 1.06
+top_distance = 1.5
+bottom_distance = 1.5
+collision_thickness = 0.32
+metadata/generated_role = "WingLimb"
+metadata/generated_part_type = "WingMiddle"
+metadata/generated_density = 0.1
+metadata/generated_size = Vector3(2.12, 3, 0.32)
+
+[node name="Feather_1_3_001" parent="GeneratedParts" index="24" unique_id=754055232 instance=ExtResource("11_fivow")]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -7.8196526, 10.610115, 0.4)
+mass = 0.010069065
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([9])
+sprite_visible = false
+left_distance = 0.56
+right_distance = 0.56
+top_distance = 4.495118
+bottom_distance = 4.495118
+collision_thickness = 0.1
+metadata/generated_role = "Feather"
+metadata/generated_part_type = "Feather"
+metadata/generated_density = 0.01
+metadata/generated_size = Vector3(1.12, 8.990236, 0.1)
+
+[node name="Feather_1_3_002" parent="GeneratedParts" index="25" unique_id=2019273077 instance=ExtResource("11_fivow")]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -7.199169, 10.268094, 0.4)
+mass = 0.010784094
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([9])
+sprite_visible = false
+left_distance = 0.56
+right_distance = 0.56
+top_distance = 4.8143277
+bottom_distance = 4.8143277
+collision_thickness = 0.1
+metadata/generated_role = "Feather"
+metadata/generated_part_type = "Feather"
+metadata/generated_density = 0.01
+metadata/generated_size = Vector3(1.12, 9.628655, 0.1)
+
+[node name="Feather_1_3_003" parent="GeneratedParts" index="26" unique_id=476015897 instance=ExtResource("11_fivow")]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -6.544877, 9.926074, 0.4)
+mass = 0.011423391
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([9])
+sprite_visible = false
+left_distance = 0.56
+right_distance = 0.56
+top_distance = 5.099728
+bottom_distance = 5.099728
+collision_thickness = 0.1
+metadata/generated_role = "Feather"
+metadata/generated_part_type = "Feather"
+metadata/generated_density = 0.01
+metadata/generated_size = Vector3(1.12, 10.199456, 0.1)
+
+[node name="Wing_1_Middle_4" parent="GeneratedParts" index="27" unique_id=950102973 instance=ExtResource("11_fivow")]
+transform = Transform3D(-0.34202012, 0.9396926, 0, -0.9396926, -0.34202012, 0, 0, 0, 1, 0.07169509, 8.24596, 0.4)
+mass = 0.19008002
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([7, 8])
+sprite_visible = false
+left_distance = 0.99
+right_distance = 0.99
+top_distance = 1.5000001
+bottom_distance = 1.5000001
+collision_thickness = 0.32
+metadata/generated_role = "WingLimb"
+metadata/generated_part_type = "WingMiddle"
+metadata/generated_density = 0.1
+metadata/generated_size = Vector3(1.98, 3.0000002, 0.32)
+
+[node name="Feather_1_4_001" parent="GeneratedParts" index="28" unique_id=1320690363 instance=ExtResource("11_fivow")]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -5.85818, 9.518276, 0.4)
+mass = 0.011936472
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([9])
+sprite_visible = false
+left_distance = 0.56
+right_distance = 0.56
+top_distance = 5.328782
+bottom_distance = 5.328782
+collision_thickness = 0.1
+metadata/generated_role = "Feather"
+metadata/generated_part_type = "Feather"
+metadata/generated_density = 0.01
+metadata/generated_size = Vector3(1.12, 10.657564, 0.1)
+
+[node name="Feather_1_4_002" parent="GeneratedParts" index="29" unique_id=1491632894 instance=ExtResource("11_fivow")]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -5.0613832, 9.176256, 0.4)
+mass = 0.01225656
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([9])
+sprite_visible = false
+left_distance = 0.56
+right_distance = 0.56
+top_distance = 5.4716783
+bottom_distance = 5.4716783
+collision_thickness = 0.1
+metadata/generated_role = "Feather"
+metadata/generated_part_type = "Feather"
+metadata/generated_density = 0.01
+metadata/generated_size = Vector3(1.12, 10.9433565, 0.1)
+
+[node name="Feather_1_4_003" parent="GeneratedParts" index="30" unique_id=97865991 instance=ExtResource("11_fivow")]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -4.2057657, 8.834236, 0.4)
+mass = 0.012444887
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([9])
+sprite_visible = false
+left_distance = 0.56
+right_distance = 0.56
+top_distance = 5.555753
+bottom_distance = 5.555753
+collision_thickness = 0.1
+metadata/generated_role = "Feather"
+metadata/generated_part_type = "Feather"
+metadata/generated_density = 0.01
+metadata/generated_size = Vector3(1.12, 11.111506, 0.1)
+
+[node name="Wing_1_Tip_5" parent="GeneratedParts" index="31" unique_id=1535648183 instance=ExtResource("11_fivow")]
+transform = Transform3D(0.64278764, -0.76604444, 0, 0.76604444, 0.64278764, 0, 0, 0, 1, 0.17895854, 8.825668, 0.4)
+mass = 0.100095995
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([7, 8])
+sprite_visible = false
+left_distance = 0.92
+right_distance = 0.92
+top_distance = 1.6999999
+bottom_distance = 1.6999999
+collision_thickness = 0.32
+metadata/generated_role = "WingLimb"
+metadata/generated_part_type = "WingTip"
+metadata/generated_density = 0.05
+metadata/generated_size = Vector3(1.84, 3.3999999, 0.32)
+
+[node name="Feather_1_5_001" parent="GeneratedParts" index="32" unique_id=1336889768 instance=ExtResource("11_fivow")]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -5.11584, 7.3924146, 0.4)
+mass = 0.012480424
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([9])
+sprite_visible = false
+left_distance = 0.56
+right_distance = 0.56
+top_distance = 5.5716176
+bottom_distance = 5.5716176
+collision_thickness = 0.1
+metadata/generated_role = "Feather"
+metadata/generated_part_type = "Feather"
+metadata/generated_density = 0.01
+metadata/generated_size = Vector3(1.12, 11.143235, 0.1)
+
+[node name="Feather_1_5_002" parent="GeneratedParts" index="33" unique_id=2073767547 instance=ExtResource("11_fivow")]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -5.8853006, 8.120908, 0.4)
+mass = 0.012259284
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([9])
+sprite_visible = false
+left_distance = 0.56
+right_distance = 0.56
+top_distance = 5.4728947
+bottom_distance = 5.4728947
+collision_thickness = 0.1
+metadata/generated_role = "Feather"
+metadata/generated_part_type = "Feather"
+metadata/generated_density = 0.01
+metadata/generated_size = Vector3(1.12, 10.945789, 0.1)
+
+[node name="Feather_1_5_003" parent="GeneratedParts" index="34" unique_id=1755316854 instance=ExtResource("11_fivow")]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -6.5894523, 8.8494005, 0.4)
+mass = 0.011891853
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([9])
+sprite_visible = false
+left_distance = 0.56
+right_distance = 0.56
+top_distance = 5.3088627
+bottom_distance = 5.3088627
+collision_thickness = 0.1
+metadata/generated_role = "Feather"
+metadata/generated_part_type = "Feather"
+metadata/generated_density = 0.01
+metadata/generated_size = Vector3(1.12, 10.617725, 0.1)
+
+[node name="Wing_1_Tip_6" parent="GeneratedParts" index="35" unique_id=46325148 instance=ExtResource("11_fivow")]
+transform = Transform3D(0.64278764, -0.76604444, 0, 0.76604444, 0.64278764, 0, 0, 0, 1, -2.4255924, 11.011147, 0.4)
+mass = 0.092480004
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([7])
+sprite_visible = false
+left_distance = 0.85
+right_distance = 0.85
+top_distance = 1.7
+bottom_distance = 1.7
+collision_thickness = 0.32
+metadata/generated_role = "Wing"
+metadata/generated_part_type = "WingTip"
+metadata/generated_density = 0.05
+metadata/generated_size = Vector3(1.7, 3.4, 0.32)
+
+[node name="Feather_1_6_001" parent="GeneratedParts" index="36" unique_id=1895228634 instance=ExtResource("11_fivow")]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -7.1981497, 9.631516, 0.4)
+mass = 0.011411392
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([9])
+sprite_visible = false
+left_distance = 0.56
+right_distance = 0.56
+top_distance = 5.0943713
+bottom_distance = 5.0943713
+collision_thickness = 0.1
+metadata/generated_role = "Feather"
+metadata/generated_part_type = "Feather"
+metadata/generated_density = 0.01
+metadata/generated_size = Vector3(1.12, 10.188743, 0.1)
+
+[node name="Feather_1_6_002" parent="GeneratedParts" index="37" unique_id=519618594 instance=ExtResource("11_fivow")]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -7.785885, 10.360009, 0.4)
+mass = 0.010783187
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([9])
+sprite_visible = false
+left_distance = 0.56
+right_distance = 0.56
+top_distance = 4.813923
+bottom_distance = 4.813923
+collision_thickness = 0.1
+metadata/generated_role = "Feather"
+metadata/generated_part_type = "Feather"
+metadata/generated_density = 0.01
+metadata/generated_size = Vector3(1.12, 9.627846, 0.1)
+
+[node name="Feather_1_6_003" parent="GeneratedParts" index="38" unique_id=501888851 instance=ExtResource("11_fivow")]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -8.340145, 11.088501, 0.4)
+mass = 0.01008
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([9])
+sprite_visible = false
+left_distance = 0.56
+right_distance = 0.56
+top_distance = 4.5
+bottom_distance = 4.5
+collision_thickness = 0.1
+metadata/generated_role = "Feather"
+metadata/generated_part_type = "Feather"
+metadata/generated_density = 0.01
+metadata/generated_size = Vector3(1.12, 9, 0.1)
+
+[node name="Wing_2_Root_1" parent="GeneratedParts" index="39" unique_id=1253552158 instance=ExtResource("11_fivow")]
+transform = Transform3D(0.49999997, -0.86602545, 0, 0.86602545, 0.49999997, 0, 0, 0, 1, -1.0392305, 7.98505, -0.4)
+mass = 0.18432002
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([7, 8])
+sprite_visible = false
+left_distance = 1.2
+right_distance = 1.2
+top_distance = 1.2
+bottom_distance = 1.2
+collision_thickness = 0.32
+metadata/generated_role = "WingLimb"
+metadata/generated_part_type = "WingRoot"
+metadata/generated_density = 0.1
+metadata/generated_size = Vector3(2.4, 2.4, 0.32)
+
+[node name="Feather_2_1_001" parent="GeneratedParts" index="40" unique_id=927932895 instance=ExtResource("11_fivow")]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -3.9464102, 6.5458198, -0.4)
+mass = 0.006720001
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([9])
+sprite_visible = false
+left_distance = 0.56
+right_distance = 0.56
+top_distance = 3.0000002
+bottom_distance = 3.0000002
+collision_thickness = 0.1
+metadata/generated_role = "Feather"
+metadata/generated_part_type = "Feather"
+metadata/generated_density = 0.01
+metadata/generated_size = Vector3(1.12, 6.0000005, 0.1)
+
+[node name="Feather_2_1_002" parent="GeneratedParts" index="41" unique_id=1251022983 instance=ExtResource("11_fivow")]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -4.9254746, 6.94582, -0.4)
+mass = 0.007361187
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([9])
+sprite_visible = false
+left_distance = 0.56
+right_distance = 0.56
+top_distance = 3.2862442
+bottom_distance = 3.2862442
+collision_thickness = 0.1
+metadata/generated_role = "Feather"
+metadata/generated_part_type = "Feather"
+metadata/generated_density = 0.01
+metadata/generated_size = Vector3(1.12, 6.5724883, 0.1)
+
+[node name="Feather_2_1_003" parent="GeneratedParts" index="42" unique_id=809402158 instance=ExtResource("11_fivow")]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -5.941948, 7.3458195, -0.4)
+mass = 0.008086169
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([9])
+sprite_visible = false
+left_distance = 0.56
+right_distance = 0.56
+top_distance = 3.609897
+bottom_distance = 3.609897
+collision_thickness = 0.1
+metadata/generated_role = "Feather"
+metadata/generated_part_type = "Feather"
+metadata/generated_density = 0.01
+metadata/generated_size = Vector3(1.12, 7.219794, 0.1)
+
+[node name="Wing_2_Root_2" parent="GeneratedParts" index="43" unique_id=1104544845 instance=ExtResource("11_fivow")]
+transform = Transform3D(0.49999997, -0.86602545, 0, 0.86602545, 0.49999997, 0, 0, 0, 1, -3.1176915, 9.185051, -0.4)
+mass = 0.17356798
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([7, 8])
+sprite_visible = false
+left_distance = 1.13
+right_distance = 1.13
+top_distance = 1.1999999
+bottom_distance = 1.1999999
+collision_thickness = 0.32
+metadata/generated_role = "WingLimb"
+metadata/generated_part_type = "WingRoot"
+metadata/generated_density = 0.1
+metadata/generated_size = Vector3(2.26, 2.3999999, 0.32)
+
+[node name="Feather_2_2_001" parent="GeneratedParts" index="44" unique_id=1992282081 instance=ExtResource("11_fivow")]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -7.0981874, 7.906442, -0.4)
+mass = 0.008814649
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([9])
+sprite_visible = false
+left_distance = 0.56
+right_distance = 0.56
+top_distance = 3.935111
+bottom_distance = 3.935111
+collision_thickness = 0.1
+metadata/generated_role = "Feather"
+metadata/generated_part_type = "Feather"
+metadata/generated_density = 0.01
+metadata/generated_size = Vector3(1.12, 7.870222, 0.1)
+
+[node name="Feather_2_2_002" parent="GeneratedParts" index="45" unique_id=540633048 instance=ExtResource("11_fivow")]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -8.386429, 8.506442, -0.4)
+mass = 0.009372435
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([9])
+sprite_visible = false
+left_distance = 0.56
+right_distance = 0.56
+top_distance = 4.1841226
+bottom_distance = 4.1841226
+collision_thickness = 0.1
+metadata/generated_role = "Feather"
+metadata/generated_part_type = "Feather"
+metadata/generated_density = 0.01
+metadata/generated_size = Vector3(1.12, 8.368245, 0.1)
+
+[node name="Wing_2_Middle_3" parent="GeneratedParts" index="46" unique_id=1951749255 instance=ExtResource("11_fivow")]
+transform = Transform3D(-0.34202012, 0.9396926, 0, -0.9396926, -0.34202012, 0, 0, 0, 1, -2.7473829, 9.27202, -0.4)
+mass = 0.20351999
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([7, 8])
+sprite_visible = false
+left_distance = 1.06
+right_distance = 1.06
+top_distance = 1.5
+bottom_distance = 1.5
+collision_thickness = 0.32
+metadata/generated_role = "WingLimb"
+metadata/generated_part_type = "WingMiddle"
+metadata/generated_density = 0.1
+metadata/generated_size = Vector3(2.12, 3, 0.32)
+
+[node name="Feather_2_3_001" parent="GeneratedParts" index="47" unique_id=743311266 instance=ExtResource("11_fivow")]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -7.8196526, 10.610115, -0.4)
+mass = 0.010069065
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([9])
+sprite_visible = false
+left_distance = 0.56
+right_distance = 0.56
+top_distance = 4.495118
+bottom_distance = 4.495118
+collision_thickness = 0.1
+metadata/generated_role = "Feather"
+metadata/generated_part_type = "Feather"
+metadata/generated_density = 0.01
+metadata/generated_size = Vector3(1.12, 8.990236, 0.1)
+
+[node name="Feather_2_3_002" parent="GeneratedParts" index="48" unique_id=1030250506 instance=ExtResource("11_fivow")]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -7.199169, 10.268094, -0.4)
+mass = 0.010784094
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([9])
+sprite_visible = false
+left_distance = 0.56
+right_distance = 0.56
+top_distance = 4.8143277
+bottom_distance = 4.8143277
+collision_thickness = 0.1
+metadata/generated_role = "Feather"
+metadata/generated_part_type = "Feather"
+metadata/generated_density = 0.01
+metadata/generated_size = Vector3(1.12, 9.628655, 0.1)
+
+[node name="Feather_2_3_003" parent="GeneratedParts" index="49" unique_id=1046271592 instance=ExtResource("11_fivow")]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -6.544877, 9.926074, -0.4)
+mass = 0.011423391
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([9])
+sprite_visible = false
+left_distance = 0.56
+right_distance = 0.56
+top_distance = 5.099728
+bottom_distance = 5.099728
+collision_thickness = 0.1
+metadata/generated_role = "Feather"
+metadata/generated_part_type = "Feather"
+metadata/generated_density = 0.01
+metadata/generated_size = Vector3(1.12, 10.199456, 0.1)
+
+[node name="Wing_2_Middle_4" parent="GeneratedParts" index="50" unique_id=184654567 instance=ExtResource("11_fivow")]
+transform = Transform3D(-0.34202012, 0.9396926, 0, -0.9396926, -0.34202012, 0, 0, 0, 1, 0.07169509, 8.24596, -0.4)
+mass = 0.19008002
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([7, 8])
+sprite_visible = false
+left_distance = 0.99
+right_distance = 0.99
+top_distance = 1.5000001
+bottom_distance = 1.5000001
+collision_thickness = 0.32
+metadata/generated_role = "WingLimb"
+metadata/generated_part_type = "WingMiddle"
+metadata/generated_density = 0.1
+metadata/generated_size = Vector3(1.98, 3.0000002, 0.32)
+
+[node name="Feather_2_4_001" parent="GeneratedParts" index="51" unique_id=138230962 instance=ExtResource("11_fivow")]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -5.85818, 9.518276, -0.4)
+mass = 0.011936472
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([9])
+sprite_visible = false
+left_distance = 0.56
+right_distance = 0.56
+top_distance = 5.328782
+bottom_distance = 5.328782
+collision_thickness = 0.1
+metadata/generated_role = "Feather"
+metadata/generated_part_type = "Feather"
+metadata/generated_density = 0.01
+metadata/generated_size = Vector3(1.12, 10.657564, 0.1)
+
+[node name="Feather_2_4_002" parent="GeneratedParts" index="52" unique_id=467727900 instance=ExtResource("11_fivow")]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -5.0613832, 9.176256, -0.4)
+mass = 0.01225656
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([9])
+sprite_visible = false
+left_distance = 0.56
+right_distance = 0.56
+top_distance = 5.4716783
+bottom_distance = 5.4716783
+collision_thickness = 0.1
+metadata/generated_role = "Feather"
+metadata/generated_part_type = "Feather"
+metadata/generated_density = 0.01
+metadata/generated_size = Vector3(1.12, 10.9433565, 0.1)
+
+[node name="Feather_2_4_003" parent="GeneratedParts" index="53" unique_id=1056444373 instance=ExtResource("11_fivow")]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -4.2057657, 8.834236, -0.4)
+mass = 0.012444887
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([9])
+sprite_visible = false
+left_distance = 0.56
+right_distance = 0.56
+top_distance = 5.555753
+bottom_distance = 5.555753
+collision_thickness = 0.1
+metadata/generated_role = "Feather"
+metadata/generated_part_type = "Feather"
+metadata/generated_density = 0.01
+metadata/generated_size = Vector3(1.12, 11.111506, 0.1)
+
+[node name="Wing_2_Tip_5" parent="GeneratedParts" index="54" unique_id=17683608 instance=ExtResource("11_fivow")]
+transform = Transform3D(0.64278764, -0.76604444, 0, 0.76604444, 0.64278764, 0, 0, 0, 1, 0.17895854, 8.825668, -0.4)
+mass = 0.100095995
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([7, 8])
+sprite_visible = false
+left_distance = 0.92
+right_distance = 0.92
+top_distance = 1.6999999
+bottom_distance = 1.6999999
+collision_thickness = 0.32
+metadata/generated_role = "WingLimb"
+metadata/generated_part_type = "WingTip"
+metadata/generated_density = 0.05
+metadata/generated_size = Vector3(1.84, 3.3999999, 0.32)
+
+[node name="Feather_2_5_001" parent="GeneratedParts" index="55" unique_id=681304884 instance=ExtResource("11_fivow")]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -5.11584, 7.3924146, -0.4)
+mass = 0.012480424
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([9])
+sprite_visible = false
+left_distance = 0.56
+right_distance = 0.56
+top_distance = 5.5716176
+bottom_distance = 5.5716176
+collision_thickness = 0.1
+metadata/generated_role = "Feather"
+metadata/generated_part_type = "Feather"
+metadata/generated_density = 0.01
+metadata/generated_size = Vector3(1.12, 11.143235, 0.1)
+
+[node name="Feather_2_5_002" parent="GeneratedParts" index="56" unique_id=1727480048 instance=ExtResource("11_fivow")]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -5.8853006, 8.120908, -0.4)
+mass = 0.012259284
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([9])
+sprite_visible = false
+left_distance = 0.56
+right_distance = 0.56
+top_distance = 5.4728947
+bottom_distance = 5.4728947
+collision_thickness = 0.1
+metadata/generated_role = "Feather"
+metadata/generated_part_type = "Feather"
+metadata/generated_density = 0.01
+metadata/generated_size = Vector3(1.12, 10.945789, 0.1)
+
+[node name="Feather_2_5_003" parent="GeneratedParts" index="57" unique_id=830873729 instance=ExtResource("11_fivow")]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -6.5894523, 8.8494005, -0.4)
+mass = 0.011891853
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([9])
+sprite_visible = false
+left_distance = 0.56
+right_distance = 0.56
+top_distance = 5.3088627
+bottom_distance = 5.3088627
+collision_thickness = 0.1
+metadata/generated_role = "Feather"
+metadata/generated_part_type = "Feather"
+metadata/generated_density = 0.01
+metadata/generated_size = Vector3(1.12, 10.617725, 0.1)
+
+[node name="Wing_2_Tip_6" parent="GeneratedParts" index="58" unique_id=1048048020 instance=ExtResource("11_fivow")]
+transform = Transform3D(0.64278764, -0.76604444, 0, 0.76604444, 0.64278764, 0, 0, 0, 1, -2.4255924, 11.011147, -0.4)
+mass = 0.092480004
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([7])
+sprite_visible = false
+left_distance = 0.85
+right_distance = 0.85
+top_distance = 1.7
+bottom_distance = 1.7
+collision_thickness = 0.32
+metadata/generated_role = "Wing"
+metadata/generated_part_type = "WingTip"
+metadata/generated_density = 0.05
+metadata/generated_size = Vector3(1.7, 3.4, 0.32)
+
+[node name="Feather_2_6_001" parent="GeneratedParts" index="59" unique_id=856833855 instance=ExtResource("11_fivow")]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -7.1981497, 9.631516, -0.4)
+mass = 0.011411392
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([9])
+sprite_visible = false
+left_distance = 0.56
+right_distance = 0.56
+top_distance = 5.0943713
+bottom_distance = 5.0943713
+collision_thickness = 0.1
+metadata/generated_role = "Feather"
+metadata/generated_part_type = "Feather"
+metadata/generated_density = 0.01
+metadata/generated_size = Vector3(1.12, 10.188743, 0.1)
+
+[node name="Feather_2_6_002" parent="GeneratedParts" index="60" unique_id=1923624918 instance=ExtResource("11_fivow")]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -7.785885, 10.360009, -0.4)
+mass = 0.010783187
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([9])
+sprite_visible = false
+left_distance = 0.56
+right_distance = 0.56
+top_distance = 4.813923
+bottom_distance = 4.813923
+collision_thickness = 0.1
+metadata/generated_role = "Feather"
+metadata/generated_part_type = "Feather"
+metadata/generated_density = 0.01
+metadata/generated_size = Vector3(1.12, 9.627846, 0.1)
+
+[node name="Feather_2_6_003" parent="GeneratedParts" index="61" unique_id=182800346 instance=ExtResource("11_fivow")]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -8.340145, 11.088501, -0.4)
+mass = 0.01008
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([9])
+sprite_visible = false
+left_distance = 0.56
+right_distance = 0.56
+top_distance = 4.5
+bottom_distance = 4.5
+collision_thickness = 0.1
+metadata/generated_role = "Feather"
+metadata/generated_part_type = "Feather"
+metadata/generated_density = 0.01
+metadata/generated_size = Vector3(1.12, 9, 0.1)
+
+[node name="Joints" type="Node3D" parent="GeneratedParts" index="62" unique_id=1073348444]
+
+[node name="Joint_001_Torso" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="0" unique_id=424795316]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.41999996, 5.164109, 0.4)
+node_a = NodePath("../../Torso_3")
+node_b = NodePath("../../SubTorso")
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0, 1)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.22000003, -1.2139606, 0.4)
+metadata/generated_joint_frame_b = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.41999996, 0, -0.4)
+
+[node name="Joint_002_Torso" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="1" unique_id=2093517389]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.41999996, 5.164109, -0.39999998)
+node_a = NodePath("../../Torso_3")
+node_b = NodePath("../../SubTorso_2")
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0, 1)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.22000003, -1.2139606, -0.39999998)
+metadata/generated_joint_frame_b = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.41999996, 0, 0.40000004)
+
+[node name="Joint_003_Torso" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="2" unique_id=1714878335]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.56, 6.342271, 0)
+node_a = NodePath("../../Torso_2")
+node_b = NodePath("../../Torso")
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0, 1)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.64, -0.036322117, 0)
+metadata/generated_joint_frame_b = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6400001, 0, 0)
+
+[node name="Joint_004_Torso" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="3" unique_id=670505432]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.28, 6.378593, 0)
+node_a = NodePath("../../Torso_3")
+node_b = NodePath("../../Torso_2")
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0, 1)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.64, 0.00052309036, 0)
+metadata/generated_joint_frame_b = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.64, 0, 0)
+
+[node name="Joint_005_Torso" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="4" unique_id=1676915468]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.9802322e-08, 6.302614, 0)
+node_a = NodePath("../../Torso_4")
+node_b = NodePath("../../Torso_3")
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0, 1)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.64, 0.0020542145, 0)
+metadata/generated_joint_frame_b = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.64, -0.075455666, 0)
+
+[node name="Joint_006_Torso" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="5" unique_id=663490195]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.28, 6.257094, 0)
+node_a = NodePath("../../Torso_5")
+node_b = NodePath("../../Torso_4")
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0, 1)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.64, 0, 0)
+metadata/generated_joint_frame_b = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.64, -0.04346609, 0)
+
+[node name="Joint_007_Torso" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="6" unique_id=129813548]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.56, 6.352693, 0)
+node_a = NodePath("../../Torso_6")
+node_b = NodePath("../../Torso_5")
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0, 1)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6400001, 0, 0)
+metadata/generated_joint_frame_b = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.64, 0.095599174, 0)
+
+[node name="Joint_008_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="7" unique_id=1688351777]
+transform = Transform3D(0.8947756, -0.44651604, 0, 0.44651604, 0.8947756, 0, 0, 0, 1, 0, 1.2, 0.8)
+node_a = NodePath("../../Leg_1")
+node_b = NodePath("../../Leg_1_Limb_1")
+angular_limit_x/upper_angle = 0.61086524
+angular_limit_x/lower_angle = -0.61086524
+angular_limit_y/upper_angle = 0.61086524
+angular_limit_y/lower_angle = -0.61086524
+angular_limit_z/upper_angle = 0.61086524
+angular_limit_z/lower_angle = -0.61086524
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.22937346, 0.9733385)
+metadata/generated_joint_frame_a = Transform3D(0.8947756, -0.44651604, 0, 0.44651604, 0.8947756, 0, 0, 0, 1, 0, 0.6, 0)
+metadata/generated_joint_frame_b = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.8242712, 0)
+
+[node name="Joint_009_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="8" unique_id=664949306]
+transform = Transform3D(0.9691431, 0.24649888, 0, -0.24649888, 0.9691431, 0, 0, 0, 1, -0.7361005, 2.6750755, 0.8)
+node_a = NodePath("../../Leg_1_Limb_1")
+node_b = NodePath("../../Leg_1_Limb_2")
+linear_limit_x/upper_distance = 0.03
+linear_limit_x/lower_distance = -0.03
+linear_limit_y/upper_distance = 0.03
+linear_limit_y/lower_distance = -0.03
+angular_limit_z/upper_angle = 0.61086524
+angular_limit_z/lower_angle = -0.61086524
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, -0.34849685, 0.93731)
+metadata/generated_joint_frame_a = Transform3D(0.7570999, 0.65329915, 0, -0.65329915, 0.7570999, 0, 0, 0, 1, 0, 0.8242711, 0)
+metadata/generated_joint_frame_b = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.87140584, 0)
+
+[node name="Joint_010_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="9" unique_id=458374723]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.30649945, 4.364109, 0.8)
+node_a = NodePath("../../SubTorso")
+node_b = NodePath("../../Leg_1_Limb_2")
+angular_limit_x/upper_angle = 0.61086524
+angular_limit_x/lower_angle = -0.61086524
+angular_limit_z/upper_angle = 0.61086524
+angular_limit_z/lower_angle = -0.61086524
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, -0.124211356, 0.9922558)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.30649945, -0.8000002, 0)
+metadata/generated_joint_frame_b = Transform3D(0.9691431, -0.24649888, 0, 0.24649888, 0.9691431, 0, 0, 0, 1, 0, 0.8714051, 0)
+
+[node name="Joint_011_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="10" unique_id=1862246807]
+transform = Transform3D(0.8947756, -0.44651604, 0, 0.44651604, 0.8947756, 0, 0, 0, 1, 0, 1.2, -0.8)
+node_a = NodePath("../../Leg_2")
+node_b = NodePath("../../Leg_2_Limb_1")
+angular_limit_x/upper_angle = 0.61086524
+angular_limit_x/lower_angle = -0.61086524
+angular_limit_y/upper_angle = 0.61086524
+angular_limit_y/lower_angle = -0.61086524
+angular_limit_z/upper_angle = 0.61086524
+angular_limit_z/lower_angle = -0.61086524
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.22937346, 0.9733385)
+metadata/generated_joint_frame_a = Transform3D(0.8947756, -0.44651604, 0, 0.44651604, 0.8947756, 0, 0, 0, 1, 0, 0.6, 0)
+metadata/generated_joint_frame_b = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.8242712, 0)
+
+[node name="Joint_012_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="11" unique_id=950334586]
+transform = Transform3D(0.9691431, 0.24649888, 0, -0.24649888, 0.9691431, 0, 0, 0, 1, -0.7361005, 2.6750755, -0.8)
+node_a = NodePath("../../Leg_2_Limb_1")
+node_b = NodePath("../../Leg_2_Limb_2")
+linear_limit_x/upper_distance = 0.03
+linear_limit_x/lower_distance = -0.03
+linear_limit_y/upper_distance = 0.03
+linear_limit_y/lower_distance = -0.03
+angular_limit_z/upper_angle = 0.61086524
+angular_limit_z/lower_angle = -0.61086524
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, -0.34849685, 0.93731)
+metadata/generated_joint_frame_a = Transform3D(0.7570999, 0.65329915, 0, -0.65329915, 0.7570999, 0, 0, 0, 1, 0, 0.8242711, 0)
+metadata/generated_joint_frame_b = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.87140584, 0)
+
+[node name="Joint_013_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="12" unique_id=799265503]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.30649945, 4.364109, -0.8)
+node_a = NodePath("../../SubTorso_2")
+node_b = NodePath("../../Leg_2_Limb_2")
+angular_limit_x/upper_angle = 0.61086524
+angular_limit_x/lower_angle = -0.61086524
+angular_limit_z/upper_angle = 0.61086524
+angular_limit_z/lower_angle = -0.61086524
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, -0.124211356, 0.9922558)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.30649945, -0.8000002, 0)
+metadata/generated_joint_frame_b = Transform3D(0.9691431, -0.24649888, 0, 0.24649888, 0.9691431, 0, 0, 0, 1, 0, 0.8714051, 0)
+
+[node name="Joint_014_Neck" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="13" unique_id=2054350117]
+transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 4, 6.6547103, 0)
+node_a = NodePath("../../Torso_6")
+node_b = NodePath("../../Neck_1_1")
+angular_limit_x/upper_angle = 0.34906584
+angular_limit_x/lower_angle = -0.34906584
+angular_limit_y/upper_angle = 0.34906584
+angular_limit_y/lower_angle = -0.34906584
+angular_limit_z/upper_angle = 0.34906584
+angular_limit_z/lower_angle = -0.34906584
+angular_spring_x/enabled = true
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/enabled = true
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/enabled = true
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, -0.70710677, 0.70710677)
+metadata/generated_joint_frame_a = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 0.79999995, 0.3020172, 0)
+metadata/generated_joint_frame_b = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.7886872, 0)
+
+[node name="Joint_015_Neck" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="14" unique_id=835481048]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5773745, 6.6547103, 0)
+node_a = NodePath("../../Neck_1_1")
+node_b = NodePath("../../Head_1")
+angular_limit_x/upper_angle = 0.34906584
+angular_limit_x/lower_angle = -0.34906584
+angular_limit_y/upper_angle = 0.34906584
+angular_limit_y/lower_angle = -0.34906584
+angular_limit_z/upper_angle = 0.34906584
+angular_limit_z/lower_angle = -0.34906584
+angular_spring_x/enabled = true
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/enabled = true
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/enabled = true
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.70710677, 0.70710677)
+metadata/generated_joint_frame_a = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, 0, 0.7886872, 0)
+metadata/generated_joint_frame_b = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4000001, 0, 0)
+
+[node name="Joint_016_Wing" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="15" unique_id=642501442]
+transform = Transform3D(0.49999997, -0.86602545, 0, 0.86602545, 0.49999997, 0, 0, 0, 1, 0, 7.3850503, 0.4)
+node_a = NodePath("../../Torso_3")
+node_b = NodePath("../../Wing_1_Root_1")
+angular_limit_z/upper_angle = 0.17453292
+angular_limit_z/lower_angle = -0.17453292
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.5, 0.8660254)
+metadata/generated_joint_frame_a = Transform3D(0.49999997, -0.86602545, 0, 0.86602545, 0.49999997, 0, 0, 0, 1, 0.64, 1.0069804, 0.4)
+metadata/generated_joint_frame_b = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.1999998, 0)
+metadata/wing_open_relative_a = Quaternion(0, 0, 0.5, 0.8660254)
+
+[node name="Joint_017_Feather" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="16" unique_id=1228893581]
+transform = Transform3D(0.49999997, -0.86602545, 0, 0.86602545, 0.49999997, 0, 0, 0, 1, -0.94641006, 6.5458198, 0.4)
+node_a = NodePath("../../Wing_1_Root_1")
+node_b = NodePath("../../Feather_1_1_001")
+angular_limit_z/upper_angle = 3.1415927
+angular_limit_z/lower_angle = -3.1415927
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.258819, 0.9659258)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1999998, -0.7999997, 0)
+metadata/generated_joint_frame_b = Transform3D(0.86602545, 0.5, 0, -0.5, 0.86602545, 0, 0, 0, 1, 0, -3.0000002, 0)
+metadata/feather_open_relative_a = Quaternion(0, 0, 0.58778524, 0.809017)
+
+[node name="Joint_018_Feather" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="17" unique_id=1880332388]
+transform = Transform3D(0.49999997, -0.86602545, 0, 0.86602545, 0.49999997, 0, 0, 0, 1, -1.6392305, 6.94582, 0.4)
+node_a = NodePath("../../Wing_1_Root_1")
+node_b = NodePath("../../Feather_1_1_002")
+angular_limit_z/upper_angle = 3.1415927
+angular_limit_z/lower_angle = -3.1415927
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.258819, 0.9659258)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1999998, 0, 0)
+metadata/generated_joint_frame_b = Transform3D(0.86602545, 0.5, 0, -0.5, 0.86602545, 0, 0, 0, 1, 0, -3.286244, 0)
+metadata/feather_open_relative_a = Quaternion(0, 0, 0.540122, 0.84158677)
+
+[node name="Joint_019_Feather" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="18" unique_id=1169148999]
+transform = Transform3D(0.49999997, -0.86602545, 0, 0.86602545, 0.49999997, 0, 0, 0, 1, -2.3320508, 7.3458195, 0.4)
+node_a = NodePath("../../Wing_1_Root_1")
+node_b = NodePath("../../Feather_1_1_003")
+angular_limit_z/upper_angle = 3.1415927
+angular_limit_z/lower_angle = -3.1415927
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.258819, 0.9659258)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1999998, 0.8000002, 0)
+metadata/generated_joint_frame_b = Transform3D(0.86602545, 0.5, 0, -0.5, 0.86602545, 0, 0, 0, 1, -4.7683716e-07, -3.609897, 0)
+metadata/feather_open_relative_a = Quaternion(0, 0, 0.49923626, 0.8664659)
+
+[node name="Joint_020_Wing" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="19" unique_id=834447780]
+transform = Transform3D(0.49999997, -0.86602545, 0, 0.86602545, 0.49999997, 0, 0, 0, 1, -2.078461, 8.585051, 0.4)
+node_a = NodePath("../../Wing_1_Root_1")
+node_b = NodePath("../../Wing_1_Root_2")
+angular_limit_z/upper_angle = 0.17453292
+angular_limit_z/lower_angle = -0.17453292
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0, 1)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.7683716e-07, 1.2000003, 0)
+metadata/generated_joint_frame_b = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.7683716e-07, -1.2000003, 0)
+metadata/wing_open_relative_a = Quaternion(0, 0, 0, 1)
+
+[node name="Joint_021_Feather" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="20" unique_id=1064181093]
+transform = Transform3D(0.49999997, -0.86602545, 0, 0.86602545, 0.49999997, 0, 0, 0, 1, -3.1630762, 7.906442, 0.4)
+node_a = NodePath("../../Wing_1_Root_2")
+node_b = NodePath("../../Feather_1_2_001")
+angular_limit_z/upper_angle = 3.1415927
+angular_limit_z/lower_angle = -3.1415927
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.258819, 0.9659258)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1300001, -0.5999999, 0)
+metadata/generated_joint_frame_b = Transform3D(0.86602545, 0.5, 0, -0.5, 0.86602545, 0, 0, 0, 1, -4.7683716e-07, -3.935111, 0)
+metadata/feather_open_relative_a = Quaternion(0, 0, 0.47599986, 0.8794454)
+
+[node name="Joint_022_Feather" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="21" unique_id=915172804]
+transform = Transform3D(0.49999997, -0.86602545, 0, 0.86602545, 0.49999997, 0, 0, 0, 1, -4.2023067, 8.506442, 0.4)
+node_a = NodePath("../../Wing_1_Root_2")
+node_b = NodePath("../../Feather_1_2_002")
+angular_limit_z/upper_angle = 3.1415927
+angular_limit_z/lower_angle = -3.1415927
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.258819, 0.9659258)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1300001, 0.5999999, 0)
+metadata/generated_joint_frame_b = Transform3D(0.86602545, 0.5, 0, -0.5, 0.86602545, 0, 0, 0, 1, 0, -4.1841226, 0)
+metadata/feather_open_relative_a = Quaternion(0, 0, 0.46261695, 0.8865583)
+
+[node name="Joint_023_Wing" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="22" unique_id=806616174]
+transform = Transform3D(-0.34202012, 0.9396926, 0, -0.9396926, -0.34202012, 0, 0, 0, 1, -4.156922, 9.78505, 0.4)
+node_a = NodePath("../../Wing_1_Root_2")
+node_b = NodePath("../../Wing_1_Middle_3")
+angular_limit_z/upper_angle = 0.17453292
+angular_limit_z/lower_angle = -3.1415927
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, -0.9961947, 0.08715573)
+metadata/generated_joint_frame_a = Transform3D(-0.9848077, 0.17364815, 0, -0.17364815, -0.9848077, 0, 0, 0, 1, 0, 1.1999998, 0)
+metadata/generated_joint_frame_b = Transform3D(1.0000001, 0, 0, 0, 1.0000001, 0, 0, 0, 1, 9.536743e-07, -1.5, 0)
+metadata/wing_open_relative_a = Quaternion(0, 0, 0, 1)
+
+[node name="Joint_024_Feather" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="23" unique_id=1674827611]
+transform = Transform3D(-0.34202012, 0.9396926, 0, -0.9396926, -0.34202012, 0, 0, 0, 1, -3.3245342, 10.610115, 0.4)
+node_a = NodePath("../../Wing_1_Middle_3")
+node_b = NodePath("../../Feather_1_3_001")
+angular_limit_z/upper_angle = 3.1415927
+angular_limit_z/lower_angle = -3.1415927
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.9848078, -0.17364818)
+metadata/generated_joint_frame_a = Transform3D(1.0000001, 0, 0, 0, 1.0000001, 0, 0, 0, 1, -1.0600004, -1, 0)
+metadata/generated_joint_frame_b = Transform3D(-0.9396926, -0.34202015, 0, 0.34202015, -0.9396926, 0, 0, 0, 1, 0, -4.495118, 0)
+metadata/feather_open_relative_a = Quaternion(0, 0, 0.4487957, 0.8936344)
+
+[node name="Joint_025_Feather" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="24" unique_id=390429413]
+transform = Transform3D(-0.34202012, 0.9396926, 0, -0.9396926, -0.34202012, 0, 0, 0, 1, -2.3848414, 10.268094, 0.4)
+node_a = NodePath("../../Wing_1_Middle_3")
+node_b = NodePath("../../Feather_1_3_002")
+angular_limit_z/upper_angle = 3.1415927
+angular_limit_z/lower_angle = -3.1415927
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.9848078, -0.17364818)
+metadata/generated_joint_frame_a = Transform3D(1.0000001, 0, 0, 0, 1.0000001, 0, 0, 0, 1, -1.0599985, 0, 0)
+metadata/generated_joint_frame_b = Transform3D(-0.9396926, -0.34202015, 0, 0.34202015, -0.9396926, 0, 0, 0, 1, 0, -4.8143277, 0)
+metadata/feather_open_relative_a = Quaternion(0, 0, 0.43104795, 0.902329)
+
+[node name="Joint_026_Feather" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="25" unique_id=653945795]
+transform = Transform3D(-0.34202012, 0.9396926, 0, -0.9396926, -0.34202012, 0, 0, 0, 1, -1.445149, 9.926074, 0.4)
+node_a = NodePath("../../Wing_1_Middle_3")
+node_b = NodePath("../../Feather_1_3_003")
+angular_limit_z/upper_angle = 3.1415927
+angular_limit_z/lower_angle = -3.1415927
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.9848078, -0.17364818)
+metadata/generated_joint_frame_a = Transform3D(1.0000001, 0, 0, 0, 1.0000001, 0, 0, 0, 1, -1.0599985, 1, 0)
+metadata/generated_joint_frame_b = Transform3D(-0.9396926, -0.34202015, 0, 0.34202015, -0.9396926, 0, 0, 0, 1, 0, -5.099728, 0)
+metadata/feather_open_relative_a = Quaternion(0, 0, 0.4114931, 0.9114129)
+
+[node name="Joint_027_Wing" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="26" unique_id=520197149]
+transform = Transform3D(-0.34202012, 0.9396926, 0, -0.9396926, -0.34202012, 0, 0, 0, 1, -1.3378439, 8.75899, 0.4)
+node_a = NodePath("../../Wing_1_Middle_3")
+node_b = NodePath("../../Wing_1_Middle_4")
+angular_limit_z/upper_angle = 0.17453292
+angular_limit_z/lower_angle = -0.17453292
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0, 1)
+metadata/generated_joint_frame_a = Transform3D(1.0000001, 0, 0, 0, 1.0000001, 0, 0, 0, 1, 4.7683716e-07, 1.5, 0)
+metadata/generated_joint_frame_b = Transform3D(1.0000001, 0, 0, 0, 1.0000001, 0, 0, 0, 1, 4.7683716e-07, -1.5000002, 0)
+metadata/wing_open_relative_a = Quaternion(0, 0, 0, 1)
+
+[node name="Joint_028_Feather" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="27" unique_id=2089166589]
+transform = Transform3D(-0.34202012, 0.9396926, 0, -0.9396926, -0.34202012, 0, 0, 0, 1, -0.5293977, 9.518276, 0.4)
+node_a = NodePath("../../Wing_1_Middle_4")
+node_b = NodePath("../../Feather_1_4_001")
+angular_limit_z/upper_angle = 3.1415927
+angular_limit_z/lower_angle = -3.1415927
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.9848078, -0.17364818)
+metadata/generated_joint_frame_a = Transform3D(1.0000001, 0, 0, 0, 1.0000001, 0, 0, 0, 1, -0.9899998, -1.0000002, 0)
+metadata/generated_joint_frame_b = Transform3D(-0.9396926, -0.34202015, 0, 0.34202015, -0.9396926, 0, 0, 0, 1, 0, -5.328782, 0)
+metadata/feather_open_relative_a = Quaternion(0, 0, 0.38813052, 0.92160445)
+
+[node name="Joint_029_Feather" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="28" unique_id=1852491955]
+transform = Transform3D(-0.34202012, 0.9396926, 0, -0.9396926, -0.34202012, 0, 0, 0, 1, 0.410295, 9.176256, 0.4)
+node_a = NodePath("../../Wing_1_Middle_4")
+node_b = NodePath("../../Feather_1_4_002")
+angular_limit_z/upper_angle = 3.1415927
+angular_limit_z/lower_angle = -3.1415927
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.9848078, -0.17364818)
+metadata/generated_joint_frame_a = Transform3D(1.0000001, 0, 0, 0, 1.0000001, 0, 0, 0, 1, -0.9899998, 0, 0)
+metadata/generated_joint_frame_b = Transform3D(-0.9396926, -0.34202015, 0, 0.34202015, -0.9396926, 0, 0, 0, 1, 0, -5.4716783, 0)
+metadata/feather_open_relative_a = Quaternion(0, 0, 0.358846, 0.9333968)
+
+[node name="Joint_030_Feather" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="29" unique_id=69246653]
+transform = Transform3D(-0.34202012, 0.9396926, 0, -0.9396926, -0.34202012, 0, 0, 0, 1, 1.3499877, 8.834236, 0.4)
+node_a = NodePath("../../Wing_1_Middle_4")
+node_b = NodePath("../../Feather_1_4_003")
+angular_limit_z/upper_angle = 3.1415927
+angular_limit_z/lower_angle = -3.1415927
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.9848078, -0.17364818)
+metadata/generated_joint_frame_a = Transform3D(1.0000001, 0, 0, 0, 1.0000001, 0, 0, 0, 1, -0.9900007, 1.0000001, 0)
+metadata/generated_joint_frame_b = Transform3D(-0.9396926, -0.34202015, 0, 0.34202015, -0.9396926, 0, 0, 0, 1, 0, -5.555753, 0)
+metadata/feather_open_relative_a = Quaternion(0, 0, 0.3255238, 0.9455339)
+
+[node name="Joint_031_Wing" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="30" unique_id=1959529084]
+transform = Transform3D(0.64278764, -0.76604444, 0, 0.76604444, 0.64278764, 0, 0, 0, 1, 1.4812341, 7.7329297, 0.4)
+node_a = NodePath("../../Wing_1_Middle_4")
+node_b = NodePath("../../Wing_1_Tip_5")
+angular_limit_z/upper_angle = 2.9670596
+angular_limit_z/lower_angle = -0.17453292
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.9848078, 0.17364821)
+metadata/generated_joint_frame_a = Transform3D(-0.9396927, -0.3420202, 0, 0.3420202, -0.9396927, 0, 0, 0, 1, 9.536743e-07, 1.5000004, 0)
+metadata/generated_joint_frame_b = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.6999998, 0)
+metadata/wing_open_relative_a = Quaternion(0, 0, 0, 1)
+
+[node name="Joint_032_Feather" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="31" unique_id=20059509]
+transform = Transform3D(0.64278764, -0.76604444, 0, 0.76604444, 0.64278764, 0, 0, 0, 1, 0.4557776, 7.392415, 0.4)
+node_a = NodePath("../../Wing_1_Tip_5")
+node_b = NodePath("../../Feather_1_5_001")
+angular_limit_z/upper_angle = 3.1415927
+angular_limit_z/lower_angle = -3.1415927
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.34202015, 0.9396926)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9199996, -1.1333332, 0)
+metadata/generated_joint_frame_b = Transform3D(0.76604444, 0.6427877, 0, -0.6427877, 0.76604444, 0, 0, 0, 1, 4.7683716e-07, -5.5716176, 0)
+metadata/feather_open_relative_a = Quaternion(0, 0, 0.2917035, 0.9565088)
+
+[node name="Joint_033_Feather" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="32" unique_id=730937180]
+transform = Transform3D(0.64278764, -0.76604444, 0, 0.76604444, 0.64278764, 0, 0, 0, 1, -0.4124061, 8.120908, 0.4)
+node_a = NodePath("../../Wing_1_Tip_5")
+node_b = NodePath("../../Feather_1_5_002")
+angular_limit_z/upper_angle = 3.1415927
+angular_limit_z/lower_angle = -3.1415927
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.34202015, 0.9396926)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9199996, 4.7683716e-07, 0)
+metadata/generated_joint_frame_b = Transform3D(0.76604444, 0.6427877, 0, -0.6427877, 0.76604444, 0, 0, 0, 1, 0, -5.4728947, 0)
+metadata/feather_open_relative_a = Quaternion(0, 0, 0.251274, 0.967916)
+
+[node name="Joint_034_Feather" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="33" unique_id=280791615]
+transform = Transform3D(0.64278764, -0.76604444, 0, 0.76604444, 0.64278764, 0, 0, 0, 1, -1.2805897, 8.8494005, 0.4)
+node_a = NodePath("../../Wing_1_Tip_5")
+node_b = NodePath("../../Feather_1_5_003")
+angular_limit_z/upper_angle = 3.1415927
+angular_limit_z/lower_angle = -3.1415927
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.34202015, 0.9396926)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9199996, 1.1333337, 0)
+metadata/generated_joint_frame_b = Transform3D(0.76604444, 0.6427877, 0, -0.6427877, 0.76604444, 0, 0, 0, 1, 0, -5.3088627, 0)
+metadata/feather_open_relative_a = Quaternion(0, 0, 0.2035768, 0.979059)
+
+[node name="Joint_035_Wing" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="34" unique_id=1022608130]
+transform = Transform3D(0.64278764, -0.76604444, 0, 0.76604444, 0.64278764, 0, 0, 0, 1, -1.123317, 9.918407, 0.4)
+node_a = NodePath("../../Wing_1_Tip_5")
+node_b = NodePath("../../Wing_1_Tip_6")
+angular_limit_z/upper_angle = 0.17453292
+angular_limit_z/lower_angle = -0.17453292
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0, 1)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7000003, 0)
+metadata/generated_joint_frame_b = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.7000003, 0)
+metadata/wing_open_relative_a = Quaternion(0, 0, 0, 1)
+
+[node name="Joint_036_Feather" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="35" unique_id=682859236]
+transform = Transform3D(0.64278764, -0.76604444, 0, 0.76604444, 0.64278764, 0, 0, 0, 1, -2.1037784, 9.631516, 0.4)
+node_a = NodePath("../../Wing_1_Tip_6")
+node_b = NodePath("../../Feather_1_6_001")
+angular_limit_z/upper_angle = 3.1415927
+angular_limit_z/lower_angle = -3.1415927
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.34202015, 0.9396926)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8499999, -1.1333332, 0)
+metadata/generated_joint_frame_b = Transform3D(0.76604444, 0.6427877, 0, -0.6427877, 0.76604444, 0, 0, 0, 1, 0, -5.0943713, 0)
+metadata/feather_open_relative_a = Quaternion(0, 0, 0.15010574, 0.98866993)
+
+[node name="Joint_037_Feather" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="36" unique_id=291098358]
+transform = Transform3D(0.64278764, -0.76604444, 0, 0.76604444, 0.64278764, 0, 0, 0, 1, -2.971962, 10.360009, 0.4)
+node_a = NodePath("../../Wing_1_Tip_6")
+node_b = NodePath("../../Feather_1_6_002")
+angular_limit_z/upper_angle = 3.1415927
+angular_limit_z/lower_angle = -3.1415927
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.34202015, 0.9396926)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8499994, 0, 0)
+metadata/generated_joint_frame_b = Transform3D(0.76604444, 0.6427877, 0, -0.6427877, 0.76604444, 0, 0, 0, 1, 0, -4.813923, 0)
+metadata/feather_open_relative_a = Quaternion(0, 0, 0.08229765, 0.9966078)
+
+[node name="Joint_038_Feather" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="37" unique_id=1276115175]
+transform = Transform3D(0.64278764, -0.76604444, 0, 0.76604444, 0.64278764, 0, 0, 0, 1, -3.8401456, 11.088501, 0.4)
+node_a = NodePath("../../Wing_1_Tip_6")
+node_b = NodePath("../../Feather_1_6_003")
+angular_limit_z/upper_angle = 3.1415927
+angular_limit_z/lower_angle = -3.1415927
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.34202015, 0.9396926)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8499999, 1.1333332, 0)
+metadata/generated_joint_frame_b = Transform3D(0.76604444, 0.6427877, 0, -0.6427877, 0.76604444, 0, 0, 0, 1, 0, -4.499999, 0)
+metadata/feather_open_relative_a = Quaternion(0, 0, 0, 1)
+
+[node name="Joint_039_Wing" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="38" unique_id=303762350]
+transform = Transform3D(0.49999997, -0.86602545, 0, 0.86602545, 0.49999997, 0, 0, 0, 1, 0, 7.3850503, -0.4)
+node_a = NodePath("../../Torso_3")
+node_b = NodePath("../../Wing_2_Root_1")
+angular_limit_z/upper_angle = 0.17453292
+angular_limit_z/lower_angle = -0.17453292
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.5, 0.8660254)
+metadata/generated_joint_frame_a = Transform3D(0.49999997, -0.86602545, 0, 0.86602545, 0.49999997, 0, 0, 0, 1, 0.64, 1.0069804, -0.4)
+metadata/generated_joint_frame_b = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.1999998, 0)
+metadata/wing_open_relative_a = Quaternion(0, 0, 0.5, 0.8660254)
+
+[node name="Joint_040_Feather" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="39" unique_id=1347668677]
+transform = Transform3D(0.49999997, -0.86602545, 0, 0.86602545, 0.49999997, 0, 0, 0, 1, -0.94641006, 6.5458198, -0.4)
+node_a = NodePath("../../Wing_2_Root_1")
+node_b = NodePath("../../Feather_2_1_001")
+angular_limit_z/upper_angle = 3.1415927
+angular_limit_z/lower_angle = -3.1415927
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.258819, 0.9659258)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1999998, -0.7999997, 0)
+metadata/generated_joint_frame_b = Transform3D(0.86602545, 0.5, 0, -0.5, 0.86602545, 0, 0, 0, 1, 0, -3.0000002, 0)
+metadata/feather_open_relative_a = Quaternion(0, 0, 0.58778524, 0.809017)
+
+[node name="Joint_041_Feather" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="40" unique_id=1274055461]
+transform = Transform3D(0.49999997, -0.86602545, 0, 0.86602545, 0.49999997, 0, 0, 0, 1, -1.6392305, 6.94582, -0.4)
+node_a = NodePath("../../Wing_2_Root_1")
+node_b = NodePath("../../Feather_2_1_002")
+angular_limit_z/upper_angle = 3.1415927
+angular_limit_z/lower_angle = -3.1415927
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.258819, 0.9659258)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1999998, 0, 0)
+metadata/generated_joint_frame_b = Transform3D(0.86602545, 0.5, 0, -0.5, 0.86602545, 0, 0, 0, 1, 0, -3.286244, 0)
+metadata/feather_open_relative_a = Quaternion(0, 0, 0.540122, 0.84158677)
+
+[node name="Joint_042_Feather" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="41" unique_id=1457351639]
+transform = Transform3D(0.49999997, -0.86602545, 0, 0.86602545, 0.49999997, 0, 0, 0, 1, -2.3320508, 7.3458195, -0.4)
+node_a = NodePath("../../Wing_2_Root_1")
+node_b = NodePath("../../Feather_2_1_003")
+angular_limit_z/upper_angle = 3.1415927
+angular_limit_z/lower_angle = -3.1415927
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.258819, 0.9659258)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1999998, 0.8000002, 0)
+metadata/generated_joint_frame_b = Transform3D(0.86602545, 0.5, 0, -0.5, 0.86602545, 0, 0, 0, 1, -4.7683716e-07, -3.609897, 0)
+metadata/feather_open_relative_a = Quaternion(0, 0, 0.49923626, 0.8664659)
+
+[node name="Joint_043_Wing" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="42" unique_id=1700464087]
+transform = Transform3D(0.49999997, -0.86602545, 0, 0.86602545, 0.49999997, 0, 0, 0, 1, -2.078461, 8.585051, -0.4)
+node_a = NodePath("../../Wing_2_Root_1")
+node_b = NodePath("../../Wing_2_Root_2")
+angular_limit_z/upper_angle = 0.17453292
+angular_limit_z/lower_angle = -0.17453292
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0, 1)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.7683716e-07, 1.2000003, 0)
+metadata/generated_joint_frame_b = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.7683716e-07, -1.2000003, 0)
+metadata/wing_open_relative_a = Quaternion(0, 0, 0, 1)
+
+[node name="Joint_044_Feather" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="43" unique_id=377012279]
+transform = Transform3D(0.49999997, -0.86602545, 0, 0.86602545, 0.49999997, 0, 0, 0, 1, -3.1630762, 7.906442, -0.4)
+node_a = NodePath("../../Wing_2_Root_2")
+node_b = NodePath("../../Feather_2_2_001")
+angular_limit_z/upper_angle = 3.1415927
+angular_limit_z/lower_angle = -3.1415927
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.258819, 0.9659258)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1300001, -0.5999999, 0)
+metadata/generated_joint_frame_b = Transform3D(0.86602545, 0.5, 0, -0.5, 0.86602545, 0, 0, 0, 1, -4.7683716e-07, -3.935111, 0)
+metadata/feather_open_relative_a = Quaternion(0, 0, 0.47599986, 0.8794454)
+
+[node name="Joint_045_Feather" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="44" unique_id=1864721592]
+transform = Transform3D(0.49999997, -0.86602545, 0, 0.86602545, 0.49999997, 0, 0, 0, 1, -4.2023067, 8.506442, -0.4)
+node_a = NodePath("../../Wing_2_Root_2")
+node_b = NodePath("../../Feather_2_2_002")
+angular_limit_z/upper_angle = 3.1415927
+angular_limit_z/lower_angle = -3.1415927
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.258819, 0.9659258)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1300001, 0.5999999, 0)
+metadata/generated_joint_frame_b = Transform3D(0.86602545, 0.5, 0, -0.5, 0.86602545, 0, 0, 0, 1, 0, -4.1841226, 0)
+metadata/feather_open_relative_a = Quaternion(0, 0, 0.46261695, 0.8865583)
+
+[node name="Joint_046_Wing" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="45" unique_id=1185790653]
+transform = Transform3D(-0.34202012, 0.9396926, 0, -0.9396926, -0.34202012, 0, 0, 0, 1, -4.156922, 9.78505, -0.4)
+node_a = NodePath("../../Wing_2_Root_2")
+node_b = NodePath("../../Wing_2_Middle_3")
+angular_limit_z/upper_angle = 0.17453292
+angular_limit_z/lower_angle = -3.1415927
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, -0.9961947, 0.08715573)
+metadata/generated_joint_frame_a = Transform3D(-0.9848077, 0.17364815, 0, -0.17364815, -0.9848077, 0, 0, 0, 1, 0, 1.1999998, 0)
+metadata/generated_joint_frame_b = Transform3D(1.0000001, 0, 0, 0, 1.0000001, 0, 0, 0, 1, 9.536743e-07, -1.5, 0)
+metadata/wing_open_relative_a = Quaternion(0, 0, 0, 1)
+
+[node name="Joint_047_Feather" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="46" unique_id=1859184242]
+transform = Transform3D(-0.34202012, 0.9396926, 0, -0.9396926, -0.34202012, 0, 0, 0, 1, -3.3245342, 10.610115, -0.4)
+node_a = NodePath("../../Wing_2_Middle_3")
+node_b = NodePath("../../Feather_2_3_001")
+angular_limit_z/upper_angle = 3.1415927
+angular_limit_z/lower_angle = -3.1415927
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.9848078, -0.17364818)
+metadata/generated_joint_frame_a = Transform3D(1.0000001, 0, 0, 0, 1.0000001, 0, 0, 0, 1, -1.0600004, -1, 0)
+metadata/generated_joint_frame_b = Transform3D(-0.9396926, -0.34202015, 0, 0.34202015, -0.9396926, 0, 0, 0, 1, 0, -4.495118, 0)
+metadata/feather_open_relative_a = Quaternion(0, 0, 0.4487957, 0.8936344)
+
+[node name="Joint_048_Feather" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="47" unique_id=2069328161]
+transform = Transform3D(-0.34202012, 0.9396926, 0, -0.9396926, -0.34202012, 0, 0, 0, 1, -2.3848414, 10.268094, -0.4)
+node_a = NodePath("../../Wing_2_Middle_3")
+node_b = NodePath("../../Feather_2_3_002")
+angular_limit_z/upper_angle = 3.1415927
+angular_limit_z/lower_angle = -3.1415927
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.9848078, -0.17364818)
+metadata/generated_joint_frame_a = Transform3D(1.0000001, 0, 0, 0, 1.0000001, 0, 0, 0, 1, -1.0599985, 0, 0)
+metadata/generated_joint_frame_b = Transform3D(-0.9396926, -0.34202015, 0, 0.34202015, -0.9396926, 0, 0, 0, 1, 0, -4.8143277, 0)
+metadata/feather_open_relative_a = Quaternion(0, 0, 0.43104795, 0.902329)
+
+[node name="Joint_049_Feather" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="48" unique_id=973235826]
+transform = Transform3D(-0.34202012, 0.9396926, 0, -0.9396926, -0.34202012, 0, 0, 0, 1, -1.445149, 9.926074, -0.4)
+node_a = NodePath("../../Wing_2_Middle_3")
+node_b = NodePath("../../Feather_2_3_003")
+angular_limit_z/upper_angle = 3.1415927
+angular_limit_z/lower_angle = -3.1415927
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.9848078, -0.17364818)
+metadata/generated_joint_frame_a = Transform3D(1.0000001, 0, 0, 0, 1.0000001, 0, 0, 0, 1, -1.0599985, 1, 0)
+metadata/generated_joint_frame_b = Transform3D(-0.9396926, -0.34202015, 0, 0.34202015, -0.9396926, 0, 0, 0, 1, 0, -5.099728, 0)
+metadata/feather_open_relative_a = Quaternion(0, 0, 0.4114931, 0.9114129)
+
+[node name="Joint_050_Wing" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="49" unique_id=355937544]
+transform = Transform3D(-0.34202012, 0.9396926, 0, -0.9396926, -0.34202012, 0, 0, 0, 1, -1.3378439, 8.75899, -0.4)
+node_a = NodePath("../../Wing_2_Middle_3")
+node_b = NodePath("../../Wing_2_Middle_4")
+angular_limit_z/upper_angle = 0.17453292
+angular_limit_z/lower_angle = -0.17453292
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0, 1)
+metadata/generated_joint_frame_a = Transform3D(1.0000001, 0, 0, 0, 1.0000001, 0, 0, 0, 1, 4.7683716e-07, 1.5, 0)
+metadata/generated_joint_frame_b = Transform3D(1.0000001, 0, 0, 0, 1.0000001, 0, 0, 0, 1, 4.7683716e-07, -1.5000002, 0)
+metadata/wing_open_relative_a = Quaternion(0, 0, 0, 1)
+
+[node name="Joint_051_Feather" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="50" unique_id=559556300]
+transform = Transform3D(-0.34202012, 0.9396926, 0, -0.9396926, -0.34202012, 0, 0, 0, 1, -0.5293977, 9.518276, -0.4)
+node_a = NodePath("../../Wing_2_Middle_4")
+node_b = NodePath("../../Feather_2_4_001")
+angular_limit_z/upper_angle = 3.1415927
+angular_limit_z/lower_angle = -3.1415927
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.9848078, -0.17364818)
+metadata/generated_joint_frame_a = Transform3D(1.0000001, 0, 0, 0, 1.0000001, 0, 0, 0, 1, -0.9899998, -1.0000002, 0)
+metadata/generated_joint_frame_b = Transform3D(-0.9396926, -0.34202015, 0, 0.34202015, -0.9396926, 0, 0, 0, 1, 0, -5.328782, 0)
+metadata/feather_open_relative_a = Quaternion(0, 0, 0.38813052, 0.92160445)
+
+[node name="Joint_052_Feather" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="51" unique_id=1613846393]
+transform = Transform3D(-0.34202012, 0.9396926, 0, -0.9396926, -0.34202012, 0, 0, 0, 1, 0.410295, 9.176256, -0.4)
+node_a = NodePath("../../Wing_2_Middle_4")
+node_b = NodePath("../../Feather_2_4_002")
+angular_limit_z/upper_angle = 3.1415927
+angular_limit_z/lower_angle = -3.1415927
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.9848078, -0.17364818)
+metadata/generated_joint_frame_a = Transform3D(1.0000001, 0, 0, 0, 1.0000001, 0, 0, 0, 1, -0.9899998, 0, 0)
+metadata/generated_joint_frame_b = Transform3D(-0.9396926, -0.34202015, 0, 0.34202015, -0.9396926, 0, 0, 0, 1, 0, -5.4716783, 0)
+metadata/feather_open_relative_a = Quaternion(0, 0, 0.358846, 0.9333968)
+
+[node name="Joint_053_Feather" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="52" unique_id=1761085284]
+transform = Transform3D(-0.34202012, 0.9396926, 0, -0.9396926, -0.34202012, 0, 0, 0, 1, 1.3499877, 8.834236, -0.4)
+node_a = NodePath("../../Wing_2_Middle_4")
+node_b = NodePath("../../Feather_2_4_003")
+angular_limit_z/upper_angle = 3.1415927
+angular_limit_z/lower_angle = -3.1415927
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.9848078, -0.17364818)
+metadata/generated_joint_frame_a = Transform3D(1.0000001, 0, 0, 0, 1.0000001, 0, 0, 0, 1, -0.9900007, 1.0000001, 0)
+metadata/generated_joint_frame_b = Transform3D(-0.9396926, -0.34202015, 0, 0.34202015, -0.9396926, 0, 0, 0, 1, 0, -5.555753, 0)
+metadata/feather_open_relative_a = Quaternion(0, 0, 0.3255238, 0.9455339)
+
+[node name="Joint_054_Wing" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="53" unique_id=166051623]
+transform = Transform3D(0.64278764, -0.76604444, 0, 0.76604444, 0.64278764, 0, 0, 0, 1, 1.4812341, 7.7329297, -0.4)
+node_a = NodePath("../../Wing_2_Middle_4")
+node_b = NodePath("../../Wing_2_Tip_5")
+angular_limit_z/upper_angle = 2.9670596
+angular_limit_z/lower_angle = -0.17453292
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.9848078, 0.17364821)
+metadata/generated_joint_frame_a = Transform3D(-0.9396927, -0.3420202, 0, 0.3420202, -0.9396927, 0, 0, 0, 1, 9.536743e-07, 1.5000004, 0)
+metadata/generated_joint_frame_b = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.6999998, 0)
+metadata/wing_open_relative_a = Quaternion(0, 0, 0, 1)
+
+[node name="Joint_055_Feather" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="54" unique_id=278808171]
+transform = Transform3D(0.64278764, -0.76604444, 0, 0.76604444, 0.64278764, 0, 0, 0, 1, 0.4557776, 7.392415, -0.4)
+node_a = NodePath("../../Wing_2_Tip_5")
+node_b = NodePath("../../Feather_2_5_001")
+angular_limit_z/upper_angle = 3.1415927
+angular_limit_z/lower_angle = -3.1415927
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.34202015, 0.9396926)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9199996, -1.1333332, 0)
+metadata/generated_joint_frame_b = Transform3D(0.76604444, 0.6427877, 0, -0.6427877, 0.76604444, 0, 0, 0, 1, 4.7683716e-07, -5.5716176, 0)
+metadata/feather_open_relative_a = Quaternion(0, 0, 0.2917035, 0.9565088)
+
+[node name="Joint_056_Feather" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="55" unique_id=1313376791]
+transform = Transform3D(0.64278764, -0.76604444, 0, 0.76604444, 0.64278764, 0, 0, 0, 1, -0.4124061, 8.120908, -0.4)
+node_a = NodePath("../../Wing_2_Tip_5")
+node_b = NodePath("../../Feather_2_5_002")
+angular_limit_z/upper_angle = 3.1415927
+angular_limit_z/lower_angle = -3.1415927
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.34202015, 0.9396926)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9199996, 4.7683716e-07, 0)
+metadata/generated_joint_frame_b = Transform3D(0.76604444, 0.6427877, 0, -0.6427877, 0.76604444, 0, 0, 0, 1, 0, -5.4728947, 0)
+metadata/feather_open_relative_a = Quaternion(0, 0, 0.251274, 0.967916)
+
+[node name="Joint_057_Feather" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="56" unique_id=490610505]
+transform = Transform3D(0.64278764, -0.76604444, 0, 0.76604444, 0.64278764, 0, 0, 0, 1, -1.2805897, 8.8494005, -0.4)
+node_a = NodePath("../../Wing_2_Tip_5")
+node_b = NodePath("../../Feather_2_5_003")
+angular_limit_z/upper_angle = 3.1415927
+angular_limit_z/lower_angle = -3.1415927
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.34202015, 0.9396926)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9199996, 1.1333337, 0)
+metadata/generated_joint_frame_b = Transform3D(0.76604444, 0.6427877, 0, -0.6427877, 0.76604444, 0, 0, 0, 1, 0, -5.3088627, 0)
+metadata/feather_open_relative_a = Quaternion(0, 0, 0.2035768, 0.979059)
+
+[node name="Joint_058_Wing" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="57" unique_id=1248991330]
+transform = Transform3D(0.64278764, -0.76604444, 0, 0.76604444, 0.64278764, 0, 0, 0, 1, -1.123317, 9.918407, -0.4)
+node_a = NodePath("../../Wing_2_Tip_5")
+node_b = NodePath("../../Wing_2_Tip_6")
+angular_limit_z/upper_angle = 0.17453292
+angular_limit_z/lower_angle = -0.17453292
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0, 1)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7000003, 0)
+metadata/generated_joint_frame_b = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.7000003, 0)
+metadata/wing_open_relative_a = Quaternion(0, 0, 0, 1)
+
+[node name="Joint_059_Feather" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="58" unique_id=25724259]
+transform = Transform3D(0.64278764, -0.76604444, 0, 0.76604444, 0.64278764, 0, 0, 0, 1, -2.1037784, 9.631516, -0.4)
+node_a = NodePath("../../Wing_2_Tip_6")
+node_b = NodePath("../../Feather_2_6_001")
+angular_limit_z/upper_angle = 3.1415927
+angular_limit_z/lower_angle = -3.1415927
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.34202015, 0.9396926)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8499999, -1.1333332, 0)
+metadata/generated_joint_frame_b = Transform3D(0.76604444, 0.6427877, 0, -0.6427877, 0.76604444, 0, 0, 0, 1, 0, -5.0943713, 0)
+metadata/feather_open_relative_a = Quaternion(0, 0, 0.15010574, 0.98866993)
+
+[node name="Joint_060_Feather" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="59" unique_id=1263823642]
+transform = Transform3D(0.64278764, -0.76604444, 0, 0.76604444, 0.64278764, 0, 0, 0, 1, -2.971962, 10.360009, -0.4)
+node_a = NodePath("../../Wing_2_Tip_6")
+node_b = NodePath("../../Feather_2_6_002")
+angular_limit_z/upper_angle = 3.1415927
+angular_limit_z/lower_angle = -3.1415927
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.34202015, 0.9396926)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8499994, 0, 0)
+metadata/generated_joint_frame_b = Transform3D(0.76604444, 0.6427877, 0, -0.6427877, 0.76604444, 0, 0, 0, 1, 0, -4.813923, 0)
+metadata/feather_open_relative_a = Quaternion(0, 0, 0.08229765, 0.9966078)
+
+[node name="Joint_061_Feather" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="60" unique_id=989151008]
+transform = Transform3D(0.64278764, -0.76604444, 0, 0.76604444, 0.64278764, 0, 0, 0, 1, -3.8401456, 11.088501, -0.4)
+node_a = NodePath("../../Wing_2_Tip_6")
+node_b = NodePath("../../Feather_2_6_003")
+angular_limit_z/upper_angle = 3.1415927
+angular_limit_z/lower_angle = -3.1415927
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.34202015, 0.9396926)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8499999, 1.1333332, 0)
+metadata/generated_joint_frame_b = Transform3D(0.76604444, 0.6427877, 0, -0.6427877, 0.76604444, 0, 0, 0, 1, 0, -4.499999, 0)
+metadata/feather_open_relative_a = Quaternion(0, 0, 0, 1)
+
+[node name="BirdDiveAttackController3D" parent="." index="7" unique_id=848155913 instance=ExtResource("dive_controller")]
+
+[node name="NPCStateMachine3D" parent="." index="8" unique_id=1086112578 instance=ExtResource("bird_npc")]
+behavior = ExtResource("bird_behavior")
+auto_find_target_by_group = false
+navigation_origin_path = NodePath("../GeneratedParts/Torso")

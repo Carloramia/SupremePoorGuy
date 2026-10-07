@@ -79,6 +79,22 @@ enum BodyPartTag {
 @export var damage_number_offset: Vector3 = Vector3(0.0, 0.75, 0.0)
 
 @export_group("Visuals")
+enum GeometryMode { BOX_FIT, CUSTOM_MODEL }
+## Custom models retain their authored transforms, collision shape and joint markers.
+@export var geometry_mode: GeometryMode = GeometryMode.BOX_FIT:
+	set(value):
+		if is_instance_valid(_custom_model) and _custom_model != _mesh: _custom_model.visible = false
+		geometry_mode = value
+		_last_signature.clear()
+		_custom_model = null
+		if is_node_ready(): _sync_geometry()
+## A Node3D or MeshInstance3D under this body; Mesh Visible controls its subtree.
+@export_node_path("Node3D") var custom_model_path: NodePath = ^"MeshInstance3D":
+	set(value):
+		if is_instance_valid(_custom_model) and _custom_model != _mesh: _custom_model.visible = false
+		custom_model_path = value
+		_custom_model = null
+		if is_node_ready(): _sync_visual_visibility()
 @export var sprite_visible: bool = true:
 	set(value):
 		sprite_visible = value
@@ -87,6 +103,22 @@ enum BodyPartTag {
 	set(value):
 		mesh_visible = value
 		_sync_visual_visibility()
+
+@export_group("Paper Model Volume")
+## Requires a baked PaperVolume mesh under the custom model. Off for ordinary body parts.
+@export var paper_volume_enabled: bool = false:
+	set(value):
+		paper_volume_enabled = value
+		if is_node_ready(): _sync_geometry()
+## Full depth along local Z, centered on the original paper plane.
+@export_range(0.001, 2.0, 0.005, "or_greater") var paper_volume_thickness: float = 0.08:
+	set(value):
+		paper_volume_thickness = maxf(value,MIN_SIZE)
+		if is_node_ready(): _sync_geometry()
+@export var paper_side_color: Color = Color(0.65,0.65,0.65):
+	set(value):
+		paper_side_color = value
+		if is_node_ready(): _sync_geometry()
 
 @export_group("BodyPart Edges")
 ## Distances from the Sprite3D's local origin, in Godot 3D units.
@@ -104,6 +136,13 @@ enum BodyPartTag {
 @onready var _mesh: MeshInstance3D = get_node_or_null("MeshInstance3D") as MeshInstance3D
 
 var _material: ShaderMaterial
+var _custom_model: Node3D
+var _paper_volume: MeshInstance3D
+var _paper_source_meshes: Array[MeshInstance3D] = []
+var _paper_side_material: StandardMaterial3D
+var _paper_collision_shape: ConvexPolygonShape3D
+var _paper_original_depth: float = 0.02
+var _paper_signature: Array = []
 var _last_signature: Array = []
 var current_hp: float = 100.0
 var _damage_service: Node
@@ -233,26 +272,7 @@ func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
 		var impulse := state.get_contact_impulse(contact_index).length()
 		weapon_impulses[weapon] = maxf(float(weapon_impulses.get(weapon, 0.0)), impulse)
 	for weapon: SampleWeapon3D in weapon_impulses:
-		var impulse: float = weapon_impulses[weapon]
-		var raw_damage := 0.0
-		var hp_damage := 0.0
-		var registered := false
-		if is_instance_valid(_damage_service):
-			raw_damage = float(_damage_service.call("calculate_weapon_raw_damage", impulse, weapon.swing_damage_active))
-			var eligible_damage := float(_damage_service.call("apply_weapon_armor", raw_damage, armor, weapon.swing_damage_active))
-			# Glancing contacts absorbed by armor must not spend this swing's one damage opportunity.
-			if eligible_damage > 0.0:
-				registered = weapon.try_register_hit(self)
-				if registered:
-					hp_damage = eligible_damage
-		if damage_logging_enabled or weapon.damage_logging_enabled:
-			print(
-				("[part_impact] target=%s weapon=%s mode=%s registered=%s impulse=%.3f raw_damage=%.3f "
-				+ "armor=%.3f hp_damage=%.3f hp=%.3f")
-				% [name, weapon.name, "swing" if weapon.swing_damage_active else "passive", registered, impulse, raw_damage, armor, hp_damage, current_hp]
-			)
-		if hp_damage > 0.0:
-			apply_damage(hp_damage, weapon)
+		weapon.apply_contact_damage(self, float(weapon_impulses[weapon]))
 
 func apply_damage(amount: float, source: Node = null) -> float:
 	if is_broken or amount <= 0.0:
@@ -321,6 +341,12 @@ func has_body_tag(tag: BodyPartTag) -> bool:
 
 func _get_configuration_warnings() -> PackedStringArray:
 	var warnings := PackedStringArray()
+	if geometry_mode == GeometryMode.CUSTOM_MODEL:
+		var model := get_node_or_null(custom_model_path) as Node3D if not custom_model_path.is_empty() else null
+		if model == null or model == self or not is_ancestor_of(model):
+			warnings.append("Custom Model Path must select a visual node beneath this body.")
+		if sprite_visible:
+			warnings.append("Custom models retain authored geometry; disable Sprite Visible when using only the model.")
 	if not arm_swing_bindings.is_empty() and BodyPartTag.Arm not in tags:
 		warnings.append("Arm Swing Bindings are ignored unless this part has the Arm tag.")
 	for binding: ArmSwingBinding in arm_swing_bindings:
@@ -354,8 +380,18 @@ func get_outline_edge_distances() -> Vector4:
 		maxf(bottom_distance, MIN_SIZE)
 	)
 
+## Prepare staged generation geometry before entering the tree; no physics or gameplay callbacks.
+func prepare_generated_geometry() -> void:
+	_sprite = get_node_or_null("Sprite3D") as Sprite3D
+	_collision = get_node_or_null("CollisionShape3D") as CollisionShape3D
+	_mesh = get_node_or_null("MeshInstance3D") as MeshInstance3D
+	_sync_geometry()
+
 func _sync_geometry() -> void:
 	_sync_visual_visibility()
+	if geometry_mode == GeometryMode.CUSTOM_MODEL:
+		_sync_paper_volume()
+		return
 	if not is_instance_valid(_sprite) or not is_instance_valid(_collision):
 		return
 	var edges := get_outline_edge_distances()
@@ -399,8 +435,63 @@ func _sync_geometry() -> void:
 func _sync_visual_visibility() -> void:
 	if is_instance_valid(_sprite):
 		_sprite.visible = sprite_visible
+	if geometry_mode == GeometryMode.CUSTOM_MODEL:
+		if not is_instance_valid(_custom_model) and not custom_model_path.is_empty():
+			var candidate := get_node_or_null(custom_model_path) as Node3D
+			if candidate != null and candidate != self and is_ancestor_of(candidate): _custom_model = candidate
+		if is_instance_valid(_mesh) and _mesh != _custom_model:
+			_mesh.visible = false
+		if is_instance_valid(_custom_model): _custom_model.visible = mesh_visible
+		return
 	if is_instance_valid(_mesh):
 		_mesh.visible = mesh_visible
+
+func _sync_paper_volume() -> void:
+	if not is_instance_valid(_custom_model): return
+	if not is_instance_valid(_paper_volume) or _paper_volume.get_parent() != _custom_model:
+		_paper_volume = _custom_model.get_node_or_null("PaperVolume") as MeshInstance3D
+		_paper_source_meshes.clear()
+		_paper_side_material = null
+		_paper_signature.clear()
+		if _paper_volume == null: return
+		for node: Node in _custom_model.find_children("*","MeshInstance3D",true,false):
+			if node != _paper_volume: _paper_source_meshes.append(node as MeshInstance3D)
+	var shape := _collision.shape as ConvexPolygonShape3D if is_instance_valid(_collision) else null
+	if shape != _paper_collision_shape:
+		_paper_collision_shape = shape
+		if shape != null and not shape.points.is_empty():
+			var low := INF
+			var high := -INF
+			for point: Vector3 in shape.points:
+				low = minf(low,point.z)
+				high = maxf(high,point.z)
+			# Keep the flat depth stable even after an editor save stores expanded points.
+			_paper_original_depth = maxf(float(_paper_volume.get_meta("flat_collision_depth",high-low)),MIN_SIZE)
+	var model_depth_scale := _custom_model.basis.z.length()
+	var signature := [paper_volume_enabled,paper_volume_thickness,paper_side_color,shape,_paper_volume,model_depth_scale]
+	if signature == _paper_signature: return
+	_paper_signature = signature
+	_paper_volume.visible = paper_volume_enabled
+	for visual: MeshInstance3D in _paper_source_meshes:
+		if is_instance_valid(visual): visual.visible = not paper_volume_enabled
+	_paper_volume.scale.z = paper_volume_thickness
+	if _paper_side_material == null:
+		_paper_side_material = _paper_volume.mesh.surface_get_material(2).duplicate() as StandardMaterial3D
+		_paper_volume.set_surface_override_material(2,_paper_side_material)
+	_paper_side_material.albedo_color = paper_side_color
+	if shape != null:
+		var points := shape.points
+		var low := INF
+		var high := -INF
+		for point: Vector3 in points:
+			low = minf(low,point.z)
+			high = maxf(high,point.z)
+		if high-low > 0.0:
+			var depth := (paper_volume_thickness if paper_volume_enabled else _paper_original_depth) * model_depth_scale
+			if not is_equal_approx(high-low,depth):
+				var center := (low+high)*0.5
+				for index: int in points.size(): points[index].z = center + (points[index].z-center)*depth/(high-low)
+				shape.points = points
 
 func _sync_mesh_geometry(size: Vector3) -> void:
 	if not is_instance_valid(_mesh) or _mesh.mesh == null:

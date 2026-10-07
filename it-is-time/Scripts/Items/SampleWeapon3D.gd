@@ -40,6 +40,22 @@ func end_damage_swing() -> void:
 func try_register_hit(target: Node) -> bool:
 	return target != null and _register_hit(target)
 
+## Shared settlement for regular contacts and temporary compound-body attack shapes.
+func apply_contact_damage(target: PhysicalBodyPart3D, impulse: float) -> float:
+	if target.is_broken or target._is_friendly_weapon(self) or impulse <= 0.0: return 0.0
+	# Generated parts live under GeneratedParts rather than directly under the character.
+	var actor: Node = preload("res://Scripts/Player/PlayerControlContext.gd").character_of(target)
+	var source_team: int = wielder_character.get_faction_id() if is_instance_valid(wielder_character) and wielder_character.has_method("get_faction_id") else wielder_team_id
+	if actor != null and (actor == wielder_character or (source_team >= 0 and actor.get_faction_id() == source_team)): return 0.0
+	var service := get_node_or_null("/root/DamageService")
+	if service == null: return 0.0
+	var raw: float = service.calculate_weapon_raw_damage(impulse, swing_damage_active)
+	var damage: float = service.apply_weapon_armor(raw, target.armor, swing_damage_active)
+	var registered := damage > 0.0 and try_register_hit(target)
+	if damage_logging_enabled or target.damage_logging_enabled:
+		print("[part_impact] target=%s weapon=%s mode=%s registered=%s impulse=%.3f raw_damage=%.3f armor=%.3f hp_damage=%.3f hp=%.3f" % [target.name, name, "swing" if swing_damage_active else "passive", registered, impulse, raw, target.armor, damage if registered else 0.0, target.current_hp])
+	return target.apply_damage(damage, self) if registered else 0.0
+
 func _register_hit(target: Node) -> bool:
 	var target_id := target.get_instance_id()
 	if swing_damage_active:

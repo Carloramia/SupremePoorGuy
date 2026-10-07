@@ -7,6 +7,7 @@ const PERFORMANCE_STATS = preload("res://Scripts/Debug/ControlPerformanceStats.g
 var _control_perf: PERFORMANCE_STATS = PERFORMANCE_STATS.new()
 
 const PART_SCENE: PackedScene = preload("res://Scenes/Creatures/Bodyparts/PhysicalTestCreatureParts/TestCreature_Part.tscn")
+const PART_GEOMETRY = preload("res://Scripts/Creatures/Generators/GeneratedPartGeometry.gd")
 const DAMAGE_SCENE: PackedScene = preload("res://Scenes/Creatures/Components/CharacterDamageController3D.tscn")
 const GEOMETRY = preload("res://Scripts/Creatures/CreatureBoxGeometry.gd")
 const SEGMENT_CONSTRAINT = preload("res://Scripts/Creatures/SegmentConstraint3D.gd")
@@ -21,7 +22,7 @@ const FEATHER_GEOMETRY = preload("res://Scripts/Creatures/Generators/BirdFeather
 @export var generator_path: NodePath = ^"CreatureGenerator"
 @export_tool_button("生成框架与物理角色", "Node3D") var generate_character_button: Callable:
 	get:
-		return generate_creature
+		return Callable(self, &"generate_creature")
 @export var generate_on_ready: bool = true
 @export var show_framework: bool = false:
 	set(value):
@@ -66,7 +67,6 @@ func _sync_planar_constraints() -> void:
 @export var density_data: DENSITY_DATA
 ## Mass is density times volume; optional limits apply to all generated parts, including feathers.
 @export_range(0.01, 100.0, 0.01, "or_greater") var mass_density: float = 1.0
-@export var mass_limits_enabled: bool = true
 @export_range(0.01, 10.0, 0.01, "or_greater") var minimum_part_mass: float = 0.1
 ## Thin feathers need a smaller mass floor than structural body blocks.
 @export_range(0.001, 1.0, 0.001, "or_greater") var minimum_feather_mass: float = 0.005
@@ -262,6 +262,9 @@ func _perf_impl__on_framework_generated(plan: Dictionary) -> void:
 		_rebuilding = false
 		return
 	var bodies_started: int = _control_perf.start()
+	# Persistent root settings are resolved again for every blueprint, never stored on preview nodes.
+	for layout: Dictionary in blueprint.parts:
+		layout["scene_rule"] = generator.get_part_scene_rule(_get_generated_part_type(layout), str(layout.name), str(layout.get("part_key", layout.name)))
 	var staging := _instantiate_blueprint(blueprint, generator.transform)
 	_control_perf.finish(&"instantiate_bodies_joints", bodies_started)
 	if staging == null:
@@ -272,6 +275,8 @@ func _perf_impl__on_framework_generated(plan: Dictionary) -> void:
 	if not Engine.is_editor_hint():
 		var action := get_node_or_null("CreatureActionController3D")
 		if action != null: action.cancel_action(&"regenerated")
+		var dive := get_node_or_null("BirdDiveAttackController3D")
+		if dive != null: dive.cancel_action(&"regenerated")
 	if previous != null:
 		remove_child(previous)
 		previous.queue_free()
@@ -283,6 +288,10 @@ func _perf_impl__on_framework_generated(plan: Dictionary) -> void:
 	staging.owner = scene_owner
 	for part: Node in staging.get_children():
 		part.owner = scene_owner
+		if part.has_meta(&"generated_scene_path"):
+			# Fitting changes descendants of an instantiated Part, not just exported root values.
+			# Preserve those overrides when the generated character is packed/saved in the editor.
+			scene_owner.set_editable_instance(part, true)
 		if part.name == &"Joints":
 			for joint: Node in part.get_children():
 				joint.owner = scene_owner
@@ -534,7 +543,7 @@ func _sync_segment_rotation_constraints(container: Node) -> void:
 		joint.call("capture_reference")
 
 func _append_part(parts: Array[Dictionary], node_name: String, role: String, size: Vector3, transform: Transform3D) -> int:
-	parts.append({"name": node_name, "role": role, "size": size, "transform": transform})
+	parts.append({"name": node_name, "part_key": node_name, "role": role, "size": size, "transform": transform})
 	return parts.size() - 1
 
 func _add_connection(connections: Array[Dictionary], first: int, second: int, anchor: Vector3, kind: String, basis: Basis = Basis.IDENTITY) -> void:
@@ -663,6 +672,8 @@ func _build_blueprint(plan: Dictionary, connection_distance: float) -> Dictionar
 		var role: String = layout.role
 		counts[role] += 1
 		var node_name := "%s_%d" % [role, counts[role]]
+		if separate_supports and layout.has("sub_torso_index"):
+			parts[torso_indices[int(layout.sub_torso_index)]]["part_key"] = "SubTorso_" + node_name
 		var size: Vector3 = layout.size
 		var horizontal: Vector2 = layout.final_position
 		var position := Vector3(horizontal.x, size.y * 0.5, horizontal.y)
@@ -788,22 +799,43 @@ func _instantiate_blueprint(blueprint: Dictionary, generator_transform: Transfor
 	var container := Node3D.new()
 	var bodies: Array[RigidBody3D] = []
 	for layout: Dictionary in blueprint.parts:
-		var part := PART_SCENE.instantiate() as PhysicalBodyPart3D
+		var rule: Resource = layout.get("scene_rule")
+		var scene: PackedScene = PART_SCENE if rule == null else rule.part_scene
+		var instance: Node = scene.instantiate() if scene != null else null
+		var part := instance as PhysicalBodyPart3D
 		if part == null:
+			if instance != null: instance.free()
+			push_warning("[generated_creature] Invalid Part scene for %s; previous physics retained." % layout.name)
+			container.free()
+			return null
+		if not part.scale.is_equal_approx(Vector3.ONE):
+			push_warning("[generated_creature] Part %s must have unit root scale; use the scene rule's Size Multiplier." % layout.name)
+			part.free()
 			container.free()
 			return null
 		part.name = layout.name
 		part.freeze = true
 		part.transform = generator_transform * Transform3D(layout.transform)
 		var size: Vector3 = layout.size
-		part.left_distance = size.x * 0.5
-		part.right_distance = size.x * 0.5
-		part.top_distance = size.y * 0.5
-		part.bottom_distance = size.y * 0.5
-		part.collision_thickness = size.z
-		part.sprite_visible = false
-		part.mesh_visible = true
-		if layout.role == "Feather":
+		if rule == null:
+			part.left_distance = size.x * 0.5
+			part.right_distance = size.x * 0.5
+			part.top_distance = size.y * 0.5
+			part.bottom_distance = size.y * 0.5
+			part.collision_thickness = size.z
+			part.sprite_visible = false
+			part.mesh_visible = true
+		else:
+			var actual := PART_GEOMETRY.fit(part, size, rule)
+			if actual.size == Vector3.ZERO:
+				push_warning("[generated_creature] Part %s requires a valid Box/Convex CollisionShape3D and positive scale; previous physics retained." % layout.name)
+				part.free()
+				container.free()
+				return null
+			size = actual.size
+			part.set_meta(&"generated_scene_path", scene.resource_path)
+			part.set_meta(&"generated_scene_rule_key", rule.part_name if not rule.part_name.is_empty() else rule.part_type)
+		if layout.role == "Feather" and rule == null:
 			var mesh := part.get_node("MeshInstance3D") as MeshInstance3D
 			mesh.mesh = FEATHER_GEOMETRY.create_mesh(size)
 			var material := StandardMaterial3D.new()
@@ -817,7 +849,9 @@ func _instantiate_blueprint(blueprint: Dictionary, generator_transform: Transfor
 		part.mass = clampf(calculated_mass, minimum_mass, maximum_part_mass) if mass_limits_enabled else calculated_mass
 		part.linear_damp = part_linear_damping
 		part.angular_damp = part_angular_damping
-		part.tags.clear()
+		# Preserve authored tags and health/armor; required generated tags are added once.
+		var authored_tags: Array = part.tags.duplicate() if rule != null else []
+		part.tags = []
 		match layout.role:
 			"Torso": part.tags.append(BODY_PART.BodyPartTag.Torso)
 			"Leg": part.tags.append(BODY_PART.BodyPartTag.Leg)
@@ -830,12 +864,16 @@ func _instantiate_blueprint(blueprint: Dictionary, generator_transform: Transfor
 			"Head": part.tags.append(BODY_PART.BodyPartTag.Head)
 			"Feather": part.tags.append(BODY_PART.BodyPartTag.Feather)
 		if bool(layout.get("sub_torso", false)): part.tags.append(BODY_PART.BodyPartTag.SubTorso)
+		for tag: int in authored_tags:
+			if tag not in part.tags: part.tags.append(tag)
 		if layout.has("segment_id"): part.set_meta(&"body_segment_id", int(layout.segment_id))
 		if layout.has("segment_id"): part.set_meta(&"segment_layout_version", 3)
 		part.set_meta(&"generated_role", layout.role)
+		part.set_meta(&"generated_part_key", layout.get("part_key", layout.name))
 		part.set_meta(&"generated_part_type", part_type)
 		part.set_meta(&"generated_density", density)
 		part.set_meta(&"generated_size", size)
+		part.set_meta(&"generated_framework_size", layout.size)
 		container.add_child(part)
 		bodies.append(part)
 	var joints := Node3D.new()
@@ -863,6 +901,13 @@ func _instantiate_blueprint(blueprint: Dictionary, generator_transform: Transfor
 		joint.exclude_nodes_from_collision = true
 		var a: RigidBody3D = bodies[connection.a]
 		var b: RigidBody3D = bodies[connection.b]
+		var anchor_a := joint.position
+		var anchor_b := joint.position
+		var rule_a: Resource = blueprint.parts[connection.a].get("scene_rule")
+		var rule_b: Resource = blueprint.parts[connection.b].get("scene_rule")
+		if rule_a != null and rule_a.use_joint_markers: anchor_a = PART_GEOMETRY.connection_marker(a, anchor_a)
+		if rule_b != null and rule_b.use_joint_markers: anchor_b = PART_GEOMETRY.connection_marker(b, anchor_b)
+		joint.position = (anchor_a + anchor_b) * 0.5
 		# Keep the generated rest pose across gait-cache refreshes and participation changes.
 		var rest_a := a.basis.orthonormalized().get_rotation_quaternion()
 		var rest_b := b.basis.orthonormalized().get_rotation_quaternion()

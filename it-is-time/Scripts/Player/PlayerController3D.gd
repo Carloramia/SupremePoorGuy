@@ -227,6 +227,8 @@ func gameplay_input_allowed() -> bool:
 
 func is_gameplay_action_pressed(action: StringName) -> bool:
 	if is_instance_valid(_character):
+		var dive := _character.get_node_or_null("BirdDiveAttackController3D")
+		if dive != null and dive.has_input_action(action): return false
 		var module := _character.get_node_or_null("CreatureActionController3D")
 		if module != null and module.has_input_action(action): return false
 	return gameplay_input_allowed() and not _blocked_actions.has(action) and Input.is_action_pressed(action)
@@ -317,6 +319,10 @@ func _input(event: InputEvent) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not gameplay_input_allowed() or event.is_echo(): return
+	var dive := _character.get_node_or_null("BirdDiveAttackController3D")
+	if dive != null and dive.handle_input(event):
+		get_viewport().set_input_as_handled()
+		return
 	var module := _character.get_node_or_null("CreatureActionController3D")
 	if module != null and module.handle_input(event):
 		get_viewport().set_input_as_handled()

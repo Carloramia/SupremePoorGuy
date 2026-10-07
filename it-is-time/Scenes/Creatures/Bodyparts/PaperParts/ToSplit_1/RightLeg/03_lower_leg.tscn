@@ -1,0 +1,41 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/PaperParts/ToSplit_1/RightLeg/03_lower_leg.glb" id="1_model"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/_PhysicalSampleBodyParts.tscn" id="2_base"]
+
+[ext_resource type="ArrayMesh" path="res://Resources/Meshes/PaperParts/ToSplit_1/RightLeg/03_lower_leg.res" id="3_volume"]
+
+[sub_resource type="ConvexPolygonShape3D" id="Shape"]
+resource_local_to_scene = true
+points = PackedVector3Array(-0.29411290, -0.26433866, -0.01000000, -0.27549325, -0.15292878, -0.01000000, -0.23825394, -0.04151890, -0.01000000, -0.21963428, -0.00438227, -0.01000000, -0.18239497, 0.06989099, -0.01000000, -0.16377532, 0.08845930, -0.01000000, -0.12653601, 0.12559593, -0.01000000, -0.08929670, 0.14416424, -0.01000000, 0.04104089, 0.14416424, -0.01000000, 0.11551950, 0.06989099, -0.01000000, 0.13413916, 0.03275436, -0.01000000, 0.15275881, -0.04151890, -0.01000000, 0.24585709, -1.04420785, -0.01000000, 0.24585709, -1.17418605, -0.01000000, 0.20861778, -1.24845930, -0.01000000, 0.15275881, -1.28559593, -0.01000000, 0.11551950, -1.30416424, -0.01000000, -0.03343773, -1.30416424, -0.01000000, -0.08929670, -1.28559593, -0.01000000, -0.12653601, -1.24845930, -0.01000000, -0.16377532, -1.21132267, -0.01000000, -0.18239497, -1.19275436, -0.01000000, -0.20101463, -1.11848110, -0.01000000, -0.29411290, -0.56143169, -0.01000000, -0.29411290, -0.26433866, 0.01000000, -0.27549325, -0.15292878, 0.01000000, -0.23825394, -0.04151890, 0.01000000, -0.21963428, -0.00438227, 0.01000000, -0.18239497, 0.06989099, 0.01000000, -0.16377532, 0.08845930, 0.01000000, -0.12653601, 0.12559593, 0.01000000, -0.08929670, 0.14416424, 0.01000000, 0.04104089, 0.14416424, 0.01000000, 0.11551950, 0.06989099, 0.01000000, 0.13413916, 0.03275436, 0.01000000, 0.15275881, -0.04151890, 0.01000000, 0.24585709, -1.04420785, 0.01000000, 0.24585709, -1.17418605, 0.01000000, 0.20861778, -1.24845930, 0.01000000, 0.15275881, -1.28559593, 0.01000000, 0.11551950, -1.30416424, 0.01000000, -0.03343773, -1.30416424, 0.01000000, -0.08929670, -1.28559593, 0.01000000, -0.12653601, -1.24845930, 0.01000000, -0.16377532, -1.21132267, 0.01000000, -0.18239497, -1.19275436, 0.01000000, -0.20101463, -1.11848110, 0.01000000, -0.29411290, -0.56143169, 0.01000000)
+
+[node name="PaperPart_RightLeg_03_lower_leg" instance=ExtResource("2_base")]
+mass = 0.1
+geometry_mode = 1
+paper_volume_enabled = true
+custom_model_path = NodePath("Model")
+sprite_visible = false
+mesh_visible = true
+tags = Array[int]([5])
+metadata/paper_source_scene = "res://Assets/3DResources/Creatures/PaperParts/ToSplit_1/RightLeg/03_lower_leg.tscn"
+metadata/pivot_is_initial_estimate = true
+
+[node name="CollisionShape3D" parent="." index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+shape = SubResource("Shape")
+
+[node name="MeshInstance3D" parent="." index="2"]
+visible = false
+mesh = null
+
+[node name="Model" parent="." instance=ExtResource("1_model")]
+
+[node name="JointIn" type="Marker3D" parent="."]
+
+[node name="JointOut" type="Marker3D" parent="."]
+position = Vector3(0.05000000, -0.81000000, 0.00000000)
+
+[node name="PaperVolume" type="MeshInstance3D" parent="Model"]
+scale = Vector3(1, 1, 0.08)
+mesh = ExtResource("3_volume")
+metadata/flat_collision_depth = 0.02

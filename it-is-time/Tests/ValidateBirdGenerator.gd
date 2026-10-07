@@ -154,13 +154,16 @@ func run() -> void:
 		var size: Vector3 = part.get_meta("generated_size")
 		var density: float = bird_actor.density_data.get_density(part_type, bird_actor.mass_density)
 		var mass_floor: float = bird_actor.minimum_feather_mass if part_type == "Feather" else bird_actor.minimum_part_mass
-		check(is_equal_approx(part.mass, clampf(size.x*size.y*size.z*density,mass_floor,bird_actor.maximum_part_mass)),"Actual generated geometry must use its typed density and scaled volume")
+		var expected_mass := size.x*size.y*size.z*density
+		if bird_actor.mass_limits_enabled: expected_mass = clampf(expected_mass,mass_floor,bird_actor.maximum_part_mass)
+		check(is_equal_approx(part.mass, expected_mass),"Actual generated geometry must use its typed density, scaled volume and configured mass-limit switch")
 	for part_type: String in ["SubTorso", "WingRoot", "WingMiddle", "WingTip"]:
 		check(generated_types.has(part_type),"Bird blueprint must preserve the explicit generated type: "+part_type)
 	var bird_movement := bird_actor.get_node("GeneratedLegStepMovementController3D")
 	check(bird_movement.get_leg_parts().size()==2,"Bird character must discover only its two legs")
 	check(bird_actor.has_node("CreatureRecoveryStateMachine3D") and bird_actor.has_node("CreatureActionController3D"),"Bird character must preserve recovery and action components")
-	check(bird_movement.slow_gait_data==actor.get_node("GeneratedLegStepMovementController3D").slow_gait_data,"Bird and beast must share the configured gait resource")
+	check(bird_movement.slow_gait_data==load("res://Resources/Movement/BirdGroundWalk.tres"),"Bird must preserve its independently configured ground gait")
+	check(actor.get_node("GeneratedLegStepMovementController3D").slow_gait_data==load("res://Resources/Movement/GeneratedMultiLegWalk.tres"),"Beast must preserve its independently configured gait")
 	# Exercise regeneration with an active runtime action before physics can change its phase.
 	var action := bird_actor.get_node("CreatureActionController3D")
 	action._data = action.actions[0]

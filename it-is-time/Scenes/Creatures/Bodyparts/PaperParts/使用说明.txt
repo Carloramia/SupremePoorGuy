@@ -1,0 +1,31 @@
+PaperParts物理部件
+
+ToSplit_1下的27个场景均继承Scenes/Creatures/Bodyparts/_PhysicalSampleBodyParts.tscn。
+使用这些新场景装配角色，Assets中的原模型和静态预览场景保持不变。
+
+Geometry Mode默认Custom Model，Custom Model Path为Model。
+这个模式保留模型的原始比例、原点、凸轮廓碰撞及JointIn/JointOut标记。
+Sprite Visible默认关闭；Mesh Visible控制Model及其内部所有显示节点。
+自定义模式不会使用四边距离和Collision Thickness修改模型或碰撞。
+修改碰撞时，请编辑CollisionShape3D的Shape；修改模型位置时，请让碰撞和连接标记同步对齐。
+
+默认不冻结物理，质量沿用源部件的0.1，可在根节点Inspector调整Mass。
+HP、Armor、Broken、Tags及其他游戏属性继承部件基类。
+02_body_main默认Torso，05_head默认Head，脚掌与原整腿默认Leg，拆分腿段默认LegLimb。
+装饰部件默认没有物理标签，可按用途在Inspector添加标签；前脚可将Leg改为ForeLeg。
+原整腿和拆分后的腿是两种装配选择，不应把同一条腿的两种版本重叠使用。
+
+JointIn/JointOut是初始估计的连接位置，仍需根据装配效果校准并创建Joint3D。
+这些部件场景本身不创建关节，也不自动组装成可行走的完整角色。
+
+扁平体块显示
+Paper Model Volume分组的Paper Volume Enabled默认开启。
+Paper Volume Thickness控制完整Z轴厚度，默认0.08世界单位，前后各扩展一半。
+Paper Side Color控制侧面颜色，默认灰色。
+正反面共用原贴图和对应UV，因此从背面观察时图案自然镜像。
+侧面按贴图透明轮廓预烘焙，包括凹陷及孔洞；碰撞继续采用不包含孔洞的简化凸轮廓。
+厚度会同步至碰撞，原点、JointIn和JointOut位置保持不变。
+关闭Paper Volume Enabled可恢复原来的薄片显示及0.02厚度碰撞。
+网格保存在Resources/Meshes/PaperParts，运行时不重新扫描贴图。
+打开PaperVolumePreview.tscn并按F6，可查看正反面对照；预览使用0.3厚度以突出侧面。
+若修改了源贴图或GLB，需要使用Godot的--script res://Tools/BakePaperVolumes.gd重新烘焙。

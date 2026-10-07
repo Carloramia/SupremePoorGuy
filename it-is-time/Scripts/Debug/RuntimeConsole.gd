@@ -6,7 +6,7 @@ const COMMAND_HELP: Array[Dictionary] = [
 	{&"name": "help", &"description": "List all available console commands."},
 	{&"name": "getlogs", &"description": "Pack runtime logs into a ZIP in the project root."},
 	{&"name": "trackgenerated", &"description": "Toggle generated creature foot, limb-chain and gait diagnostics."},
-	{&"name": "trackflight [on|off]", &"description": "Track controlled bird flight, landing, wing torques and feather errors every 0.1s."},
+	{&"name": "trackflight [on|off]", &"description": "Track controlled bird flight, dive attacks, landing, wing torques and feather errors every 0.1s."},
 	{&"name": "trackmotion", &"description": "Toggle all BodyPart motion tracking for the currently controlled character."},
 	{&"name": "trackcontrolperf", &"description": "Toggle Controller, cursor, arc and generation timings (inclusive) and frame spikes."},
 	{&"name": "trackperformance", &"description": "Toggle runtime performance summaries."},
@@ -15,7 +15,7 @@ const COMMAND_HELP: Array[Dictionary] = [
 	{&"name": "tracknpcstate [on|off] [filter]", &"description": "Track FSM changes and snapshots; filter by NPC name, full path or instance ID."},
 	{&"name": "npcstates [filter]", &"description": "Print a one-time NPC state-machine snapshot."},
 	{&"name": "trackcollision", &"description": "Toggle BodyPart contact enter/exit and collision configuration logs."},
-	{&"name": "trackdamage", &"description": "Toggle weapon/shockwave impact, HP, break, and joint-removal logs."},
+	{&"name": "trackdamage", &"description": "Toggle weapon/shockwave/dive impact, HP, break, and joint-removal logs."},
 	{&"name": "trackturn", &"description": "Toggle facing decisions, combined walking/turning targets and Leg traction logs."},
 	{&"name": "trackswing", &"description": "Toggle Arm swing direction, load, and Joint diagnostics."},
 ]
@@ -247,6 +247,7 @@ func _emit_npc_state_snapshot(filter: String) -> int:
 		if not _npc_matches(machine,filter): continue
 		count += 1
 		messages.append("[npc_state] event=snapshot data=%s" % machine.get_state_diagnostics())
+		messages.append("[npc_state] event=friendly_avoidance data=%s" % machine.get_friendly_avoidance_diagnostics())
 		messages.append("[npc_state] event=attack_ranges data=%s" % machine.get_attack_range_diagnostics())
 	if not messages.is_empty():
 		_output_lines.append_array(messages)
@@ -749,6 +750,7 @@ func _collect_bird_motion_lines(character: Node3D, prefix: String) -> Array[Stri
 		return lines
 	for component: Node in character.get_children():
 		var method := "get_flight_diagnostics" if component.has_method("get_flight_diagnostics") else "get_wing_diagnostics"
+		if component.has_method("get_dive_diagnostics"): method = "get_dive_diagnostics"
 		if not component.has_method(method): continue
 		var data: Dictionary = component.call(method)
 		var legs: Array = data.get("legs",[])

@@ -7,11 +7,10 @@
 script = ExtResource("2_attack")
 action_id = &"PrimaryArm"
 receiver_path = NodePath("LimbSwingController3D")
-maximum_range = 4.5
+maximum_range = 5.0
+preferred_distance = 3.5
 
 [resource]
 script = ExtResource("1_behavior")
-detection_radius = 100.1
-disengage_radius = 120.1
 preferred_distance = 3.5
 attacks = Array[ExtResource("2_attack")]([SubResource("Attack_arm")])

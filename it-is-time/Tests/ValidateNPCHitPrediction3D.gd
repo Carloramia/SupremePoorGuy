@@ -17,6 +17,10 @@ func run() -> void:
 	torso.global_position = Vector3(3,3.5,0)
 	for frame: int in range(4): await physics_frame
 	var swing := npc.get_node("LimbSwingController3D")
+	check(swing.get_npc_attack_maximum_range(&"PrimaryArm",torso) > 5.0, "Arm and merged weapon geometry must contribute to the attack envelope")
+	swing.npc_geometry_attack_range_enabled = false
+	check(swing.get_npc_attack_maximum_range(&"PrimaryArm",torso) == 0.0, "Disabling geometry range must restore the authored range")
+	swing.npc_geometry_attack_range_enabled = true
 	var before: Transform3D = npc.get_node("Arm_R").global_transform
 	var prediction: Dictionary = swing.predict_npc_attack(&"PrimaryArm",torso,0.6)
 	check(prediction.hit,"Near target collision geometry must intersect the predicted swing")

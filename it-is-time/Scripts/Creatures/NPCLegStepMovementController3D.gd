@@ -14,6 +14,34 @@ var _reach_diagnostics: Dictionary = {}
 @export_range(0.0, 30.0, 0.5) var standing_height_damping: float = 10.0
 var _standing_height: float = 0.0
 var _standing_force: Vector3 = Vector3.ZERO
+var _hip_restore_pending := false
+
+func _physics_process(delta: float) -> void:
+	super._physics_process(delta)
+	if _hip_restore_pending and not _turn_planning_active and _step_state == StepState.IDLE:
+		restore_base_hip_joint_limits()
+
+## Do not shrink a joint around a leg that has not returned to its authored range.
+func restore_base_hip_joint_limits() -> void:
+	_hip_restore_pending = false
+	for leg: RigidBody3D in _hip_joints_by_leg:
+		if not is_instance_valid(leg) or not leg.is_inside_tree() or _is_body_broken(leg):
+			continue
+		var joint := _hip_joints_by_leg[leg] as Generic6DOFJoint3D
+		if not is_instance_valid(joint) or not joint.is_inside_tree() or not _hip_joint_base_limits.has(joint):
+			continue
+		var geometry := _hip_geometry(leg)
+		if geometry.is_empty():
+			continue
+		var offset: Vector3 = geometry.offset
+		var limits: Vector4 = _hip_joint_base_limits[joint]
+		if offset.x < limits.x or offset.x > limits.y or offset.z < limits.z or offset.z > limits.w:
+			_hip_restore_pending = true
+			continue
+		joint.set_param_x(Generic6DOFJoint3D.PARAM_LINEAR_LOWER_LIMIT, limits.x)
+		joint.set_param_x(Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT, limits.y)
+		joint.set_param_z(Generic6DOFJoint3D.PARAM_LINEAR_LOWER_LIMIT, limits.z)
+		joint.set_param_z(Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT, limits.w)
 
 func _apply_torso_response() -> void:
 	super._apply_torso_response()
@@ -144,6 +172,8 @@ func get_npc_motion_execution_diagnostics() -> Dictionary:
 	result["reach_planning"] = _reach_diagnostics.duplicate()
 	result["standing_height"] = _standing_height
 	result["standing_force"] = _standing_force
+	result["approach_speed_scale"] = _state_machine.get_npc_movement_speed_scale(super._get_expected_horizontal_speed()) if is_instance_valid(_state_machine) else 1.0
+	result["desired_horizontal_speed"] = get_expected_horizontal_speed()
 	return result
 
 func _ready() -> void:
@@ -161,6 +191,12 @@ func get_input_movement_direction() -> Vector3:
 		if requested_direction is Vector3:
 			return requested_direction
 	return Vector3.ZERO
+
+func _get_expected_horizontal_speed() -> float:
+	var full_speed := super._get_expected_horizontal_speed()
+	if get_player_command_source() == null and is_instance_valid(_state_machine):
+		return full_speed * _state_machine.get_npc_movement_speed_scale(full_speed)
+	return full_speed
 
 func is_fast_speed_active() -> bool:
 	if is_instance_valid(_state_machine) and _state_machine.has_method("is_fast_movement_requested"):

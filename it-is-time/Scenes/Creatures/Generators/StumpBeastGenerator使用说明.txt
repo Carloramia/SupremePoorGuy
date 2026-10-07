@@ -1,0 +1,44 @@
+StumpBeastGenerator 使用说明
+
+脚本继承：BaseCreatureGenerator → BeastGenerator → StumpBeastGenerator。
+场景复用无预览子节点的 _BaseCreatureGenerator，避免继承已生成的临时框架。
+默认设置：Resources/Generators/StumpBeastGeneratorDefaults.tres。
+“保存为当前物种默认值”只更新该文件，包含曲线和 Part Scene Rules。
+已有场景中显式设置的参数仍优先于默认值；保存默认值不会强行修改已有实例。
+
+可直接使用 Scenes/Creatures/Characters/Generate_StumpBeast.tscn：
+其生成器是本地节点，物理、行走、恢复和动作组件复用生成生物的通用组件。
+初始提供双后腿、双前腿、单躯干和直接连接的头部；躯干、头、脚和腿段已有 PaperParts 映射。
+SubTorso 沿用普通体块。未指定的部位也沿用 TestCreature_Part。
+初始预设是可调整的生成示例，导入的关节标记仍需按实际模型校准。
+
+所有生成器根节点新增 Physical Part Scenes / Part Scene Rules 数组。
+新建 GeneratedPartSceneRule，设置 Part Scene 为继承 _PhysicalSampleBodyParts 的 tscn。
+规则优先级：Part Key > Part Name > Part Type；同级首个匹配生效。
+未配置规则采用默认场景；匹配规则但场景为空/不合法则中止物理生成并保留上一套物理角色。
+
+按类型替换：Part Key 和 Part Name 留空，指定 Torso、Head、Leg、ForeLeg、LegLimb 等 Part Type。
+单部位替换：填写 Part Name，如 Torso、Torso_2、Leg_1、Leg_1_Limb_2、ForeLeg_2_Limb_1。
+Limb 编号从脚向躯干递增；后腿通常三段，前腿两段。
+单 SubTorso 推荐 Part Key：SubTorso_Leg_1 或 SubTorso_ForeLeg_1。
+它与对应腿绑定，不会因为修改其他类型腿的数量而换成另一个腿根。
+其他部位的 Part Key 与其生成名称相同。运行部位上的 generated_part_key 元数据可查看。
+
+Size Mode（自定义模型）：
+FIT_UNIFORM 默认：等比例缩放，完整放入框架尺寸，保留模型比例。
+KEEP_SIZE：保留模型原尺寸；再应用 Size Multiplier，不自动使用 Overall Scale。
+FIT_BOX：分别按 XYZ 缩放以完全匹配框架，可能改变模型比例。
+普通 BOX_FIT 部件仍使用四边参数和厚度匹配框架。
+自定义部件按碰撞边界中心对齐框架；视觉、碰撞、JointIn/JointOut 同时变换。
+刚体根节点始终保持单位缩放。质量按实际碰撞外包盒体积和角色密度预设重新计算。
+模型内部凹洞仍按原凸碰撞体处理，体积估算不扣除洞。
+
+Use Joint Markers 默认为关闭，使用原框架连接点。
+开启后选择靠近计划连接点的 JointIn/JointOut，取双方建议位置的中点作为关节位置。
+未找到标记时使用框架位置；不会移动整个部位来拼接标记。
+HP、Armor、视觉开关和额外物理标签保留；生成角色按职责追加必要标签。
+
+规则保存在生成器根节点/默认资源中，重建框架不会删除它们。
+减少腿数时多出的单部位规则暂时不匹配，恢复数量后继续生效。
+临时框架节点的手动改动仍会被重新生成覆盖，应在根节点配置规则。
+调整为原尺寸或等比例尺寸后，模型边缘未必与框架边缘重合，需同步调整框架参数与连接点。
