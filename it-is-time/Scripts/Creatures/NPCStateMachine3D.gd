@@ -11,6 +11,11 @@ enum State { IDLE, MOVE_TO_TARGET, ATTACK, WAITING }
 @export var behavior: BEHAVIOR
 var _enemy: Node3D
 var _scan_elapsed := 0.0
+var _target_switch_remaining: float = 0.0
+var _generated_facing_side: float = 1.0
+var _generated_facing_candidate: float = 1.0
+var _generated_facing_elapsed: float = 0.0
+var _generated_facing_frame: int = -1
 var _attack_elapsed := 0.0
 var _attack_retry := 0.0
 var _active_attack: ATTACK
@@ -40,6 +45,9 @@ var _collision_stop_distance := 0.0
 @export_group("Humanoid Combat Positioning")
 ## Keep body facing on world +/-X; align attack lanes by walking along Z.
 @export var humanoid_xz_positioning: bool = false
+## Generated actors retain their own leg-driven turning, independent of attack lane rules.
+@export var generated_x_axis_facing: bool = false
+@export_range(0.0, 1.0, 0.01) var generated_facing_confirmation_time: float = 0.2
 @export_range(0.01, 5.0, 0.01) var attack_z_tolerance: float = 0.5
 @export_range(0.0, 2.0, 0.01) var facing_x_dead_zone: float = 0.1
 @export_range(0.0, 2.0, 0.01) var body_clearance: float = 0.25
@@ -178,7 +186,7 @@ func get_state_diagnostics() -> Dictionary:
 	elif not _character_enabled: disabled_reason = "character_disabled"
 	elif PLAYER_CONTEXT.controlled_character(self) == get_parent(): disabled_reason = "player_controlled"
 	var nav_ready := _navigation_map_is_ready()
-	return {"npc_path":str(get_parent().get_path()),"npc_id":get_parent().get_instance_id(),"state_machine_path":str(get_path()),"state":State.keys()[current_state],"disabled_reason":disabled_reason,"manual_command":_manual_command,"enemy":str(_enemy.get_path()) if is_instance_valid(_enemy) else "none","has_requested_target":_has_requested_target,"position":_get_navigation_origin_position(),"target":_requested_target_position,"navigation_ready":nav_ready,"path_points":navigation_agent.get_current_navigation_path().size(),"navigation_finished":navigation_agent.is_navigation_finished() if nav_ready else true,"target_reachable":navigation_agent.is_target_reachable() if nav_ready else false,"active_attack":_active_attack.action_id if _active_attack != null else &"none","attack_elapsed":_attack_elapsed,"attack_block_reason":_attack_block_reason,"cooldowns":cooldowns}
+	return {"npc_path":str(get_parent().get_path()),"npc_id":get_parent().get_instance_id(),"state_machine_path":str(get_path()),"state":State.keys()[current_state],"disabled_reason":disabled_reason,"manual_command":_manual_command,"enemy":str(_enemy.get_path()) if is_instance_valid(_enemy) else "none","has_requested_target":_has_requested_target,"position":_get_navigation_origin_position(),"target":_requested_target_position,"navigation_ready":nav_ready,"path_points":navigation_agent.get_current_navigation_path().size(),"navigation_finished":navigation_agent.is_navigation_finished() if nav_ready else true,"target_reachable":navigation_agent.is_target_reachable() if nav_ready else false,"active_attack":_active_attack.action_id if _active_attack != null else &"none","attack_elapsed":_attack_elapsed,"attack_block_reason":_attack_block_reason,"cooldowns":cooldowns,"target_switch_remaining":_target_switch_remaining,"generated_x_axis_facing":generated_x_axis_facing,"facing_side":_generated_facing_side,"facing_candidate":_generated_facing_candidate,"facing_confirmation_elapsed":_generated_facing_elapsed,"prediction_distance_sample":_prediction_distance_sample}
 
 func move_to_node(target: Node3D) -> void:
 	_cancel_attack()
@@ -353,6 +361,20 @@ func is_jump_requested() -> bool: return false
 
 func get_generated_facing_direction(_delta: float) -> Vector3:
 	if not enabled or not _character_enabled or not _is_enemy(_enemy): return Vector3.ZERO
+	if generated_x_axis_facing:
+		# Stomping keeps its starting heading; a moving enemy must not turn the raised body.
+		if current_state == State.ATTACK: return Vector3.RIGHT * _generated_facing_side
+		var dx := _enemy_position(_enemy).x - _get_navigation_origin_position().x
+		var side := signf(dx) if absf(dx) > facing_x_dead_zone else _generated_facing_side
+		if _generated_facing_frame != Engine.get_physics_frames():
+			_generated_facing_frame = Engine.get_physics_frames()
+			if side != _generated_facing_candidate:
+				_generated_facing_candidate = side
+				_generated_facing_elapsed = 0.0
+			_generated_facing_elapsed += maxf(_delta, 0.0)
+			if _generated_facing_elapsed >= generated_facing_confirmation_time:
+				_generated_facing_side = side
+		return Vector3.RIGHT * _generated_facing_side
 	return (_enemy_position(_enemy)-_get_navigation_origin_position()).slide(Vector3.UP).normalized()
 
 func get_npc_body_facing_direction() -> Vector3:
@@ -407,7 +429,9 @@ func _preferred_attack_distance(attack: ATTACK) -> float:
 		# edge instead of making the attack unreachable or overriding prediction.
 		minimum = maxf(minimum, minf(_minimum_character_standoff() + margin, maximum))
 	if _prediction_distance_sample >= 0:
-		return lerpf(minimum,maximum,float(_prediction_distance_sample%5)/4.0)
+		var center := clampf(desired, minimum, maximum)
+		var radius := maxf(center * behavior.prediction_reposition_ratio, attack.distance_tolerance * 2.0)
+		return lerpf(maxf(minimum, center-radius),minf(maximum, center+radius),float(_prediction_distance_sample%5)/4.0)
 	return clampf(desired, minimum, maximum)
 
 func _body_x_reach(body: Node3D, direction: float) -> float:
@@ -539,6 +563,7 @@ func _visible(actor: Node3D, target_part: Node3D = null) -> bool:
 	return get_world_3d().direct_space_state.intersect_ray(query).is_empty()
 
 func _update_combat(delta: float) -> void:
+	_target_switch_remaining = maxf(0.0, _target_switch_remaining - delta)
 	for key in _cooldowns: _cooldowns[key] = maxf(float(_cooldowns[key])-delta, 0.0)
 	_attack_retry = maxf(_attack_retry-delta,0.0)
 	_scan_elapsed -= delta
@@ -570,8 +595,14 @@ func _update_combat(delta: float) -> void:
 						attack_candidate = actor
 						best_attack_distance = distance
 			var previous := _enemy
-			if attack_candidate != null: _enemy = attack_candidate
-			elif _enemy == null: _enemy = candidate
+			var proposed: Node3D = attack_candidate if attack_candidate != null else candidate
+			if _enemy == null:
+				_enemy = proposed
+			elif proposed != null and proposed != _enemy and _target_switch_remaining <= 0.0:
+				var current_distance := _horizontal_distance_to(_enemy_position(_enemy))
+				if _horizontal_distance_to(_enemy_position(proposed)) < current_distance * (1.0 - behavior.target_switch_distance_advantage):
+					_enemy = proposed
+			if _enemy != previous: _target_switch_remaining = behavior.target_switch_cooldown
 			if _enemy != previous: _prediction_distance_sample = -1
 			if _enemy != previous and _enemy != null: _log_state_event(&"target_acquired",{"target":str(_enemy.get_path()),"target_part":str(_enemy_torso(_enemy).get_path()),"distance":_horizontal_distance_to(_enemy_position(_enemy))})
 			if debug_logging_enabled: print("[npc_combat] npc=",get_parent().name," target=",_enemy.name if _enemy != null else &"none")
@@ -595,7 +626,11 @@ func _update_combat(delta: float) -> void:
 		return
 	if _attack_retry <= 0.0:
 		if _try_attack(distance): return
-		if _attack_block_reason == &"prediction_misses" and not reposition:
+		# Missing support/turn readiness is not evidence that the attack distance is wrong.
+		var distance_miss := not _attack_predictions.is_empty()
+		for prediction: Dictionary in _attack_predictions:
+			if prediction.get("reason") not in [&"shockwave_misses", &"swing_misses"]: distance_miss = false
+		if _attack_block_reason == &"prediction_misses" and distance_miss and not reposition:
 			_prediction_distance_sample += 1
 			reposition = _plan_attack_distance(distance,attacks)
 	change_state(State.MOVE_TO_TARGET if reposition else State.WAITING)

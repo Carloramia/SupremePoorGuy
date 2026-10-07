@@ -1,0 +1,17 @@
+Generate_StumpBeast_NPC.tscn 继承 Generate_StumpBeast.tscn。
+Stump 已切换为普通物理模式（Planar Constraints=false），与 Generate_Creature_Test 的动作条件一致。
+玩家可通过 Controller 接入 Stump，使用原有移动/转向/跳跃和 MouseLeft 前腿踏地动作。
+前腿动作、冲击波特效、冲量伤害和阵营过滤使用公共 CreatureActionController3D 与 ForeLegStomp.tres。
+Stump 的模型、手动布局及 PartWidth 厚度规则继续从父场景继承。
+
+NPC 额外挂载 NPCStateMachine3D 和其 NavigationAgent3D。
+Behavior 使用现有 GeneratedStompAI.tres，与 Generate_Creature_NPC 共享索敌、攻击预测、距离控制和友军避让设置。
+Navigation Origin Path 留空，以角色当前躯干作为导航原点，不依赖名为 Torso 的根层子节点。
+默认 Faction Id=1，与普通 Generate_Creature_NPC 相同；相同阵营互不作为敌人。
+NPC 状态机默认 Enabled=true，Use Fast Movement=false；玩家接入时原有机制会暂停 AI。
+
+将场景实例加入有地面碰撞和可用导航网格的关卡即可；本次未自动加入 TestLevel。
+要创建敌对实例，分别给它们设置不同的 Faction Id。
+公共 AI 设置在 Resources/AI/GeneratedStompAI.tres 调整；若需独立设置，复制该资源后赋给 NPCStateMachine3D.Behavior。
+攻击的抬起/踏地参数在 Resources/Actions/ForeLegStomp.tres，冲击波参数在 ForeLegStompShockwave.tres。
+已有 NPC 状态机日志与控制台诊断机制自动覆盖这个新的 NPC 实例。

@@ -111,6 +111,8 @@ enum GeometryMode { BOX_FIT, CUSTOM_MODEL }
 		paper_volume_enabled = value
 		if is_node_ready(): _sync_geometry()
 ## Full depth along local Z, centered on the original paper plane.
+## Generated Custom paper parts fit depth to Part Width * Overall Scale independently of XY;
+## authored thickness and the scene rule Size Multiplier do not change the final depth.
 @export_range(0.001, 2.0, 0.005, "or_greater") var paper_volume_thickness: float = 0.08:
 	set(value):
 		paper_volume_thickness = maxf(value,MIN_SIZE)

@@ -1,0 +1,13 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/PaperParts/ToSplit_1/LeftLeg/03_lower_leg.tscn" id="1"]
+
+[node name="StumpPart" instance=ExtResource("1")]
+metadata/stump_connector_calibrated = true
+
+[node name="JointIn" parent="." index="4"]
+position = Vector3(-0.02512349188328, 0.22952145338058, 0.0)
+
+[node name="JointOut" parent="." index="5"]
+position = Vector3(0.35144984722137, -1.61399507522583, 0.0)
+

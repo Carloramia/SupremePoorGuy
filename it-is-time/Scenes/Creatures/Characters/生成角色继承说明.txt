@@ -1,0 +1,25 @@
+公共场景继承关系：
+_SampleCharacter.tscn
+  └─ _BaseGeneratedCreature.tscn
+       ├─ Generate_Creature_Test.tscn
+       ├─ Generate_Beast.tscn
+       │    └─ Generate_Creature_NPC.tscn
+       ├─ Generate_Bird.tscn
+       │    └─ Generate_Bird_NPC.tscn
+       └─ Generate_StumpBeast.tscn
+            └─ Generate_StumpBeast_NPC.tscn
+
+_BaseGeneratedCreature 是用于继承的干净场景，挂载 GeneratedCreatureCharacter3D.gd。
+统一提供 GeneratedLegStepMovementController3D、CreatureRecoveryStateMachine3D、CreatureActionController3D。
+公共生成、保存姿态、对齐连接点按钮来自根节点脚本。
+公共基类不保存生成器实例、框架预览或 GeneratedParts，也不会在运行时自动尝试生成。
+
+子类保留自己的生成器、Generator Path、密度/步态预设、生成参数、已生成部件及手动布局。
+子类已开启 Generate On Ready；Bird 的专有翅膀/飞行/俯冲组件仍留在 Bird 场景中。
+Stump 的手动布局、SubTorso 模型映射及根节点名称保持不变。
+
+今后统一增删公共组件，请编辑 _BaseGeneratedCreature.tscn。
+统一改公共算法，请编辑 GeneratedCreatureCharacter3D.gd 或对应组件脚本。
+物种专有参数仍在子场景中编辑。子类有显式覆盖值时，父场景对该参数的修改不会覆盖它；
+如需改为跟随父场景，可在子场景 Inspector 中用对应属性的还原按钮清除覆盖。
+父场景及公共组件节点名称属于接口，请避免随意改名，因为子类和脚本使用节点路径引用它们。

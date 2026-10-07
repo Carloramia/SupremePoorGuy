@@ -23,6 +23,162 @@ const FEATHER_GEOMETRY = preload("res://Scripts/Creatures/Generators/BirdFeather
 @export_tool_button("生成框架与物理角色", "Node3D") var generate_character_button: Callable:
 	get:
 		return Callable(self, &"generate_creature")
+@export_tool_button("将当前部件姿态写入生成器", "Save") var capture_layout_button: Callable:
+	get: return Callable(self, &"capture_manual_layout")
+@export_tool_button("自动对齐连接点", "Joint3D") var align_layout_connections_button: Callable:
+	get: return Callable(self, &"align_manual_connections")
+## Maximum allowed distance between paired joint ports, in current scene units.
+@export_range(0.0001, 1.0, 0.001, "or_greater") var manual_layout_connection_tolerance: float = 0.01
+
+func align_manual_connections() -> bool:
+	if not Engine.is_editor_hint():
+		push_warning("[manual_layout] Connection alignment is editor-only.")
+		return false
+	return _align_manual_connections()
+
+## Re-author joint anchors without changing any body transform or collider.
+func _align_manual_connections() -> bool:
+	var container := get_node_or_null("GeneratedParts") as Node3D
+	if not is_inside_tree() or container == null: return false
+	var joints := container.get_node_or_null("Joints")
+	if joints == null: return false
+	var pending: Array[Dictionary] = []
+	var maximum_gap := 0.0
+	# Validate the whole operation before changing any port.
+	for node: Node in joints.get_children():
+		var joint := node as Joint3D
+		if joint == null or joint.has_meta(&"segment_rotation_constraint"): continue
+		var a := joint.get_node_or_null(joint.node_a) as PhysicalBodyPart3D
+		var b := joint.get_node_or_null(joint.node_b) as PhysicalBodyPart3D
+		if a == null or b == null or a.is_broken or b.is_broken:
+			push_warning("[manual_layout] Cannot align missing/broken endpoints: " + str(joint.name))
+			return false
+		var anchor_a := _capture_joint_anchor(a, joint, &"generated_joint_frame_a")
+		var anchor_b := _capture_joint_anchor(b, joint, &"generated_joint_frame_b")
+		if not anchor_a.is_finite() or not anchor_b.is_finite(): return false
+		maximum_gap = maxf(maximum_gap, anchor_a.distance_to(anchor_b))
+		pending.append({"joint":joint, "a":a, "b":b, "anchor":(anchor_a+anchor_b)*0.5})
+	if pending.is_empty(): return false
+	var scene_owner := _scene_owner()
+	for entry: Dictionary in pending:
+		var joint: Joint3D = entry.joint
+		var a: PhysicalBodyPart3D = entry.a
+		var b: PhysicalBodyPart3D = entry.b
+		var kind := str(joint.get_meta(&"generated_connection_kind", str(joint.name).get_slice("_", 2)))
+		var parent_body := a
+		var child_body := b
+		if kind == "Limb" and (str(a.get_meta(&"generated_role", "")) in ["Leg","ForeLeg"] or (str(a.get_meta(&"generated_role", "")) == "Limb" and str(b.get_meta(&"generated_role", "")) == "Limb")):
+			parent_body = b
+			child_body = a
+		_align_connection_port(parent_body, joint, "JointOut_"+str(child_body.name), child_body, entry.anchor, scene_owner)
+		_align_connection_port(child_body, joint, "JointIn_"+str(parent_body.name), parent_body, entry.anchor, scene_owner)
+		joint.global_position = entry.anchor
+		joint.set_meta(&"generated_joint_frame_a", a.global_transform.affine_inverse()*joint.global_transform)
+		joint.set_meta(&"generated_joint_frame_b", b.global_transform.affine_inverse()*joint.global_transform)
+	if Engine.is_editor_hint(): EditorInterface.mark_scene_as_unsaved()
+	print("[manual_layout] Aligned %d joints; maximum_previous_gap=%.6f; body poses unchanged. Capture the layout to persist generation anchors." % [pending.size(),maximum_gap])
+	return true
+
+func _align_connection_port(body: PhysicalBodyPart3D, joint: Joint3D, port_name: String, other: PhysicalBodyPart3D, anchor: Vector3, scene_owner: Node) -> void:
+	var port: Marker3D
+	for child: Node in body.get_children():
+		if child is Marker3D and child.get_meta(&"joint_name", "") == str(joint.name):
+			port = child
+			break
+	if port == null:
+		port = Marker3D.new()
+		port.name = port_name
+		body.add_child(port)
+	port.position = body.global_transform.affine_inverse()*anchor
+	port.set_meta(&"generated_connection_port", true)
+	port.set_meta(&"joint_name", str(joint.name))
+	port.set_meta(&"connected_part", str(other.name))
+	port.owner = scene_owner
+
+func capture_manual_layout() -> bool:
+	if not Engine.is_editor_hint():
+		push_warning("[manual_layout] Capture is editor-only; runtime physics poses are not authored layouts.")
+		return false
+	return _capture_manual_layout()
+
+## Kept separate so the capture/round-trip can be validated without the editor UI.
+func _capture_manual_layout() -> bool:
+	var generator := get_node_or_null(generator_path) as Node3D
+	var container := get_node_or_null("GeneratedParts") as Node3D
+	if generator == null or container == null or not _valid_settings(generator): return false
+	var multiplier: float = generator.overall_scale
+	if not is_finite(multiplier) or multiplier < 0.1: return false
+	var parts: Array[Dictionary] = []
+	var indices: Dictionary = {}
+	var keys: Dictionary = {}
+	var to_generator := generator.global_transform.affine_inverse()
+	for child: Node in container.get_children():
+		var body := child as PhysicalBodyPart3D
+		if body == null: continue
+		var key := str(body.get_meta(&"generated_part_key", ""))
+		if key.is_empty() or keys.has(key) or body.is_broken:
+			push_warning("[manual_layout] Missing/duplicate PartKey or broken part: " + str(body.name))
+			return false
+		var pose := to_generator * body.global_transform
+		if not pose.basis.get_scale().is_equal_approx(Vector3.ONE) or not pose.origin.is_finite():
+			push_warning("[manual_layout] Part roots must retain unit scale: " + str(body.name))
+			return false
+		pose.origin /= multiplier
+		var layout: Dictionary = body.get_meta(&"generated_layout", {}).duplicate(true)
+		layout.merge({"name": str(body.name), "part_key": key, "role": str(body.get_meta(&"generated_role", "")), "size": body.get_meta(&"generated_framework_size", body.get_meta(&"generated_size", Vector3.ONE)), "transform": pose}, true)
+		layout.erase("scene_rule")
+		layout.size /= multiplier
+		if layout.has("connector_span"): layout.connector_span /= multiplier
+		if body.has_meta(&"body_segment_id"): layout["segment_id"] = int(body.get_meta(&"body_segment_id"))
+		layout["sub_torso"] = BODY_PART.BodyPartTag.SubTorso in body.tags
+		# Older saved characters predate the full layout metadata.
+		if layout.role in ["Wing", "WingLimb"] and not layout.has("wing_section"):
+			layout["wing_section"] = str(body.get_meta(&"generated_part_type", "WingRoot")).trim_prefix("Wing")
+		indices[body] = parts.size()
+		keys[key] = true
+		parts.append(layout)
+	if parts.is_empty(): return false
+	var connections: Array[Dictionary] = []
+	var joints := container.get_node_or_null("Joints")
+	if joints == null: return false
+	for joint: Node in joints.get_children():
+		if joint.has_meta(&"segment_rotation_constraint"): continue
+		if not joint is Joint3D and not joint is SEGMENT_SPRING: continue
+		var a := joint.get_node_or_null(joint.node_a) as PhysicalBodyPart3D
+		var b := joint.get_node_or_null(joint.node_b) as PhysicalBodyPart3D
+		if not indices.has(a) or not indices.has(b):
+			push_warning("[manual_layout] Missing endpoint for " + str(joint.name))
+			return false
+		if joint is SEGMENT_SPRING:
+			connections.append({"a": indices[a], "b": indices[b], "anchor": Vector3.ZERO, "basis": Basis.IDENTITY, "kind": "Segment"})
+			continue
+		var anchor_a := _capture_joint_anchor(a, joint, &"generated_joint_frame_a")
+		var anchor_b := _capture_joint_anchor(b, joint, &"generated_joint_frame_b")
+		var gap := anchor_a.distance_to(anchor_b)
+		if gap > manual_layout_connection_tolerance:
+			push_warning("[manual_layout] %s -> %s gap=%.6f exceeds tolerance=%.6f; previous layout retained." % [a.name, b.name, gap, manual_layout_connection_tolerance])
+			return false
+		var kind := str(joint.get_meta(&"generated_connection_kind", str(joint.name).get_slice("_", 2)))
+		connections.append({"a": indices[a], "b": indices[b], "anchor": (to_generator * ((anchor_a + anchor_b) * 0.5)) / multiplier, "basis": (to_generator.basis * joint.global_basis).orthonormalized(), "kind": kind})
+		if kind == "Wing":
+			parts[indices[b]]["wing_open_basis"] = parts[indices[a]].transform.basis * Basis(joint.get_meta(&"wing_open_relative_a", Quaternion.IDENTITY))
+		if kind == "Feather":
+			parts[indices[b]]["feather_open_basis"] = parts[indices[a]].transform.basis * Basis(joint.get_meta(&"feather_open_relative_a", Quaternion.IDENTITY))
+	var captured := preload("res://Scripts/Creatures/Generators/CreatureManualLayout.gd").new()
+	captured.resource_local_to_scene = true
+	captured.blueprint = {"parts": parts, "connections": connections}
+	generator.manual_layout = captured
+	generator.use_manual_layout = true
+	if Engine.is_editor_hint(): EditorInterface.mark_scene_as_unsaved()
+	print("[manual_layout] Captured %d parts and %d connections for %s; save the scene to persist." % [parts.size(), connections.size(), name])
+	return true
+
+func _capture_joint_anchor(body: PhysicalBodyPart3D, joint: Joint3D, frame_key: StringName) -> Vector3:
+	for child: Node in body.get_children():
+		if child is Marker3D and child.get_meta(&"joint_name", "") == str(joint.name): return child.global_position
+	var frame: Transform3D = joint.get_meta(frame_key, body.global_transform.affine_inverse() * joint.global_transform)
+	return body.global_transform * frame.origin
+
 @export var generate_on_ready: bool = true
 @export var show_framework: bool = false:
 	set(value):
@@ -255,7 +411,7 @@ func _perf_impl__on_framework_generated(plan: Dictionary) -> void:
 		return
 	_rebuilding = true
 	var blueprint_started: int = _control_perf.start()
-	var blueprint := _build_blueprint(plan, float(generator.torso_connection_distance))
+	var blueprint: Dictionary = plan.manual_blueprint.duplicate(true) if plan.has("manual_blueprint") else _build_blueprint(plan, float(generator.torso_connection_distance))
 	_control_perf.finish(&"blueprint", blueprint_started)
 	if blueprint.is_empty():
 		push_warning("[generated_creature] Frame connectivity could not be converted; previous physics retained.")
@@ -265,6 +421,9 @@ func _perf_impl__on_framework_generated(plan: Dictionary) -> void:
 	# Persistent root settings are resolved again for every blueprint, never stored on preview nodes.
 	for layout: Dictionary in blueprint.parts:
 		layout["scene_rule"] = generator.get_part_scene_rule(_get_generated_part_type(layout), str(layout.name), str(layout.get("part_key", layout.name)))
+	# Use one scaled width for every paper model, including saved manual layouts.
+	# Authored thickness and per-rule Size Multiplier must not affect this depth.
+	blueprint["paper_depth"] = float(generator.part_width) * float(generator.overall_scale)
 	var staging := _instantiate_blueprint(blueprint, generator.transform)
 	_control_perf.finish(&"instantiate_bodies_joints", bodies_started)
 	if staging == null:
@@ -288,6 +447,8 @@ func _perf_impl__on_framework_generated(plan: Dictionary) -> void:
 	staging.owner = scene_owner
 	for part: Node in staging.get_children():
 		part.owner = scene_owner
+		for child: Node in part.get_children():
+			if child.has_meta(&"generated_connection_port"): child.owner = scene_owner
 		if part.has_meta(&"generated_scene_path"):
 			# Fitting changes descendants of an instantiated Part, not just exported root values.
 			# Preserve those overrides when the generated character is packed/saved in the editor.
@@ -686,6 +847,7 @@ func _build_blueprint(plan: Dictionary, connection_distance: float) -> Dictionar
 			var basis := Basis(Quaternion(Vector3.UP, direction.normalized()))
 			var block_size: Vector3 = layout.limb_block_sizes[index]
 			var next := _append_part(parts, "%s_Limb_%d" % [node_name, index + 1], "Limb", block_size, Transform3D(basis, (start + end) * 0.5))
+			parts[next]["connector_span"] = direction.length()
 			_add_connection(connections, previous, next, start, "Limb", basis)
 			previous = next
 		var tip := position + points[-1]
@@ -738,12 +900,13 @@ func _build_blueprint(plan: Dictionary, connection_distance: float) -> Dictionar
 	var multiplier: float = plan.get(&"overall_scale", 1.0)
 	for part: Dictionary in parts:
 		part.size *= multiplier
+		if part.has("connector_span"): part.connector_span *= multiplier
 		var transform: Transform3D = part.transform
 		transform.origin *= multiplier
 		part.transform = transform
 	for connection: Dictionary in connections:
 		connection.anchor *= multiplier
-	return {"parts": parts, "connections": connections}
+	return {"parts": parts, "connections": connections, "overall_scale": multiplier, "create_connection_markers": plan.get("create_connection_markers",false)}
 
 func _root(parents: Array[int], index: int) -> int:
 	while parents[index] != index:
@@ -826,7 +989,10 @@ func _instantiate_blueprint(blueprint: Dictionary, generator_transform: Transfor
 			part.sprite_visible = false
 			part.mesh_visible = true
 		else:
-			var actual := PART_GEOMETRY.fit(part, size, rule)
+			var fit_size := size
+			if rule.align_connectors_to_frame and layout.role == "Limb":
+				fit_size.y = float(layout.get("connector_span", size.y))
+			var actual := PART_GEOMETRY.fit(part, fit_size, rule, str(layout.role), float(blueprint.get("paper_depth", fit_size.z)))
 			if actual.size == Vector3.ZERO:
 				push_warning("[generated_creature] Part %s requires a valid Box/Convex CollisionShape3D and positive scale; previous physics retained." % layout.name)
 				part.free()
@@ -868,6 +1034,9 @@ func _instantiate_blueprint(blueprint: Dictionary, generator_transform: Transfor
 			if tag not in part.tags: part.tags.append(tag)
 		if layout.has("segment_id"): part.set_meta(&"body_segment_id", int(layout.segment_id))
 		if layout.has("segment_id"): part.set_meta(&"segment_layout_version", 3)
+		var saved_layout := layout.duplicate(true)
+		saved_layout.erase("scene_rule")
+		part.set_meta(&"generated_layout", saved_layout)
 		part.set_meta(&"generated_role", layout.role)
 		part.set_meta(&"generated_part_key", layout.get("part_key", layout.name))
 		part.set_meta(&"generated_part_type", part_type)
@@ -898,6 +1067,7 @@ func _instantiate_blueprint(blueprint: Dictionary, generator_transform: Transfor
 		var joint := Generic6DOFJoint3D.new()
 		joint.name = "Joint_%03d_%s" % [index + 1, connection.kind]
 		joint.transform = generator_transform * Transform3D(connection.basis, connection.anchor)
+		joint.set_meta(&"generated_connection_kind", connection.kind)
 		joint.exclude_nodes_from_collision = true
 		var a: RigidBody3D = bodies[connection.a]
 		var b: RigidBody3D = bodies[connection.b]
@@ -905,9 +1075,18 @@ func _instantiate_blueprint(blueprint: Dictionary, generator_transform: Transfor
 		var anchor_b := joint.position
 		var rule_a: Resource = blueprint.parts[connection.a].get("scene_rule")
 		var rule_b: Resource = blueprint.parts[connection.b].get("scene_rule")
-		if rule_a != null and rule_a.use_joint_markers: anchor_a = PART_GEOMETRY.connection_marker(a, anchor_a)
-		if rule_b != null and rule_b.use_joint_markers: anchor_b = PART_GEOMETRY.connection_marker(b, anchor_b)
+		if not blueprint.get("manual_layout", false) and rule_a != null and rule_a.use_joint_markers: anchor_a = PART_GEOMETRY.connection_marker(a, anchor_a)
+		if not blueprint.get("manual_layout", false) and rule_b != null and rule_b.use_joint_markers: anchor_b = PART_GEOMETRY.connection_marker(b, anchor_b)
 		joint.position = (anchor_a + anchor_b) * 0.5
+		if blueprint.get("create_connection_markers",false):
+			var parent_body := a
+			var child_body := b
+			# Limb chains are stored foot-to-root; expose ports in the anatomical root-to-foot direction.
+			if connection.kind == "Limb" and (blueprint.parts[connection.a].role in ["Leg","ForeLeg"] or (blueprint.parts[connection.a].role == "Limb" and blueprint.parts[connection.b].role == "Limb")):
+				parent_body = b
+				child_body = a
+			_add_connection_port(parent_body,"JointOut_" + str(child_body.name),joint.position,str(joint.name),str(child_body.name))
+			_add_connection_port(child_body,"JointIn_" + str(parent_body.name),joint.position,str(joint.name),str(parent_body.name))
 		# Keep the generated rest pose across gait-cache refreshes and participation changes.
 		var rest_a := a.basis.orthonormalized().get_rotation_quaternion()
 		var rest_b := b.basis.orthonormalized().get_rotation_quaternion()
@@ -948,6 +1127,15 @@ func _instantiate_blueprint(blueprint: Dictionary, generator_transform: Transfor
 			_configure_limb_joint_sliding(joint)
 		joints.add_child(joint)
 	return container
+
+func _add_connection_port(body: RigidBody3D, port_name: String, anchor: Vector3, joint_name: String, other_name: String) -> void:
+	var marker := Marker3D.new()
+	marker.name = port_name
+	marker.position = body.transform.affine_inverse() * anchor
+	marker.set_meta(&"generated_connection_port",true)
+	marker.set_meta(&"joint_name",joint_name)
+	marker.set_meta(&"connected_part",other_name)
+	body.add_child(marker)
 
 func _configure_wing_joint_limits(joint: Generic6DOFJoint3D, section: String) -> void:
 	joint.set_flag_z(Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_LIMIT, wing_joint_limits_enabled)

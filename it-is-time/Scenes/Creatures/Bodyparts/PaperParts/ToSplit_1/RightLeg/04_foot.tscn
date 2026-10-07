@@ -1,41 +1,47 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene format=3 uid="uid://bcj70w7iuyhb5"]
 
-[ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/PaperParts/ToSplit_1/RightLeg/04_foot.glb" id="1_model"]
-[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/_PhysicalSampleBodyParts.tscn" id="2_base"]
-
+[ext_resource type="PackedScene" uid="uid://b2lhbq5j1c6so" path="res://Assets/3DResources/Creatures/PaperParts/ToSplit_1/RightLeg/04_foot.glb" id="1_model"]
+[ext_resource type="PackedScene" uid="uid://y2gn44xh763h" path="res://Scenes/Creatures/Bodyparts/_PhysicalSampleBodyParts.tscn" id="2_base"]
 [ext_resource type="ArrayMesh" path="res://Resources/Meshes/PaperParts/ToSplit_1/RightLeg/04_foot.res" id="3_volume"]
 
-[sub_resource type="ConvexPolygonShape3D" id="Shape"]
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_h3vao"]
 resource_local_to_scene = true
-points = PackedVector3Array(-0.53311094, -0.55904749, -0.01000000, -0.49473146, -0.44362554, -0.01000000, -0.30283404, 0.05653624, -0.01000000, -0.24526482, 0.17195819, -0.01000000, -0.18769560, 0.24890615, -0.01000000, -0.16850586, 0.26814315, -0.01000000, -0.11093663, 0.30661713, -0.01000000, -0.07255715, 0.32585412, -0.01000000, 0.10015052, 0.32585412, -0.01000000, 0.13853000, 0.30661713, -0.01000000, 0.15771974, 0.28738014, -0.01000000, 0.25366845, 0.19119518, -0.01000000, 0.77179145, -0.44362554, -0.01000000, 0.84855042, -0.53981049, -0.01000000, 0.92530938, -0.65523244, -0.01000000, 0.94449912, -0.69370643, -0.01000000, 0.96368886, -0.75141740, -0.01000000, 0.96368886, -0.82836537, -0.01000000, 0.94449912, -0.84760236, -0.01000000, 0.88692990, -0.86683935, -0.01000000, 0.31123767, -0.90531333, -0.01000000, -0.30283404, -0.90531333, -0.01000000, -0.39878275, -0.86683935, -0.01000000, -0.45635197, -0.82836537, -0.01000000, -0.49473146, -0.78989138, -0.01000000, -0.51392120, -0.77065439, -0.01000000, -0.53311094, -0.73218041, -0.01000000, -0.53311094, -0.55904749, 0.01000000, -0.49473146, -0.44362554, 0.01000000, -0.30283404, 0.05653624, 0.01000000, -0.24526482, 0.17195819, 0.01000000, -0.18769560, 0.24890615, 0.01000000, -0.16850586, 0.26814315, 0.01000000, -0.11093663, 0.30661713, 0.01000000, -0.07255715, 0.32585412, 0.01000000, 0.10015052, 0.32585412, 0.01000000, 0.13853000, 0.30661713, 0.01000000, 0.15771974, 0.28738014, 0.01000000, 0.25366845, 0.19119518, 0.01000000, 0.77179145, -0.44362554, 0.01000000, 0.84855042, -0.53981049, 0.01000000, 0.92530938, -0.65523244, 0.01000000, 0.94449912, -0.69370643, 0.01000000, 0.96368886, -0.75141740, 0.01000000, 0.96368886, -0.82836537, 0.01000000, 0.94449912, -0.84760236, 0.01000000, 0.88692990, -0.86683935, 0.01000000, 0.31123767, -0.90531333, 0.01000000, -0.30283404, -0.90531333, 0.01000000, -0.39878275, -0.86683935, 0.01000000, -0.45635197, -0.82836537, 0.01000000, -0.49473146, -0.78989138, 0.01000000, -0.51392120, -0.77065439, 0.01000000, -0.53311094, -0.73218041, 0.01000000)
+points = PackedVector3Array(-0.5331109, -0.55904746, -0.2005, -0.49473146, -0.44362554, -0.2005, -0.30283403, 0.05653624, -0.2005, -0.24526481, 0.1719582, -0.2005, -0.1876956, 0.24890615, -0.2005, -0.16850586, 0.26814315, -0.2005, -0.11093663, 0.30661714, -0.2005, -0.07255715, 0.32585412, -0.2005, 0.10015052, 0.32585412, -0.2005, 0.13853, 0.30661714, -0.2005, 0.15771975, 0.28738013, -0.2005, 0.25366846, 0.19119518, -0.2005, 0.77179146, -0.44362554, -0.2005, 0.84855044, -0.5398105, -0.2005, 0.92530936, -0.6552324, -0.2005, 0.94449914, -0.69370645, -0.2005, 0.96368885, -0.7514174, -0.2005, 0.96368885, -0.8283654, -0.2005, 0.94449914, -0.84760237, -0.2005, 0.8869299, -0.86683935, -0.2005, 0.31123766, -0.9053133, -0.2005, -0.30283403, -0.9053133, -0.2005, -0.39878276, -0.86683935, -0.2005, -0.45635197, -0.8283654, -0.2005, -0.49473146, -0.78989136, -0.2005, -0.5139212, -0.7706544, -0.2005, -0.5331109, -0.7321804, -0.2005, -0.5331109, -0.55904746, 0.2005, -0.49473146, -0.44362554, 0.2005, -0.30283403, 0.05653624, 0.2005, -0.24526481, 0.1719582, 0.2005, -0.1876956, 0.24890615, 0.2005, -0.16850586, 0.26814315, 0.2005, -0.11093663, 0.30661714, 0.2005, -0.07255715, 0.32585412, 0.2005, 0.10015052, 0.32585412, 0.2005, 0.13853, 0.30661714, 0.2005, 0.15771975, 0.28738013, 0.2005, 0.25366846, 0.19119518, 0.2005, 0.77179146, -0.44362554, 0.2005, 0.84855044, -0.5398105, 0.2005, 0.92530936, -0.6552324, 0.2005, 0.94449914, -0.69370645, 0.2005, 0.96368885, -0.7514174, 0.2005, 0.96368885, -0.8283654, 0.2005, 0.94449914, -0.84760237, 0.2005, 0.8869299, -0.86683935, 0.2005, 0.31123766, -0.9053133, 0.2005, -0.30283403, -0.9053133, 0.2005, -0.39878276, -0.86683935, 0.2005, -0.45635197, -0.8283654, 0.2005, -0.49473146, -0.78989136, 0.2005, -0.5139212, -0.7706544, 0.2005, -0.5331109, -0.7321804, 0.2005)
 
-[node name="PaperPart_RightLeg_04_foot" instance=ExtResource("2_base")]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vgwnj"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+
+[node name="PaperPart_RightLeg_04_foot" unique_id=503255120 instance=ExtResource("2_base")]
+axis_lock_angular_x = true
+axis_lock_angular_z = true
 mass = 0.1
-geometry_mode = 1
-paper_volume_enabled = true
-custom_model_path = NodePath("Model")
-sprite_visible = false
-mesh_visible = true
 tags = Array[int]([1])
+geometry_mode = 1
+custom_model_path = NodePath("Model")
+paper_volume_enabled = true
+paper_volume_thickness = 0.401
 metadata/paper_source_scene = "res://Assets/3DResources/Creatures/PaperParts/ToSplit_1/RightLeg/04_foot.tscn"
 metadata/pivot_is_initial_estimate = true
+metadata/foot_previous_locks = Vector2i(0, 0)
 
-[node name="CollisionShape3D" parent="." index="0"]
+[node name="CollisionShape3D" parent="." index="0" unique_id=1899992271]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
-shape = SubResource("Shape")
+shape = SubResource("ConvexPolygonShape3D_h3vao")
 
-[node name="MeshInstance3D" parent="." index="2"]
+[node name="MeshInstance3D" parent="." index="2" unique_id=1504749449]
 visible = false
 mesh = null
 
-[node name="Model" parent="." instance=ExtResource("1_model")]
+[node name="Model" parent="." index="3" unique_id=1728633972 instance=ExtResource("1_model")]
 
-[node name="JointIn" type="Marker3D" parent="."]
-
-[node name="JointOut" type="Marker3D" parent="."]
-position = Vector3(0.21528896, -0.72372961, 0.00000000)
-
-[node name="PaperVolume" type="MeshInstance3D" parent="Model"]
-scale = Vector3(1, 1, 0.08)
+[node name="PaperVolume" type="MeshInstance3D" parent="Model" index="1" unique_id=339468136]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.401, 0, 0, 0)
 mesh = ExtResource("3_volume")
+surface_material_override/2 = SubResource("StandardMaterial3D_vgwnj")
 metadata/flat_collision_depth = 0.02
+
+[node name="JointIn" type="Marker3D" parent="." index="4" unique_id=2006602594]
+
+[node name="JointOut" type="Marker3D" parent="." index="5" unique_id=1519495459]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.21528897, -0.7237296, 0)

@@ -4,6 +4,62 @@ extends Node3D
 signal framework_generated(plan: Dictionary)
 
 const PART_SCENE_RULE = preload("res://Scripts/Creatures/Generators/GeneratedPartSceneRule.gd")
+const MANUAL_LAYOUT = preload("res://Scripts/Creatures/Generators/CreatureManualLayout.gd")
+@export_group("Manual Layout")
+## Captured layout overrides procedural counts/curves; Overall Scale still applies.
+@export var use_manual_layout: bool = false
+@export var manual_layout: MANUAL_LAYOUT
+@export_tool_button("清除手动布局", "Remove") var clear_manual_layout_button: Callable:
+	get: return Callable(self, &"clear_manual_layout")
+
+func clear_manual_layout() -> void:
+	manual_layout = null
+	use_manual_layout = false
+	if Engine.is_editor_hint() and is_inside_tree(): EditorInterface.mark_scene_as_unsaved()
+
+func _clear_generated_preview() -> void:
+	for child: Node in get_children():
+		if child.name in [&"Feets", &"LimbNetwork", &"ManualLayout"] or child.has_meta(&"generated_torso") or child.has_meta(&"generated_network_torso") or child.has_meta(&"generated_neck_line") or child.has_meta(&"generated_wings"):
+			remove_child(child)
+			child.queue_free()
+
+func _generate_manual_framework() -> bool:
+	if manual_layout == null or manual_layout.blueprint.get("parts", []).is_empty():
+		push_warning("[creature_generator] Manual layout is enabled but empty; previous frame retained.")
+		return false
+	_clear_generated_preview()
+	var preview := Node3D.new()
+	preview.name = "ManualLayout"
+	add_child(preview)
+	var scene_owner: Node = self
+	if Engine.is_editor_hint():
+		var edited := get_tree().edited_scene_root
+		if edited != null and (edited == self or edited.is_ancestor_of(self)): scene_owner = edited
+	preview.owner = scene_owner
+	var material := StandardMaterial3D.new()
+	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	material.albedo_color = wireframe_color
+	var blueprint := manual_layout.scaled_blueprint(overall_scale)
+	for layout: Dictionary in blueprint.parts:
+		var block := MeshInstance3D.new()
+		block.name = str(layout.name)
+		block.transform = layout.transform
+		block.mesh = _create_wireframe(layout.size)
+		block.material_override = material
+		preview.add_child(block)
+		block.owner = scene_owner
+		var label := Label3D.new()
+		label.text = str(layout.name)
+		label.position.y = layout.size.y * 0.5 + 0.3
+		label.font_size = label_font_size
+		label.modulate = label_color
+		label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+		block.add_child(label)
+		label.owner = scene_owner
+	framework_generated.emit({"manual_blueprint": blueprint})
+	if Engine.is_editor_hint(): EditorInterface.mark_scene_as_unsaved()
+	return true
+
 @export_group("Physical Part Scenes")
 ## Persistent rules; exact Part Name wins over Part Type. First match wins within each level.
 ## Missing types use the character's standard TestCreature_Part scene.
@@ -23,7 +79,7 @@ static func _copy_default_value(value: Variant) -> Variant:
 	if value is PackedScene: return value
 	if value is PART_SCENE_RULE:
 		var copy := PART_SCENE_RULE.new()
-		for key: String in ["part_name", "part_key", "part_type", "part_scene", "size_mode", "size_multiplier", "use_joint_markers"]:
+		for key: String in ["part_name", "part_key", "part_type", "part_scene", "size_mode", "size_multiplier", "use_joint_markers", "align_connectors_to_frame"]:
 			copy.set(key, value.get(key))
 		return copy
 	if value is Resource: return value.duplicate(true)
@@ -43,6 +99,7 @@ static func _copy_default_value(value: Variant) -> Variant:
 @export_range(0.1, 10.0, 0.05, "or_greater") var overall_scale: float = 4.0
 ## Shared local Z size for Torso, SubTorso, feet, Limb blocks, Neck and Head.
 ## Applied before Overall Scale; overrides Z in all per-part size settings and the Torso curve.
+## Physical Custom paper models use Part Width * Overall Scale as final depth, without Size Multiplier.
 @export_range(0.01, 100.0, 0.01, "or_greater") var part_width: float = 0.2
 
 @export_group("Framework Display")
@@ -231,7 +288,7 @@ func _capture_default_parameters() -> Dictionary:
 	for property: Dictionary in get_property_list():
 		if (int(property.usage) & PROPERTY_USAGE_EDITOR) == 0 or (int(property.usage) & PROPERTY_USAGE_SCRIPT_VARIABLE) == 0: continue
 		var value: Variant = get(property.name)
-		if value is Callable: continue
+		if value is Callable or property.name in [&"manual_layout", &"use_manual_layout"]: continue
 		parameters[property.name] = _copy_default_value(value)
 	return parameters
 
@@ -269,6 +326,8 @@ func generate_torso() -> bool:
 		return false
 	if not is_inside_tree():
 		return false
+	if use_manual_layout: return _generate_manual_framework()
+	if has_node("ManualLayout"): _clear_generated_preview()
 	var plan := _create_valid_plan()
 	if plan.is_empty():
 		push_warning("[creature_generator] Generation failed: no legal layout; previous frame retained. Check upper/lower contour order and connectivity, body length, foot counts/clearance and Neck/Head overlap constraints.")
@@ -891,13 +950,13 @@ func _create_limb_points(role: String, foot_height: float, total_length: float) 
 	points.append(first)
 	if role == "ForeLeg":
 		# Forward return is shorter than the initial rearward bend: end remains behind start.
-		points.append(first + Vector3(rear_offset * _random.randf_range(0.25, 0.75), _sample_dimension(minimum_segment_height, maximum_segment_height), 0.0))
+		points.append(first + Vector3(rear_offset * _sample_limb_return_ratio(), _sample_dimension(minimum_segment_height, maximum_segment_height), 0.0))
 	else:
 		var front_offset := _sample_dimension(minimum_bend_offset, maximum_bend_offset)
 		var second := first + Vector3(front_offset, _sample_dimension(minimum_segment_height, maximum_segment_height), 0.0)
 		points.append(second)
 		# Third segment bends back less than the second moved forward.
-		points.append(second + Vector3(-front_offset * _random.randf_range(0.25, 0.75), _sample_dimension(minimum_segment_height, maximum_segment_height), 0.0))
+		points.append(second + Vector3(-front_offset * _sample_limb_return_ratio(), _sample_dimension(minimum_segment_height, maximum_segment_height), 0.0))
 	# Uniformly scale the shape about its start, keeping bends and start position intact.
 	var raw_length := 0.0
 	for index: int in range(1, points.size()):
@@ -906,6 +965,12 @@ func _create_limb_points(role: String, foot_height: float, total_length: float) 
 	for index: int in range(1, points.size()):
 		points[index] = start + (points[index] - start) * length_scale
 	return points
+
+func _sample_limb_return_ratio() -> float:
+	return _random.randf_range(0.25, 0.75)
+
+func _sample_limb_length() -> float:
+	return base_limb_length * (1.0 + _random.randf_range(-0.25, 0.25) * clampf(inhomogeneity / 100.0, 0.0, 1.0))
 
 func _sample_neck_origin(torsos: Array[Dictionary]) -> Vector3:
 	var torso: Dictionary = torsos[-1]
@@ -1088,7 +1153,7 @@ func _fit_limbs(layouts: Array[Dictionary], torsos: Array[Dictionary]) -> void:
 	for index: int in range(layouts.size()):
 		var layout: Dictionary = layouts[index]
 		var partner: int = layout.get("partner_index", -1)
-		var sampled_length := base_limb_length * (1.0 + _random.randf_range(-0.25, 0.25) * clampf(inhomogeneity / 100.0, 0.0, 1.0))
+		var sampled_length := _sample_limb_length()
 		var points := _create_limb_points(layout.role, layout.size.y, sampled_length)
 		if partner >= 0 and is_zero_approx(_asymmetry()):
 			points = layouts[partner].limb_points.duplicate()

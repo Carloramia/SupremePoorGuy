@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" path="res://Scenes/VFX/TerrainArcIndicator3D.tscn" id="7_terrain_arc"]
 [ext_resource type="PackedScene" path="res://Scenes/Player/Controller.tscn" id="8_player_controller"]
 [ext_resource type="PackedScene" uid="uid://dstgtopkigikh" path="res://Scenes/Creatures/Characters/Character_Test_NPC.tscn" id="9_a7u0l"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Characters/Generate_StumpBeast_NPC.tscn" id="9_qhub5"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_flat_ground"]
 size = Vector3(200, 102, 200)
@@ -56,18 +57,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.69153404, 11.563919, -0.62
 camera_rig = NodePath("../DragCamera3D")
 terrain_cursor = NodePath("../TerrainCursor3D")
 
-[node name="CharacterTestNPC2" parent="." unique_id=2023618767 instance=ExtResource("9_a7u0l")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.874315, 1.3800001, 18.593918)
-
-[node name="CharacterTestNPC3" parent="." unique_id=1574288121 instance=ExtResource("9_a7u0l")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24.224499, 1.3799999, 53.333866)
-
-[node name="CharacterTestNPC4" parent="." unique_id=945920879 instance=ExtResource("9_a7u0l")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.546778, 1.3800037, 71.63225)
-
-[node name="CharacterTestNPC5" parent="." unique_id=1923603504 instance=ExtResource("9_a7u0l")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24.846643, 1.3799999, 86.45303)
-
 [node name="CharacterTestNPC6" parent="." unique_id=579971682 instance=ExtResource("9_a7u0l")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44.503834, 1.3800001, 67.55763)
 faction_id = 2
@@ -79,3 +68,6 @@ faction_id = 2
 [node name="CharacterTestNPC8" parent="." unique_id=2079029446 instance=ExtResource("9_a7u0l")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40.187824, 1.3799961, 83.694534)
 faction_id = 2
+
+[node name="GenerateStumpBeastNPC" parent="." unique_id=170830965 instance=ExtResource("9_qhub5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -64.72314, 1.203095, 69.93644)

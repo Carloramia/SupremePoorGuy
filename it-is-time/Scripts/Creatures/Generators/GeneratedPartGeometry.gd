@@ -20,7 +20,7 @@ static func bounds(part: PhysicalBodyPart3D) -> AABB:
 	for point: Vector3 in points: result = result.expand(collider.transform * point)
 	return result
 
-static func fit(part: PhysicalBodyPart3D, target: Vector3, rule: RULE) -> AABB:
+static func fit(part: PhysicalBodyPart3D, target: Vector3, rule: RULE, role: String = "", paper_depth: float = -1.0) -> AABB:
 	if part.get_node_or_null("Sprite3D") == null: return AABB()
 	if part.geometry_mode == part.GeometryMode.CUSTOM_MODEL:
 		var model := part.get_node_or_null(part.custom_model_path) as Node3D
@@ -45,13 +45,35 @@ static func fit(part: PhysicalBodyPart3D, target: Vector3, rule: RULE) -> AABB:
 		part.prepare_generated_geometry()
 		return bounds(part)
 	var ratio := Vector3.ONE
+	# Paper depth is fitted separately so source thickness never constrains XY.
+	var source_paper_depth := part.paper_volume_enabled
+	var final_paper_depth := target.z if paper_depth < 0.0 else paper_depth
+	if source_paper_depth and (not is_finite(final_paper_depth) or final_paper_depth <= 0.0): return AABB()
 	if rule.size_mode != RULE.SizeMode.KEEP_SIZE:
 		ratio = target / original.size
 		if rule.size_mode == RULE.SizeMode.FIT_UNIFORM:
-			ratio = Vector3.ONE * minf(ratio.x, minf(ratio.y, ratio.z))
+			var factor := minf(ratio.x, ratio.y) if source_paper_depth else minf(ratio.x, minf(ratio.y, ratio.z))
+			ratio = Vector3.ONE * factor
 	ratio *= multiplier
+	if source_paper_depth: ratio.z = final_paper_depth / original.size.z
 	var scale_basis := Basis.from_scale(ratio)
 	var shift := -(scale_basis * original.get_center())
+	if rule.align_connectors_to_frame:
+		var joint_in := part.get_node_or_null("JointIn") as Marker3D
+		if joint_in == null: return AABB()
+		if role == "Limb":
+			var joint_out := part.get_node_or_null("JointOut") as Marker3D
+			if joint_out == null: return AABB()
+			var span := joint_in.position - joint_out.position
+			if span.length() < 0.001: return AABB()
+			var rotation := Basis(Quaternion(span.normalized(), Vector3.UP))
+			var factor := target.y / span.length()
+			var depth_factor := final_paper_depth / original.size.z if source_paper_depth else target.z * multiplier / original.size.z
+			scale_basis = Basis.from_scale(Vector3(factor, factor, depth_factor)) * rotation
+			shift = -(scale_basis * (joint_in.position + joint_out.position) * 0.5)
+		elif role in ["Leg", "ForeLeg", "Head"]:
+			var anchor := Vector3(-target.x * 0.5,0,0) if role == "Head" else Vector3(0,target.y * 0.5,0)
+			shift = anchor - scale_basis * joint_in.position
 	var collider := part.get_node("CollisionShape3D") as CollisionShape3D
 	# Bake collider scaling into a unique convex resource; the rigid body stays unit scale.
 	var shape := ConvexPolygonShape3D.new()

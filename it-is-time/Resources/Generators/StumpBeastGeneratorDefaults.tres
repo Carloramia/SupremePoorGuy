@@ -1,157 +1,200 @@
-[gd_resource type="Resource" format=3]
+[gd_resource type="Resource" format=3 uid="uid://dtvamfh1nm6gh"]
 
-[ext_resource type="Script" path="res://Scripts/Creatures/Generators/GeneratedPartSceneRule.gd" id="1_ufphc"]
+[ext_resource type="Script" uid="uid://dmavu4dhvd2ls" path="res://Scripts/Creatures/Generators/GeneratedPartSceneRule.gd" id="1_ufphc"]
 [ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/PaperParts/ToSplit_1/Base/02_body_main.tscn" id="2_iebx3"]
-[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/PaperParts/ToSplit_1/Base/05_head.tscn" id="3_angju"]
-[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/PaperParts/ToSplit_1/LeftLeg/04_foot.tscn" id="4_nv43c"]
-[ext_resource type="Script" path="res://Scripts/Creatures/Generators/CreatureGeneratorDefaults.gd" id="5_ho5gd"]
-[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/PaperParts/ToSplit_1/RightLeg/04_foot.tscn" id="5_iebx3"]
-[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/PaperParts/ToSplit_1/LeftLeg/03_lower_leg.tscn" id="6_5cae6"]
-[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/PaperParts/ToSplit_1/LeftLeg/02_middle_leg.tscn" id="7_ixqqh"]
-[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/PaperParts/ToSplit_1/LeftLeg/01_upper_leg.tscn" id="8_4ia2q"]
-[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/PaperParts/ToSplit_1/RightLeg/03_lower_leg.tscn" id="9_ue37u"]
-[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/PaperParts/ToSplit_1/RightLeg/02_middle_leg.tscn" id="10_7twtd"]
-[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/PaperParts/ToSplit_1/RightLeg/01_upper_leg.tscn" id="11_6j54p"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/StumpParts/Base/05_head.tscn" id="3_5cae6"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/StumpParts/LeftLeg/04_foot.tscn" id="4_ixqqh"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/StumpParts/RightLeg/04_foot.tscn" id="5_4ia2q"]
+[ext_resource type="Script" uid="uid://c4l6ywxm51pi" path="res://Scripts/Creatures/Generators/CreatureGeneratorDefaults.gd" id="5_ho5gd"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/StumpParts/LeftLeg/03_lower_leg.tscn" id="6_ue37u"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/StumpParts/LeftLeg/02_middle_leg.tscn" id="7_7twtd"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/StumpParts/LeftLeg/01_upper_leg.tscn" id="8_6j54p"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/StumpParts/RightLeg/03_lower_leg.tscn" id="9_gygo0"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/StumpParts/RightLeg/02_middle_leg.tscn" id="10_i57ie"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/StumpParts/RightLeg/01_upper_leg.tscn" id="11_day4n"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/PaperParts/ToSplit_1/Base/01_body_light_plate.tscn" id="stump_subtorso_scene"]
 
-[sub_resource type="Resource" id="Resource_gygo0"]
-resource_local_to_scene = true
-script = ExtResource("1_ufphc")
-part_scene = ExtResource("2_iebx3")
-
-[sub_resource type="Resource" id="Resource_i57ie"]
+[sub_resource type="Resource" id="Resource_ixqqh"]
 resource_local_to_scene = true
 script = ExtResource("1_ufphc")
 part_type = "Head"
-part_scene = ExtResource("3_angju")
+part_scene = ExtResource("2_iebx3")
+size_mode = 2
+use_joint_markers = true
+align_connectors_to_frame = true
 
-[sub_resource type="Resource" id="Resource_day4n"]
+[sub_resource type="Resource" id="Resource_4ia2q"]
+resource_local_to_scene = true
+script = ExtResource("1_ufphc")
+part_type = "Head"
+part_scene = ExtResource("3_5cae6")
+use_joint_markers = true
+align_connectors_to_frame = true
+
+[sub_resource type="Resource" id="Resource_ue37u"]
 resource_local_to_scene = true
 script = ExtResource("1_ufphc")
 part_type = "Leg"
-part_scene = ExtResource("4_nv43c")
+part_scene = ExtResource("4_ixqqh")
+use_joint_markers = true
+align_connectors_to_frame = true
 
-[sub_resource type="Resource" id="Resource_g3b5s"]
+[sub_resource type="Resource" id="Resource_7twtd"]
 resource_local_to_scene = true
 script = ExtResource("1_ufphc")
+part_name = "Leg_1_Limb_1"
 part_type = "ForeLeg"
-part_scene = ExtResource("5_iebx3")
+part_scene = ExtResource("5_4ia2q")
+use_joint_markers = true
+align_connectors_to_frame = true
 
-[sub_resource type="Resource" id="Resource_rncxf"]
+[sub_resource type="Resource" id="Resource_6j54p"]
 resource_local_to_scene = true
 script = ExtResource("1_ufphc")
 part_name = "Leg_1_Limb_1"
 part_type = "LegLimb"
-part_scene = ExtResource("6_5cae6")
+part_scene = ExtResource("6_ue37u")
+use_joint_markers = true
+align_connectors_to_frame = true
 
-[sub_resource type="Resource" id="Resource_sltor"]
+[sub_resource type="Resource" id="Resource_gygo0"]
 resource_local_to_scene = true
 script = ExtResource("1_ufphc")
 part_name = "Leg_1_Limb_2"
 part_type = "LegLimb"
-part_scene = ExtResource("7_ixqqh")
+part_scene = ExtResource("7_7twtd")
+use_joint_markers = true
+align_connectors_to_frame = true
 
-[sub_resource type="Resource" id="Resource_i31iq"]
+[sub_resource type="Resource" id="Resource_i57ie"]
 resource_local_to_scene = true
 script = ExtResource("1_ufphc")
 part_name = "Leg_1_Limb_3"
 part_type = "LegLimb"
-part_scene = ExtResource("8_4ia2q")
+part_scene = ExtResource("8_6j54p")
+use_joint_markers = true
+align_connectors_to_frame = true
 
-[sub_resource type="Resource" id="Resource_nlxg8"]
+[sub_resource type="Resource" id="Resource_day4n"]
 resource_local_to_scene = true
 script = ExtResource("1_ufphc")
 part_name = "ForeLeg_1_Limb_1"
 part_type = "LegLimb"
-part_scene = ExtResource("6_5cae6")
+part_scene = ExtResource("6_ue37u")
+use_joint_markers = true
+align_connectors_to_frame = true
 
-[sub_resource type="Resource" id="Resource_m1sn5"]
+[sub_resource type="Resource" id="Resource_g3b5s"]
 resource_local_to_scene = true
 script = ExtResource("1_ufphc")
 part_name = "ForeLeg_1_Limb_2"
 part_type = "LegLimb"
-part_scene = ExtResource("8_4ia2q")
+part_scene = ExtResource("8_6j54p")
+use_joint_markers = true
+align_connectors_to_frame = true
 
-[sub_resource type="Resource" id="Resource_vtubs"]
+[sub_resource type="Resource" id="Resource_rncxf"]
 resource_local_to_scene = true
 script = ExtResource("1_ufphc")
 part_name = "Leg_2_Limb_1"
 part_type = "LegLimb"
-part_scene = ExtResource("9_ue37u")
+part_scene = ExtResource("9_gygo0")
+use_joint_markers = true
+align_connectors_to_frame = true
 
-[sub_resource type="Resource" id="Resource_ybuh3"]
+[sub_resource type="Resource" id="Resource_sltor"]
 resource_local_to_scene = true
 script = ExtResource("1_ufphc")
 part_name = "Leg_2_Limb_2"
 part_type = "LegLimb"
-part_scene = ExtResource("10_7twtd")
+part_scene = ExtResource("10_i57ie")
+use_joint_markers = true
+align_connectors_to_frame = true
 
-[sub_resource type="Resource" id="Resource_li24d"]
+[sub_resource type="Resource" id="Resource_i31iq"]
 resource_local_to_scene = true
 script = ExtResource("1_ufphc")
 part_name = "Leg_2_Limb_3"
 part_type = "LegLimb"
-part_scene = ExtResource("11_6j54p")
+part_scene = ExtResource("11_day4n")
+use_joint_markers = true
+align_connectors_to_frame = true
 
-[sub_resource type="Resource" id="Resource_d7328"]
+[sub_resource type="Resource" id="Resource_nlxg8"]
 resource_local_to_scene = true
 script = ExtResource("1_ufphc")
 part_name = "ForeLeg_2_Limb_1"
 part_type = "LegLimb"
-part_scene = ExtResource("9_ue37u")
+part_scene = ExtResource("9_gygo0")
+use_joint_markers = true
+align_connectors_to_frame = true
 
-[sub_resource type="Resource" id="Resource_qgge5"]
+[sub_resource type="Resource" id="Resource_m1sn5"]
 resource_local_to_scene = true
 script = ExtResource("1_ufphc")
 part_name = "ForeLeg_2_Limb_2"
 part_type = "LegLimb"
-part_scene = ExtResource("11_6j54p")
+part_scene = ExtResource("11_day4n")
+use_joint_markers = true
+align_connectors_to_frame = true
 
-[sub_resource type="Resource" id="Resource_fiy4m"]
+[sub_resource type="Resource" id="Resource_vtubs"]
 resource_local_to_scene = true
 script = ExtResource("1_ufphc")
 part_name = "Leg_2"
 part_type = "Leg"
-part_scene = ExtResource("5_iebx3")
+part_scene = ExtResource("5_4ia2q")
+use_joint_markers = true
+align_connectors_to_frame = true
 
-[sub_resource type="Curve" id="Curve_yqfhp"]
-_data = [Vector2(0, 0.5), 0.0, 0.0, 0, 0, Vector2(1, 0.5), 0.0, 0.0, 0, 0]
+[sub_resource type="Resource" id="Resource_ybuh3"]
+resource_local_to_scene = true
+script = ExtResource("1_ufphc")
+part_type = "SubTorso"
+part_scene = ExtResource("stump_subtorso_scene")
+size_mode = 2
+
+[sub_resource type="Curve" id="Curve_fiy4m"]
+_data = [Vector2(0, 0.35), 0.0, 0.0, 0, 0, Vector2(1, 0.35), 0.0, 0.0, 0, 0]
 point_count = 2
 
-[sub_resource type="Curve" id="Curve_acfhh"]
-_limits = [-1.0, 1.0, 0.0, 1.0]
-_data = [Vector2(0, -0.5), 0.0, 0.0, 0, 0, Vector2(1, -0.5), 0.0, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="Curve" id="Curve_hr6ov"]
+[sub_resource type="Curve" id="Curve_qgge5"]
 _limits = [-3.0, 3.0, 0.0, 1.0]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 2
 
-[sub_resource type="Curve" id="Curve_n6eam"]
-_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+[sub_resource type="Curve" id="Curve_d7328"]
+_limits = [-1.0, 1.0, 0.0, 1.0]
+_data = [Vector2(0, -0.5), 0.0, 0.0, 0, 0, Vector2(1, -0.5), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_li24d"]
+_limits = [-3.0, 3.0, 0.0, 1.0]
+_data = [Vector2(0, 0.5), 0.0, 0.0, 0, 0, Vector2(1, 0.5), 0.0, 0.0, 0, 0]
 point_count = 2
 
 [resource]
 script = ExtResource("5_ho5gd")
 parameters = {
 "base_foot_size": Vector3(0.6, 0.3, 0.2),
-"base_limb_length": 1.5,
-"body_length": 2.0,
+"base_limb_length": 1.0,
+"body_length": 4.0,
 "foreleg_count": 2,
-"head_maximum_size": Vector3(0.7, 0.7, 0.7),
-"head_minimum_size": Vector3(0.3, 0.3, 0.3),
+"head_attachment_height_ratio": 0.27500000121524026,
+"head_maximum_size": Vector3(0.6, 0.55, 0.08),
+"head_minimum_size": Vector3(0.6, 0.55, 0.08),
 "inhomogeneity": 0.0,
 "label_color": Color(1, 1, 1, 1),
 "label_font_size": 32,
 "limb_endpoint_merge_distance": 0.2,
-"limb_maximum_size": Vector3(0.3, 0.3, 0.15),
-"limb_minimum_size": Vector3(0.3, 0.3, 0.15),
+"limb_maximum_size": Vector3(0.25, 0.3, 0.15),
+"limb_minimum_size": Vector3(0.25, 0.3, 0.15),
 "limb_y_matches_segment": true,
 "max_neck_overlap_diameter": 0.5,
-"maximum_bend_offset": 0.5,
+"maximum_bend_offset": 0.18,
 "maximum_foot_size": Vector3(0.6, 0.3, 0.2),
 "maximum_segment_height": 0.8,
-"minimum_bend_offset": 0.5,
+"minimum_bend_offset": 0.18,
 "minimum_feet_distance": 0.05,
 "minimum_foot_size": Vector3(0.6, 0.3, 0.2),
 "minimum_segment_height": 0.4,
@@ -165,21 +208,21 @@ parameters = {
 "network_core_extra_connections": 3,
 "network_extra_endpoint_count": 4,
 "network_extra_endpoint_padding": 0.5,
-"overall_scale": 1.0,
-"part_scene_rules": Array[ExtResource("1_ufphc")]([SubResource("Resource_gygo0"), SubResource("Resource_i57ie"), SubResource("Resource_day4n"), SubResource("Resource_g3b5s"), SubResource("Resource_rncxf"), SubResource("Resource_sltor"), SubResource("Resource_i31iq"), SubResource("Resource_nlxg8"), SubResource("Resource_m1sn5"), SubResource("Resource_vtubs"), SubResource("Resource_ybuh3"), SubResource("Resource_li24d"), SubResource("Resource_d7328"), SubResource("Resource_qgge5"), SubResource("Resource_fiy4m")]),
+"overall_scale": 8.0,
+"part_scene_rules": Array[ExtResource("1_ufphc")]([SubResource("Resource_ixqqh"), SubResource("Resource_4ia2q"), SubResource("Resource_ue37u"), SubResource("Resource_7twtd"), SubResource("Resource_6j54p"), SubResource("Resource_gygo0"), SubResource("Resource_i57ie"), SubResource("Resource_day4n"), SubResource("Resource_g3b5s"), SubResource("Resource_rncxf"), SubResource("Resource_sltor"), SubResource("Resource_i31iq"), SubResource("Resource_nlxg8"), SubResource("Resource_m1sn5"), SubResource("Resource_vtubs"), SubResource("Resource_ybuh3")]),
 "part_width": 0.08,
 "rear_leg_count": 2,
-"sub_torso_height_curve": SubResource("Curve_n6eam"),
+"sub_torso_height_curve": SubResource("Curve_fiy4m"),
 "sub_torso_size": Vector3(0.5, 0.4, 0.3),
 "sub_torso_x_offset": 0.0,
 "torso_connection_distance": 0.3,
 "torso_count": 1,
-"torso_height_offset_curve": SubResource("Curve_hr6ov"),
-"torso_lower_curve": SubResource("Curve_acfhh"),
+"torso_height_offset_curve": SubResource("Curve_qgge5"),
+"torso_lower_curve": SubResource("Curve_d7328"),
 "torso_maximum_height": 1.58,
 "torso_minimum_height": 1.58,
 "torso_overlap_percent": 20.0,
-"torso_upper_curve": SubResource("Curve_yqfhp"),
+"torso_upper_curve": SubResource("Curve_li24d"),
 "unsymmetrie": 0.0,
 "wireframe_color": Color(0.2, 0.9, 1, 1)
 }

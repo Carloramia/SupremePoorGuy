@@ -101,6 +101,10 @@ var _contact_states: Dictionary = {}
 ## Feet face the measured torso +X heading, independently of movement input.
 ## Correct yaw with torque, then lock it; turning/recovery/broken chains release the lock.
 @export var foot_heading_lock_enabled: bool = true
+## Keep each foot in its limb's bending plane while preserving the Z hinge.
+@export var foot_joint_yaw_lock_enabled: bool = false
+## Use supporting rear feet to brake yaw during a stomp; never rotate airborne bodies directly.
+@export var action_heading_hold_enabled: bool = false
 @export_range(0.05, 5.0, 0.05) var foot_heading_lock_tolerance_degrees: float = 0.5
 @export_range(0.1, 10.0, 0.1) var foot_heading_unlock_tolerance_degrees: float = 2.0
 @export_range(0.0, 500.0, 0.1) var foot_heading_strength: float = 60.0
@@ -537,7 +541,8 @@ func _capture_chains() -> void:
 			var limb_hinge := body_a != null and body_b != null and _has_body_tag(body_a, LEG_LIMB_TAG) and _has_body_tag(body_b, LEG_LIMB_TAG)
 			for axis: String in ["x", "y", "z"]:
 				var root_yaw_lock := body_a != null and body_b != null and ((_has_body_tag(body_a, LEG_LIMB_TAG) and _has_body_tag(body_b, SUB_TORSO_TAG)) or (_has_body_tag(body_b, LEG_LIMB_TAG) and _has_body_tag(body_a, SUB_TORSO_TAG)))
-				var locked := (limb_hinge and axis != "z") or (root_yaw_lock and axis == "y")
+				var foot_link := (_has_body_tag(body_a, LEG_TAG) or _has_body_tag(body_a, FORELEG_TAG)) and _has_body_tag(body_b, LEG_LIMB_TAG) or (_has_body_tag(body_b, LEG_TAG) or _has_body_tag(body_b, FORELEG_TAG)) and _has_body_tag(body_a, LEG_LIMB_TAG)
+				var locked := (limb_hinge and axis != "z") or (root_yaw_lock and axis == "y") or (foot_joint_yaw_lock_enabled and foot_link and axis == "y")
 				var axis_angle := 0.0 if locked else angle
 				joint.call("set_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_LIMIT, true)
 				joint.call("set_param_" + axis, Generic6DOFJoint3D.PARAM_ANGULAR_LOWER_LIMIT, -axis_angle)
@@ -1987,6 +1992,8 @@ func _update_layout_turn_steps(delta: float) -> void:
 	if not _action_feet.is_empty():
 		_turn_leg_forces.clear()
 		_layout_turn_status = &"creature_action"
+		if action_heading_hold_enabled and not recovery_control_active:
+			_apply_grounded_turn_traction()
 		return
 	if _planar_mode_active():
 		_turn_leg_forces.clear()
@@ -2117,7 +2124,7 @@ func _apply_grounded_turn_traction() -> void:
 	var levers: Array[Vector3] = []
 	var radius_sum := 0.0
 	for foot: RigidBody3D in _legs:
-		if not _chain_is_intact(foot) or is_leg_stepping(foot) or not is_leg_grounded(foot): continue
+		if not _chain_is_intact(foot) or _action_feet.has(foot) or is_leg_stepping(foot) or not is_leg_grounded(foot): continue
 		var chain: Dictionary = _chains[foot]
 		var lever: Vector3 = (chain.root.to_global(chain.anchor) - center).slide(Vector3.UP)
 		feet.append(foot)

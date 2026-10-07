@@ -1,0 +1,20 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Characters/_SampleCharacter.tscn" id="1_base"]
+[ext_resource type="Script" path="res://Scripts/Creatures/GeneratedCreatureCharacter3D.gd" id="2_character"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/GeneratedLegStepMovementController3D.tscn" id="3_movement"]
+[ext_resource type="Resource" path="res://Resources/Movement/GeneratedMultiLegWalk.tres" id="4_gait"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/CreatureRecoveryStateMachine3D.tscn" id="5_recovery"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/CreatureActionController3D.tscn" id="6_action"]
+
+[node name="BaseGeneratedCreature" instance=ExtResource("1_base")]
+script = ExtResource("2_character")
+generate_on_ready = false
+
+[node name="GeneratedLegStepMovementController3D" parent="." instance=ExtResource("3_movement")]
+slow_gait_data = ExtResource("4_gait")
+fast_gait_data = ExtResource("4_gait")
+
+[node name="CreatureRecoveryStateMachine3D" parent="." instance=ExtResource("5_recovery")]
+
+[node name="CreatureActionController3D" parent="." instance=ExtResource("6_action")]

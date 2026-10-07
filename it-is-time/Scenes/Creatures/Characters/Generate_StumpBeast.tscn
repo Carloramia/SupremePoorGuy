@@ -1,25 +1,2635 @@
-[gd_scene format=3]
+[gd_scene format=4 uid="uid://cpatiiobx1h5f"]
 
-[ext_resource type="PackedScene" path="res://Scenes/Creatures/Characters/_SampleCharacter.tscn" id="1"]
-[ext_resource type="Script" path="res://Scripts/Creatures/GeneratedCreatureCharacter3D.gd" id="2"]
-[ext_resource type="Script" path="res://Scripts/Creatures/Generators/StumpBeastGenerator.gd" id="3"]
-[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/GeneratedLegStepMovementController3D.tscn" id="4"]
-[ext_resource type="Resource" path="res://Resources/Movement/GeneratedMultiLegWalk.tres" id="5"]
-[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/CreatureRecoveryStateMachine3D.tscn" id="6"]
-[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/CreatureActionController3D.tscn" id="7"]
+[ext_resource type="Script" uid="uid://d1iiu2bjovgv6" path="res://Scripts/Creatures/Generators/StumpBeastGenerator.gd" id="3"]
+[ext_resource type="Script" uid="uid://x2newpafrhet" path="res://Scripts/Creatures/Generators/CreatureManualLayout.gd" id="4_rjox4"]
+[ext_resource type="Script" uid="uid://dmavu4dhvd2ls" path="res://Scripts/Creatures/Generators/GeneratedPartSceneRule.gd" id="5_lvngv"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/StumpParts/Base/05_head.tscn" id="6_b0xo3"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/PaperParts/ToSplit_1/Base/02_body_main.tscn" id="6_fvt16"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/StumpParts/LeftLeg/04_foot.tscn" id="7_hq3o8"]
 [ext_resource type="Resource" path="res://Resources/Creatures/BeastDensity.tres" id="8"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/StumpParts/RightLeg/04_foot.tscn" id="8_rjox4"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/StumpParts/LeftLeg/03_lower_leg.tscn" id="9_71h1l"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/StumpParts/LeftLeg/02_middle_leg.tscn" id="10_ih8rh"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/StumpParts/LeftLeg/01_upper_leg.tscn" id="11_owq8c"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/StumpParts/RightLeg/03_lower_leg.tscn" id="12_kbv7i"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/StumpParts/RightLeg/02_middle_leg.tscn" id="13_daekf"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/StumpParts/RightLeg/01_upper_leg.tscn" id="14_eaae3"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/CharacterDamageController3D.tscn" id="38_uymru"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Characters/_BaseGeneratedCreature.tscn" id="generated_base"]
+[ext_resource type="Script" uid="uid://dvs35n8nwhq2x" path="res://Scripts/Creatures/CreatureActionData.gd" id="stump_action_data"]
+[ext_resource type="Resource" path="res://Resources/Actions/StumpBeastForeLegStomp.tres" id="stump_stomp"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/PaperParts/ToSplit_1/Base/01_body_light_plate.tscn" id="stump_subtorso_scene"]
 
-[node name="GenerateStumpBeast" instance=ExtResource("1")]
-script = ExtResource("2")
+[sub_resource type="Resource" id="Resource_1smb6"]
+resource_local_to_scene = true
+script = ExtResource("4_rjox4")
+blueprint = {
+"connections": Array[Dictionary]([{
+"a": 4,
+"anchor": Vector3(-0.41355133, 1.4214199, 0.04),
+"b": 0,
+"basis": Basis(1, 0, 0, 0, 1, 0, 0, 0, 1),
+"kind": "Torso"
+}, {
+"a": 4,
+"anchor": Vector3(-0.41355133, 1.3592708, -0.04),
+"b": 1,
+"basis": Basis(1, 0, 0, 0, 1, 0, 0, 0, 1),
+"kind": "Torso"
+}, {
+"a": 4,
+"anchor": Vector3(0.5142746, 1.4252651, 0.04),
+"b": 2,
+"basis": Basis(1, 0, 0, 0, 1, 0, 0, 0, 1),
+"kind": "Torso"
+}, {
+"a": 4,
+"anchor": Vector3(0.51399994, 1.4326046, -0.04),
+"b": 3,
+"basis": Basis(1, 0, 0, 0, 1, 0, 0, 0, 1),
+"kind": "Torso"
+}, {
+"a": 5,
+"anchor": Vector3(-0.4813708, 0.269203, 0.08),
+"b": 6,
+"basis": Basis(0.9808642, -0.19469313, 0, 0.19469313, 0.9808642, 0, 0, 0, 1),
+"kind": "Limb"
+}, {
+"a": 6,
+"anchor": Vector3(-0.76711893, 0.5619179, 0.08),
+"b": 7,
+"basis": Basis(0.9808642, 0.19469316, 0, -0.19469316, 0.9808642, 0, 0, 0, 1),
+"kind": "Limb"
+}, {
+"a": 7,
+"anchor": Vector3(-0.47806102, 0.85099006, 0.08),
+"b": 8,
+"basis": Basis(0.9951112, -0.098760575, 0, 0.098760575, 0.9951112, 0, 0, 0, 1),
+"kind": "Limb"
+}, {
+"a": 0,
+"anchor": Vector3(-0.54839885, 1.1936641, 0.08),
+"b": 8,
+"basis": Basis(1, 0, 0, 0, 1, 0, 0, 0, 1),
+"kind": "Limb"
+}, {
+"a": 9,
+"anchor": Vector3(-0.48828065, 0.23770648, -0.08),
+"b": 10,
+"basis": Basis(0.9808642, -0.19469313, 0, 0.19469313, 0.9808642, 0, 0, 0, 1),
+"kind": "Limb"
+}, {
+"a": 10,
+"anchor": Vector3(-0.7307732, 0.5612935, -0.08),
+"b": 11,
+"basis": Basis(0.9808642, 0.19469316, 0, -0.19469316, 0.9808642, 0, 0, 0, 1),
+"kind": "Limb"
+}, {
+"a": 11,
+"anchor": Vector3(-0.35249197, 0.79188466, -0.08),
+"b": 12,
+"basis": Basis(0.9951112, -0.098760575, 0, 0.098760575, 0.9951112, 0, 0, 0, 1),
+"kind": "Limb"
+}, {
+"a": 1,
+"anchor": Vector3(-0.55616415, 1.07533, -0.08),
+"b": 12,
+"basis": Basis(1, 0, 0, 0, 1, 0, 0, 0, 1),
+"kind": "Limb"
+}, {
+"a": 13,
+"anchor": Vector3(0.51432717, 0.2295813, 0.08),
+"b": 14,
+"basis": Basis(0.9806657, -0.19569065, 0, 0.19569065, 0.9806657, 0, 0, 0, 1),
+"kind": "Limb"
+}, {
+"a": 14,
+"anchor": Vector3(0.12038254, 0.7645606, 0.08),
+"b": 15,
+"basis": Basis(0.9950594, 0.09928144, 0, -0.09928144, 0.9950594, 0, 0, 0, 1),
+"kind": "Limb"
+}, {
+"a": 2,
+"anchor": Vector3(0.40195435, 1.2023565, 0.08),
+"b": 15,
+"basis": Basis(1, 0, 0, 0, 1, 0, 0, 0, 1),
+"kind": "Limb"
+}, {
+"a": 16,
+"anchor": Vector3(0.52860796, 0.23035197, -0.08),
+"b": 17,
+"basis": Basis(0.9806657, -0.19569065, 0, 0.19569065, 0.9806657, 0, 0, 0, 1),
+"kind": "Limb"
+}, {
+"a": 17,
+"anchor": Vector3(0.30668533, 0.7702137, -0.08),
+"b": 18,
+"basis": Basis(0.9950594, 0.09928144, 0, -0.09928144, 0.9950594, 0, 0, 0, 1),
+"kind": "Limb"
+}, {
+"a": 3,
+"anchor": Vector3(0.37330312, 1.2615695, -0.08),
+"b": 18,
+"basis": Basis(1, 0, 0, 0, 1, 0, 0, 0, 1),
+"kind": "Limb"
+}, {
+"a": 4,
+"anchor": Vector3(1.0333939, 1.4726229, 0),
+"b": 19,
+"basis": Basis(1, 0, 0, 0, 1, 0, 0, 0, 1),
+"kind": "Neck"
+}]),
+"parts": Array[Dictionary]([{
+"name": "SubTorso",
+"part_key": "SubTorso_Leg_1",
+"role": "Torso",
+"segment_id": 0,
+"size": Vector3(0.5, 0.4, 0.08),
+"sub_torso": true,
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 1.2999446, 0.08)
+}, {
+"name": "SubTorso_2",
+"part_key": "SubTorso_Leg_2",
+"role": "Torso",
+"segment_id": 0,
+"size": Vector3(0.5, 0.4, 0.08),
+"sub_torso": true,
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 1.1756465, -0.08)
+}, {
+"name": "SubTorso_3",
+"part_key": "SubTorso_ForeLeg_1",
+"role": "Torso",
+"segment_id": 0,
+"size": Vector3(0.5, 0.4, 0.08),
+"sub_torso": true,
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.35565186, 1.3076351, 0.08)
+}, {
+"name": "SubTorso_4",
+"part_key": "SubTorso_ForeLeg_2",
+"role": "Torso",
+"segment_id": 0,
+"size": Vector3(0.5, 0.4, 0.08),
+"sub_torso": true,
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.35510254, 1.322314, -0.08)
+}, {
+"name": "Torso",
+"part_key": "Torso",
+"role": "Torso",
+"segment_id": 0,
+"size": Vector3(2, 1.58, 0.08),
+"sub_torso": false,
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.17289734, 1.7198951, 0)
+}, {
+"name": "Leg_1",
+"part_key": "Leg_1",
+"role": "Leg",
+"size": Vector3(0.6, 0.3, 0.08),
+"sub_torso": false,
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0.15, 0.08)
+}, {
+"connector_span": 0.4971806,
+"name": "Leg_1_Limb_1",
+"part_key": "Leg_1_Limb_1",
+"role": "Limb",
+"size": Vector3(0.25, 0.49718064, 0.08),
+"sub_torso": false,
+"transform": Transform3D(0.76809394, -0.6403373, 0, 0.6403373, 0.76809394, 0, 0, 0, 1, -0.6219233, 0.42934668, 0.08)
+}, {
+"connector_span": 0.49718055,
+"name": "Leg_1_Limb_2",
+"part_key": "Leg_1_Limb_2",
+"role": "Limb",
+"size": Vector3(0.25, 0.49718055, 0.08),
+"sub_torso": false,
+"transform": Transform3D(0.80195105, 0.59738976, 0, -0.59738976, 0.80195105, 0, 0, 0, 1, -0.6046275, 0.7029058, 0.08)
+}, {
+"connector_span": 0.49006253,
+"name": "Leg_1_Limb_3",
+"part_key": "Leg_1_Limb_3",
+"role": "Limb",
+"size": Vector3(0.25, 0.49006253, 0.08),
+"sub_torso": false,
+"transform": Transform3D(0.9951112, -0.098760575, 0, 0.098760575, 0.9951112, 0, 0, 0, 1, -0.5241994, 1.0435503, 0.08)
+}, {
+"name": "Leg_2",
+"part_key": "Leg_2",
+"role": "Leg",
+"size": Vector3(0.6, 0.3, 0.08),
+"sub_torso": false,
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0.15, -0.08)
+}, {
+"connector_span": 0.4971806,
+"name": "Leg_2_Limb_1",
+"part_key": "Leg_2_Limb_1",
+"role": "Limb",
+"size": Vector3(0.25, 0.49718064, 0.08),
+"sub_torso": false,
+"transform": Transform3D(0.87175494, -0.48994213, 0, 0.48994213, 0.87175494, 0, 0, 0, 1, -0.5983561, 0.39212286, -0.08)
+}, {
+"connector_span": 0.49718055,
+"name": "Leg_2_Limb_2",
+"part_key": "Leg_2_Limb_2",
+"role": "Limb",
+"size": Vector3(0.25, 0.49718055, 0.08),
+"sub_torso": false,
+"transform": Transform3D(0.6617502, 0.7497244, 0, -0.7497244, 0.6617502, 0, 0, 0, 1, -0.55502117, 0.678259, -0.08)
+}, {
+"connector_span": 0.49006253,
+"name": "Leg_2_Limb_3",
+"part_key": "Leg_2_Limb_3",
+"role": "Limb",
+"size": Vector3(0.25, 0.49006253, 0.08),
+"sub_torso": false,
+"transform": Transform3D(0.8856176, -0.46441513, 0, 0.46441513, 0.8856176, 0, 0, 0, 1, -0.45013326, 0.9580095, -0.08)
+}, {
+"name": "ForeLeg_1",
+"part_key": "ForeLeg_1",
+"role": "ForeLeg",
+"size": Vector3(0.6, 0.3, 0.08),
+"sub_torso": false,
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.15, 0.08)
+}, {
+"connector_span": 0.7459219,
+"name": "ForeLeg_1_Limb_1",
+"part_key": "ForeLeg_1_Limb_1",
+"role": "Limb",
+"size": Vector3(0.25, 0.7459219, 0.08),
+"sub_torso": false,
+"transform": Transform3D(0.8766973, -0.48104236, 0, 0.48104236, 0.8766973, 0, 0, 0, 1, 0.34924433, 0.48613656, 0.08)
+}, {
+"connector_span": 0.73513204,
+"name": "ForeLeg_1_Limb_2",
+"part_key": "ForeLeg_1_Limb_2",
+"role": "Limb",
+"size": Vector3(0.25, 0.73513204, 0.08),
+"sub_torso": false,
+"transform": Transform3D(0.7904255, 0.6125582, 0, -0.6125582, 0.7904255, 0, 0, 0, 1, 0.2960865, 1.0065444, 0.08)
+}, {
+"name": "ForeLeg_2",
+"part_key": "ForeLeg_2",
+"role": "ForeLeg",
+"size": Vector3(0.6, 0.3, 0.08),
+"sub_torso": false,
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.15, -0.08)
+}, {
+"connector_span": 0.7459219,
+"name": "ForeLeg_2_Limb_1",
+"part_key": "ForeLeg_2_Limb_1",
+"role": "Limb",
+"size": Vector3(0.25, 0.7459219, 0.08),
+"sub_torso": false,
+"transform": Transform3D(0.9370852, -0.3491007, 0, 0.3491007, 0.9370852, 0, 0, 0, 1, 0.42701504, 0.5102, -0.08)
+}, {
+"connector_span": 0.73513204,
+"name": "ForeLeg_2_Limb_2",
+"part_key": "ForeLeg_2_Limb_2",
+"role": "Limb",
+"size": Vector3(0.25, 0.73513204, 0.08),
+"sub_torso": false,
+"transform": Transform3D(0.97954357, 0.20123205, 0, -0.20123205, 0.97954357, 0, 0, 0, 1, 0.39052254, 1.0407779, -0.08)
+}, {
+"name": "Head_1",
+"part_key": "Head_1",
+"role": "Head",
+"size": Vector3(0.6, 0.55, 0.08),
+"sub_torso": false,
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1938903, 1.5808506, 0)
+}])
+}
+
+[sub_resource type="Resource" id="Resource_nm6lo"]
+resource_local_to_scene = true
+script = ExtResource("5_lvngv")
+part_scene = ExtResource("6_fvt16")
+size_mode = 2
+
+[sub_resource type="Resource" id="Resource_atodx"]
+resource_local_to_scene = true
+script = ExtResource("5_lvngv")
+part_type = "Head"
+part_scene = ExtResource("6_b0xo3")
+use_joint_markers = true
+align_connectors_to_frame = true
+
+[sub_resource type="Resource" id="Resource_ggy3m"]
+resource_local_to_scene = true
+script = ExtResource("5_lvngv")
+part_type = "Leg"
+part_scene = ExtResource("7_hq3o8")
+use_joint_markers = true
+align_connectors_to_frame = true
+
+[sub_resource type="Resource" id="Resource_n4iuv"]
+resource_local_to_scene = true
+script = ExtResource("5_lvngv")
+part_type = "ForeLeg"
+part_scene = ExtResource("8_rjox4")
+use_joint_markers = true
+align_connectors_to_frame = true
+
+[sub_resource type="Resource" id="Resource_g41sy"]
+resource_local_to_scene = true
+script = ExtResource("5_lvngv")
+part_name = "Leg_1_Limb_1"
+part_type = "LegLimb"
+part_scene = ExtResource("9_71h1l")
+use_joint_markers = true
+align_connectors_to_frame = true
+
+[sub_resource type="Resource" id="Resource_7s6w7"]
+resource_local_to_scene = true
+script = ExtResource("5_lvngv")
+part_name = "Leg_1_Limb_2"
+part_type = "LegLimb"
+part_scene = ExtResource("10_ih8rh")
+use_joint_markers = true
+align_connectors_to_frame = true
+
+[sub_resource type="Resource" id="Resource_8phtg"]
+resource_local_to_scene = true
+script = ExtResource("5_lvngv")
+part_name = "Leg_1_Limb_3"
+part_type = "LegLimb"
+part_scene = ExtResource("11_owq8c")
+use_joint_markers = true
+align_connectors_to_frame = true
+
+[sub_resource type="Resource" id="Resource_1j13x"]
+resource_local_to_scene = true
+script = ExtResource("5_lvngv")
+part_name = "ForeLeg_1_Limb_1"
+part_type = "LegLimb"
+part_scene = ExtResource("9_71h1l")
+use_joint_markers = true
+align_connectors_to_frame = true
+
+[sub_resource type="Resource" id="Resource_838l0"]
+resource_local_to_scene = true
+script = ExtResource("5_lvngv")
+part_name = "ForeLeg_1_Limb_2"
+part_type = "LegLimb"
+part_scene = ExtResource("11_owq8c")
+use_joint_markers = true
+align_connectors_to_frame = true
+
+[sub_resource type="Resource" id="Resource_5r42s"]
+resource_local_to_scene = true
+script = ExtResource("5_lvngv")
+part_name = "Leg_2_Limb_1"
+part_type = "LegLimb"
+part_scene = ExtResource("12_kbv7i")
+use_joint_markers = true
+align_connectors_to_frame = true
+
+[sub_resource type="Resource" id="Resource_fq532"]
+resource_local_to_scene = true
+script = ExtResource("5_lvngv")
+part_name = "Leg_2_Limb_2"
+part_type = "LegLimb"
+part_scene = ExtResource("13_daekf")
+use_joint_markers = true
+align_connectors_to_frame = true
+
+[sub_resource type="Resource" id="Resource_dr1tm"]
+resource_local_to_scene = true
+script = ExtResource("5_lvngv")
+part_name = "Leg_2_Limb_3"
+part_type = "LegLimb"
+part_scene = ExtResource("14_eaae3")
+use_joint_markers = true
+align_connectors_to_frame = true
+
+[sub_resource type="Resource" id="Resource_m6bfx"]
+resource_local_to_scene = true
+script = ExtResource("5_lvngv")
+part_name = "ForeLeg_2_Limb_1"
+part_type = "LegLimb"
+part_scene = ExtResource("12_kbv7i")
+use_joint_markers = true
+align_connectors_to_frame = true
+
+[sub_resource type="Resource" id="Resource_cn0ju"]
+resource_local_to_scene = true
+script = ExtResource("5_lvngv")
+part_name = "ForeLeg_2_Limb_2"
+part_type = "LegLimb"
+part_scene = ExtResource("14_eaae3")
+use_joint_markers = true
+align_connectors_to_frame = true
+
+[sub_resource type="Resource" id="Resource_u5is3"]
+resource_local_to_scene = true
+script = ExtResource("5_lvngv")
+part_name = "Leg_2"
+part_type = "Leg"
+part_scene = ExtResource("8_rjox4")
+use_joint_markers = true
+align_connectors_to_frame = true
+
+[sub_resource type="Resource" id="Resource_8d1x5"]
+resource_local_to_scene = true
+script = ExtResource("5_lvngv")
+part_type = "SubTorso"
+part_scene = ExtResource("stump_subtorso_scene")
+size_mode = 2
+
+[sub_resource type="Curve" id="Curve_1wvrb"]
+_data = [Vector2(0, 0.5), 0.0, 0.0, 0, 0, Vector2(1, 0.5), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_urlo4"]
+_limits = [-1.0, 1.0, 0.0, 1.0]
+_data = [Vector2(0, -0.5), 0.0, 0.0, 0, 0, Vector2(1, -0.5), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_6po2f"]
+_limits = [-3.0, 3.0, 0.0, 1.0]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_4u0s6"]
+_data = [Vector2(0, 0.35), 0.0, 0.0, 0, 0, Vector2(1, 0.35), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3l0qi"]
+shading_mode = 0
+albedo_color = Color(0.2, 0.9, 1, 1)
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_ne1jt"]
+_surfaces = [{
+"aabb": AABB(-1.5, -1.2, -0.24, 3, 2.4, 0.48),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("AADAv5qZmb+PwnW+AADAP5qZmb+PwnW+AADAP5qZmb+PwnW+AADAP5qZmT+PwnW+AADAP5qZmT+PwnW+AADAv5qZmT+PwnW+AADAv5qZmT+PwnW+AADAv5qZmb+PwnW+AADAv5qZmb+PwnU+AADAP5qZmb+PwnU+AADAP5qZmb+PwnU+AADAP5qZmT+PwnU+AADAP5qZmT+PwnU+AADAv5qZmT+PwnU+AADAv5qZmT+PwnU+AADAv5qZmb+PwnU+AADAv5qZmb+PwnW+AADAv5qZmb+PwnU+AADAP5qZmb+PwnW+AADAP5qZmb+PwnU+AADAP5qZmT+PwnW+AADAP5qZmT+PwnU+AADAv5qZmT+PwnW+AADAv5qZmT+PwnU+")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_lvngv"]
+_surfaces = [{
+"aabb": AABB(-1.5, -1.2, -0.24, 3, 2.4, 0.48),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("AADAv5qZmb+PwnW+AADAP5qZmb+PwnW+AADAP5qZmb+PwnW+AADAP5qZmT+PwnW+AADAP5qZmT+PwnW+AADAv5qZmT+PwnW+AADAv5qZmT+PwnW+AADAv5qZmb+PwnW+AADAv5qZmb+PwnU+AADAP5qZmb+PwnU+AADAP5qZmb+PwnU+AADAP5qZmT+PwnU+AADAP5qZmT+PwnU+AADAv5qZmT+PwnU+AADAv5qZmT+PwnU+AADAv5qZmb+PwnU+AADAv5qZmb+PwnW+AADAv5qZmb+PwnU+AADAP5qZmb+PwnW+AADAP5qZmb+PwnU+AADAP5qZmT+PwnW+AADAP5qZmT+PwnU+AADAv5qZmT+PwnW+AADAv5qZmT+PwnU+")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_fvt16"]
+_surfaces = [{
+"aabb": AABB(-1.5, -1.2, -0.24, 3, 2.4, 0.48),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("AADAv5qZmb+PwnW+AADAP5qZmb+PwnW+AADAP5qZmb+PwnW+AADAP5qZmT+PwnW+AADAP5qZmT+PwnW+AADAv5qZmT+PwnW+AADAv5qZmT+PwnW+AADAv5qZmb+PwnW+AADAv5qZmb+PwnU+AADAP5qZmb+PwnU+AADAP5qZmb+PwnU+AADAP5qZmT+PwnU+AADAP5qZmT+PwnU+AADAv5qZmT+PwnU+AADAv5qZmT+PwnU+AADAv5qZmb+PwnU+AADAv5qZmb+PwnW+AADAv5qZmb+PwnU+AADAP5qZmb+PwnW+AADAP5qZmb+PwnU+AADAP5qZmT+PwnW+AADAP5qZmT+PwnU+AADAv5qZmT+PwnW+AADAv5qZmT+PwnU+")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_jurwk"]
+_surfaces = [{
+"aabb": AABB(-1.5, -1.2, -0.24, 3, 2.4, 0.48),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("AADAv5qZmb+PwnW+AADAP5qZmb+PwnW+AADAP5qZmb+PwnW+AADAP5qZmT+PwnW+AADAP5qZmT+PwnW+AADAv5qZmT+PwnW+AADAv5qZmT+PwnW+AADAv5qZmb+PwnW+AADAv5qZmb+PwnU+AADAP5qZmb+PwnU+AADAP5qZmb+PwnU+AADAP5qZmT+PwnU+AADAP5qZmT+PwnU+AADAv5qZmT+PwnU+AADAv5qZmT+PwnU+AADAv5qZmb+PwnU+AADAv5qZmb+PwnW+AADAv5qZmb+PwnU+AADAP5qZmb+PwnW+AADAP5qZmb+PwnU+AADAP5qZmT+PwnW+AADAP5qZmT+PwnU+AADAv5qZmT+PwnW+AADAv5qZmT+PwnU+")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_hv23a"]
+_surfaces = [{
+"aabb": AABB(-6, -4.7400002, -0.24, 12, 9.4800005, 0.48),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("AADAwBWul8CPwnW+AADAQBWul8CPwnW+AADAQBWul8CPwnW+AADAQBWul0CPwnW+AADAQBWul0CPwnW+AADAwBWul0CPwnW+AADAwBWul0CPwnW+AADAwBWul8CPwnW+AADAwBWul8CPwnU+AADAQBWul8CPwnU+AADAQBWul8CPwnU+AADAQBWul0CPwnU+AADAQBWul0CPwnU+AADAwBWul0CPwnU+AADAwBWul0CPwnU+AADAwBWul8CPwnU+AADAwBWul8CPwnW+AADAwBWul8CPwnU+AADAQBWul8CPwnW+AADAQBWul8CPwnU+AADAQBWul0CPwnW+AADAQBWul0CPwnU+AADAwBWul0CPwnW+AADAwBWul0CPwnU+")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_x5hrk"]
+_surfaces = [{
+"aabb": AABB(-1.8000001, -0.90000004, -0.24, 3.6000001, 1.8000001, 0.48),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("Z2bmv2dmZr+PwnW+Z2bmP2dmZr+PwnW+Z2bmP2dmZr+PwnW+Z2bmP2dmZj+PwnW+Z2bmP2dmZj+PwnW+Z2bmv2dmZj+PwnW+Z2bmv2dmZj+PwnW+Z2bmv2dmZr+PwnW+Z2bmv2dmZr+PwnU+Z2bmP2dmZr+PwnU+Z2bmP2dmZr+PwnU+Z2bmP2dmZj+PwnU+Z2bmP2dmZj+PwnU+Z2bmv2dmZj+PwnU+Z2bmv2dmZj+PwnU+Z2bmv2dmZr+PwnU+Z2bmv2dmZr+PwnW+Z2bmv2dmZr+PwnU+Z2bmP2dmZr+PwnW+Z2bmP2dmZr+PwnU+Z2bmP2dmZj+PwnW+Z2bmP2dmZj+PwnU+Z2bmv2dmZj+PwnW+Z2bmv2dmZj+PwnU+")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_0aykf"]
+_surfaces = [{
+"aabb": AABB(-0.75, -1.4915419, -0.24, 1.5, 2.9830837, 0.48),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("AABAv9jqvr+PwnW+AABAP9jqvr+PwnW+AABAP9jqvr+PwnW+AABAP9jqvj+PwnW+AABAP9jqvj+PwnW+AABAv9jqvj+PwnW+AABAv9jqvj+PwnW+AABAv9jqvr+PwnW+AABAv9jqvr+PwnU+AABAP9jqvr+PwnU+AABAP9jqvr+PwnU+AABAP9jqvj+PwnU+AABAP9jqvj+PwnU+AABAv9jqvj+PwnU+AABAv9jqvj+PwnU+AABAv9jqvr+PwnU+AABAv9jqvr+PwnW+AABAv9jqvr+PwnU+AABAP9jqvr+PwnW+AABAP9jqvr+PwnU+AABAP9jqvj+PwnW+AABAP9jqvj+PwnU+AABAv9jqvj+PwnW+AABAv9jqvj+PwnU+")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_b0xo3"]
+_surfaces = [{
+"aabb": AABB(-0.75, -1.4915416, -0.24, 1.5, 2.9830832, 0.48),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("AABAv9bqvr+PwnW+AABAP9bqvr+PwnW+AABAP9bqvr+PwnW+AABAP9bqvj+PwnW+AABAP9bqvj+PwnW+AABAv9bqvj+PwnW+AABAv9bqvj+PwnW+AABAv9bqvr+PwnW+AABAv9bqvr+PwnU+AABAP9bqvr+PwnU+AABAP9bqvr+PwnU+AABAP9bqvj+PwnU+AABAP9bqvj+PwnU+AABAv9bqvj+PwnU+AABAv9bqvj+PwnU+AABAv9bqvr+PwnU+AABAv9bqvr+PwnW+AABAv9bqvr+PwnU+AABAP9bqvr+PwnW+AABAP9bqvr+PwnU+AABAP9bqvj+PwnW+AABAP9bqvj+PwnU+AABAv9bqvj+PwnW+AABAv9bqvj+PwnU+")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_hq3o8"]
+_surfaces = [{
+"aabb": AABB(-0.75, -1.4701877, -0.24, 1.5, 2.9403753, 0.48),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("AABAvxwvvL+PwnW+AABAPxwvvL+PwnW+AABAPxwvvL+PwnW+AABAPxwvvD+PwnW+AABAPxwvvD+PwnW+AABAvxwvvD+PwnW+AABAvxwvvD+PwnW+AABAvxwvvL+PwnW+AABAvxwvvL+PwnU+AABAPxwvvL+PwnU+AABAPxwvvL+PwnU+AABAPxwvvD+PwnU+AABAPxwvvD+PwnU+AABAvxwvvD+PwnU+AABAvxwvvD+PwnU+AABAvxwvvL+PwnU+AABAvxwvvL+PwnW+AABAvxwvvL+PwnU+AABAPxwvvL+PwnW+AABAPxwvvL+PwnU+AABAPxwvvD+PwnW+AABAPxwvvD+PwnU+AABAvxwvvD+PwnW+AABAvxwvvD+PwnU+")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_rjox4"]
+_surfaces = [{
+"aabb": AABB(-1.8000001, -0.90000004, -0.24, 3.6000001, 1.8000001, 0.48),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("Z2bmv2dmZr+PwnW+Z2bmP2dmZr+PwnW+Z2bmP2dmZr+PwnW+Z2bmP2dmZj+PwnW+Z2bmP2dmZj+PwnW+Z2bmv2dmZj+PwnW+Z2bmv2dmZj+PwnW+Z2bmv2dmZr+PwnW+Z2bmv2dmZr+PwnU+Z2bmP2dmZr+PwnU+Z2bmP2dmZr+PwnU+Z2bmP2dmZj+PwnU+Z2bmP2dmZj+PwnU+Z2bmv2dmZj+PwnU+Z2bmv2dmZj+PwnU+Z2bmv2dmZr+PwnU+Z2bmv2dmZr+PwnW+Z2bmv2dmZr+PwnU+Z2bmP2dmZr+PwnW+Z2bmP2dmZr+PwnU+Z2bmP2dmZj+PwnW+Z2bmP2dmZj+PwnU+Z2bmv2dmZj+PwnW+Z2bmv2dmZj+PwnU+")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_71h1l"]
+_surfaces = [{
+"aabb": AABB(-0.75, -1.4915419, -0.24, 1.5, 2.9830837, 0.48),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("AABAv9jqvr+PwnW+AABAP9jqvr+PwnW+AABAP9jqvr+PwnW+AABAP9jqvj+PwnW+AABAP9jqvj+PwnW+AABAv9jqvj+PwnW+AABAv9jqvj+PwnW+AABAv9jqvr+PwnW+AABAv9jqvr+PwnU+AABAP9jqvr+PwnU+AABAP9jqvr+PwnU+AABAP9jqvj+PwnU+AABAP9jqvj+PwnU+AABAv9jqvj+PwnU+AABAv9jqvj+PwnU+AABAv9jqvr+PwnU+AABAv9jqvr+PwnW+AABAv9jqvr+PwnU+AABAP9jqvr+PwnW+AABAP9jqvr+PwnU+AABAP9jqvj+PwnW+AABAP9jqvj+PwnU+AABAv9jqvj+PwnW+AABAv9jqvj+PwnU+")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_ih8rh"]
+_surfaces = [{
+"aabb": AABB(-0.75, -1.4915416, -0.24, 1.5, 2.9830832, 0.48),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("AABAv9bqvr+PwnW+AABAP9bqvr+PwnW+AABAP9bqvr+PwnW+AABAP9bqvj+PwnW+AABAP9bqvj+PwnW+AABAv9bqvj+PwnW+AABAv9bqvj+PwnW+AABAv9bqvr+PwnW+AABAv9bqvr+PwnU+AABAP9bqvr+PwnU+AABAP9bqvr+PwnU+AABAP9bqvj+PwnU+AABAP9bqvj+PwnU+AABAv9bqvj+PwnU+AABAv9bqvj+PwnU+AABAv9bqvr+PwnU+AABAv9bqvr+PwnW+AABAv9bqvr+PwnU+AABAP9bqvr+PwnW+AABAP9bqvr+PwnU+AABAP9bqvj+PwnW+AABAP9bqvj+PwnU+AABAv9bqvj+PwnW+AABAv9bqvj+PwnU+")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_owq8c"]
+_surfaces = [{
+"aabb": AABB(-0.75, -1.4701877, -0.24, 1.5, 2.9403753, 0.48),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("AABAvxwvvL+PwnW+AABAPxwvvL+PwnW+AABAPxwvvL+PwnW+AABAPxwvvD+PwnW+AABAPxwvvD+PwnW+AABAvxwvvD+PwnW+AABAvxwvvD+PwnW+AABAvxwvvL+PwnW+AABAvxwvvL+PwnU+AABAPxwvvL+PwnU+AABAPxwvvL+PwnU+AABAPxwvvD+PwnU+AABAPxwvvD+PwnU+AABAvxwvvD+PwnU+AABAvxwvvD+PwnU+AABAvxwvvL+PwnU+AABAvxwvvL+PwnW+AABAvxwvvL+PwnU+AABAPxwvvL+PwnW+AABAPxwvvL+PwnU+AABAPxwvvD+PwnW+AABAPxwvvD+PwnU+AABAvxwvvD+PwnW+AABAvxwvvD+PwnU+")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_kbv7i"]
+_surfaces = [{
+"aabb": AABB(-1.8000001, -0.90000004, -0.24, 3.6000001, 1.8000001, 0.48),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("Z2bmv2dmZr+PwnW+Z2bmP2dmZr+PwnW+Z2bmP2dmZr+PwnW+Z2bmP2dmZj+PwnW+Z2bmP2dmZj+PwnW+Z2bmv2dmZj+PwnW+Z2bmv2dmZj+PwnW+Z2bmv2dmZr+PwnW+Z2bmv2dmZr+PwnU+Z2bmP2dmZr+PwnU+Z2bmP2dmZr+PwnU+Z2bmP2dmZj+PwnU+Z2bmP2dmZj+PwnU+Z2bmv2dmZj+PwnU+Z2bmv2dmZj+PwnU+Z2bmv2dmZr+PwnU+Z2bmv2dmZr+PwnW+Z2bmv2dmZr+PwnU+Z2bmP2dmZr+PwnW+Z2bmP2dmZr+PwnU+Z2bmP2dmZj+PwnW+Z2bmP2dmZj+PwnU+Z2bmv2dmZj+PwnW+Z2bmv2dmZj+PwnU+")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_daekf"]
+_surfaces = [{
+"aabb": AABB(-0.75, -2.2377658, -0.24, 1.5, 4.4755316, 0.48),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("AABAv443D8CPwnW+AABAP443D8CPwnW+AABAP443D8CPwnW+AABAP443D0CPwnW+AABAP443D0CPwnW+AABAv443D0CPwnW+AABAv443D0CPwnW+AABAv443D8CPwnW+AABAv443D8CPwnU+AABAP443D8CPwnU+AABAP443D8CPwnU+AABAP443D0CPwnU+AABAP443D0CPwnU+AABAv443D0CPwnU+AABAv443D0CPwnU+AABAv443D8CPwnU+AABAv443D8CPwnW+AABAv443D8CPwnU+AABAP443D8CPwnW+AABAP443D8CPwnU+AABAP443D0CPwnW+AABAP443D0CPwnU+AABAv443D0CPwnW+AABAv443D0CPwnU+")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_eaae3"]
+_surfaces = [{
+"aabb": AABB(-0.75, -2.2053962, -0.24, 1.5, 4.4107924, 0.48),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("AABAvzYlDcCPwnW+AABAPzYlDcCPwnW+AABAPzYlDcCPwnW+AABAPzYlDUCPwnW+AABAPzYlDUCPwnW+AABAvzYlDUCPwnW+AABAvzYlDUCPwnW+AABAvzYlDcCPwnW+AABAvzYlDcCPwnU+AABAPzYlDcCPwnU+AABAPzYlDcCPwnU+AABAPzYlDUCPwnU+AABAPzYlDUCPwnU+AABAvzYlDUCPwnU+AABAvzYlDUCPwnU+AABAvzYlDcCPwnU+AABAvzYlDcCPwnW+AABAvzYlDcCPwnU+AABAPzYlDcCPwnW+AABAPzYlDcCPwnU+AABAPzYlDUCPwnW+AABAPzYlDUCPwnU+AABAvzYlDUCPwnW+AABAvzYlDUCPwnU+")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_4dqyh"]
+_surfaces = [{
+"aabb": AABB(-1.8000001, -0.90000004, -0.24, 3.6000001, 1.8000001, 0.48),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("Z2bmv2dmZr+PwnW+Z2bmP2dmZr+PwnW+Z2bmP2dmZr+PwnW+Z2bmP2dmZj+PwnW+Z2bmP2dmZj+PwnW+Z2bmv2dmZj+PwnW+Z2bmv2dmZj+PwnW+Z2bmv2dmZr+PwnW+Z2bmv2dmZr+PwnU+Z2bmP2dmZr+PwnU+Z2bmP2dmZr+PwnU+Z2bmP2dmZj+PwnU+Z2bmP2dmZj+PwnU+Z2bmv2dmZj+PwnU+Z2bmv2dmZj+PwnU+Z2bmv2dmZr+PwnU+Z2bmv2dmZr+PwnW+Z2bmv2dmZr+PwnU+Z2bmP2dmZr+PwnW+Z2bmP2dmZr+PwnU+Z2bmP2dmZj+PwnW+Z2bmP2dmZj+PwnU+Z2bmv2dmZj+PwnW+Z2bmv2dmZj+PwnU+")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_3eexk"]
+_surfaces = [{
+"aabb": AABB(-0.75, -2.2377658, -0.24, 1.5, 4.4755316, 0.48),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("AABAv443D8CPwnW+AABAP443D8CPwnW+AABAP443D8CPwnW+AABAP443D0CPwnW+AABAP443D0CPwnW+AABAv443D0CPwnW+AABAv443D0CPwnW+AABAv443D8CPwnW+AABAv443D8CPwnU+AABAP443D8CPwnU+AABAP443D8CPwnU+AABAP443D0CPwnU+AABAP443D0CPwnU+AABAv443D0CPwnU+AABAv443D0CPwnU+AABAv443D8CPwnU+AABAv443D8CPwnW+AABAv443D8CPwnU+AABAP443D8CPwnW+AABAP443D8CPwnU+AABAP443D0CPwnW+AABAP443D0CPwnU+AABAv443D0CPwnW+AABAv443D0CPwnU+")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_0f2x3"]
+_surfaces = [{
+"aabb": AABB(-0.75, -2.2053962, -0.24, 1.5, 4.4107924, 0.48),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("AABAvzYlDcCPwnW+AABAPzYlDcCPwnW+AABAPzYlDcCPwnW+AABAPzYlDUCPwnW+AABAPzYlDUCPwnW+AABAvzYlDUCPwnW+AABAvzYlDUCPwnW+AABAvzYlDcCPwnW+AABAvzYlDcCPwnU+AABAPzYlDcCPwnU+AABAPzYlDcCPwnU+AABAPzYlDUCPwnU+AABAPzYlDUCPwnU+AABAvzYlDUCPwnU+AABAvzYlDUCPwnU+AABAvzYlDcCPwnU+AABAvzYlDcCPwnW+AABAvzYlDcCPwnU+AABAPzYlDcCPwnW+AABAPzYlDcCPwnU+AABAPzYlDUCPwnW+AABAPzYlDUCPwnU+AABAvzYlDUCPwnW+AABAvzYlDUCPwnU+")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_5rymu"]
+_surfaces = [{
+"aabb": AABB(-1.8000001, -1.6500001, -0.24, 3.6000001, 3.3000002, 0.48),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("Z2bmvzQz07+PwnW+Z2bmPzQz07+PwnW+Z2bmPzQz07+PwnW+Z2bmPzQz0z+PwnW+Z2bmPzQz0z+PwnW+Z2bmvzQz0z+PwnW+Z2bmvzQz0z+PwnW+Z2bmvzQz07+PwnW+Z2bmvzQz07+PwnU+Z2bmPzQz07+PwnU+Z2bmPzQz07+PwnU+Z2bmPzQz0z+PwnU+Z2bmPzQz0z+PwnU+Z2bmvzQz0z+PwnU+Z2bmvzQz0z+PwnU+Z2bmvzQz07+PwnU+Z2bmvzQz07+PwnW+Z2bmvzQz07+PwnU+Z2bmPzQz07+PwnW+Z2bmPzQz07+PwnU+Z2bmPzQz0z+PwnW+Z2bmPzQz0z+PwnU+Z2bmvzQz0z+PwnW+Z2bmvzQz0z+PwnU+")
+}]
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_85rcj"]
+points = PackedVector3Array(-1.5, -0.057142958, -0.04, -1.461039, 0.019047514, -0.04, -1.383117, 0.13333324, -0.04, -1.2662338, 0.28571415, -0.04, -1.0324676, 0.51428556, -0.04, -0.91558444, 0.6285713, -0.04, -0.7597403, 0.742857, -0.04, -0.6428572, 0.81904745, -0.04, -0.48701304, 0.8952378, -0.04, -0.25324684, 1.0095236, -0.04, -0.17532468, 1.0476187, -0.04, -0.05844164, 1.085714, -0.04, 0.05844152, 1.1238093, -0.04, 0.21428561, 1.1619046, -0.04, 0.37012982, 1.1999997, -0.04, 0.9935063, 1.1999997, -0.04, 1.1103896, 1.1619046, -0.04, 1.3051947, 0.9714284, -0.04, 1.3441559, 0.93333316, -0.04, 1.422078, 0.7809522, -0.04, 1.461039, 0.6666665, -0.04, 1.5000001, 0.4761903, -0.04, 1.5000001, 0.17142844, -0.04, 1.461039, -0.019047722, -0.04, 1.422078, -0.13333341, -0.04, 1.3051947, -0.36190483, -0.04, 1.2662338, -0.43809527, -0.04, 0.79870117, -1.1619047, -0.04, 0.7597401, -1.2, -0.04, 0.29220772, -1.2, -0.04, 0.13636363, -1.1619047, -0.04, -0.48701304, -1.0095239, -0.04, -0.60389614, -0.9714285, -0.04, -0.68181825, -0.9333333, -0.04, -0.91558444, -0.8190476, -0.04, -1.0324676, -0.7428571, -0.04, -1.3441559, -0.43809527, -0.04, -1.461039, -0.28571436, -0.04, -1.5, -0.20952389, -0.04, -1.5, -0.057142958, 0.04, -1.461039, 0.019047514, 0.04, -1.383117, 0.13333324, 0.04, -1.2662338, 0.28571415, 0.04, -1.0324676, 0.51428556, 0.04, -0.91558444, 0.6285713, 0.04, -0.7597403, 0.742857, 0.04, -0.6428572, 0.81904745, 0.04, -0.48701304, 0.8952378, 0.04, -0.25324684, 1.0095236, 0.04, -0.17532468, 1.0476187, 0.04, -0.05844164, 1.085714, 0.04, 0.05844152, 1.1238093, 0.04, 0.21428561, 1.1619046, 0.04, 0.37012982, 1.1999997, 0.04, 0.9935063, 1.1999997, 0.04, 1.1103896, 1.1619046, 0.04, 1.3051947, 0.9714284, 0.04, 1.3441559, 0.93333316, 0.04, 1.422078, 0.7809522, 0.04, 1.461039, 0.6666665, 0.04, 1.5000001, 0.4761903, 0.04, 1.5000001, 0.17142844, 0.04, 1.461039, -0.019047722, 0.04, 1.422078, -0.13333341, 0.04, 1.3051947, -0.36190483, 0.04, 1.2662338, -0.43809527, 0.04, 0.79870117, -1.1619047, 0.04, 0.7597401, -1.2, 0.04, 0.29220772, -1.2, 0.04, 0.13636363, -1.1619047, 0.04, -0.48701304, -1.0095239, 0.04, -0.60389614, -0.9714285, 0.04, -0.68181825, -0.9333333, 0.04, -0.91558444, -0.8190476, 0.04, -1.0324676, -0.7428571, 0.04, -1.3441559, -0.43809527, 0.04, -1.461039, -0.28571436, 0.04, -1.5, -0.20952389, 0.04)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4axdn"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_tgo0x"]
+points = PackedVector3Array(-1.5, -0.057142958, -0.04, -1.461039, 0.019047514, -0.04, -1.383117, 0.13333324, -0.04, -1.2662338, 0.28571415, -0.04, -1.0324676, 0.51428556, -0.04, -0.91558444, 0.6285713, -0.04, -0.7597403, 0.742857, -0.04, -0.6428572, 0.81904745, -0.04, -0.48701304, 0.8952378, -0.04, -0.25324684, 1.0095236, -0.04, -0.17532468, 1.0476187, -0.04, -0.05844164, 1.085714, -0.04, 0.05844152, 1.1238093, -0.04, 0.21428561, 1.1619046, -0.04, 0.37012982, 1.1999997, -0.04, 0.9935063, 1.1999997, -0.04, 1.1103896, 1.1619046, -0.04, 1.3051947, 0.9714284, -0.04, 1.3441559, 0.93333316, -0.04, 1.422078, 0.7809522, -0.04, 1.461039, 0.6666665, -0.04, 1.5000001, 0.4761903, -0.04, 1.5000001, 0.17142844, -0.04, 1.461039, -0.019047722, -0.04, 1.422078, -0.13333341, -0.04, 1.3051947, -0.36190483, -0.04, 1.2662338, -0.43809527, -0.04, 0.79870117, -1.1619047, -0.04, 0.7597401, -1.2, -0.04, 0.29220772, -1.2, -0.04, 0.13636363, -1.1619047, -0.04, -0.48701304, -1.0095239, -0.04, -0.60389614, -0.9714285, -0.04, -0.68181825, -0.9333333, -0.04, -0.91558444, -0.8190476, -0.04, -1.0324676, -0.7428571, -0.04, -1.3441559, -0.43809527, -0.04, -1.461039, -0.28571436, -0.04, -1.5, -0.20952389, -0.04, -1.5, -0.057142958, 0.04, -1.461039, 0.019047514, 0.04, -1.383117, 0.13333324, 0.04, -1.2662338, 0.28571415, 0.04, -1.0324676, 0.51428556, 0.04, -0.91558444, 0.6285713, 0.04, -0.7597403, 0.742857, 0.04, -0.6428572, 0.81904745, 0.04, -0.48701304, 0.8952378, 0.04, -0.25324684, 1.0095236, 0.04, -0.17532468, 1.0476187, 0.04, -0.05844164, 1.085714, 0.04, 0.05844152, 1.1238093, 0.04, 0.21428561, 1.1619046, 0.04, 0.37012982, 1.1999997, 0.04, 0.9935063, 1.1999997, 0.04, 1.1103896, 1.1619046, 0.04, 1.3051947, 0.9714284, 0.04, 1.3441559, 0.93333316, 0.04, 1.422078, 0.7809522, 0.04, 1.461039, 0.6666665, 0.04, 1.5000001, 0.4761903, 0.04, 1.5000001, 0.17142844, 0.04, 1.461039, -0.019047722, 0.04, 1.422078, -0.13333341, 0.04, 1.3051947, -0.36190483, 0.04, 1.2662338, -0.43809527, 0.04, 0.79870117, -1.1619047, 0.04, 0.7597401, -1.2, 0.04, 0.29220772, -1.2, 0.04, 0.13636363, -1.1619047, 0.04, -0.48701304, -1.0095239, 0.04, -0.60389614, -0.9714285, 0.04, -0.68181825, -0.9333333, 0.04, -0.91558444, -0.8190476, 0.04, -1.0324676, -0.7428571, 0.04, -1.3441559, -0.43809527, 0.04, -1.461039, -0.28571436, 0.04, -1.5, -0.20952389, 0.04)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_uh8og"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_j7kdm"]
+points = PackedVector3Array(-1.5, -0.057142958, -0.04, -1.461039, 0.019047514, -0.04, -1.383117, 0.13333324, -0.04, -1.2662338, 0.28571415, -0.04, -1.0324676, 0.51428556, -0.04, -0.91558444, 0.6285713, -0.04, -0.7597403, 0.742857, -0.04, -0.6428572, 0.81904745, -0.04, -0.48701304, 0.8952378, -0.04, -0.25324684, 1.0095236, -0.04, -0.17532468, 1.0476187, -0.04, -0.05844164, 1.085714, -0.04, 0.05844152, 1.1238093, -0.04, 0.21428561, 1.1619046, -0.04, 0.37012982, 1.1999997, -0.04, 0.9935063, 1.1999997, -0.04, 1.1103896, 1.1619046, -0.04, 1.3051947, 0.9714284, -0.04, 1.3441559, 0.93333316, -0.04, 1.422078, 0.7809522, -0.04, 1.461039, 0.6666665, -0.04, 1.5000001, 0.4761903, -0.04, 1.5000001, 0.17142844, -0.04, 1.461039, -0.019047722, -0.04, 1.422078, -0.13333341, -0.04, 1.3051947, -0.36190483, -0.04, 1.2662338, -0.43809527, -0.04, 0.79870117, -1.1619047, -0.04, 0.7597401, -1.2, -0.04, 0.29220772, -1.2, -0.04, 0.13636363, -1.1619047, -0.04, -0.48701304, -1.0095239, -0.04, -0.60389614, -0.9714285, -0.04, -0.68181825, -0.9333333, -0.04, -0.91558444, -0.8190476, -0.04, -1.0324676, -0.7428571, -0.04, -1.3441559, -0.43809527, -0.04, -1.461039, -0.28571436, -0.04, -1.5, -0.20952389, -0.04, -1.5, -0.057142958, 0.04, -1.461039, 0.019047514, 0.04, -1.383117, 0.13333324, 0.04, -1.2662338, 0.28571415, 0.04, -1.0324676, 0.51428556, 0.04, -0.91558444, 0.6285713, 0.04, -0.7597403, 0.742857, 0.04, -0.6428572, 0.81904745, 0.04, -0.48701304, 0.8952378, 0.04, -0.25324684, 1.0095236, 0.04, -0.17532468, 1.0476187, 0.04, -0.05844164, 1.085714, 0.04, 0.05844152, 1.1238093, 0.04, 0.21428561, 1.1619046, 0.04, 0.37012982, 1.1999997, 0.04, 0.9935063, 1.1999997, 0.04, 1.1103896, 1.1619046, 0.04, 1.3051947, 0.9714284, 0.04, 1.3441559, 0.93333316, 0.04, 1.422078, 0.7809522, 0.04, 1.461039, 0.6666665, 0.04, 1.5000001, 0.4761903, 0.04, 1.5000001, 0.17142844, 0.04, 1.461039, -0.019047722, 0.04, 1.422078, -0.13333341, 0.04, 1.3051947, -0.36190483, 0.04, 1.2662338, -0.43809527, 0.04, 0.79870117, -1.1619047, 0.04, 0.7597401, -1.2, 0.04, 0.29220772, -1.2, 0.04, 0.13636363, -1.1619047, 0.04, -0.48701304, -1.0095239, 0.04, -0.60389614, -0.9714285, 0.04, -0.68181825, -0.9333333, 0.04, -0.91558444, -0.8190476, 0.04, -1.0324676, -0.7428571, 0.04, -1.3441559, -0.43809527, 0.04, -1.461039, -0.28571436, 0.04, -1.5, -0.20952389, 0.04)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1smb6"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_hjhn7"]
+points = PackedVector3Array(-1.5, -0.057142958, -0.04, -1.461039, 0.019047514, -0.04, -1.383117, 0.13333324, -0.04, -1.2662338, 0.28571415, -0.04, -1.0324676, 0.51428556, -0.04, -0.91558444, 0.6285713, -0.04, -0.7597403, 0.742857, -0.04, -0.6428572, 0.81904745, -0.04, -0.48701304, 0.8952378, -0.04, -0.25324684, 1.0095236, -0.04, -0.17532468, 1.0476187, -0.04, -0.05844164, 1.085714, -0.04, 0.05844152, 1.1238093, -0.04, 0.21428561, 1.1619046, -0.04, 0.37012982, 1.1999997, -0.04, 0.9935063, 1.1999997, -0.04, 1.1103896, 1.1619046, -0.04, 1.3051947, 0.9714284, -0.04, 1.3441559, 0.93333316, -0.04, 1.422078, 0.7809522, -0.04, 1.461039, 0.6666665, -0.04, 1.5000001, 0.4761903, -0.04, 1.5000001, 0.17142844, -0.04, 1.461039, -0.019047722, -0.04, 1.422078, -0.13333341, -0.04, 1.3051947, -0.36190483, -0.04, 1.2662338, -0.43809527, -0.04, 0.79870117, -1.1619047, -0.04, 0.7597401, -1.2, -0.04, 0.29220772, -1.2, -0.04, 0.13636363, -1.1619047, -0.04, -0.48701304, -1.0095239, -0.04, -0.60389614, -0.9714285, -0.04, -0.68181825, -0.9333333, -0.04, -0.91558444, -0.8190476, -0.04, -1.0324676, -0.7428571, -0.04, -1.3441559, -0.43809527, -0.04, -1.461039, -0.28571436, -0.04, -1.5, -0.20952389, -0.04, -1.5, -0.057142958, 0.04, -1.461039, 0.019047514, 0.04, -1.383117, 0.13333324, 0.04, -1.2662338, 0.28571415, 0.04, -1.0324676, 0.51428556, 0.04, -0.91558444, 0.6285713, 0.04, -0.7597403, 0.742857, 0.04, -0.6428572, 0.81904745, 0.04, -0.48701304, 0.8952378, 0.04, -0.25324684, 1.0095236, 0.04, -0.17532468, 1.0476187, 0.04, -0.05844164, 1.085714, 0.04, 0.05844152, 1.1238093, 0.04, 0.21428561, 1.1619046, 0.04, 0.37012982, 1.1999997, 0.04, 0.9935063, 1.1999997, 0.04, 1.1103896, 1.1619046, 0.04, 1.3051947, 0.9714284, 0.04, 1.3441559, 0.93333316, 0.04, 1.422078, 0.7809522, 0.04, 1.461039, 0.6666665, 0.04, 1.5000001, 0.4761903, 0.04, 1.5000001, 0.17142844, 0.04, 1.461039, -0.019047722, 0.04, 1.422078, -0.13333341, 0.04, 1.3051947, -0.36190483, 0.04, 1.2662338, -0.43809527, 0.04, 0.79870117, -1.1619047, 0.04, 0.7597401, -1.2, 0.04, 0.29220772, -1.2, 0.04, 0.13636363, -1.1619047, 0.04, -0.48701304, -1.0095239, 0.04, -0.60389614, -0.9714285, 0.04, -0.68181825, -0.9333333, 0.04, -0.91558444, -0.8190476, 0.04, -1.0324676, -0.7428571, 0.04, -1.3441559, -0.43809527, 0.04, -1.461039, -0.28571436, 0.04, -1.5, -0.20952389, 0.04)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fjw6y"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_ra4en"]
+points = PackedVector3Array(-6.0000005, -2.054, -0.04, -2, 3.6339998, -0.04, -1.8461537, 3.7919998, -0.04, -1.5384617, 3.9499993, -0.04, -0.4615388, 4.4239993, -0.04, 0.46153855, 4.74, -0.04, 2.6153848, 4.74, -0.04, 3.0769234, 4.5819993, -0.04, 3.5384617, 4.4239993, -0.04, 4, 4.1079993, -0.04, 5.0769234, 3.3179994, -0.04, 5.384616, 3.0019996, -0.04, 5.5384617, 2.8439996, -0.04, 6.0000005, -2.054, -0.04, 6.0000005, -2.2120001, -0.04, 5.846154, -2.3700001, -0.04, 4.3076925, -3.634, -0.04, 3.8461542, -3.95, -0.04, 3.0769234, -4.266, -0.04, 2.3076925, -4.424, -0.04, 0, -4.7400002, -0.04, -1.8461537, -4.7400002, -0.04, -2.615385, -4.582, -0.04, -3.5384622, -4.266, -0.04, -4.307693, -3.95, -0.04, -5.2307696, -3.476, -0.04, -5.692308, -3.002, -0.04, -5.8461547, -2.844, -0.04, -6.0000005, -2.528, -0.04, -6.0000005, -2.054, 0.04, -2, 3.6339998, 0.04, -1.8461537, 3.7919998, 0.04, -1.5384617, 3.9499993, 0.04, -0.4615388, 4.4239993, 0.04, 0.46153855, 4.74, 0.04, 2.6153848, 4.74, 0.04, 3.0769234, 4.5819993, 0.04, 3.5384617, 4.4239993, 0.04, 4, 4.1079993, 0.04, 5.0769234, 3.3179994, 0.04, 5.384616, 3.0019996, 0.04, 5.5384617, 2.8439996, 0.04, 6.0000005, -2.054, 0.04, 6.0000005, -2.2120001, 0.04, 5.846154, -2.3700001, 0.04, 4.3076925, -3.634, 0.04, 3.8461542, -3.95, 0.04, 3.0769234, -4.266, 0.04, 2.3076925, -4.424, 0.04, 0, -4.7400002, 0.04, -1.8461537, -4.7400002, 0.04, -2.615385, -4.582, 0.04, -3.5384622, -4.266, 0.04, -4.307693, -3.95, 0.04, -5.2307696, -3.476, 0.04, -5.692308, -3.002, 0.04, -5.8461547, -2.844, 0.04, -6.0000005, -2.528, 0.04)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dk1vr"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_ojtc3"]
+points = PackedVector3Array(-1.1694089, -0.13846147, -0.04, -0.6534933, 0.7269231, -0.04, -0.5847045, 0.7961539, -0.04, -0.55031013, 0.83076924, -0.04, -0.48152134, 0.86538464, -0.04, -0.27515507, 0.90000004, -0.04, 0.27515504, 0.90000004, -0.04, 0.41273254, 0.86538464, -0.04, 0.4815213, 0.83076924, -0.04, 0.5159157, 0.7961539, -0.04, 0.5503101, 0.7615385, -0.04, 1.3069865, -0.20769227, -0.04, 1.3757753, -0.31153834, -0.04, 1.4101697, -0.38076913, -0.04, 1.4445641, -0.44999993, -0.04, 1.4789584, -0.553846, -0.04, 1.5133528, -0.6923076, -0.04, 1.5133528, -0.86538446, -0.04, 1.4445641, -0.9, -0.04, -0.24076068, -0.9, -0.04, -0.68788767, -0.86538446, -0.04, -0.7910708, -0.83076906, -0.04, -0.997437, -0.6230768, -0.04, -1.1350145, -0.41538453, -0.04, -1.1694089, -0.31153834, -0.04, -1.1694089, -0.13846147, 0.04, -0.6534933, 0.7269231, 0.04, -0.5847045, 0.7961539, 0.04, -0.55031013, 0.83076924, 0.04, -0.48152134, 0.86538464, 0.04, -0.27515507, 0.90000004, 0.04, 0.27515504, 0.90000004, 0.04, 0.41273254, 0.86538464, 0.04, 0.4815213, 0.83076924, 0.04, 0.5159157, 0.7961539, 0.04, 0.5503101, 0.7615385, 0.04, 1.3069865, -0.20769227, 0.04, 1.3757753, -0.31153834, 0.04, 1.4101697, -0.38076913, 0.04, 1.4445641, -0.44999993, 0.04, 1.4789584, -0.553846, 0.04, 1.5133528, -0.6923076, 0.04, 1.5133528, -0.86538446, 0.04, 1.4445641, -0.9, 0.04, -0.24076068, -0.9, 0.04, -0.68788767, -0.86538446, 0.04, -0.7910708, -0.83076906, 0.04, -0.997437, -0.6230768, 0.04, -1.1350145, -0.41538453, 0.04, -1.1694089, -0.31153834, 0.04)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4m3ql"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_6ln4r"]
+points = PackedVector3Array(-0.3740269, 1.338476, -0.04, -0.2709117, 1.4703913, -0.04, -0.14623609, 1.5214133, -0.04, 0.14623606, 1.4616703, -0.04, 0.21185482, 1.4100218, -0.04, 0.27747357, 1.3583732, -0.04, 0.30653328, 1.3141925, -0.04, 0.39371246, 1.1816505, -0.04, 0.56057155, 0.8798537, -0.04, 0.8371077, -0.9358883, -0.04, 0.77711344, -1.2295907, -0.04, 0.72555584, -1.2955487, -0.04, 0.6739982, -1.361506, -0.04, 0.6299399, -1.3907511, -0.04, 0.497765, -1.4784858, -0.04, 0.3365304, -1.5220399, -0.04, 0.21935403, -1.536349, -0.04, -0.21935412, -1.4467347, -0.04, -0.28497288, -1.395086, -0.04, -0.41621035, -1.291789, -0.04, -0.47432983, -1.2034278, -0.04, -0.51745075, -1.041641, -0.04, -0.43402117, 1.0447736, -0.04, -0.3740269, 1.338476, 0.04, -0.2709117, 1.4703913, 0.04, -0.14623609, 1.5214133, 0.04, 0.14623606, 1.4616703, 0.04, 0.21185482, 1.4100218, 0.04, 0.27747357, 1.3583732, 0.04, 0.30653328, 1.3141925, 0.04, 0.39371246, 1.1816505, 0.04, 0.56057155, 0.8798537, 0.04, 0.8371077, -0.9358883, 0.04, 0.77711344, -1.2295907, 0.04, 0.72555584, -1.2955487, 0.04, 0.6739982, -1.361506, 0.04, 0.6299399, -1.3907511, 0.04, 0.497765, -1.4784858, 0.04, 0.3365304, -1.5220399, 0.04, 0.21935403, -1.536349, 0.04, -0.21935412, -1.4467347, 0.04, -0.28497288, -1.395086, 0.04, -0.41621035, -1.291789, 0.04, -0.47432983, -1.2034278, 0.04, -0.51745075, -1.041641, 0.04, -0.43402117, 1.0447736, 0.04)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bg2iu"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_10oa3"]
+points = PackedVector3Array(-0.43708915, 1.2519143, -0.04, -0.39401653, 1.3256359, -0.04, -0.35094392, 1.3993577, -0.04, -0.31031865, 1.4349918, -0.04, -0.15271202, 1.5013542, -0.04, 0.15271199, 1.4817291, -0.04, 0.2647987, 1.4362824, -0.04, 0.3387074, 1.3932887, -0.04, 0.4126161, 1.3502951, -0.04, 0.6318948, 1.1832267, -0.04, 0.6676255, 1.1426861, -0.04, 0.7748175, 1.0210645, -0.04, 0.95347106, 0.8183618, -0.04, 0.9892018, 0.7778213, -0.04, 1.1296772, 0.57757175, -0.04, 1.2677054, 0.33923477, -0.04, 1.4008389, 0.024722934, -0.04, 1.4625111, -0.20870769, -0.04, 1.4355907, -0.6276692, -0.04, 1.3900708, -0.73947823, -0.04, 1.3469981, -0.8132, -0.04, 1.3039255, -0.88692176, -0.04, 1.2202275, -0.9962777, -0.04, 0.8952251, -1.2813517, -0.04, 0.7757966, -1.3501674, -0.04, 0.53938663, -1.4497107, -0.04, 0.42240527, -1.4804388, -0.04, 0.26724604, -1.5087138, -0.04, -0.267246, -1.4743699, -0.04, -0.3793327, -1.4289232, -0.04, -0.45324138, -1.3859292, -0.04, -0.5247028, -1.3048483, -0.04, -0.55553883, -1.1881329, -0.04, -0.45422032, 0.9853024, -0.04, -0.43708915, 1.2519143, 0.04, -0.39401653, 1.3256359, 0.04, -0.35094392, 1.3993577, 0.04, -0.31031865, 1.4349918, 0.04, -0.15271202, 1.5013542, 0.04, 0.15271199, 1.4817291, 0.04, 0.2647987, 1.4362824, 0.04, 0.3387074, 1.3932887, 0.04, 0.4126161, 1.3502951, 0.04, 0.6318948, 1.1832267, 0.04, 0.6676255, 1.1426861, 0.04, 0.7748175, 1.0210645, 0.04, 0.95347106, 0.8183618, 0.04, 0.9892018, 0.7778213, 0.04, 1.1296772, 0.57757175, 0.04, 1.2677054, 0.33923477, 0.04, 1.4008389, 0.024722934, 0.04, 1.4625111, -0.20870769, 0.04, 1.4355907, -0.6276692, 0.04, 1.3900708, -0.73947823, 0.04, 1.3469981, -0.8132, 0.04, 1.3039255, -0.88692176, 0.04, 1.2202275, -0.9962777, 0.04, 0.8952251, -1.2813517, 0.04, 0.7757966, -1.3501674, 0.04, 0.53938663, -1.4497107, 0.04, 0.42240527, -1.4804388, 0.04, 0.26724604, -1.5087138, 0.04, -0.267246, -1.4743699, 0.04, -0.3793327, -1.4289232, 0.04, -0.45324138, -1.3859292, 0.04, -0.5247028, -1.3048483, 0.04, -0.55553883, -1.1881329, 0.04, -0.45422032, 0.9853024, 0.04)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_72pxl"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_v0pqa"]
+points = PackedVector3Array(-0.72095305, 1.1976202, -0.04, -0.58254045, 1.3748095, -0.04, -0.47970116, 1.4514995, -0.04, -0.34322882, 1.5162845, -0.04, -0.18498136, 1.5356646, -0.04, 0.18498142, 1.4047107, -0.04, 0.30765557, 1.3235912, -0.04, 0.39669675, 1.2543766, -0.04, 0.5411461, 1.1278524, -0.04, 0.67373765, 0.9678283, -0.04, 0.75092095, 0.86511385, -0.04, 0.79447144, 0.7743043, -0.04, 0.8162466, 0.7288995, -0.04, 0.9904482, 0.36566132, -0.04, 1.043916, 0.19594711, -0.04, 1.0756086, 0.07163769, -0.04, 1.1152782, -0.24398094, -0.04, 1.1351131, -0.4017902, -0.04, 1.1331726, -0.5141948, -0.04, 1.1193746, -0.6600991, -0.04, 0.9652235, -1.0955975, -0.04, 0.88415927, -1.2176921, -0.04, 0.71211374, -1.3829768, -0.04, 0.57564133, -1.4477618, -0.04, 0.4391691, -1.5125465, -0.04, 0.28092158, -1.5319269, -0.04, 0.1681649, -1.529712, -0.04, -0.16816492, -1.4106629, -0.04, -0.29083908, -1.3295436, -0.04, -0.45706362, -1.1576145, -0.04, -0.534247, -1.0549002, -0.04, -0.6549807, -0.861376, -0.04, -0.6767559, -0.8159713, -0.04, -0.69853115, -0.7705665, -0.04, -0.72030634, -0.72516173, -0.04, -0.8173246, -0.46463805, -0.04, -0.88070977, -0.21601927, -0.04, -0.9302969, 0.17850405, -0.04, -0.9382739, 0.3698133, -0.04, -0.92447585, 0.5157177, -0.04, -0.8988198, 0.6951219, -0.04, -0.72095305, 1.1976202, 0.04, -0.58254045, 1.3748095, 0.04, -0.47970116, 1.4514995, 0.04, -0.34322882, 1.5162845, 0.04, -0.18498136, 1.5356646, 0.04, 0.18498142, 1.4047107, 0.04, 0.30765557, 1.3235912, 0.04, 0.39669675, 1.2543766, 0.04, 0.5411461, 1.1278524, 0.04, 0.67373765, 0.9678283, 0.04, 0.75092095, 0.86511385, 0.04, 0.79447144, 0.7743043, 0.04, 0.8162466, 0.7288995, 0.04, 0.9904482, 0.36566132, 0.04, 1.043916, 0.19594711, 0.04, 1.0756086, 0.07163769, 0.04, 1.1152782, -0.24398094, 0.04, 1.1351131, -0.4017902, 0.04, 1.1331726, -0.5141948, 0.04, 1.1193746, -0.6600991, 0.04, 0.9652235, -1.0955975, 0.04, 0.88415927, -1.2176921, 0.04, 0.71211374, -1.3829768, 0.04, 0.57564133, -1.4477618, 0.04, 0.4391691, -1.5125465, 0.04, 0.28092158, -1.5319269, 0.04, 0.1681649, -1.529712, 0.04, -0.16816492, -1.4106629, 0.04, -0.29083908, -1.3295436, 0.04, -0.45706362, -1.1576145, 0.04, -0.534247, -1.0549002, 0.04, -0.6549807, -0.861376, 0.04, -0.6767559, -0.8159713, 0.04, -0.69853115, -0.7705665, 0.04, -0.72030634, -0.72516173, 0.04, -0.8173246, -0.46463805, 0.04, -0.88070977, -0.21601927, 0.04, -0.9302969, 0.17850405, 0.04, -0.9382739, 0.3698133, 0.04, -0.92447585, 0.5157177, 0.04, -0.8988198, 0.6951219, 0.04)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jcmac"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_v8noq"]
+points = PackedVector3Array(-0.7995937, -0.39375004, -0.04, -0.7434819, -0.22500005, -0.04, -0.4629227, 0.50624996, -0.04, -0.37875494, 0.675, -0.04, -0.29458717, 0.7875, -0.04, -0.26653126, 0.815625, -0.04, -0.18236347, 0.87187505, -0.04, -0.12625164, 0.90000004, -0.04, 0.12625165, 0.90000004, -0.04, 0.1823635, 0.87187505, -0.04, 0.21041942, 0.84375, -0.04, 0.350699, 0.703125, -0.04, 1.1082089, -0.22500005, -0.04, 1.2204325, -0.36562505, -0.04, 1.3326561, -0.5343751, -0.04, 1.3607122, -0.59062517, -0.04, 1.3887681, -0.6750002, -0.04, 1.3887681, -0.78750014, -0.04, 1.3607122, -0.8156252, -0.04, 1.2765445, -0.8437501, -0.04, 0.43486676, -0.9000001, -0.04, -0.4629227, -0.9000001, -0.04, -0.6032023, -0.8437501, -0.04, -0.68737006, -0.78750014, -0.04, -0.7434819, -0.73125017, -0.04, -0.77153784, -0.7031251, -0.04, -0.7995937, -0.64687514, -0.04, -0.7995937, -0.39375004, 0.04, -0.7434819, -0.22500005, 0.04, -0.4629227, 0.50624996, 0.04, -0.37875494, 0.675, 0.04, -0.29458717, 0.7875, 0.04, -0.26653126, 0.815625, 0.04, -0.18236347, 0.87187505, 0.04, -0.12625164, 0.90000004, 0.04, 0.12625165, 0.90000004, 0.04, 0.1823635, 0.87187505, 0.04, 0.21041942, 0.84375, 0.04, 0.350699, 0.703125, 0.04, 1.1082089, -0.22500005, 0.04, 1.2204325, -0.36562505, 0.04, 1.3326561, -0.5343751, 0.04, 1.3607122, -0.59062517, 0.04, 1.3887681, -0.6750002, 0.04, 1.3887681, -0.78750014, 0.04, 1.3607122, -0.8156252, 0.04, 1.2765445, -0.8437501, 0.04, 0.43486676, -0.9000001, 0.04, -0.4629227, -0.9000001, 0.04, -0.6032023, -0.8437501, 0.04, -0.68737006, -0.78750014, 0.04, -0.7434819, -0.73125017, 0.04, -0.77153784, -0.7031251, 0.04, -0.7995937, -0.64687514, 0.04)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ecut6"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_5pw1n"]
+points = PackedVector3Array(-0.5927396, 0.6768301, -0.04, -0.54416245, 0.90411234, -0.04, -0.4573123, 1.1296724, -0.04, -0.41560465, 1.204285, -0.04, -0.33218932, 1.3535104, -0.04, -0.29219902, 1.3899556, -0.04, -0.21221843, 1.4628462, -0.04, -0.13395521, 1.4975693, -0.04, 0.13395523, 1.4855144, -0.04, 0.28017738, 1.3259563, -0.04, 0.31501555, 1.2478995, -0.04, 0.34641898, 1.0935078, -0.04, 0.44504535, -0.9761416, -0.04, 0.43302375, -1.2433132, -0.04, 0.34960836, -1.3925389, -0.04, 0.23135488, -1.4637071, -0.04, 0.15309167, -1.4984301, -0.04, -0.15309167, -1.4846534, -0.04, -0.26619303, -1.4413193, -0.04, -0.33930415, -1.3615407, -0.04, -0.4124152, -1.2817615, -0.04, -0.4489708, -1.2418722, -0.04, -0.48037422, -1.0874804, -0.04, -0.62021756, 0.06615186, -0.04, -0.5927396, 0.6768301, 0.04, -0.54416245, 0.90411234, 0.04, -0.4573123, 1.1296724, 0.04, -0.41560465, 1.204285, 0.04, -0.33218932, 1.3535104, 0.04, -0.29219902, 1.3899556, 0.04, -0.21221843, 1.4628462, 0.04, -0.13395521, 1.4975693, 0.04, 0.13395523, 1.4855144, 0.04, 0.28017738, 1.3259563, 0.04, 0.31501555, 1.2478995, 0.04, 0.34641898, 1.0935078, 0.04, 0.44504535, -0.9761416, 0.04, 0.43302375, -1.2433132, 0.04, 0.34960836, -1.3925389, 0.04, 0.23135488, -1.4637071, 0.04, 0.15309167, -1.4984301, 0.04, -0.15309167, -1.4846534, 0.04, -0.26619303, -1.4413193, 0.04, -0.33930415, -1.3615407, 0.04, -0.4124152, -1.2817615, 0.04, -0.4489708, -1.2418722, 0.04, -0.48037422, -1.0874804, 0.04, -0.62021756, 0.06615186, 0.04)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wgx82"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_x6no5"]
+points = PackedVector3Array(-1.0025018, 0.22323596, -0.04, -0.97323, 0.415758, -0.04, -0.9079126, 0.64812386, -0.04, -0.8048561, 0.8821639, -0.04, -0.73445845, 1.0000211, -0.04, -0.66236734, 1.0797088, -0.04, -0.41004843, 1.3586156, -0.04, -0.26247936, 1.441652, -0.04, -0.1509559, 1.4848444, -0.04, 0.15095587, 1.498239, -0.04, 0.2658662, 1.4650924, -0.04, 0.30529857, 1.4285972, -0.04, 0.42359573, 1.3191116, -0.04, 0.46472156, 1.2444468, -0.04, 0.47826886, 0.93909055, -0.04, 0.4204508, -1.1669309, -0.04, 0.3877921, -1.2831137, -0.04, 0.27965543, -1.4026451, -0.04, 0.24360988, -1.4424889, -0.04, 0.16982535, -1.4840074, -0.04, -0.16982533, -1.4990761, -0.04, -0.3241681, -1.4294341, -0.04, -0.48020422, -1.3216228, -0.04, -0.51963663, -1.2851276, -0.04, -0.6396272, -1.1374726, -0.04, -0.72018534, -1.0263126, -0.04, -0.8024369, -0.87698305, -0.04, -0.8435627, -0.8023182, -0.04, -0.886382, -0.689484, -0.04, -0.92920125, -0.5766499, -0.04, -0.97540724, -0.38747644, -0.04, -1.0025018, 0.22323596, 0.04, -0.97323, 0.415758, 0.04, -0.9079126, 0.64812386, 0.04, -0.8048561, 0.8821639, 0.04, -0.73445845, 1.0000211, 0.04, -0.66236734, 1.0797088, 0.04, -0.41004843, 1.3586156, 0.04, -0.26247936, 1.441652, 0.04, -0.1509559, 1.4848444, 0.04, 0.15095587, 1.498239, 0.04, 0.2658662, 1.4650924, 0.04, 0.30529857, 1.4285972, 0.04, 0.42359573, 1.3191116, 0.04, 0.46472156, 1.2444468, 0.04, 0.47826886, 0.93909055, 0.04, 0.4204508, -1.1669309, 0.04, 0.3877921, -1.2831137, 0.04, 0.27965543, -1.4026451, 0.04, 0.24360988, -1.4424889, 0.04, 0.16982535, -1.4840074, 0.04, -0.16982533, -1.4990761, 0.04, -0.3241681, -1.4294341, 0.04, -0.48020422, -1.3216228, 0.04, -0.51963663, -1.2851276, 0.04, -0.6396272, -1.1374726, 0.04, -0.72018534, -1.0263126, 0.04, -0.8024369, -0.87698305, 0.04, -0.8435627, -0.8023182, 0.04, -0.886382, -0.689484, 0.04, -0.92920125, -0.5766499, 0.04, -0.97540724, -0.38747644, 0.04)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_l5qly"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_ilk1v"]
+points = PackedVector3Array(-0.9052617, -0.3213533, -0.04, -0.91404206, -0.17331609, -0.04, -0.91206646, -0.059605718, -0.04, -0.9100908, 0.054104656, -0.04, -0.89735925, 0.13348822, -0.04, -0.8718961, 0.2922554, -0.04, -0.8356768, 0.41669577, -0.04, -0.79945755, 0.5411361, -0.04, -0.7524823, 0.63124967, -0.04, -0.6350441, 0.8565335, -0.04, -0.6115564, 0.9015902, -0.04, -0.36789972, 1.2041208, -0.04, -0.28668082, 1.3049643, -0.04, -0.22894953, 1.360751, -0.04, -0.13697459, 1.4272678, -0.04, 0.13697465, 1.5131074, -0.04, 0.22697397, 1.4659137, -0.04, 0.2719736, 1.4423169, -0.04, 0.361973, 1.3951231, -0.04, 0.41772872, 1.3371994, -0.04, 0.52924, 1.2213522, -0.04, 0.59575176, 1.1291018, -0.04, 0.67301947, 1.0025244, -0.04, 0.8451158, 0.45329547, -0.04, 0.8538962, 0.30525827, -0.04, 0.85192055, 0.19154789, -0.04, 0.8264574, 0.032780737, -0.04, 0.7882625, -0.20537004, -0.04, 0.75204325, -0.32981035, -0.04, 0.66884875, -0.5443642, -0.04, 0.5151913, -0.8940885, -0.04, 0.46821606, -0.984202, -0.04, 0.2930466, -1.2652725, -0.04, 0.23531531, -1.3210593, -0.04, 0.11985274, -1.4326328, -0.04, -0.119852856, -1.5077425, -0.04, -0.20985214, -1.4605489, -0.04, -0.3448512, -1.3897583, -0.04, -0.40060693, -1.3318347, -0.04, -0.51211816, -1.2159874, -0.04, -0.7439214, -0.83625555, -0.04, -0.9052617, -0.3213533, 0.04, -0.91404206, -0.17331609, 0.04, -0.91206646, -0.059605718, 0.04, -0.9100908, 0.054104656, 0.04, -0.89735925, 0.13348822, 0.04, -0.8718961, 0.2922554, 0.04, -0.8356768, 0.41669577, 0.04, -0.79945755, 0.5411361, 0.04, -0.7524823, 0.63124967, 0.04, -0.6350441, 0.8565335, 0.04, -0.6115564, 0.9015902, 0.04, -0.36789972, 1.2041208, 0.04, -0.28668082, 1.3049643, 0.04, -0.22894953, 1.360751, 0.04, -0.13697459, 1.4272678, 0.04, 0.13697465, 1.5131074, 0.04, 0.22697397, 1.4659137, 0.04, 0.2719736, 1.4423169, 0.04, 0.361973, 1.3951231, 0.04, 0.41772872, 1.3371994, 0.04, 0.52924, 1.2213522, 0.04, 0.59575176, 1.1291018, 0.04, 0.67301947, 1.0025244, 0.04, 0.8451158, 0.45329547, 0.04, 0.8538962, 0.30525827, 0.04, 0.85192055, 0.19154789, 0.04, 0.8264574, 0.032780737, 0.04, 0.7882625, -0.20537004, 0.04, 0.75204325, -0.32981035, 0.04, 0.66884875, -0.5443642, 0.04, 0.5151913, -0.8940885, 0.04, 0.46821606, -0.984202, 0.04, 0.2930466, -1.2652725, 0.04, 0.23531531, -1.3210593, 0.04, 0.11985274, -1.4326328, 0.04, -0.119852856, -1.5077425, 0.04, -0.20985214, -1.4605489, 0.04, -0.3448512, -1.3897583, 0.04, -0.40060693, -1.3318347, 0.04, -0.51211816, -1.2159874, 0.04, -0.7439214, -0.83625555, 0.04)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ne1jt"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_0f4ss"]
+points = PackedVector3Array(-0.7995937, -0.39375004, -0.04, -0.7434819, -0.22500005, -0.04, -0.4629227, 0.50624996, -0.04, -0.37875494, 0.675, -0.04, -0.29458717, 0.7875, -0.04, -0.26653126, 0.815625, -0.04, -0.18236347, 0.87187505, -0.04, -0.12625164, 0.90000004, -0.04, 0.12625165, 0.90000004, -0.04, 0.1823635, 0.87187505, -0.04, 0.21041942, 0.84375, -0.04, 0.350699, 0.703125, -0.04, 1.1082089, -0.22500005, -0.04, 1.2204325, -0.36562505, -0.04, 1.3326561, -0.5343751, -0.04, 1.3607122, -0.59062517, -0.04, 1.3887681, -0.6750002, -0.04, 1.3887681, -0.78750014, -0.04, 1.3607122, -0.8156252, -0.04, 1.2765445, -0.8437501, -0.04, 0.43486676, -0.9000001, -0.04, -0.4629227, -0.9000001, -0.04, -0.6032023, -0.8437501, -0.04, -0.68737006, -0.78750014, -0.04, -0.7434819, -0.73125017, -0.04, -0.77153784, -0.7031251, -0.04, -0.7995937, -0.64687514, -0.04, -0.7995937, -0.39375004, 0.04, -0.7434819, -0.22500005, 0.04, -0.4629227, 0.50624996, 0.04, -0.37875494, 0.675, 0.04, -0.29458717, 0.7875, 0.04, -0.26653126, 0.815625, 0.04, -0.18236347, 0.87187505, 0.04, -0.12625164, 0.90000004, 0.04, 0.12625165, 0.90000004, 0.04, 0.1823635, 0.87187505, 0.04, 0.21041942, 0.84375, 0.04, 0.350699, 0.703125, 0.04, 1.1082089, -0.22500005, 0.04, 1.2204325, -0.36562505, 0.04, 1.3326561, -0.5343751, 0.04, 1.3607122, -0.59062517, 0.04, 1.3887681, -0.6750002, 0.04, 1.3887681, -0.78750014, 0.04, 1.3607122, -0.8156252, 0.04, 1.2765445, -0.8437501, 0.04, 0.43486676, -0.9000001, 0.04, -0.4629227, -0.9000001, 0.04, -0.6032023, -0.8437501, 0.04, -0.68737006, -0.78750014, 0.04, -0.7434819, -0.73125017, 0.04, -0.77153784, -0.7031251, 0.04, -0.7995937, -0.64687514, 0.04)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lvngv"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_aa0ud"]
+points = PackedVector3Array(-0.561154, 2.0081205, -0.04, -0.40644982, 2.2060337, -0.04, -0.21939859, 2.282582, -0.04, 0.2193985, 2.1929493, -0.04, 0.31784657, 2.1154609, -0.04, 0.4162946, 2.0379725, -0.04, 0.45989302, 1.971688, -0.04, 0.5906882, 1.7728348, -0.04, 0.8410276, 1.3200479, -0.04, 1.2559159, -1.4041169, -0.04, 1.1659062, -1.8447597, -0.04, 1.0885541, -1.9437165, -0.04, 1.0112021, -2.0426729, -0.04, 0.94510114, -2.086549, -0.04, 0.74679863, -2.2181778, -0.04, 0.5048977, -2.2835224, -0.04, 0.32909766, -2.3049903, -0.04, -0.32909787, -2.1705413, -0.04, -0.4275459, -2.0930529, -0.04, -0.624442, -1.9380758, -0.04, -0.7116389, -1.805507, -0.04, -0.77633333, -1.5627778, -0.04, -0.6511636, 1.5674778, -0.04, -0.561154, 2.0081205, 0.04, -0.40644982, 2.2060337, 0.04, -0.21939859, 2.282582, 0.04, 0.2193985, 2.1929493, 0.04, 0.31784657, 2.1154609, 0.04, 0.4162946, 2.0379725, 0.04, 0.45989302, 1.971688, 0.04, 0.5906882, 1.7728348, 0.04, 0.8410276, 1.3200479, 0.04, 1.2559159, -1.4041169, 0.04, 1.1659062, -1.8447597, 0.04, 1.0885541, -1.9437165, 0.04, 1.0112021, -2.0426729, 0.04, 0.94510114, -2.086549, 0.04, 0.74679863, -2.2181778, 0.04, 0.5048977, -2.2835224, 0.04, 0.32909766, -2.3049903, 0.04, -0.32909787, -2.1705413, 0.04, -0.4275459, -2.0930529, 0.04, -0.624442, -1.9380758, 0.04, -0.7116389, -1.805507, 0.04, -0.77633333, -1.5627778, 0.04, -0.6511636, 1.5674778, 0.04)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fvt16"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_7fvj0"]
+points = PackedVector3Array(-1.081486, 1.7965238, -0.04, -0.8738563, 2.062322, -0.04, -0.71958923, 2.1773627, -0.04, -0.51487017, 2.2745452, -0.04, -0.27748647, 2.303617, -0.04, 0.2774866, 2.1071758, -0.04, 0.46150738, 1.9854903, -0.04, 0.5950761, 1.8816631, -0.04, 0.8117614, 1.6918669, -0.04, 1.0106591, 1.4518181, -0.04, 1.1264402, 1.2977384, -0.04, 1.1917692, 1.161517, -0.04, 1.2244338, 1.0934063, -0.04, 1.4857497, 0.5485206, -0.04, 1.5659556, 0.293936, -0.04, 1.6134971, 0.10746217, -0.04, 1.6730045, -0.3659904, -0.04, 1.7027584, -0.6027167, -0.04, 1.6998476, -0.77133226, -0.04, 1.6791494, -0.9902003, -0.04, 1.4479107, -1.643482, -0.04, 1.326308, -1.8266332, -0.04, 1.0682262, -2.074573, -0.04, 0.8635071, -2.1717558, -0.04, 0.65878797, -2.2689383, -0.04, 0.42140448, -2.2980099, -0.04, 0.25226057, -2.2946875, -0.04, -0.2522605, -2.1161046, -0.04, -0.43628126, -1.9944191, -0.04, -0.68563116, -1.7365124, -0.04, -0.8014123, -1.5824327, -0.04, -0.9825223, -1.2921314, -0.04, -1.0151868, -1.2240207, -0.04, -1.0478513, -1.15591, -0.04, -1.0805157, -1.0877993, -0.04, -1.2260507, -0.69699335, -0.04, -1.3211335, -0.32404566, -0.04, -1.3955181, 0.26777017, -0.04, -1.4074843, 0.5547489, -0.04, -1.386786, 0.77361685, -0.04, -1.3483, 1.0427372, -0.04, -1.081486, 1.7965238, 0.04, -0.8738563, 2.062322, 0.04, -0.71958923, 2.1773627, 0.04, -0.51487017, 2.2745452, 0.04, -0.27748647, 2.303617, 0.04, 0.2774866, 2.1071758, 0.04, 0.46150738, 1.9854903, 0.04, 0.5950761, 1.8816631, 0.04, 0.8117614, 1.6918669, 0.04, 1.0106591, 1.4518181, 0.04, 1.1264402, 1.2977384, 0.04, 1.1917692, 1.161517, 0.04, 1.2244338, 1.0934063, 0.04, 1.4857497, 0.5485206, 0.04, 1.5659556, 0.293936, 0.04, 1.6134971, 0.10746217, 0.04, 1.6730045, -0.3659904, 0.04, 1.7027584, -0.6027167, 0.04, 1.6998476, -0.77133226, 0.04, 1.6791494, -0.9902003, 0.04, 1.4479107, -1.643482, 0.04, 1.326308, -1.8266332, 0.04, 1.0682262, -2.074573, 0.04, 0.8635071, -2.1717558, 0.04, 0.65878797, -2.2689383, 0.04, 0.42140448, -2.2980099, 0.04, 0.25226057, -2.2946875, 0.04, -0.2522605, -2.1161046, 0.04, -0.43628126, -1.9944191, 0.04, -0.68563116, -1.7365124, 0.04, -0.8014123, -1.5824327, 0.04, -0.9825223, -1.2921314, 0.04, -1.0151868, -1.2240207, 0.04, -1.0478513, -1.15591, 0.04, -1.0805157, -1.0877993, 0.04, -1.2260507, -0.69699335, 0.04, -1.3211335, -0.32404566, 0.04, -1.3955181, 0.26777017, 0.04, -1.4074843, 0.5547489, 0.04, -1.386786, 0.77361685, 0.04, -1.3483, 1.0427372, 0.04)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jurwk"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_ustb6"]
+points = PackedVector3Array(-0.7995937, -0.39375004, -0.04, -0.7434819, -0.22500005, -0.04, -0.4629227, 0.50624996, -0.04, -0.37875494, 0.675, -0.04, -0.29458717, 0.7875, -0.04, -0.26653126, 0.815625, -0.04, -0.18236347, 0.87187505, -0.04, -0.12625164, 0.90000004, -0.04, 0.12625165, 0.90000004, -0.04, 0.1823635, 0.87187505, -0.04, 0.21041942, 0.84375, -0.04, 0.350699, 0.703125, -0.04, 1.1082089, -0.22500005, -0.04, 1.2204325, -0.36562505, -0.04, 1.3326561, -0.5343751, -0.04, 1.3607122, -0.59062517, -0.04, 1.3887681, -0.6750002, -0.04, 1.3887681, -0.78750014, -0.04, 1.3607122, -0.8156252, -0.04, 1.2765445, -0.8437501, -0.04, 0.43486676, -0.9000001, -0.04, -0.4629227, -0.9000001, -0.04, -0.6032023, -0.8437501, -0.04, -0.68737006, -0.78750014, -0.04, -0.7434819, -0.73125017, -0.04, -0.77153784, -0.7031251, -0.04, -0.7995937, -0.64687514, -0.04, -0.7995937, -0.39375004, 0.04, -0.7434819, -0.22500005, 0.04, -0.4629227, 0.50624996, 0.04, -0.37875494, 0.675, 0.04, -0.29458717, 0.7875, 0.04, -0.26653126, 0.815625, 0.04, -0.18236347, 0.87187505, 0.04, -0.12625164, 0.90000004, 0.04, 0.12625165, 0.90000004, 0.04, 0.1823635, 0.87187505, 0.04, 0.21041942, 0.84375, 0.04, 0.350699, 0.703125, 0.04, 1.1082089, -0.22500005, 0.04, 1.2204325, -0.36562505, 0.04, 1.3326561, -0.5343751, 0.04, 1.3607122, -0.59062517, 0.04, 1.3887681, -0.6750002, 0.04, 1.3887681, -0.78750014, 0.04, 1.3607122, -0.8156252, 0.04, 1.2765445, -0.8437501, 0.04, 0.43486676, -0.9000001, 0.04, -0.4629227, -0.9000001, 0.04, -0.6032023, -0.8437501, 0.04, -0.68737006, -0.78750014, 0.04, -0.7434819, -0.73125017, 0.04, -0.77153784, -0.7031251, 0.04, -0.7995937, -0.64687514, 0.04)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hv23a"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_vjnci"]
+points = PackedVector3Array(-0.8892894, 1.015451, -0.04, -0.81640893, 1.3564433, -0.04, -0.6861074, 1.6948519, -0.04, -0.6235332, 1.8067936, -0.04, -0.49838492, 2.0306768, -0.04, -0.43838733, 2.0853558, -0.04, -0.31839216, 2.1947138, -0.04, -0.20097354, 2.246809, -0.04, 0.20097354, 2.228723, -0.04, 0.4203512, 1.9893376, -0.04, 0.47261906, 1.8722285, -0.04, 0.5197337, 1.640594, -0.04, 0.6677033, -1.4645089, -0.04, 0.64966714, -1.8653477, -0.04, 0.5245188, -2.089231, -0.04, 0.3471026, -2.1960049, -0.04, 0.22968403, -2.2481008, -0.04, -0.22968403, -2.2274308, -0.04, -0.39937046, -2.162417, -0.04, -0.5090593, -2.0427246, -0.04, -0.6187482, -1.9230314, -0.04, -0.67359257, -1.8631853, -0.04, -0.72070724, -1.6315509, -0.04, -0.9305147, 0.09924805, -0.04, -0.8892894, 1.015451, 0.04, -0.81640893, 1.3564433, 0.04, -0.6861074, 1.6948519, 0.04, -0.6235332, 1.8067936, 0.04, -0.49838492, 2.0306768, 0.04, -0.43838733, 2.0853558, 0.04, -0.31839216, 2.1947138, 0.04, -0.20097354, 2.246809, 0.04, 0.20097354, 2.228723, 0.04, 0.4203512, 1.9893376, 0.04, 0.47261906, 1.8722285, 0.04, 0.5197337, 1.640594, 0.04, 0.6677033, -1.4645089, 0.04, 0.64966714, -1.8653477, 0.04, 0.5245188, -2.089231, 0.04, 0.3471026, -2.1960049, 0.04, 0.22968403, -2.2481008, 0.04, -0.22968403, -2.2274308, 0.04, -0.39937046, -2.162417, 0.04, -0.5090593, -2.0427246, 0.04, -0.6187482, -1.9230314, 0.04, -0.67359257, -1.8631853, 0.04, -0.72070724, -1.6315509, 0.04, -0.9305147, 0.09924805, 0.04)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_x5hrk"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_on3vg"]
+points = PackedVector3Array(-1.3579633, -0.48205507, -0.04, -1.3711345, -0.2599877, -0.04, -1.368171, -0.089413226, -0.04, -1.3652074, 0.08116126, -0.04, -1.3461092, 0.20024279, -0.04, -1.3079121, 0.43840593, -0.04, -1.2535803, 0.6250762, -0.04, -1.1992488, 0.81174636, -0.04, -1.1287823, 0.94692373, -0.04, -0.9526158, 1.284867, -0.04, -0.9173824, 1.3524559, -0.04, -0.55187833, 1.8062752, -0.04, -0.43004358, 1.9575484, -0.04, -0.3434422, 2.0412328, -0.04, -0.20547256, 2.1410131, -0.04, 0.20547265, 2.2697792, -0.04, 0.3404787, 2.198985, -0.04, 0.4079817, 2.163588, -0.04, 0.54298776, 2.0927937, -0.04, 0.62662566, 2.0059037, -0.04, 0.7939014, 1.8321236, -0.04, 0.8936742, 1.6937407, -0.04, 1.0095818, 1.5038649, -0.04, 1.2677398, 0.6799786, -0.04, 1.280911, 0.45791125, -0.04, 1.2779474, 0.2873368, -0.04, 1.2397506, 0.049173653, -0.04, 1.1824553, -0.30807108, -0.04, 1.1281235, -0.49474132, -0.04, 1.0033252, -0.8165889, -0.04, 0.7728272, -1.3412025, -0.04, 0.70236063, -1.4763799, -0.04, 0.43959278, -1.8980078, -0.04, 0.3529913, -1.9816922, -0.04, 0.17978847, -2.1490607, -0.04, -0.17978859, -2.2617311, -0.04, -0.3147946, -2.1909375, -0.04, -0.5173037, -2.084746, -0.04, -0.6009416, -1.9978558, -0.04, -0.76821727, -1.8240758, -0.04, -1.1159403, -1.2544485, -0.04, -1.3579633, -0.48205507, 0.04, -1.3711345, -0.2599877, 0.04, -1.368171, -0.089413226, 0.04, -1.3652074, 0.08116126, 0.04, -1.3461092, 0.20024279, 0.04, -1.3079121, 0.43840593, 0.04, -1.2535803, 0.6250762, 0.04, -1.1992488, 0.81174636, 0.04, -1.1287823, 0.94692373, 0.04, -0.9526158, 1.284867, 0.04, -0.9173824, 1.3524559, 0.04, -0.55187833, 1.8062752, 0.04, -0.43004358, 1.9575484, 0.04, -0.3434422, 2.0412328, 0.04, -0.20547256, 2.1410131, 0.04, 0.20547265, 2.2697792, 0.04, 0.3404787, 2.198985, 0.04, 0.4079817, 2.163588, 0.04, 0.54298776, 2.0927937, 0.04, 0.62662566, 2.0059037, 0.04, 0.7939014, 1.8321236, 0.04, 0.8936742, 1.6937407, 0.04, 1.0095818, 1.5038649, 0.04, 1.2677398, 0.6799786, 0.04, 1.280911, 0.45791125, 0.04, 1.2779474, 0.2873368, 0.04, 1.2397506, 0.049173653, 0.04, 1.1824553, -0.30807108, 0.04, 1.1281235, -0.49474132, 0.04, 1.0033252, -0.8165889, 0.04, 0.7728272, -1.3412025, 0.04, 0.70236063, -1.4763799, 0.04, 0.43959278, -1.8980078, 0.04, 0.3529913, -1.9816922, 0.04, 0.17978847, -2.1490607, 0.04, -0.17978859, -2.2617311, 0.04, -0.3147946, -2.1909375, 0.04, -0.5173037, -2.084746, 0.04, -0.6009416, -1.9978558, 0.04, -0.76821727, -1.8240758, 0.04, -1.1159403, -1.2544485, 0.04)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0aykf"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_y6l6y"]
+points = PackedVector3Array(-2.0253317, 0.27334893, -0.04, -1.9779632, 0.41456333, -0.04, -1.9305948, 0.5087063, -0.04, -1.7884896, 0.79113513, -0.04, -1.6937526, 0.93234956, -0.04, -1.504279, 1.1206354, -0.04, -1.4569106, 1.1677068, -0.04, -1.1727, 1.4030644, -0.04, -0.74638426, 1.6384217, -0.04, -0.60427904, 1.6384217, -0.04, -0.32006848, 1.5442787, -0.04, -0.08322644, 1.4501358, -0.04, 0.15361571, 1.3089213, -0.04, 0.20098412, 1.2618499, -0.04, 0.43782628, 1.0264926, -0.04, 0.5799316, 0.8852781, -0.04, 0.6746682, 0.7440637, -0.04, 1.195721, -0.10322288, -0.04, 1.3378264, -0.33858025, -0.04, 1.3851947, -0.4327232, -0.04, 1.4799317, -0.6210091, -0.04, 1.5273, -0.7622235, -0.04, 1.5746685, -0.9505094, -0.04, 1.5746685, -1.3270812, -0.04, 1.5273, -1.4682957, -0.04, 1.4799317, -1.5624386, -0.04, 1.4325632, -1.6095102, -0.04, 1.3378264, -1.6565815, -0.04, 1.2430896, -1.6565815, -0.04, -1.3148054, -0.80929494, -0.04, -1.5990158, -0.66808057, -0.04, -1.7884896, -0.52686614, -0.04, -1.8832264, -0.4327232, -0.04, -1.9779632, -0.29150876, -0.04, -2.0253317, -0.15029435, -0.04, -2.0253317, 0.27334893, 0.04, -1.9779632, 0.41456333, 0.04, -1.9305948, 0.5087063, 0.04, -1.7884896, 0.79113513, 0.04, -1.6937526, 0.93234956, 0.04, -1.504279, 1.1206354, 0.04, -1.4569106, 1.1677068, 0.04, -1.1727, 1.4030644, 0.04, -0.74638426, 1.6384217, 0.04, -0.60427904, 1.6384217, 0.04, -0.32006848, 1.5442787, 0.04, -0.08322644, 1.4501358, 0.04, 0.15361571, 1.3089213, 0.04, 0.20098412, 1.2618499, 0.04, 0.43782628, 1.0264926, 0.04, 0.5799316, 0.8852781, 0.04, 0.6746682, 0.7440637, 0.04, 1.195721, -0.10322288, 0.04, 1.3378264, -0.33858025, 0.04, 1.3851947, -0.4327232, 0.04, 1.4799317, -0.6210091, 0.04, 1.5273, -0.7622235, 0.04, 1.5746685, -0.9505094, 0.04, 1.5746685, -1.3270812, 0.04, 1.5273, -1.4682957, 0.04, 1.4799317, -1.5624386, 0.04, 1.4325632, -1.6095102, 0.04, 1.3378264, -1.6565815, 0.04, 1.2430896, -1.6565815, 0.04, -1.3148054, -0.80929494, 0.04, -1.5990158, -0.66808057, 0.04, -1.7884896, -0.52686614, 0.04, -1.8832264, -0.4327232, 0.04, -1.9779632, -0.29150876, 0.04, -2.0253317, -0.15029435, 0.04)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_b0xo3"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+
+[node name="GenerateStumpBeast" unique_id=279234981 instance=ExtResource("generated_base")]
 generator_path = NodePath("StumpBeastGenerator")
+manual_layout_connection_tolerance = 0.01
+generate_on_ready = true
+show_framework = false
+zero_gravity_test_mode = false
+planar_constraints_enabled = false
 density_data = ExtResource("8")
+mass_density = 1.0
+minimum_part_mass = 0.1
+minimum_feather_mass = 0.005
+maximum_part_mass = 10.0
+part_linear_damping = 0.15
+part_angular_damping = 1.0
+limb_angular_limit_degrees = 35.0
+neck_angular_limit_degrees = 20.0
+angular_spring_stiffness = 30.0
+angular_spring_damping = 5.0
+wing_joint_limits_enabled = true
+wing_root_limit_margin_degrees = 10.0
+wing_middle_limit_margin_degrees = 10.0
+wing_tip_limit_margin_degrees = 10.0
+neck_linear_springs_enabled = true
+neck_joint_linear_slack = Vector3(0.06, 0.06, 0.06)
+neck_linear_spring_stiffness = 80.0
+neck_linear_spring_damping = 8.0
+limb_hinge_damping = 3.0
+limb_joint_linear_slack = Vector3(0.03, 0.03, 0)
+segmented_torso_enabled = true
+segment_merge_length_percent = 10.0
+segment_weight_decay_ratio = 0.2
+segment_rotation_constraints_enabled = true
+segment_transverse_constraints_enabled = true
+segment_transverse_slack = 0.05
+segment_translation_springs_enabled = true
+segment_spring_maximum_acceleration = 50.0
+segment_maximum_distance_lock_enabled = true
+segment_maximum_distance_ratio = 1.15
+segment_spring_frequency = 3.0
+segment_spring_damping_ratio = 1.0
 
-[node name="StumpBeastGenerator" type="Node3D" parent="."]
+[node name="GeneratedLegStepMovementController3D" parent="." index="0"]
+foot_joint_yaw_lock_enabled = true
+action_heading_hold_enabled = true
+minimum_step_distance = 0.03854718424379826
+ray_start_height = 0.6424530707299709
+ray_length = 2.5698122829198837
+maximum_horizontal_leg_reach = 0.0
+slow_step_distance = 0.15418873697519303
+step_height = 0.1284906141459942
+torso_path = NodePath("../GeneratedParts/Torso")
+
+[node name="CreatureActionController3D" parent="." index="2"]
+actions = Array[ExtResource("stump_action_data")]([ExtResource("stump_stomp")])
+
+[node name="StumpBeastGenerator" type="Node3D" parent="." index="3" unique_id=42398125]
+visible = false
 script = ExtResource("3")
+head_attachment_height_ratio = 0.27500000121524026
+rear_leg_count = 2
+use_manual_layout = true
+manual_layout = SubResource("Resource_1smb6")
+part_scene_rules = Array[ExtResource("5_lvngv")]([SubResource("Resource_nm6lo"), SubResource("Resource_atodx"), SubResource("Resource_ggy3m"), SubResource("Resource_n4iuv"), SubResource("Resource_g41sy"), SubResource("Resource_7s6w7"), SubResource("Resource_8phtg"), SubResource("Resource_1j13x"), SubResource("Resource_838l0"), SubResource("Resource_5r42s"), SubResource("Resource_fq532"), SubResource("Resource_dr1tm"), SubResource("Resource_m6bfx"), SubResource("Resource_cn0ju"), SubResource("Resource_u5is3"), SubResource("Resource_8d1x5")])
+overall_scale = 8.0
+part_width = 0.08
+minimum_feet_distance = 0.05
+torso_count = 1
+body_length = 4.0
+torso_upper_curve = SubResource("Curve_1wvrb")
+torso_lower_curve = SubResource("Curve_urlo4")
+torso_height_offset_curve = SubResource("Curve_6po2f")
+sub_torso_x_offset = 0.0
+sub_torso_height_curve = SubResource("Curve_4u0s6")
+torso_minimum_height = 1.58
+torso_maximum_height = 1.58
+base_limb_length = 1.0
+minimum_bend_offset = 0.18
+maximum_bend_offset = 0.18
+limb_minimum_size = Vector3(0.25, 0.3, 0.15)
+limb_maximum_size = Vector3(0.25, 0.3, 0.15)
+neck_minimum_length = 1.0
+neck_maximum_length = 1.0
+neck_segment_count = 0
+head_minimum_size = Vector3(0.6, 0.55, 0.08)
+head_maximum_size = Vector3(0.6, 0.55, 0.08)
 
-[node name="GeneratedLegStepMovementController3D" parent="." instance=ExtResource("4")]
-slow_gait_data = ExtResource("5")
+[node name="ManualLayout" type="Node3D" parent="StumpBeastGenerator" index="0" unique_id=1285744954]
 
-[node name="CreatureRecoveryStateMachine3D" parent="." instance=ExtResource("6")]
+[node name="SubTorso" type="MeshInstance3D" parent="StumpBeastGenerator/ManualLayout" index="0" unique_id=361608012]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 7.799668, 0.48)
+material_override = SubResource("StandardMaterial3D_3l0qi")
+mesh = SubResource("ArrayMesh_ne1jt")
 
-[node name="CreatureActionController3D" parent="." instance=ExtResource("7")]
+[node name="@Label3D@167838" type="Label3D" parent="StumpBeastGenerator/ManualLayout/SubTorso" index="0" unique_id=1071651816]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+billboard = 1
+text = "SubTorso"
+
+[node name="SubTorso_2" type="MeshInstance3D" parent="StumpBeastGenerator/ManualLayout" index="1" unique_id=1395819596]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 7.0538793, -0.48)
+material_override = SubResource("StandardMaterial3D_3l0qi")
+mesh = SubResource("ArrayMesh_lvngv")
+
+[node name="@Label3D@167839" type="Label3D" parent="StumpBeastGenerator/ManualLayout/SubTorso_2" index="0" unique_id=1280843185]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+billboard = 1
+text = "SubTorso_2"
+
+[node name="SubTorso_3" type="MeshInstance3D" parent="StumpBeastGenerator/ManualLayout" index="2" unique_id=1725249191]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.1339111, 7.8458104, 0.48)
+material_override = SubResource("StandardMaterial3D_3l0qi")
+mesh = SubResource("ArrayMesh_fvt16")
+
+[node name="@Label3D@167840" type="Label3D" parent="StumpBeastGenerator/ManualLayout/SubTorso_3" index="0" unique_id=1633769537]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+billboard = 1
+text = "SubTorso_3"
+
+[node name="SubTorso_4" type="MeshInstance3D" parent="StumpBeastGenerator/ManualLayout" index="3" unique_id=843030849]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.1306152, 7.933884, -0.48)
+material_override = SubResource("StandardMaterial3D_3l0qi")
+mesh = SubResource("ArrayMesh_jurwk")
+
+[node name="@Label3D@167841" type="Label3D" parent="StumpBeastGenerator/ManualLayout/SubTorso_4" index="0" unique_id=597616363]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+billboard = 1
+text = "SubTorso_4"
+
+[node name="Torso" type="MeshInstance3D" parent="StumpBeastGenerator/ManualLayout" index="4" unique_id=888179491]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.037384, 10.31937, 0)
+material_override = SubResource("StandardMaterial3D_3l0qi")
+mesh = SubResource("ArrayMesh_hv23a")
+
+[node name="@Label3D@167842" type="Label3D" parent="StumpBeastGenerator/ManualLayout/Torso" index="0" unique_id=996120471]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.0400004, 0)
+billboard = 1
+text = "Torso"
+
+[node name="Leg_1" type="MeshInstance3D" parent="StumpBeastGenerator/ManualLayout" index="5" unique_id=181285501]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.90000004, 0.48)
+material_override = SubResource("StandardMaterial3D_3l0qi")
+mesh = SubResource("ArrayMesh_x5hrk")
+
+[node name="@Label3D@167843" type="Label3D" parent="StumpBeastGenerator/ManualLayout/Leg_1" index="0" unique_id=1710166510]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+billboard = 1
+text = "Leg_1"
+
+[node name="Leg_1_Limb_1" type="MeshInstance3D" parent="StumpBeastGenerator/ManualLayout" index="6" unique_id=1996621733]
+transform = Transform3D(0.76809394, -0.6403373, 0, 0.6403373, 0.76809394, 0, 0, 0, 1, -3.73154, 2.57608, 0.48)
+material_override = SubResource("StandardMaterial3D_3l0qi")
+mesh = SubResource("ArrayMesh_0aykf")
+
+[node name="@Label3D@167844" type="Label3D" parent="StumpBeastGenerator/ManualLayout/Leg_1_Limb_1" index="0" unique_id=1543536615]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7915418, 0)
+billboard = 1
+text = "Leg_1_Limb_1"
+
+[node name="Leg_1_Limb_2" type="MeshInstance3D" parent="StumpBeastGenerator/ManualLayout" index="7" unique_id=806030774]
+transform = Transform3D(0.80195105, 0.59738976, 0, -0.59738976, 0.80195105, 0, 0, 0, 1, -3.627765, 4.217435, 0.48)
+material_override = SubResource("StandardMaterial3D_3l0qi")
+mesh = SubResource("ArrayMesh_b0xo3")
+
+[node name="@Label3D@167845" type="Label3D" parent="StumpBeastGenerator/ManualLayout/Leg_1_Limb_2" index="0" unique_id=1449354648]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7915416, 0)
+billboard = 1
+text = "Leg_1_Limb_2"
+
+[node name="Leg_1_Limb_3" type="MeshInstance3D" parent="StumpBeastGenerator/ManualLayout" index="8" unique_id=1331298924]
+transform = Transform3D(0.9951112, -0.098760575, 0, 0.098760575, 0.9951112, 0, 0, 0, 1, -3.1451964, 6.2613015, 0.48)
+material_override = SubResource("StandardMaterial3D_3l0qi")
+mesh = SubResource("ArrayMesh_hq3o8")
+
+[node name="@Label3D@167846" type="Label3D" parent="StumpBeastGenerator/ManualLayout/Leg_1_Limb_3" index="0" unique_id=440092443]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7701876, 0)
+billboard = 1
+text = "Leg_1_Limb_3"
+
+[node name="Leg_2" type="MeshInstance3D" parent="StumpBeastGenerator/ManualLayout" index="9" unique_id=421983279]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.90000004, -0.48)
+material_override = SubResource("StandardMaterial3D_3l0qi")
+mesh = SubResource("ArrayMesh_rjox4")
+
+[node name="@Label3D@167847" type="Label3D" parent="StumpBeastGenerator/ManualLayout/Leg_2" index="0" unique_id=824293977]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+billboard = 1
+text = "Leg_2"
+
+[node name="Leg_2_Limb_1" type="MeshInstance3D" parent="StumpBeastGenerator/ManualLayout" index="10" unique_id=701333478]
+transform = Transform3D(0.87175494, -0.48994213, 0, 0.48994213, 0.87175494, 0, 0, 0, 1, -3.5901368, 2.3527372, -0.48)
+material_override = SubResource("StandardMaterial3D_3l0qi")
+mesh = SubResource("ArrayMesh_71h1l")
+
+[node name="@Label3D@167848" type="Label3D" parent="StumpBeastGenerator/ManualLayout/Leg_2_Limb_1" index="0" unique_id=932091348]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7915418, 0)
+billboard = 1
+text = "Leg_2_Limb_1"
+
+[node name="Leg_2_Limb_2" type="MeshInstance3D" parent="StumpBeastGenerator/ManualLayout" index="11" unique_id=750633832]
+transform = Transform3D(0.6617502, 0.7497244, 0, -0.7497244, 0.6617502, 0, 0, 0, 1, -3.330127, 4.0695543, -0.48)
+material_override = SubResource("StandardMaterial3D_3l0qi")
+mesh = SubResource("ArrayMesh_ih8rh")
+
+[node name="@Label3D@167849" type="Label3D" parent="StumpBeastGenerator/ManualLayout/Leg_2_Limb_2" index="0" unique_id=2141661636]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7915416, 0)
+billboard = 1
+text = "Leg_2_Limb_2"
+
+[node name="Leg_2_Limb_3" type="MeshInstance3D" parent="StumpBeastGenerator/ManualLayout" index="12" unique_id=624757953]
+transform = Transform3D(0.8856176, -0.46441513, 0, 0.46441513, 0.8856176, 0, 0, 0, 1, -2.7007995, 5.748057, -0.48)
+material_override = SubResource("StandardMaterial3D_3l0qi")
+mesh = SubResource("ArrayMesh_owq8c")
+
+[node name="@Label3D@167850" type="Label3D" parent="StumpBeastGenerator/ManualLayout/Leg_2_Limb_3" index="0" unique_id=452758913]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7701876, 0)
+billboard = 1
+text = "Leg_2_Limb_3"
+
+[node name="ForeLeg_1" type="MeshInstance3D" parent="StumpBeastGenerator/ManualLayout" index="13" unique_id=743574974]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.90000004, 0.48)
+material_override = SubResource("StandardMaterial3D_3l0qi")
+mesh = SubResource("ArrayMesh_kbv7i")
+
+[node name="@Label3D@167851" type="Label3D" parent="StumpBeastGenerator/ManualLayout/ForeLeg_1" index="0" unique_id=1612127009]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+billboard = 1
+text = "ForeLeg_1"
+
+[node name="ForeLeg_1_Limb_1" type="MeshInstance3D" parent="StumpBeastGenerator/ManualLayout" index="14" unique_id=1229023446]
+transform = Transform3D(0.8766973, -0.48104236, 0, 0.48104236, 0.8766973, 0, 0, 0, 1, 2.095466, 2.9168193, 0.48)
+material_override = SubResource("StandardMaterial3D_3l0qi")
+mesh = SubResource("ArrayMesh_daekf")
+
+[node name="@Label3D@167852" type="Label3D" parent="StumpBeastGenerator/ManualLayout/ForeLeg_1_Limb_1" index="0" unique_id=195473087]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5377657, 0)
+billboard = 1
+text = "ForeLeg_1_Limb_1"
+
+[node name="ForeLeg_1_Limb_2" type="MeshInstance3D" parent="StumpBeastGenerator/ManualLayout" index="15" unique_id=804328452]
+transform = Transform3D(0.7904255, 0.6125582, 0, -0.6125582, 0.7904255, 0, 0, 0, 1, 1.776519, 6.039266, 0.48)
+material_override = SubResource("StandardMaterial3D_3l0qi")
+mesh = SubResource("ArrayMesh_eaae3")
+
+[node name="@Label3D@167853" type="Label3D" parent="StumpBeastGenerator/ManualLayout/ForeLeg_1_Limb_2" index="0" unique_id=398423371]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5053961, 0)
+billboard = 1
+text = "ForeLeg_1_Limb_2"
+
+[node name="ForeLeg_2" type="MeshInstance3D" parent="StumpBeastGenerator/ManualLayout" index="16" unique_id=1790027744]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.90000004, -0.48)
+material_override = SubResource("StandardMaterial3D_3l0qi")
+mesh = SubResource("ArrayMesh_4dqyh")
+
+[node name="@Label3D@167854" type="Label3D" parent="StumpBeastGenerator/ManualLayout/ForeLeg_2" index="0" unique_id=1302763156]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+billboard = 1
+text = "ForeLeg_2"
+
+[node name="ForeLeg_2_Limb_1" type="MeshInstance3D" parent="StumpBeastGenerator/ManualLayout" index="17" unique_id=713491641]
+transform = Transform3D(0.9370852, -0.3491007, 0, 0.3491007, 0.9370852, 0, 0, 0, 1, 2.5620902, 3.0612001, -0.48)
+material_override = SubResource("StandardMaterial3D_3l0qi")
+mesh = SubResource("ArrayMesh_3eexk")
+
+[node name="@Label3D@167855" type="Label3D" parent="StumpBeastGenerator/ManualLayout/ForeLeg_2_Limb_1" index="0" unique_id=1801212815]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5377657, 0)
+billboard = 1
+text = "ForeLeg_2_Limb_1"
+
+[node name="ForeLeg_2_Limb_2" type="MeshInstance3D" parent="StumpBeastGenerator/ManualLayout" index="18" unique_id=1290534960]
+transform = Transform3D(0.97954357, 0.20123205, 0, -0.20123205, 0.97954357, 0, 0, 0, 1, 2.3431354, 6.2446675, -0.48)
+material_override = SubResource("StandardMaterial3D_3l0qi")
+mesh = SubResource("ArrayMesh_0f2x3")
+
+[node name="@Label3D@167856" type="Label3D" parent="StumpBeastGenerator/ManualLayout/ForeLeg_2_Limb_2" index="0" unique_id=433917121]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5053961, 0)
+billboard = 1
+text = "ForeLeg_2_Limb_2"
+
+[node name="Head_1" type="MeshInstance3D" parent="StumpBeastGenerator/ManualLayout" index="19" unique_id=1417052527]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.163342, 9.485104, 0)
+material_override = SubResource("StandardMaterial3D_3l0qi")
+mesh = SubResource("ArrayMesh_5rymu")
+
+[node name="@Label3D@167857" type="Label3D" parent="StumpBeastGenerator/ManualLayout/Head_1" index="0" unique_id=1886130384]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.95, 0)
+billboard = 1
+text = "Head_1"
+
+[node name="CharacterDamageController3D" parent="." index="4" unique_id=1339091800 instance=ExtResource("38_uymru")]
+
+[node name="GeneratedParts" type="Node3D" parent="." index="5" unique_id=810279214]
+
+[node name="SubTorso" parent="GeneratedParts" index="0" unique_id=1840211341 instance=ExtResource("stump_subtorso_scene")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 7.799668, 0.48)
+mass = 0.5759999
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([0, 6])
+metadata/generated_scene_path = "res://Scenes/Creatures/Bodyparts/PaperParts/ToSplit_1/Base/01_body_light_plate.tscn"
+metadata/generated_scene_rule_key = "SubTorso"
+metadata/body_segment_id = 0
+metadata/segment_layout_version = 3
+metadata/generated_layout = {
+"name": "SubTorso",
+"part_key": "SubTorso_Leg_1",
+"role": "Torso",
+"segment_id": 0,
+"size": Vector3(3, 2.4, 0.48),
+"sub_torso": true,
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 7.799668, 0.48)
+}
+metadata/generated_role = "Torso"
+metadata/generated_part_key = "SubTorso_Leg_1"
+metadata/generated_part_type = "SubTorso"
+metadata/generated_density = 1.0
+metadata/generated_size = Vector3(3, 2.3999996, 0.08)
+metadata/generated_framework_size = Vector3(3, 2.4, 0.48)
+
+[node name="CollisionShape3D" parent="GeneratedParts/SubTorso" index="0" unique_id=1899992271]
+shape = SubResource("ConvexPolygonShape3D_85rcj")
+
+[node name="Sprite3D" parent="GeneratedParts/SubTorso" index="1" unique_id=1806091758]
+transform = Transform3D(0.6603566, 0, 0, 0, 0.64946073, 0, 0, 0, 1, -1.2293862, -0.19899938, 0)
+
+[node name="MeshInstance3D" parent="GeneratedParts/SubTorso" index="2" unique_id=1504749449]
+transform = Transform3D(1.6911731, 0, 0, 0, 1.6626195, 0, 0, 0, 1.001, -1.2297164, -0.19899938, 0)
+
+[node name="Model" parent="GeneratedParts/SubTorso" index="3"]
+transform = Transform3D(0.6603566, 0, 0, 0, 0.64946073, 0, 0, 0, 1, -1.2293862, -0.19899938, 0)
+
+[node name="PaperVolume" parent="GeneratedParts/SubTorso/Model" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.08, 0, 0, 0)
+surface_material_override/2 = SubResource("StandardMaterial3D_4axdn")
+
+[node name="JointIn" parent="GeneratedParts/SubTorso" index="4"]
+transform = Transform3D(0.6603566, 0, 0, 0, 0.64946073, 0, 0, 0, 1, -1.2293862, -0.19899938, 0)
+
+[node name="JointOut" parent="GeneratedParts/SubTorso" index="5"]
+transform = Transform3D(0.6603566, 0, 0, 0, 0.64946073, 0, 0, 0, 1, -0.012876987, -0.8579377, 0)
+
+[node name="JointIn_Torso" type="Marker3D" parent="GeneratedParts/SubTorso" index="6" unique_id=496927766]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.518692, 0.72885084, -0.24)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_001_Torso"
+metadata/connected_part = "Torso"
+
+[node name="JointOut_Leg_1_Limb_3" type="Marker3D" parent="GeneratedParts/SubTorso" index="7" unique_id=1200996044]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2903931, -0.6376834, 0)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_008_Limb"
+metadata/connected_part = "Leg_1_Limb_3"
+
+[node name="SubTorso_2" parent="GeneratedParts" index="1" unique_id=1344066128 instance=ExtResource("stump_subtorso_scene")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 7.0538793, -0.48)
+mass = 0.5759999
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([0, 6])
+metadata/generated_scene_path = "res://Scenes/Creatures/Bodyparts/PaperParts/ToSplit_1/Base/01_body_light_plate.tscn"
+metadata/generated_scene_rule_key = "SubTorso"
+metadata/body_segment_id = 0
+metadata/segment_layout_version = 3
+metadata/generated_layout = {
+"name": "SubTorso_2",
+"part_key": "SubTorso_Leg_2",
+"role": "Torso",
+"segment_id": 0,
+"size": Vector3(3, 2.4, 0.48),
+"sub_torso": true,
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 7.0538793, -0.48)
+}
+metadata/generated_role = "Torso"
+metadata/generated_part_key = "SubTorso_Leg_2"
+metadata/generated_part_type = "SubTorso"
+metadata/generated_density = 1.0
+metadata/generated_size = Vector3(3, 2.3999996, 0.08)
+metadata/generated_framework_size = Vector3(3, 2.4, 0.48)
+
+[node name="CollisionShape3D" parent="GeneratedParts/SubTorso_2" index="0" unique_id=1899992271]
+shape = SubResource("ConvexPolygonShape3D_tgo0x")
+
+[node name="Sprite3D" parent="GeneratedParts/SubTorso_2" index="1" unique_id=1806091758]
+transform = Transform3D(0.6603566, 0, 0, 0, 0.64946073, 0, 0, 0, 1, -1.2293862, -0.19899938, 0)
+
+[node name="MeshInstance3D" parent="GeneratedParts/SubTorso_2" index="2" unique_id=1504749449]
+transform = Transform3D(1.6911731, 0, 0, 0, 1.6626195, 0, 0, 0, 1.001, -1.2297164, -0.19899938, 0)
+
+[node name="Model" parent="GeneratedParts/SubTorso_2" index="3"]
+transform = Transform3D(0.6603566, 0, 0, 0, 0.64946073, 0, 0, 0, 1, -1.2293862, -0.19899938, 0)
+
+[node name="PaperVolume" parent="GeneratedParts/SubTorso_2/Model" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.08, 0, 0, 0)
+surface_material_override/2 = SubResource("StandardMaterial3D_uh8og")
+
+[node name="JointIn" parent="GeneratedParts/SubTorso_2" index="4"]
+transform = Transform3D(0.6603566, 0, 0, 0, 0.64946073, 0, 0, 0, 1, -1.2293862, -0.19899938, 0)
+
+[node name="JointOut" parent="GeneratedParts/SubTorso_2" index="5"]
+transform = Transform3D(0.6603566, 0, 0, 0, 0.64946073, 0, 0, 0, 1, -0.012876987, -0.8579377, 0)
+
+[node name="JointIn_Torso" type="Marker3D" parent="GeneratedParts/SubTorso_2" index="6" unique_id=600918044]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.518692, 1.1017451, 0.24)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_002_Torso"
+metadata/connected_part = "Torso"
+
+[node name="JointOut_Leg_2_Limb_3" type="Marker3D" parent="GeneratedParts/SubTorso_2" index="7" unique_id=779811061]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.33698487, -0.60189915, 0)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_012_Limb"
+metadata/connected_part = "Leg_2_Limb_3"
+
+[node name="SubTorso_3" parent="GeneratedParts" index="2" unique_id=238905388 instance=ExtResource("stump_subtorso_scene")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.1339111, 7.8458104, 0.48)
+mass = 0.5759999
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([0, 6])
+metadata/generated_scene_path = "res://Scenes/Creatures/Bodyparts/PaperParts/ToSplit_1/Base/01_body_light_plate.tscn"
+metadata/generated_scene_rule_key = "SubTorso"
+metadata/body_segment_id = 0
+metadata/segment_layout_version = 3
+metadata/generated_layout = {
+"name": "SubTorso_3",
+"part_key": "SubTorso_ForeLeg_1",
+"role": "Torso",
+"segment_id": 0,
+"size": Vector3(3, 2.4, 0.48),
+"sub_torso": true,
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.1339111, 7.8458104, 0.48)
+}
+metadata/generated_role = "Torso"
+metadata/generated_part_key = "SubTorso_ForeLeg_1"
+metadata/generated_part_type = "SubTorso"
+metadata/generated_density = 1.0
+metadata/generated_size = Vector3(3, 2.3999996, 0.08)
+metadata/generated_framework_size = Vector3(3, 2.4, 0.48)
+
+[node name="CollisionShape3D" parent="GeneratedParts/SubTorso_3" index="0" unique_id=1899992271]
+shape = SubResource("ConvexPolygonShape3D_j7kdm")
+
+[node name="Sprite3D" parent="GeneratedParts/SubTorso_3" index="1" unique_id=1806091758]
+transform = Transform3D(0.6603566, 0, 0, 0, 0.64946073, 0, 0, 0, 1, -1.2293862, -0.19899938, 0)
+
+[node name="MeshInstance3D" parent="GeneratedParts/SubTorso_3" index="2" unique_id=1504749449]
+transform = Transform3D(1.6911731, 0, 0, 0, 1.6626195, 0, 0, 0, 1.001, -1.2297164, -0.19899938, 0)
+
+[node name="Model" parent="GeneratedParts/SubTorso_3" index="3"]
+transform = Transform3D(0.6603566, 0, 0, 0, 0.64946073, 0, 0, 0, 1, -1.2293862, -0.19899938, 0)
+
+[node name="PaperVolume" parent="GeneratedParts/SubTorso_3/Model" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.08, 0, 0, 0)
+surface_material_override/2 = SubResource("StandardMaterial3D_1smb6")
+
+[node name="JointIn" parent="GeneratedParts/SubTorso_3" index="4"]
+transform = Transform3D(0.6603566, 0, 0, 0, 0.64946073, 0, 0, 0, 1, -1.2293862, -0.19899938, 0)
+
+[node name="JointOut" parent="GeneratedParts/SubTorso_3" index="5"]
+transform = Transform3D(0.6603566, 0, 0, 0, 0.64946073, 0, 0, 0, 1, -0.012876987, -0.8579377, 0)
+
+[node name="JointIn_Torso" type="Marker3D" parent="GeneratedParts/SubTorso_3" index="6" unique_id=120623008]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.95173645, 0.70577955, -0.24)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_003_Torso"
+metadata/connected_part = "Torso"
+
+[node name="JointOut_ForeLeg_1_Limb_2" type="Marker3D" parent="GeneratedParts/SubTorso_3" index="7" unique_id=907895440]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27781487, -0.6316714, 0)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_015_Limb"
+metadata/connected_part = "ForeLeg_1_Limb_2"
+
+[node name="SubTorso_4" parent="GeneratedParts" index="3" unique_id=1206968607 instance=ExtResource("stump_subtorso_scene")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.1306152, 7.933884, -0.48)
+mass = 0.5759999
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([0, 6])
+metadata/generated_scene_path = "res://Scenes/Creatures/Bodyparts/PaperParts/ToSplit_1/Base/01_body_light_plate.tscn"
+metadata/generated_scene_rule_key = "SubTorso"
+metadata/body_segment_id = 0
+metadata/segment_layout_version = 3
+metadata/generated_layout = {
+"name": "SubTorso_4",
+"part_key": "SubTorso_ForeLeg_2",
+"role": "Torso",
+"segment_id": 0,
+"size": Vector3(3, 2.4, 0.48),
+"sub_torso": true,
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.1306152, 7.933884, -0.48)
+}
+metadata/generated_role = "Torso"
+metadata/generated_part_key = "SubTorso_ForeLeg_2"
+metadata/generated_part_type = "SubTorso"
+metadata/generated_density = 1.0
+metadata/generated_size = Vector3(3, 2.3999996, 0.08)
+metadata/generated_framework_size = Vector3(3, 2.4, 0.48)
+
+[node name="CollisionShape3D" parent="GeneratedParts/SubTorso_4" index="0" unique_id=1899992271]
+shape = SubResource("ConvexPolygonShape3D_hjhn7")
+
+[node name="Sprite3D" parent="GeneratedParts/SubTorso_4" index="1" unique_id=1806091758]
+transform = Transform3D(0.6603566, 0, 0, 0, 0.64946073, 0, 0, 0, 1, -1.2293862, -0.19899938, 0)
+
+[node name="MeshInstance3D" parent="GeneratedParts/SubTorso_4" index="2" unique_id=1504749449]
+transform = Transform3D(1.6911731, 0, 0, 0, 1.6626195, 0, 0, 0, 1.001, -1.2297164, -0.19899938, 0)
+
+[node name="Model" parent="GeneratedParts/SubTorso_4" index="3"]
+transform = Transform3D(0.6603566, 0, 0, 0, 0.64946073, 0, 0, 0, 1, -1.2293862, -0.19899938, 0)
+
+[node name="PaperVolume" parent="GeneratedParts/SubTorso_4/Model" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.08, 0, 0, 0)
+surface_material_override/2 = SubResource("StandardMaterial3D_fjw6y")
+
+[node name="JointIn" parent="GeneratedParts/SubTorso_4" index="4"]
+transform = Transform3D(0.6603566, 0, 0, 0, 0.64946073, 0, 0, 0, 1, -1.2293862, -0.19899938, 0)
+
+[node name="JointOut" parent="GeneratedParts/SubTorso_4" index="5"]
+transform = Transform3D(0.6603566, 0, 0, 0, 0.64946073, 0, 0, 0, 1, -0.012876987, -0.8579377, 0)
+
+[node name="JointIn_Torso" type="Marker3D" parent="GeneratedParts/SubTorso_4" index="6" unique_id=1138808469]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9533844, 0.6617427, 0.24)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_004_Torso"
+metadata/connected_part = "Torso"
+
+[node name="JointOut_ForeLeg_2_Limb_2" type="Marker3D" parent="GeneratedParts/SubTorso_4" index="7" unique_id=51028137]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.10920334, -0.36446714, 0)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_018_Limb"
+metadata/connected_part = "ForeLeg_2_Limb_2"
+
+[node name="Torso" parent="GeneratedParts" index="4" unique_id=266781955 instance=ExtResource("6_fvt16")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.037384, 10.31937, 0)
+mass = 9.1008005
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+metadata/generated_scene_path = "res://Scenes/Creatures/Bodyparts/PaperParts/ToSplit_1/Base/02_body_main.tscn"
+metadata/generated_scene_rule_key = "Torso"
+metadata/body_segment_id = 0
+metadata/segment_layout_version = 3
+metadata/generated_layout = {
+"name": "Torso",
+"part_key": "Torso",
+"role": "Torso",
+"segment_id": 0,
+"size": Vector3(12, 9.4800005, 0.48),
+"sub_torso": false,
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.037384, 10.31937, 0)
+}
+metadata/generated_role = "Torso"
+metadata/generated_part_key = "Torso"
+metadata/generated_part_type = "Torso"
+metadata/generated_density = 1.0
+metadata/generated_size = Vector3(12.000001, 9.48, 0.08)
+metadata/generated_framework_size = Vector3(12, 9.4800005, 0.48)
+
+[node name="CollisionShape3D" parent="GeneratedParts/Torso" index="0" unique_id=1899992271]
+shape = SubResource("ConvexPolygonShape3D_ra4en")
+
+[node name="Sprite3D" parent="GeneratedParts/Torso" index="1" unique_id=1806091758]
+transform = Transform3D(1.8847922, 0, 0, 0, 1.9328154, 0, 0, 0, 1, 4.3719954, -0.68446106, 0)
+
+[node name="MeshInstance3D" parent="GeneratedParts/Torso" index="2" unique_id=1504749449]
+transform = Transform3D(4.8269525, 0, 0, 0, 4.9480076, 0, 0, 0, 1.001, 4.371053, -0.68446106, 0)
+
+[node name="Model" parent="GeneratedParts/Torso" index="3"]
+transform = Transform3D(1.8847922, 0, 0, 0, 1.9328154, 0, 0, 0, 1, 4.3719954, -0.68446106, 0)
+
+[node name="PaperVolume" parent="GeneratedParts/Torso/Model" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.08, 0, 0, 0)
+surface_material_override/2 = SubResource("StandardMaterial3D_dk1vr")
+
+[node name="JointIn" parent="GeneratedParts/Torso" index="4"]
+transform = Transform3D(1.8847922, 0, 0, 0, 1.9328154, 0, 0, 0, 1, 4.3719954, -0.68446106, 0)
+
+[node name="JointOut" parent="GeneratedParts/Torso" index="5"]
+transform = Transform3D(1.8847922, 0, 0, 0, 1.9328154, 0, 0, 0, 1, 1.3992538, -3.45625, 0)
+
+[node name="JointOut_SubTorso" type="Marker3D" parent="GeneratedParts/Torso" index="6" unique_id=1717764037]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.518692, -1.7908516, 0.24)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_001_Torso"
+metadata/connected_part = "SubTorso"
+
+[node name="JointOut_SubTorso_2" type="Marker3D" parent="GeneratedParts/Torso" index="7" unique_id=1111510209]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.518692, -2.1637459, -0.24)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_002_Torso"
+metadata/connected_part = "SubTorso_2"
+
+[node name="JointOut_SubTorso_3" type="Marker3D" parent="GeneratedParts/Torso" index="8" unique_id=983653115]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0482635, -1.7677803, 0.24)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_003_Torso"
+metadata/connected_part = "SubTorso_3"
+
+[node name="JointOut_SubTorso_4" type="Marker3D" parent="GeneratedParts/Torso" index="9" unique_id=512622994]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0466156, -1.7237434, -0.24)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_004_Torso"
+metadata/connected_part = "SubTorso_4"
+
+[node name="JointOut_Head_1" type="Marker3D" parent="GeneratedParts/Torso" index="10" unique_id=146676604]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.162979, -1.483633, 0)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_019_Neck"
+metadata/connected_part = "Head_1"
+
+[node name="Leg_1" parent="GeneratedParts" index="5" unique_id=419177667 instance=ExtResource("7_hq3o8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.90000004, 0.48)
+mass = 0.38631767
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+metadata/generated_scene_path = "res://Scenes/Creatures/Bodyparts/StumpParts/LeftLeg/04_foot.tscn"
+metadata/generated_scene_rule_key = "Leg"
+metadata/generated_layout = {
+"name": "Leg_1",
+"part_key": "Leg_1",
+"role": "Leg",
+"size": Vector3(3.6000001, 1.8000001, 0.48),
+"sub_torso": false,
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.90000004, 0.48)
+}
+metadata/generated_role = "Leg"
+metadata/generated_part_key = "Leg_1"
+metadata/generated_part_type = "Leg"
+metadata/generated_density = 1.0
+metadata/generated_size = Vector3(2.6827617, 1.8, 0.08)
+metadata/generated_framework_size = Vector3(3.6000001, 1.8000001, 0.48)
+
+[node name="CollisionShape3D" parent="GeneratedParts/Leg_1" index="0" unique_id=1899992271]
+shape = SubResource("ConvexPolygonShape3D_ojtc3")
+
+[node name="Sprite3D" parent="GeneratedParts/Leg_1" index="1" unique_id=1806091758]
+transform = Transform3D(2.1486511, 0, 0, 0, 2.1486511, 0, 0, 0, 0.19950125, 0.17197189, 0.6317035, 0)
+
+[node name="MeshInstance3D" parent="GeneratedParts/Leg_1" index="2" unique_id=1504749449]
+transform = Transform3D(5.502695, 0, 0, 0, 5.500547, 0, 0, 0, 0.19970076, 0.17089751, 0.6317035, 0)
+
+[node name="Model" parent="GeneratedParts/Leg_1" index="3" unique_id=1585055800]
+transform = Transform3D(2.1486511, 0, 0, 0, 2.1486511, 0, 0, 0, 0.19950125, 0.17197189, 0.6317035, 0)
+
+[node name="PaperVolume" parent="GeneratedParts/Leg_1/Model" index="1" unique_id=1413208341]
+surface_material_override/2 = SubResource("StandardMaterial3D_4m3ql")
+
+[node name="JointIn" parent="GeneratedParts/Leg_1" index="4" unique_id=389087046]
+transform = Transform3D(2.1486511, 0, 0, 0, 2.1486511, 0, 0, 0, 0.19950125, 0, 0.90000004, 0)
+
+[node name="JointOut" parent="GeneratedParts/Leg_1" index="5" unique_id=1105864914]
+transform = Transform3D(2.1486511, 0, 0, 0, 2.1486511, 0, 0, 0, 0.19950125, 0.60190165, -0.9, 0)
+
+[node name="JointIn_Leg_1_Limb_1" type="Marker3D" parent="GeneratedParts/Leg_1" index="6" unique_id=465217191]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.11177516, 0.715218, 0)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_005_Limb"
+metadata/connected_part = "Leg_1_Limb_1"
+
+[node name="Leg_1_Limb_1" parent="GeneratedParts" index="6" unique_id=1767349143 instance=ExtResource("9_71h1l")]
+transform = Transform3D(0.76809394, -0.6403373, 0, 0.6403373, 0.76809394, 0, 0, 0, 1, -3.73154, 2.57608, 0.48)
+mass = 0.33135343
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+metadata/generated_scene_path = "res://Scenes/Creatures/Bodyparts/StumpParts/LeftLeg/03_lower_leg.tscn"
+metadata/generated_scene_rule_key = "Leg_1_Limb_1"
+metadata/generated_layout = {
+"connector_span": 2.9830835999999996,
+"name": "Leg_1_Limb_1",
+"part_key": "Leg_1_Limb_1",
+"role": "Limb",
+"size": Vector3(1.5, 2.9830837, 0.48),
+"sub_torso": false,
+"transform": Transform3D(0.76809394, -0.6403373, 0, 0.6403373, 0.76809394, 0, 0, 0, 1, -3.73154, 2.57608, 0.48)
+}
+metadata/generated_role = "Limb"
+metadata/generated_part_key = "Leg_1_Limb_1"
+metadata/generated_part_type = "LegLimb"
+metadata/generated_density = 1.0
+metadata/generated_size = Vector3(1.3545585, 3.0577624, 0.08)
+metadata/generated_framework_size = Vector3(1.5, 2.9830837, 0.48)
+
+[node name="CollisionShape3D" parent="GeneratedParts/Leg_1_Limb_1" index="0" unique_id=1899992271]
+shape = SubResource("ConvexPolygonShape3D_6ln4r")
+
+[node name="Sprite3D" parent="GeneratedParts/Leg_1_Limb_1" index="1" unique_id=1806091758]
+transform = Transform3D(1.5533344, 0.31729808, 0, -0.31729808, 1.5533344, 0, 0, 0, 1, -0.033801556, 1.1270466, 0)
+
+[node name="MeshInstance3D" parent="GeneratedParts/Leg_1_Limb_1" index="2" unique_id=1504749449]
+transform = Transform3D(3.978089, 0.8122831, 0, -0.8126004, 3.9765358, 0, 0, 0, 1.001, -0.03457826, 1.1272053, 0)
+
+[node name="Model" parent="GeneratedParts/Leg_1_Limb_1" index="3"]
+transform = Transform3D(1.5533344, 0.31729808, 0, -0.31729808, 1.5533344, 0, 0, 0, 1, -0.033801556, 1.1270466, 0)
+
+[node name="PaperVolume" parent="GeneratedParts/Leg_1_Limb_1/Model" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.08, 0, 0, 0)
+surface_material_override/2 = SubResource("StandardMaterial3D_bg2iu")
+
+[node name="JointIn" parent="GeneratedParts/Leg_1_Limb_1" index="4"]
+transform = Transform3D(1.5533344, 0.31729808, 0, -0.31729808, 1.5533344, 0, 0, 0, 1, -1.8626451e-08, 1.4915419, 0)
+
+[node name="JointOut" parent="GeneratedParts/Leg_1_Limb_1" index="5"]
+transform = Transform3D(1.5533344, 0.31729808, 0, -0.31729808, 1.5533344, 0, 0, 0, 1, 0, -1.4915419, 0)
+
+[node name="JointOut_Leg_1" type="Marker3D" parent="GeneratedParts/Leg_1_Limb_1" index="6" unique_id=1537343076]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.03246951, -1.278038, 0)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_005_Limb"
+metadata/connected_part = "Leg_1"
+
+[node name="JointIn_Leg_1_Limb_2" type="Marker3D" parent="GeneratedParts/Leg_1_Limb_1" index="7" unique_id=330545175]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.15980136, 1.1688075, 0)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_006_Limb"
+metadata/connected_part = "Leg_1_Limb_2"
+
+[node name="Leg_1_Limb_2" parent="GeneratedParts" index="7" unique_id=1428096380 instance=ExtResource("10_ih8rh")]
+transform = Transform3D(0.80195105, 0.59738976, 0, -0.59738976, 0.80195105, 0, 0, 0, 1, -3.627765, 4.217435, 0.48)
+mass = 0.4859574
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+metadata/generated_scene_path = "res://Scenes/Creatures/Bodyparts/StumpParts/LeftLeg/02_middle_leg.tscn"
+metadata/generated_scene_rule_key = "Leg_1_Limb_2"
+metadata/generated_layout = {
+"connector_span": 2.9830833,
+"name": "Leg_1_Limb_2",
+"part_key": "Leg_1_Limb_2",
+"role": "Limb",
+"size": Vector3(1.5, 2.9830832, 0.48),
+"sub_torso": false,
+"transform": Transform3D(0.80195105, 0.59738976, 0, -0.59738976, 0.80195105, 0, 0, 0, 1, -3.627765, 4.217435, 0.48)
+}
+metadata/generated_role = "Limb"
+metadata/generated_part_key = "Leg_1_Limb_2"
+metadata/generated_part_type = "LegLimb"
+metadata/generated_density = 1.0
+metadata/generated_size = Vector3(2.01805, 3.0100682, 0.08)
+metadata/generated_framework_size = Vector3(1.5, 2.9830832, 0.48)
+
+[node name="CollisionShape3D" parent="GeneratedParts/Leg_1_Limb_2" index="0" unique_id=1899992271]
+shape = SubResource("ConvexPolygonShape3D_10oa3")
+
+[node name="Sprite3D" parent="GeneratedParts/Leg_1_Limb_2" index="1" unique_id=1806091758]
+transform = Transform3D(1.0837263, 0.06963486, 0, -0.06963486, 1.0837263, 0, 0, 0, 1, -0.083086945, 1.1404008, 0)
+
+[node name="MeshInstance3D" parent="GeneratedParts/Leg_1_Limb_2" index="2" unique_id=1504749449]
+transform = Transform3D(2.7754228, 0.17826524, 0, -0.17833488, 2.7743392, 0, 0, 0, 1.001, -0.08362883, 1.1404356, 0)
+
+[node name="Model" parent="GeneratedParts/Leg_1_Limb_2" index="3" unique_id=1868575974]
+transform = Transform3D(1.0837263, 0.06963486, 0, -0.06963486, 1.0837263, 0, 0, 0, 1, -0.083086945, 1.1404008, 0)
+
+[node name="PaperVolume" parent="GeneratedParts/Leg_1_Limb_2/Model" index="1" unique_id=1790851794]
+surface_material_override/2 = SubResource("StandardMaterial3D_72pxl")
+
+[node name="JointIn" parent="GeneratedParts/Leg_1_Limb_2" index="4" unique_id=1221275831]
+transform = Transform3D(1.0837263, 0.06963486, 0, -0.06963486, 1.0837263, 0, 0, 0, 1, -7.450581e-09, 1.4915417, 0)
+
+[node name="JointOut" parent="GeneratedParts/Leg_1_Limb_2" index="5" unique_id=1927680441]
+transform = Transform3D(1.0837263, 0.06963486, 0, -0.06963486, 1.0837263, 0, 0, 0, 1, 7.450581e-09, -1.4915417, 0)
+
+[node name="JointOut_Leg_1_Limb_1" type="Marker3D" parent="GeneratedParts/Leg_1_Limb_2" index="6" unique_id=364367412]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.27651215, -1.2608168, 0)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_006_Limb"
+metadata/connected_part = "Leg_1_Limb_1"
+
+[node name="JointIn_Leg_1_Limb_3" type="Marker3D" parent="GeneratedParts/Leg_1_Limb_2" index="7" unique_id=167021177]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.07821655, 1.1661949, 0)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_007_Limb"
+metadata/connected_part = "Leg_1_Limb_3"
+
+[node name="Leg_1_Limb_3" parent="GeneratedParts" index="8" unique_id=1437743292 instance=ExtResource("11_owq8c")]
+transform = Transform3D(0.9951112, -0.098760575, 0, 0.098760575, 0.9951112, 0, 0, 0, 1, -3.1451964, 6.2613015, 0.48)
+mass = 0.50882435
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+metadata/generated_scene_path = "res://Scenes/Creatures/Bodyparts/StumpParts/LeftLeg/01_upper_leg.tscn"
+metadata/generated_scene_rule_key = "Leg_1_Limb_3"
+metadata/generated_layout = {
+"connector_span": 2.94037518,
+"name": "Leg_1_Limb_3",
+"part_key": "Leg_1_Limb_3",
+"role": "Limb",
+"size": Vector3(1.5, 2.9403753, 0.48),
+"sub_torso": false,
+"transform": Transform3D(0.9951112, -0.098760575, 0, 0.098760575, 0.9951112, 0, 0, 0, 1, -3.1451964, 6.2613015, 0.48)
+}
+metadata/generated_role = "Limb"
+metadata/generated_part_key = "Leg_1_Limb_3"
+metadata/generated_part_type = "LegLimb"
+metadata/generated_density = 1.0
+metadata/generated_size = Vector3(2.0733871, 3.0675914, 0.08)
+metadata/generated_framework_size = Vector3(1.5, 2.9403753, 0.48)
+
+[node name="CollisionShape3D" parent="GeneratedParts/Leg_1_Limb_3" index="0" unique_id=1899992271]
+shape = SubResource("ConvexPolygonShape3D_v0pqa")
+
+[node name="Sprite3D" parent="GeneratedParts/Leg_1_Limb_3" index="1" unique_id=1806091758]
+transform = Transform3D(1.210603, 0.42851102, 0, -0.42851102, 1.210603, 0, 0, 0, 1, -0.0514545, 0.7399637, 0)
+
+[node name="MeshInstance3D" parent="GeneratedParts/Leg_1_Limb_3" index="2" unique_id=1504749449]
+transform = Transform3D(3.1003542, 1.0969882, 0, -1.0974166, 3.0991435, 0, 0, 0, 1.001, -0.05205983, 0.740178, 0)
+
+[node name="Model" parent="GeneratedParts/Leg_1_Limb_3" index="3"]
+transform = Transform3D(1.210603, 0.42851102, 0, -0.42851102, 1.210603, 0, 0, 0, 1, -0.0514545, 0.7399637, 0)
+
+[node name="PaperVolume" parent="GeneratedParts/Leg_1_Limb_3/Model" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.08, 0, 0, 0)
+surface_material_override/2 = SubResource("StandardMaterial3D_jcmac")
+
+[node name="JointIn" parent="GeneratedParts/Leg_1_Limb_3" index="4"]
+transform = Transform3D(1.210603, 0.42851102, 0, -0.42851102, 1.210603, 0, 0, 0, 1, 4.4703484e-08, 1.4701877, 0)
+
+[node name="JointOut" parent="GeneratedParts/Leg_1_Limb_3" index="5"]
+transform = Transform3D(1.210603, 0.42851102, 0, -0.42851102, 1.210603, 0, 0, 0, 1, -1.4901161e-08, -1.4701874, 0)
+
+[node name="JointOut_Leg_1_Limb_2" type="Marker3D" parent="GeneratedParts/Leg_1_Limb_3" index="6" unique_id=115211022]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.16137266, -1.177053, 0)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_007_Limb"
+metadata/connected_part = "Leg_1_Limb_2"
+
+[node name="JointIn_SubTorso" type="Marker3D" parent="GeneratedParts/Leg_1_Limb_3" index="7" unique_id=1150529712]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.05553484, 0.91061974, 0)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_008_Limb"
+metadata/connected_part = "SubTorso"
+
+[node name="Leg_2" parent="GeneratedParts" index="9" unique_id=1711746343 instance=ExtResource("8_rjox4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.90000004, -0.48)
+mass = 0.3151241
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+metadata/generated_scene_path = "res://Scenes/Creatures/Bodyparts/StumpParts/RightLeg/04_foot.tscn"
+metadata/generated_scene_rule_key = "Leg_2"
+metadata/generated_layout = {
+"name": "Leg_2",
+"part_key": "Leg_2",
+"role": "Leg",
+"size": Vector3(3.6000001, 1.8000001, 0.48),
+"sub_torso": false,
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.90000004, -0.48)
+}
+metadata/generated_role = "Leg"
+metadata/generated_part_key = "Leg_2"
+metadata/generated_part_type = "Leg"
+metadata/generated_density = 1.0
+metadata/generated_size = Vector3(2.1883616, 1.8000002, 0.08)
+metadata/generated_framework_size = Vector3(3.6000001, 1.8000001, 0.48)
+
+[node name="CollisionShape3D" parent="GeneratedParts/Leg_2" index="0" unique_id=1899992271]
+shape = SubResource("ConvexPolygonShape3D_v8noq")
+
+[node name="Sprite3D" parent="GeneratedParts/Leg_2" index="1" unique_id=1806091758]
+transform = Transform3D(1.4620271, 0, 0, 0, 1.4620271, 0, 0, 0, 0.19950125, -0.020171124, 0.42359248, 0)
+
+[node name="MeshInstance3D" parent="GeneratedParts/Leg_2" index="2" unique_id=1504749449]
+transform = Transform3D(3.7442513, 0, 0, 0, 3.7427893, 0, 0, 0, 0.19970076, -0.020902172, 0.42359248, 0)
+
+[node name="Model" parent="GeneratedParts/Leg_2" index="3" unique_id=1728633972]
+transform = Transform3D(1.4620271, 0, 0, 0, 1.4620271, 0, 0, 0, 0.19950125, -0.020171124, 0.42359248, 0)
+
+[node name="PaperVolume" parent="GeneratedParts/Leg_2/Model" index="1" unique_id=339468136]
+surface_material_override/2 = SubResource("StandardMaterial3D_ecut6")
+
+[node name="JointIn" parent="GeneratedParts/Leg_2" index="4" unique_id=2006602594]
+transform = Transform3D(1.4620271, 0, 0, 0, 1.4620271, 0, 0, 0, 0.19950125, 0, 0.90000004, 0)
+
+[node name="JointOut" parent="GeneratedParts/Leg_2" index="5" unique_id=1519495459]
+transform = Transform3D(1.4620271, 0, 0, 0, 1.4620271, 0, 0, 0, 0.19950125, -0.014027958, -0.9000001, 0)
+
+[node name="JointIn_Leg_2_Limb_1" type="Marker3D" parent="GeneratedParts/Leg_2" index="6" unique_id=1627514734]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.07031608, 0.52623886, 0)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_009_Limb"
+metadata/connected_part = "Leg_2_Limb_1"
+
+[node name="Leg_2_Limb_1" parent="GeneratedParts" index="10" unique_id=628966157 instance=ExtResource("12_kbv7i")]
+transform = Transform3D(0.87175494, -0.48994213, 0, 0.48994213, 0.87175494, 0, 0, 0, 1, -3.5901368, 2.3527372, -0.48)
+mass = 0.25532216
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+metadata/generated_scene_path = "res://Scenes/Creatures/Bodyparts/StumpParts/RightLeg/03_lower_leg.tscn"
+metadata/generated_scene_rule_key = "Leg_2_Limb_1"
+metadata/generated_layout = {
+"connector_span": 2.9830835999999996,
+"name": "Leg_2_Limb_1",
+"part_key": "Leg_2_Limb_1",
+"role": "Limb",
+"size": Vector3(1.5, 2.9830837, 0.48),
+"sub_torso": false,
+"transform": Transform3D(0.87175494, -0.48994213, 0, 0.48994213, 0.87175494, 0, 0, 0, 1, -3.5901368, 2.3527372, -0.48)
+}
+metadata/generated_role = "Limb"
+metadata/generated_part_key = "Leg_2_Limb_1"
+metadata/generated_part_type = "LegLimb"
+metadata/generated_density = 1.0
+metadata/generated_size = Vector3(1.0652629, 2.9959996, 0.08)
+metadata/generated_framework_size = Vector3(1.5, 2.9830837, 0.48)
+
+[node name="CollisionShape3D" parent="GeneratedParts/Leg_2_Limb_1" index="0" unique_id=1899992271]
+shape = SubResource("ConvexPolygonShape3D_5pw1n")
+
+[node name="Sprite3D" parent="GeneratedParts/Leg_2_Limb_1" index="1" unique_id=1806091758]
+transform = Transform3D(2.0555117, 0.092489526, 0, -0.092489526, 2.0555117, 0, 0, 0, 1, 0.036261514, 1.192979, 0)
+
+[node name="MeshInstance3D" parent="GeneratedParts/Leg_2_Limb_1" index="2" unique_id=1504749449]
+transform = Transform3D(5.2641654, 0.23677318, 0, -0.23686567, 5.2621098, 0, 0, 0, 1.001, 0.03523371, 1.1930252, 0)
+
+[node name="Model" parent="GeneratedParts/Leg_2_Limb_1" index="3"]
+transform = Transform3D(2.0555117, 0.092489526, 0, -0.092489526, 2.0555117, 0, 0, 0, 1, 0.036261514, 1.192979, 0)
+
+[node name="PaperVolume" parent="GeneratedParts/Leg_2_Limb_1/Model" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.08, 0, 0, 0)
+surface_material_override/2 = SubResource("StandardMaterial3D_wgx82")
+
+[node name="JointIn" parent="GeneratedParts/Leg_2_Limb_1" index="4"]
+transform = Transform3D(2.0555117, 0.092489526, 0, -0.092489526, 2.0555117, 0, 0, 0, 1, 1.1175871e-08, 1.4915419, 0)
+
+[node name="JointOut" parent="GeneratedParts/Leg_2_Limb_1" index="5"]
+transform = Transform3D(2.0555117, 0.092489526, 0, -0.092489526, 2.0555117, 0, 0, 0, 1, 0, -1.4915417, 0)
+
+[node name="JointOut_Leg_2" type="Marker3D" parent="GeneratedParts/Leg_2_Limb_1" index="6" unique_id=932175965]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.121822596, -1.1312635, 0)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_009_Limb"
+metadata/connected_part = "Leg_2"
+
+[node name="JointIn_Leg_2_Limb_2" type="Marker3D" parent="GeneratedParts/Leg_2_Limb_1" index="7" unique_id=164276634]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.19530845, 1.2741125, 0)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_010_Limb"
+metadata/connected_part = "Leg_2_Limb_2"
+
+[node name="Leg_2_Limb_2" parent="GeneratedParts" index="11" unique_id=1255887244 instance=ExtResource("13_daekf")]
+transform = Transform3D(0.6617502, 0.7497244, 0, -0.7497244, 0.6617502, 0, 0, 0, 1, -3.330127, 4.0695543, -0.48)
+mass = 0.35506693
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+metadata/generated_scene_path = "res://Scenes/Creatures/Bodyparts/StumpParts/RightLeg/02_middle_leg.tscn"
+metadata/generated_scene_rule_key = "Leg_2_Limb_2"
+metadata/generated_layout = {
+"connector_span": 2.9830833,
+"name": "Leg_2_Limb_2",
+"part_key": "Leg_2_Limb_2",
+"role": "Limb",
+"size": Vector3(1.5, 2.9830832, 0.48),
+"sub_torso": false,
+"transform": Transform3D(0.6617502, 0.7497244, 0, -0.7497244, 0.6617502, 0, 0, 0, 1, -3.330127, 4.0695543, -0.48)
+}
+metadata/generated_role = "Limb"
+metadata/generated_part_key = "Leg_2_Limb_2"
+metadata/generated_part_type = "LegLimb"
+metadata/generated_density = 1.0
+metadata/generated_size = Vector3(1.4807707, 2.9973152, 0.08)
+metadata/generated_framework_size = Vector3(1.5, 2.9830832, 0.48)
+
+[node name="CollisionShape3D" parent="GeneratedParts/Leg_2_Limb_2" index="0" unique_id=1899992271]
+shape = SubResource("ConvexPolygonShape3D_x6no5")
+
+[node name="Sprite3D" parent="GeneratedParts/Leg_2_Limb_2" index="1" unique_id=1806091758]
+transform = Transform3D(2.05158, -0.091019645, 0, 0.091019645, 2.05158, 0, 0, 0, 1, 0.16384281, 1.0761905, 0)
+
+[node name="MeshInstance3D" parent="GeneratedParts/Leg_2_Limb_2" index="2" unique_id=1504749449]
+transform = Transform3D(5.254096, -0.23301029, 0, 0.2331013, 5.2520447, 0, 0, 0, 1.001, 0.16281697, 1.0761449, 0)
+
+[node name="Model" parent="GeneratedParts/Leg_2_Limb_2" index="3"]
+transform = Transform3D(2.05158, -0.091019645, 0, 0.091019645, 2.05158, 0, 0, 0, 1, 0.16384281, 1.0761905, 0)
+
+[node name="PaperVolume" parent="GeneratedParts/Leg_2_Limb_2/Model" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.08, 0, 0, 0)
+surface_material_override/2 = SubResource("StandardMaterial3D_l5qly")
+
+[node name="JointIn" parent="GeneratedParts/Leg_2_Limb_2" index="4"]
+transform = Transform3D(2.05158, -0.091019645, 0, 0.091019645, 2.05158, 0, 0, 0, 1, -1.4901161e-08, 1.4915417, 0)
+
+[node name="JointOut" parent="GeneratedParts/Leg_2_Limb_2" index="5"]
+transform = Transform3D(2.05158, -0.091019645, 0, 0.091019645, 2.05158, 0, 0, 0, 1, 1.4901161e-08, -1.4915416, 0)
+
+[node name="JointOut_Leg_2_Limb_1" type="Marker3D" parent="GeneratedParts/Leg_2_Limb_2" index="6" unique_id=562642688]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.17167234, -1.2550056, 0)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_010_Limb"
+metadata/connected_part = "Leg_2_Limb_1"
+
+[node name="JointIn_Leg_2_Limb_3" type="Marker3D" parent="GeneratedParts/Leg_2_Limb_2" index="7" unique_id=972897583]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.293015, 1.3621968, 0)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_011_Limb"
+metadata/connected_part = "Leg_2_Limb_3"
+
+[node name="Leg_2_Limb_3" parent="GeneratedParts" index="12" unique_id=342655718 instance=ExtResource("14_eaae3")]
+transform = Transform3D(0.8856176, -0.46441513, 0, 0.46441513, 0.8856176, 0, 0, 0, 1, -2.7007995, 5.748057, -0.48)
+mass = 0.4272541
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+metadata/generated_scene_path = "res://Scenes/Creatures/Bodyparts/StumpParts/RightLeg/01_upper_leg.tscn"
+metadata/generated_scene_rule_key = "Leg_2_Limb_3"
+metadata/generated_layout = {
+"connector_span": 2.94037518,
+"name": "Leg_2_Limb_3",
+"part_key": "Leg_2_Limb_3",
+"role": "Limb",
+"size": Vector3(1.5, 2.9403753, 0.48),
+"sub_torso": false,
+"transform": Transform3D(0.8856176, -0.46441513, 0, 0.46441513, 0.8856176, 0, 0, 0, 1, -2.7007995, 5.748057, -0.48)
+}
+metadata/generated_role = "Limb"
+metadata/generated_part_key = "Leg_2_Limb_3"
+metadata/generated_part_type = "LegLimb"
+metadata/generated_density = 1.0
+metadata/generated_size = Vector3(1.7679383, 3.0208502, 0.08)
+metadata/generated_framework_size = Vector3(1.5, 2.9403753, 0.48)
+
+[node name="CollisionShape3D" parent="GeneratedParts/Leg_2_Limb_3" index="0" unique_id=1899992271]
+shape = SubResource("ConvexPolygonShape3D_ilk1v")
+
+[node name="Sprite3D" parent="GeneratedParts/Leg_2_Limb_3" index="1" unique_id=1806091758]
+transform = Transform3D(1.3432469, -0.42089516, 0, 0.42089516, 1.3432469, 0, 0, 0, 1, -0.04932405, 0.34118298, 0)
+
+[node name="MeshInstance3D" parent="GeneratedParts/Leg_2_Limb_3" index="2" unique_id=1504749449]
+transform = Transform3D(3.4400551, -1.0774916, 0, 1.0779124, 3.4387121, 0, 0, 0, 1.001, -0.049995705, 0.3409725, 0)
+
+[node name="Model" parent="GeneratedParts/Leg_2_Limb_3" index="3"]
+transform = Transform3D(1.3432469, -0.42089516, 0, 0.42089516, 1.3432469, 0, 0, 0, 1, -0.04932405, 0.34118298, 0)
+
+[node name="PaperVolume" parent="GeneratedParts/Leg_2_Limb_3/Model" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.08, 0, 0, 0)
+surface_material_override/2 = SubResource("StandardMaterial3D_ne1jt")
+
+[node name="JointIn" parent="GeneratedParts/Leg_2_Limb_3" index="4"]
+transform = Transform3D(1.3432469, -0.42089516, 0, 0.42089516, 1.3432469, 0, 0, 0, 1, 4.4703484e-08, 1.4701875, 0)
+
+[node name="JointOut" parent="GeneratedParts/Leg_2_Limb_3" index="5"]
+transform = Transform3D(1.3432469, -0.42089516, 0, 0.42089516, 1.3432469, 0, 0, 0, 1, -4.4703484e-08, -1.4701877, 0)
+
+[node name="JointOut_Leg_2_Limb_2" type="Marker3D" parent="GeneratedParts/Leg_2_Limb_3" index="6" unique_id=483693979]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.05593145, -1.1548147, 0)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_011_Limb"
+metadata/connected_part = "Leg_2_Limb_2"
+
+[node name="JointIn_SubTorso_2" type="Marker3D" parent="GeneratedParts/Leg_2_Limb_3" index="7" unique_id=385822646]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.23650432, 0.9188614, 0)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_012_Limb"
+metadata/connected_part = "SubTorso_2"
+
+[node name="ForeLeg_1" parent="GeneratedParts" index="13" unique_id=177940335 instance=ExtResource("8_rjox4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.90000004, 0.48)
+mass = 0.3151241
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([4, 1])
+metadata/generated_scene_path = "res://Scenes/Creatures/Bodyparts/StumpParts/RightLeg/04_foot.tscn"
+metadata/generated_scene_rule_key = "ForeLeg"
+metadata/generated_layout = {
+"name": "ForeLeg_1",
+"part_key": "ForeLeg_1",
+"role": "ForeLeg",
+"size": Vector3(3.6000001, 1.8000001, 0.48),
+"sub_torso": false,
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.90000004, 0.48)
+}
+metadata/generated_role = "ForeLeg"
+metadata/generated_part_key = "ForeLeg_1"
+metadata/generated_part_type = "ForeLeg"
+metadata/generated_density = 1.0
+metadata/generated_size = Vector3(2.1883616, 1.8000002, 0.08)
+metadata/generated_framework_size = Vector3(3.6000001, 1.8000001, 0.48)
+
+[node name="CollisionShape3D" parent="GeneratedParts/ForeLeg_1" index="0" unique_id=1899992271]
+shape = SubResource("ConvexPolygonShape3D_0f4ss")
+
+[node name="Sprite3D" parent="GeneratedParts/ForeLeg_1" index="1" unique_id=1806091758]
+transform = Transform3D(1.4620271, 0, 0, 0, 1.4620271, 0, 0, 0, 0.19950125, -0.020171124, 0.42359248, 0)
+
+[node name="MeshInstance3D" parent="GeneratedParts/ForeLeg_1" index="2" unique_id=1504749449]
+transform = Transform3D(3.7442513, 0, 0, 0, 3.7427893, 0, 0, 0, 0.19970076, -0.020902172, 0.42359248, 0)
+
+[node name="Model" parent="GeneratedParts/ForeLeg_1" index="3" unique_id=1728633972]
+transform = Transform3D(1.4620271, 0, 0, 0, 1.4620271, 0, 0, 0, 0.19950125, -0.020171124, 0.42359248, 0)
+
+[node name="PaperVolume" parent="GeneratedParts/ForeLeg_1/Model" index="1" unique_id=339468136]
+surface_material_override/2 = SubResource("StandardMaterial3D_lvngv")
+
+[node name="JointIn" parent="GeneratedParts/ForeLeg_1" index="4" unique_id=2006602594]
+transform = Transform3D(1.4620271, 0, 0, 0, 1.4620271, 0, 0, 0, 0.19950125, 0, 0.90000004, 0)
+
+[node name="JointOut" parent="GeneratedParts/ForeLeg_1" index="5" unique_id=1519495459]
+transform = Transform3D(1.4620271, 0, 0, 0, 1.4620271, 0, 0, 0, 0.19950125, -0.014027958, -0.9000001, 0)
+
+[node name="JointIn_ForeLeg_1_Limb_1" type="Marker3D" parent="GeneratedParts/ForeLeg_1" index="6" unique_id=1954431618]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.08596301, 0.47748774, 0)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_013_Limb"
+metadata/connected_part = "ForeLeg_1_Limb_1"
+
+[node name="ForeLeg_1_Limb_1" parent="GeneratedParts" index="14" unique_id=37225807 instance=ExtResource("9_71h1l")]
+transform = Transform3D(0.8766973, -0.48104236, 0, 0.48104236, 0.8766973, 0, 0, 0, 1, 2.095466, 2.9168193, 0.48)
+mass = 0.74584717
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+metadata/generated_scene_path = "res://Scenes/Creatures/Bodyparts/StumpParts/LeftLeg/03_lower_leg.tscn"
+metadata/generated_scene_rule_key = "ForeLeg_1_Limb_1"
+metadata/generated_layout = {
+"connector_span": 4.4755314,
+"name": "ForeLeg_1_Limb_1",
+"part_key": "ForeLeg_1_Limb_1",
+"role": "Limb",
+"size": Vector3(1.5, 4.4755316, 0.48),
+"sub_torso": false,
+"transform": Transform3D(0.8766973, -0.48104236, 0, 0.48104236, 0.8766973, 0, 0, 0, 1, 2.095466, 2.9168193, 0.48)
+}
+metadata/generated_role = "Limb"
+metadata/generated_part_key = "ForeLeg_1_Limb_1"
+metadata/generated_part_type = "LegLimb"
+metadata/generated_density = 1.0
+metadata/generated_size = Vector3(2.0322492, 4.587572, 0.08)
+metadata/generated_framework_size = Vector3(1.5, 4.4755316, 0.48)
+
+[node name="CollisionShape3D" parent="GeneratedParts/ForeLeg_1_Limb_1" index="0" unique_id=1899992271]
+shape = SubResource("ConvexPolygonShape3D_aa0ud")
+
+[node name="Sprite3D" parent="GeneratedParts/ForeLeg_1_Limb_1" index="1" unique_id=1806091758]
+transform = Transform3D(2.3304734, 0.47604355, 0, -0.47604355, 2.3304734, 0, 0, 0, 1, -0.050712615, 1.6909122, 0)
+
+[node name="MeshInstance3D" parent="GeneratedParts/ForeLeg_1_Limb_1" index="2" unique_id=1504749449]
+transform = Transform3D(5.9683423, 1.2186714, 0, -1.2191474, 5.966012, 0, 0, 0, 1.001, -0.051877905, 1.6911503, 0)
+
+[node name="Model" parent="GeneratedParts/ForeLeg_1_Limb_1" index="3"]
+transform = Transform3D(2.3304734, 0.47604355, 0, -0.47604355, 2.3304734, 0, 0, 0, 1, -0.050712615, 1.6909122, 0)
+
+[node name="PaperVolume" parent="GeneratedParts/ForeLeg_1_Limb_1/Model" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.08, 0, 0, 0)
+surface_material_override/2 = SubResource("StandardMaterial3D_fvt16")
+
+[node name="JointIn" parent="GeneratedParts/ForeLeg_1_Limb_1" index="4"]
+transform = Transform3D(2.3304734, 0.47604355, 0, -0.47604355, 2.3304734, 0, 0, 0, 1, -4.0978193e-08, 2.2377658, 0)
+
+[node name="JointOut" parent="GeneratedParts/ForeLeg_1_Limb_1" index="5"]
+transform = Transform3D(2.3304734, 0.47604355, 0, -0.47604355, 2.3304734, 0, 0, 0, 1, -2.9802322e-08, -2.2377658, 0)
+
+[node name="JointOut_ForeLeg_1" type="Marker3D" parent="GeneratedParts/ForeLeg_1_Limb_1" index="6" unique_id=1142764224]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12788248, -1.8259991, 0)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_013_Limb"
+metadata/connected_part = "ForeLeg_1"
+
+[node name="JointIn_ForeLeg_1_Limb_2" type="Marker3D" parent="GeneratedParts/ForeLeg_1_Limb_1" index="7" unique_id=1712359405]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.40025282, 2.125115, 0)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_014_Limb"
+metadata/connected_part = "ForeLeg_1_Limb_2"
+
+[node name="ForeLeg_1_Limb_2" parent="GeneratedParts" index="15" unique_id=1684100983 instance=ExtResource("11_owq8c")]
+transform = Transform3D(0.7904255, 0.6125582, 0, -0.6125582, 0.7904255, 0, 0, 0, 1, 1.776519, 6.039266, 0.48)
+mass = 1.1449742
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+metadata/generated_scene_path = "res://Scenes/Creatures/Bodyparts/StumpParts/LeftLeg/01_upper_leg.tscn"
+metadata/generated_scene_rule_key = "ForeLeg_1_Limb_2"
+metadata/generated_layout = {
+"connector_span": 4.41079224,
+"name": "ForeLeg_1_Limb_2",
+"part_key": "ForeLeg_1_Limb_2",
+"role": "Limb",
+"size": Vector3(1.5, 4.4107924, 0.48),
+"sub_torso": false,
+"transform": Transform3D(0.7904255, 0.6125582, 0, -0.6125582, 0.7904255, 0, 0, 0, 1, 1.776519, 6.039266, 0.48)
+}
+metadata/generated_role = "Limb"
+metadata/generated_part_key = "ForeLeg_1_Limb_2"
+metadata/generated_part_type = "LegLimb"
+metadata/generated_density = 1.0
+metadata/generated_size = Vector3(3.1102428, 4.6016273, 0.08)
+metadata/generated_framework_size = Vector3(1.5, 4.4107924, 0.48)
+
+[node name="CollisionShape3D" parent="GeneratedParts/ForeLeg_1_Limb_2" index="0" unique_id=1899992271]
+shape = SubResource("ConvexPolygonShape3D_7fvj0")
+
+[node name="Sprite3D" parent="GeneratedParts/ForeLeg_1_Limb_2" index="1" unique_id=1806091758]
+transform = Transform3D(1.8159992, 0.64280003, 0, -0.64280003, 1.8159992, 0, 0, 0, 1, -0.07718575, 1.1100035, 0)
+
+[node name="MeshInstance3D" parent="GeneratedParts/ForeLeg_1_Limb_2" index="2" unique_id=1504749449]
+transform = Transform3D(4.6507735, 1.645568, 0, -1.6462108, 4.6489577, 0, 0, 0, 1.001, -0.07809379, 1.1103249, 0)
+
+[node name="Model" parent="GeneratedParts/ForeLeg_1_Limb_2" index="3"]
+transform = Transform3D(1.8159992, 0.64280003, 0, -0.64280003, 1.8159992, 0, 0, 0, 1, -0.07718575, 1.1100035, 0)
+
+[node name="PaperVolume" parent="GeneratedParts/ForeLeg_1_Limb_2/Model" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.08, 0, 0, 0)
+surface_material_override/2 = SubResource("StandardMaterial3D_jurwk")
+
+[node name="JointIn" parent="GeneratedParts/ForeLeg_1_Limb_2" index="4"]
+transform = Transform3D(1.8159992, 0.64280003, 0, -0.64280003, 1.8159992, 0, 0, 0, 1, 5.9604645e-08, 2.2053964, 0)
+
+[node name="JointOut" parent="GeneratedParts/ForeLeg_1_Limb_2" index="5"]
+transform = Transform3D(1.8159992, 0.64280003, 0, -0.64280003, 1.8159992, 0, 0, 0, 1, 0, -2.2053962, 0)
+
+[node name="JointOut_ForeLeg_1_Limb_1" type="Marker3D" parent="GeneratedParts/ForeLeg_1_Limb_2" index="6" unique_id=2084222540]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.05608964, -1.7933941, 0)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_014_Limb"
+metadata/connected_part = "ForeLeg_1_Limb_1"
+
+[node name="JointIn_SubTorso_3" type="Marker3D" parent="GeneratedParts/ForeLeg_1_Limb_2" index="7" unique_id=1411294379]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.21759415, 1.3177509, 0)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_015_Limb"
+metadata/connected_part = "SubTorso_3"
+
+[node name="ForeLeg_2" parent="GeneratedParts" index="16" unique_id=1812602068 instance=ExtResource("8_rjox4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.90000004, -0.48)
+mass = 0.3151241
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([4, 1])
+metadata/generated_scene_path = "res://Scenes/Creatures/Bodyparts/StumpParts/RightLeg/04_foot.tscn"
+metadata/generated_scene_rule_key = "ForeLeg"
+metadata/generated_layout = {
+"name": "ForeLeg_2",
+"part_key": "ForeLeg_2",
+"role": "ForeLeg",
+"size": Vector3(3.6000001, 1.8000001, 0.48),
+"sub_torso": false,
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.90000004, -0.48)
+}
+metadata/generated_role = "ForeLeg"
+metadata/generated_part_key = "ForeLeg_2"
+metadata/generated_part_type = "ForeLeg"
+metadata/generated_density = 1.0
+metadata/generated_size = Vector3(2.1883616, 1.8000002, 0.08)
+metadata/generated_framework_size = Vector3(3.6000001, 1.8000001, 0.48)
+
+[node name="CollisionShape3D" parent="GeneratedParts/ForeLeg_2" index="0" unique_id=1899992271]
+shape = SubResource("ConvexPolygonShape3D_ustb6")
+
+[node name="Sprite3D" parent="GeneratedParts/ForeLeg_2" index="1" unique_id=1806091758]
+transform = Transform3D(1.4620271, 0, 0, 0, 1.4620271, 0, 0, 0, 0.19950125, -0.020171124, 0.42359248, 0)
+
+[node name="MeshInstance3D" parent="GeneratedParts/ForeLeg_2" index="2" unique_id=1504749449]
+transform = Transform3D(3.7442513, 0, 0, 0, 3.7427893, 0, 0, 0, 0.19970076, -0.020902172, 0.42359248, 0)
+
+[node name="Model" parent="GeneratedParts/ForeLeg_2" index="3" unique_id=1728633972]
+transform = Transform3D(1.4620271, 0, 0, 0, 1.4620271, 0, 0, 0, 0.19950125, -0.020171124, 0.42359248, 0)
+
+[node name="PaperVolume" parent="GeneratedParts/ForeLeg_2/Model" index="1" unique_id=339468136]
+surface_material_override/2 = SubResource("StandardMaterial3D_hv23a")
+
+[node name="JointIn" parent="GeneratedParts/ForeLeg_2" index="4" unique_id=2006602594]
+transform = Transform3D(1.4620271, 0, 0, 0, 1.4620271, 0, 0, 0, 0.19950125, 0, 0.90000004, 0)
+
+[node name="JointOut" parent="GeneratedParts/ForeLeg_2" index="5" unique_id=1519495459]
+transform = Transform3D(1.4620271, 0, 0, 0, 1.4620271, 0, 0, 0, 0.19950125, -0.014027958, -0.9000001, 0)
+
+[node name="JointIn_ForeLeg_2_Limb_1" type="Marker3D" parent="GeneratedParts/ForeLeg_2" index="6" unique_id=1374914524]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.17164779, 0.48211175, 0)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_016_Limb"
+metadata/connected_part = "ForeLeg_2_Limb_1"
+
+[node name="ForeLeg_2_Limb_1" parent="GeneratedParts" index="17" unique_id=599228434 instance=ExtResource("12_kbv7i")]
+transform = Transform3D(0.9370852, -0.3491007, 0, 0.3491007, 0.9370852, 0, 0, 0, 1, 2.5620902, 3.0612001, -0.48)
+mass = 0.5747076
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+metadata/generated_scene_path = "res://Scenes/Creatures/Bodyparts/StumpParts/RightLeg/03_lower_leg.tscn"
+metadata/generated_scene_rule_key = "ForeLeg_2_Limb_1"
+metadata/generated_layout = {
+"connector_span": 4.4755314,
+"name": "ForeLeg_2_Limb_1",
+"part_key": "ForeLeg_2_Limb_1",
+"role": "Limb",
+"size": Vector3(1.5, 4.4755316, 0.48),
+"sub_torso": false,
+"transform": Transform3D(0.9370852, -0.3491007, 0, 0.3491007, 0.9370852, 0, 0, 0, 1, 2.5620902, 3.0612001, -0.48)
+}
+metadata/generated_role = "Limb"
+metadata/generated_part_key = "ForeLeg_2_Limb_1"
+metadata/generated_part_type = "LegLimb"
+metadata/generated_density = 1.0
+metadata/generated_size = Vector3(1.598218, 4.49491, 0.08)
+metadata/generated_framework_size = Vector3(1.5, 4.4755316, 0.48)
+
+[node name="CollisionShape3D" parent="GeneratedParts/ForeLeg_2_Limb_1" index="0" unique_id=1899992271]
+shape = SubResource("ConvexPolygonShape3D_vjnci")
+
+[node name="Sprite3D" parent="GeneratedParts/ForeLeg_2_Limb_1" index="1" unique_id=1806091758]
+transform = Transform3D(3.083892, 0.13876238, 0, -0.13876238, 3.083892, 0, 0, 0, 1, 0.054403283, 1.789831, 0)
+
+[node name="MeshInstance3D" parent="GeneratedParts/ForeLeg_2_Limb_1" index="2" unique_id=1504749449]
+transform = Transform3D(7.897847, 0.3552317, 0, -0.35537046, 7.8947635, 0, 0, 0, 1.001, 0.052861266, 1.7899004, 0)
+
+[node name="Model" parent="GeneratedParts/ForeLeg_2_Limb_1" index="3"]
+transform = Transform3D(3.083892, 0.13876238, 0, -0.13876238, 3.083892, 0, 0, 0, 1, 0.054403283, 1.789831, 0)
+
+[node name="PaperVolume" parent="GeneratedParts/ForeLeg_2_Limb_1/Model" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.08, 0, 0, 0)
+surface_material_override/2 = SubResource("StandardMaterial3D_x5hrk")
+
+[node name="JointIn" parent="GeneratedParts/ForeLeg_2_Limb_1" index="4"]
+transform = Transform3D(3.083892, 0.13876238, 0, -0.13876238, 3.083892, 0, 0, 0, 1, 7.450581e-09, 2.237766, 0)
+
+[node name="JointOut" parent="GeneratedParts/ForeLeg_2_Limb_1" index="5"]
+transform = Transform3D(3.083892, 0.13876238, 0, -0.13876238, 3.083892, 0, 0, 0, 1, 7.450581e-09, -2.2377658, 0)
+
+[node name="JointOut_ForeLeg_2" type="Marker3D" parent="GeneratedParts/ForeLeg_2_Limb_1" index="6" unique_id=1491255568]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.014963388, -1.7862458, 0)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_016_Limb"
+metadata/connected_part = "ForeLeg_2"
+
+[node name="JointIn_ForeLeg_2_Limb_2" type="Marker3D" parent="GeneratedParts/ForeLeg_2_Limb_1" index="7" unique_id=617473547]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13192916, 1.713973, 0)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_017_Limb"
+metadata/connected_part = "ForeLeg_2_Limb_2"
+
+[node name="ForeLeg_2_Limb_2" parent="GeneratedParts" index="18" unique_id=1637948021 instance=ExtResource("14_eaae3")]
+transform = Transform3D(0.97954357, 0.20123205, 0, -0.20123205, 0.97954357, 0, 0, 0, 1, 2.3431354, 6.2446675, -0.48)
+mass = 0.9614217
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+metadata/generated_scene_path = "res://Scenes/Creatures/Bodyparts/StumpParts/RightLeg/01_upper_leg.tscn"
+metadata/generated_scene_rule_key = "ForeLeg_2_Limb_2"
+metadata/generated_layout = {
+"connector_span": 4.41079224,
+"name": "ForeLeg_2_Limb_2",
+"part_key": "ForeLeg_2_Limb_2",
+"role": "Limb",
+"size": Vector3(1.5, 4.4107924, 0.48),
+"sub_torso": false,
+"transform": Transform3D(0.97954357, 0.20123205, 0, -0.20123205, 0.97954357, 0, 0, 0, 1, 2.3431354, 6.2446675, -0.48)
+}
+metadata/generated_role = "Limb"
+metadata/generated_part_key = "ForeLeg_2_Limb_2"
+metadata/generated_part_type = "LegLimb"
+metadata/generated_density = 1.0
+metadata/generated_size = Vector3(2.6520455, 4.5315104, 0.08)
+metadata/generated_framework_size = Vector3(1.5, 4.4107924, 0.48)
+
+[node name="CollisionShape3D" parent="GeneratedParts/ForeLeg_2_Limb_2" index="0" unique_id=1899992271]
+shape = SubResource("ConvexPolygonShape3D_on3vg")
+
+[node name="Sprite3D" parent="GeneratedParts/ForeLeg_2_Limb_2" index="1" unique_id=1806091758]
+transform = Transform3D(2.0149753, -0.6313756, 0, 0.6313756, 2.0149753, 0, 0, 0, 1, -0.07398993, 0.5118011, 0)
+
+[node name="MeshInstance3D" parent="GeneratedParts/ForeLeg_2_Limb_2" index="2" unique_id=1504749449]
+transform = Transform3D(5.1603513, -1.6163216, 0, 1.6169529, 5.1583366, 0, 0, 0, 1.001, -0.07499746, 0.5114854, 0)
+
+[node name="Model" parent="GeneratedParts/ForeLeg_2_Limb_2" index="3"]
+transform = Transform3D(2.0149753, -0.6313756, 0, 0.6313756, 2.0149753, 0, 0, 0, 1, -0.07398993, 0.5118011, 0)
+
+[node name="PaperVolume" parent="GeneratedParts/ForeLeg_2_Limb_2/Model" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.08, 0, 0, 0)
+surface_material_override/2 = SubResource("StandardMaterial3D_0aykf")
+
+[node name="JointIn" parent="GeneratedParts/ForeLeg_2_Limb_2" index="4"]
+transform = Transform3D(2.0149753, -0.6313756, 0, 0.6313756, 2.0149753, 0, 0, 0, 1, 5.9604645e-08, 2.2053962, 0)
+
+[node name="JointOut" parent="GeneratedParts/ForeLeg_2_Limb_2" index="5"]
+transform = Transform3D(2.0149753, -0.6313756, 0, 0.6313756, 2.0149753, 0, 0, 0, 1, -5.9604645e-08, -2.2053962, 0)
+
+[node name="JointOut_ForeLeg_2_Limb_1" type="Marker3D" parent="GeneratedParts/ForeLeg_2_Limb_2" index="6" unique_id=1885368925]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.16605622, -1.6914015, 0)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_017_Limb"
+metadata/connected_part = "ForeLeg_2_Limb_1"
+
+[node name="JointIn_SubTorso_4" type="Marker3D" parent="GeneratedParts/ForeLeg_2_Limb_2" index="7" unique_id=586923769]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.36778522, 1.2768588, 0)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_018_Limb"
+metadata/connected_part = "SubTorso_4"
+
+[node name="Head_1" parent="GeneratedParts" index="19" unique_id=725866929 instance=ExtResource("6_b0xo3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.163342, 9.485104, 0)
+mass = 0.948961
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+metadata/generated_scene_path = "res://Scenes/Creatures/Bodyparts/StumpParts/Base/05_head.tscn"
+metadata/generated_scene_rule_key = "Head"
+metadata/generated_layout = {
+"name": "Head_1",
+"part_key": "Head_1",
+"role": "Head",
+"size": Vector3(3.6000001, 3.3000002, 0.48),
+"sub_torso": false,
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.163342, 9.485104, 0)
+}
+metadata/generated_role = "Head"
+metadata/generated_part_key = "Head_1"
+metadata/generated_part_type = "Head"
+metadata/generated_density = 1.0
+metadata/generated_size = Vector3(3.6000004, 3.2950032, 0.08)
+metadata/generated_framework_size = Vector3(3.6000001, 3.3000002, 0.48)
+
+[node name="CollisionShape3D" parent="GeneratedParts/Head_1" index="0" unique_id=1899992271]
+shape = SubResource("ConvexPolygonShape3D_y6l6y")
+
+[node name="Sprite3D" parent="GeneratedParts/Head_1" index="1" unique_id=1806091758]
+transform = Transform3D(0.8028546, 0, 0, 0, 0.8028546, 0, 0, 0, 1, -1.8000001, 0, 0)
+
+[node name="MeshInstance3D" parent="GeneratedParts/Head_1" index="2" unique_id=1504749449]
+transform = Transform3D(2.0561106, 0, 0, 0, 2.0553076, 0, 0, 0, 1.001, -1.8004016, 0, 0)
+
+[node name="Model" parent="GeneratedParts/Head_1" index="3"]
+transform = Transform3D(0.8028546, 0, 0, 0, 0.8028546, 0, 0, 0, 1, -1.8000001, 0, 0)
+
+[node name="PaperVolume" parent="GeneratedParts/Head_1/Model" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.08, 0, 0, 0)
+surface_material_override/2 = SubResource("StandardMaterial3D_b0xo3")
+
+[node name="JointIn" parent="GeneratedParts/Head_1" index="4"]
+transform = Transform3D(0.8028546, 0, 0, 0, 0.8028546, 0, 0, 0, 1, -1.8000001, 0, 0)
+
+[node name="JointOut" parent="GeneratedParts/Head_1" index="5"]
+transform = Transform3D(0.8028546, 0, 0, 0, 0.8028546, 0, 0, 0, 1, -0.23336017, -1.1649376, 0)
+
+[node name="JointIn_Torso" type="Marker3D" parent="GeneratedParts/Head_1" index="6" unique_id=1233569319]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.96297884, -0.6493664, 0)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_019_Neck"
+metadata/connected_part = "Torso"
+
+[node name="Joints" type="Node3D" parent="GeneratedParts" index="20" unique_id=1322002499]
+
+[node name="Joint_001_Torso" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="0" unique_id=1024151634]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.481308, 8.528519, 0.24)
+node_a = NodePath("../../Torso")
+node_b = NodePath("../../SubTorso")
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_connection_kind = "Torso"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0, 1)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.518692, -1.7908516, 0.24)
+metadata/generated_joint_frame_b = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.518692, 0.72885084, -0.24)
+
+[node name="Joint_002_Torso" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="1" unique_id=762330126]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.481308, 8.155624, -0.24)
+node_a = NodePath("../../Torso")
+node_b = NodePath("../../SubTorso_2")
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_connection_kind = "Torso"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0, 1)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.518692, -2.1637459, -0.24)
+metadata/generated_joint_frame_b = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.518692, 1.1017451, 0.24)
+
+[node name="Joint_003_Torso" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="2" unique_id=333413173]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0856476, 8.55159, 0.24)
+node_a = NodePath("../../Torso")
+node_b = NodePath("../../SubTorso_3")
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_connection_kind = "Torso"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0, 1)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0482635, -1.7677803, 0.24)
+metadata/generated_joint_frame_b = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.95173645, 0.70577955, -0.24)
+
+[node name="Joint_004_Torso" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="3" unique_id=211421167]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0839996, 8.595627, -0.24)
+node_a = NodePath("../../Torso")
+node_b = NodePath("../../SubTorso_4")
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_connection_kind = "Torso"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0, 1)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0466156, -1.7237434, -0.24)
+metadata/generated_joint_frame_b = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9533844, 0.6617427, 0.24)
+
+[node name="Joint_005_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="4" unique_id=2079266830]
+transform = Transform3D(0.9808642, -0.19469313, 0, 0.19469313, 0.9808642, 0, 0, 0, 1, -2.8882248, 1.615218, 0.48)
+node_a = NodePath("../../Leg_1")
+node_b = NodePath("../../Leg_1_Limb_1")
+angular_limit_x/upper_angle = 0.61086524
+angular_limit_x/lower_angle = -0.61086524
+angular_limit_y/upper_angle = 0.61086524
+angular_limit_y/lower_angle = -0.61086524
+angular_limit_z/upper_angle = 0.61086524
+angular_limit_z/lower_angle = -0.61086524
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_connection_kind = "Limb"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.34051883, 0.9402377)
+metadata/generated_joint_frame_a = Transform3D(0.9808642, -0.19469313, 0, 0.19469313, 0.9808642, 0, 0, 0, 1, 0.11177516, 0.715218, 0)
+metadata/generated_joint_frame_b = Transform3D(0.87806493, 0.4785412, 0, -0.4785412, 0.87806493, 0, 0, 0, 1, 0.03246951, -1.278038, 0)
+
+[node name="Joint_006_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="5" unique_id=486127568]
+transform = Transform3D(0.9808642, 0.19469316, 0, -0.19469316, 0.9808642, 0, 0, 0, 1, -4.6027136, 3.3715074, 0.48)
+node_a = NodePath("../../Leg_1_Limb_1")
+node_b = NodePath("../../Leg_1_Limb_2")
+linear_limit_x/upper_distance = 0.03
+linear_limit_x/lower_distance = -0.03
+linear_limit_y/upper_distance = 0.03
+linear_limit_y/lower_distance = -0.03
+angular_limit_z/upper_angle = 0.61086524
+angular_limit_z/lower_angle = -0.61086524
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_connection_kind = "Limb"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, -0.619095, 0.7853161)
+metadata/generated_joint_frame_a = Transform3D(0.6287264, 0.7776264, 0, -0.7776264, 0.6287264, 0, 0, 0, 1, -0.15980136, 1.1688075, 0)
+metadata/generated_joint_frame_b = Transform3D(0.9029128, -0.42982388, 0, 0.42982388, 0.9029128, 0, 0, 0, 1, -0.27651215, -1.2608168, 0)
+
+[node name="Joint_007_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="6" unique_id=15370850]
+transform = Transform3D(0.9951112, -0.098760575, 0, 0.098760575, 0.9951112, 0, 0, 0, 1, -2.8683662, 5.1059403, 0.48)
+node_a = NodePath("../../Leg_1_Limb_2")
+node_b = NodePath("../../Leg_1_Limb_3")
+linear_limit_x/upper_distance = 0.03
+linear_limit_x/lower_distance = -0.03
+linear_limit_y/upper_distance = 0.03
+linear_limit_y/lower_distance = -0.03
+angular_limit_z/upper_angle = 0.61086524
+angular_limit_z/lower_angle = -0.61086524
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_connection_kind = "Limb"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.36122575, 0.93247837)
+metadata/generated_joint_frame_a = Transform3D(0.7390319, -0.6736704, 0, 0.6736704, 0.7390319, 0, 0, 0, 1, 0.07821655, 1.1661949, 0)
+metadata/generated_joint_frame_b = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.16137266, -1.177053, 0)
+
+[node name="Joint_008_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="7" unique_id=948534196]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.290393, 7.1619844, 0.48)
+node_a = NodePath("../../SubTorso")
+node_b = NodePath("../../Leg_1_Limb_3")
+angular_limit_x/upper_angle = 0.61086524
+angular_limit_x/lower_angle = -0.61086524
+angular_limit_z/upper_angle = 0.61086524
+angular_limit_z/lower_angle = -0.61086524
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_connection_kind = "Limb"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.049440753, 0.99877703)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2903931, -0.6376834, 0)
+metadata/generated_joint_frame_b = Transform3D(0.9951112, 0.098760575, 0, -0.098760575, 0.9951112, 0, 0, 0, 1, -0.05553484, 0.91061974, 0)
+
+[node name="Joint_009_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="8" unique_id=279380851]
+transform = Transform3D(0.9808642, -0.19469313, 0, 0.19469313, 0.9808642, 0, 0, 0, 1, -2.929684, 1.4262389, -0.48)
+node_a = NodePath("../../Leg_2")
+node_b = NodePath("../../Leg_2_Limb_1")
+angular_limit_x/upper_angle = 0.61086524
+angular_limit_x/lower_angle = -0.61086524
+angular_limit_y/upper_angle = 0.61086524
+angular_limit_y/lower_angle = -0.61086524
+angular_limit_z/upper_angle = 0.61086524
+angular_limit_z/lower_angle = -0.61086524
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_connection_kind = "Limb"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.25322425, 0.96740764)
+metadata/generated_joint_frame_a = Transform3D(0.9808642, -0.19469313, 0, 0.19469313, 0.9808642, 0, 0, 0, 1, 0.07031608, 0.52623886, 0)
+metadata/generated_joint_frame_b = Transform3D(0.95046175, 0.31084204, 0, -0.31084204, 0.95046175, 0, 0, 0, 1, 0.121822596, -1.1312635, 0)
+
+[node name="Joint_010_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="9" unique_id=1288236794]
+transform = Transform3D(0.9808642, 0.19469316, 0, -0.19469316, 0.9808642, 0, 0, 0, 1, -4.3846393, 3.367761, -0.48)
+node_a = NodePath("../../Leg_2_Limb_1")
+node_b = NodePath("../../Leg_2_Limb_2")
+linear_limit_x/upper_distance = 0.03
+linear_limit_x/lower_distance = -0.03
+linear_limit_y/upper_distance = 0.03
+linear_limit_y/lower_distance = -0.03
+angular_limit_z/upper_angle = 0.61086524
+angular_limit_z/lower_angle = -0.61086524
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_connection_kind = "Limb"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, -0.6286643, 0.7776769)
+metadata/generated_joint_frame_a = Transform3D(0.7596849, 0.6502915, 0, -0.6502915, 0.7596849, 0, 0, 0, 1, -0.19530845, 1.2741125, 0)
+metadata/generated_joint_frame_b = Transform3D(0.7950533, -0.6065396, 0, 0.6065396, 0.7950533, 0, 0, 0, 1, -0.17167234, -1.2550056, 0)
+
+[node name="Joint_011_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="10" unique_id=114612879]
+transform = Transform3D(0.9951112, -0.098760575, 0, 0.098760575, 0.9951112, 0, 0, 0, 1, -2.1149518, 4.751308, -0.48)
+node_a = NodePath("../../Leg_2_Limb_2")
+node_b = NodePath("../../Leg_2_Limb_3")
+linear_limit_x/upper_distance = 0.03
+linear_limit_x/lower_distance = -0.03
+linear_limit_y/upper_distance = 0.03
+linear_limit_y/lower_distance = -0.03
+angular_limit_z/upper_angle = 0.61086524
+angular_limit_z/lower_angle = -0.61086524
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_connection_kind = "Limb"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.6173029, 0.78672564)
+metadata/generated_joint_frame_a = Transform3D(0.5844718, -0.811414, 0, 0.811414, 0.5844718, 0, 0, 0, 1, 0.293015, 1.3621968, 0)
+metadata/generated_joint_frame_b = Transform3D(0.92715394, 0.3746806, 0, -0.3746806, 0.92715394, 0, 0, 0, 1, 0.05593145, -1.1548147, 0)
+
+[node name="Joint_012_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="11" unique_id=1128069510]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.3369849, 6.45198, -0.48)
+node_a = NodePath("../../SubTorso_2")
+node_b = NodePath("../../Leg_2_Limb_3")
+angular_limit_x/upper_angle = 0.61086524
+angular_limit_x/lower_angle = -0.61086524
+angular_limit_z/upper_angle = 0.61086524
+angular_limit_z/lower_angle = -0.61086524
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_connection_kind = "Limb"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.23914677, 0.97098345)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.33698487, -0.60189915, 0)
+metadata/generated_joint_frame_b = Transform3D(0.8856176, 0.46441513, 0, -0.46441513, 0.8856176, 0, 0, 0, 1, -0.23650432, 0.9188614, 0)
+
+[node name="Joint_013_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="12" unique_id=1162713533]
+transform = Transform3D(0.9806657, -0.19569065, 0, 0.19569065, 0.9806657, 0, 0, 0, 1, 3.085963, 1.3774878, 0.48)
+node_a = NodePath("../../ForeLeg_1")
+node_b = NodePath("../../ForeLeg_1_Limb_1")
+angular_limit_x/upper_angle = 0.61086524
+angular_limit_x/lower_angle = -0.61086524
+angular_limit_y/upper_angle = 0.61086524
+angular_limit_y/lower_angle = -0.61086524
+angular_limit_z/upper_angle = 0.61086524
+angular_limit_z/lower_angle = -0.61086524
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_connection_kind = "Limb"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.24829687, 0.96868396)
+metadata/generated_joint_frame_a = Transform3D(0.9806657, -0.19569065, 0, 0.19569065, 0.9806657, 0, 0, 0, 1, 0.08596301, 0.47748774, 0)
+metadata/generated_joint_frame_b = Transform3D(0.9538826, 0.30018032, 0, -0.30018032, 0.9538826, 0, 0, 0, 1, 0.12788248, -1.8259991, 0)
+
+[node name="Joint_014_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="13" unique_id=837126376]
+transform = Transform3D(0.9950594, 0.09928144, 0, -0.09928144, 0.9950594, 0, 0, 0, 1, 0.7222952, 4.5873632, 0.48)
+node_a = NodePath("../../ForeLeg_1_Limb_1")
+node_b = NodePath("../../ForeLeg_1_Limb_2")
+linear_limit_x/upper_distance = 0.03
+linear_limit_x/lower_distance = -0.03
+linear_limit_y/upper_distance = 0.03
+linear_limit_y/lower_distance = -0.03
+angular_limit_z/upper_angle = 0.61086524
+angular_limit_z/lower_angle = -0.61086524
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_connection_kind = "Limb"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, -0.5484991, 0.8361511)
+metadata/generated_joint_frame_a = Transform3D(0.82460743, 0.56570554, 0, -0.56570554, 0.82460743, 0, 0, 0, 1, -0.40025282, 2.125115, 0)
+metadata/generated_joint_frame_b = Transform3D(0.84733593, -0.5310572, 0, 0.5310572, 0.84733593, 0, 0, 0, 1, 0.05608964, -1.7933941, 0)
+
+[node name="Joint_015_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="14" unique_id=2017083380]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.411726, 7.214139, 0.48)
+node_a = NodePath("../../SubTorso_3")
+node_b = NodePath("../../ForeLeg_1_Limb_2")
+angular_limit_x/upper_angle = 0.61086524
+angular_limit_x/lower_angle = -0.61086524
+angular_limit_z/upper_angle = 0.61086524
+angular_limit_z/lower_angle = -0.61086524
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_connection_kind = "Limb"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, -0.32370856, 0.94615686)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27781487, -0.6316714, 0)
+metadata/generated_joint_frame_b = Transform3D(0.7904255, -0.6125582, 0, 0.6125582, 0.7904255, 0, 0, 0, 1, -0.21759415, 1.3177509, 0)
+
+[node name="Joint_016_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="15" unique_id=524882192]
+transform = Transform3D(0.9806657, -0.19569065, 0, 0.19569065, 0.9806657, 0, 0, 0, 1, 3.1716478, 1.3821118, -0.48)
+node_a = NodePath("../../ForeLeg_2")
+node_b = NodePath("../../ForeLeg_2_Limb_1")
+angular_limit_x/upper_angle = 0.61086524
+angular_limit_x/lower_angle = -0.61086524
+angular_limit_y/upper_angle = 0.61086524
+angular_limit_y/lower_angle = -0.61086524
+angular_limit_z/upper_angle = 0.61086524
+angular_limit_z/lower_angle = -0.61086524
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_connection_kind = "Limb"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.17736232, 0.9841456)
+metadata/generated_joint_frame_a = Transform3D(0.9806657, -0.19569065, 0, 0.19569065, 0.9806657, 0, 0, 0, 1, 0.17164779, 0.48211175, 0)
+metadata/generated_joint_frame_b = Transform3D(0.98728305, 0.15897226, 0, -0.15897226, 0.98728305, 0, 0, 0, 1, -0.014963388, -1.7862458, 0)
+
+[node name="Joint_017_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="16" unique_id=260479929]
+transform = Transform3D(0.9950594, 0.09928144, 0, -0.09928144, 0.9950594, 0, 0, 0, 1, 1.840112, 4.6212826, -0.48)
+node_a = NodePath("../../ForeLeg_2_Limb_1")
+node_b = NodePath("../../ForeLeg_2_Limb_2")
+linear_limit_x/upper_distance = 0.03
+linear_limit_x/lower_distance = -0.03
+linear_limit_y/upper_distance = 0.03
+linear_limit_y/lower_distance = -0.03
+angular_limit_z/upper_angle = 0.61086524
+angular_limit_z/lower_angle = -0.61086524
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_connection_kind = "Limb"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, -0.27598408, 0.96116215)
+metadata/generated_joint_frame_a = Transform3D(0.8977962, 0.4404111, 0, -0.4404111, 0.8977962, 0, 0, 0, 1, -0.13192916, 1.713973, 0)
+metadata/generated_joint_frame_b = Transform3D(0.9946827, -0.10298735, 0, 0.10298735, 0.9946827, 0, 0, 0, 1, -0.16605622, -1.6914015, 0)
+
+[node name="Joint_018_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="17" unique_id=1466232397]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2398186, 7.569417, -0.48)
+node_a = NodePath("../../SubTorso_4")
+node_b = NodePath("../../ForeLeg_2_Limb_2")
+angular_limit_x/upper_angle = 0.61086524
+angular_limit_x/lower_angle = -0.61086524
+angular_limit_z/upper_angle = 0.61086524
+angular_limit_z/lower_angle = -0.61086524
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_connection_kind = "Limb"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, -0.10113457, 0.99487275)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.10920334, -0.36446714, 0)
+metadata/generated_joint_frame_b = Transform3D(0.9795437, -0.20123208, 0, 0.20123208, 0.9795437, 0, 0, 0, 1, -0.36778522, 1.2768588, 0)
+
+[node name="Joint_019_Neck" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="18" unique_id=760470793]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.200363, 8.835737, 0)
+node_a = NodePath("../../Torso")
+node_b = NodePath("../../Head_1")
+angular_limit_x/upper_angle = 0.34906584
+angular_limit_x/lower_angle = -0.34906584
+angular_limit_y/upper_angle = 0.34906584
+angular_limit_y/lower_angle = -0.34906584
+angular_limit_z/upper_angle = 0.34906584
+angular_limit_z/lower_angle = -0.34906584
+angular_spring_x/enabled = true
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/enabled = true
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/enabled = true
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_connection_kind = "Neck"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0, 1)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.162979, -1.483633, 0)
+metadata/generated_joint_frame_b = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.96297884, -0.6493664, 0)
+
+[editable path="GeneratedParts/SubTorso"]
+[editable path="GeneratedParts/SubTorso_2"]
+[editable path="GeneratedParts/SubTorso_3"]
+[editable path="GeneratedParts/SubTorso_4"]
+[editable path="GeneratedParts/Torso"]
+[editable path="GeneratedParts/Leg_1"]
+[editable path="GeneratedParts/Leg_1_Limb_1"]
+[editable path="GeneratedParts/Leg_1_Limb_2"]
+[editable path="GeneratedParts/Leg_1_Limb_3"]
+[editable path="GeneratedParts/Leg_2"]
+[editable path="GeneratedParts/Leg_2_Limb_1"]
+[editable path="GeneratedParts/Leg_2_Limb_2"]
+[editable path="GeneratedParts/Leg_2_Limb_3"]
+[editable path="GeneratedParts/ForeLeg_1"]
+[editable path="GeneratedParts/ForeLeg_1_Limb_1"]
+[editable path="GeneratedParts/ForeLeg_1_Limb_2"]
+[editable path="GeneratedParts/ForeLeg_2"]
+[editable path="GeneratedParts/ForeLeg_2_Limb_1"]
+[editable path="GeneratedParts/ForeLeg_2_Limb_2"]
+[editable path="GeneratedParts/Head_1"]

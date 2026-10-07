@@ -42,3 +42,24 @@ HP、Armor、视觉开关和额外物理标签保留；生成角色按职责追�
 减少腿数时多出的单部位规则暂时不匹配，恢复数量后继续生效。
 临时框架节点的手动改动仍会被重新生成覆盖，应在根节点配置规则。
 调整为原尺寸或等比例尺寸后，模型边缘未必与框架边缘重合，需同步调整框架参数与连接点。
+
+Stump 连接适配预设：
+当前躯干按框架三轴适配；头部尺寸固定为 0.6 × 0.55，连接高度固定为实际躯干最前端的高度。
+Base Limb Length 为 1.0，折线基础前后弯折为 0.18；SubTorso 高度曲线为 0.35，使腿根进入躯干实际凸碰撞轮廓。
+StumpParts 中的脚和腿段使用专用继承场景，标记由对应轮廓的上、下端校准，不修改原 PaperParts。
+腿段映射开启 Align Connectors To Frame：将 JointOut 与 JointIn 对准框架线段的起点、终点。
+此模式由线段实际长度决定 XY 缩放，Z 厚度单独匹配框架；覆盖腿段普通 Size Mode 的长度选择。
+Size Multiplier 不改变已对准的连接长度，但仍作用于厚度。脚和头的缩放仍遵循 Size Mode，连接点位置固定对准框架入口。
+脚的 JointIn 对准脚上方入口；头的 JointIn 对准躯干连接入口。关节选用这些已校准的标记。
+躯干可以连接多个腿根，其通用 JointIn/JointOut 不用于替代这些多分支连接点，仍使用框架的躯干表面连接点。
+已有场景若保存了旧参数或旧映射覆盖，需使用 Inspector 的恢复默认值，或重新载入当前 Stump 专用映射后重新生成。
+
+固定生成模式：
+Stump 不进行肢体形状随机采样；尺寸范围使用上下限的平均值，回弯比例固定为 0.5。
+脚使用 Base Foot Size，肢体总长使用 Base Limb Length；Unsymmetrie 与 Inhomogeneity 不产生随机偏移。
+预览网络使用固定序列，因此相同参数重复生成时，部位尺寸、位置、旋转和预览线网保持一致。
+Generate_StumpBeast 已同步校准映射并重新保存，避免场景中的旧数据覆盖专用预设。
+每条物理连接在两端分别生成 JointOut_目标部位、JointIn_来源部位标记，并标注 connected_part 与 joint_name 元数据。
+例：Torso/JointOut_Head_1 与 Head_1/JointIn_Torso 重合。
+例：Leg_1_Limb_3/JointOut_Leg_1_Limb_2 与 Leg_1_Limb_2/JointIn_Leg_1_Limb_3 重合。
+躯干和 SubTorso 有多个分支，使用带部位名称的标记区分每条连接；原模型通用 JointIn/JointOut 不表示全部分支。

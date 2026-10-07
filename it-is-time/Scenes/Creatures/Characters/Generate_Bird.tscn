@@ -1,12 +1,8 @@
 [gd_scene format=4 uid="uid://b0j2xkqx4q8k2"]
 
-[ext_resource type="PackedScene" uid="uid://cxif8fjbfymmg" path="res://Scenes/Creatures/Characters/_SampleCharacter.tscn" id="1_base"]
-[ext_resource type="Script" uid="uid://ctnhv1466mp6l" path="res://Scripts/Creatures/GeneratedCreatureCharacter3D.gd" id="2_character"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Characters/_BaseGeneratedCreature.tscn" id="1_base"]
 [ext_resource type="Script" uid="uid://c1k5qhc2uqp5n" path="res://Scripts/Creatures/Generators/BirdGenerator.gd" id="3_generator"]
-[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/GeneratedLegStepMovementController3D.tscn" id="4_movement"]
 [ext_resource type="Resource" path="res://Resources/Movement/BirdGroundWalk.tres" id="5_gait"]
-[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/CreatureRecoveryStateMachine3D.tscn" id="6_recovery"]
-[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/CreatureActionController3D.tscn" id="7_action"]
 [ext_resource type="PackedScene" uid="uid://bxchfdbxm5uur" path="res://Scenes/Creatures/Bodyparts/PhysicalTestCreatureParts/TestCreature_Part.tscn" id="11_fivow"]
 [ext_resource type="Resource" path="res://Resources/AI/BirdDiveBehavior.tres" id="bird_behavior"]
 [ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/NPCStateMachine3D.tscn" id="bird_npc"]
@@ -478,7 +474,6 @@ _surfaces = [{
 }]
 
 [node name="Generate_Bird" unique_id=1071077287 instance=ExtResource("1_base")]
-script = ExtResource("2_character")
 generator_path = NodePath("BirdGenerator")
 generate_on_ready = true
 show_framework = false
@@ -1079,14 +1074,14 @@ pixel_size = 0.01
 billboard = 1
 text = "Wing_2"
 
-[node name="GeneratedLegStepMovementController3D" parent="." index="1" unique_id=63359102 instance=ExtResource("4_movement")]
+[node name="GeneratedLegStepMovementController3D" parent="." index="1"]
 stance_load_safety_factor = 5.0
 slow_gait_data = ExtResource("5_gait")
 fast_gait_data = ExtResource("5_gait")
 
-[node name="CreatureRecoveryStateMachine3D" parent="." index="2" unique_id=1172503862 instance=ExtResource("6_recovery")]
+[node name="CreatureRecoveryStateMachine3D" parent="." index="2"]
 
-[node name="CreatureActionController3D" parent="." index="3" unique_id=1338268193 instance=ExtResource("7_action")]
+[node name="CreatureActionController3D" parent="." index="3"]
 
 [node name="WingPoseController3D" parent="." index="4" unique_id=1184170244 instance=ExtResource("wing_controller")]
 

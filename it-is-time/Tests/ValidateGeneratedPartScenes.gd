@@ -37,7 +37,7 @@ func run() -> void:
 	assert(generator.get_part_scene_rule("SubTorso", "SubTorso_3", "SubTorso_ForeLeg_1") == support_rule)
 	assert(generator.get_part_scene_rule("SubTorso", "SubTorso_7", "SubTorso_ForeLeg_1") == support_rule)
 	generator.part_scene_rules.erase(support_rule)
-	assert(generator.get_part_scene_rule("SubTorso", "SubTorso") == null)
+	assert(generator.get_part_scene_rule("SubTorso", "SubTorso").part_scene.resource_path.ends_with("01_body_light_plate.tscn"))
 	var temp := "res://Tests/.part_scene_defaults_test.tres"
 	assert(generator._save_default_preset(temp))
 	var saved := load(temp) as DATA
@@ -55,6 +55,11 @@ func run() -> void:
 	assert(restored_other.get_part_scene_rule("Torso", "Torso_2").size_multiplier == 1.0)
 	var actor := CHARACTER.new()
 	actor.mass_limits_enabled = false
+	# The default preset is user-editable; this regression needs an explicit Torso mapping.
+	var torso_fixture := RULE.new()
+	torso_fixture.part_type = "Torso"
+	torso_fixture.part_scene = PAPER
+	generator.part_scene_rules.push_front(torso_fixture)
 	var layouts: Array[Dictionary] = [{"name":"Torso_2", "role":"Torso", "size":Vector3(2,3,0.2), "transform":Transform3D.IDENTITY, "scene_rule":exact}]
 	var blueprint := {"parts": layouts, "connections": []}
 	var stage := actor._instantiate_blueprint(blueprint, Transform3D.IDENTITY)
@@ -87,7 +92,7 @@ func run() -> void:
 		var original := GEOMETRY.bounds(source).size
 		exact.size_mode = mode
 		var fitted := GEOMETRY.fit(source, Vector3(2,3,0.2), exact).size
-		if mode == RULE.SizeMode.KEEP_SIZE: assert(fitted.is_equal_approx(original))
+		if mode == RULE.SizeMode.KEEP_SIZE: assert(Vector2(fitted.x,fitted.y).is_equal_approx(Vector2(original.x,original.y)))
 		else: assert(is_equal_approx(fitted.x / fitted.y, original.x / original.y))
 		source.free()
 	exact.size_mode = RULE.SizeMode.FIT_BOX

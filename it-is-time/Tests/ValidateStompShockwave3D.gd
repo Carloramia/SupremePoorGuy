@@ -10,6 +10,8 @@ func _initialize() -> void: call_deferred("run")
 func actor(id: int, at: Vector3, frozen: bool = true) -> Node3D:
 	var node := Node3D.new()
 	node.set_script(CHARACTER)
+	# This damage fixture intentionally contains only a Torso, not a complete creature.
+	node.require_head_and_torso_connectivity = false
 	node.faction_id = id
 	var body := PhysicalBodyPart3D.new()
 	body.name = "Torso"

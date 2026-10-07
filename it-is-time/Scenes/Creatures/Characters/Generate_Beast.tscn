@@ -1,15 +1,10 @@
 [gd_scene format=4 uid="uid://cg0oywp0k4bqc"]
 
-[ext_resource type="PackedScene" uid="uid://cxif8fjbfymmg" path="res://Scenes/Creatures/Characters/_SampleCharacter.tscn" id="1_base"]
-[ext_resource type="Script" uid="uid://ctnhv1466mp6l" path="res://Scripts/Creatures/GeneratedCreatureCharacter3D.gd" id="2_character"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Characters/_BaseGeneratedCreature.tscn" id="1_base"]
 [ext_resource type="Script" uid="uid://cby8nj4lggg60" path="res://Scripts/Creatures/CreatureGenerator.gd" id="3_generator"]
 [ext_resource type="PackedScene" uid="uid://bxchfdbxm5uur" path="res://Scenes/Creatures/Bodyparts/PhysicalTestCreatureParts/TestCreature_Part.tscn" id="4_04tpq"]
-[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/GeneratedLegStepMovementController3D.tscn" id="4_movement"]
-[ext_resource type="Resource" uid="uid://vm2r7a3jebd2" path="res://Resources/Movement/GeneratedMultiLegWalk.tres" id="5_4el8i"]
-[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/CreatureRecoveryStateMachine3D.tscn" id="5_recovery"]
 [ext_resource type="Script" uid="uid://662b3wq7iue7" path="res://Scripts/Creatures/SegmentDistanceSpring3D.gd" id="9_7smi1"]
 [ext_resource type="Script" uid="uid://clvkyuw7044hl" path="res://Scripts/Creatures/SegmentConstraint3D.gd" id="10_rux7j"]
-[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/CreatureActionController3D.tscn" id="action_module"]
 [ext_resource type="Resource" path="res://Resources/Creatures/BeastDensity.tres" id="density_preset"]
 
 [sub_resource type="Curve" id="Curve_3wfe7"]
@@ -375,7 +370,7 @@ _surfaces = [{
 }]
 
 [node name="Generate_Beast" unique_id=1734874713 instance=ExtResource("1_base")]
-script = ExtResource("2_character")
+generate_on_ready = true
 density_data = ExtResource("density_preset")
 planar_constraints_enabled = false
 
@@ -812,12 +807,10 @@ metadata/generated_neck_block = false
 metadata/generated_head = true
 metadata/block_size = Vector3(0.6829623, 0.6386814, 0.2)
 
-[node name="GeneratedLegStepMovementController3D" parent="." index="1" unique_id=1664046872 instance=ExtResource("4_movement")]
+[node name="GeneratedLegStepMovementController3D" parent="." index="1"]
 stance_load_safety_factor = 5.0
-slow_gait_data = ExtResource("5_4el8i")
-fast_gait_data = ExtResource("5_4el8i")
 
-[node name="CreatureRecoveryStateMachine3D" parent="." index="2" unique_id=1480614708 instance=ExtResource("5_recovery")]
+[node name="CreatureRecoveryStateMachine3D" parent="." index="2"]
 
 [node name="GeneratedParts" type="Node3D" parent="." index="3" unique_id=78179]
 
@@ -1747,4 +1740,4 @@ metadata/segment_rotation_constraint = true
 metadata/constraint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.28, -0.043598175, 0)
 metadata/constraint_frame_b = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.28, 0.043598175, 0)
 
-[node name="CreatureActionController3D" parent="." index="4" unique_id=1806185200 instance=ExtResource("action_module")]
+[node name="CreatureActionController3D" parent="." index="4"]
