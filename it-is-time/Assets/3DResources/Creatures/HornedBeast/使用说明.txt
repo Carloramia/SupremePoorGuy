@@ -1,0 +1,47 @@
+HornedBeast 模型与物理 Part
+
+14 个部件：TorsoMain、HeadMain、前腿 UpperLeg/LowerLeg/Foot、后腿 UpperLeg/LowerLeg/Foot、三种 Horn、两种 Ear、Rivet。
+
+文件分类
+Assets/3DResources/Creatures/HornedBeast/Models：带原始贴图的 GLB 平面模型（XY 平面，+Z 正面）。
+Assets/3DResources/Creatures/HornedBeast/Textures：按同名分类保存的原图副本，内容未修改。
+Assets/3DResources/Creatures/HornedBeast/Scenes：冻结的模型包装场景，含凸包碰撞和初始连接点。
+Assets/3DResources/Creatures/HornedBeast/Previews：Physical Part 部件总览，可直接运行。
+Assets/3DResources/Creatures/HornedBeast/Metadata：初始尺寸、连接点配置及模型清单。
+Assets/3DResources/Creatures/HornedBeast/Tools：可重复使用的构建脚本。
+Scenes/Creatures/Bodyparts/HornedBeast：实际可用于生物组装的 Physical Part，均继承 _PhysicalSampleBodyParts.tscn。
+Resources/Meshes/HornedBeast：预烘焙的立体 ArrayMesh，含正面、背面和侧面三组表面。
+
+物理与视觉
+采用与 StumpBeast 相同的 CustomModel + PaperVolume 方法。GLB 保留轻量平面源模型；Physical Part 显示其烘焙立体网格并隐藏源平面，避免重叠。
+默认厚度为 0.08，在 Part Inspector 的 Paper Volume Thickness 中调整，仅改变 Z 厚度。
+如果随后用于生成器，生成器的 PartWidth / OverallScale 仍可能覆盖最终厚度，遵循现有生成规则。
+正面、背面使用同一原图，背面从背后观看会自然镜像。侧面颜色沿用 PhysicalBodyParts 的 Paper Side Color 设置。
+碰撞采用轮廓凸包，孔洞、蹄瓣间凹陷和角的内弯不会形成精确凹面碰撞；这是适用于动态刚体的简化。
+源 PNG 没有裁切、补绘或重新编码；GLB 内嵌原始 PNG 数据。烘焙网格贴图引用原始 Separated PNG，副本用于素材分类查看。
+
+标签
+TorsoMain：Torso
+HeadMain：Head
+前后腿 UpperLeg、LowerLeg：LegLimb
+前蹄：ForeLeg
+后蹄：Leg
+角、耳朵和铆钉：标签为空，作为装饰/连接部件。未自动增加武器或额外 Head 标签。
+连接后仍需由角色内部碰撞忽略机制处理自身部位间碰撞。
+
+尺寸与连接点
+AI 图片没有共同像素比例，因此本次按 alpha>=128 的可见范围设置初始比例：躯干宽 6.5，头高 2.0，上腿高 2.3，下腿高 1.6，蹄高 0.65。
+这些是初始美术比例，不是从原图恢复的精确人体测量。
+JointIn 在 Part 原点，JointOut 可在场景中编辑；位置基于关节装饰/连接根部的初始估计，尚未拼成完整生物。
+Metadata/build_settings.json 的 joint_in / joint_out 是可见轮廓包围盒内的归一化坐标，图像 X 向右、Y 向下；导出时映射为局部 +X 向右、+Y 向上。
+标签、质量、厚度可在 Physical Part 场景 Inspector 中继续调整。
+
+重新构建顺序（Python 需要 Pillow）
+1. python Assets/3DResources/Creatures/HornedBeast/Tools/build_models.py
+2. 用 Godot 重新导入项目。
+3. Godot --headless --path 项目目录 --script res://Tools/BakeHornedBeastVolumes.gd
+4. python Assets/3DResources/Creatures/HornedBeast/Tools/build_models.py --physical
+
+构建脚本默认保留已存在的模型与场景，避免覆盖手工连接点。更改 build_settings 后，要先备份并移走需要重建的对应 Models/Scenes/Physical Part 文件，再按以上顺序构建；重新烘焙会更新对应的 .res 网格。
+本次未创建完整 HornedBeast 角色、生成器或 NPC，也未修改 StumpBeast。
+

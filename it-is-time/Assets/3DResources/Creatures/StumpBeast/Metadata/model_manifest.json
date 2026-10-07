@@ -1,0 +1,960 @@
+{
+  "model_count": 27,
+  "geometry": "XY plane, four vertices/two triangles per model; front normal +Z; zero visual thickness",
+  "material": "embedded original RGBA PNG, double-sided, unlit, alpha mask cutoff 0.5",
+  "units": "100 ORIGINAL image pixels = 1 world unit; AI restored parts use inferred original heights",
+  "collision": "Simplified convex alpha silhouette extruded to 0.02 units; holes omitted from collision; frozen RigidBody3D wrappers",
+  "pivots": "Initial image-based estimates, editable JointIn/JointOut markers; reconstructed images have no exact original registration",
+  "assemblies": [
+    "Previews/RightLegCombined.tscn",
+    "Previews/RightLegSeparated.tscn"
+  ],
+  "preview_scene": "Previews/RightLegPreview.tscn",
+  "models": [
+    {
+      "name": "01_body_light_plate",
+      "group": "Base",
+      "source": "res://Assets/2DResources/StumpBeast/Textures/Torso/SubTorsoPlate.png",
+      "source_sha256": "57d716ded76c941a474195431ea9cf487661530d2f50327a5976da13a0a522b8",
+      "texture_size": [
+        472,
+        393
+      ],
+      "world_size": [
+        4.72,
+        3.93
+      ],
+      "units_per_texture_pixel": 0.01,
+      "pivot_pixel": [
+        52.77995283018868,
+        227.14069371542064
+      ],
+      "joint_out_local": [
+        1.8422004716981133,
+        -1.0145930628457933,
+        0
+      ],
+      "reference_frame": "ToSplit_1.jpg",
+      "reference_origin_pixel": [
+        65,
+        55
+      ],
+      "reference_pivot_pixel": [
+        117.77995283018868,
+        282.14069371542064
+      ],
+      "glb": "Models/Torso/SubTorsoPlate.glb",
+      "scene": "Scenes/Torso/SubTorsoPlate.tscn"
+    },
+    {
+      "name": "02_body_main",
+      "group": "Base",
+      "source": "res://Assets/2DResources/StumpBeast/Textures/Torso/TorsoMain.png",
+      "source_sha256": "d1beaf7df6eda87699ce69d06d7b7ce2315350f65f67de8152a361dc42ef24c5",
+      "texture_size": [
+        653,
+        515
+      ],
+      "world_size": [
+        6.53,
+        5.15
+      ],
+      "units_per_texture_pixel": 0.01,
+      "pivot_pixel": [
+        558.461669921875,
+        296.99993799603175
+      ],
+      "joint_out_local": [
+        -1.5772251413829292,
+        -1.4340680803571428,
+        0
+      ],
+      "reference_frame": "ToSplit_1.jpg",
+      "reference_origin_pixel": [
+        333,
+        142
+      ],
+      "reference_pivot_pixel": [
+        891.461669921875,
+        438.99993799603175
+      ],
+      "glb": "Models/Torso/TorsoMain.glb",
+      "scene": "Scenes/Torso/TorsoMain.tscn"
+    },
+    {
+      "name": "03_ear_left",
+      "group": "Base",
+      "source": "res://Assets/2DResources/StumpBeast/Textures/Head/EarLeft.png",
+      "source_sha256": "443e1c47af62ad228ccc0079ea546861f71ea6f6b466ec89d0ce87ecabc53474",
+      "texture_size": [
+        151,
+        195
+      ],
+      "world_size": [
+        1.51,
+        1.95
+      ],
+      "units_per_texture_pixel": 0.01,
+      "pivot_pixel": [
+        98.42468619246861,
+        161.03556485355648
+      ],
+      "joint_out_local": [
+        -0.24424686192468614,
+        0.044355648535564854,
+        0
+      ],
+      "reference_frame": "ToSplit_1.jpg",
+      "reference_origin_pixel": [
+        962,
+        55
+      ],
+      "reference_pivot_pixel": [
+        1060.4246861924687,
+        216.03556485355648
+      ],
+      "glb": "Models/Head/EarLeft.glb",
+      "scene": "Scenes/Head/EarLeft.tscn"
+    },
+    {
+      "name": "04_ear_right",
+      "group": "Base",
+      "source": "res://Assets/2DResources/StumpBeast/Textures/Head/EarRight.png",
+      "source_sha256": "ab5aa86fd6b1c5d66c14da47f1597f823d24968519d0424bf42b665ed3b80f0f",
+      "texture_size": [
+        112,
+        172
+      ],
+      "world_size": [
+        1.12,
+        1.72
+      ],
+      "units_per_texture_pixel": 0.01,
+      "pivot_pixel": [
+        41.26521739130435,
+        135.31304347826088
+      ],
+      "joint_out_local": [
+        0.17734782608695654,
+        -0.0343695652173912,
+        0
+      ],
+      "reference_frame": "ToSplit_1.jpg",
+      "reference_origin_pixel": [
+        1151,
+        75
+      ],
+      "reference_pivot_pixel": [
+        1192.2652173913043,
+        210.31304347826088
+      ],
+      "glb": "Models/Head/EarRight.glb",
+      "scene": "Scenes/Head/EarRight.tscn"
+    },
+    {
+      "name": "05_head",
+      "group": "Base",
+      "source": "res://Assets/2DResources/StumpBeast/Textures/Head/HeadMain.png",
+      "source_sha256": "4330b1d51135139075764dcc5db88b2d0bf627ee61f3e51d553bdd668b2f9753",
+      "texture_size": [
+        472,
+        428
+      ],
+      "world_size": [
+        4.72,
+        4.28
+      ],
+      "units_per_texture_pixel": 0.01,
+      "pivot_pixel": [
+        39.866299999999995,
+        215.8005517241379
+      ],
+      "joint_out_local": [
+        1.951337,
+        -1.4509944827586208,
+        0
+      ],
+      "reference_frame": "ToSplit_1.jpg",
+      "reference_origin_pixel": [
+        949,
+        208
+      ],
+      "reference_pivot_pixel": [
+        988.8663,
+        423.8005517241379
+      ],
+      "glb": "Models/Head/HeadMain.glb",
+      "scene": "Scenes/Head/HeadMain.tscn"
+    },
+    {
+      "name": "06_leg_left",
+      "group": "Base",
+      "source": "res://Assets/2DResources/StumpBeast/Textures/Legs/Whole/LegLeft.png",
+      "source_sha256": "b53385d4291e6a70f0c9b9409601dfeaf924b5986834e8f47c3ff9fb3d190e89",
+      "texture_size": [
+        278,
+        481
+      ],
+      "world_size": [
+        2.7800000000000002,
+        4.8100000000000005
+      ],
+      "units_per_texture_pixel": 0.01,
+      "pivot_pixel": [
+        115.92277992277992,
+        62.65406746031746
+      ],
+      "joint_out_local": [
+        -0.6195878689749658,
+        -2.1753328133000513,
+        0
+      ],
+      "reference_frame": "ToSplit_1.jpg",
+      "reference_origin_pixel": [
+        66,
+        450
+      ],
+      "reference_pivot_pixel": [
+        181.9227799227799,
+        512.6540674603175
+      ],
+      "glb": "Models/Legs/Whole/LegLeft.glb",
+      "scene": "Scenes/Legs/Whole/LegLeft.tscn"
+    },
+    {
+      "name": "01_upper_leg",
+      "group": "LeftLeg",
+      "source": "res://Assets/2DResources/StumpBeast/Textures/Legs/Left/UpperLeg.png",
+      "source_sha256": "4840cc58220e0d1d92208fb7bee74b837c678586a25b2ad41be0ea4dc66c711c",
+      "texture_size": [
+        1036,
+        1214
+      ],
+      "world_size": [
+        1.8891764705882352,
+        2.213764705882353
+      ],
+      "units_per_texture_pixel": 0.0018235294117647058,
+      "pivot_pixel": [
+        349.9533425826011,
+        316.4588113727455
+      ],
+      "joint_out_local": [
+        0.3064380223493744,
+        -1.289310402790876,
+        0
+      ],
+      "reference_frame": "06_leg_left.png",
+      "reference_origin_pixel": [
+        0,
+        0
+      ],
+      "reference_pivot_pixel": [
+        63.81502129447432,
+        57.70719501503007
+      ],
+      "glb": "Models/Legs/Left/UpperLeg.glb",
+      "scene": "Scenes/Legs/Left/UpperLeg.tscn"
+    },
+    {
+      "name": "02_middle_leg",
+      "group": "LeftLeg",
+      "source": "res://Assets/2DResources/StumpBeast/Textures/Legs/Left/MiddleLeg.png",
+      "source_sha256": "3d19366ddc02e918a231ed260d54e7548bb2e3dbe0b1037fc6ccb8085a191f25",
+      "texture_size": [
+        885,
+        1308
+      ],
+      "world_size": [
+        1.9023364485981307,
+        2.8115887850467285
+      ],
+      "units_per_texture_pixel": 0.0021495327102803736,
+      "pivot_pixel": [
+        170.79185867895546,
+        168.74886904761905
+      ],
+      "joint_out_local": [
+        -0.00915615085346773,
+        -2.127352797599865,
+        0
+      ],
+      "reference_frame": "06_leg_left.png",
+      "reference_origin_pixel": [
+        0,
+        0
+      ],
+      "reference_pivot_pixel": [
+        36.71226868799977,
+        36.27312138406764
+      ],
+      "glb": "Models/Legs/Left/MiddleLeg.glb",
+      "scene": "Scenes/Legs/Left/MiddleLeg.tscn"
+    },
+    {
+      "name": "03_lower_leg",
+      "group": "LeftLeg",
+      "source": "res://Assets/2DResources/StumpBeast/Textures/Legs/Left/LowerLeg.png",
+      "source_sha256": "695b4f7c35b5b80d0765579d3db00fa3e01aa4ef45f9b9e948213deb0a50f197",
+      "texture_size": [
+        844,
+        1474
+      ],
+      "world_size": [
+        1.082648275862069,
+        1.8907862068965517
+      ],
+      "units_per_texture_pixel": 0.0012827586206896552,
+      "pivot_pixel": [
+        203.0637746952501,
+        197.35300961538462
+      ],
+      "joint_out_local": [
+        0.2808423303909206,
+        -1.3432368290450931,
+        0
+      ],
+      "reference_frame": "06_leg_left.png",
+      "reference_origin_pixel": [
+        0,
+        0
+      ],
+      "reference_pivot_pixel": [
+        26.04818075401139,
+        25.315627440318305
+      ],
+      "glb": "Models/Legs/Left/LowerLeg.glb",
+      "scene": "Scenes/Legs/Left/LowerLeg.tscn"
+    },
+    {
+      "name": "04_foot",
+      "group": "LeftLeg",
+      "source": "res://Assets/2DResources/StumpBeast/Textures/Legs/Left/Foot.png",
+      "source_sha256": "8b84dc10ce9ea59406396a9f45bcc352b714a10359bf046b995331572d1c8e06",
+      "texture_size": [
+        1026,
+        697
+      ],
+      "world_size": [
+        1.280594353640416,
+        0.8699554234769687
+      ],
+      "units_per_texture_pixel": 0.0012481426448736998,
+      "pivot_pixel": [
+        513.0,
+        112.95
+      ],
+      "joint_out_local": [
+        0.0,
+        -0.588,
+        0
+      ],
+      "reference_frame": "06_leg_left.png",
+      "reference_origin_pixel": [
+        0,
+        0
+      ],
+      "reference_pivot_pixel": [
+        64.0297176820208,
+        14.09777117384844
+      ],
+      "glb": "Models/Legs/Left/Foot.glb",
+      "scene": "Scenes/Legs/Left/Foot.tscn"
+    },
+    {
+      "name": "07_leg_center",
+      "group": "Base",
+      "source": "res://Assets/2DResources/StumpBeast/Textures/Legs/Whole/LegCenter.png",
+      "source_sha256": "3a94e89efbcadf2c9d2e30f8c92fae76ffa72b7685f2a5e4d27d448951f6dfbc",
+      "texture_size": [
+        296,
+        379
+      ],
+      "world_size": [
+        2.96,
+        3.79
+      ],
+      "units_per_texture_pixel": 0.01,
+      "pivot_pixel": [
+        63.65557894736842,
+        80.26265699760765
+      ],
+      "joint_out_local": [
+        1.8729549797570848,
+        -1.7830121018989238,
+        0
+      ],
+      "reference_frame": "ToSplit_1.jpg",
+      "reference_origin_pixel": [
+        341,
+        598
+      ],
+      "reference_pivot_pixel": [
+        404.65557894736844,
+        678.2626569976077
+      ],
+      "glb": "Models/Legs/Whole/LegCenter.glb",
+      "scene": "Scenes/Legs/Whole/LegCenter.tscn"
+    },
+    {
+      "name": "08_leg_right",
+      "group": "Base",
+      "source": "res://Assets/2DResources/StumpBeast/Textures/Legs/Whole/LegRight.png",
+      "source_sha256": "3ca09b70a3c1cd9cfcbc7e361d8dcd456a293cc5ca6cc0d3136b50ba487ae82a",
+      "texture_size": [
+        222,
+        339
+      ],
+      "world_size": [
+        2.22,
+        3.39
+      ],
+      "units_per_texture_pixel": 0.01,
+      "pivot_pixel": [
+        85.35627705627707,
+        85.0091112012987
+      ],
+      "joint_out_local": [
+        0.33806215344938734,
+        -1.5058912683061618,
+        0
+      ],
+      "reference_frame": "ToSplit_1.jpg",
+      "reference_origin_pixel": [
+        798,
+        597
+      ],
+      "reference_pivot_pixel": [
+        883.3562770562771,
+        682.0091112012987
+      ],
+      "glb": "Models/Legs/Whole/LegRight.glb",
+      "scene": "Scenes/Legs/Whole/LegRight.tscn"
+    },
+    {
+      "name": "01_upper_leg",
+      "group": "RightLeg",
+      "source": "res://Assets/2DResources/StumpBeast/Textures/Legs/Right/UpperLeg.png",
+      "source_sha256": "3adf74764214aee39c541dc9dfdc66892fc6754125c3cd8ba9acc4d8987a21ba",
+      "texture_size": [
+        978,
+        1426
+      ],
+      "world_size": [
+        1.4021255349500714,
+        2.0444079885877318
+      ],
+      "units_per_texture_pixel": 0.0014336661911554921,
+      "pivot_pixel": [
+        520.6733561643836,
+        544.364359375
+      ],
+      "joint_out_local": [
+        0.14000000000000007,
+        -0.76,
+        0
+      ],
+      "reference_frame": "08_leg_right.png",
+      "reference_origin_pixel": [
+        10.35282126316612,
+        6.956322229404407
+      ],
+      "reference_pivot_pixel": [
+        85.0,
+        85.0
+      ],
+      "glb": "Models/Legs/Right/UpperLeg.glb",
+      "scene": "Scenes/Legs/Right/UpperLeg.tscn"
+    },
+    {
+      "name": "02_03_middle_lower_merged",
+      "group": "RightLeg",
+      "source": "res://Assets/2DResources/StumpBeast/Textures/Legs/Right/MiddleLowerMerged.png",
+      "source_sha256": "f995b760d453dd5f8d5708ce083f01c2a046468fdb009568d6ab11026d83c006",
+      "texture_size": [
+        861,
+        1265
+      ],
+      "world_size": [
+        1.0121256038647344,
+        1.4870370370370372
+      ],
+      "units_per_texture_pixel": 0.001175523349436393,
+      "pivot_pixel": [
+        513.9041095890411,
+        198.1506849315068
+      ],
+      "joint_out_local": [
+        0.1999999999999998,
+        -0.7399999999999999,
+        0
+      ],
+      "reference_frame": "08_leg_right.png",
+      "reference_origin_pixel": [
+        38.589371980676326,
+        137.70692431561997
+      ],
+      "reference_pivot_pixel": [
+        99.0,
+        161.0
+      ],
+      "glb": "Models/Legs/Right/MiddleLowerMerged.glb",
+      "scene": "Scenes/Legs/Right/MiddleLowerMerged.tscn"
+    },
+    {
+      "name": "02_middle_leg",
+      "group": "RightLeg",
+      "source": "res://Assets/2DResources/StumpBeast/Textures/Legs/Right/MiddleLeg.png",
+      "source_sha256": "9bab8aef5e007cde70cad225593fd44399851b20c0cf4c59f553bf9db7f6c984",
+      "texture_size": [
+        653,
+        1258
+      ],
+      "world_size": [
+        0.7725931928687195,
+        1.4883954619124795
+      ],
+      "units_per_texture_pixel": 0.0011831442463533224,
+      "pivot_pixel": [
+        510.67123287671234,
+        189.49315068493146
+      ],
+      "joint_out_local": [
+        0.15,
+        0.06999999999999999,
+        0
+      ],
+      "reference_frame": "08_leg_right.png",
+      "reference_origin_pixel": [
+        38.58022690437601,
+        138.58022690437602
+      ],
+      "reference_pivot_pixel": [
+        99.0,
+        161.0
+      ],
+      "glb": "Models/Legs/Right/MiddleLeg.glb",
+      "scene": "Scenes/Legs/Right/MiddleLeg.tscn"
+    },
+    {
+      "name": "03_lower_leg",
+      "group": "RightLeg",
+      "source": "res://Assets/2DResources/StumpBeast/Textures/Legs/Right/LowerLeg.png",
+      "source_sha256": "5f2ed31d5055bd46466248b90c16c921830be6d1187872f4b9b3b451a0fe3760",
+      "texture_size": [
+        544,
+        1400
+      ],
+      "world_size": [
+        0.5772093023255813,
+        1.4854651162790695
+      ],
+      "units_per_texture_pixel": 0.0010610465116279069,
+      "pivot_pixel": [
+        294.73972602739724,
+        153.3698630136986
+      ],
+      "joint_out_local": [
+        0.04999999999999996,
+        -0.8099999999999999,
+        0
+      ],
+      "reference_frame": "08_leg_right.png",
+      "reference_origin_pixel": [
+        82.72674418604652,
+        137.72674418604652
+      ],
+      "reference_pivot_pixel": [
+        114.0,
+        154.0
+      ],
+      "glb": "Models/Legs/Right/LowerLeg.glb",
+      "scene": "Scenes/Legs/Right/LowerLeg.tscn"
+    },
+    {
+      "name": "04_foot",
+      "group": "RightLeg",
+      "source": "res://Assets/2DResources/StumpBeast/Textures/Legs/Right/Foot.png",
+      "source_sha256": "04c6eac4e8a58f1c3a551bf3587b53e4c7d4432b551638d3b718f794cf331cd8",
+      "texture_size": [
+        1243,
+        1028
+      ],
+      "world_size": [
+        1.535179282868526,
+        1.2696414342629483
+      ],
+      "units_per_texture_pixel": 0.0012350597609561754,
+      "pivot_pixel": [
+        447.1853879830918,
+        279.4124801750068
+      ],
+      "joint_out_local": [
+        0.2152889630487711,
+        -0.7237296061583581,
+        0
+      ],
+      "reference_frame": "08_leg_right.png",
+      "reference_origin_pixel": [
+        63.76993216145081,
+        200.4908889026884
+      ],
+      "reference_pivot_pixel": [
+        119.0,
+        235.0
+      ],
+      "glb": "Models/Legs/Right/Foot.glb",
+      "scene": "Scenes/Legs/Right/Foot.tscn"
+    },
+    {
+      "name": "09_tongue",
+      "group": "Base",
+      "source": "res://Assets/2DResources/StumpBeast/Textures/Head/Tongue.png",
+      "source_sha256": "d487029b7b90ce699fb93b0b24c150ea426cd76baed534b7090ecce82fafe9b6",
+      "texture_size": [
+        166,
+        145
+      ],
+      "world_size": [
+        1.6600000000000001,
+        1.45
+      ],
+      "units_per_texture_pixel": 0.01,
+      "pivot_pixel": [
+        83.0,
+        72.5
+      ],
+      "joint_out_local": [
+        -0.015,
+        -0.45599999999999996,
+        0
+      ],
+      "reference_frame": "ToSplit_1.jpg",
+      "reference_origin_pixel": [
+        1084,
+        544
+      ],
+      "reference_pivot_pixel": [
+        1167.0,
+        616.5
+      ],
+      "glb": "Models/Head/Tongue.glb",
+      "scene": "Scenes/Head/Tongue.tscn"
+    },
+    {
+      "name": "10_jaw_light",
+      "group": "Base",
+      "source": "res://Assets/2DResources/StumpBeast/Textures/Head/JawLight.png",
+      "source_sha256": "7413e6770839f4537a991ce585c3d26f37c2459caf0297381bdae87a5783ba30",
+      "texture_size": [
+        289,
+        329
+      ],
+      "world_size": [
+        2.89,
+        3.29
+      ],
+      "units_per_texture_pixel": 0.01,
+      "pivot_pixel": [
+        39.85140482293507,
+        45.2626638986014
+      ],
+      "joint_out_local": [
+        1.0464859517706493,
+        -2.2638733610139856,
+        0
+      ],
+      "reference_frame": "ToSplit_1.jpg",
+      "reference_origin_pixel": [
+        1073,
+        618
+      ],
+      "reference_pivot_pixel": [
+        1112.8514048229351,
+        663.2626638986014
+      ],
+      "glb": "Models/Head/JawLight.glb",
+      "scene": "Scenes/Head/JawLight.tscn"
+    },
+    {
+      "name": "11_jaw_dark",
+      "group": "Base",
+      "source": "res://Assets/2DResources/StumpBeast/Textures/Head/JawDark.png",
+      "source_sha256": "9a4c24b0e8ab6d83172239ab615213d84e6ba3c76487087de327f44fa9b7111d",
+      "texture_size": [
+        193,
+        319
+      ],
+      "world_size": [
+        1.93,
+        3.19
+      ],
+      "units_per_texture_pixel": 0.01,
+      "pivot_pixel": [
+        40.3968253968254,
+        49.23015873015873
+      ],
+      "joint_out_local": [
+        0.571031746031746,
+        -2.170198412698413,
+        0
+      ],
+      "reference_frame": "ToSplit_1.jpg",
+      "reference_origin_pixel": [
+        1246,
+        623
+      ],
+      "reference_pivot_pixel": [
+        1286.3968253968253,
+        672.2301587301587
+      ],
+      "glb": "Models/Head/JawDark.glb",
+      "scene": "Scenes/Head/JawDark.tscn"
+    },
+    {
+      "name": "12_connector_01",
+      "group": "Base",
+      "source": "res://Assets/2DResources/StumpBeast/Textures/Connectors/Connector01.png",
+      "source_sha256": "1ddc72739155259c15da03a3e76188db55e361b9174ea462ba2854a09a8d4fca",
+      "texture_size": [
+        65,
+        61
+      ],
+      "world_size": [
+        0.65,
+        0.61
+      ],
+      "units_per_texture_pixel": 0.01,
+      "pivot_pixel": [
+        32.5,
+        30.5
+      ],
+      "joint_out_local": [
+        -0.015,
+        -0.16299999999999998,
+        0
+      ],
+      "reference_frame": "ToSplit_1.jpg",
+      "reference_origin_pixel": [
+        428,
+        986
+      ],
+      "reference_pivot_pixel": [
+        460.5,
+        1016.5
+      ],
+      "glb": "Models/Connectors/Connector01.glb",
+      "scene": "Scenes/Connectors/Connector01.tscn"
+    },
+    {
+      "name": "13_connector_02",
+      "group": "Base",
+      "source": "res://Assets/2DResources/StumpBeast/Textures/Connectors/Connector02.png",
+      "source_sha256": "faebe33eadd174847b3bd3346336b53ee99304ceb44f2983481b3cc095ecc280",
+      "texture_size": [
+        69,
+        61
+      ],
+      "world_size": [
+        0.6900000000000001,
+        0.61
+      ],
+      "units_per_texture_pixel": 0.01,
+      "pivot_pixel": [
+        34.5,
+        30.5
+      ],
+      "joint_out_local": [
+        0.0,
+        -0.173,
+        0
+      ],
+      "reference_frame": "ToSplit_1.jpg",
+      "reference_origin_pixel": [
+        513,
+        985
+      ],
+      "reference_pivot_pixel": [
+        547.5,
+        1015.5
+      ],
+      "glb": "Models/Connectors/Connector02.glb",
+      "scene": "Scenes/Connectors/Connector02.tscn"
+    },
+    {
+      "name": "14_connector_03",
+      "group": "Base",
+      "source": "res://Assets/2DResources/StumpBeast/Textures/Connectors/Connector03.png",
+      "source_sha256": "5cef6fb86990dbcf60b4354c86d5fffaf61361c38d118b24082531e8207cac42",
+      "texture_size": [
+        62,
+        61
+      ],
+      "world_size": [
+        0.62,
+        0.61
+      ],
+      "units_per_texture_pixel": 0.01,
+      "pivot_pixel": [
+        31.0,
+        30.5
+      ],
+      "joint_out_local": [
+        0.005,
+        -0.16299999999999998,
+        0
+      ],
+      "reference_frame": "ToSplit_1.jpg",
+      "reference_origin_pixel": [
+        604,
+        986
+      ],
+      "reference_pivot_pixel": [
+        635.0,
+        1016.5
+      ],
+      "glb": "Models/Connectors/Connector03.glb",
+      "scene": "Scenes/Connectors/Connector03.tscn"
+    },
+    {
+      "name": "15_connector_04",
+      "group": "Base",
+      "source": "res://Assets/2DResources/StumpBeast/Textures/Connectors/Connector04.png",
+      "source_sha256": "51e3354ada1b4b9d0a0c71a5ed6847fd1bb5fe1db4b04d3c34f1db570fb4b969",
+      "texture_size": [
+        67,
+        62
+      ],
+      "world_size": [
+        0.67,
+        0.62
+      ],
+      "units_per_texture_pixel": 0.01,
+      "pivot_pixel": [
+        33.5,
+        31.0
+      ],
+      "joint_out_local": [
+        0.02,
+        -0.15799999999999997,
+        0
+      ],
+      "reference_frame": "ToSplit_1.jpg",
+      "reference_origin_pixel": [
+        688,
+        986
+      ],
+      "reference_pivot_pixel": [
+        721.5,
+        1017.0
+      ],
+      "glb": "Models/Connectors/Connector04.glb",
+      "scene": "Scenes/Connectors/Connector04.tscn"
+    },
+    {
+      "name": "16_connector_05",
+      "group": "Base",
+      "source": "res://Assets/2DResources/StumpBeast/Textures/Connectors/Connector05.png",
+      "source_sha256": "5405fb8f8849cc445bf2ec8541ef7d145def88dd25e0e0383211f208bbefa1b0",
+      "texture_size": [
+        62,
+        60
+      ],
+      "world_size": [
+        0.62,
+        0.6
+      ],
+      "units_per_texture_pixel": 0.01,
+      "pivot_pixel": [
+        31.0,
+        30.0
+      ],
+      "joint_out_local": [
+        0.0,
+        -0.16799999999999998,
+        0
+      ],
+      "reference_frame": "ToSplit_1.jpg",
+      "reference_origin_pixel": [
+        781,
+        986
+      ],
+      "reference_pivot_pixel": [
+        812.0,
+        1016.0
+      ],
+      "glb": "Models/Connectors/Connector05.glb",
+      "scene": "Scenes/Connectors/Connector05.tscn"
+    },
+    {
+      "name": "17_connector_06",
+      "group": "Base",
+      "source": "res://Assets/2DResources/StumpBeast/Textures/Connectors/Connector06.png",
+      "source_sha256": "1b6cc1bb0edbea17b1794a5c7dd4741a01ff2b704476b25a78386933c491d74e",
+      "texture_size": [
+        71,
+        62
+      ],
+      "world_size": [
+        0.71,
+        0.62
+      ],
+      "units_per_texture_pixel": 0.01,
+      "pivot_pixel": [
+        35.5,
+        31.0
+      ],
+      "joint_out_local": [
+        0.005,
+        -0.17799999999999996,
+        0
+      ],
+      "reference_frame": "ToSplit_1.jpg",
+      "reference_origin_pixel": [
+        864,
+        984
+      ],
+      "reference_pivot_pixel": [
+        899.5,
+        1015.0
+      ],
+      "glb": "Models/Connectors/Connector06.glb",
+      "scene": "Scenes/Connectors/Connector06.tscn"
+    },
+    {
+      "name": "18_connector_07",
+      "group": "Base",
+      "source": "res://Assets/2DResources/StumpBeast/Textures/Connectors/Connector07.png",
+      "source_sha256": "c1b167692e143293a93f756ad502e77bb781bd0ca5145e43496aabf7365170b8",
+      "texture_size": [
+        62,
+        61
+      ],
+      "world_size": [
+        0.62,
+        0.61
+      ],
+      "units_per_texture_pixel": 0.01,
+      "pivot_pixel": [
+        31.0,
+        30.5
+      ],
+      "joint_out_local": [
+        0.005,
+        -0.173,
+        0
+      ],
+      "reference_frame": "ToSplit_1.jpg",
+      "reference_origin_pixel": [
+        957,
+        985
+      ],
+      "reference_pivot_pixel": [
+        988.0,
+        1015.5
+      ],
+      "glb": "Models/Connectors/Connector07.glb",
+      "scene": "Scenes/Connectors/Connector07.tscn"
+    }
+  ]
+}

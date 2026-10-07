@@ -1,0 +1,31 @@
+生成提示词说明
+工具：内置 image_gen；transparent_background=true；输入为 HornedBeast.png。
+用途：background-extraction / precise-object-edit，Godot 纸雕风格部件贴图。
+
+共同要求：
+以输入原图为编辑目标，隔离指定部件，保留米白、深棕、铜橙配色以及纸纹、剪纸叠层和原有装饰。
+移除所有其他部件。补齐连接根部或遮挡轮廓。只有一个完整物件，四周留透明边距，不添加背景、文字、标识、额外道具或地面阴影。
+补绘服从原有结构与风格；输出具有真实 alpha 的透明 PNG。
+
+各部件目标：
+torso：输出独立的躯干。
+head：输出独立的头。
+foreleg_upper：输出独立的前腿上段。
+foreleg_lower：输出独立的前腿下段。
+hoof：输出独立的前蹄。
+hindleg_upper：输出独立的后腿上段。
+hindleg_lower：输出独立的后腿下段。
+hoof_wide：输出独立的后蹄。
+horn_fan：输出独立的扇形角。
+horn_curl_left：输出独立的卷角一。
+horn_curl_right：输出独立的卷角二。
+ear_left：输出独立的耳朵一。
+ear_right：输出独立的耳朵二。
+rivet：输出独立的铆钉。
+
+追加修正：
+foreleg_upper：移除全部细长下腿及底部孔，仅保留宽大的装饰上腿。下端止于完整膝部圆形连接片，补齐深棕关节圆孔。上方髋部、下方膝部各一个连接点。
+foreleg_lower：仅保留膝盖圆盘与深色蹄之间的短米白连接段。移除膝盖上方大腿和全部蹄。两端为完整圆形连接片并带深棕关节圆孔，不含大腿或脚趾。
+
+本文件为使用的提示词组及迭代要求的汇总，便于后续继续编辑。
+

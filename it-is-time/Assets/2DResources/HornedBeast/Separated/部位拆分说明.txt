@@ -1,0 +1,44 @@
+HornedBeast 部位拆分与生物生成建议
+
+交付：14 张独立透明 PNG。原始 HornedBeast.png 保持不变。
+工具：内置 image_gen 图像编辑；以原图为参考，补齐遮挡边界。
+这是 AI 重建后的部件版本，不是原图的逐像素裁切。遮挡区域为推测补绘，各图画布尺寸、相对比例和连接点需要在组装时校准。
+
+素材清单
+Base/01_torso.png — 躯干
+Base/02_head.png — 头
+Limbs/01_foreleg_upper.png — 前腿上段
+Limbs/02_foreleg_lower.png — 前腿下段
+Limbs/03_foreleg_hoof.png — 前蹄
+Limbs/04_hindleg_upper.png — 后腿上段
+Limbs/05_hindleg_lower.png — 后腿下段
+Limbs/06_hindleg_hoof.png — 后蹄
+Attachments/01_horn_fan.png — 扇形角
+Attachments/02_horn_curl_left.png — 卷角一
+Attachments/03_horn_curl_right.png — 卷角二
+Attachments/04_ear_left.png — 耳朵一
+Attachments/05_ear_right.png — 耳朵二
+Attachments/06_rivet.png — 铆钉
+
+补绘处理
+1. 躯干移除覆盖其上的腿部，补齐腹部及身体轮廓，保留纸雕装饰。
+2. 头部移除覆盖的角和耳朵，补齐头后侧轮廓。
+3. 前后腿拆为上段、下段、蹄，补齐关节端部。上、下段保留圆形关节装饰，蹄补充连接根部。
+4. 角、耳朵独立分离，并补齐原先连接或遮挡处。
+5. 铆钉提供一个可重复使用的模板，不重复导出八份相同用途的素材。
+
+适合进一步拆分的部位
+优先：前后腿上段、下段及蹄，本次已经拆分。上下段适合 LegLimb，末端蹄适合 ForeLeg 或 Leg。
+可选：躯干后段、中段、胸段，可用于多 Torso/体节，但原图没有明确的分段接缝；需补绘边界和重新安排装饰，不建议直接沿螺旋纹裁切。
+可选：躯干肩部、髋部的圆形装饰可拆为 SubTorso 的视觉层；它们不自动等同于独立承重结构，连接仍需单独设计。
+低优先：下颌可以分离用于张嘴；目前没有明确的下颌铰链，需要额外补绘并定义新的动作。
+低优先：双瓣蹄可分离成两瓣做视觉变化；默认建议作为一个接地物理部件，减少关节数量。
+角与耳朵建议作为 Head 的装饰子节点；角只有在需要独立折断或攻击时才另建物理部件。纸雕纹理层不是关节，不建议逐层拆分。
+
+现有生成器适配
+本次两套腿均为“两段肢体 + 一个末端蹄”。BeastGenerator 的 ForeLeg 两段结构可参考这些素材；原有后腿三段 Limb 结构需要增加一段连接素材，或建立独立的两段后腿配置。
+两侧部位可复用同一套素材。不要通过负缩放翻转 RigidBody3D 或 Joint；视觉翻转与物理连接需分别处理。
+所有 PNG 保留各自透明画布，未强行统一像素尺寸或裁切。组装尺寸应参考 alpha_bounds，而非整张画布尺寸。
+建议在每个 Part 场景设置 JointIn / JointOut，再用连接点对齐，避免只用图片中心对齐。
+本次仅交付图片及说明，未修改现有角色、模型、碰撞体或生成器引用。
+

@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=3]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/_PhysicalSampleBodyParts.tscn" id="1_base"]
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/HornedBeast/Models/Head/EarRight.glb" id="2_model"]
+[ext_resource type="ArrayMesh" path="res://Resources/Meshes/HornedBeast/Head/EarRight.res" id="3_mesh"]
+[sub_resource type="ConvexPolygonShape3D" id="Shape"]
+resource_local_to_scene = true
+points = PackedVector3Array(-0.11910145, 0.24867514, -0.01000000, -0.10286957, 0.28134309, -0.01000000, -0.07040580, 0.31401103, -0.01000000, 0.02698551, 0.31401103, -0.01000000, 0.36785507, 0.15067132, -0.01000000, 0.40031884, 0.13433734, -0.01000000, 0.46524638, 0.08533543, -0.01000000, 0.49771014, 0.05266749, -0.01000000, 0.54640580, -0.01266840, -0.01000000, 0.57886957, -0.07800428, -0.01000000, 0.57886957, -0.12700620, -0.01000000, 0.35162319, -0.14334017, -0.01000000, 0.28669565, -0.14334017, -0.01000000, 0.20553623, -0.12700620, -0.01000000, 0.14060870, -0.09433826, -0.01000000, 0.05944928, -0.01266840, -0.01000000, 0.04321739, 0.00366557, -0.01000000, -0.10286957, 0.18333926, -0.01000000, -0.11910145, 0.21600720, -0.01000000, -0.11910145, 0.24867514, 0.01000000, -0.10286957, 0.28134309, 0.01000000, -0.07040580, 0.31401103, 0.01000000, 0.02698551, 0.31401103, 0.01000000, 0.36785507, 0.15067132, 0.01000000, 0.40031884, 0.13433734, 0.01000000, 0.46524638, 0.08533543, 0.01000000, 0.49771014, 0.05266749, 0.01000000, 0.54640580, -0.01266840, 0.01000000, 0.57886957, -0.07800428, 0.01000000, 0.57886957, -0.12700620, 0.01000000, 0.35162319, -0.14334017, 0.01000000, 0.28669565, -0.14334017, 0.01000000, 0.20553623, -0.12700620, 0.01000000, 0.14060870, -0.09433826, 0.01000000, 0.05944928, -0.01266840, 0.01000000, 0.04321739, 0.00366557, 0.01000000, -0.10286957, 0.18333926, 0.01000000, -0.11910145, 0.21600720, 0.01000000)
+[node name="HornedBeast_EarRight" instance=ExtResource("1_base")]
+mass = 0.03
+geometry_mode = 1
+custom_model_path = NodePath("Model")
+paper_volume_enabled = true
+paper_volume_thickness = 0.08
+sprite_visible = false
+mesh_visible = true
+tags = Array[int]([])
+metadata/source_png = "res://Assets/2DResources/HornedBeast/Separated/Attachments/05_ear_right.png"
+metadata/pivot_is_initial_estimate = true
+[node name="CollisionShape3D" parent="." index="0"]
+position = Vector3(0, 0, 0)
+shape = SubResource("Shape")
+[node name="MeshInstance3D" parent="." index="2"]
+visible = false
+mesh = null
+[node name="Model" parent="." instance=ExtResource("2_model")]
+[node name="PaperVolume" type="MeshInstance3D" parent="Model"]
+scale = Vector3(1, 1, 0.08)
+mesh = ExtResource("3_mesh")
+metadata/flat_collision_depth = 0.02
+[node name="JointIn" type="Marker3D" parent="."]
+[node name="JointOut" type="Marker3D" parent="."]
+position = Vector3(0.49000000, 0.18193237, 0.00000000)

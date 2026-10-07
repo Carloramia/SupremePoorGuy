@@ -1,0 +1,273 @@
+{
+  "description": "Initial design proportions, not measured source atlas scale. Joint coordinates normalized inside alpha>=128 visible bounds; editable estimates.",
+  "parts": [
+    {
+      "file": "Base/01_torso.png",
+      "category": "Torso",
+      "name": "TorsoMain",
+      "size_axis": "width",
+      "visible_size": 6.5,
+      "joint_in": [
+        0.5,
+        0.5
+      ],
+      "joint_out": [
+        0.88,
+        0.45
+      ],
+      "tags": [
+        0
+      ],
+      "mass": 3,
+      "thickness": 0.08
+    },
+    {
+      "file": "Base/02_head.png",
+      "category": "Head",
+      "name": "HeadMain",
+      "size_axis": "height",
+      "visible_size": 2,
+      "joint_in": [
+        0.2,
+        0.57
+      ],
+      "joint_out": [
+        0.72,
+        0.64
+      ],
+      "tags": [
+        3
+      ],
+      "mass": 0.5,
+      "thickness": 0.08
+    },
+    {
+      "file": "Limbs/01_foreleg_upper.png",
+      "category": "Legs/Fore",
+      "name": "UpperLeg",
+      "size_axis": "height",
+      "visible_size": 2.3,
+      "joint_in": [
+        0.245,
+        0.19
+      ],
+      "joint_out": [
+        0.83,
+        0.875
+      ],
+      "tags": [
+        5
+      ],
+      "mass": 0.25,
+      "thickness": 0.08
+    },
+    {
+      "file": "Limbs/02_foreleg_lower.png",
+      "category": "Legs/Fore",
+      "name": "LowerLeg",
+      "size_axis": "height",
+      "visible_size": 1.6,
+      "joint_in": [
+        0.51,
+        0.2
+      ],
+      "joint_out": [
+        0.53,
+        0.84
+      ],
+      "tags": [
+        5
+      ],
+      "mass": 0.15,
+      "thickness": 0.08
+    },
+    {
+      "file": "Limbs/03_foreleg_hoof.png",
+      "category": "Legs/Fore",
+      "name": "Foot",
+      "size_axis": "height",
+      "visible_size": 0.65,
+      "joint_in": [
+        0.4,
+        0.18
+      ],
+      "joint_out": [
+        0.5,
+        0.91
+      ],
+      "tags": [
+        4
+      ],
+      "mass": 0.2,
+      "thickness": 0.08
+    },
+    {
+      "file": "Limbs/04_hindleg_upper.png",
+      "category": "Legs/Hind",
+      "name": "UpperLeg",
+      "size_axis": "height",
+      "visible_size": 2.3,
+      "joint_in": [
+        0.88,
+        0.12
+      ],
+      "joint_out": [
+        0.12,
+        0.865
+      ],
+      "tags": [
+        5
+      ],
+      "mass": 0.25,
+      "thickness": 0.08
+    },
+    {
+      "file": "Limbs/05_hindleg_lower.png",
+      "category": "Legs/Hind",
+      "name": "LowerLeg",
+      "size_axis": "height",
+      "visible_size": 1.6,
+      "joint_in": [
+        0.53,
+        0.15
+      ],
+      "joint_out": [
+        0.43,
+        0.865
+      ],
+      "tags": [
+        5
+      ],
+      "mass": 0.15,
+      "thickness": 0.08
+    },
+    {
+      "file": "Limbs/06_hindleg_hoof.png",
+      "category": "Legs/Hind",
+      "name": "Foot",
+      "size_axis": "height",
+      "visible_size": 0.65,
+      "joint_in": [
+        0.43,
+        0.18
+      ],
+      "joint_out": [
+        0.5,
+        0.91
+      ],
+      "tags": [
+        1
+      ],
+      "mass": 0.2,
+      "thickness": 0.08
+    },
+    {
+      "file": "Attachments/01_horn_fan.png",
+      "category": "Horns",
+      "name": "HornFan",
+      "size_axis": "height",
+      "visible_size": 2.5,
+      "joint_in": [
+        0.65,
+        0.83
+      ],
+      "joint_out": [
+        0.25,
+        0.2
+      ],
+      "tags": [],
+      "mass": 0.15,
+      "thickness": 0.08
+    },
+    {
+      "file": "Attachments/02_horn_curl_left.png",
+      "category": "Horns",
+      "name": "HornCurlLeft",
+      "size_axis": "height",
+      "visible_size": 1.8,
+      "joint_in": [
+        0.75,
+        0.86
+      ],
+      "joint_out": [
+        0.27,
+        0.26
+      ],
+      "tags": [],
+      "mass": 0.12,
+      "thickness": 0.08
+    },
+    {
+      "file": "Attachments/03_horn_curl_right.png",
+      "category": "Horns",
+      "name": "HornCurlRight",
+      "size_axis": "height",
+      "visible_size": 1.8,
+      "joint_in": [
+        0.25,
+        0.86
+      ],
+      "joint_out": [
+        0.73,
+        0.26
+      ],
+      "tags": [],
+      "mass": 0.12,
+      "thickness": 0.08
+    },
+    {
+      "file": "Attachments/04_ear_left.png",
+      "category": "Head",
+      "name": "EarLeft",
+      "size_axis": "width",
+      "visible_size": 0.7,
+      "joint_in": [
+        0.84,
+        0.7
+      ],
+      "joint_out": [
+        0.14,
+        0.3
+      ],
+      "tags": [],
+      "mass": 0.03,
+      "thickness": 0.08
+    },
+    {
+      "file": "Attachments/05_ear_right.png",
+      "category": "Head",
+      "name": "EarRight",
+      "size_axis": "width",
+      "visible_size": 0.7,
+      "joint_in": [
+        0.16,
+        0.7
+      ],
+      "joint_out": [
+        0.86,
+        0.3
+      ],
+      "tags": [],
+      "mass": 0.03,
+      "thickness": 0.08
+    },
+    {
+      "file": "Attachments/06_rivet.png",
+      "category": "Connectors",
+      "name": "Rivet",
+      "size_axis": "width",
+      "visible_size": 0.15,
+      "joint_in": [
+        0.5,
+        0.5
+      ],
+      "joint_out": [
+        0.5,
+        0.5
+      ],
+      "tags": [],
+      "mass": 0.01,
+      "thickness": 0.08
+    }
+  ]
+}
