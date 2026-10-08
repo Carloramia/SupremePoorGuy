@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="WorldMapDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://world_map/data/world_map_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+map_id = &"frontier"
+display_name = "THE FRONTIER"
+width = 16
+height = 12
+hex_size = 64.0
+disabled_hexes = Array[Vector2i]([Vector2i(0, 0), Vector2i(1, 0), Vector2i(0, 1), Vector2i(15, 4), Vector2i(14, 4), Vector2i(7, 4), Vector2i(8, 3)])
+spawns = {"harbor": Vector2(120, 220)}

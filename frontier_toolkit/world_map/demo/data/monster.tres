@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="LocationDefinition" load_steps=3 format=3]
+[ext_resource type="Script" path="res://world_map/data/location_definition.gd" id="1"]
+[ext_resource type="PackedScene" path="res://world_map/ui/BattlePanel.tscn" id="2"]
+[resource]
+script = ExtResource("1")
+type_id = &"battle"
+display_name = "Wandering Monster"
+short_description = "A roaming threat. Victory removes it permanently."
+marker_color = Color(0.89, 0.43, 0.36, 1)
+marker_glyph = "B"
+completion_behavior = 2
+interaction_ui_scene = ExtResource("2")
+encounter_data = {"encounter_id": "monster"}
