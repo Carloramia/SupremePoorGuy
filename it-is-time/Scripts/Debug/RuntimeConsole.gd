@@ -1,17 +1,20 @@
 extends CanvasLayer
 
 const MOTION_PLAYER_CONTEXT = preload("res://Scripts/Player/PlayerControlContext.gd")
+const PERF = preload("res://Scripts/Debug/ControlPerformanceStats.gd")
 
 const COMMAND_HELP: Array[Dictionary] = [
+	{&"name": "motiondetail [summary|full]", &"description": "Choose compact gait summaries (default) or full BodyPart snapshots for motion tracking."},
+	{&"name": "trackcharge", &"description": "Toggle charge phases, torso speeds/forces, support foot locks/steps and stuck timers every 0.1s."},
 	{&"name": "help", &"description": "List all available console commands."},
 	{&"name": "getlogs", &"description": "Pack runtime logs into a ZIP in the project root."},
 	{&"name": "trackgenerated", &"description": "Toggle generated creature foot, limb-chain and gait diagnostics."},
 	{&"name": "trackflight [on|off]", &"description": "Track controlled bird flight, dive attacks, landing, wing torques and feather errors every 0.1s."},
-	{&"name": "trackmotion", &"description": "Toggle all BodyPart motion tracking for the currently controlled character."},
+	{&"name": "trackmotion", &"description": "Toggle controlled character motion tracking; use motiondetail to choose summary/full."},
 	{&"name": "trackcontrolperf", &"description": "Toggle Controller, cursor, arc and generation timings (inclusive) and frame spikes."},
 	{&"name": "trackperformance", &"description": "Toggle runtime performance summaries."},
 	{&"name": "tracknpc", &"description": "Toggle NPC navigation and gait diagnostics."},
-	{&"name": "tracknpcmotion [on|off] [filter]", &"description": "Track all NPC BodyParts and gait every 0.1s; filter by name, path or instance ID."},
+	{&"name": "tracknpcmotion [on|off] [filter]", &"description": "Track NPC gait every 0.1s; filter by name, path or ID; motiondetail full adds all BodyParts."},
 	{&"name": "tracknpcstate [on|off] [filter]", &"description": "Track FSM changes and snapshots; filter by NPC name, full path or instance ID."},
 	{&"name": "npcstates [filter]", &"description": "Print a one-time NPC state-machine snapshot."},
 	{&"name": "trackcollision", &"description": "Toggle BodyPart contact enter/exit and collision configuration logs."},
@@ -37,8 +40,13 @@ var _control_perf_max_delta: float = 0.0
 var _control_perf_slow_frames: int = 0
 
 var _output_lines: Array[String] = []
+var _output_dirty := false
+var _output_refresh_elapsed := 0.0
+var _full_motion_details := false
+var _logger_perf := PERF.new()
 var _previous_mouse_mode: Input.MouseMode = Input.MOUSE_MODE_VISIBLE
 var _generated_motion_tracking_enabled: bool = false
+var _charge_tracking_enabled := false
 var _flight_tracking_enabled := false
 var _flight_tracking_elapsed := 0.0
 var _motion_tracking_enabled: bool = false
@@ -61,6 +69,8 @@ var _turn_tracking_enabled: bool = true
 
 func _ready() -> void:
 	_control_performance_tracking_enabled = control_performance_on_start
+	_logger_perf.register(self)
+	_logger_perf.set_enabled(_control_performance_tracking_enabled)
 	visible = false
 	_command_input.text_submitted.connect(_on_command_submitted)
 	_append_output("Runtime console ready. Type 'help' to list available commands.")
@@ -71,6 +81,7 @@ func _input(event: InputEvent) -> void:
 		set_console_open(not visible)
 
 func _process(delta: float) -> void:
+	_output_refresh_elapsed += delta
 	if _flight_tracking_enabled and not _motion_tracking_enabled:
 		_flight_tracking_elapsed += delta
 		if _flight_tracking_elapsed >= motion_tracking_interval:
@@ -103,12 +114,15 @@ func _process(delta: float) -> void:
 		if _performance_tracking_elapsed >= performance_tracking_interval:
 			_performance_tracking_elapsed = 0.0
 			_emit_performance_snapshot()
+	if visible and _output_dirty and _output_refresh_elapsed >= 0.1:
+		_refresh_output_text()
 
 func set_console_open(open: bool) -> void:
 	if visible == open:
 		return
 	visible = open
 	if open:
+		_refresh_output_text()
 		_previous_mouse_mode = Input.mouse_mode
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 		_command_input.clear()
@@ -122,6 +136,10 @@ func is_console_open() -> bool:
 
 func execute_command(command: String) -> String:
 	var args := command.strip_edges().split(" ",false)
+	if not args.is_empty() and args[0].to_lower() == "motiondetail":
+		if args.size() != 2 or args[1].to_lower() not in ["summary", "full"]: return "Usage: motiondetail [summary|full]"
+		_full_motion_details = args[1].to_lower() == "full"
+		return "Motion detail: %s" % args[1].to_lower()
 	if not args.is_empty() and args[0].to_lower() == "trackflight":
 		if args.size() == 1: _flight_tracking_enabled = not _flight_tracking_enabled
 		elif args.size() == 2 and args[1].to_lower() in ["on","off"]: _flight_tracking_enabled = args[1].to_lower() == "on"
@@ -209,6 +227,11 @@ func execute_command(command: String) -> String:
 					if actor.has_method("get_internal_collision_diagnostics"):
 						_append_log_output("[internal_collision] character=%s audit=%s" % [actor.name, actor.call("get_internal_collision_diagnostics")])
 			return "BodyPart collision tracking %s." % ("enabled" if _collision_tracking_enabled else "disabled")
+		"trackcharge":
+			_charge_tracking_enabled = not _charge_tracking_enabled
+			for component: Node in get_tree().get_nodes_in_group(&"charge_attack_controllers"):
+				component.set_diagnostic_tracking_enabled(_charge_tracking_enabled)
+			return "Charge tracking %s." % ("enabled" if _charge_tracking_enabled else "disabled")
 		"trackdamage":
 			_damage_tracking_enabled = not _damage_tracking_enabled
 			_set_damage_tracking(_damage_tracking_enabled)
@@ -249,11 +272,7 @@ func _emit_npc_state_snapshot(filter: String) -> int:
 		messages.append("[npc_state] event=snapshot data=%s" % machine.get_state_diagnostics())
 		messages.append("[npc_state] event=friendly_avoidance data=%s" % machine.get_friendly_avoidance_diagnostics())
 		messages.append("[npc_state] event=attack_ranges data=%s" % machine.get_attack_range_diagnostics())
-	if not messages.is_empty():
-		_output_lines.append_array(messages)
-		while _output_lines.size() > maximum_output_lines: _output_lines.pop_front()
-		if is_instance_valid(_output): _output.text = "\n".join(_output_lines)
-		print("\n".join(messages))
+	_emit_motion_lines(messages)
 	return count
 
 ## Packs user://logs into a ZIP. Tests may pass different writable source and output directories.
@@ -353,16 +372,17 @@ func get_runtime_log_directory() -> String:
 	return ProjectSettings.globalize_path("user://logs")
 
 func _emit_motion_snapshot() -> void:
+	var started := _logger_perf.start()
 	var messages := _collect_motion_snapshot()
+	_logger_perf.finish(&"motion_snapshot_build", started)
 	_emit_motion_lines(messages)
 
 func _emit_motion_lines(messages: Array[String]) -> void:
 	if messages.is_empty(): return
-	# Refresh the visible log once per snapshot rather than once per body.
 	_output_lines.append_array(messages)
 	while _output_lines.size() > maximum_output_lines: _output_lines.pop_front()
-	if is_instance_valid(_output): _output.text = "\n".join(_output_lines)
-	print("\n".join(messages))
+	_output_dirty = true
+	_print_log("\n".join(messages))
 
 func _collect_npc_motion_snapshot() -> Array[String]:
 	var messages: Array[String] = []
@@ -372,23 +392,50 @@ func _collect_npc_motion_snapshot() -> Array[String]:
 		if not is_instance_valid(actor) or actor.is_queued_for_deletion() or visited.has(actor) or not _npc_matches(machine, _npc_motion_filter): continue
 		visited[actor] = true
 		var identity := "[npc_motion] npc_path=%s npc_id=%d" % [actor.get_path(), actor.get_instance_id()]
-		messages.append("%s state=%s" % [identity, machine.get_state_diagnostics()])
-		messages.append("%s attack_ranges=%s" % [identity, machine.get_attack_range_diagnostics()])
-		messages.append("%s navigation=%s" % [identity, machine.get_navigation_motion_diagnostics()])
-		for controller: Node in get_tree().get_nodes_in_group(&"leg_step_movement_controllers"):
-			if controller.get_parent() == actor and controller.has_method("get_npc_motion_execution_diagnostics"):
-				messages.append("%s execution=%s" % [identity, controller.get_npc_motion_execution_diagnostics()])
+		if _full_motion_details:
+			messages.append("%s state=%s" % [identity, machine.get_state_diagnostics()])
+			messages.append("%s attack_ranges=%s" % [identity, machine.get_attack_range_diagnostics()])
+			messages.append("%s navigation=%s" % [identity, machine.get_navigation_motion_diagnostics()])
+			for controller: Node in get_tree().get_nodes_in_group(&"leg_step_movement_controllers"):
+				if controller.get_parent() == actor and controller.has_method("get_npc_motion_execution_diagnostics"):
+					messages.append("%s execution=%s" % [identity, controller.get_npc_motion_execution_diagnostics()])
 		for line: String in _collect_motion_snapshot(actor):
 			messages.append(line.replace("[trackmotion]", identity))
 	return messages
 
 func _emit_npc_motion_snapshot() -> int:
+	var started := _logger_perf.start()
 	var messages := _collect_npc_motion_snapshot()
+	_logger_perf.finish(&"npc_motion_snapshot_build", started)
 	var count := 0
 	for line: String in messages:
 		if " snapshot=" in line: count += 1
 	_emit_motion_lines(messages)
 	return count
+
+func _collect_motion_summary(character: Node3D) -> Array[String]:
+	var messages: Array[String] = []
+	messages.append("[trackmotion] snapshot=%d physics_frame=%d time_ms=%d character=%s detail=summary" % [
+		_motion_snapshot_sequence, Engine.get_physics_frames(), Time.get_ticks_msec(), character.name])
+	for controller: Node in get_tree().get_nodes_in_group(&"leg_step_movement_controllers"):
+		if controller.get_parent() != character: continue
+		var automatic: Dictionary = controller.get_automatic_motion_diagnostics()
+		var legs: Array[Dictionary] = []
+		for profile: Dictionary in automatic.legs:
+			var row := {"foot": profile.foot}
+			for key: String in ["stride", "reachable_speed", "observed_step_duration", "occupied_step_duration", "usable_stance_stride_limit", "required_stance_stride"]:
+				if profile.has(key): row[key] = profile[key]
+			legs.append(row)
+		var torsos: Array[Dictionary] = []
+		var feet: Array[Dictionary] = []
+		for foot: RigidBody3D in controller.get_leg_parts():
+			feet.append({"foot": foot.name, "grounded": controller.is_leg_grounded(foot),
+				"stepping": controller.is_leg_stepping(foot), "slipping": controller.is_leg_slipping(foot)})
+		for torso: RigidBody3D in controller.get_torso_parts():
+			torsos.append({"body": torso.name, "position": torso.global_position, "velocity": torso.linear_velocity})
+		messages.append("[trackmotion] character=%s requested_speed=%.3f planned_speed=%.3f stepping=%d torso_motion=%s leg_profiles=%s feet=%s" % [
+			character.name, automatic.requested_speed, automatic.target_speed, controller._active_steps.size(), torsos, legs, feet])
+	return messages
 
 func _collect_motion_snapshot(character: Node3D = null) -> Array[String]:
 	var messages: Array[String] = []
@@ -397,6 +444,7 @@ func _collect_motion_snapshot(character: Node3D = null) -> Array[String]:
 		messages.append("[trackmotion] No controlled character (Controller detached or no target).")
 		return messages
 	_motion_snapshot_sequence += 1
+	if not _full_motion_details: return _collect_motion_summary(character)
 	var parts: Array[PhysicalBodyPart3D] = []
 	for node: Node in character.find_children("*", "RigidBody3D", true, false):
 		if node is PhysicalBodyPart3D and not node.is_queued_for_deletion(): parts.append(node)
@@ -415,6 +463,8 @@ func _collect_motion_snapshot(character: Node3D = null) -> Array[String]:
 			part.linear_velocity.length_squared() > 0.0001 or part.angular_velocity.length_squared() > 0.0001,
 			part.sleeping, part.freeze, part.mass, part.gravity_scale, part.current_hp, part.max_hp, part.is_broken])
 	# Preserve the detailed gait fields, limited to the selected actor's controllers.
+	if character.has_method("get_standing_pose_diagnostics"):
+		messages.append("[trackmotion] character=%s grounded_standing_pose=%s" % [character.name, character.get_standing_pose_diagnostics()])
 	for controller: Node in get_tree().get_nodes_in_group(&"leg_step_movement_controllers"):
 		if controller.get_parent() == character:
 			if controller.has_method("get_creature_action_controller"):
@@ -532,6 +582,12 @@ func _collect_leg_motion_lines(controller: Node) -> Array[String]:
 			message += " foot_locked=%s foot_anchor=%s foot_drift=%.3f foot_speed=%.3f support_force=%s brake_force=%s expected_speed=%.3f" % [
 				support.locked, _format_vector3(support.anchor), support.drift,
 				support.speed, _format_vector3(support.force), _format_vector3(support.brake_force), support.expected_speed]
+			if support.has("contact_point"):
+				message += " pin_kind=%s contact_point=%s contact_velocity=%s body_center=%s turn_released=%s spider_touchdown=%s" % [support.get("pin_kind", "none"), _format_vector3(support.contact_point), _format_vector3(support.get("contact_velocity", Vector3.ZERO)), _format_vector3(support.get("body_center", leg.global_position)), support.get("turn_released", false), support.get("spider_touchdown", {})]
+			if support.has("spider_support_selection"):
+				message += " spider_support_selection=%s spider_liftoff=%s spider_joint_springs=%s" % [support.spider_support_selection, support.get("spider_liftoff", {}), support.get("spider_joint_springs", [])]
+				message += " spider_landing=%s spider_last_touchdown=%s" % [support.get("spider_landing", {}), support.get("spider_last_touchdown", {})]
+				message += " spider_catch_up=%s spider_recovery_attempts=%s" % [support.get("spider_catch_up", {}), support.get("spider_recovery_attempts", 0)]
 			if support.has("foot_heading"):
 				message += " foot_yaw_locked=%s foot_heading=%s" % [support.get("foot_yaw_locked", false), support.foot_heading]
 			message += " adhesion_force=%s ground_gap=%.3f alignment_torque=%s" % [
@@ -650,9 +706,10 @@ func _consume_group_performance(group_name: StringName) -> Dictionary:
 		var stats: Dictionary = component.call("consume_performance_stats")
 		if group_name == &"leg_step_movement_controllers":
 			var frames: int = stats.get(&"physics_frames", 0)
-			_append_log_output("[trackperformance] movement_component=%s frames=%d total_ms=%.3f avg_ms=%.3f max_ms=%.3f ray_queries=%d shape_queries=%d" % [component.get_path(), frames,
+			_append_log_output("[trackperformance] movement_component=%s frames=%d total_ms=%.3f avg_ms=%.3f max_ms=%.3f ray_queries=%d shape_queries=%d tracking_enabled=%s physics_processing=%s can_process=%s" % [component.get_path(), frames,
 				float(stats.get(&"total_usec", 0)) / 1000.0, float(stats.get(&"total_usec", 0)) / maxi(frames, 1) / 1000.0,
-				float(stats.get(&"max_usec", 0)) / 1000.0, stats.get(&"ray_queries", 0), stats.get(&"shape_queries", 0)])
+				float(stats.get(&"max_usec", 0)) / 1000.0, stats.get(&"ray_queries", 0), stats.get(&"shape_queries", 0),
+				component.is_performance_tracking_enabled(), component.is_physics_processing(), component.can_process()])
 		total.components += 1
 		for key: StringName in stats:
 			if key == &"enabled":
@@ -668,7 +725,13 @@ func _format_vector3(value: Vector3) -> String:
 
 func _append_log_output(message: String) -> void:
 	_append_output(message)
+	_print_log(message)
+
+func _print_log(message: String) -> void:
+	var started := _logger_perf.start()
 	print(message)
+	_logger_perf.finish(&"log_print", started)
+	_logger_perf.count(&"log_characters", message.length())
 
 func _collect_files_recursive(directory_path: String, result: Array[String]) -> void:
 	if not DirAccess.dir_exists_absolute(ProjectSettings.globalize_path(directory_path)):
@@ -692,9 +755,22 @@ func _append_output(message: String) -> void:
 	_output_lines.append(message)
 	while _output_lines.size() > maximum_output_lines:
 		_output_lines.pop_front()
-	if is_instance_valid(_output):
-		_output.text = "\n".join(_output_lines)
-		_output.scroll_to_line(maxi(_output.get_line_count() - 1, 0))
+	_output_dirty = true
+
+func _refresh_output_text() -> void:
+	if not visible or not is_instance_valid(_output): return
+	var started := _logger_perf.start()
+	_output.text = "\n".join(_output_lines)
+	_output.scroll_to_line(maxi(_output.get_line_count() - 1, 0))
+	_output_dirty = false
+	_output_refresh_elapsed = 0.0
+	_logger_perf.finish(&"console_text_refresh", started)
+
+func set_control_performance_tracking_enabled(enabled: bool) -> void:
+	_logger_perf.set_enabled(enabled)
+
+func consume_control_performance_stats() -> Dictionary:
+	return _logger_perf.consume()
 
 func is_control_performance_tracking_enabled() -> bool:
 	return _control_performance_tracking_enabled
@@ -763,3 +839,6 @@ func _collect_bird_motion_lines(character: Node3D, prefix: String) -> Array[Stri
 		for row: Dictionary in joints: lines.append("%s flight_joint=%s" % [header,row])
 		for row: Dictionary in wings: lines.append("%s wing_pose=%s" % [header,row])
 	return lines
+
+func is_charge_tracking_enabled() -> bool:
+	return _charge_tracking_enabled

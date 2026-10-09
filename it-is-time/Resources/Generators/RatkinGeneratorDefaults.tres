@@ -1,0 +1,218 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://Scripts/Creatures/Generators/CreatureGeneratorDefaults.gd" id="1"]
+[ext_resource type="Script" path="res://Scripts/Creatures/Generators/GeneratedPartSceneRule.gd" id="1_lbvcx"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Ratkin/Torso/TorsoNoJointCaps.tscn" id="2_twmmb"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Ratkin/Torso/Pelvis.tscn" id="3_3cd5k"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Ratkin/Connectors/Rivet.tscn" id="4_4l8tu"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Ratkin/Legs/Left/UpperLeg.tscn" id="5_lil8c"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Ratkin/Legs/Left/LowerLeg.tscn" id="6_7fjpl"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Ratkin/Legs/Right/Foot.tscn" id="7_p2rsn"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Ratkin/Legs/Right/UpperLeg.tscn" id="8_7ummf"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Ratkin/Legs/Right/LowerLeg.tscn" id="9_3bdrk"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Ratkin/Arms/Left/UpperArm.tscn" id="10_bsqt7"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Ratkin/Arms/Left/Forearm.tscn" id="11_v10m2"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Ratkin/Arms/Right/Hand.tscn" id="12_r3x2s"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Ratkin/Arms/Right/UpperArm.tscn" id="13_iyeq1"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Ratkin/Arms/Right/Forearm.tscn" id="14_8a82b"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Ratkin/Arms/Left/Hand.tscn" id="15_ofh4a"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Ratkin/Head/HeadMain.tscn" id="16_e0onh"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Ratkin/Torso/NeckMane.tscn" id="17_up86p"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Ratkin/Head/EarRound.tscn" id="18_jlwyb"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Ratkin/Head/EarRound.tscn" id="19_37jgc"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Ratkin/Tail/Tail.tscn" id="20_5uu3j"]
+
+[sub_resource type="Resource" id="Resource_b2omk"]
+resource_local_to_scene = true
+script = ExtResource("1_lbvcx")
+part_key = "Torso"
+part_scene = ExtResource("2_twmmb")
+size_mode = 1
+
+[sub_resource type="Resource" id="Resource_f381h"]
+resource_local_to_scene = true
+script = ExtResource("1_lbvcx")
+part_key = "Pelvis"
+part_scene = ExtResource("3_3cd5k")
+size_mode = 0
+
+[sub_resource type="Resource" id="Resource_s8toj"]
+resource_local_to_scene = true
+script = ExtResource("1_lbvcx")
+part_key = "SubTorso_Leg_1"
+part_type = "SubTorso"
+part_scene = ExtResource("4_4l8tu")
+size_mode = 0
+
+[sub_resource type="Resource" id="Resource_hd1yo"]
+resource_local_to_scene = true
+script = ExtResource("1_lbvcx")
+part_key = "Leg_1_Limb_2"
+part_type = "LegLimb"
+part_scene = ExtResource("5_lil8c")
+size_mode = 0
+
+[sub_resource type="Resource" id="Resource_1mid0"]
+resource_local_to_scene = true
+script = ExtResource("1_lbvcx")
+part_key = "Leg_1_Limb_1"
+part_type = "LegLimb"
+part_scene = ExtResource("6_7fjpl")
+size_mode = 0
+
+[sub_resource type="Resource" id="Resource_avb7e"]
+resource_local_to_scene = true
+script = ExtResource("1_lbvcx")
+part_key = "Leg_1"
+part_type = "Leg"
+part_scene = ExtResource("7_p2rsn")
+size_mode = 0
+
+[sub_resource type="Resource" id="Resource_whbn4"]
+resource_local_to_scene = true
+script = ExtResource("1_lbvcx")
+part_key = "SubTorso_Leg_2"
+part_type = "SubTorso"
+part_scene = ExtResource("4_4l8tu")
+size_mode = 0
+
+[sub_resource type="Resource" id="Resource_l3oy8"]
+resource_local_to_scene = true
+script = ExtResource("1_lbvcx")
+part_key = "Leg_2_Limb_2"
+part_type = "LegLimb"
+part_scene = ExtResource("8_7ummf")
+size_mode = 0
+
+[sub_resource type="Resource" id="Resource_mjhj2"]
+resource_local_to_scene = true
+script = ExtResource("1_lbvcx")
+part_key = "Leg_2_Limb_1"
+part_type = "LegLimb"
+part_scene = ExtResource("9_3bdrk")
+size_mode = 0
+
+[sub_resource type="Resource" id="Resource_afgy8"]
+resource_local_to_scene = true
+script = ExtResource("1_lbvcx")
+part_key = "Leg_2"
+part_type = "Leg"
+part_scene = ExtResource("7_p2rsn")
+size_mode = 0
+
+[sub_resource type="Resource" id="Resource_xeuwv"]
+resource_local_to_scene = true
+script = ExtResource("1_lbvcx")
+part_key = "Arm_1_Limb_2"
+part_type = "ArmLimb"
+part_scene = ExtResource("10_bsqt7")
+size_mode = 0
+
+[sub_resource type="Resource" id="Resource_f4vue"]
+resource_local_to_scene = true
+script = ExtResource("1_lbvcx")
+part_key = "Arm_1_Limb_1"
+part_type = "ArmLimb"
+part_scene = ExtResource("11_v10m2")
+size_mode = 0
+
+[sub_resource type="Resource" id="Resource_017a7"]
+resource_local_to_scene = true
+script = ExtResource("1_lbvcx")
+part_key = "Arm_1"
+part_type = "Arm"
+part_scene = ExtResource("12_r3x2s")
+size_mode = 0
+
+[sub_resource type="Resource" id="Resource_626y2"]
+resource_local_to_scene = true
+script = ExtResource("1_lbvcx")
+part_key = "Arm_2_Limb_2"
+part_type = "ArmLimb"
+part_scene = ExtResource("13_iyeq1")
+size_mode = 0
+
+[sub_resource type="Resource" id="Resource_j1ibo"]
+resource_local_to_scene = true
+script = ExtResource("1_lbvcx")
+part_key = "Arm_2_Limb_1"
+part_type = "ArmLimb"
+part_scene = ExtResource("14_8a82b")
+size_mode = 0
+
+[sub_resource type="Resource" id="Resource_bsov8"]
+resource_local_to_scene = true
+script = ExtResource("1_lbvcx")
+part_key = "Arm_2"
+part_type = "Arm"
+part_scene = ExtResource("15_ofh4a")
+size_mode = 0
+
+[sub_resource type="Resource" id="Resource_qge7n"]
+resource_local_to_scene = true
+script = ExtResource("1_lbvcx")
+part_key = "Head"
+part_type = "Head"
+part_scene = ExtResource("16_e0onh")
+size_mode = 1
+
+[sub_resource type="Resource" id="Resource_4ajmp"]
+resource_local_to_scene = true
+script = ExtResource("1_lbvcx")
+part_key = "NeckMane"
+part_type = "Decoration"
+part_scene = ExtResource("17_up86p")
+size_mode = 0
+
+[sub_resource type="Resource" id="Resource_q4ym0"]
+resource_local_to_scene = true
+script = ExtResource("1_lbvcx")
+part_key = "EarLeft"
+part_type = "Decoration"
+part_scene = ExtResource("18_jlwyb")
+size_mode = 1
+
+[sub_resource type="Resource" id="Resource_qrnb3"]
+resource_local_to_scene = true
+script = ExtResource("1_lbvcx")
+part_key = "EarRight"
+part_type = "Decoration"
+part_scene = ExtResource("19_37jgc")
+size_mode = 1
+
+[sub_resource type="Resource" id="Resource_bsl63"]
+resource_local_to_scene = true
+script = ExtResource("1_lbvcx")
+part_key = "Tail"
+part_type = "Tail"
+part_scene = ExtResource("20_5uu3j")
+size_mode = 0
+
+[resource]
+script = ExtResource("1")
+parameters = {
+"arm_bend_degrees": Vector2(5, 15),
+"arm_pair_width": 0.16,
+"arm_segment_lengths": Vector2(0.8, 0.7),
+"ears_enabled": true,
+"foot_height": 0.32,
+"hand_height": 0.35,
+"head_height": 1.08,
+"ear_heights": Vector2(0.9, 0.8),
+"hip_support_size": 0.16,
+"leg_bend_degrees": Vector2(12, -18),
+"leg_pair_width": 0.16,
+"leg_segment_lengths": Vector2(0.9, 0.7),
+"neck_mane_enabled": true,
+"overall_scale": 1.0,
+"part_scene_rules": Array[ExtResource("1_lbvcx")]([SubResource("Resource_b2omk"), SubResource("Resource_f381h"), SubResource("Resource_s8toj"), SubResource("Resource_hd1yo"), SubResource("Resource_1mid0"), SubResource("Resource_avb7e"), SubResource("Resource_whbn4"), SubResource("Resource_l3oy8"), SubResource("Resource_mjhj2"), SubResource("Resource_afgy8"), SubResource("Resource_xeuwv"), SubResource("Resource_f4vue"), SubResource("Resource_017a7"), SubResource("Resource_626y2"), SubResource("Resource_j1ibo"), SubResource("Resource_bsov8"), SubResource("Resource_qge7n"), SubResource("Resource_4ajmp"), SubResource("Resource_q4ym0"), SubResource("Resource_qrnb3"), SubResource("Resource_bsl63")]),
+"part_width": 0.08,
+"pelvis_height": 0.7,
+"shoulder_height_ratio": 0.8,
+"tail_angle_degrees": -15.0,
+"tail_enabled": true,
+"tail_height": 1.25,
+"tail_root_offset": Vector3(0, 0, 0),
+"torso_height": 1.8,
+"torso_pelvis_offset": Vector3(0.26, 0, 0.005)
+}

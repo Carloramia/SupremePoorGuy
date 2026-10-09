@@ -1,0 +1,1333 @@
+[gd_scene format=3 uid="uid://bitgaljk3bi18"]
+
+[ext_resource type="Script" uid="uid://beli808owg1w1" path="res://Scripts/Creatures/SpiderCharacter3D.gd" id="1_mnwgo"]
+[ext_resource type="PackedScene" uid="uid://drwjwhn1dakgo" path="res://Scenes/Creatures/Generators/SpiderGenerator.tscn" id="2_generator"]
+[ext_resource type="Resource" uid="uid://che6gghyela31" path="res://Resources/Movement/SpiderWalk.tres" id="3_walk"]
+[ext_resource type="Script" uid="uid://c5e64buybn16o" path="res://Scripts/Creatures/SpiderLegStepMovementController3D.gd" id="4_77gc7"]
+[ext_resource type="Resource" uid="uid://brikjiquees" path="res://Resources/Creatures/SpiderDensity.tres" id="4_density"]
+[ext_resource type="PackedScene" uid="uid://bxchfdbxm5uur" path="res://Scenes/Creatures/Bodyparts/PhysicalTestCreatureParts/TestCreature_Part.tscn" id="14_jvk18"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Characters/_BaseGeneratedCreature.tscn" id="spider_character_base"]
+
+[sub_resource type="Curve" id="Curve_vftp3"]
+_data = [Vector2(0, 0.19101131), 0.0, 0.0, 0, 0, Vector2(0.44957983, 0.77528095), 0.0, 0.0, 0, 0, Vector2(1, 0.3370787), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Curve" id="Curve_tnuoe"]
+_limits = [-3.0, 3.0, 0.0, 1.0]
+_data = [Vector2(0, -0.32458997), 0.0, 0.0, 0, 0, Vector2(0.4873949, -0.9101124), 0.0, 0.0, 0, 0, Vector2(0.9397759, -0.60000014), 0.0, 0.0, 0, 0, Vector2(1, -0.46229506), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="Curve" id="Curve_hhag5"]
+_limits = [-3.0, 3.0, 0.0, 1.0]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_hy0wv"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[node name="GenerateSpider" unique_id=1413880667 instance=ExtResource("spider_character_base")]
+script = ExtResource("1_mnwgo")
+spider_leg_bend_limit_degrees = 75.0
+spider_leg_spring_stiffness = 300.0
+spider_leg_spring_damping = 30.0
+generator_path = NodePath("SpiderGenerator")
+manual_layout_connection_tolerance = 0.01
+generate_on_ready = true
+show_framework = false
+zero_gravity_test_mode = false
+planar_constraints_enabled = false
+density_data = ExtResource("4_density")
+mass_density = 1.0
+minimum_part_mass = 0.1
+minimum_feather_mass = 0.005
+maximum_part_mass = 10.0
+part_linear_damping = 0.15
+part_angular_damping = 1.0
+limb_angular_limit_degrees = 35.0
+neck_angular_limit_degrees = 20.0
+angular_spring_stiffness = 30.0
+angular_spring_damping = 5.0
+tail_joint_angular_limit_degrees = 25.0
+tail_joint_spring_stiffness = 80.0
+tail_joint_spring_damping = 8.0
+wing_joint_limits_enabled = true
+wing_root_limit_margin_degrees = 10.0
+wing_middle_limit_margin_degrees = 10.0
+wing_tip_limit_margin_degrees = 10.0
+neck_linear_springs_enabled = true
+neck_joint_linear_slack = Vector3(0.06, 0.06, 0.06)
+neck_linear_spring_stiffness = 80.0
+neck_linear_spring_damping = 8.0
+limb_hinge_damping = 3.0
+limb_joint_linear_slack = Vector3(0.03, 0.03, 0)
+segmented_torso_enabled = true
+segment_merge_length_percent = 10.0
+segment_weight_decay_ratio = 0.2
+segment_rotation_constraints_enabled = true
+segment_transverse_constraints_enabled = true
+segment_transverse_slack = 0.05
+segment_translation_springs_enabled = true
+segment_spring_maximum_acceleration = 50.0
+segment_maximum_distance_lock_enabled = true
+segment_maximum_distance_ratio = 1.15
+segment_spring_frequency = 3.0
+segment_spring_damping_ratio = 1.0
+
+[node name="GeneratedLegStepMovementController3D" parent="." index="0"]
+script = ExtResource("4_77gc7")
+stance_travel_length_ratio = 0.06
+stalled_step_delay = 0.8
+joint_limit_reserve_degrees = 5.0
+support_polygon_tolerance = 0.2
+liftoff_assist_acceleration = 20.0
+liftoff_assist_delay = 0.2
+maximum_liftoff_time = 1.0
+grounded_joint_stiffness_ratio = 0.5
+touchdown_brake_time = 0.08
+touchdown_brake_acceleration = 40.0
+touchdown_confirmation_time = 0.04
+touchdown_contact_speed_limit = 0.3
+foot_heading_lock_enabled = false
+align_support_feet_to_surface = false
+slow_gait_data = ExtResource("3_walk")
+fast_gait_data = ExtResource("3_walk")
+minimum_step_distance = 0.3379932975769043
+ray_start_height = 5.6332216
+ray_length = 22.532887
+maximum_horizontal_leg_reach = 0.0
+slow_step_distance = 1.351973190307617
+step_height = 1.1266443252563476
+torso_path = NodePath("../GeneratedParts/Torso_Front")
+
+[node name="CreatureRecoveryStateMachine3D" parent="." index="1"]
+height_collapse_detection_enabled = false
+fallen_height_ratio = 0.45
+collapse_detection_speed = 0.5
+fall_confirmation_duration = 0.8
+stable_confirmation_duration = 0.5
+stable_height_ratio = 0.65
+
+[node name="CreatureActionController3D" parent="." index="2"]
+enabled = false
+
+[node name="SpiderGenerator" parent="." index="3" unique_id=691937953 instance=ExtResource("2_generator")]
+visible = false
+overall_scale = 1.0
+torso_upper_curve = SubResource("Curve_vftp3")
+torso_lower_curve = SubResource("Curve_tnuoe")
+torso_height_offset_curve = SubResource("Curve_hhag5")
+sub_torso_height_curve = SubResource("Curve_hy0wv")
+
+[node name="GeneratedParts" type="Node3D" parent="." index="4" unique_id=2120518074]
+
+[node name="Torso_Front" parent="GeneratedParts" index="0" unique_id=298589033 instance=ExtResource("14_jvk18")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.2007546, 0)
+mass = 10.0
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([0])
+sprite_visible = false
+left_distance = 2.8
+right_distance = 2.8
+top_distance = 1.8
+bottom_distance = 1.8
+collision_thickness = 0.8
+metadata/body_segment_id = 0
+metadata/segment_layout_version = 3
+metadata/generated_layout = {
+"name": "Torso_Front",
+"part_key": "Torso_Front",
+"role": "Torso",
+"segment_id": 0,
+"size": Vector3(5.6, 3.6, 0.8),
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.2007546, 0)
+}
+metadata/generated_role = "Torso"
+metadata/generated_part_key = "Torso_Front"
+metadata/generated_part_type = "Torso"
+metadata/generated_density = 2.0
+metadata/generated_size = Vector3(5.6, 3.6, 0.8)
+metadata/generated_framework_size = Vector3(5.6, 3.6, 0.8)
+metadata/generated_segment_rest_height = 5.000755
+metadata/generated_segment_rest_offset = Vector3(0, 0, 0)
+
+[node name="JointOut_Torso_Rear" type="Marker3D" parent="GeneratedParts/Torso_Front" index="3" unique_id=119270116]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.56, 0, 0)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_001_Torso"
+metadata/connected_part = "Torso_Rear"
+
+[node name="JointOut_Leg_1_Limb_1" type="Marker3D" parent="GeneratedParts/Torso_Front" index="4" unique_id=952554594]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.24, 0.60105944, -0.4)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_002_Limb"
+metadata/connected_part = "Leg_1_Limb_1"
+
+[node name="JointOut_Leg_2_Limb_1" type="Marker3D" parent="GeneratedParts/Torso_Front" index="5" unique_id=1836188755]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.74666667, -0.6010587, -0.4)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_004_Limb"
+metadata/connected_part = "Leg_2_Limb_1"
+
+[node name="JointOut_Leg_3_Limb_1" type="Marker3D" parent="GeneratedParts/Torso_Front" index="6" unique_id=888933134]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.74666667, -0.6010587, -0.4)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_006_Limb"
+metadata/connected_part = "Leg_3_Limb_1"
+
+[node name="JointOut_Leg_4_Limb_1" type="Marker3D" parent="GeneratedParts/Torso_Front" index="7" unique_id=1643302183]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.24, 0.60105944, -0.4)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_008_Limb"
+metadata/connected_part = "Leg_4_Limb_1"
+
+[node name="JointOut_Leg_5_Limb_1" type="Marker3D" parent="GeneratedParts/Torso_Front" index="8" unique_id=1656879718]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.24, 0.60105944, 0.4)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_010_Limb"
+metadata/connected_part = "Leg_5_Limb_1"
+
+[node name="JointOut_Leg_6_Limb_1" type="Marker3D" parent="GeneratedParts/Torso_Front" index="9" unique_id=880329257]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.74666667, -0.6010587, 0.4)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_012_Limb"
+metadata/connected_part = "Leg_6_Limb_1"
+
+[node name="JointOut_Leg_7_Limb_1" type="Marker3D" parent="GeneratedParts/Torso_Front" index="10" unique_id=868291449]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.74666667, -0.6010587, 0.4)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_014_Limb"
+metadata/connected_part = "Leg_7_Limb_1"
+
+[node name="JointOut_Leg_8_Limb_1" type="Marker3D" parent="GeneratedParts/Torso_Front" index="11" unique_id=882998795]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.24, 0.60105944, 0.4)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_016_Limb"
+metadata/connected_part = "Leg_8_Limb_1"
+
+[node name="JointOut_Head" type="Marker3D" parent="GeneratedParts/Torso_Front" index="12" unique_id=1279406389]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.72, 0, 0)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_018_Neck"
+metadata/connected_part = "Head"
+
+[node name="Torso_Rear" parent="GeneratedParts" index="1" unique_id=1992710832 instance=ExtResource("14_jvk18")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.32, 5.800755, 0)
+mass = 10.0
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([0])
+sprite_visible = false
+left_distance = 4.0
+right_distance = 4.0
+top_distance = 4.0
+bottom_distance = 4.0
+collision_thickness = 0.8
+metadata/body_segment_id = 0
+metadata/segment_layout_version = 3
+metadata/generated_layout = {
+"name": "Torso_Rear",
+"part_key": "Torso_Rear",
+"role": "Torso",
+"segment_id": 0,
+"size": Vector3(8, 8, 0.8),
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.32, 5.800755, 0)
+}
+metadata/generated_role = "Torso"
+metadata/generated_part_key = "Torso_Rear"
+metadata/generated_part_type = "Torso"
+metadata/generated_density = 2.0
+metadata/generated_size = Vector3(8, 8, 0.8)
+metadata/generated_framework_size = Vector3(8, 8, 0.8)
+
+[node name="JointIn_Torso_Front" type="Marker3D" parent="GeneratedParts/Torso_Rear" index="3" unique_id=638619907]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7600002, -1.6000004, 0)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_001_Torso"
+metadata/connected_part = "Torso_Front"
+
+[node name="Leg_1_Limb_1" parent="GeneratedParts" index="2" unique_id=1255256593 instance=ExtResource("14_jvk18")]
+transform = Transform3D(0.7036317, 0.7105648, 0, -0.7105648, 0.7036317, 0, 0, 0, 1, 4.5138073, 7.053436, -0.8)
+mass = 10.0
+freeze = true
+linear_damp = 0.15
+angular_damp_mode = 1
+tags = Array[int]([5])
+sprite_visible = false
+left_distance = 0.5
+right_distance = 0.5
+top_distance = 3.2000003
+bottom_distance = 3.2000003
+collision_thickness = 0.8
+metadata/body_segment_id = 0
+metadata/segment_layout_version = 3
+metadata/generated_layout = {
+"name": "Leg_1_Limb_1",
+"part_key": "Leg_1_Limb_1",
+"role": "Limb",
+"segment_id": 0,
+"size": Vector3(1, 6.4000006, 0.8),
+"transform": Transform3D(0.7036317, 0.7105648, 0, -0.7105648, 0.7036317, 0, 0, 0, 1, 4.5138073, 7.053436, -0.8)
+}
+metadata/generated_role = "Limb"
+metadata/generated_part_key = "Leg_1_Limb_1"
+metadata/generated_part_type = "LegLimb"
+metadata/generated_density = 2.0
+metadata/generated_size = Vector3(1, 6.4000006, 0.8)
+metadata/generated_framework_size = Vector3(1, 6.4000006, 0.8)
+
+[node name="JointIn_Torso_Front" type="Marker3D" parent="GeneratedParts/Leg_1_Limb_1" index="3" unique_id=2036310951]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.7683716e-07, -3.1999998, 0.4)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_002_Limb"
+metadata/connected_part = "Torso_Front"
+
+[node name="JointOut_Leg_1" type="Marker3D" parent="GeneratedParts/Leg_1_Limb_1" index="4" unique_id=729689138]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.3841858e-07, 3.2000008, -0.40000004)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_003_Limb"
+metadata/connected_part = "Leg_1"
+
+[node name="Leg_1" parent="GeneratedParts" index="3" unique_id=1026902371 instance=ExtResource("14_jvk18")]
+transform = Transform3D(-0.9497051, 0.31314558, 0, -0.31314558, -0.9497051, 0, 0, 0, 1, 8.290714, 4.7464724, -1.6)
+axis_lock_angular_x = true
+axis_lock_angular_z = true
+mass = 10.0
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([1])
+sprite_visible = false
+left_distance = 0.6
+right_distance = 0.6
+top_distance = 4.8000007
+bottom_distance = 4.8000007
+collision_thickness = 0.8
+metadata/body_segment_id = 0
+metadata/segment_layout_version = 3
+metadata/generated_layout = {
+"name": "Leg_1",
+"part_key": "Leg_1",
+"role": "Leg",
+"segment_id": 0,
+"size": Vector3(1.2, 9.600001, 0.8),
+"transform": Transform3D(-0.9497051, 0.31314558, 0, -0.31314558, -0.9497051, 0, 0, 0, 1, 8.290714, 4.7464724, -1.6)
+}
+metadata/generated_role = "Leg"
+metadata/generated_part_key = "Leg_1"
+metadata/generated_part_type = "Leg"
+metadata/generated_density = 4.0
+metadata/generated_size = Vector3(1.2, 9.600001, 0.8)
+metadata/generated_framework_size = Vector3(1.2, 9.600001, 0.8)
+metadata/foot_previous_locks = Vector2i(0, 0)
+metadata/generated_attachment_rest_offset = Vector3(8.290714, 0.5457177, -1.6)
+metadata/generated_layout_foot_offset = Vector3(11.450714, -0.254282, -1.6)
+
+[node name="JointIn_Leg_1_Limb_1" type="Marker3D" parent="GeneratedParts/Leg_1" index="3" unique_id=238198090]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.536743e-07, -4.800001, 0.39999998)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_003_Limb"
+metadata/connected_part = "Leg_1_Limb_1"
+
+[node name="Leg_2_Limb_1" parent="GeneratedParts" index="4" unique_id=801548314 instance=ExtResource("14_jvk18")]
+transform = Transform3D(0.93797415, 0.34670523, 0, -0.34670523, 0.93797415, 0, 0, 0, 1, 1.8561232, 6.601213, -0.8)
+mass = 10.0
+freeze = true
+linear_damp = 0.15
+angular_damp_mode = 1
+tags = Array[int]([5])
+sprite_visible = false
+left_distance = 0.5
+right_distance = 0.5
+top_distance = 3.1999996
+bottom_distance = 3.1999996
+collision_thickness = 0.8
+metadata/body_segment_id = 0
+metadata/segment_layout_version = 3
+metadata/generated_layout = {
+"name": "Leg_2_Limb_1",
+"part_key": "Leg_2_Limb_1",
+"role": "Limb",
+"segment_id": 0,
+"size": Vector3(1, 6.399999, 0.8),
+"transform": Transform3D(0.93797415, 0.34670523, 0, -0.34670523, 0.93797415, 0, 0, 0, 1, 1.8561232, 6.601213, -0.8)
+}
+metadata/generated_role = "Limb"
+metadata/generated_part_key = "Leg_2_Limb_1"
+metadata/generated_part_type = "LegLimb"
+metadata/generated_density = 2.0
+metadata/generated_size = Vector3(1, 6.399999, 0.8)
+metadata/generated_framework_size = Vector3(1, 6.399999, 0.8)
+
+[node name="JointIn_Torso_Front" type="Marker3D" parent="GeneratedParts/Leg_2_Limb_1" index="3" unique_id=963606704]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.9604645e-08, -3.1999998, 0.4)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_004_Limb"
+metadata/connected_part = "Torso_Front"
+
+[node name="JointOut_Leg_2" type="Marker3D" parent="GeneratedParts/Leg_2_Limb_1" index="4" unique_id=813055278]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.1999998, -0.40000004)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_005_Limb"
+metadata/connected_part = "Leg_2"
+
+[node name="Leg_2" parent="GeneratedParts" index="5" unique_id=655960451 instance=ExtResource("14_jvk18")]
+transform = Transform3D(-0.9927957, 0.11981981, 0, -0.11981981, -0.9927957, 0, 0, 0, 1, 3.5407147, 4.8373103, -1.6)
+axis_lock_angular_x = true
+axis_lock_angular_z = true
+mass = 10.0
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([1])
+sprite_visible = false
+left_distance = 0.6
+right_distance = 0.6
+top_distance = 4.8
+bottom_distance = 4.8
+collision_thickness = 0.8
+metadata/body_segment_id = 0
+metadata/segment_layout_version = 3
+metadata/generated_layout = {
+"name": "Leg_2",
+"part_key": "Leg_2",
+"role": "Leg",
+"segment_id": 0,
+"size": Vector3(1.2, 9.6, 0.8),
+"transform": Transform3D(-0.9927957, 0.11981981, 0, -0.11981981, -0.9927957, 0, 0, 0, 1, 3.5407147, 4.8373103, -1.6)
+}
+metadata/generated_role = "Leg"
+metadata/generated_part_key = "Leg_2"
+metadata/generated_part_type = "Leg"
+metadata/generated_density = 4.0
+metadata/generated_size = Vector3(1.2, 9.6, 0.8)
+metadata/generated_framework_size = Vector3(1.2, 9.6, 0.8)
+metadata/foot_previous_locks = Vector2i(0, 0)
+metadata/generated_attachment_rest_offset = Vector3(3.5407147, 0.6365557, -1.6)
+metadata/generated_layout_foot_offset = Vector3(6.700715, -0.16344404, -1.6)
+
+[node name="JointIn_Leg_2_Limb_1" type="Marker3D" parent="GeneratedParts/Leg_2" index="3" unique_id=636439861]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4.7999997, 0.39999998)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_005_Limb"
+metadata/connected_part = "Leg_2_Limb_1"
+
+[node name="Leg_3_Limb_1" parent="GeneratedParts" index="6" unique_id=1831650676 instance=ExtResource("14_jvk18")]
+transform = Transform3D(0.93797415, -0.34670523, 0, 0.34670523, 0.93797415, 0, 0, 0, 1, -1.8561232, 6.601213, -0.8)
+mass = 10.0
+freeze = true
+linear_damp = 0.15
+angular_damp_mode = 1
+tags = Array[int]([5])
+sprite_visible = false
+left_distance = 0.5
+right_distance = 0.5
+top_distance = 3.1999996
+bottom_distance = 3.1999996
+collision_thickness = 0.8
+metadata/body_segment_id = 0
+metadata/segment_layout_version = 3
+metadata/generated_layout = {
+"name": "Leg_3_Limb_1",
+"part_key": "Leg_3_Limb_1",
+"role": "Limb",
+"segment_id": 0,
+"size": Vector3(1, 6.399999, 0.8),
+"transform": Transform3D(0.93797415, -0.34670523, 0, 0.34670523, 0.93797415, 0, 0, 0, 1, -1.8561232, 6.601213, -0.8)
+}
+metadata/generated_role = "Limb"
+metadata/generated_part_key = "Leg_3_Limb_1"
+metadata/generated_part_type = "LegLimb"
+metadata/generated_density = 2.0
+metadata/generated_size = Vector3(1, 6.399999, 0.8)
+metadata/generated_framework_size = Vector3(1, 6.399999, 0.8)
+
+[node name="JointIn_Torso_Front" type="Marker3D" parent="GeneratedParts/Leg_3_Limb_1" index="3" unique_id=1977975080]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.9604645e-08, -3.1999998, 0.4)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_006_Limb"
+metadata/connected_part = "Torso_Front"
+
+[node name="JointOut_Leg_3" type="Marker3D" parent="GeneratedParts/Leg_3_Limb_1" index="4" unique_id=1073187670]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.1999998, -0.40000004)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_007_Limb"
+metadata/connected_part = "Leg_3"
+
+[node name="Leg_3" parent="GeneratedParts" index="7" unique_id=1421280148 instance=ExtResource("14_jvk18")]
+transform = Transform3D(-0.9927957, -0.11981981, 0, 0.11981981, -0.9927957, 0, 0, 0, 1, -3.5407147, 4.8373103, -1.6)
+axis_lock_angular_x = true
+axis_lock_angular_z = true
+mass = 10.0
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([1])
+sprite_visible = false
+left_distance = 0.6
+right_distance = 0.6
+top_distance = 4.8
+bottom_distance = 4.8
+collision_thickness = 0.8
+metadata/body_segment_id = 0
+metadata/segment_layout_version = 3
+metadata/generated_layout = {
+"name": "Leg_3",
+"part_key": "Leg_3",
+"role": "Leg",
+"segment_id": 0,
+"size": Vector3(1.2, 9.6, 0.8),
+"transform": Transform3D(-0.9927957, -0.11981981, 0, 0.11981981, -0.9927957, 0, 0, 0, 1, -3.5407147, 4.8373103, -1.6)
+}
+metadata/generated_role = "Leg"
+metadata/generated_part_key = "Leg_3"
+metadata/generated_part_type = "Leg"
+metadata/generated_density = 4.0
+metadata/generated_size = Vector3(1.2, 9.6, 0.8)
+metadata/generated_framework_size = Vector3(1.2, 9.6, 0.8)
+metadata/foot_previous_locks = Vector2i(0, 0)
+metadata/generated_attachment_rest_offset = Vector3(-3.5407147, 0.6365557, -1.6)
+metadata/generated_layout_foot_offset = Vector3(-0.38071465, -0.16344404, -1.6)
+
+[node name="JointIn_Leg_3_Limb_1" type="Marker3D" parent="GeneratedParts/Leg_3" index="3" unique_id=651108506]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4.7999997, 0.39999998)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_007_Limb"
+metadata/connected_part = "Leg_3_Limb_1"
+
+[node name="Leg_4_Limb_1" parent="GeneratedParts" index="8" unique_id=936105557 instance=ExtResource("14_jvk18")]
+transform = Transform3D(0.7036317, -0.7105648, 0, 0.7105648, 0.7036317, 0, 0, 0, 1, -4.5138073, 7.053436, -0.8)
+mass = 10.0
+freeze = true
+linear_damp = 0.15
+angular_damp_mode = 1
+tags = Array[int]([5])
+sprite_visible = false
+left_distance = 0.5
+right_distance = 0.5
+top_distance = 3.2000003
+bottom_distance = 3.2000003
+collision_thickness = 0.8
+metadata/body_segment_id = 0
+metadata/segment_layout_version = 3
+metadata/generated_layout = {
+"name": "Leg_4_Limb_1",
+"part_key": "Leg_4_Limb_1",
+"role": "Limb",
+"segment_id": 0,
+"size": Vector3(1, 6.4000006, 0.8),
+"transform": Transform3D(0.7036317, -0.7105648, 0, 0.7105648, 0.7036317, 0, 0, 0, 1, -4.5138073, 7.053436, -0.8)
+}
+metadata/generated_role = "Limb"
+metadata/generated_part_key = "Leg_4_Limb_1"
+metadata/generated_part_type = "LegLimb"
+metadata/generated_density = 2.0
+metadata/generated_size = Vector3(1, 6.4000006, 0.8)
+metadata/generated_framework_size = Vector3(1, 6.4000006, 0.8)
+
+[node name="JointIn_Torso_Front" type="Marker3D" parent="GeneratedParts/Leg_4_Limb_1" index="3" unique_id=471606585]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.7683716e-07, -3.1999998, 0.4)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_008_Limb"
+metadata/connected_part = "Torso_Front"
+
+[node name="JointOut_Leg_4" type="Marker3D" parent="GeneratedParts/Leg_4_Limb_1" index="4" unique_id=721572468]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.3841858e-07, 3.2000008, -0.40000004)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_009_Limb"
+metadata/connected_part = "Leg_4"
+
+[node name="Leg_4" parent="GeneratedParts" index="9" unique_id=799315739 instance=ExtResource("14_jvk18")]
+transform = Transform3D(-0.9497051, -0.31314558, 0, 0.31314558, -0.9497051, 0, 0, 0, 1, -8.290714, 4.7464724, -1.6)
+axis_lock_angular_x = true
+axis_lock_angular_z = true
+mass = 10.0
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([1])
+sprite_visible = false
+left_distance = 0.6
+right_distance = 0.6
+top_distance = 4.8000007
+bottom_distance = 4.8000007
+collision_thickness = 0.8
+metadata/body_segment_id = 0
+metadata/segment_layout_version = 3
+metadata/generated_layout = {
+"name": "Leg_4",
+"part_key": "Leg_4",
+"role": "Leg",
+"segment_id": 0,
+"size": Vector3(1.2, 9.600001, 0.8),
+"transform": Transform3D(-0.9497051, -0.31314558, 0, 0.31314558, -0.9497051, 0, 0, 0, 1, -8.290714, 4.7464724, -1.6)
+}
+metadata/generated_role = "Leg"
+metadata/generated_part_key = "Leg_4"
+metadata/generated_part_type = "Leg"
+metadata/generated_density = 4.0
+metadata/generated_size = Vector3(1.2, 9.600001, 0.8)
+metadata/generated_framework_size = Vector3(1.2, 9.600001, 0.8)
+metadata/foot_previous_locks = Vector2i(0, 0)
+metadata/generated_attachment_rest_offset = Vector3(-8.290714, 0.5457177, -1.6)
+metadata/generated_layout_foot_offset = Vector3(-5.1307144, -0.254282, -1.6)
+
+[node name="JointIn_Leg_4_Limb_1" type="Marker3D" parent="GeneratedParts/Leg_4" index="3" unique_id=237970335]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.536743e-07, -4.800001, 0.39999998)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_009_Limb"
+metadata/connected_part = "Leg_4_Limb_1"
+
+[node name="Leg_5_Limb_1" parent="GeneratedParts" index="10" unique_id=658039239 instance=ExtResource("14_jvk18")]
+transform = Transform3D(0.7036317, 0.7105648, 0, -0.7105648, 0.7036317, 0, 0, 0, 1, 4.5138073, 7.053436, 0.8)
+mass = 10.0
+freeze = true
+linear_damp = 0.15
+angular_damp_mode = 1
+tags = Array[int]([5])
+sprite_visible = false
+left_distance = 0.5
+right_distance = 0.5
+top_distance = 3.2000003
+bottom_distance = 3.2000003
+collision_thickness = 0.8
+metadata/body_segment_id = 0
+metadata/segment_layout_version = 3
+metadata/generated_layout = {
+"name": "Leg_5_Limb_1",
+"part_key": "Leg_5_Limb_1",
+"role": "Limb",
+"segment_id": 0,
+"size": Vector3(1, 6.4000006, 0.8),
+"transform": Transform3D(0.7036317, 0.7105648, 0, -0.7105648, 0.7036317, 0, 0, 0, 1, 4.5138073, 7.053436, 0.8)
+}
+metadata/generated_role = "Limb"
+metadata/generated_part_key = "Leg_5_Limb_1"
+metadata/generated_part_type = "LegLimb"
+metadata/generated_density = 2.0
+metadata/generated_size = Vector3(1, 6.4000006, 0.8)
+metadata/generated_framework_size = Vector3(1, 6.4000006, 0.8)
+
+[node name="JointIn_Torso_Front" type="Marker3D" parent="GeneratedParts/Leg_5_Limb_1" index="3" unique_id=2058455689]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.7683716e-07, -3.1999998, -0.4)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_010_Limb"
+metadata/connected_part = "Torso_Front"
+
+[node name="JointOut_Leg_5" type="Marker3D" parent="GeneratedParts/Leg_5_Limb_1" index="4" unique_id=931670193]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.3841858e-07, 3.2000008, 0.40000004)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_011_Limb"
+metadata/connected_part = "Leg_5"
+
+[node name="Leg_5" parent="GeneratedParts" index="11" unique_id=1833394496 instance=ExtResource("14_jvk18")]
+transform = Transform3D(-0.9497051, 0.31314558, 0, -0.31314558, -0.9497051, 0, 0, 0, 1, 8.290714, 4.7464724, 1.6)
+axis_lock_angular_x = true
+axis_lock_angular_z = true
+mass = 10.0
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([1])
+sprite_visible = false
+left_distance = 0.6
+right_distance = 0.6
+top_distance = 4.8000007
+bottom_distance = 4.8000007
+collision_thickness = 0.8
+metadata/body_segment_id = 0
+metadata/segment_layout_version = 3
+metadata/generated_layout = {
+"name": "Leg_5",
+"part_key": "Leg_5",
+"role": "Leg",
+"segment_id": 0,
+"size": Vector3(1.2, 9.600001, 0.8),
+"transform": Transform3D(-0.9497051, 0.31314558, 0, -0.31314558, -0.9497051, 0, 0, 0, 1, 8.290714, 4.7464724, 1.6)
+}
+metadata/generated_role = "Leg"
+metadata/generated_part_key = "Leg_5"
+metadata/generated_part_type = "Leg"
+metadata/generated_density = 4.0
+metadata/generated_size = Vector3(1.2, 9.600001, 0.8)
+metadata/generated_framework_size = Vector3(1.2, 9.600001, 0.8)
+metadata/foot_previous_locks = Vector2i(0, 0)
+metadata/generated_attachment_rest_offset = Vector3(8.290714, 0.5457177, 1.6)
+metadata/generated_layout_foot_offset = Vector3(11.450714, -0.254282, 1.6)
+
+[node name="JointIn_Leg_5_Limb_1" type="Marker3D" parent="GeneratedParts/Leg_5" index="3" unique_id=1241921599]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.536743e-07, -4.800001, -0.39999998)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_011_Limb"
+metadata/connected_part = "Leg_5_Limb_1"
+
+[node name="Leg_6_Limb_1" parent="GeneratedParts" index="12" unique_id=55618067 instance=ExtResource("14_jvk18")]
+transform = Transform3D(0.93797415, 0.34670523, 0, -0.34670523, 0.93797415, 0, 0, 0, 1, 1.8561232, 6.601213, 0.8)
+mass = 10.0
+freeze = true
+linear_damp = 0.15
+angular_damp_mode = 1
+tags = Array[int]([5])
+sprite_visible = false
+left_distance = 0.5
+right_distance = 0.5
+top_distance = 3.1999996
+bottom_distance = 3.1999996
+collision_thickness = 0.8
+metadata/body_segment_id = 0
+metadata/segment_layout_version = 3
+metadata/generated_layout = {
+"name": "Leg_6_Limb_1",
+"part_key": "Leg_6_Limb_1",
+"role": "Limb",
+"segment_id": 0,
+"size": Vector3(1, 6.399999, 0.8),
+"transform": Transform3D(0.93797415, 0.34670523, 0, -0.34670523, 0.93797415, 0, 0, 0, 1, 1.8561232, 6.601213, 0.8)
+}
+metadata/generated_role = "Limb"
+metadata/generated_part_key = "Leg_6_Limb_1"
+metadata/generated_part_type = "LegLimb"
+metadata/generated_density = 2.0
+metadata/generated_size = Vector3(1, 6.399999, 0.8)
+metadata/generated_framework_size = Vector3(1, 6.399999, 0.8)
+
+[node name="JointIn_Torso_Front" type="Marker3D" parent="GeneratedParts/Leg_6_Limb_1" index="3" unique_id=216366218]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.9604645e-08, -3.1999998, -0.4)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_012_Limb"
+metadata/connected_part = "Torso_Front"
+
+[node name="JointOut_Leg_6" type="Marker3D" parent="GeneratedParts/Leg_6_Limb_1" index="4" unique_id=1900832867]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.1999998, 0.40000004)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_013_Limb"
+metadata/connected_part = "Leg_6"
+
+[node name="Leg_6" parent="GeneratedParts" index="13" unique_id=1789543853 instance=ExtResource("14_jvk18")]
+transform = Transform3D(-0.9927957, 0.11981981, 0, -0.11981981, -0.9927957, 0, 0, 0, 1, 3.5407147, 4.8373103, 1.6)
+axis_lock_angular_x = true
+axis_lock_angular_z = true
+mass = 10.0
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([1])
+sprite_visible = false
+left_distance = 0.6
+right_distance = 0.6
+top_distance = 4.8
+bottom_distance = 4.8
+collision_thickness = 0.8
+metadata/body_segment_id = 0
+metadata/segment_layout_version = 3
+metadata/generated_layout = {
+"name": "Leg_6",
+"part_key": "Leg_6",
+"role": "Leg",
+"segment_id": 0,
+"size": Vector3(1.2, 9.6, 0.8),
+"transform": Transform3D(-0.9927957, 0.11981981, 0, -0.11981981, -0.9927957, 0, 0, 0, 1, 3.5407147, 4.8373103, 1.6)
+}
+metadata/generated_role = "Leg"
+metadata/generated_part_key = "Leg_6"
+metadata/generated_part_type = "Leg"
+metadata/generated_density = 4.0
+metadata/generated_size = Vector3(1.2, 9.6, 0.8)
+metadata/generated_framework_size = Vector3(1.2, 9.6, 0.8)
+metadata/foot_previous_locks = Vector2i(0, 0)
+metadata/generated_attachment_rest_offset = Vector3(3.5407147, 0.6365557, 1.6)
+metadata/generated_layout_foot_offset = Vector3(6.700715, -0.16344404, 1.6)
+
+[node name="JointIn_Leg_6_Limb_1" type="Marker3D" parent="GeneratedParts/Leg_6" index="3" unique_id=2129742312]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4.7999997, -0.39999998)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_013_Limb"
+metadata/connected_part = "Leg_6_Limb_1"
+
+[node name="Leg_7_Limb_1" parent="GeneratedParts" index="14" unique_id=1582444617 instance=ExtResource("14_jvk18")]
+transform = Transform3D(0.93797415, -0.34670523, 0, 0.34670523, 0.93797415, 0, 0, 0, 1, -1.8561232, 6.601213, 0.8)
+mass = 10.0
+freeze = true
+linear_damp = 0.15
+angular_damp_mode = 1
+tags = Array[int]([5])
+sprite_visible = false
+left_distance = 0.5
+right_distance = 0.5
+top_distance = 3.1999996
+bottom_distance = 3.1999996
+collision_thickness = 0.8
+metadata/body_segment_id = 0
+metadata/segment_layout_version = 3
+metadata/generated_layout = {
+"name": "Leg_7_Limb_1",
+"part_key": "Leg_7_Limb_1",
+"role": "Limb",
+"segment_id": 0,
+"size": Vector3(1, 6.399999, 0.8),
+"transform": Transform3D(0.93797415, -0.34670523, 0, 0.34670523, 0.93797415, 0, 0, 0, 1, -1.8561232, 6.601213, 0.8)
+}
+metadata/generated_role = "Limb"
+metadata/generated_part_key = "Leg_7_Limb_1"
+metadata/generated_part_type = "LegLimb"
+metadata/generated_density = 2.0
+metadata/generated_size = Vector3(1, 6.399999, 0.8)
+metadata/generated_framework_size = Vector3(1, 6.399999, 0.8)
+
+[node name="JointIn_Torso_Front" type="Marker3D" parent="GeneratedParts/Leg_7_Limb_1" index="3" unique_id=1268773989]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.9604645e-08, -3.1999998, -0.4)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_014_Limb"
+metadata/connected_part = "Torso_Front"
+
+[node name="JointOut_Leg_7" type="Marker3D" parent="GeneratedParts/Leg_7_Limb_1" index="4" unique_id=1061676787]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.1999998, 0.40000004)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_015_Limb"
+metadata/connected_part = "Leg_7"
+
+[node name="Leg_7" parent="GeneratedParts" index="15" unique_id=586068324 instance=ExtResource("14_jvk18")]
+transform = Transform3D(-0.9927957, -0.11981981, 0, 0.11981981, -0.9927957, 0, 0, 0, 1, -3.5407147, 4.8373103, 1.6)
+axis_lock_angular_x = true
+axis_lock_angular_z = true
+mass = 10.0
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([1])
+sprite_visible = false
+left_distance = 0.6
+right_distance = 0.6
+top_distance = 4.8
+bottom_distance = 4.8
+collision_thickness = 0.8
+metadata/body_segment_id = 0
+metadata/segment_layout_version = 3
+metadata/generated_layout = {
+"name": "Leg_7",
+"part_key": "Leg_7",
+"role": "Leg",
+"segment_id": 0,
+"size": Vector3(1.2, 9.6, 0.8),
+"transform": Transform3D(-0.9927957, -0.11981981, 0, 0.11981981, -0.9927957, 0, 0, 0, 1, -3.5407147, 4.8373103, 1.6)
+}
+metadata/generated_role = "Leg"
+metadata/generated_part_key = "Leg_7"
+metadata/generated_part_type = "Leg"
+metadata/generated_density = 4.0
+metadata/generated_size = Vector3(1.2, 9.6, 0.8)
+metadata/generated_framework_size = Vector3(1.2, 9.6, 0.8)
+metadata/foot_previous_locks = Vector2i(0, 0)
+metadata/generated_attachment_rest_offset = Vector3(-3.5407147, 0.6365557, 1.6)
+metadata/generated_layout_foot_offset = Vector3(-0.38071465, -0.16344404, 1.6)
+
+[node name="JointIn_Leg_7_Limb_1" type="Marker3D" parent="GeneratedParts/Leg_7" index="3" unique_id=11703934]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4.7999997, -0.39999998)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_015_Limb"
+metadata/connected_part = "Leg_7_Limb_1"
+
+[node name="Leg_8_Limb_1" parent="GeneratedParts" index="16" unique_id=234281747 instance=ExtResource("14_jvk18")]
+transform = Transform3D(0.7036317, -0.7105648, 0, 0.7105648, 0.7036317, 0, 0, 0, 1, -4.5138073, 7.053436, 0.8)
+mass = 10.0
+freeze = true
+linear_damp = 0.15
+angular_damp_mode = 1
+tags = Array[int]([5])
+sprite_visible = false
+left_distance = 0.5
+right_distance = 0.5
+top_distance = 3.2000003
+bottom_distance = 3.2000003
+collision_thickness = 0.8
+metadata/body_segment_id = 0
+metadata/segment_layout_version = 3
+metadata/generated_layout = {
+"name": "Leg_8_Limb_1",
+"part_key": "Leg_8_Limb_1",
+"role": "Limb",
+"segment_id": 0,
+"size": Vector3(1, 6.4000006, 0.8),
+"transform": Transform3D(0.7036317, -0.7105648, 0, 0.7105648, 0.7036317, 0, 0, 0, 1, -4.5138073, 7.053436, 0.8)
+}
+metadata/generated_role = "Limb"
+metadata/generated_part_key = "Leg_8_Limb_1"
+metadata/generated_part_type = "LegLimb"
+metadata/generated_density = 2.0
+metadata/generated_size = Vector3(1, 6.4000006, 0.8)
+metadata/generated_framework_size = Vector3(1, 6.4000006, 0.8)
+
+[node name="JointIn_Torso_Front" type="Marker3D" parent="GeneratedParts/Leg_8_Limb_1" index="3" unique_id=877845914]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.7683716e-07, -3.1999998, -0.4)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_016_Limb"
+metadata/connected_part = "Torso_Front"
+
+[node name="JointOut_Leg_8" type="Marker3D" parent="GeneratedParts/Leg_8_Limb_1" index="4" unique_id=718728807]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.3841858e-07, 3.2000008, 0.40000004)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_017_Limb"
+metadata/connected_part = "Leg_8"
+
+[node name="Leg_8" parent="GeneratedParts" index="17" unique_id=1191020804 instance=ExtResource("14_jvk18")]
+transform = Transform3D(-0.9497051, -0.31314558, 0, 0.31314558, -0.9497051, 0, 0, 0, 1, -8.290714, 4.7464724, 1.6)
+axis_lock_angular_x = true
+axis_lock_angular_z = true
+mass = 10.0
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([1])
+sprite_visible = false
+left_distance = 0.6
+right_distance = 0.6
+top_distance = 4.8000007
+bottom_distance = 4.8000007
+collision_thickness = 0.8
+metadata/body_segment_id = 0
+metadata/segment_layout_version = 3
+metadata/generated_layout = {
+"name": "Leg_8",
+"part_key": "Leg_8",
+"role": "Leg",
+"segment_id": 0,
+"size": Vector3(1.2, 9.600001, 0.8),
+"transform": Transform3D(-0.9497051, -0.31314558, 0, 0.31314558, -0.9497051, 0, 0, 0, 1, -8.290714, 4.7464724, 1.6)
+}
+metadata/generated_role = "Leg"
+metadata/generated_part_key = "Leg_8"
+metadata/generated_part_type = "Leg"
+metadata/generated_density = 4.0
+metadata/generated_size = Vector3(1.2, 9.600001, 0.8)
+metadata/generated_framework_size = Vector3(1.2, 9.600001, 0.8)
+metadata/foot_previous_locks = Vector2i(0, 0)
+metadata/generated_attachment_rest_offset = Vector3(-8.290714, 0.5457177, 1.6)
+metadata/generated_layout_foot_offset = Vector3(-5.1307144, -0.254282, 1.6)
+
+[node name="JointIn_Leg_8_Limb_1" type="Marker3D" parent="GeneratedParts/Leg_8" index="3" unique_id=1599426659]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.536743e-07, -4.800001, -0.39999998)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_017_Limb"
+metadata/connected_part = "Leg_8_Limb_1"
+
+[node name="Head" parent="GeneratedParts" index="18" unique_id=51410717 instance=ExtResource("14_jvk18")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9399998, 4.2007546, 0)
+mass = 3.7439997
+freeze = true
+linear_damp = 0.15
+angular_damp = 1.0
+tags = Array[int]([3])
+sprite_visible = false
+left_distance = 1.3
+right_distance = 1.3
+top_distance = 0.9
+bottom_distance = 0.9
+collision_thickness = 0.8
+metadata/body_segment_id = 0
+metadata/segment_layout_version = 3
+metadata/generated_layout = {
+"name": "Head",
+"part_key": "Head",
+"role": "Head",
+"segment_id": 0,
+"size": Vector3(2.6, 1.8, 0.8),
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9399998, 4.2007546, 0)
+}
+metadata/generated_role = "Head"
+metadata/generated_part_key = "Head"
+metadata/generated_part_type = "Head"
+metadata/generated_density = 1.0
+metadata/generated_size = Vector3(2.6, 1.8, 0.8)
+metadata/generated_framework_size = Vector3(2.6, 1.8, 0.8)
+
+[node name="JointIn_Torso_Front" type="Marker3D" parent="GeneratedParts/Head" index="3" unique_id=1939352387]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2199998, 0, 0)
+metadata/generated_connection_port = true
+metadata/joint_name = "Joint_018_Neck"
+metadata/connected_part = "Torso_Front"
+
+[node name="Joints" type="Node3D" parent="GeneratedParts" index="19" unique_id=690201607]
+
+[node name="Joint_001_Torso" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="0" unique_id=1302912317]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.56, 4.2007546, 0)
+node_a = NodePath("../../Torso_Front")
+node_b = NodePath("../../Torso_Rear")
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_connection_kind = "Torso"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0, 1)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.56, 0, 0)
+metadata/generated_joint_frame_b = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7600002, -1.6000004, 0)
+
+[node name="Joint_002_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="1" unique_id=1775033444]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.24, 4.801814, -0.4)
+node_a = NodePath("../../Torso_Front")
+node_b = NodePath("../../Leg_1_Limb_1")
+angular_limit_x/upper_angle = 1.0471976
+angular_limit_x/lower_angle = -1.0471976
+angular_limit_y/upper_angle = 1.0471976
+angular_limit_y/lower_angle = -1.0471976
+angular_limit_z/upper_angle = 1.0471976
+angular_limit_z/lower_angle = -1.0471976
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_connection_kind = "Limb"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, -0.38494694, 0.9229387)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.24, 0.60105944, -0.4)
+metadata/generated_joint_frame_b = Transform3D(0.70363176, -0.71056485, 0, 0.71056485, 0.70363176, 0, 0, 0, 1, 4.7683716e-07, -3.1999998, 0.4)
+
+[node name="Joint_003_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="2" unique_id=1617520147]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.787615, 9.305058, -1.2)
+node_a = NodePath("../../Leg_1_Limb_1")
+node_b = NodePath("../../Leg_1")
+angular_limit_x/upper_angle = 1.0471976
+angular_limit_x/lower_angle = -1.0471976
+angular_limit_y/upper_angle = 1.0471976
+angular_limit_y/lower_angle = -1.0471976
+angular_limit_z/upper_angle = 1.0471976
+angular_limit_z/lower_angle = -1.0471976
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_connection_kind = "Limb"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.8502154, -0.526435)
+metadata/generated_joint_frame_a = Transform3D(0.70363176, -0.71056485, 0, 0.71056485, 0.70363176, 0, 0, 0, 1, 2.3841858e-07, 3.2000008, -0.40000004)
+metadata/generated_joint_frame_b = Transform3D(-0.94970524, -0.3131456, 0, 0.3131456, -0.94970524, 0, 0, 0, 1, 9.536743e-07, -4.800001, 0.39999998)
+
+[node name="Joint_004_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="3" unique_id=865616010]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.74666667, 3.599696, -0.4)
+node_a = NodePath("../../Torso_Front")
+node_b = NodePath("../../Leg_2_Limb_1")
+angular_limit_x/upper_angle = 1.0471976
+angular_limit_x/lower_angle = -1.0471976
+angular_limit_y/upper_angle = 1.0471976
+angular_limit_y/lower_angle = -1.0471976
+angular_limit_z/upper_angle = 1.0471976
+angular_limit_z/lower_angle = -1.0471976
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_connection_kind = "Limb"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, -0.17610487, 0.9843714)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.74666667, -0.6010587, -0.4)
+metadata/generated_joint_frame_b = Transform3D(0.93797415, -0.34670523, 0, 0.34670523, 0.93797415, 0, 0, 0, 1, 5.9604645e-08, -3.1999998, 0.4)
+
+[node name="Joint_005_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="4" unique_id=273664843]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.9655797, 9.60273, -1.2)
+node_a = NodePath("../../Leg_2_Limb_1")
+node_b = NodePath("../../Leg_2")
+angular_limit_x/upper_angle = 1.0471976
+angular_limit_x/lower_angle = -1.0471976
+angular_limit_y/upper_angle = 1.0471976
+angular_limit_y/lower_angle = -1.0471976
+angular_limit_z/upper_angle = 1.0471976
+angular_limit_z/lower_angle = -1.0471976
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_connection_kind = "Limb"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.9720275, -0.23486751)
+metadata/generated_joint_frame_a = Transform3D(0.93797415, -0.34670523, 0, 0.34670523, 0.93797415, 0, 0, 0, 1, 0, 3.1999998, -0.40000004)
+metadata/generated_joint_frame_b = Transform3D(-0.9927956, -0.1198198, 0, 0.1198198, -0.9927956, 0, 0, 0, 1, 0, -4.7999997, 0.39999998)
+
+[node name="Joint_006_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="5" unique_id=1685703741]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.74666667, 3.599696, -0.4)
+node_a = NodePath("../../Torso_Front")
+node_b = NodePath("../../Leg_3_Limb_1")
+angular_limit_x/upper_angle = 1.0471976
+angular_limit_x/lower_angle = -1.0471976
+angular_limit_y/upper_angle = 1.0471976
+angular_limit_y/lower_angle = -1.0471976
+angular_limit_z/upper_angle = 1.0471976
+angular_limit_z/lower_angle = -1.0471976
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_connection_kind = "Limb"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.17610487, 0.9843714)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.74666667, -0.6010587, -0.4)
+metadata/generated_joint_frame_b = Transform3D(0.93797415, 0.34670523, 0, -0.34670523, 0.93797415, 0, 0, 0, 1, -5.9604645e-08, -3.1999998, 0.4)
+
+[node name="Joint_007_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="6" unique_id=219898996]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.9655797, 9.60273, -1.2)
+node_a = NodePath("../../Leg_3_Limb_1")
+node_b = NodePath("../../Leg_3")
+angular_limit_x/upper_angle = 1.0471976
+angular_limit_x/lower_angle = -1.0471976
+angular_limit_y/upper_angle = 1.0471976
+angular_limit_y/lower_angle = -1.0471976
+angular_limit_z/upper_angle = 1.0471976
+angular_limit_z/lower_angle = -1.0471976
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_connection_kind = "Limb"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.9720275, 0.23486751)
+metadata/generated_joint_frame_a = Transform3D(0.93797415, 0.34670523, 0, -0.34670523, 0.93797415, 0, 0, 0, 1, 0, 3.1999998, -0.40000004)
+metadata/generated_joint_frame_b = Transform3D(-0.9927956, 0.1198198, 0, -0.1198198, -0.9927956, 0, 0, 0, 1, 0, -4.7999997, 0.39999998)
+
+[node name="Joint_008_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="7" unique_id=392988165]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.24, 4.801814, -0.4)
+node_a = NodePath("../../Torso_Front")
+node_b = NodePath("../../Leg_4_Limb_1")
+angular_limit_x/upper_angle = 1.0471976
+angular_limit_x/lower_angle = -1.0471976
+angular_limit_y/upper_angle = 1.0471976
+angular_limit_y/lower_angle = -1.0471976
+angular_limit_z/upper_angle = 1.0471976
+angular_limit_z/lower_angle = -1.0471976
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_connection_kind = "Limb"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.38494694, 0.9229387)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.24, 0.60105944, -0.4)
+metadata/generated_joint_frame_b = Transform3D(0.70363176, 0.71056485, 0, -0.71056485, 0.70363176, 0, 0, 0, 1, -4.7683716e-07, -3.1999998, 0.4)
+
+[node name="Joint_009_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="8" unique_id=980393445]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.787615, 9.305058, -1.2)
+node_a = NodePath("../../Leg_4_Limb_1")
+node_b = NodePath("../../Leg_4")
+angular_limit_x/upper_angle = 1.0471976
+angular_limit_x/lower_angle = -1.0471976
+angular_limit_y/upper_angle = 1.0471976
+angular_limit_y/lower_angle = -1.0471976
+angular_limit_z/upper_angle = 1.0471976
+angular_limit_z/lower_angle = -1.0471976
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_connection_kind = "Limb"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.8502154, 0.526435)
+metadata/generated_joint_frame_a = Transform3D(0.70363176, 0.71056485, 0, -0.71056485, 0.70363176, 0, 0, 0, 1, -2.3841858e-07, 3.2000008, -0.40000004)
+metadata/generated_joint_frame_b = Transform3D(-0.94970524, 0.3131456, 0, -0.3131456, -0.94970524, 0, 0, 0, 1, -9.536743e-07, -4.800001, 0.39999998)
+
+[node name="Joint_010_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="9" unique_id=1789666612]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.24, 4.801814, 0.4)
+node_a = NodePath("../../Torso_Front")
+node_b = NodePath("../../Leg_5_Limb_1")
+angular_limit_x/upper_angle = 1.0471976
+angular_limit_x/lower_angle = -1.0471976
+angular_limit_y/upper_angle = 1.0471976
+angular_limit_y/lower_angle = -1.0471976
+angular_limit_z/upper_angle = 1.0471976
+angular_limit_z/lower_angle = -1.0471976
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_connection_kind = "Limb"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, -0.38494694, 0.9229387)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.24, 0.60105944, 0.4)
+metadata/generated_joint_frame_b = Transform3D(0.70363176, -0.71056485, 0, 0.71056485, 0.70363176, 0, 0, 0, 1, 4.7683716e-07, -3.1999998, -0.4)
+
+[node name="Joint_011_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="10" unique_id=884252842]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.787615, 9.305058, 1.2)
+node_a = NodePath("../../Leg_5_Limb_1")
+node_b = NodePath("../../Leg_5")
+angular_limit_x/upper_angle = 1.0471976
+angular_limit_x/lower_angle = -1.0471976
+angular_limit_y/upper_angle = 1.0471976
+angular_limit_y/lower_angle = -1.0471976
+angular_limit_z/upper_angle = 1.0471976
+angular_limit_z/lower_angle = -1.0471976
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_connection_kind = "Limb"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.8502154, -0.526435)
+metadata/generated_joint_frame_a = Transform3D(0.70363176, -0.71056485, 0, 0.71056485, 0.70363176, 0, 0, 0, 1, 2.3841858e-07, 3.2000008, 0.40000004)
+metadata/generated_joint_frame_b = Transform3D(-0.94970524, -0.3131456, 0, 0.3131456, -0.94970524, 0, 0, 0, 1, 9.536743e-07, -4.800001, -0.39999998)
+
+[node name="Joint_012_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="11" unique_id=1618315174]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.74666667, 3.599696, 0.4)
+node_a = NodePath("../../Torso_Front")
+node_b = NodePath("../../Leg_6_Limb_1")
+angular_limit_x/upper_angle = 1.0471976
+angular_limit_x/lower_angle = -1.0471976
+angular_limit_y/upper_angle = 1.0471976
+angular_limit_y/lower_angle = -1.0471976
+angular_limit_z/upper_angle = 1.0471976
+angular_limit_z/lower_angle = -1.0471976
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_connection_kind = "Limb"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, -0.17610487, 0.9843714)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.74666667, -0.6010587, 0.4)
+metadata/generated_joint_frame_b = Transform3D(0.93797415, -0.34670523, 0, 0.34670523, 0.93797415, 0, 0, 0, 1, 5.9604645e-08, -3.1999998, -0.4)
+
+[node name="Joint_013_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="12" unique_id=1774359593]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.9655797, 9.60273, 1.2)
+node_a = NodePath("../../Leg_6_Limb_1")
+node_b = NodePath("../../Leg_6")
+angular_limit_x/upper_angle = 1.0471976
+angular_limit_x/lower_angle = -1.0471976
+angular_limit_y/upper_angle = 1.0471976
+angular_limit_y/lower_angle = -1.0471976
+angular_limit_z/upper_angle = 1.0471976
+angular_limit_z/lower_angle = -1.0471976
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_connection_kind = "Limb"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.9720275, -0.23486751)
+metadata/generated_joint_frame_a = Transform3D(0.93797415, -0.34670523, 0, 0.34670523, 0.93797415, 0, 0, 0, 1, 0, 3.1999998, 0.40000004)
+metadata/generated_joint_frame_b = Transform3D(-0.9927956, -0.1198198, 0, 0.1198198, -0.9927956, 0, 0, 0, 1, 0, -4.7999997, -0.39999998)
+
+[node name="Joint_014_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="13" unique_id=1478697475]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.74666667, 3.599696, 0.4)
+node_a = NodePath("../../Torso_Front")
+node_b = NodePath("../../Leg_7_Limb_1")
+angular_limit_x/upper_angle = 1.0471976
+angular_limit_x/lower_angle = -1.0471976
+angular_limit_y/upper_angle = 1.0471976
+angular_limit_y/lower_angle = -1.0471976
+angular_limit_z/upper_angle = 1.0471976
+angular_limit_z/lower_angle = -1.0471976
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_connection_kind = "Limb"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.17610487, 0.9843714)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.74666667, -0.6010587, 0.4)
+metadata/generated_joint_frame_b = Transform3D(0.93797415, 0.34670523, 0, -0.34670523, 0.93797415, 0, 0, 0, 1, -5.9604645e-08, -3.1999998, -0.4)
+
+[node name="Joint_015_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="14" unique_id=1701575992]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.9655797, 9.60273, 1.2)
+node_a = NodePath("../../Leg_7_Limb_1")
+node_b = NodePath("../../Leg_7")
+angular_limit_x/upper_angle = 1.0471976
+angular_limit_x/lower_angle = -1.0471976
+angular_limit_y/upper_angle = 1.0471976
+angular_limit_y/lower_angle = -1.0471976
+angular_limit_z/upper_angle = 1.0471976
+angular_limit_z/lower_angle = -1.0471976
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_connection_kind = "Limb"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.9720275, 0.23486751)
+metadata/generated_joint_frame_a = Transform3D(0.93797415, 0.34670523, 0, -0.34670523, 0.93797415, 0, 0, 0, 1, 0, 3.1999998, 0.40000004)
+metadata/generated_joint_frame_b = Transform3D(-0.9927956, 0.1198198, 0, -0.1198198, -0.9927956, 0, 0, 0, 1, 0, -4.7999997, -0.39999998)
+
+[node name="Joint_016_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="15" unique_id=1507343783]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.24, 4.801814, 0.4)
+node_a = NodePath("../../Torso_Front")
+node_b = NodePath("../../Leg_8_Limb_1")
+angular_limit_x/upper_angle = 1.0471976
+angular_limit_x/lower_angle = -1.0471976
+angular_limit_y/upper_angle = 1.0471976
+angular_limit_y/lower_angle = -1.0471976
+angular_limit_z/upper_angle = 1.0471976
+angular_limit_z/lower_angle = -1.0471976
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_connection_kind = "Limb"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.38494694, 0.9229387)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.24, 0.60105944, 0.4)
+metadata/generated_joint_frame_b = Transform3D(0.70363176, 0.71056485, 0, -0.71056485, 0.70363176, 0, 0, 0, 1, -4.7683716e-07, -3.1999998, -0.4)
+
+[node name="Joint_017_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="16" unique_id=192916797]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.787615, 9.305058, 1.2)
+node_a = NodePath("../../Leg_8_Limb_1")
+node_b = NodePath("../../Leg_8")
+angular_limit_x/upper_angle = 1.0471976
+angular_limit_x/lower_angle = -1.0471976
+angular_limit_y/upper_angle = 1.0471976
+angular_limit_y/lower_angle = -1.0471976
+angular_limit_z/upper_angle = 1.0471976
+angular_limit_z/lower_angle = -1.0471976
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_connection_kind = "Limb"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.8502154, 0.526435)
+metadata/generated_joint_frame_a = Transform3D(0.70363176, 0.71056485, 0, -0.71056485, 0.70363176, 0, 0, 0, 1, -2.3841858e-07, 3.2000008, 0.40000004)
+metadata/generated_joint_frame_b = Transform3D(-0.94970524, 0.3131456, 0, -0.3131456, -0.94970524, 0, 0, 0, 1, -9.536743e-07, -4.800001, -0.39999998)
+
+[node name="Joint_018_Neck" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="17" unique_id=867833993]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.72, 4.2007546, 0)
+node_a = NodePath("../../Torso_Front")
+node_b = NodePath("../../Head")
+linear_limit_x/upper_distance = 0.06
+linear_limit_x/lower_distance = -0.06
+linear_limit_y/upper_distance = 0.06
+linear_limit_y/lower_distance = -0.06
+linear_limit_z/upper_distance = 0.06
+linear_limit_z/lower_distance = -0.06
+angular_limit_x/upper_angle = 0.34906584
+angular_limit_x/lower_angle = -0.34906584
+angular_limit_y/upper_angle = 0.34906584
+angular_limit_y/lower_angle = -0.34906584
+angular_limit_z/upper_angle = 0.34906584
+angular_limit_z/lower_angle = -0.34906584
+angular_spring_x/enabled = true
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/enabled = true
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/enabled = true
+angular_spring_z/stiffness = 30.0
+angular_spring_z/damping = 5.0
+metadata/generated_connection_kind = "Neck"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0, 1)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.72, 0, 0)
+metadata/generated_joint_frame_b = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2199998, 0, 0)

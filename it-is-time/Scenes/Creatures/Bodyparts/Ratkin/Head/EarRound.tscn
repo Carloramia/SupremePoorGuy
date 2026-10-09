@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=3]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/_PhysicalSampleBodyParts.tscn" id="1_base"]
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/Ratkin/Models/Head/EarRound.glb" id="2_model"]
+[ext_resource type="ArrayMesh" path="res://Resources/Meshes/Ratkin/Head/EarRound.res" id="3_mesh"]
+[sub_resource type="ConvexPolygonShape3D" id="Shape"]
+resource_local_to_scene = true
+points = PackedVector3Array(-0.80048165, 0.46250650, -0.01000000, -0.61665138, 0.64542220, -0.01000000, -0.60352064, 0.64542220, -0.01000000, -0.48534404, 0.63235679, -0.01000000, -0.40655963, 0.61929139, -0.01000000, -0.36716743, 0.60622598, -0.01000000, -0.28838303, 0.56702976, -0.01000000, -0.23586009, 0.51476813, -0.01000000, -0.19646789, 0.47557191, -0.01000000, 0.09240826, 0.12280592, -0.01000000, 0.09240826, 0.00521726, -0.01000000, 0.06614679, -0.03397896, -0.01000000, 0.05301606, -0.04704437, -0.01000000, 0.01362385, -0.07317518, -0.01000000, -0.01263761, -0.08624059, -0.01000000, -0.06516055, -0.09930599, -0.01000000, -0.13081422, -0.09930599, -0.01000000, -0.20959862, -0.08624059, -0.01000000, -0.39342890, -0.00784814, -0.01000000, -0.53786697, 0.08360970, -0.01000000, -0.59038991, 0.12280592, -0.01000000, -0.62978211, 0.16200215, -0.01000000, -0.65604358, 0.20119837, -0.01000000, -0.80048165, 0.44944110, -0.01000000, -0.80048165, 0.46250650, 0.01000000, -0.61665138, 0.64542220, 0.01000000, -0.60352064, 0.64542220, 0.01000000, -0.48534404, 0.63235679, 0.01000000, -0.40655963, 0.61929139, 0.01000000, -0.36716743, 0.60622598, 0.01000000, -0.28838303, 0.56702976, 0.01000000, -0.23586009, 0.51476813, 0.01000000, -0.19646789, 0.47557191, 0.01000000, 0.09240826, 0.12280592, 0.01000000, 0.09240826, 0.00521726, 0.01000000, 0.06614679, -0.03397896, 0.01000000, 0.05301606, -0.04704437, 0.01000000, 0.01362385, -0.07317518, 0.01000000, -0.01263761, -0.08624059, 0.01000000, -0.06516055, -0.09930599, 0.01000000, -0.13081422, -0.09930599, 0.01000000, -0.20959862, -0.08624059, 0.01000000, -0.39342890, -0.00784814, 0.01000000, -0.53786697, 0.08360970, 0.01000000, -0.59038991, 0.12280592, 0.01000000, -0.62978211, 0.16200215, 0.01000000, -0.65604358, 0.20119837, 0.01000000, -0.80048165, 0.44944110, 0.01000000)
+[node name="Ratkin_EarRound" instance=ExtResource("1_base")]
+mass = 0.025
+geometry_mode = 1
+custom_model_path = NodePath("Model")
+paper_volume_enabled = true
+paper_volume_thickness = 0.08
+sprite_visible = false
+mesh_visible = true
+tags = Array[int]([])
+metadata/source_png = "res://Assets/2DResources/Ratkin/Separated/Attachments/02_ear_round.png"
+metadata/pivot_is_initial_estimate = true
+[node name="CollisionShape3D" parent="." index="0"]
+position = Vector3(0, 0, 0)
+shape = SubResource("Shape")
+[node name="MeshInstance3D" parent="." index="2"]
+visible = false
+mesh = null
+[node name="Model" parent="." instance=ExtResource("2_model")]
+[node name="PaperVolume" type="MeshInstance3D" parent="Model"]
+scale = Vector3(1, 1, 0.08)
+mesh = ExtResource("3_mesh")
+metadata/flat_collision_depth = 0.02
+[node name="JointIn" type="Marker3D" parent="."]
+[node name="JointOut" type="Marker3D" parent="."]
+position = Vector3(-0.43905199, 0.38250000, 0.00000000)

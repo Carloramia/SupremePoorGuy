@@ -1,0 +1,69 @@
+Ratkin 直立生物
+
+生成器：Scenes/Creatures/Generators/RatkinGenerator.tscn
+生成角色：Scenes/Creatures/Characters/Generate_Ratkin.tscn
+可运行预览：Assets/3DResources/Creatures/Ratkin/Previews/RatkinCreaturePreview.tscn
+
+生成器直接继承 _BaseCreatureGenerator；角色继承 _BaseGeneratedCreature，
+沿用生成角色的物理关节、部位断裂、内部碰撞忽略、移动与恢复组件。
+默认关闭 PlanarConstraints，保持物理关节实际生效。
+预览场景已挂载 Controller；单独加入关卡时可按既有流程接入 Controller。
+
+默认结构（面向 +X，Y 向上）：
+Torso + Pelvis；两条腿各包含两节 Limb 和一个独立脚部；
+两条手臂各包含上臂、前臂和手爪；Head；骨盆后方 Tail；耳朵和颈鬃。
+两侧沿 Z 分开。默认共 21 个物理部位、20 个关节。
+脚部为 Leg，腿链为 LegLimb；手臂为 Arm，不参与脚部迈步调度。
+腿部使用 UpperLeg 和 LowerLeg 素材；脚部为独立部件。
+
+在 RatkinGenerator 根节点 Inspector 中调整：
+Ratkin Standing Layout：躯干/骨盆/头部高度，双腿间距，脚部大小；
+Leg Segment Lengths：X/Y 分别为从髋部向下的上、下两节长度；
+Leg Bend Degrees：两节相对向下垂直方向的角度，正值向 +X；
+Ratkin Arms：双臂间距，两节长度、弯曲角度、手爪大小和肩部高度；
+Ratkin Tail：尾巴启用、大小、方向和根部偏移；
+Ratkin Decorations：耳朵和颈鬃开关。
+主躯干 Torso 使用 FIT_UNIFORM，由 Torso Height 控制高度，当前为 1.8（接近 Pelvis 高度）。
+Head、EarLeft、EarRight 也使用 FIT_UNIFORM；其他部位默认使用 KEEP_SIZE，保留源模型 XY 尺寸；厚度仍由 Part Width × Overall Scale 控制。
+腿链使用实际 JointIn/JointOut 间距规划位置，Leg Segment Lengths 不再缩放 KEEP_SIZE 部位。
+Leg_1 与 Leg_2 均使用 Legs/Right/Foot.tscn；腿部 Limb 的左右素材保持各自引用。
+每个部位的 Size Mode 可在 Physical Part Scenes / Part Scene Rules 中修改。
+修改后在 Generate_Ratkin 点击“生成框架与物理角色”刷新角色。
+
+参数默认值独立保存于 Resources/Generators/RatkinGeneratorDefaults.tres，
+不会修改 Beast/Bird/HornedBeast 等生成器的默认值。
+支持基类 Part Scene Rules、自定义部位场景和手动姿态功能。
+启用 Use Manual Layout 后采用已捕获的手动布局，程序化姿态参数暂不参与。
+
+移动预设：Resources/Movement/RatkinWalk.tres
+密度预设：Resources/Creatures/RatkinDensity.tres
+站姿及关节调节：Generate_Ratkin 根节点和其移动控制器 Inspector。
+双腿任意时刻默认最多一条迈步，至少保留一条支撑腿，不启用飞奔。
+
+验证：Tests/ValidateRatkinCreature.gd 检查结构、连接点、缩放、标签和内部碰撞；
+Tests/SmokeRatkinStanding.gd 在平地物理运行中检查直立、移动和部件完整性。
+测试不能替代复杂地形、长时间运行与攻击动作的实际调参。
+
+腰部接口：Torso Pelvis Offset 可微调躯干相对骨盆的位置，当前为 (0.26, 0, 0.005)。
+正 X 对齐原图腰带中心，微小 Z 偏移避免腰带重叠处共面闪烁。
+
+头耳尺寸：Head Height = 1.0，Ear Heights = (0.9, 0.8)，分别控制圆耳和尖耳。
+按原总图的相对外观估算，并保留每张补绘素材的宽高比例；不是不同画布之间的逐像素复原。
+
+四肢 Z 排布：Leg Pair Width 与 Arm Pair Width 均设为 0.16，匹配当前 0.08 的体块厚度。
+每条肢体整链沿 Z 平移，保持 X/Y、旋转和链内相对位置；双臂以 Torso 的实际 Z 中心定位。
+默认腿部中心为 ±0.08，手臂中心为 Torso 中心 Z ±0.08。以后修改 Part Width 时，可按躯干厚度 + 肢体厚度同步调整 Pair Width。
+
+无关节断面躯干：Torso 默认引用 Torso/TorsoNoJointCaps.tscn，原 TorsoMain 保留。
+源图为 Base/01_torso_no_joint_caps.png；模型、双面纸片体块网格和凸碰撞体独立生成。
+复建：build_models.py --only TorsoNoJointCaps → 导入 GLB → BakeRatkinVolumes.gd -- TorsoNoJointCaps → build_models.py --physical --only TorsoNoJointCaps。
+
+头部最新设置：FIT_UNIFORM，Head Height = 1.08，约为源部件原高度的 80%。
+耳朵方向核对：EarLeft 使用圆耳，尖端向 -X/+Y；EarRight 使用右尖耳，尖端向 +X/+Y。
+生成变换没有镜像或额外旋转，方向差异来自各自原图。
+
+耳朵引用更新：EarLeft 和 EarRight 均使用 Head/EarRound.tscn；均保持素材原方向，未镜像。
+EarRight 保留自身的尺寸规则和耳根位置，尖耳资源保留备用。
+
+手爪引用交换：Arm_1 → Arms/Right/Hand.tscn (06_hand_right.png)；Arm_2 → Arms/Left/Hand.tscn (03_hand_left.png)。
+只交换手爪末端，未交换 UpperArm/Forearm。两张均为弯指张爪的静态姿态，左手图较收拢，右手图较张开。

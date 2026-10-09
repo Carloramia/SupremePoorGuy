@@ -1,0 +1,38 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Characters/Generate_Ratkin.tscn" id="1"]
+[ext_resource type="PackedScene" path="res://Scenes/Player/Controller.tscn" id="2"]
+
+[sub_resource type="BoxShape3D" id="GroundShape"]
+size = Vector3(100, 1, 100)
+[sub_resource type="BoxMesh" id="GroundMesh"]
+size = Vector3(100, 1, 100)
+[sub_resource type="StandardMaterial3D" id="GroundMaterial"]
+albedo_color = Color(0.22, 0.25, 0.28, 1)
+[sub_resource type="Environment" id="Environment"]
+background_mode = 1
+background_color = Color(0.4, 0.43, 0.48, 1)
+ambient_light_source = 3
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_energy = 0.8
+
+[node name="RatkinCreaturePreview" type="Node3D"]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment")
+[node name="Ground" type="StaticBody3D" parent="."]
+position = Vector3(0, -0.5, 0)
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground"]
+shape = SubResource("GroundShape")
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ground"]
+mesh = SubResource("GroundMesh")
+material_override = SubResource("GroundMaterial")
+[node name="Camera3D" type="Camera3D" parent="."]
+position = Vector3(0, 3, 20)
+projection = 1
+size = 7.0
+current = true
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-35, -25, 0)
+[node name="GenerateRatkin" parent="." instance=ExtResource("1")]
+position = Vector3(0, 0.15, 0)
+[node name="Controller" parent="GenerateRatkin" instance=ExtResource("2")]

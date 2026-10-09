@@ -747,6 +747,9 @@ func try_start_turn_step(leg: RigidBody3D, sample_position: Vector3, duration: f
 	if not _is_landing_point_valid(leg, foot, hit):
 		return false
 	_begin_leg_motion(leg, _body_position_for_ground_contact(leg, hit[&"position"]), hit[&"normal"])
+	# Turning steps also consume the walking startup slot. They intentionally
+	# have no translation input, so _begin_leg_motion cannot record it for us.
+	_record_walk_start(leg)
 	if _automatic_motion_enabled() and _get_gait_data().maximum_step_frequency > 0.0:
 		_next_resource_step_time = _physics_elapsed + 1.0 / _get_gait_data().maximum_step_frequency
 	_active_step_duration = maxf(duration, MIN_STEP_TIME)
@@ -1094,6 +1097,10 @@ func _keep_touchdown_support_pin(_leg: RigidBody3D) -> bool:
 func _is_leg_action_controlled(_leg: RigidBody3D) -> bool:
 	return false
 
+## Default feet pin their centre; long lower legs can anchor a contact point instead.
+func _get_support_pin_world_position(leg: RigidBody3D) -> Vector3:
+	return leg.global_position
+
 func _update_support_foot_lock(leg: RigidBody3D, normal: Vector3) -> void:
 	if _adhesion_release_time_remaining > 0.0 or not support_foot_lock_enabled or not surface_adhesion_enabled or leg.freeze or _is_body_broken(leg) or is_leg_slipping(leg) or not is_leg_grounded(leg):
 		_release_support_pin(leg)
@@ -1126,11 +1133,12 @@ func _update_support_foot_lock(leg: RigidBody3D, normal: Vector3) -> void:
 		pin.call("set_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_SPRING, false)
 		pin.call("set_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_MOTOR, false)
 	add_child(pin)
-	pin.global_position = leg.global_position
+	var anchor := _get_support_pin_world_position(leg)
+	pin.global_position = anchor
 	pin.node_a = pin.get_path_to(leg)
 	if terrain != null: pin.node_b = pin.get_path_to(terrain)
-	_support_pins[leg] = {"joint": pin, "terrain": terrain, "local_anchor": terrain.to_local(leg.global_position) if terrain != null else leg.global_position}
-	_support_anchors[leg] = leg.global_position
+	_support_pins[leg] = {"joint": pin, "terrain": terrain, "local_anchor": terrain.to_local(anchor) if terrain != null else anchor, "foot_local_anchor": leg.to_local(anchor)}
+	_support_anchors[leg] = anchor
 	if leg.has_signal("slipping_changed"):
 		var callback := _on_foot_slipping_changed.bind(leg)
 		if not leg.is_connected("slipping_changed", callback): leg.connect("slipping_changed", callback)
@@ -1140,12 +1148,25 @@ func _update_support_foot_lock(leg: RigidBody3D, normal: Vector3) -> void:
 	var exiting_callback := _on_pinned_foot_exiting.bind(leg)
 	if not leg.tree_exiting.is_connected(exiting_callback): leg.tree_exiting.connect(exiting_callback)
 
+func _get_ground_contact_world_position(leg: RigidBody3D) -> Vector3:
+	return leg.to_global(_support_pins[leg].foot_local_anchor) if _support_pins.has(leg) else _get_foot_world_position(leg)
+
+## Relative velocity at the material contact point, including angular motion.
+func _get_ground_contact_velocity(leg: RigidBody3D, hit: Dictionary) -> Vector3:
+	var point := _get_ground_contact_world_position(leg)
+	var velocity := leg.linear_velocity + leg.angular_velocity.cross(point - leg.global_position)
+	var terrain := hit.get("collider") as RigidBody3D
+	if is_instance_valid(terrain):
+		velocity -= terrain.linear_velocity + terrain.angular_velocity.cross(point - terrain.global_position)
+	return velocity
+
 func get_support_foot_diagnostics(leg: RigidBody3D) -> Dictionary:
+	var point := leg.to_global(_support_pins[leg].foot_local_anchor) if _support_pins.has(leg) else leg.global_position
 	return {
 		"locked": _support_pins.has(leg), "slipping": is_leg_slipping(leg), "pin_kind": "linear_constraint" if _support_pins.has(leg) else "none",
 		"adhesion_force": _adhesion_forces.get(leg, Vector3.ZERO),
 		"anchor": _support_anchors.get(leg, leg.global_position),
-		"drift": absf(leg.global_position.x - Vector3(_support_anchors.get(leg,leg.global_position)).x) if _support_pin_z_free() else (leg.global_position - _support_anchors.get(leg, leg.global_position)).slide(Vector3.UP).length(),
+		"drift": absf(point.x - Vector3(_support_anchors.get(leg,point)).x) if _support_pin_z_free() else (point - _support_anchors.get(leg, point)).slide(Vector3.UP).length(),
 		"z_free": _support_pin_z_free(),
 		"speed": leg.linear_velocity.slide(Vector3.UP).length(),
 		"force": _support_forces.get(leg, Vector3.ZERO),
@@ -1446,6 +1467,8 @@ func _contact_drive_supports(feet: Array) -> Array[RigidBody3D]:
 	return result
 
 func _contact_velocity_force(velocity: Vector3, mass: float, up: Vector3) -> Vector3:
+	var charge := get_parent().get_node_or_null("ChargeAttackController3D")
+	if charge != null and charge.owns_velocity(): return Vector3.ZERO
 	var direction := get_input_movement_direction().slide(up) if input_enabled else Vector3.ZERO
 	var target := direction.limit_length(1.0) * get_expected_horizontal_speed() * _walk_start_drive_scale()
 	_contact_drive_diagnostics["target_velocity"] = target
@@ -2188,6 +2211,8 @@ func get_directional_projection_correction_strength() -> float:
 	return maximum_directional_projection_correction * smoothstep(0.0, 1.0, speed_ratio)
 
 func _get_expected_horizontal_speed() -> float:
+	var charge := get_parent().get_node_or_null("ChargeAttackController3D")
+	if charge != null and charge.owns_velocity(): return charge.get_expected_speed()
 	if _automatic_motion_enabled():
 		var speed := _get_gait_data().target_speed
 		for leg: RigidBody3D in _legs: speed = minf(speed, float(get_leg_motion_profile(leg).reachable_speed))

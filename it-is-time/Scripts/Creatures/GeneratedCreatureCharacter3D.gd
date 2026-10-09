@@ -236,6 +236,12 @@ func _sync_planar_constraints() -> void:
 @export_range(0.0, 1000.0, 0.1, "or_greater") var angular_spring_stiffness: float = 30.0
 @export_range(0.0, 100.0, 0.1, "or_greater") var angular_spring_damping: float = 5.0
 
+@export_group("Tail Joints")
+## Segmented tails bend about local Z only; the root remains attached to Torso.
+@export_range(0.0, 90.0, 0.1) var tail_joint_angular_limit_degrees: float = 25.0
+@export_range(0.0, 1000.0, 0.1, "or_greater") var tail_joint_spring_stiffness: float = 80.0
+@export_range(0.0, 100.0, 0.1, "or_greater") var tail_joint_spring_damping: float = 8.0
+
 @export_group("Wing Joint Limits")
 @export var wing_joint_limits_enabled: bool = true
 ## Extra rotation beyond the generated folded/open poses. X/Y remain locked.
@@ -391,7 +397,7 @@ func _valid_settings(generator: Node3D) -> bool:
 	if not global_basis.get_scale().is_equal_approx(Vector3.ONE) or not generator.transform.basis.get_scale().is_equal_approx(Vector3.ONE):
 		return false
 	if not limb_joint_linear_slack.is_finite(): return false
-	for value: float in [mass_density, part_linear_damping, part_angular_damping, limb_angular_limit_degrees, neck_angular_limit_degrees, angular_spring_stiffness, angular_spring_damping]:
+	for value: float in [mass_density, part_linear_damping, part_angular_damping, limb_angular_limit_degrees, neck_angular_limit_degrees, angular_spring_stiffness, angular_spring_damping, tail_joint_angular_limit_degrees, tail_joint_spring_stiffness, tail_joint_spring_damping]:
 		if not is_finite(value) or value < 0.0:
 			return false
 	return mass_density > 0.0
@@ -1029,6 +1035,8 @@ func _instantiate_blueprint(blueprint: Dictionary, generator_transform: Transfor
 				part.tags.append(BODY_PART.BodyPartTag.WingLimb)
 			"Head": part.tags.append(BODY_PART.BodyPartTag.Head)
 			"Feather": part.tags.append(BODY_PART.BodyPartTag.Feather)
+			"Tail": part.tags.append(BODY_PART.BodyPartTag.Tail)
+			"Horn": part.tags.append(BODY_PART.BodyPartTag.Horn)
 		if bool(layout.get("sub_torso", false)): part.tags.append(BODY_PART.BodyPartTag.SubTorso)
 		for tag: int in authored_tags:
 			if tag not in part.tags: part.tags.append(tag)
@@ -1112,6 +1120,7 @@ func _instantiate_blueprint(blueprint: Dictionary, generator_transform: Transfor
 			locked_limb_axis = locked_limb_axis or (axis == "y" and _is_limb_subtorso_pair(a, b))
 			var axis_angle := 0.0 if locked_limb_axis else angle
 			if connection.kind in ["Wing","Feather"]: axis_angle = PI if axis == "z" else 0.0
+			if connection.kind == "Tail": axis_angle = deg_to_rad(tail_joint_angular_limit_degrees) if axis == "z" else 0.0
 			joint.call("set_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_LINEAR_LIMIT, true)
 			joint.call("set_param_" + axis, Generic6DOFJoint3D.PARAM_LINEAR_LOWER_LIMIT, 0.0)
 			joint.call("set_param_" + axis, Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT, 0.0)
@@ -1121,6 +1130,10 @@ func _instantiate_blueprint(blueprint: Dictionary, generator_transform: Transfor
 			joint.call("set_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_SPRING, connection.kind not in ["Torso", "Wing", "Feather"] and not locked_limb_axis and BODY_PART.BodyPartTag.LegLimb not in a.tags and BODY_PART.BodyPartTag.LegLimb not in b.tags)
 			joint.call("set_param_" + axis, Generic6DOFJoint3D.PARAM_ANGULAR_SPRING_STIFFNESS, angular_spring_stiffness)
 			joint.call("set_param_" + axis, Generic6DOFJoint3D.PARAM_ANGULAR_SPRING_DAMPING, angular_spring_damping)
+			if connection.kind == "Tail":
+				joint.call("set_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_SPRING, axis == "z")
+				joint.call("set_param_" + axis, Generic6DOFJoint3D.PARAM_ANGULAR_SPRING_STIFFNESS, tail_joint_spring_stiffness)
+				joint.call("set_param_" + axis, Generic6DOFJoint3D.PARAM_ANGULAR_SPRING_DAMPING, tail_joint_spring_damping)
 		if connection.kind == "Wing":
 			_configure_wing_joint_limits(joint, str(blueprint.parts[connection.b].get("wing_section", "Root")))
 		if BODY_PART.BodyPartTag.LegLimb in a.tags and BODY_PART.BodyPartTag.LegLimb in b.tags:

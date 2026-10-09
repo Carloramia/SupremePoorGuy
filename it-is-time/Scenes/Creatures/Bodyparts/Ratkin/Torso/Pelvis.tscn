@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=3]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/_PhysicalSampleBodyParts.tscn" id="1_base"]
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/Ratkin/Models/Torso/Pelvis.glb" id="2_model"]
+[ext_resource type="ArrayMesh" path="res://Resources/Meshes/Ratkin/Torso/Pelvis.res" id="3_mesh"]
+[sub_resource type="ConvexPolygonShape3D" id="Shape"]
+resource_local_to_scene = true
+points = PackedVector3Array(-0.78786146, -0.67247858, -0.01000000, -0.76224012, -0.54414598, -0.01000000, -0.63413343, -0.26181425, -0.01000000, -0.37792005, 0.27718269, -0.01000000, -0.24981336, 0.27718269, -0.01000000, 0.57006946, 0.25151617, -0.01000000, 0.59569080, 0.22584965, -0.01000000, 0.72379749, -0.10781512, -0.01000000, 0.77504016, -0.28748077, -0.01000000, 0.80066150, -0.51847946, -0.01000000, 0.80066150, -0.56981250, -0.01000000, 0.62131213, -0.82647771, -0.01000000, 0.44196277, -1.03180988, -0.01000000, 0.39072009, -1.08314292, -0.01000000, 0.31385608, -1.16014248, -0.01000000, 0.28823474, -1.18580900, -0.01000000, -0.09608533, -1.39114117, -0.01000000, -0.48040541, -1.49380726, -0.01000000, -0.50602674, -1.49380726, -0.01000000, -0.55726942, -1.46814073, -0.01000000, -0.63413343, -1.31414161, -0.01000000, -0.76224012, -0.90347727, -0.01000000, -0.78786146, -0.69814510, -0.01000000, -0.78786146, -0.67247858, 0.01000000, -0.76224012, -0.54414598, 0.01000000, -0.63413343, -0.26181425, 0.01000000, -0.37792005, 0.27718269, 0.01000000, -0.24981336, 0.27718269, 0.01000000, 0.57006946, 0.25151617, 0.01000000, 0.59569080, 0.22584965, 0.01000000, 0.72379749, -0.10781512, 0.01000000, 0.77504016, -0.28748077, 0.01000000, 0.80066150, -0.51847946, 0.01000000, 0.80066150, -0.56981250, 0.01000000, 0.62131213, -0.82647771, 0.01000000, 0.44196277, -1.03180988, 0.01000000, 0.39072009, -1.08314292, 0.01000000, 0.31385608, -1.16014248, 0.01000000, 0.28823474, -1.18580900, 0.01000000, -0.09608533, -1.39114117, 0.01000000, -0.48040541, -1.49380726, 0.01000000, -0.50602674, -1.49380726, 0.01000000, -0.55726942, -1.46814073, 0.01000000, -0.63413343, -1.31414161, 0.01000000, -0.76224012, -0.90347727, 0.01000000, -0.78786146, -0.69814510, 0.01000000)
+[node name="Ratkin_Pelvis" instance=ExtResource("1_base")]
+mass = 0.65
+geometry_mode = 1
+custom_model_path = NodePath("Model")
+paper_volume_enabled = true
+paper_volume_thickness = 0.08
+sprite_visible = false
+mesh_visible = true
+tags = Array[int]([0])
+metadata/source_png = "res://Assets/2DResources/Ratkin/Separated/Base/04_pelvis.png"
+metadata/pivot_is_initial_estimate = true
+[node name="CollisionShape3D" parent="." index="0"]
+position = Vector3(0, 0, 0)
+shape = SubResource("Shape")
+[node name="MeshInstance3D" parent="." index="2"]
+visible = false
+mesh = null
+[node name="Model" parent="." instance=ExtResource("2_model")]
+[node name="PaperVolume" type="MeshInstance3D" parent="Model"]
+scale = Vector3(1, 1, 0.08)
+mesh = ExtResource("3_mesh")
+metadata/flat_collision_depth = 0.02
+[node name="JointIn" type="Marker3D" parent="."]
+[node name="JointOut" type="Marker3D" parent="."]
+position = Vector3(0.00000000, -0.61200000, 0.00000000)

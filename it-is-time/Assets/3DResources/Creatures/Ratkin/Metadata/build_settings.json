@@ -1,0 +1,435 @@
+{
+  "description": "Initial design proportions for independently reconstructed Ratkin textures, not atlas measurements. Joint coordinates normalized inside alpha>=128 bounds; editable estimates. Left/right name the source variants. Thickness is independent of XY size.",
+  "parts": [
+    {
+      "file": "Base/01_torso.png",
+      "category": "Torso",
+      "name": "TorsoMain",
+      "size_axis": "height",
+      "visible_size": 3.5,
+      "joint_in": [
+        0.5,
+        0.55
+      ],
+      "joint_out": [
+        0.5,
+        0.16
+      ],
+      "tags": [
+        0
+      ],
+      "mass": 2.5,
+      "thickness": 0.08
+    },
+    {
+      "file": "Base/02_head.png",
+      "category": "Head",
+      "name": "HeadMain",
+      "size_axis": "height",
+      "visible_size": 1.35,
+      "joint_in": [
+        0.2,
+        0.65
+      ],
+      "joint_out": [
+        0.78,
+        0.64
+      ],
+      "tags": [
+        3
+      ],
+      "mass": 0.45,
+      "thickness": 0.08
+    },
+    {
+      "file": "Base/03_neck_mane.png",
+      "category": "Torso",
+      "name": "NeckMane",
+      "size_axis": "height",
+      "visible_size": 1.2,
+      "joint_in": [
+        0.6,
+        0.82
+      ],
+      "joint_out": [
+        0.65,
+        0.2
+      ],
+      "tags": [],
+      "mass": 0.08,
+      "thickness": 0.08
+    },
+    {
+      "file": "Base/04_pelvis.png",
+      "category": "Torso",
+      "name": "Pelvis",
+      "size_axis": "height",
+      "visible_size": 1.8,
+      "joint_in": [
+        0.5,
+        0.16
+      ],
+      "joint_out": [
+        0.5,
+        0.5
+      ],
+      "tags": [
+        0
+      ],
+      "mass": 0.65,
+      "thickness": 0.08
+    },
+    {
+      "file": "Limbs/01_arm_upper_left.png",
+      "category": "Arms/Left",
+      "name": "UpperArm",
+      "size_axis": "height",
+      "visible_size": 1.4,
+      "joint_in": [
+        0.8,
+        0.2
+      ],
+      "joint_out": [
+        0.16,
+        0.85
+      ],
+      "tags": [
+        2
+      ],
+      "mass": 0.2,
+      "thickness": 0.08
+    },
+    {
+      "file": "Limbs/02_arm_lower_left.png",
+      "category": "Arms/Left",
+      "name": "Forearm",
+      "size_axis": "width",
+      "visible_size": 1.35,
+      "joint_in": [
+        0.14,
+        0.18
+      ],
+      "joint_out": [
+        0.91,
+        0.84
+      ],
+      "tags": [
+        2
+      ],
+      "mass": 0.15,
+      "thickness": 0.08
+    },
+    {
+      "file": "Limbs/03_hand_left.png",
+      "category": "Arms/Left",
+      "name": "Hand",
+      "size_axis": "width",
+      "visible_size": 0.8,
+      "joint_in": [
+        0.07,
+        0.24
+      ],
+      "joint_out": [
+        0.71,
+        0.68
+      ],
+      "tags": [
+        2
+      ],
+      "mass": 0.1,
+      "thickness": 0.08
+    },
+    {
+      "file": "Limbs/04_arm_upper_right.png",
+      "category": "Arms/Right",
+      "name": "UpperArm",
+      "size_axis": "height",
+      "visible_size": 1.4,
+      "joint_in": [
+        0.2,
+        0.17
+      ],
+      "joint_out": [
+        0.85,
+        0.88
+      ],
+      "tags": [
+        2
+      ],
+      "mass": 0.2,
+      "thickness": 0.08
+    },
+    {
+      "file": "Limbs/05_arm_lower_right.png",
+      "category": "Arms/Right",
+      "name": "Forearm",
+      "size_axis": "width",
+      "visible_size": 1.35,
+      "joint_in": [
+        0.15,
+        0.25
+      ],
+      "joint_out": [
+        0.92,
+        0.8
+      ],
+      "tags": [
+        2
+      ],
+      "mass": 0.15,
+      "thickness": 0.08
+    },
+    {
+      "file": "Limbs/06_hand_right.png",
+      "category": "Arms/Right",
+      "name": "Hand",
+      "size_axis": "width",
+      "visible_size": 0.8,
+      "joint_in": [
+        0.12,
+        0.08
+      ],
+      "joint_out": [
+        0.67,
+        0.65
+      ],
+      "tags": [
+        2
+      ],
+      "mass": 0.1,
+      "thickness": 0.08
+    },
+    {
+      "file": "Limbs/07_leg_upper_left.png",
+      "category": "Legs/Left",
+      "name": "UpperLeg",
+      "size_axis": "height",
+      "visible_size": 1.75,
+      "joint_in": [
+        0.85,
+        0.18
+      ],
+      "joint_out": [
+        0.28,
+        0.91
+      ],
+      "tags": [
+        5
+      ],
+      "mass": 0.3,
+      "thickness": 0.08
+    },
+    {
+      "file": "Limbs/08_leg_lower_left.png",
+      "category": "Legs/Left",
+      "name": "LowerLeg",
+      "size_axis": "height",
+      "visible_size": 1.45,
+      "joint_in": [
+        0.87,
+        0.08
+      ],
+      "joint_out": [
+        0.4,
+        0.91
+      ],
+      "tags": [
+        5
+      ],
+      "mass": 0.2,
+      "thickness": 0.08
+    },
+    {
+      "file": "Limbs/09_foot_left.png",
+      "category": "Legs/Left",
+      "name": "Foot",
+      "size_axis": "height",
+      "visible_size": 0.65,
+      "joint_in": [
+        0.66,
+        0.12
+      ],
+      "joint_out": [
+        0.5,
+        0.87
+      ],
+      "tags": [
+        1
+      ],
+      "mass": 0.2,
+      "thickness": 0.08
+    },
+    {
+      "file": "Limbs/10_leg_upper_right.png",
+      "category": "Legs/Right",
+      "name": "UpperLeg",
+      "size_axis": "height",
+      "visible_size": 1.75,
+      "joint_in": [
+        0.15,
+        0.27
+      ],
+      "joint_out": [
+        0.76,
+        0.87
+      ],
+      "tags": [
+        5
+      ],
+      "mass": 0.3,
+      "thickness": 0.08
+    },
+    {
+      "file": "Limbs/11_leg_lower_right.png",
+      "category": "Legs/Right",
+      "name": "LowerLeg",
+      "size_axis": "height",
+      "visible_size": 1.45,
+      "joint_in": [
+        0.82,
+        0.11
+      ],
+      "joint_out": [
+        0.75,
+        0.91
+      ],
+      "tags": [
+        5
+      ],
+      "mass": 0.2,
+      "thickness": 0.08
+    },
+    {
+      "file": "Limbs/12_foot_right.png",
+      "category": "Legs/Right",
+      "name": "Foot",
+      "size_axis": "width",
+      "visible_size": 0.95,
+      "joint_in": [
+        0.12,
+        0.2
+      ],
+      "joint_out": [
+        0.88,
+        0.78
+      ],
+      "tags": [
+        1
+      ],
+      "mass": 0.2,
+      "thickness": 0.08
+    },
+    {
+      "file": "Attachments/01_tail.png",
+      "category": "Tail",
+      "name": "Tail",
+      "size_axis": "height",
+      "visible_size": 3,
+      "joint_in": [
+        0.86,
+        0.9
+      ],
+      "joint_out": [
+        0.08,
+        0.02
+      ],
+      "tags": [
+        10
+      ],
+      "mass": 0.15,
+      "thickness": 0.08
+    },
+    {
+      "file": "Attachments/02_ear_round.png",
+      "category": "Head",
+      "name": "EarRound",
+      "size_axis": "height",
+      "visible_size": 0.75,
+      "joint_in": [
+        0.89,
+        0.86
+      ],
+      "joint_out": [
+        0.4,
+        0.35
+      ],
+      "tags": [],
+      "mass": 0.025,
+      "thickness": 0.08
+    },
+    {
+      "file": "Attachments/03_ear_pointed_left.png",
+      "category": "Head",
+      "name": "EarPointedLeft",
+      "size_axis": "height",
+      "visible_size": 0.65,
+      "joint_in": [
+        0.17,
+        0.92
+      ],
+      "joint_out": [
+        0.85,
+        0.12
+      ],
+      "tags": [],
+      "mass": 0.02,
+      "thickness": 0.08
+    },
+    {
+      "file": "Attachments/04_ear_pointed_right.png",
+      "category": "Head",
+      "name": "EarPointedRight",
+      "size_axis": "height",
+      "visible_size": 0.65,
+      "joint_in": [
+        0.1,
+        0.9
+      ],
+      "joint_out": [
+        0.9,
+        0.08
+      ],
+      "tags": [],
+      "mass": 0.02,
+      "thickness": 0.08
+    },
+    {
+      "file": "Attachments/05_rivet.png",
+      "category": "Connectors",
+      "name": "Rivet",
+      "size_axis": "width",
+      "visible_size": 0.12,
+      "joint_in": [
+        0.5,
+        0.5
+      ],
+      "joint_out": [
+        0.5,
+        0.5
+      ],
+      "tags": [],
+      "mass": 0.01,
+      "thickness": 0.08
+    },
+    {
+      "file": "Base/01_torso_no_joint_caps.png",
+      "category": "Torso",
+      "name": "TorsoNoJointCaps",
+      "size_axis": "height",
+      "visible_size": 3.5,
+      "joint_in": [
+        0.5,
+        0.55
+      ],
+      "joint_out": [
+        0.5,
+        0.16
+      ],
+      "tags": [
+        0
+      ],
+      "mass": 2.5,
+      "thickness": 0.08
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=3]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/_PhysicalSampleBodyParts.tscn" id="1_base"]
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/Ratkin/Models/Torso/TorsoMain.glb" id="2_model"]
+[ext_resource type="ArrayMesh" path="res://Resources/Meshes/Ratkin/Torso/TorsoMain.res" id="3_mesh"]
+[sub_resource type="ConvexPolygonShape3D" id="Shape"]
+resource_local_to_scene = true
+points = PackedVector3Array(-1.76468562, -0.36342980, -0.01000000, -1.58648547, 0.71342980, -0.01000000, -1.52708542, 0.83308087, -0.01000000, -1.46768537, 0.89290640, -0.01000000, -0.57668462, 1.73046387, -0.01000000, 0.07671593, 1.90994047, -0.01000000, 0.13611598, 1.90994047, -0.01000000, 1.20531688, 1.37151067, -0.01000000, 1.26471693, 1.31168513, -0.01000000, 1.79931738, 0.59377873, -0.01000000, 1.79931738, 0.23482553, -0.01000000, 1.73991733, 0.11517447, -0.01000000, 1.32411698, -0.60273193, -0.01000000, 0.73011648, -1.38046387, -0.01000000, 0.67071643, -1.44028940, -0.01000000, 0.55191633, -1.50011494, -0.01000000, 0.31431613, -1.55994047, -0.01000000, -0.63608467, -1.55994047, -0.01000000, -0.93308492, -1.50011494, -0.01000000, -1.11128507, -1.44028940, -0.01000000, -1.34888527, -1.32063834, -0.01000000, -1.64588552, -0.90185960, -0.01000000, -1.76468562, -0.48308087, -0.01000000, -1.76468562, -0.36342980, 0.01000000, -1.58648547, 0.71342980, 0.01000000, -1.52708542, 0.83308087, 0.01000000, -1.46768537, 0.89290640, 0.01000000, -0.57668462, 1.73046387, 0.01000000, 0.07671593, 1.90994047, 0.01000000, 0.13611598, 1.90994047, 0.01000000, 1.20531688, 1.37151067, 0.01000000, 1.26471693, 1.31168513, 0.01000000, 1.79931738, 0.59377873, 0.01000000, 1.79931738, 0.23482553, 0.01000000, 1.73991733, 0.11517447, 0.01000000, 1.32411698, -0.60273193, 0.01000000, 0.73011648, -1.38046387, 0.01000000, 0.67071643, -1.44028940, 0.01000000, 0.55191633, -1.50011494, 0.01000000, 0.31431613, -1.55994047, 0.01000000, -0.63608467, -1.55994047, 0.01000000, -0.93308492, -1.50011494, 0.01000000, -1.11128507, -1.44028940, 0.01000000, -1.34888527, -1.32063834, 0.01000000, -1.64588552, -0.90185960, 0.01000000, -1.76468562, -0.48308087, 0.01000000)
+[node name="Ratkin_TorsoMain" instance=ExtResource("1_base")]
+mass = 2.5
+geometry_mode = 1
+custom_model_path = NodePath("Model")
+paper_volume_enabled = true
+paper_volume_thickness = 0.08
+sprite_visible = false
+mesh_visible = true
+tags = Array[int]([0])
+metadata/source_png = "res://Assets/2DResources/Ratkin/Separated/Base/01_torso.png"
+metadata/pivot_is_initial_estimate = true
+[node name="CollisionShape3D" parent="." index="0"]
+position = Vector3(0, 0, 0)
+shape = SubResource("Shape")
+[node name="MeshInstance3D" parent="." index="2"]
+visible = false
+mesh = null
+[node name="Model" parent="." instance=ExtResource("2_model")]
+[node name="PaperVolume" type="MeshInstance3D" parent="Model"]
+scale = Vector3(1, 1, 0.08)
+mesh = ExtResource("3_mesh")
+metadata/flat_collision_depth = 0.02
+[node name="JointIn" type="Marker3D" parent="."]
+[node name="JointOut" type="Marker3D" parent="."]
+position = Vector3(0.00000000, 1.36500000, 0.00000000)

@@ -13,7 +13,7 @@ func _init() -> void:
 ## Optional stable identity; e.g. SubTorso_Leg_1 stays attached to Leg_1 even if foreleg counts change.
 ## Highest priority. Other parts use their generated name as their key.
 @export var part_key: String = ""
-@export_enum("Torso", "SubTorso", "Leg", "ForeLeg", "LegLimb", "Neck", "Head", "WingRoot", "WingMiddle", "WingTip", "Feather") var part_type: String = "Torso"
+@export_enum("Torso", "SubTorso", "Leg", "ForeLeg", "LegLimb", "Neck", "Head", "WingRoot", "WingMiddle", "WingTip", "Feather", "Tail", "Horn") var part_type: String = "Torso"
 @export var part_scene: PackedScene
 ## Custom models keep their proportions by default. Standard box parts always fit the frame.
 ## Custom paper-volume models fit XY only; final depth is generator Part Width * Overall Scale.

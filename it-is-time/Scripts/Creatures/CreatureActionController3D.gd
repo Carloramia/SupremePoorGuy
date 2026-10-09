@@ -113,6 +113,8 @@ func handle_input(event: InputEvent) -> bool:
 	return false
 
 func try_start_action(action_id: StringName = &"foreleg_stomp") -> bool:
+	var charge := get_parent().get_node_or_null("ChargeAttackController3D")
+	if charge != null and charge.is_active(): return _reject(&"charge_active")
 	var dive := get_parent().get_node_or_null("BirdDiveAttackController3D")
 	if dive != null and dive.is_active(): return _reject(&"bird_dive_active")
 	_movement = get_node_or_null(movement_path)

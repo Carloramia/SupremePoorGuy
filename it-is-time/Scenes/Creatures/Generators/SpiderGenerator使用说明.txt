@@ -1,0 +1,107 @@
+SpiderGenerator 继承 _BaseCreatureGenerator，+X 为前，-X 为后，Y 向上。
+身体中心位于 Z=0，左右两侧分别位于 -Z / +Z。
+
+结构固定：前小 Torso_Front、后大 Torso_Rear；前躯干两侧各四条腿；前方 Head。
+每条腿的各段分别在固定 Z 位置的 XY 平面内延伸：一个向上伸出的 Limb，再连接一个更长、向下伸出的 Leg。
+自动生成时 Torso 中心 Z=0、Limb 中心 Z=±Part Width、Leg 中心 Z=±2×Part Width，使相邻部位的侧面相接而不在 Z 方向重叠。
+Torso/Limb 关节位于 Z=±0.5×Part Width，Limb/Leg 关节位于 Z=±1.5×Part Width，均落在共同侧面上；Overall Scale 同步缩放这些位置。
+上述自动排布不覆盖已捕获的手动布局；启用手动布局时保留手动位置。
+所有部位的局部 Z 厚度轴与全局 Z 轴平行；腿段只绕 Z 轴旋转，不再向 XZ 平面倾斜。
+共 19 个框架体块、18 条连接。没有额外生成脚掌或 SubTorso。
+Leg_1~4 在 -Z 侧，Leg_5~8 在 +Z 侧，每侧编号从前往后。
+每个 Leg 对应的上肢段命名为 Leg_N_Limb_1。
+
+操作：打开 SpiderGenerator.tscn，选中根节点，点击“生成随机框架”。
+此物种的基础布局为确定性布局，按钮沿用基类名称。
+Spider Body 中调整 Front/Rear Torso Size、Body Overlap、Spider Head Size、Head Overlap。
+Rear Torso Y Offset 单独控制后 Torso 向 +Y 上移的距离，默认 0，最终偏移为该值 × Overall Scale；不移动前 Torso、Head 或腿部。躯干间关节锚点随高度交集调整，偏移过大时两个躯干会出现间隙。
+Spider Legs 中调整 Upper Limb Length、Lower Leg Length、Leg Width、Limb Width、向上仰角、下腿偏角、XY 平面内前后展开角和腿根 X 分布。
+后躯干 X/Y 尺寸应大于前躯干；下腿长度必须大于上肢段。
+实际 Leg 体块最下方对齐地面 Y=0；不同前后位置的腿根高度会相应调整，修改参数后重新生成。
+所有部位的 Z 厚度统一使用 Part Width，最终厚度为 Part Width × Overall Scale，手动布局同样适用。
+Torso/Head Size 只使用 X/Y，保留 Z 字段以兼容已有场景，但它不再影响生成结果。
+Part Width 只控制 Z 厚度，腿根和腿段 Z 分层位置跟随厚度以保持侧面相接。
+Leg Width 单独控制 Leg 的局部 X 宽度，Limb Width 单独控制 Limb 的局部 X 宽度，默认均为 0.16。
+腿段有倾斜时，局部 X 宽度不等于全局 X 投影宽度；调整 Leg Width 后会自动修正腿根高度以维持接地。
+Overall Scale 统一缩放框架和连接位置。
+
+每部位可通过 Physical Part Scenes / Part Scene Rules 指定后续生成角色的物理部件。
+未指定时由现有生成角色装配器使用默认 TestCreature_Part。
+独立默认预设位于 Resources/Generators/SpiderGeneratorDefaults.tres。
+保存当前物种默认值不会写入 Beast、Bird、Ratkin 等其他物种预设。
+保留基类手动布局接口；启用手动布局后优先使用捕获的布局。
+
+角色场景为 Scenes/Creatures/Characters/Generate_Spider.tscn，继承 _BaseGeneratedCreature，内置 SpiderGenerator、GeneratedLegStepMovementController3D、倒地起身状态机和动作组件。
+NPC 场景为 Scenes/Creatures/Characters/Generate_Spider_NPC.tscn，根节点为 GenerateSpiderNPC，继承 Generate_Spider，并增加 NPCStateMachine3D。
+两者在运行时重新生成物理角色，编辑器中显示冻结的物理预览；在角色根节点点击“生成框架与物理角色”刷新预览。
+默认使用普通关节物理，Planar Constraints 关闭；可以像其他生成角色一样接入 Controller 控制。
+SpiderWalk.tres 控制目标速度（当前为 3.0）、转向速度 45°/秒、参考总步频 8 次/秒，允许最多四条腿迈步且保留四条支撑腿，暂不启用飞奔。
+SpiderDensity.tres 单独配置各类型部位密度。上述资源分别在 Resources/Movement 和 Resources/Creatures 下。
+SpiderCharacter3D 继承 GeneratedCreatureCharacter3D，为长条 Leg 解除世界 X/Z 旋转锁，并将全部 16 个腿关节限制为局部 Z 轴弯曲。根节点的 Spider Leg Bend Limit Degrees、Spider Leg Spring Stiffness、Spider Leg Spring Damping 分别控制弯曲范围、站姿弹簧和阻尼（默认 45°、300、30）。这些设置会在运行和重新生成后应用。Spider Scale Joint Springs 默认开启：根据两个相连刚体的质量、碰撞箱尺寸、关节轴和力臂估算有效转动惯量 I，再采用 K=300×I、D=30×I；300/30 是单位惯量系数，而不是每个关节固定的实际刚度/阻尼。该计算保留质量上下限的真实影响，不直接按 OverallScale 的幂次推算。关闭开关可恢复固定参数。
+Spider 的移动组件关闭 Align Support Feet To Surface，避免把倾斜长腿强行旋转成直立脚掌。SpiderDensity 的 Leg 和 Leg Limb 密度为 0.1，Torso 为 2，避免质量上限使每条肢体与躯干一样重。调整整体缩放后仍应检查实际质量与站姿。
+移动组件使用 SpiderLegStepMovementController3D，继承通用生成生物移动控制器，并关闭 Foot Heading Lock，避免长腿局部 X 轴被误当作角色前方。
+Spider Step Planning 的 Stance Travel Length Ratio（默认 0.06）与关节弯曲角度共同计算保守站姿移动预算；落点前伸量最多为预算的两倍，不把整条链长的球形范围当作实际关节可达范围。Stalled Step Delay（默认 0.8 秒）控制受阻后的换步恢复及同腿重试间隔，仍遵守支撑腿数量和落点检测。
+Spider 独立倒地参数在 Generate_Spider/CreatureRecoveryStateMachine3D 上设置，NPC 自动继承。Height Collapse Detection Enabled 已关闭：接地时只在身体倾角达到 60° 并持续 0.8 秒后触发恢复，站高和速度不参与倒地触发。恢复退出条件仍为站高达到参考高度的 65%，满足姿态/速度/支撑检测并稳定 0.5 秒。参考高度保持生成姿态的固定值，不随行走下沉自动降低。其他生物默认保留高度倒地判定。
+Spider Contact Pivot 使用倾斜碰撞箱的最低接触边/面的中心作为锁地锚点，固定该材料接触点而非刚体中心，因此长腿能绕接触点在 X-Y 平面内摆动。原有肢体关节继续限制 X/Y 旋转并允许 Z 轴弯曲；接地锚点自身不增加旋转锁。迈步、打滑、断裂和离地沿用原有解锁流程，转向时也释放锚点，保留普通接触和吸附力。
+移动组件的 Grounded Joint Stiffness Ratio 默认为 0.5：非迈步期间采用半刚度和完整阻尼。Stepping Joint Stiffness Ratio 默认为 0.15、Stepping Joint Damping Ratio 默认为 0.5，抬脚和迈步期间降低复位阻力，避免解除锁地后反而恢复更硬的弹簧。接地后在约 0.15 秒内平滑恢复支撑参数。过低可能降低站姿高度，应配合 Spider Leg Spring Stiffness 调节。
+部位支撑日志中的 pin_kind=contact_pivot 表示接触点锚定；contact_point 是同一个材料点的当前位置，anchor 是地形上的锚点，body_center 是腿部刚体中心。drift 计算接触点的水平漂移，腿部中心摆动不再被误判为滑步。grounded_stiffness_ratio 和 turn_released 分别记录刚度比例和转向解锁状态。
+Spider 行走先抬脚，确认实际离地后再开始水平迈步。抬升高度保留长条碰撞箱所需的几何余量，避免短步幅使脚部无法离地。实际再次接地后立即放弃原定落点追踪，改为在接触点施加有限制动力；接触速度稳定后完成迈步，而不是等刚体中心到达旧落点。
+Spider Touchdown 提供 Touchdown Brake Time（默认 0.08 秒）、Touchdown Brake Acceleration（40）、Touchdown Confirmation Time（0.04 秒）及 Touchdown Contact Speed Limit（0.3）参数。保持接地的 LANDING 阶段不会因普通迈步清理而丢失锚点，转向和打滑仍可释放锚点。
+自动步幅、周期、参考步频、抬升与追踪增益使用同一实际短步幅计算；保留真实链长用于可达性与转向判定。速度上限按步幅 / 支撑时长计算。完整动作占用时间包含抬脚、水平迈步和接地确认，并使用各腿成功或超时动作的实测耗时平滑反馈；周期同时满足总步频上限与并发支撑预算，支撑时长=周期−完整动作占用时间。超时也占用名额，不被当作零耗时。初始占用预算为摆动时间加抬脚延迟和接地确认余量，随后按实测结果更新。stance_duration、occupied_step_duration、observed_step_duration、cycle_travel、airborne_body_travel 记录这些预算；配置的 TargetSpeed 仍不等于物理结构保证可达的速度。提高目标速度前需同时评估步幅和参考步频，日志不会再以 4.507 的步幅估算这套短步行走能力。
+tracknpcmotion 的 contact_velocity 包括刚体旋转产生的接触点速度，并扣除动态地形的运动；contact_sliding 按该点切向速度判断。spider_touchdown 记录接地制动时间、接触速度、制动力及 horizontal_tracking=false，可确认接地后不再追逐旧落点。真实接地检测仍沿用原有地形探测与贴地距离阈值。
+tracknpcmotion 中 extension_demand.policy 为 spider_contact_travel。每次实际接地建立新支撑姿态，stance_anchor 为地形接触锚点，stance_progress 为腿根相对该锚点的水平行程，stance_travel_budget 为单侧保守预算，剩余行程为双侧预算减去已行进距离，不再由长腿刚体中心相对生成姿态的偏移决定。joint_limit_margin_degrees 表示当前最紧张关节距离 Z 弯曲限位的角度余量；已产生一定前进行程且余量低于 Joint Limit Reserve Degrees（默认 5°）时提前请求换步。stall_elapsed、retry_in 保留受阻恢复与重试间隔诊断；automatic_motion 的每条腿另有 spider_landing_stride，表示实际采用的前伸上限。
+Spider Support Selection 的 Support Polygon Tolerance 默认为 0.2。正常行走在满足原有支撑数量限制后，还会检查移除候选腿后的地面支撑凸包是否覆盖重心投影。若已经失衡，仅允许不进一步增加投影误差的移除，避免恢复死锁。转向、动作模组及飞奔继续沿用原有专用准入规则。spider_support_selection 记录 before_error、after_error、remaining_feet、allowed 与拒绝原因。
+Spider Liftoff Assist 提供 Liftoff Assist Acceleration（默认 20）、Liftoff Assist Delay（0.2 秒）、Maximum Liftoff Time（1 秒）。抬脚受阻时额外向脚本身施加质量乘以有界加速度的向上力，延迟后用 0.3 秒平滑增至上限，离地后停止补偿；仍保留抬脚超时，不直接移动部位或给躯干追加推进力。spider_liftoff 记录 elapsed、assist_force、assist_acceleration、timeout。
+NPC 默认阵营为 1，SpiderAI.tres 位于 Resources/AI，控制索敌和保持距离；需要所在关卡有可用的导航网格。
+SpiderNPCStateMachine3D 继承通用 NPC 状态机，保留索敌、友军避让和配置攻击的能力，补充没有可用攻击时接近目标至 Preferred Distance 的逻辑。
+当前八条腿均为 Leg，没有 ForeLeg，因此动作组件默认关闭，AI 攻击列表为空，不会发动前腿踏地攻击。后续增加适用的攻击组件时可在 SpiderAI 中配置。
+日志命令：tracknpcmotion on GenerateSpiderNPC；tracknpcstate on GenerateSpiderNPC。
+已验证自动生成、八腿识别、内部碰撞排除、AI 索敌寻路和重生成；短时落地行走通过，长期步态稳定性仍需实际关卡测试。
+
+与基类通用生成参数的差异：
+Spider 使用独立蓝图，继承的 Unsymmetrie/Inhomogeneity、Feet 尺寸/间距、Torso 数量/体长/轮廓曲线、SubTorso、Limb Lines/Block、Limb Network、Neck/Head Generation 参数不参与其自动布局。
+腿数固定为八条，每条一个 Limb 加一个 Leg，头部直接连接前 Torso，不生成 SubTorso 或 Neck。
+腿段横截面 X 已通过 Leg Width 和 Limb Width 与 Part Width 独立，通用 Limb Block Generation 尺寸参数仍不参与 Spider 布局。
+只验证自身尺寸和角度规则，没有接入通用脚间距、体块相交或颈部遮挡检查，也没有按实际模型 JointIn/JointOut 规划框架尺寸。
+Overall Scale、框架颜色/文字大小、Part Scene Rules、独立默认预设保存、手动布局和通用物理装配接口已共用。
+
+缩放诊断：tracknpcmotion on GenerateSpiderNPC 的 spider_joint_springs 输出每个关节的有效惯量、实际刚度、实际阻尼和当前阶段权重。Tests/SmokeSpiderStanding.gd 支持 -- --scale=1 或 -- --scale=4，验证小体型与大体型的落地、连续行走、转向和结构完整性。惯量归一化不保证在所有尺寸和所有地形下拥有完全一致的步态；仍需结合真实接地与抬脚失败统计调节。
+
+抬脚追踪修正：根据当前脚尖到地面的距离差逐帧计算抬升目标，不再固定追踪起步时刚体中心 Y。水平方向参考腿根的线速度与角速度，不再以零速度对抗身体前进。法向抬升力加入作用于脚尖的等效力矩，不重复施加线性力。确认离地后从真实姿态开始水平轨迹，并补偿抬脚期间腿根的水平位移。spider_liftoff 输出 toe_gap、target_clearance、horizontal_reference。
+
+Spider Axial Sliding（Generate_Spider 根节点，NPC 继承）：Spider Axial Sliding Enabled 默认开启。Spider Root Slide Ratio 默认 0.02、Spider Knee Slide Ratio 默认 0.03，分别设置上腿-躯干和上腿-下腿连接的单侧滑动范围，单位为上腿实际长度的比例；两处合计单侧 5%，完整伸缩行程合计 10%。Spider Axial Spring Frequency 默认 8 Hz、Spider Axial Damping Ratio 默认 1。弹簧 K=m_eff*(2πf)^2、阻尼 D=2*ζ*m_eff*2πf，使用相连部件的实际约化质量。关节 Y 轴对齐上腿局部 Y，并将上腿设为物理端点 A，使方向随上腿旋转；其他两条线性轴继续锁死，保留局部 Z 弯曲和 X/Y 旋转锁。修改参数后重新运行生效；开关关闭时恢复全部线性轴锁定。
+滑动日志：原 tracknpcmotion on GenerateSpiderNPC 的 spider_joint_springs 中增加 axial_slide，含 connection=root/knee、half_travel、upper_length、effective_mass、stiffness、damping、axis_world 和 offset。offset 为两端关节锚点沿当前上腿轴的相对位移，可用于检查是否触及行程上限。未额外扩大原有迈步规划比例。测试 ValidateSpiderAxialSliding.gd 实际验证上腿旋转后滑动轴随动、限位、弹簧回中及关闭后锁死。
+
+Spider Independent Torso Support（新增，默认开启）：Generate_Spider 根节点的 Spider Independent Torso Support 开关控制独立承重；修改后重新运行或重新生成生物，使关节配置同步。开启时腿根 Joint 的三个线性限位、线性弹簧全部关闭，保留角度限位和角度弹簧；仅对上腿施加连接点位置追踪力和自身重力补偿，不向 Torso 施加反作用力。膝部仍使用原轴向滑动弹簧。上文 Root Slide Ratio 在独立承重开启时不参与腿根连接。
+GeneratedLegStepMovementController3D 节点的 Spider Independent Torso Support 分组：Torso Support Frequency=1.5 Hz，Torso Support Damping Ratio=1，Torso Support Maximum Acceleration=30；Root Follow Frequency=3 Hz，Root Follow Maximum Acceleration=30。Torso 逐个补偿自身实际重力，向下射线排除本角色部位，以参考站高进行带阻尼的垂直修正；未发现地面时仅补偿重力，不更新目标高度。因此无地面时也可以悬浮，这不是普通下落模式。仍保留接地条件下的水平推进、脚步吸附和迈步、躯干平衡及关节角度交互。关闭独立承重后恢复原 Spider 腿链承重和通用躯干高度修正。
+诊断：trackmotion/tracknpcmotion 的 stance_support.spider_independent_support 输出各 Torso 的 gravity_compensation、height_error、has_floor、force，以及各腿根 gap、force、reaction_on_torso（零）。spider_joint_springs.axial_slide 增加 independent_root、linear_limit_enabled、linear_spring_enabled，避免将未启用的行程参数误认为仍在生效。ValidateSpiderIndependentSupport.gd 断开所有腿根并将脚部移至空中，验证躯干仍可独立恢复高度。
+
+Spider Structural Stride（移动控制器，默认开启）：用真实腿根/膝关节局部锚点、脚尖接触点、脚部 BoxShape3D 尺寸和 Z 轴角度限位求解可达区间。关节先扣除 Joint Limit Reserve Degrees（默认 5°），对膝关节进行 81 个角度采样，并解析求解使脚尖落在参考地面的腿根角度；剔除超限或脚部其他角点穿过参考地面的姿态。取原始站姿向前、向后余量较小的一侧，乘 Structural Stride Safety Ratio（默认 0.8），两倍得到完整步幅上限。不把腿根软连接拉伸或膝部弹簧压缩当作额外步幅。
+最终步幅仍取结构上限与通用控制器需求的较小值；落点从原始接触位置向前半个可用步幅采样，换步判断同时考虑脚尖到结构后缘的剩余距离。生成/刷新部位时缓存几何范围，运行时只按移动方向投影，每个物理帧复用结果。修改关节范围、几何或 Joint Limit Reserve Degrees 后重新生成/运行；安全比例可直接调节。
+当前缩放 1 的结构上限约为 0.543～1.560，取决于各腿的原始弯曲姿态；不是所有腿共用一个最大值。关闭结构算法、结构不支持或当前方向没有双向可达解时回退到原 Stance Travel Length Ratio 算法，日志 reason 会明确标注。转向、动作、飞奔仍沿用原有专用落点逻辑。几何计算是生成站高下的平面可达估计，不替代真实地形射线检测或动力学验证，不承诺达到目标速度。
+tracknpcmotion on GenerateSpiderNPC：automatic_motion.legs[].spider_structural_stride 输出 valid、reason、raw_backward、raw_forward、half_travel、stride_limit、safety_ratio、samples。ValidateSpiderCharacters.gd 验证所有腿的求解、角度范围、地面接触、参数开关和安全比例；SmokeSpiderStanding.gd 验证缩放 1/4 的站立、行走、换步恢复和转向。
+
+已移除 Spider 单腿两次迈步之间的固定 0.8 秒重试间隔。到达结构后缘或预测接近行程边界即可请求换步，不等待上次起步计时；extension_demand.retry_in 固定为 0。Stalled Step Delay（仍默认 0.8 秒）现在仅用于确认持续低速受阻后触发恢复迈步。正在迈步、未接地、支撑名额不足等原有条件仍生效；步频继续参与运动规划。
+
+Spider 结构内部落点：Structural Landing Forward Ratio 默认 0.65（控制器 Inspector 的 Spider Structural Stride 分组）。普通行走的候选落点位于预计接地时结构参考脚位前方 20%~65% 半行程内；不再向后采样到后边界。如果该带内没有合法地形，则拒绝本次落点，不退回区间外。腾空阶段目标离开该带时重新检测地形，按剩余腾空时间补偿躯干水平速度。真实再次接地仍立即停止水平追踪并制动，不拖着接地脚追赶目标。转向、动作模组、飞奔和 Planar 模式沿用原机制。
+诊断：tracknpcmotion 的 feet 数据新增 spider_landing（规划目标、预计参考位置、剩余腾空时间、前向投影）和 spider_last_touchdown（真实首次接地时的 forward_projection、rear_remaining、inside_interval、target_error）。inside_interval=false 表示物理执行提前落地或偏离规划，不能据此视为已回到内部。ValidateSpiderInteriorLanding.gd 验证左右方向及躯干前移后的重规划；SmokeSpiderStanding.gd 输出 SPIDER_INTERIOR_TOUCHDOWNS 统计。
+
+Spider 迈步时间预算修正：名额占用时间 = max(规划腾空时间 + 接地确认时间, 实测完整迈步耗时 × 1.1)。实测耗时从起步到接地完成，包含抬脚、腾空和制动确认，因此不再重复添加 Liftoff Assist Delay。该参数仍决定额外抬升力何时开始渐增，不再直接增加速度规划的固定时长。尚无实测数据时使用规划腾空时间加接地确认；原实测耗时平滑、结构步幅、并发名额和支撑检查保留。automatic_motion 的每腿诊断新增 nominal_occupied_step_duration、observed_duration_safety_ratio、occupied_duration_source。trackmotion / tracknpcmotion 的 Spider 腿部行现在实际打印 spider_landing 和 spider_last_touchdown。
+
+Spider Catch-up Steps（仅普通结构行走）：Step Lift Multiplier 默认 1.35；基础高度乘该倍率，并按水平追赶距离增加高度（正常 0.08、恢复 0.15），不超过腿链长度的 15%，仍受原有效高度上限约束。Catch Up Speed Ratio 默认 0.75；可用相对追赶速度 = 原规划步幅 / 原规划腾空时间 × 该比例。腾空时间 = max(原时间, min(水平目标距离 / 可用相对速度 × 恢复系数, Maximum Catch Up Duration))；恢复系数为 1.25，Maximum Catch Up Duration 默认 1.2 秒，仅限制额外延长，不压缩原本更长的轨迹。离地检测保留原门槛。
+有效迈步完成需真实接地并制动稳定，实际接触点接近冻结目标，且位于冻结的结构区间内部。Touchdown Target Tolerance Ratio 默认 0.5（容差为安全半行程的该比例，最低 0.02）。首次接地冻结目标与判定参考系；制动期间不进行水平追赶。提前接地在制动后释放迈步名额，记为 step_incomplete / spider_early_touchdown，保留恢复请求；下一次仍须通过并发名额、支撑和地形合法性检查。恢复成功后清除请求。日志新增 spider_catch_up、spider_recovery_attempts；spider_last_touchdown.completed 与 completion.valid 区分有效换步和仅仅碰地。较长腾空耗时仍会进入实测速度规划，因此可能降低规划速度，并非保证提速。
+
+Spider 腿部绝对摆角限位：Spider Leg Bend Limit Degrees 默认改为 75°，Generate_Spider_NPC 继承该值。所有 Leg 与 LegLimb 以自身长轴朝上的端点为方向、世界 +Y 为零角，在 X-Y 摆动面内允许 -75°~+75°；下腿模型局部 +Y 指向脚尖，因此使用其反向作为朝上轴。生成的变换和弹簧零位不变。根、膝关节根据父部件转动实时换算相对上下限，以免父部件的倾角叠加扩大绝对摆角；不新增世界固定连接或位移约束。结构步幅求解与关节余量检测同步使用绝对摆角，保留 5° 规划余量。修改参数后重新运行/生成使结构缓存更新。物理求解限位允许微小数值误差，不是逐帧强制设置旋转。
+
+Spider 普通自动行走的步幅会随实测完整迈步耗时调整，不再固定使用基础腿长比例。设腿数为 N、并发名额为 C，完整动作占用估计 T = max(实测耗时 × 1.1, 基础规划腾空时间 + 接地确认时间)，所需支撑行程 = TargetSpeed × T × max(N/C − 1, 0)。采用基础步幅和该需求中的较大值，再限制到实际可用支撑行程。实际可用行程 = 安全半行程 × (1 + Structural Landing Forward Ratio) − max(安全半行程 × 0.2, TargetSpeed × 0.15)，并且不得超过完整结构步幅。这样保留前方内部落点和后方提前换步的余量，不把完整前后极限距离当作可用支撑距离。
+扩大后的步幅同步用于腾空规划、追踪增益、抬升高度和可达速度估计。实测耗时继续平滑更新；当结构范围或名额不足时仍会限制速度，不保证达到 TargetSpeed。转向、动作模组、飞奔及 Planar 模式不使用这项新增的自适应步幅分支。
+tracknpcmotion on GenerateSpiderNPC 的 automatic_motion.legs[] 新增 structural_stride_limit、usable_stance_stride_limit、required_stance_stride、step_admission_distance_reserve、stride_adapted_to_observed_time，可区分结构全行程、实际支撑行程、目标速度所需行程和是否已扩大基础步幅。
+
+性能优化：Spider 最终运动配置、公共预期速度和总参考步频按物理帧缓存；输入、转向/动作状态、结构参数、实测迈步耗时或框架重建变化时失效。同一帧重复查询复用结果，不改变步幅算法和施力规则。trackcontrolperf 新增 spider_profile_lookup、spider_profile_builds、spider_profile_cache_hits、spider_independent_support、movement_spider_full。各阶段为包含子阶段的耗时，不能相加；movement_spider_full 包含独立躯干支撑。
+运动日志默认采用摘要：保留目标/规划速度、躯干位置速度、各腿步幅/实测耗时/速度上限以及接地、迈步、打滑状态。输入 motiondetail full 恢复完整部位快照；motiondetail summary 恢复摘要，对 trackmotion 和 tracknpcmotion 同时生效。0.1 秒采样间隔保留。完整模式仍会产生大量输出，建议短时针对单个角色启用。
+隐藏控制台只保留历史，不刷新 RichTextLabel；打开时立即显示缓存，后续最多每 0.1 秒合并刷新。trackcontrolperf 包含 RuntimeConsole 的 motion_snapshot_build、npc_motion_snapshot_build、console_text_refresh、log_print 和 log_characters。trackperformance 的移动组件行增加 tracking_enabled、physics_processing、can_process，区分尚未采样/未启用/未处理与真正零开销；启用命令的即时快照可以为零，后续应有实际计数。
+Tests/ValidateSpiderPerformance.gd 验证缓存复用、同帧耗时/模式变化失效、真实性能计数、隐藏控制台延迟刷新、摘要/完整模式和日志计时。SmokeSpiderStanding.gd 可追加 --performance 输出 20 秒行走的移动耗时及缓存命中统计；这些无渲染测试不能替代编辑器中真实场景的 FPS 对照。
+
+动态水平追赶（仅 Spider 普通结构行走）：每次起步读取配置 TargetSpeed，不使用已经下调的 reachable_speed。请求追赶速度 = max(TargetSpeed × Catch Up Speed Ratio, 实际水平追赶距离 / 基础规划腾空时间)。追踪加速度预算 = clamp(max(原规划加速度, 8 × TargetSpeed² / 步幅 + 重力加速度), 30, 2000)，保持质量归一化。以距离和抬升高度中的较大值估算最低运动时间 sqrt(8 × 行程 / (加速度预算 − 重力加速度)) × 1.2，再以水平距离 / 最低时间限制追赶速度。1.2 的时间余量用于关节阻力和物理解算延迟，避免直接采用理想轨迹极限导致动作及转向不稳。这个上限是轨迹加速度估计，不保证物理关节和碰撞求解都能实际完成。
+腾空时长不小于基础规划时间和最低运动时间，恢复迈步保留 1.25 的时间余量。Maximum Catch Up Duration 仍限制额外请求时间，但不得压缩到最低运动时间以下；超出时记录 duration_cap_exceeded。同步更新本次动作的追踪加速度和位置/速度增益，不减弱原有增益。落点重规划、真实接地制动和完成判定保留。运行中修改目标速度后，下次起步采用新参数，当前轨迹不突然改变时长。
+motiondetail full 后开启 tracknpcmotion on GenerateSpiderNPC，spider_catch_up 新增 policy=target_speed_and_distance、target_speed、requested_relative_speed、speed_cap、acceleration_limited、minimum_safe_duration、duration_cap_exceeded、acceleration_budget、position_gain，可区分目标需求和加速度估计限速。Catch Up Speed Ratio 现在控制目标速度参考项，不再直接削减所有距离需求速度。

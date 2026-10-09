@@ -1,0 +1,17 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Characters/Generate_Spider.tscn" id="1_actor"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/NPCStateMachine3D.tscn" id="2_ai"]
+[ext_resource type="Resource" path="res://Resources/AI/SpiderAI.tres" id="3_behavior"]
+[ext_resource type="Script" path="res://Scripts/Creatures/SpiderNPCStateMachine3D.gd" id="4_state"]
+
+[node name="GenerateSpiderNPC" instance=ExtResource("1_actor")]
+faction_id = 1
+
+[node name="NPCStateMachine3D" parent="." instance=ExtResource("2_ai")]
+script = ExtResource("4_state")
+behavior = ExtResource("3_behavior")
+navigation_origin_path = NodePath("")
+generated_x_axis_facing = true
+facing_x_dead_zone = 1.0
+generated_facing_confirmation_time = 0.2

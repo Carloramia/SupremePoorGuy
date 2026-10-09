@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" path="res://Scenes/VFX/TerrainArcIndicator3D.tscn" id="7_terrain_arc"]
 [ext_resource type="PackedScene" path="res://Scenes/Player/Controller.tscn" id="8_player_controller"]
 [ext_resource type="PackedScene" uid="uid://dstgtopkigikh" path="res://Scenes/Creatures/Characters/Character_Test_NPC.tscn" id="9_a7u0l"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Characters/Generate_Spider_NPC.tscn" id="10_qhub5"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_flat_ground"]
 size = Vector3(200, 102, 200)
@@ -15,6 +16,7 @@ size = Vector3(200, 102, 200)
 [node name="TestLevel" type="Node3D" unique_id=1606515158]
 
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="." unique_id=555269644]
+transform = Transform3D(5, 0, 0, 0, 1, 0, 0, 0, 5, 0, 0, 0)
 navigation_mesh = ExtResource("4_navigation")
 
 [node name="NavigationNPCSpawner3D" parent="." unique_id=805504527 instance=ExtResource("5_npc_spawner")]
@@ -23,7 +25,7 @@ spawn_interval = 1.0
 maximum_npc_count = 1
 
 [node name="Flat" parent="." unique_id=1832489056 instance=ExtResource("1_ss4xl")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.69153404, -4.7683716e-07, -0.6274371)
+transform = Transform3D(5, 0, 0, 0, 1, 0, 0, 0, 5, -0.69153404, -4.7683716e-07, -0.6274371)
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Flat" unique_id=760121635 groups=["navigation_source"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -50, 0)
@@ -47,23 +49,21 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 43.19173, 0)
 light_energy = 5.0
 omni_range = 500.0
 
-[node name="CharacterTestNPC" parent="." unique_id=418755916 instance=ExtResource("9_a7u0l")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50.44299, 1.38, 45.416046)
-faction_id = 2
-
 [node name="Controller" parent="." unique_id=1212807446 node_paths=PackedStringArray("camera_rig", "terrain_cursor") instance=ExtResource("8_player_controller")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.69153404, 11.563919, -0.6274376)
 camera_rig = NodePath("../DragCamera3D")
 terrain_cursor = NodePath("../TerrainCursor3D")
 
-[node name="CharacterTestNPC6" parent="." unique_id=579971682 instance=ExtResource("9_a7u0l")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44.503834, 1.3800001, 67.55763)
+[node name="CharacterTestNPC" parent="." unique_id=418755916 instance=ExtResource("9_a7u0l")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 84.635254, 1.379998, -20.405687)
 faction_id = 2
 
-[node name="CharacterTestNPC7" parent="." unique_id=1350049250 instance=ExtResource("9_a7u0l")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 52.294373, 1.3800039, 21.483025)
-faction_id = 2
-
-[node name="CharacterTestNPC8" parent="." unique_id=2079029446 instance=ExtResource("9_a7u0l")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40.187824, 1.3799961, 83.694534)
-faction_id = 2
+[node name="GenerateSpiderNPC" parent="." unique_id=1402366569 instance=ExtResource("10_qhub5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -64.79531, 1.05, -24.935844)
+spider_scale_joint_springs = true
+spider_independent_torso_support = true
+spider_axial_sliding_enabled = true
+spider_root_slide_ratio = 0.02
+spider_knee_slide_ratio = 0.03
+spider_axial_spring_frequency = 8.0
+spider_axial_damping_ratio = 1.0

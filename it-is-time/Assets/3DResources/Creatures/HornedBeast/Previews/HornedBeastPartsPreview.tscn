@@ -7,7 +7,7 @@
 [ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/HornedBeast/Legs/Hind/UpperLeg.tscn" id="6"]
 [ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/HornedBeast/Legs/Hind/LowerLeg.tscn" id="7"]
 [ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/HornedBeast/Legs/Hind/Foot.tscn" id="8"]
-[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/HornedBeast/Horns/HornFan.tscn" id="9"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/HornedBeast/Tail/Tail.tscn" id="9"]
 [ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/HornedBeast/Horns/HornCurlLeft.tscn" id="10"]
 [ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/HornedBeast/Horns/HornCurlRight.tscn" id="11"]
 [ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/HornedBeast/Head/EarLeft.tscn" id="12"]
@@ -104,14 +104,14 @@ position = Vector3(0, -3.2, 1)
 text = "Foot"
 font_size = 40
 pixel_size = 0.015
-[node name="HornFan" parent="." instance=ExtResource("9")]
+[node name="Tail" parent="." instance=ExtResource("9")]
 position = Vector3(8, 0, 0)
 freeze = true
 collision_layer = 0
 collision_mask = 0
 [node name="Label8" type="Label3D" parent="."]
 position = Vector3(8, -3.2, 1)
-text = "HornFan"
+text = "Tail"
 font_size = 40
 pixel_size = 0.015
 [node name="HornCurlLeft" parent="." instance=ExtResource("10")]

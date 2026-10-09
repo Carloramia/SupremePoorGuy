@@ -1,0 +1,51 @@
+HornedBeast 生成生物
+
+生成器：res://Scenes/Creatures/Generators/HornedBeastGenerator.tscn
+生成角色：res://Scenes/Creatures/Characters/Generate_HornedBeast.tscn
+可运行预览：res://Assets/3DResources/Creatures/HornedBeast/Previews/HornedBeastCreaturePreview.tscn
+
+继承关系
+HornedBeastGenerator.gd → BeastGenerator.gd → BaseCreatureGenerator.gd。
+Generate_HornedBeast.tscn → _BaseGeneratedCreature.tscn → _SampleCharacter.tscn。
+沿用通用物理生成、行走、复位、伤害和前腿踏地控制器。
+
+默认模型结构
+两条前腿、两条后腿；每条腿由上段、下段和蹄构成。
+Rivet 用作四个 SubTorso 支撑连接部位。默认包含双卷角和双耳。
+共 23 个 PhysicalPart、22 个 Joint，内部碰撞互相排除。
+原 HornFan 已改名为 Tail，接入躯干后侧尾部，不再作为头部角生成。
+角带 Horn 标签，尾巴带 Tail 标签；它们均为固定关节连接，不带武器标签。
+尾巴使用原 HornFan 的纸片体块模型；原长方体保留为 TailBox.tscn，可在 Tail Scene 中替换。
+
+生成和编辑
+打开角色场景，选择根节点，点击“生成框架与物理角色”。
+HornedBeastGenerator 子节点的 Horned Model Layout 控制腿的横向间隔、腿根 X 位置、躯干高度和装饰开关。
+Horned Part Models 可分别替换所有部位的 PhysicalPart 场景。
+Tail Generation：Tail Enabled 控制生成；Tail Length/Height 控制长度和高度；Tail Root Height Ratio 控制后侧连接点的相对高度；Tail Root Offset 控制连接偏移；Tail Angle Degrees 控制绕 Z 轴的角度。
+Horn Generation：Horn Size Scale 控制角的大小；Horn Root Ratio/Offset 控制头部连接点；Horn Pair Depth Ratio 控制双角的 Z 轴间隔；Left/Right Rotation Degrees 分别控制双角旋转。右卷角默认绕 Y 轴 180°，统一朝向 -X。
+Tail 的长、高分别拟合模型 X/Y 尺寸，连接位置沿用原 HornFan 的 JointIn，厚度统一随 Part Width。
+上述位置与尺寸参数都在 Overall Scale 之前计算，最终厚度统一由 Part Width × Overall Scale 决定。
+默认 Use Model Layout 开启，依照各素材的 JointIn/JointOut 确定性组装，不随机扰动。
+此模式使用模型原比例；Torso 曲线、随机体块尺寸等通用程序化参数不参与固定模型布局。
+关闭 Use Model Layout 可回到 Beast 的程序化框架。素材连接适配仍建议使用默认模式。
+Overall Scale 同步缩放全身、连接点和最终厚度；Part Width 为缩放前厚度。
+生成角色根节点应保持 Scale=(1,1,1)，通过生成器 Overall Scale 调整尺寸。
+手工调整后可使用基类的自动对齐连接点、将当前部件姿态写入生成器功能；保存场景持久化。
+已保存的手工布局优先于固定模型规则，清除手工布局后才恢复按参数生成。
+
+独立配置
+Resources/Generators/HornedBeastGeneratorDefaults.tres：生成器默认参数，保存默认值不影响 Beast/StumpBeast/Bird。
+Resources/Creatures/HornedBeastDensity.tres：部位类型密度。
+密度预设支持 Tail、Horn 独立密度。
+Resources/Movement/HornedBeastWalk.tres：目标速度、转向速度和最大参考步频。
+Resources/Actions/HornedBeastForeLegStomp.tres：前腿抬升和踏地预设。
+冲击波沿用 ForeLegStompShockwave.tres；如需独立特效/伤害，请复制该资源并挂入踏地预设的 Shockwave。
+
+控制
+运行预览场景，Controller 已挂在角色下。Left/Right/Up/Down 移动，MouseLeft 触发前腿踏地。
+放入其他关卡时，挂入 Controller 或使用已有 Controller 的接入功能。
+角色保留基类功能；本次不另建 NPC，也不修改 TestLevel 或 StumpBeast。
+
+验证脚本
+Tests/ValidateHornedBeastCreature.gd：缩放、确定性组装、内部碰撞排除、连接点、手工布局保存往返。
+Tests/SmokeHornedBeastMotion.gd：落地、移动和踏地的物理运行检查。
