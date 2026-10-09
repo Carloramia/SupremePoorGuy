@@ -1,0 +1,58 @@
+[gd_resource type="Resource" script_class="LocationDefinition" format=3]
+
+[ext_resource type="Texture2D" path="res://editor/assets/town.svg" id="1_77tdb"]
+[ext_resource type="PackedScene" path="res://world_map/ui/SettlementPanel.tscn" id="2_df4x4"]
+[ext_resource type="PackedScene" path="res://scenario_2_5d/demo/Scenario25DDemo.tscn" id="3_tpb57"]
+[ext_resource type="Script" path="res://world_map/data/location_definition.gd" id="4_5h0wj"]
+
+[resource]
+script = ExtResource("4_5h0wj")
+display_name = "Test Town"
+icon = ExtResource("1_77tdb")
+repeatable = true
+interaction_ui_scene = ExtResource("2_df4x4")
+scenario_scene = ExtResource("3_tpb57")
+encounter_data = {
+"editor_object": {
+"click_area": {
+"depth": 0.0,
+"enabled": true,
+"height": 2.0,
+"offset": [0.0, 0.0],
+"points": [],
+"rotation": 0.0,
+"shape": "circle",
+"size": [78.0, 78.0]
+},
+"completion_behavior": "KEEP",
+"condition_ref": "",
+"discovery": {
+"allow_hidden_interaction": false,
+"condition_ref": "",
+"initially_visible": true,
+"marker_layer": "above",
+"radius": 240.0
+},
+"event_id": "town_visit",
+"height": 0.0,
+"id": "town",
+"interaction_offset": [0.0, 35.0],
+"interaction_radius": 42.0,
+"layer": "landmarks",
+"name": "Test Town",
+"position": [260.0, 265.0],
+"repeatable": true,
+"rotation": 0.0,
+"scale": [1.0, 1.0],
+"target_scene": "res://scenario_2_5d/demo/Scenario25DDemo.tscn",
+"type": "town",
+"visual": {
+"asset": "town",
+"opacity": 1.0,
+"size": [78.0, 78.0],
+"tint": "#9fba8d",
+"visible": true,
+"z_index": 0.0
+}
+}
+}
