@@ -1,6 +1,8 @@
 extends Node
 
 var _movement_perf := preload("res://Scripts/Debug/ControlPerformanceStats.gd").new()
+var _convex_foot_cache: Dictionary = {}
+var _convex_foot_cache_frame: int = -1
 
 const PLAYER_CONTEXT = preload("res://Scripts/Player/PlayerControlContext.gd")
 
@@ -1838,21 +1840,49 @@ func _get_foot_world_position(leg: RigidBody3D) -> Vector3:
 	var box := collision.shape as BoxShape3D
 	if collision.shape is ConvexPolygonShape3D:
 		# Imported paper feet use an offset polygon, not a centered box.
-		var points := (collision.shape as ConvexPolygonShape3D).points
-		var lowest := INF
-		for point: Vector3 in points:
-			lowest = minf(lowest,(collision.global_transform * point).y)
-		var sole := Vector3.ZERO
-		var count := 0
-		for point: Vector3 in points:
-			var world_point := collision.global_transform * point
-			if world_point.y <= lowest + 0.001:
-				sole += world_point
-				count += 1
-		return sole / float(count) if count > 0 else collision.global_position
+		return _get_convex_foot_world_position(collision, Vector3.UP, 0.001)
 	if box == null:
 		return collision.global_position
 	return collision.global_transform * Vector3(0.0, -box.size.y * 0.5, 0.0)
+
+func _invalidate_convex_foot_cache() -> void:
+	_convex_foot_cache.clear()
+
+func _get_convex_foot_world_position(collision: CollisionShape3D, up: Vector3, tolerance: float) -> Vector3:
+	var frame := Engine.get_physics_frames()
+	if frame != _convex_foot_cache_frame:
+		_convex_foot_cache_frame = frame
+		_convex_foot_cache.clear()
+	var shape := collision.shape as ConvexPolygonShape3D
+	var pose := collision.global_transform
+	var cached: Dictionary = _convex_foot_cache.get(collision, {})
+	if not cached.is_empty() and cached.shape == shape and cached.pose == pose and cached.up == up and cached.tolerance == tolerance:
+		_movement_perf.count(&"foot_contact_cache_hits")
+		return cached.position
+	# Shape edits and same-frame teleports must invalidate an otherwise valid result.
+	if not shape.changed.is_connected(_invalidate_convex_foot_cache):
+		shape.changed.connect(_invalidate_convex_foot_cache)
+	var started: int = _movement_perf.start()
+	var points := shape.points
+	var lowest := INF
+	var world_points := PackedVector3Array()
+	world_points.resize(points.size())
+	for index: int in points.size():
+		var point := pose * points[index]
+		world_points[index] = point
+		lowest = minf(lowest, point.dot(up))
+	var sole := Vector3.ZERO
+	var count := 0
+	for point: Vector3 in world_points:
+		if point.dot(up) <= lowest + tolerance:
+			sole += point
+			count += 1
+	var position := sole / float(count) if count > 0 else pose.origin
+	_convex_foot_cache[collision] = {"shape": shape, "pose": pose, "up": up, "tolerance": tolerance, "position": position}
+	_movement_perf.count(&"foot_contact_builds")
+	_movement_perf.count(&"foot_contact_vertices", points.size())
+	_movement_perf.finish(&"foot_contact_build", started)
+	return position
 
 func _find_leg_collision_shape(leg: RigidBody3D) -> CollisionShape3D:
 	var cached := _leg_collision_shape_cache.get(leg) as CollisionShape3D
@@ -1903,6 +1933,7 @@ func refresh_physics_query_cache() -> void:
 
 func _refresh_physics_query_cache() -> void:
 	_physics_query_cache_dirty = false
+	_invalidate_convex_foot_cache()
 	_leg_collision_shape_cache.clear()
 	_ground_probe_cache.clear()
 	_refresh_leg_order()

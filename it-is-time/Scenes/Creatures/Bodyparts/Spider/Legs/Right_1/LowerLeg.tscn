@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=3]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/_PhysicalSampleBodyParts.tscn" id="1_base"]
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/Spider/Models/Legs/Right_1/LowerLeg.glb" id="2_model"]
+[ext_resource type="ArrayMesh" path="res://Resources/Meshes/Spider/Legs/Right_1/LowerLeg.res" id="3_mesh"]
+[sub_resource type="ConvexPolygonShape3D" id="Shape"]
+resource_local_to_scene = true
+points = PackedVector3Array(-0.99141399, 0.29732067, -0.01000000, -0.93284487, 0.41372681, -0.01000000, -0.87427574, 0.47192988, -0.01000000, -0.46429187, 0.47192988, -0.01000000, -0.40572274, 0.41372681, -0.01000000, 0.47281413, -0.69213148, -0.01000000, 0.58995238, -0.92494375, -0.01000000, 0.64852151, -1.15775603, -0.01000000, 0.99993626, -3.54408181, -0.01000000, 0.99993626, -3.60228488, -0.01000000, 0.88279801, -3.60228488, -0.01000000, 0.82422888, -3.54408181, -0.01000000, 0.58995238, -3.19486340, -0.01000000, 0.47281413, -2.96205113, -0.01000000, 0.41424501, -2.84564500, -0.01000000, -0.99141399, 0.06450840, -0.01000000, -0.99141399, 0.29732067, 0.01000000, -0.93284487, 0.41372681, 0.01000000, -0.87427574, 0.47192988, 0.01000000, -0.46429187, 0.47192988, 0.01000000, -0.40572274, 0.41372681, 0.01000000, 0.47281413, -0.69213148, 0.01000000, 0.58995238, -0.92494375, 0.01000000, 0.64852151, -1.15775603, 0.01000000, 0.99993626, -3.54408181, 0.01000000, 0.99993626, -3.60228488, 0.01000000, 0.88279801, -3.60228488, 0.01000000, 0.82422888, -3.54408181, 0.01000000, 0.58995238, -3.19486340, 0.01000000, 0.47281413, -2.96205113, 0.01000000, 0.41424501, -2.84564500, 0.01000000, -0.99141399, 0.06450840, 0.01000000)
+[node name="Spider_LowerLeg" instance=ExtResource("1_base")]
+mass = 0.2
+geometry_mode = 1
+custom_model_path = NodePath("Model")
+paper_volume_enabled = true
+paper_volume_thickness = 0.08
+sprite_visible = false
+mesh_visible = true
+tags = Array[int]([1])
+metadata/source_png = "res://Assets/2DResources/Spider/Separated/Limbs/Right_1/LowerLeg.png"
+metadata/pivot_is_initial_estimate = true
+[node name="CollisionShape3D" parent="." index="0"]
+position = Vector3(0, 0, 0)
+shape = SubResource("Shape")
+[node name="MeshInstance3D" parent="." index="2"]
+visible = false
+mesh = null
+[node name="Model" parent="." instance=ExtResource("2_model")]
+[node name="PaperVolume" type="MeshInstance3D" parent="Model"]
+scale = Vector3(1, 1, 0.08)
+mesh = ExtResource("3_mesh")
+metadata/flat_collision_depth = 0.02
+[node name="JointIn" type="Marker3D" parent="."]
+[node name="JointOut" type="Marker3D" parent="."]
+position = Vector3(0.00000000, -3.56900000, 0.00000000)

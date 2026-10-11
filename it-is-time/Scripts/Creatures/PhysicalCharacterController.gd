@@ -4,6 +4,53 @@ extends Node3D
 @export_group("Faction")
 @export var faction_id: int = 0
 var _combat_anchor: Node3D
+var _ragdoll_sources: Dictionary = {}
+var _ragdoll_modes: Dictionary = {}
+var _hit_ragdoll_timer: Timer
+
+func is_temporarily_ragdolled() -> bool:
+	return not _ragdoll_sources.is_empty()
+
+## Target-owned timer survives cancellation or deletion of the attacking hitbox.
+func apply_timed_hit_ragdoll(duration: float) -> void:
+	if Engine.is_editor_hint() or duration <= 0.0 or not is_inside_tree() or not is_combat_alive(): return
+	if not is_instance_valid(_hit_ragdoll_timer):
+		_hit_ragdoll_timer = Timer.new()
+		_hit_ragdoll_timer.name = "HitRagdollTimer"
+		_hit_ragdoll_timer.one_shot = true
+		# Keep counting when this character's controllers are disabled, but respect game pause.
+		_hit_ragdoll_timer.process_mode = Node.PROCESS_MODE_PAUSABLE
+		add_child(_hit_ragdoll_timer)
+		_hit_ragdoll_timer.timeout.connect(_end_hit_ragdoll)
+	set_temporary_ragdoll(_hit_ragdoll_timer,true)
+	_hit_ragdoll_timer.start(maxf(duration,_hit_ragdoll_timer.time_left))
+
+func _end_hit_ragdoll() -> void:
+	if is_instance_valid(_hit_ragdoll_timer): set_temporary_ragdoll(_hit_ragdoll_timer,false)
+
+func set_temporary_ragdoll(source: Node, value: bool) -> void:
+	if Engine.is_editor_hint() or not is_instance_valid(source): return
+	var id := source.get_instance_id()
+	if value:
+		if _ragdoll_sources.has(id): return
+		_ragdoll_sources[id] = true
+		if _ragdoll_sources.size() > 1: return
+		for child: Node in get_children():
+			if child is PhysicalBodyPart3D or child is CharacterDamageController3D: continue
+			if not child.has_method("set_character_control_enabled") and not str(child.name).contains("Controller") and not str(child.name).contains("StateMachine"): continue
+			_ragdoll_modes[child] = child.process_mode
+			if child.has_method("cancel_npc_attack"): child.cancel_npc_attack()
+			elif child.has_method("cancel_player_actions"): child.cancel_player_actions()
+			elif child.has_method("cancel_action"): child.cancel_action()
+			if child.has_method("release_support_for_impact"): child.release_support_for_impact(0.1)
+			child.process_mode = Node.PROCESS_MODE_DISABLED
+	else:
+		_ragdoll_sources.erase(id)
+		if not _ragdoll_sources.is_empty(): return
+		for child: Variant in _ragdoll_modes:
+			# Death may have disabled controllers while ragdolled; never revive them on release.
+			if is_instance_valid(child) and is_combat_alive(): child.process_mode = _ragdoll_modes[child]
+		_ragdoll_modes.clear()
 
 @export_group("Body Integrity")
 ## Every living connected component must contain both a Head and a Torso.

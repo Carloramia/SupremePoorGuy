@@ -1,0 +1,15 @@
+[gd_scene format=4 uid="uid://dmp6yysgqss2f"]
+
+[ext_resource type="PackedScene" uid="uid://crce3eandk1jr" path="res://Scenes/Creatures/Characters/Generate_Wolf.tscn" id="1"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/NPCStateMachine3D.tscn" id="2"]
+[ext_resource type="Resource" uid="uid://bq4qv5skd4bl6" path="res://Resources/AI/WolfAI.tres" id="3"]
+
+[node name="GenerateWolfNPC" unique_id=1556976358 instance=ExtResource("1")]
+faction_id = 1
+
+[node name="NPCStateMachine3D" parent="." index="4" unique_id=1261962354 instance=ExtResource("2")]
+attack_execution_enabled = true
+behavior = ExtResource("3")
+generated_x_axis_facing = true
+facing_x_dead_zone = 1.0
+navigation_origin_path = NodePath("")

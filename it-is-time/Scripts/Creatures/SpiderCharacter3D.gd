@@ -1,6 +1,65 @@
 @tool
 extends "res://Scripts/Creatures/GeneratedCreatureCharacter3D.gd"
 
+const LIMB_VISUAL_STRETCH = preload("res://Scripts/Creatures/SpiderLimbVisualStretch3D.gd")
+var _spider_stretch_rows: Array = []
+var _spider_stretch_container_id: int = 0
+var _spider_stretch_dirty := true
+
+@export_group("Spider Limb Visual Stretch")
+## Connect the rendered upper-limb holes to Torso/Leg anchors without changing physics.
+@export var spider_limb_visual_stretch_enabled: bool = true:
+	set(value):
+		spider_limb_visual_stretch_enabled = value
+		_spider_stretch_dirty = true
+## Each end retains its original size; only the middle changes length.
+@export_range(0.05, 0.3, 0.01) var spider_limb_visual_end_ratio: float = 0.15:
+	set(value):
+		spider_limb_visual_end_ratio = value
+		_spider_stretch_dirty = true
+@export_group("")
+
+func _process(_delta: float) -> void:
+	_update_spider_limb_visuals()
+
+func _exit_tree() -> void:
+	_restore_spider_limb_visuals()
+
+func _restore_spider_limb_visuals() -> void:
+	for row: RefCounted in _spider_stretch_rows: row.restore()
+	_spider_stretch_rows.clear()
+	_spider_stretch_container_id = 0
+
+func _update_spider_limb_visuals() -> void:
+	var container := get_node_or_null("GeneratedParts")
+	var container_id := container.get_instance_id() if container != null else 0
+	if Engine.is_editor_hint():
+		for row: RefCounted in _spider_stretch_rows:
+			if not row.geometry_is_current(): _spider_stretch_dirty = true
+	if _spider_stretch_dirty or container_id != _spider_stretch_container_id:
+		_restore_spider_limb_visuals()
+		_spider_stretch_container_id = container_id
+		_spider_stretch_dirty = false
+		if spider_limb_visual_stretch_enabled and container != null:
+			var connections: Dictionary = {}
+			for joint: Generic6DOFJoint3D in container.find_children("*", "Generic6DOFJoint3D", true, false):
+				if joint.node_a.is_empty() or joint.node_b.is_empty(): continue
+				var a := joint.get_node_or_null(joint.node_a) as PhysicalBodyPart3D
+				var b := joint.get_node_or_null(joint.node_b) as PhysicalBodyPart3D
+				if a == null or b == null: continue
+				var upper := a if BODY_PART.BodyPartTag.LegLimb in a.tags else b
+				if BODY_PART.BodyPartTag.LegLimb not in upper.tags: continue
+				var other := b if upper == a else a
+				if not connections.has(upper): connections[upper] = {}
+				if BODY_PART.BodyPartTag.Leg in other.tags: connections[upper].tip = joint
+				elif BODY_PART.BodyPartTag.Torso in other.tags: connections[upper].root = joint
+			for upper: PhysicalBodyPart3D in connections:
+				var pair: Dictionary = connections[upper]
+				if not pair.has("root") or not pair.has("tip"): continue
+				var row := LIMB_VISUAL_STRETCH.new()
+				if row.configure(upper, pair.root, pair.tip, spider_limb_visual_end_ratio): _spider_stretch_rows.append(row)
+	for row: RefCounted in _spider_stretch_rows: row.update()
+
 ## Long lower legs bend with the chain rather than behaving as upright feet.
 @export_range(0.0, 90.0, 0.5) var spider_leg_bend_limit_degrees: float = 75.0
 var _spider_angle_joints: Array[Generic6DOFJoint3D] = []
@@ -122,6 +181,33 @@ func _spider_hinge_inertia(body: RigidBody3D, joint: Generic6DOFJoint3D) -> floa
 		intrinsic = diagonal.dot(local_axis * local_axis)
 	var center := body.to_global(body.center_of_mass) if body.center_of_mass_mode == RigidBody3D.CENTER_OF_MASS_MODE_CUSTOM else (collision.global_position if collision != null else body.global_position)
 	return maxf(intrinsic + body.mass * (center - joint.global_position).slide(axis).length_squared(), 0.000001)
+
+func _instantiate_blueprint(blueprint: Dictionary, generator_transform: Transform3D) -> Node3D:
+	var container := super._instantiate_blueprint(blueprint, generator_transform)
+	if container == null: return null
+	for part: Node in container.get_children():
+		if not part is PhysicalBodyPart3D: continue
+		if part.get_meta(&"generated_role", "") == "Leg" and part.geometry_mode == part.GeometryMode.CUSTOM_MODEL and not part.get_meta(&"generated_layout", {}).has("internal_snapshot"):
+			# Imported feet point +Y toward the knee; the original box frame points +Y toward the toe.
+			var flip := Transform3D(Basis(Vector3.BACK, PI), Vector3.ZERO)
+			for child: Node in part.get_children():
+				if child is Node3D and not child.has_meta(&"generated_connection_port"):
+					child.transform = flip * child.transform
+		# Collision follows the original frame, independently of the imported visual silhouette.
+		var size: Vector3 = part.get_meta(&"generated_framework_size")
+		var shape := BoxShape3D.new()
+		shape.resource_local_to_scene = true
+		shape.size = size
+		var collision := part.get_node("CollisionShape3D") as CollisionShape3D
+		collision.transform = Transform3D.IDENTITY
+		collision.shape = shape
+		part.left_distance = size.x * 0.5
+		part.right_distance = size.x * 0.5
+		part.top_distance = size.y * 0.5
+		part.bottom_distance = size.y * 0.5
+		part.collision_thickness = size.z
+		part.set_meta(&"generated_size", size)
+	return container
 
 func _activate_parts(container: Node) -> void:
 	_spider_angle_joints.clear()

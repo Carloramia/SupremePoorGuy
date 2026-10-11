@@ -1,0 +1,254 @@
+[gd_scene format=3]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/Torso/RearTorso.tscn" id="1"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/Torso/FrontTorso.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/Head/Head.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/Mouth/FangLeft.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/Mouth/FangRight.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/Legs/Left_1/UpperLeg.tscn" id="6"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/Legs/Left_1/LowerLeg.tscn" id="7"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/Legs/Left_2/UpperLeg.tscn" id="8"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/Legs/Left_2/LowerLeg.tscn" id="9"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/Legs/Left_3/UpperLeg.tscn" id="10"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/Legs/Left_3/LowerLeg.tscn" id="11"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/Legs/Left_4/UpperLeg.tscn" id="12"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/Legs/Left_4/LowerLeg.tscn" id="13"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/Legs/Right_4/UpperLeg.tscn" id="14"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/Legs/Right_4/LowerLeg.tscn" id="15"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/Legs/Right_3/UpperLeg.tscn" id="16"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/Legs/Right_3/LowerLeg.tscn" id="17"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/Legs/Right_2/UpperLeg.tscn" id="18"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/Legs/Right_2/LowerLeg.tscn" id="19"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/Legs/Right_1/UpperLeg.tscn" id="20"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/Legs/Right_1/LowerLeg.tscn" id="21"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/Decorations/JointRivet.tscn" id="22"]
+[sub_resource type="Environment" id="Env"]
+background_mode = 1
+background_color = Color(0.16, 0.18, 0.22, 1)
+[node name="SpiderPartsPreview" type="Node3D"]
+[node name="Camera3D" type="Camera3D" parent="."]
+position = Vector3(0, -7, 35)
+projection = 1
+size = 52.0
+current = true
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Env")
+[node name="rear_torso" parent="." instance=ExtResource("1")]
+position = Vector3(-16, 7, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label0" type="Label3D" parent="."]
+position = Vector3(-16, 3.8, 1)
+text = "RearTorso"
+font_size = 40
+pixel_size = 0.015
+[node name="front_torso" parent="." instance=ExtResource("2")]
+position = Vector3(-8, 7, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label1" type="Label3D" parent="."]
+position = Vector3(-8, 3.8, 1)
+text = "FrontTorso"
+font_size = 40
+pixel_size = 0.015
+[node name="head" parent="." instance=ExtResource("3")]
+position = Vector3(0, 7, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label2" type="Label3D" parent="."]
+position = Vector3(0, 3.8, 1)
+text = "Head"
+font_size = 40
+pixel_size = 0.015
+[node name="fang_left" parent="." instance=ExtResource("4")]
+position = Vector3(8, 7, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label3" type="Label3D" parent="."]
+position = Vector3(8, 3.8, 1)
+text = "FangLeft"
+font_size = 40
+pixel_size = 0.015
+[node name="fang_right" parent="." instance=ExtResource("5")]
+position = Vector3(16, 7, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label4" type="Label3D" parent="."]
+position = Vector3(16, 3.8, 1)
+text = "FangRight"
+font_size = 40
+pixel_size = 0.015
+[node name="left_1_upper" parent="." instance=ExtResource("6")]
+position = Vector3(-16, 0, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label5" type="Label3D" parent="."]
+position = Vector3(-16, -3.2, 1)
+text = "UpperLeg"
+font_size = 40
+pixel_size = 0.015
+[node name="left_1_lower" parent="." instance=ExtResource("7")]
+position = Vector3(-8, 0, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label6" type="Label3D" parent="."]
+position = Vector3(-8, -3.2, 1)
+text = "LowerLeg"
+font_size = 40
+pixel_size = 0.015
+[node name="left_2_upper" parent="." instance=ExtResource("8")]
+position = Vector3(0, 0, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label7" type="Label3D" parent="."]
+position = Vector3(0, -3.2, 1)
+text = "UpperLeg"
+font_size = 40
+pixel_size = 0.015
+[node name="left_2_lower" parent="." instance=ExtResource("9")]
+position = Vector3(8, 0, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label8" type="Label3D" parent="."]
+position = Vector3(8, -3.2, 1)
+text = "LowerLeg"
+font_size = 40
+pixel_size = 0.015
+[node name="left_3_upper" parent="." instance=ExtResource("10")]
+position = Vector3(16, 0, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label9" type="Label3D" parent="."]
+position = Vector3(16, -3.2, 1)
+text = "UpperLeg"
+font_size = 40
+pixel_size = 0.015
+[node name="left_3_lower" parent="." instance=ExtResource("11")]
+position = Vector3(-16, -7, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label10" type="Label3D" parent="."]
+position = Vector3(-16, -10.2, 1)
+text = "LowerLeg"
+font_size = 40
+pixel_size = 0.015
+[node name="left_4_upper" parent="." instance=ExtResource("12")]
+position = Vector3(-8, -7, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label11" type="Label3D" parent="."]
+position = Vector3(-8, -10.2, 1)
+text = "UpperLeg"
+font_size = 40
+pixel_size = 0.015
+[node name="left_4_lower" parent="." instance=ExtResource("13")]
+position = Vector3(0, -7, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label12" type="Label3D" parent="."]
+position = Vector3(0, -10.2, 1)
+text = "LowerLeg"
+font_size = 40
+pixel_size = 0.015
+[node name="right_4_upper" parent="." instance=ExtResource("14")]
+position = Vector3(8, -7, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label13" type="Label3D" parent="."]
+position = Vector3(8, -10.2, 1)
+text = "UpperLeg"
+font_size = 40
+pixel_size = 0.015
+[node name="right_4_lower" parent="." instance=ExtResource("15")]
+position = Vector3(16, -7, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label14" type="Label3D" parent="."]
+position = Vector3(16, -10.2, 1)
+text = "LowerLeg"
+font_size = 40
+pixel_size = 0.015
+[node name="right_3_upper" parent="." instance=ExtResource("16")]
+position = Vector3(-16, -14, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label15" type="Label3D" parent="."]
+position = Vector3(-16, -17.2, 1)
+text = "UpperLeg"
+font_size = 40
+pixel_size = 0.015
+[node name="right_3_lower" parent="." instance=ExtResource("17")]
+position = Vector3(-8, -14, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label16" type="Label3D" parent="."]
+position = Vector3(-8, -17.2, 1)
+text = "LowerLeg"
+font_size = 40
+pixel_size = 0.015
+[node name="right_2_upper" parent="." instance=ExtResource("18")]
+position = Vector3(0, -14, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label17" type="Label3D" parent="."]
+position = Vector3(0, -17.2, 1)
+text = "UpperLeg"
+font_size = 40
+pixel_size = 0.015
+[node name="right_2_lower" parent="." instance=ExtResource("19")]
+position = Vector3(8, -14, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label18" type="Label3D" parent="."]
+position = Vector3(8, -17.2, 1)
+text = "LowerLeg"
+font_size = 40
+pixel_size = 0.015
+[node name="right_1_upper" parent="." instance=ExtResource("20")]
+position = Vector3(16, -14, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label19" type="Label3D" parent="."]
+position = Vector3(16, -17.2, 1)
+text = "UpperLeg"
+font_size = 40
+pixel_size = 0.015
+[node name="right_1_lower" parent="." instance=ExtResource("21")]
+position = Vector3(-16, -21, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label20" type="Label3D" parent="."]
+position = Vector3(-16, -24.2, 1)
+text = "LowerLeg"
+font_size = 40
+pixel_size = 0.015
+[node name="joint_rivet" parent="." instance=ExtResource("22")]
+position = Vector3(-8, -21, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label21" type="Label3D" parent="."]
+position = Vector3(-8, -24.2, 1)
+text = "JointRivet"
+font_size = 40
+pixel_size = 0.015

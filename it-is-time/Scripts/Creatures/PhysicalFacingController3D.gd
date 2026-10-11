@@ -144,6 +144,8 @@ func _planar_mode_active() -> bool:
 	return actor != null and actor.has_method("is_planar_mode_active") and actor.is_planar_mode_active()
 
 func _physics_process(delta: float) -> void:
+	var wolf_attacks := get_parent().get_node_or_null("WolfAttackController3D")
+	if wolf_attacks != null and wolf_attacks.is_npc_attack_active(): return
 	_resolve_dependencies()
 	var npc := _get_autonomous_npc()
 	var autonomous_actor := get_parent().has_node("NPCStateMachine3D") and PLAYER_CONTEXT.controlled_character(self) != get_parent()

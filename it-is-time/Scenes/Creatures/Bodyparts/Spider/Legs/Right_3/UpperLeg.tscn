@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=3]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/_PhysicalSampleBodyParts.tscn" id="1_base"]
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/Spider/Models/Legs/Right_3/UpperLeg.glb" id="2_model"]
+[ext_resource type="ArrayMesh" path="res://Resources/Meshes/Spider/Legs/Right_3/UpperLeg.res" id="3_mesh"]
+[sub_resource type="ConvexPolygonShape3D" id="Shape"]
+resource_local_to_scene = true
+points = PackedVector3Array(-0.08703989, 0.30586844, -0.01000000, -0.06585590, 0.34817283, -0.01000000, -0.02348791, 0.36932502, -0.01000000, 0.08243207, 0.36932502, -0.01000000, 0.10361606, 0.34817283, -0.01000000, 0.12480006, 0.32702064, -0.01000000, 0.14598405, 0.30586844, -0.01000000, 0.35782400, 0.03088994, -0.01000000, 0.37900800, -0.01141445, -0.01000000, 0.37900800, -0.05371883, -0.01000000, 0.33664001, -1.11132846, -0.01000000, 0.29427202, -1.11132846, -0.01000000, 0.18835204, -1.00556750, -0.01000000, 0.14598405, -0.94211092, -0.01000000, 0.10361606, -0.87865434, -0.01000000, 0.04006408, -0.77289338, -0.01000000, -0.02348791, -0.64598022, -0.01000000, -0.04467190, -0.60367584, -0.01000000, -0.06585590, -0.54021926, -0.01000000, -0.08703989, 0.17895529, -0.01000000, -0.08703989, 0.30586844, 0.01000000, -0.06585590, 0.34817283, 0.01000000, -0.02348791, 0.36932502, 0.01000000, 0.08243207, 0.36932502, 0.01000000, 0.10361606, 0.34817283, 0.01000000, 0.12480006, 0.32702064, 0.01000000, 0.14598405, 0.30586844, 0.01000000, 0.35782400, 0.03088994, 0.01000000, 0.37900800, -0.01141445, 0.01000000, 0.37900800, -0.05371883, 0.01000000, 0.33664001, -1.11132846, 0.01000000, 0.29427202, -1.11132846, 0.01000000, 0.18835204, -1.00556750, 0.01000000, 0.14598405, -0.94211092, 0.01000000, 0.10361606, -0.87865434, 0.01000000, 0.04006408, -0.77289338, 0.01000000, -0.02348791, -0.64598022, 0.01000000, -0.04467190, -0.60367584, 0.01000000, -0.06585590, -0.54021926, 0.01000000, -0.08703989, 0.17895529, 0.01000000)
+[node name="Spider_UpperLeg" instance=ExtResource("1_base")]
+mass = 0.2
+geometry_mode = 1
+custom_model_path = NodePath("Model")
+paper_volume_enabled = true
+paper_volume_thickness = 0.08
+sprite_visible = false
+mesh_visible = true
+tags = Array[int]([5])
+metadata/source_png = "res://Assets/2DResources/Spider/Separated/Limbs/Right_3/UpperLeg.png"
+metadata/pivot_is_initial_estimate = true
+[node name="CollisionShape3D" parent="." index="0"]
+position = Vector3(0, 0, 0)
+shape = SubResource("Shape")
+[node name="MeshInstance3D" parent="." index="2"]
+visible = false
+mesh = null
+[node name="Model" parent="." instance=ExtResource("2_model")]
+[node name="PaperVolume" type="MeshInstance3D" parent="Model"]
+scale = Vector3(1, 1, 0.08)
+mesh = ExtResource("3_mesh")
+metadata/flat_collision_depth = 0.02
+[node name="JointIn" type="Marker3D" parent="."]
+[node name="JointOut" type="Marker3D" parent="."]
+position = Vector3(0.27781599, -0.82500000, 0.00000000)

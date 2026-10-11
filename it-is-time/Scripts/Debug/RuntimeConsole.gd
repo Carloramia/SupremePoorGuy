@@ -2,8 +2,14 @@ extends CanvasLayer
 
 const MOTION_PLAYER_CONTEXT = preload("res://Scripts/Player/PlayerControlContext.gd")
 const PERF = preload("res://Scripts/Debug/ControlPerformanceStats.gd")
+const JOINT_DIAGNOSTICS = preload("res://Scripts/Debug/JointMotionDiagnostics3D.gd")
+const STEP_TARGET_DISPLAY = preload("res://Scripts/Debug/StepTargetDisplay3D.gd")
+var _step_target_display: Node3D
 
 const COMMAND_HELP: Array[Dictionary] = [
+	{&"name": "trackjoints [on|off] [filter]", &"description": "Track joint reference rotations, limits and anchor gaps; filter by character name, path or ID."},
+	{&"name": "jointstates [filter]", &"description": "Print joint snapshots reconstructed from activation frames (not private solver angles)."},
+	{&"name": "showsteptargets [on|off]", &"description": "Toggle world-space planned landing rings; each foot has a fixed color."},
 	{&"name": "motiondetail [summary|full]", &"description": "Choose compact gait summaries (default) or full BodyPart snapshots for motion tracking."},
 	{&"name": "trackcharge", &"description": "Toggle charge phases, torso speeds/forces, support foot locks/steps and stuck timers every 0.1s."},
 	{&"name": "help", &"description": "List all available console commands."},
@@ -19,6 +25,7 @@ const COMMAND_HELP: Array[Dictionary] = [
 	{&"name": "npcstates [filter]", &"description": "Print a one-time NPC state-machine snapshot."},
 	{&"name": "trackcollision", &"description": "Toggle BodyPart contact enter/exit and collision configuration logs."},
 	{&"name": "trackdamage", &"description": "Toggle weapon/shockwave/dive impact, HP, break, and joint-removal logs."},
+	{&"name": "trackwolfattacks [on|off] [filter]", &"description": "Track Wolf pounce, staggered claws, bite and prediction-gated combos."},
 	{&"name": "trackturn", &"description": "Toggle facing decisions, combined walking/turning targets and Leg traction logs."},
 	{&"name": "trackswing", &"description": "Toggle Arm swing direction, load, and Joint diagnostics."},
 ]
@@ -61,9 +68,15 @@ var _npc_motion_elapsed: float = 0.0
 var _npc_state_tracking_enabled := false
 var _npc_state_filter := ""
 var _npc_state_elapsed := 0.0
+var _joint_tracking_enabled := false
+var _joint_tracking_filter := ""
+var _joint_tracking_elapsed := 0.0
+var _joint_last_physics_frame := -1
 @export_range(0.1,10.0,0.1) var npc_state_tracking_interval: float = 0.5
 var _collision_tracking_enabled: bool = false
 var _damage_tracking_enabled: bool = false
+var _wolf_attack_tracking_enabled := false
+var _wolf_attack_filter := ""
 var _swing_tracking_enabled: bool = false
 var _turn_tracking_enabled: bool = true
 
@@ -82,6 +95,11 @@ func _input(event: InputEvent) -> void:
 
 func _process(delta: float) -> void:
 	_output_refresh_elapsed += delta
+	if _joint_tracking_enabled:
+		_joint_tracking_elapsed += delta
+		if _joint_tracking_elapsed >= motion_tracking_interval and _joint_last_physics_frame != Engine.get_physics_frames():
+			_joint_tracking_elapsed = 0.0
+			_emit_joint_snapshot(_joint_tracking_filter)
 	if _flight_tracking_enabled and not _motion_tracking_enabled:
 		_flight_tracking_elapsed += delta
 		if _flight_tracking_elapsed >= motion_tracking_interval:
@@ -136,6 +154,38 @@ func is_console_open() -> bool:
 
 func execute_command(command: String) -> String:
 	var args := command.strip_edges().split(" ",false)
+	if not args.is_empty() and args[0].to_lower() == "trackwolfattacks":
+		if args.size() == 1: _wolf_attack_tracking_enabled = not _wolf_attack_tracking_enabled
+		elif args[1].to_lower() in ["on","off"]:
+			_wolf_attack_tracking_enabled = args[1].to_lower() == "on"
+			_wolf_attack_filter = " ".join(args.slice(2))
+		else: return "Usage: trackwolfattacks [on|off] [character name, path or instance ID]"
+		for controller: Node in get_tree().get_nodes_in_group(&"wolf_attack_controllers"):
+			controller.diagnostic_logging = is_wolf_attack_tracking_enabled(controller.get_parent())
+		return "Wolf attack tracking %s; filter=%s." % ["enabled" if _wolf_attack_tracking_enabled else "disabled",_wolf_attack_filter if not _wolf_attack_filter.is_empty() else "all"]
+	if not args.is_empty() and args[0].to_lower() == "jointstates":
+		return "Joint snapshots: %d" % _emit_joint_snapshot(" ".join(args.slice(1)))
+	if not args.is_empty() and args[0].to_lower() == "trackjoints":
+		if args.size() == 1:
+			_joint_tracking_enabled = not _joint_tracking_enabled
+		elif args[1].to_lower() in ["on", "off"]:
+			_joint_tracking_enabled = args[1].to_lower() == "on"
+			_joint_tracking_filter = " ".join(args.slice(2))
+		else:
+			return "Usage: trackjoints [on|off] [character name, path or instance ID]"
+		_joint_tracking_elapsed = 0.0
+		var count := _emit_joint_snapshot(_joint_tracking_filter) if _joint_tracking_enabled else 0
+		return "Joint tracking %s; filter=%s; joints=%d; interval=%.2fs" % ["enabled" if _joint_tracking_enabled else "disabled", _joint_tracking_filter if not _joint_tracking_filter.is_empty() else "all", count, motion_tracking_interval]
+	if not args.is_empty() and args[0].to_lower() == "showsteptargets":
+		if args.size() > 2 or (args.size() == 2 and args[1].to_lower() not in ["on", "off"]):
+			return "Usage: showsteptargets [on|off]"
+		if not is_instance_valid(_step_target_display):
+			_step_target_display = STEP_TARGET_DISPLAY.new()
+			_step_target_display.name = "StepTargetDisplay3D"
+			add_child(_step_target_display)
+		var value: bool = not _step_target_display.enabled if args.size() == 1 else args[1].to_lower() == "on"
+		_step_target_display.set_enabled(value)
+		return "Step target rings %s." % ("enabled" if value else "disabled")
 	if not args.is_empty() and args[0].to_lower() == "motiondetail":
 		if args.size() != 2 or args[1].to_lower() not in ["summary", "full"]: return "Usage: motiondetail [summary|full]"
 		_full_motion_details = args[1].to_lower() == "full"
@@ -341,6 +391,9 @@ func is_collision_tracking_enabled() -> bool:
 func is_damage_tracking_enabled() -> bool:
 	return _damage_tracking_enabled
 
+func is_wolf_attack_tracking_enabled(character: Node) -> bool:
+	return _wolf_attack_tracking_enabled and (_wolf_attack_filter.is_empty() or str(character.get_path()).to_lower().contains(_wolf_attack_filter.to_lower()) or str(character.get_instance_id()) == _wolf_attack_filter)
+
 func is_turn_tracking_enabled() -> bool:
 	return _turn_tracking_enabled
 
@@ -413,6 +466,21 @@ func _emit_npc_motion_snapshot() -> int:
 	_emit_motion_lines(messages)
 	return count
 
+func _emit_joint_snapshot(filter: String) -> int:
+	var started := _logger_perf.start()
+	var messages: Array[String] = []
+	var visited: Dictionary = {}
+	for controller: Node in get_tree().get_nodes_in_group(&"leg_step_movement_controllers"):
+		var actor := controller.get_parent() as Node3D
+		if not is_instance_valid(actor) or actor.is_queued_for_deletion() or visited.has(actor) or not _npc_matches(controller, filter): continue
+		visited[actor] = true
+		for joint: Generic6DOFJoint3D in actor.find_children("*", "Generic6DOFJoint3D", true, false):
+			messages.append("[joint_motion] character=%s character_path=%s character_id=%d data=%s" % [actor.name, actor.get_path(), actor.get_instance_id(), JOINT_DIAGNOSTICS.collect(joint)])
+	_joint_last_physics_frame = Engine.get_physics_frames()
+	_logger_perf.finish(&"joint_snapshot_build", started)
+	_emit_motion_lines(messages)
+	return messages.size()
+
 func _collect_motion_summary(character: Node3D) -> Array[String]:
 	var messages: Array[String] = []
 	messages.append("[trackmotion] snapshot=%d physics_frame=%d time_ms=%d character=%s detail=summary" % [
@@ -435,6 +503,8 @@ func _collect_motion_summary(character: Node3D) -> Array[String]:
 			torsos.append({"body": torso.name, "position": torso.global_position, "velocity": torso.linear_velocity})
 		messages.append("[trackmotion] character=%s requested_speed=%.3f planned_speed=%.3f stepping=%d torso_motion=%s leg_profiles=%s feet=%s" % [
 			character.name, automatic.requested_speed, automatic.target_speed, controller._active_steps.size(), torsos, legs, feet])
+		if automatic.has("wolf_auto_gallop"):
+			messages.append("[trackmotion] character=%s wolf_auto_gallop=%s" % [character.name, automatic.wolf_auto_gallop])
 	return messages
 
 func _collect_motion_snapshot(character: Node3D = null) -> Array[String]:
@@ -587,7 +657,10 @@ func _collect_leg_motion_lines(controller: Node) -> Array[String]:
 			if support.has("spider_support_selection"):
 				message += " spider_support_selection=%s spider_liftoff=%s spider_joint_springs=%s" % [support.spider_support_selection, support.get("spider_liftoff", {}), support.get("spider_joint_springs", [])]
 				message += " spider_landing=%s spider_last_touchdown=%s" % [support.get("spider_landing", {}), support.get("spider_last_touchdown", {})]
+				message += " spider_pose_guide=%s spider_contact_trajectory=%s spider_attempts=%s" % [support.get("spider_pose_guide", {}), support.get("spider_contact_trajectory", {}), support.get("spider_attempts", {})]
 				message += " spider_catch_up=%s spider_recovery_attempts=%s" % [support.get("spider_catch_up", {}), support.get("spider_recovery_attempts", 0)]
+				message += " spider_constraint_guard=%s spider_live_reach=%s" % [support.get("spider_constraint_guard", {}), support.get("spider_live_reach", {})]
+				message += " spider_leg_rotation_balance=%s" % support.get("spider_leg_rotation_balance", {})
 			if support.has("foot_heading"):
 				message += " foot_yaw_locked=%s foot_heading=%s" % [support.get("foot_yaw_locked", false), support.foot_heading]
 			message += " adhesion_force=%s ground_gap=%.3f alignment_torque=%s" % [

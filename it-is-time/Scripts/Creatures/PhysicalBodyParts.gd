@@ -28,9 +28,18 @@ enum BodyPartTag {
 
 @export_group("Classification")
 ## A part may carry more than one classification tag.
-@export var tags: Array[BodyPartTag] = []
+@export var tags: Array[BodyPartTag] = []:
+	set(value):
+		tags = value
+		if is_node_ready() and not Engine.is_editor_hint():
+			call_deferred("_sync_limb_terrain_collisions")
 
 @export_group("Foot Ground State")
+## LegLimb terrain filtering; characters may restore ground collisions without changing tags.
+@export var ignore_limb_terrain: bool = true:
+	set(value):
+		ignore_limb_terrain = value
+		if is_node_ready() and not Engine.is_editor_hint(): call_deferred("_sync_limb_terrain_collisions")
 ## External gameplay may enable slipping; an upright grounded foot is otherwise pinned.
 @export var is_slipping: bool = false:
 	set(value):
@@ -73,7 +82,11 @@ enum BodyPartTag {
 @export_group("Durability")
 @export_range(1.0, 100000.0, 1.0, "or_greater") var max_hp: float = 100.0
 @export_range(0.0, 10000.0, 0.1, "or_greater") var armor: float = 10.0
-@export var is_broken: bool = false
+@export var is_broken: bool = false:
+	set(value):
+		is_broken = value
+		if is_node_ready() and not Engine.is_editor_hint():
+			call_deferred("_sync_limb_terrain_collisions")
 @export var damage_logging_enabled: bool = false
 
 @export_group("Damage Feedback")
@@ -152,6 +165,30 @@ var current_hp: float = 100.0
 var _damage_service: Node
 var _collision_logging_enabled: bool = false
 var _foot_contact_samples: Array[Dictionary] = []
+var _ignored_limb_terrain: Array[StaticBody3D] = []
+
+func _sync_limb_terrain_collisions() -> void:
+	if not is_inside_tree() or Engine.is_editor_hint(): return
+	var ignore_terrain := ignore_limb_terrain and BodyPartTag.LegLimb in tags and not is_broken
+	var tree := get_tree()
+	if not ignore_terrain:
+		if tree.node_added.is_connected(_on_limb_terrain_added):
+			tree.node_added.disconnect(_on_limb_terrain_added)
+		for terrain: StaticBody3D in _ignored_limb_terrain:
+			if is_instance_valid(terrain): remove_collision_exception_with(terrain)
+		_ignored_limb_terrain.clear()
+		return
+	if not tree.node_added.is_connected(_on_limb_terrain_added):
+		tree.node_added.connect(_on_limb_terrain_added)
+	for terrain: Node in tree.root.find_children("*", "StaticBody3D", true, false):
+		_on_limb_terrain_added(terrain)
+
+func _on_limb_terrain_added(node: Node) -> void:
+	if node is StaticBody3D and ignore_limb_terrain and not is_broken and BodyPartTag.LegLimb in tags:
+		# Preserve exceptions owned by other systems when restoring terrain collisions.
+		if node not in get_collision_exceptions():
+			add_collision_exception_with(node)
+			_ignored_limb_terrain.append(node)
 
 ## Actual solver impulses, not the movement controller's commanded force.
 func _record_foot_contacts(state: PhysicsDirectBodyState3D) -> void:
@@ -195,6 +232,7 @@ func _ready() -> void:
 	_sync_geometry()
 	if not Engine.is_editor_hint():
 		add_to_group(&"physical_body_parts")
+		call_deferred("_sync_limb_terrain_collisions")
 		body_entered.connect(_on_collision_body_entered)
 		body_exited.connect(_on_collision_body_exited)
 		if console != null and console.has_method("is_collision_tracking_enabled"):

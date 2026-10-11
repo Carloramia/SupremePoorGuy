@@ -8,7 +8,7 @@
 [ext_resource type="PackedScene" path="res://Scenes/VFX/TerrainArcIndicator3D.tscn" id="7_terrain_arc"]
 [ext_resource type="PackedScene" path="res://Scenes/Player/Controller.tscn" id="8_player_controller"]
 [ext_resource type="PackedScene" uid="uid://dstgtopkigikh" path="res://Scenes/Creatures/Characters/Character_Test_NPC.tscn" id="9_a7u0l"]
-[ext_resource type="PackedScene" path="res://Scenes/Creatures/Characters/Generate_Spider_NPC.tscn" id="10_qhub5"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Characters/Generate_Spider_NPC.tscn" id="9_qhub5"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_flat_ground"]
 size = Vector3(200, 102, 200)
@@ -55,15 +55,8 @@ camera_rig = NodePath("../DragCamera3D")
 terrain_cursor = NodePath("../TerrainCursor3D")
 
 [node name="CharacterTestNPC" parent="." unique_id=418755916 instance=ExtResource("9_a7u0l")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 84.635254, 1.379998, -20.405687)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 143.19507, 1.3799999, -0.50146484)
 faction_id = 2
 
-[node name="GenerateSpiderNPC" parent="." unique_id=1402366569 instance=ExtResource("10_qhub5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -64.79531, 1.05, -24.935844)
-spider_scale_joint_springs = true
-spider_independent_torso_support = true
-spider_axial_sliding_enabled = true
-spider_root_slide_ratio = 0.02
-spider_knee_slide_ratio = 0.03
-spider_axial_spring_frequency = 8.0
-spider_axial_damping_ratio = 1.0
+[node name="GenerateSpiderNPC" parent="." unique_id=662865548 instance=ExtResource("9_qhub5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.56173015, 1.4623786, 0.87524223)

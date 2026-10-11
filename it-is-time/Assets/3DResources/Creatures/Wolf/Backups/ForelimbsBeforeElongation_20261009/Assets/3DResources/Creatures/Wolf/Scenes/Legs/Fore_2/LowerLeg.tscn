@@ -1,0 +1,23 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/Wolf/Models/Legs/Fore_2/LowerLeg.glb" id="1_model"]
+
+[sub_resource type="ConvexPolygonShape3D" id="Shape"]
+points = PackedVector3Array(-0.86224281, -1.12182635, -0.01000000, -0.83684834, -1.04523672, -0.01000000, -0.53211473, -0.33040015, -0.01000000, -0.48132579, -0.22828064, -0.01000000, -0.07501430, 0.15466752, -0.01000000, -0.02422536, 0.18019740, -0.01000000, 0.05195804, 0.18019740, -0.01000000, 0.10274698, 0.15466752, -0.01000000, 0.15353591, 0.10360776, -0.01000000, 0.17893038, 0.05254801, -0.01000000, 0.17893038, -0.07510138, -0.01000000, -0.40514238, -1.37712513, -0.01000000, -0.76066494, -1.37712513, -0.01000000, -0.86224281, -1.27500562, -0.01000000, -0.86224281, -1.12182635, 0.01000000, -0.83684834, -1.04523672, 0.01000000, -0.53211473, -0.33040015, 0.01000000, -0.48132579, -0.22828064, 0.01000000, -0.07501430, 0.15466752, 0.01000000, -0.02422536, 0.18019740, 0.01000000, 0.05195804, 0.18019740, 0.01000000, 0.10274698, 0.15466752, 0.01000000, 0.15353591, 0.10360776, 0.01000000, 0.17893038, 0.05254801, 0.01000000, 0.17893038, -0.07510138, 0.01000000, -0.40514238, -1.37712513, 0.01000000, -0.76066494, -1.37712513, 0.01000000, -0.86224281, -1.27500562, 0.01000000)
+
+[node name="LowerLeg" type="RigidBody3D"]
+freeze = true
+freeze_mode = 1
+mass = 0.1
+metadata/source_png = "res://Assets/2DResources/Wolf/Separated/Limbs/02_leg_lower.png"
+metadata/pivot_is_initial_estimate = true
+
+[node name="Model" parent="." instance=ExtResource("1_model")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("Shape")
+
+[node name="JointIn" type="Marker3D" parent="."]
+
+[node name="JointOut" type="Marker3D" parent="."]
+position = Vector3(-0.66977732, -1.20900000, 0.00000000)

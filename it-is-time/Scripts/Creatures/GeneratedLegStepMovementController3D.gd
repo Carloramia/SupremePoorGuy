@@ -80,6 +80,8 @@ var _startup_status: StringName = &"idle"
 
 @export_group("SubTorso Support")
 @export var sub_torso_support_enabled: bool = true
+## Carry the torso and suspended attachments without relying on stance torque.
+@export var independent_torso_height_support: bool = false
 @export_range(0.0, 1.0, 0.05) var sub_torso_weight_share: float = 0.5
 @export_range(0.0, 100.0, 0.1) var sub_torso_height_gain: float = 12.0
 @export_range(0.0, 2.0, 0.05) var sub_torso_damping_ratio: float = 1.0
@@ -690,16 +692,20 @@ func _is_landing_point_valid(leg: RigidBody3D, current_foot: Vector3, hit: Dicti
 		_last_landing_rejection_reason = &"limb_chain_broken"
 		return false
 	var chain: Dictionary = _chains[leg]
-	var root_body: RigidBody3D = chain.root
-	var attachment := root_body.to_global(chain.anchor)
+	var attachment := _landing_reach_attachment(leg)
 	var target := _body_position_for_ground_contact(leg, hit.position)
-	if _gallop_active() and _get_gait_data().speed_based_gait:
-		var plan := _get_speed_leg_plan(leg)
-		if not plan.is_empty(): attachment += Vector3(plan.predicted_travel)
 	if target.distance_to(attachment) > float(chain.length) * chain_reach_ratio:
 		_last_landing_rejection_reason = &"limb_chain_reach_exceeded"
 		return false
 	return true
+
+func _landing_reach_attachment(leg: RigidBody3D) -> Vector3:
+	var chain: Dictionary = _chains[leg]
+	var attachment: Vector3 = chain.root.to_global(chain.anchor)
+	if _gallop_active() and _get_gait_data().speed_based_gait:
+		var plan := _get_speed_leg_plan(leg)
+		if not plan.is_empty(): attachment += Vector3(plan.predicted_travel)
+	return attachment
 
 func _capture_hip_joint_limits() -> void:
 	# The foot reaches its Torso through several rotational joints; never stretch their linear limits.
@@ -1076,6 +1082,9 @@ func _update_extension_gait(delta: float, direction: Vector3) -> void:
 	var demands: Dictionary = {}
 	for foot: RigidBody3D in candidates: demands[foot] = _get_extension_step_demand(foot,direction)
 	candidates.sort_custom(func(a,b):
+		var a_priority := float(demands[a].get("step_priority",0.0))
+		var b_priority := float(demands[b].get("step_priority",0.0))
+		if not is_equal_approx(a_priority,b_priority): return a_priority>b_priority
 		var a_rank := _walk_start_pending.find(a)
 		var b_rank := _walk_start_pending.find(b)
 		if not _charge_gait_active() and a_rank>=0 and b_rank>=0 and not _walk_start_emergency(a) and not _walk_start_emergency(b): return a_rank<b_rank
@@ -1231,9 +1240,14 @@ func _try_gallop_takeoff(foot: RigidBody3D) -> void:
 
 func _update_gallop_contacts() -> void:
 	if not _gallop_active():
-		_gallop_contacts.clear()
+		if _airborne_height_support_authorized():
+			for foot in _gallop_contacts.keys():
+				if not is_instance_valid(foot) or not _chain_is_intact(foot) or _physics_elapsed - float(_gallop_contacts[foot].time) >= _gallop_contact_duration(foot):
+					_gallop_contacts.erase(foot)
+		else:
+			_gallop_contacts.clear()
 		_gallop_reach_released.clear()
-		_gallop_diagnostics = {"active": false}
+		_gallop_diagnostics = {"active": false, "retained_height_support": not _gallop_contacts.is_empty()}
 		return
 	for foot: RigidBody3D in _legs:
 		if not _chain_is_intact(foot) or foot.freeze: continue
@@ -1301,7 +1315,7 @@ func _contact_drive_supports(feet: Array) -> Array[RigidBody3D]:
 
 func _gallop_support(feet: Array, up: Vector3 = Vector3.UP) -> Dictionary:
 	var result := {"weight": 0.0, "height": 0.0, "feet": 0}
-	if not _gallop_active(): return result
+	if not _airborne_height_support_authorized(): return result
 	var total := 0.0
 	for foot in feet:
 		if not _gallop_contacts.has(foot) or not _chain_is_intact(foot) or foot.freeze: continue
@@ -1507,6 +1521,20 @@ func _apply_torso_response() -> void:
 	var total_torso_mass := 0.0
 	for body: RigidBody3D in get_torso_parts():
 		if not _is_body_broken(body): total_torso_mass += body.mass
+	var support_mass_scale := 1.0
+	if independent_torso_height_support:
+		var assembly_mass := 0.0
+		var assigned_mass := 0.0
+		var carries_limbs := _height_support_carries_limb_weight()
+		var passive_leg_bodies := {}
+		for chain: Dictionary in _chains.values():
+			for body: RigidBody3D in chain.bodies:
+				if not _has_body_tag(body, TORSO_TAG): passive_leg_bodies[body] = true
+		for body: Node in get_node(parts_root_path).get_children():
+			# Default support excludes leg weight; full-flight support carries the whole assembly.
+			if body is RigidBody3D and (carries_limbs or not passive_leg_bodies.has(body)) and not _is_body_broken(body) and not body.freeze: assembly_mass += body.mass
+		for segment: Dictionary in _segments.values(): assigned_mass += float(segment.mass)
+		support_mass_scale = assembly_mass / maxf(assigned_mass, 0.001)
 	for id: int in _segments:
 		var segment: Dictionary = _segments[id]
 		var support_floor := 0.0
@@ -1549,6 +1577,8 @@ func _apply_torso_response() -> void:
 		var previous_lift := float(segment.auxiliary_force)
 		var normal_support_weight := 1.0-_action_segment_weight(segment)
 		segment.auxiliary_force = 0.0
+		segment["support_target_height"] = 0.0
+		segment["support_mass"] = 0.0
 		var grounded_support := contact_count > 0 and _adhesion_release_time_remaining <= 0.0
 		var supported: bool = grounded_support or air_support.weight > 0.0
 		var target_blend := 1.0 if supported else 0.0
@@ -1557,22 +1587,25 @@ func _apply_torso_response() -> void:
 			# Bounded airborne support remembers the last real floor; it never samples a new floor in air.
 			if supported:
 				var target_height: float = (floor_height / float(grounded) if grounded > 0 else (support_floor if grounded_support else float(air_support.height))) + segment.reference_height
-				target_height = _limit_supported_torso_height(segment, target_height, up)
+				if not independent_torso_height_support: target_height = _limit_supported_torso_height(segment, target_height, up)
 				var height_error: float = target_height - Vector3(segment.torso_center).dot(up)
 				var damping := 2.0 * sub_torso_damping_ratio * sqrt(sub_torso_height_gain)
-				var lift: float = segment.mass * (gravity.length() * sub_torso_weight_share + height_error * sub_torso_height_gain - vertical_speed / torso_mass * damping)
+				var support_mass: float = segment.mass * support_mass_scale
+				segment["support_target_height"] = target_height
+				segment["support_mass"] = support_mass
+				var lift: float = support_mass * (gravity.length() * _height_support_weight_share() + height_error * sub_torso_height_gain - vertical_speed / torso_mass * damping)
 				var support_limit := minf(sub_torso_maximum_weight_share, auxiliary_support_weight_limit)
-				if not grounded_support: support_limit = minf(support_limit,(0.45 if _get_gait_data().speed_based_gait else _get_gait_data().gallop_airborne_support_ratio) * float(air_support.weight) * _gallop_intensity())
-				lift = clampf(lift, 0.0, segment.mass * gravity.length() * support_limit) * segment.support_blend * normal_support_weight
+				if not grounded_support: support_limit = minf(support_limit, _airborne_height_support_limit(float(air_support.weight)))
+				lift = clampf(lift, 0.0, support_mass * gravity.length() * support_limit) * segment.support_blend * normal_support_weight
 				var blend := 1.0 if sub_torso_force_smoothing_time <= 0.0 else 1.0 - exp(-_support_delta / sub_torso_force_smoothing_time)
-				lift = minf(lerpf(previous_lift, lift, blend),segment.mass * gravity.length() * support_limit*normal_support_weight)
+				lift = minf(lerpf(previous_lift, lift, blend),support_mass * gravity.length() * support_limit*normal_support_weight)
 				# Nonnegative weights make off-center supports carry the segment COM.
 				var points: Array[Vector3] = []
 				for body: RigidBody3D in sub_torsos: points.append(_stance_body_center(body))
 				var weights := _solve_stance_support_weights(points, segment.center, up)
 				for index: int in range(sub_torsos.size()): sub_torsos[index].apply_central_force(up * lift * weights[index])
 				segment.auxiliary_force = lift
-				if not grounded_support: _gallop_diagnostics.airborne_support += up * lift
+				if not grounded_support: _gallop_diagnostics["airborne_support"] = Vector3(_gallop_diagnostics.get("airborne_support", Vector3.ZERO)) + up * lift
 				_last_auxiliary_support_force += up * lift
 		elif not simplified_physics_mode and torso_response_enabled and supported and grounded > 0:
 			# Height demand comes from body height, never sole displacement.
@@ -1583,6 +1616,18 @@ func _apply_torso_response() -> void:
 			_apply_contact_drive(segment.feet, lift, float(segment.mass), up)
 		if _gallop_diagnostics.get("active",false):
 			_gallop_diagnostics.segments.append({"id": id,"ground_support": grounded_support,"air_weight": air_support.weight,"drive": force,"support": segment.auxiliary_force})
+
+func _height_support_carries_limb_weight() -> bool:
+	return false
+
+func _airborne_height_support_authorized() -> bool:
+	return _gallop_active()
+
+func _height_support_weight_share() -> float:
+	return sub_torso_weight_share
+
+func _airborne_height_support_limit(weight: float) -> float:
+	return (0.45 if _get_gait_data().speed_based_gait else _get_gait_data().gallop_airborne_support_ratio) * weight * _gallop_intensity()
 
 func _get_contact_drive_body(foot: RigidBody3D) -> RigidBody3D:
 	if not _chain_is_intact(foot): return null
@@ -1622,6 +1667,12 @@ func get_body_segment_diagnostics() -> Array[Dictionary]:
 	for id: int in _segments:
 		var segment: Dictionary = _segments[id]
 		result.append({"segment": id, "torso_count": segment.bodies.size(), "foot_count": segment.feet.size(), "mass": segment.mass, "center": segment.center, "reference_height": segment.reference_height, "balanced": segment.balanced, "movement_scale": segment.get("movement_scale",1.0), "support_blend": segment.support_blend, "auxiliary_force": segment.auxiliary_force, "balance_torque": segment.get("balance_torque", Vector3.ZERO), "balance_error_xy": segment.get("balance_error", Vector2.ZERO), "balance_error_z": segment.get("balance_error_z", 0.0), "balance_torque_limited": segment.get("balance_torque_limited", false)})
+	if independent_torso_height_support:
+		for row: Dictionary in result:
+			var segment: Dictionary = _segments[row.segment]
+			row["support_target_height"] = segment.get("support_target_height", 0.0)
+			row["actual_torso_height"] = Vector3(segment.torso_center).y
+			row["support_mass"] = segment.get("support_mass", 0.0)
 	return result
 
 func _apply_ground_movement_brake(direction: Vector3) -> void:
@@ -1853,16 +1904,19 @@ func _apply_stance_stabilization(delta: float) -> void:
 		_chains[foot].stance_torque_vectors = []
 
 var _passive_hinge_rows: Array[Dictionary] = []
+func _get_passive_limb_damping(_foot: RigidBody3D) -> float:
+	var configured: Variant = get_parent().get("limb_hinge_damping")
+	return maxf(float(configured) if configured != null else 3.0, 0.0)
+
 func _apply_passive_limb_damping() -> void:
 	_passive_hinge_rows.clear()
-	var configured: Variant = get_parent().get("limb_hinge_damping")
-	var damping := maxf(float(configured) if configured != null else 3.0, 0.0)
 	# Exponential decay cannot over-brake and reverse the hinge in one step.
 	var dt := maxf(get_physics_process_delta_time(), 0.000001)
-	var effective_damping := (1.0-exp(-damping*dt))/dt
 	var seen: Array[RigidBody3D] = []
 	for foot: RigidBody3D in _chains:
 		if not _chain_is_intact(foot): continue
+		var damping := _get_passive_limb_damping(foot)
+		var effective_damping := (1.0-exp(-damping*dt))/dt
 		var chain: Dictionary = _chains[foot]
 		for index: int in range(1, chain.bodies.size() - 1):
 			var body: RigidBody3D = chain.bodies[index]
@@ -2328,9 +2382,10 @@ func _apply_grounded_turn_traction() -> void:
 	var error := wrapf(_segment_goal_yaw - _get_physical_heading_yaw(), -PI, PI)
 	if absf(error) > deg_to_rad(175.0): error = -absf(error) if cos(_segment_goal_yaw) < 0.0 else absf(error)
 	var limit_rate := deg_to_rad(_motion_setting("turning_speed_degrees", segment_heading_speed_degrees))
-	var requested_rate := clampf(error * _motion_setting("turn_gain", turn_leg_yaw_gain), -limit_rate, limit_rate)
 	var actual_rate := _get_physical_yaw_rate()
-	var acceleration := clampf((requested_rate - actual_rate) * _motion_setting("turn_damping", turn_leg_yaw_damping), -maxf(limit_rate * 8.0,1.0), maxf(limit_rate * 8.0,1.0))
+	var control := _turn_traction_control(error, actual_rate, limit_rate)
+	var requested_rate: float = control.requested_rate
+	var acceleration: float = control.acceleration
 	var torque := inertia * acceleration * _flight_ground_blend()
 	if not _automatic_motion_enabled(): torque = clampf(torque,-turn_leg_yaw_torque_limit,turn_leg_yaw_torque_limit)
 	var forces: Array[Vector3] = []
@@ -2353,6 +2408,11 @@ func _apply_grounded_turn_traction() -> void:
 	for body: RigidBody3D in bodies:
 		if not _is_body_broken(body): body.apply_central_force(-net_force * body.mass / mass)
 	_turn_drive_diagnostics = {"blocked": &"", "stance_feet": feet.size(), "requested_rate_degrees": rad_to_deg(requested_rate), "actual_rate_degrees": rad_to_deg(actual_rate), "yaw_inertia": inertia, "requested_torque": torque, "applied_torque": torque * scale, "force_scale": scale, "force_limited": scale < 0.999, "net_force_cancelled": net_force, "global_allocation": true}
+	_turn_drive_diagnostics["control_mode"] = control.get("mode", "turn")
+
+func _turn_traction_control(error: float, actual_rate: float, limit_rate: float) -> Dictionary:
+	var requested := clampf(error * _motion_setting("turn_gain", turn_leg_yaw_gain), -limit_rate, limit_rate)
+	return {"requested_rate": requested, "acceleration": clampf((requested - actual_rate) * _motion_setting("turn_damping", turn_leg_yaw_damping), -maxf(limit_rate * 8.0, 1.0), maxf(limit_rate * 8.0, 1.0))}
 
 func _resource_turn_blending_enabled() -> bool:
 	return _get_gait_data() != null
@@ -2625,7 +2685,7 @@ func get_stance_support_diagnostics() -> Dictionary:
 	return {"planar_constraints": planar.get_diagnostics() if planar != null else {}, "planar_slide": _planar_slide_diagnostics, "zero_gravity_test_mode": simplified_physics_mode, "segment_rotation_constraints": rotation_constraints, "normal_control": normal_control, "recovery_active": recovery_control_active, "auto_allocation": false, "passive_limb_links": true, "passive_hinges": _passive_hinge_rows,
 		"contact_enter_distance": support_contact_enter_distance, "contact_exit_distance": maxf(support_contact_enter_distance, support_contact_exit_distance), "load_smoothing_time": support_load_smoothing_time,
 		"vertical_response_gain": vertical_response_gain, "vertical_damping_ratio": vertical_response_damping_ratio,
-		"stance_enabled": false, "total_mass": _stance_total_mass, "torso_mass": torso_mass,
+		"stance_enabled": false, "independent_torso_height_support": independent_torso_height_support, "total_mass": _stance_total_mass, "torso_mass": torso_mass,
 		"total_weight": _stance_total_mass * gravity.length(), "estimated_ground_reaction": maxf(0.0, _stance_total_mass * gravity.length() - (_last_torso_response_force + _last_auxiliary_support_force).dot(-gravity.normalized())), "torso_weight": torso_mass * gravity.length(), "torso_response_force": _last_torso_response_force, "torso_response_force_limit": _get_torso_response_force_limit(torso_mass),
 		"supporting_feet": supporting_feet, "foot_count": _legs.size(), "center_of_mass": _stance_center_of_mass,
 		"support_balanced": _stance_support_balanced, "balance_error": _stance_balance_error, "balance_tolerance": stance_balance_tolerance,

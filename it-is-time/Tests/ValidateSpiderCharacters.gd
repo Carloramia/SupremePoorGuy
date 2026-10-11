@@ -66,11 +66,14 @@ func run() -> void:
 			var upper := joint.get_node(joint.node_a) as PhysicalBodyPart3D
 			check(PhysicalBodyPart3D.BodyPartTag.LegLimb in upper.tags, "Both slider frames must follow their upper limb endpoint")
 			check(joint.global_basis.y.normalized().dot(upper.global_basis.y.normalized()) > 0.999, "Slide axis must align with upper-limb length")
-			check(joint.get_param_y(Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT) > 0.0, "Both root and knee must allow bounded axial travel")
+			var knee: bool = joint.get_meta(&"spider_axial_slide").connection == "knee"
+			check((joint.get_param_y(Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT) > 0.0) == knee, "Only knees may allow bounded axial travel")
 			for axis: String in ["x", "y", "z"]:
-				var independent: bool = joint.get_meta(&"spider_independent_root", false)
-				check(bool(joint.call("get_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_LINEAR_LIMIT)) != independent, "Root joints must release linear load while knees retain their limits")
-				if independent: check(not joint.call("get_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_LINEAR_SPRING), "Independent roots must not transmit spring load")
+				check(bool(joint.call("get_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_LINEAR_LIMIT)), "Every leg joint must retain its linear limits")
+				if not knee:
+					check(is_zero_approx(joint.call("get_param_" + axis, Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT)) and is_zero_approx(joint.call("get_param_" + axis, Generic6DOFJoint3D.PARAM_LINEAR_LOWER_LIMIT)), "Root translation must be locked on all axes")
+					check(not joint.call("get_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_LINEAR_SPRING), "Locked roots must not use sliding springs")
+			check(not joint.get_meta(&"spider_independent_root", false), "Locked joints must not use the legacy root-follow servo")
 			check(is_zero_approx(joint.get_param_x(Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT)) and is_zero_approx(joint.get_param_z(Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT)), "Transverse travel must remain locked")
 			var spring: Vector2 = actor.get_spider_joint_spring(joint)
 			var inertia: float = joint.get_meta(&"spider_effective_inertia", 0.0)

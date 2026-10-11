@@ -105,3 +105,11 @@ Tests/ValidateSpiderPerformance.gd 验证缓存复用、同帧耗时/模式变�
 动态水平追赶（仅 Spider 普通结构行走）：每次起步读取配置 TargetSpeed，不使用已经下调的 reachable_speed。请求追赶速度 = max(TargetSpeed × Catch Up Speed Ratio, 实际水平追赶距离 / 基础规划腾空时间)。追踪加速度预算 = clamp(max(原规划加速度, 8 × TargetSpeed² / 步幅 + 重力加速度), 30, 2000)，保持质量归一化。以距离和抬升高度中的较大值估算最低运动时间 sqrt(8 × 行程 / (加速度预算 − 重力加速度)) × 1.2，再以水平距离 / 最低时间限制追赶速度。1.2 的时间余量用于关节阻力和物理解算延迟，避免直接采用理想轨迹极限导致动作及转向不稳。这个上限是轨迹加速度估计，不保证物理关节和碰撞求解都能实际完成。
 腾空时长不小于基础规划时间和最低运动时间，恢复迈步保留 1.25 的时间余量。Maximum Catch Up Duration 仍限制额外请求时间，但不得压缩到最低运动时间以下；超出时记录 duration_cap_exceeded。同步更新本次动作的追踪加速度和位置/速度增益，不减弱原有增益。落点重规划、真实接地制动和完成判定保留。运行中修改目标速度后，下次起步采用新参数，当前轨迹不突然改变时长。
 motiondetail full 后开启 tracknpcmotion on GenerateSpiderNPC，spider_catch_up 新增 policy=target_speed_and_distance、target_speed、requested_relative_speed、speed_cap、acceleration_limited、minimum_safe_duration、duration_cap_exceeded、acceleration_budget、position_gain，可区分目标需求和加速度估计限速。Catch Up Speed Ratio 现在控制目标速度参考项，不再直接削减所有距离需求速度。
+
+2026-10-11：恢复到导入 Spider 部件前的生成布局与设置（Git 7fd21b8），仅保留十九个 Part 场景关联。后躯干尺寸恢复为 (2, 2, 1.6)，上腿长 2、下腿长 2.8；恢复 Torso=0、上腿=±PartWidth、下腿=±2×PartWidth 的 Z 分层。取消按模型孔洞重新布置根部、躯干与头部的逻辑，规则统一 FIT_BOX，不再启用 Joint Marker/Connector 对齐。框架和物理角色预览由恢复后的参数重新生成，以避免旧预览与生成参数不一致。Generate_Spider_NPC 继续继承 Generate_Spider。
+导入模型仍使用原有图片与网格。SpiderCharacter3D 保留脚部内部模型朝向适配：旧脚部框架 +Y 指向脚尖，导入模型 +Y 指向膝盖，因此仅翻转脚部内部几何，不改框架、关节位置或运动参数。手动布局已有 internal_snapshot 时不重复翻转。
+当前预设的 OverallScale=4；Generate_Spider 场景中的生成器实例保留旧版 OverallScale=1 覆盖。两个场景各自的保存预览与重新生成结果已同步。
+
+2026-10-11：进一步恢复十九个生成部件的碰撞箱。Generate_Spider 及继承它的 Generate_Spider_NPC 均使用与旧框架同尺寸、位于部件局部原点且不带局部旋转的 BoxShape3D；不再使用导入模型轮廓的凸碰撞体。再次生成时 SpiderCharacter3D 会重新建立同样的碰撞箱，不改变视觉模型的变换。SpiderStrideGeometry 和关节惯量计算也恢复旧版 BoxShape3D 逻辑，八条腿均可进行结构步幅求解。
+这次只恢复生成角色实例的碰撞箱；原始 Spider PhysicalPart 资源中的模型、纹理和轮廓碰撞体保留，供其他用途使用。共享父类脚本仍为当前项目版本，其中未断裂 LegLimb 忽略 StaticBody3D 地形碰撞的规则仍生效，脚部 Leg 不受该规则影响。当前预览根据恢复后的参数重建，没有复用旧文件中与参数不一致的过期预览。
+完整保留项核对见 D:/GameJamWorkspace/Backups/SpiderCollision_before_reset_2026-10-11/RemainingDifferences.txt。

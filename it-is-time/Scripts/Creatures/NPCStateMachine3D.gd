@@ -8,6 +8,8 @@ signal state_changed(previous_state: State, current_state: State)
 
 enum State { IDLE, MOVE_TO_TARGET, ATTACK, WAITING }
 @export var enabled: bool = true
+## Keep configured attack-distance navigation while temporarily disabling attack execution.
+@export var attack_execution_enabled: bool = true
 @export var behavior: BEHAVIOR
 var _enemy: Node3D
 var _scan_elapsed := 0.0
@@ -217,7 +219,7 @@ func resume_autonomous() -> void:
 func get_movement_direction() -> Vector3:
 	if not enabled or not _character_enabled: return Vector3.ZERO
 	var walking_attack := current_state == State.ATTACK and _active_attack != null and _active_attack.allow_movement
-	if walking_attack and _distance_attack != null and absf(_distance_error) <= _distance_attack.distance_tolerance: return Vector3.ZERO
+	if walking_attack and _distance_attack != null and absf(_distance_error) <= _attack_distance_tolerance(_distance_attack): return Vector3.ZERO
 	if (current_state != State.MOVE_TO_TARGET and not walking_attack) or not _has_requested_target:
 		return Vector3.ZERO
 	var flight := get_parent().get_node_or_null("BirdFlightController3D")
@@ -317,7 +319,7 @@ func set_diagnostic_logging_enabled(enabled: bool) -> void:
 
 func _set_agent_target(target_position: Vector3) -> void:
 	# Navigation must not stop outside the attack's distance tolerance.
-	navigation_agent.target_desired_distance = maxf(minf(_navigation_arrival_distance, _distance_attack.distance_tolerance*0.5),0.01) if behavior != null and not _manual_command and _distance_attack != null else _navigation_arrival_distance
+	navigation_agent.target_desired_distance = maxf(minf(_navigation_arrival_distance, _attack_distance_tolerance(_distance_attack)*0.5),0.01) if behavior != null and not _manual_command and _distance_attack != null else _navigation_arrival_distance
 	if humanoid_xz_positioning and behavior != null and not _manual_command:
 		navigation_agent.target_desired_distance = minf(navigation_agent.target_desired_distance, maxf(attack_z_tolerance * 0.5, 0.005))
 	var map := navigation_agent.get_navigation_map()
@@ -403,7 +405,7 @@ func _available_attacks() -> Array[ATTACK]:
 		if attack == null or not attack.enabled or attack.maximum_range < attack.minimum_range or attack.selection_weight <= 0.0: continue
 		var receiver := get_parent().get_node_or_null(attack.receiver_path)
 		if receiver == null or not receiver.has_method("try_start_npc_attack") or not receiver.has_method("is_npc_attack_active") or not receiver.has_method("cancel_npc_attack"): continue
-		if receiver.has_method("has_npc_attack") and not receiver.has_npc_attack(attack.action_id): continue
+		if attack_execution_enabled and receiver.has_method("has_npc_attack") and not receiver.has_npc_attack(attack.action_id): continue
 		result.append(attack)
 	return result
 
@@ -416,6 +418,8 @@ func _attack_in_range(attack: ATTACK, target: Node3D, horizontal_distance: float
 func _attack_maximum_range(attack: ATTACK, target: Node3D) -> float:
 	var receiver := get_parent().get_node_or_null(attack.receiver_path)
 	if receiver != null and receiver.has_method("has_unlimited_npc_attack_range") and receiver.has_unlimited_npc_attack_range(attack.action_id): return INF
+	if receiver != null and receiver.has_method("uses_dynamic_npc_attack_range") and receiver.uses_dynamic_npc_attack_range(attack.action_id):
+		return receiver.get_npc_attack_maximum_range(attack.action_id,target)
 	if humanoid_xz_positioning and attack.prediction_enabled and is_instance_valid(target) and receiver != null and receiver.has_method("get_npc_attack_maximum_range"):
 		return maxf(attack.maximum_range, receiver.get_npc_attack_maximum_range(attack.action_id,target))
 	return attack.maximum_range
@@ -425,10 +429,19 @@ func _attack_minimum_range(attack: ATTACK) -> float:
 	if receiver != null and receiver.has_method("get_npc_attack_minimum_range"): return receiver.get_npc_attack_minimum_range(attack.action_id)
 	return attack.minimum_range
 
+func _attack_distance_tolerance(attack: ATTACK) -> float:
+	var receiver := get_parent().get_node_or_null(attack.receiver_path)
+	if receiver != null and receiver.has_method("get_npc_attack_distance_tolerance"):
+		return receiver.get_npc_attack_distance_tolerance(attack.action_id)
+	return attack.distance_tolerance
+
 func _preferred_attack_distance(attack: ATTACK) -> float:
 	var desired := attack.preferred_distance if attack.preferred_distance >= 0.0 else behavior.preferred_distance
+	var receiver := get_parent().get_node_or_null(attack.receiver_path)
+	if receiver != null and receiver.has_method("get_npc_attack_preferred_distance"):
+		desired = receiver.get_npc_attack_preferred_distance(attack.action_id,_target)
 	# Keep the stop band inside the legal attack interval.
-	var margin := minf(attack.distance_tolerance, (_attack_maximum_range(attack,_target)-_attack_minimum_range(attack))*0.5)
+	var margin := minf(_attack_distance_tolerance(attack), (_attack_maximum_range(attack,_target)-_attack_minimum_range(attack))*0.5)
 	var minimum := _attack_minimum_range(attack) + margin
 	if humanoid_xz_positioning: minimum = maxf(minimum, _minimum_body_standoff() + margin)
 	var maximum := _attack_maximum_range(attack,_target) - margin
@@ -440,7 +453,7 @@ func _preferred_attack_distance(attack: ATTACK) -> float:
 		minimum = maxf(minimum, minf(_minimum_character_standoff() + margin, maximum))
 	if _prediction_distance_sample >= 0:
 		var center := clampf(desired, minimum, maximum)
-		var radius := maxf(center * behavior.prediction_reposition_ratio, attack.distance_tolerance * 2.0)
+		var radius := maxf(center * behavior.prediction_reposition_ratio, _attack_distance_tolerance(attack) * 2.0)
 		return lerpf(maxf(minimum, center-radius),minf(maximum, center+radius),float(_prediction_distance_sample%5)/4.0)
 	return clampf(desired, minimum, maximum)
 
@@ -502,12 +515,24 @@ func _plan_attack_distance(distance: float, attacks: Array[ATTACK]) -> bool:
 		distance = absf(_target.global_position.x - _get_navigation_origin_position().x)
 	_distance_attack = _active_attack
 	if _distance_attack == null:
+		for attack: ATTACK in attacks:
+			if float(_cooldowns.get(attack,0.0)) > 0.0: continue
+			var receiver := get_parent().get_node_or_null(attack.receiver_path)
+			if receiver != null and receiver.has_method("should_prepare_npc_attack") and receiver.should_prepare_npc_attack(attack.action_id,_target):
+				# Let the normal selector check facing, visibility and terrain before retreating.
+				_distance_attack = attack
+				_distance_error = 0.0
+				_attack_retry = minf(_attack_retry,0.05)
+				return false
+	if _distance_attack == null:
 		var best := INF
 		var ready_exists := false
 		for attack: ATTACK in attacks:
 			if float(_cooldowns.get(attack,0.0)) <= 0.0: ready_exists = true
 		for attack: ATTACK in attacks:
 			if ready_exists and float(_cooldowns.get(attack,0.0)) > 0.0: continue
+			var receiver := get_parent().get_node_or_null(attack.receiver_path)
+			if receiver != null and receiver.has_method("is_npc_attack_distance_candidate") and not receiver.is_npc_attack_distance_candidate(attack.action_id,_target): continue
 			var cost := absf(distance-_preferred_attack_distance(attack))
 			if cost < best:
 				best = cost
@@ -516,7 +541,7 @@ func _plan_attack_distance(distance: float, attacks: Array[ATTACK]) -> bool:
 	if _distance_attack == null: return false
 	var desired := _preferred_attack_distance(_distance_attack)
 	_distance_error = distance-desired
-	var tolerance := minf(_distance_attack.distance_tolerance, (_attack_maximum_range(_distance_attack,_target)-_attack_minimum_range(_distance_attack))*0.5)
+	var tolerance := minf(_attack_distance_tolerance(_distance_attack), (_attack_maximum_range(_distance_attack,_target)-_attack_minimum_range(_distance_attack))*0.5)
 	if humanoid_xz_positioning:
 		var origin := _get_navigation_origin_position()
 		var target_position := _target.global_position
@@ -560,7 +585,7 @@ func get_attack_range_diagnostics() -> Dictionary:
 	for attack: ATTACK in _available_attacks():
 		if is_instance_valid(_target) and _attack_in_range(attack,_target,distance): inside = true
 		ranges.append({"action":attack.action_id,"minimum":_attack_minimum_range(attack),"maximum":_attack_maximum_range(attack,_target),"maximum_unlimited":is_inf(_attack_maximum_range(attack,_target)),"configured_maximum":attack.maximum_range,
-			"preferred":_preferred_attack_distance(attack),"cooldown":float(_cooldowns.get(attack,0.0))})
+			"preferred":_preferred_attack_distance(attack),"distance_tolerance":_attack_distance_tolerance(attack),"cooldown":float(_cooldowns.get(attack,0.0))})
 	return {"ranges":ranges,"receiver_checks":receiver_checks,"predictions":_attack_predictions,"gate_rejections":_attack_gate_rejections,"body_alignment":alignment,"target_part":str(_target.get_path()) if is_instance_valid(_target) else "none",
 		"minimum_body_standoff":_minimum_body_standoff() if humanoid_xz_positioning else 0.0,
 		"limb_equipment_standoff":_minimum_character_standoff() if humanoid_xz_positioning else 0.0,
@@ -679,6 +704,9 @@ func _attack_target_candidates() -> Array[Node3D]:
 	return result
 
 func _try_attack(_distance: float) -> bool:
+	if not attack_execution_enabled:
+		_attack_block_reason = &"attack_execution_disabled"
+		return false
 	_attack_block_reason = &"none"
 	_attack_retry = maxf(behavior.scan_interval,0.05)
 	_attack_predictions.clear()
