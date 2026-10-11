@@ -1,0 +1,29 @@
+[gd_scene load_steps=3 format=3]
+[ext_resource type="PackedScene" path="res://Scenes/UI/Components/ActionButton.tscn" id="Button"]
+[ext_resource type="Theme" path="res://Assets/UI/PrototypeTheme.tres" id="Theme"]
+[node name="WarehousePanel" type="VBoxContainer"]
+size_flags_horizontal = 3
+theme = ExtResource("Theme")
+[node name="Tabs" type="HFlowContainer" parent="."]
+layout_mode = 2
+[node name="Warehouse" parent="Tabs" instance=ExtResource("Button")]
+unique_name_in_owner = true
+layout_mode = 2
+text = "仓库 · 0"
+[node name="Team" parent="Tabs" instance=ExtResource("Button")]
+unique_name_in_owner = true
+layout_mode = 2
+text = "出战队列 · 0"
+[node name="All" parent="Tabs" instance=ExtResource("Button")]
+unique_name_in_owner = true
+layout_mode = 2
+text = "全部 · 0"
+[node name="Empty" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "这里还没有妖兽。召唤后可将妖兽存入仓库或编入队列。"
+autowrap_mode = 3
+[node name="Cards" type="VBoxContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
