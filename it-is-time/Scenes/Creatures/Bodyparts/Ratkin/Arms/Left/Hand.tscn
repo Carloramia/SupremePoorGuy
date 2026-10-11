@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=3]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/_PhysicalSampleBodyParts.tscn" id="1_base"]
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/Ratkin/Models/Arms/Left/Hand.glb" id="2_model"]
+[ext_resource type="ArrayMesh" path="res://Resources/Meshes/Ratkin/Arms/Left/Hand.res" id="3_mesh"]
+[sub_resource type="ConvexPolygonShape3D" id="Shape"]
+resource_local_to_scene = true
+points = PackedVector3Array(-0.05664516, 0.04244394, -0.01000000, -0.04341935, 0.08218708, -0.01000000, -0.03019355, 0.09543480, -0.01000000, -0.01696774, 0.10868251, -0.01000000, 0.18141935, 0.16167337, -0.01000000, 0.19464516, 0.16167337, -0.01000000, 0.48561290, 0.10868251, -0.01000000, 0.63109677, 0.05569165, -0.01000000, 0.73690323, -0.09003321, -0.01000000, 0.75012903, -0.23575807, -0.01000000, 0.75012903, -0.24900579, -0.01000000, 0.72367742, -0.31524436, -0.01000000, 0.71045161, -0.34173979, -0.01000000, 0.68400000, -0.36823522, -0.01000000, 0.55174194, -0.47421694, -0.01000000, 0.49883871, -0.50071237, -0.01000000, 0.47238710, -0.50071237, -0.01000000, 0.30045161, -0.40797836, -0.01000000, -0.04341935, -0.10328092, -0.01000000, -0.05664516, -0.06353778, -0.01000000, -0.05664516, 0.04244394, 0.01000000, -0.04341935, 0.08218708, 0.01000000, -0.03019355, 0.09543480, 0.01000000, -0.01696774, 0.10868251, 0.01000000, 0.18141935, 0.16167337, 0.01000000, 0.19464516, 0.16167337, 0.01000000, 0.48561290, 0.10868251, 0.01000000, 0.63109677, 0.05569165, 0.01000000, 0.73690323, -0.09003321, 0.01000000, 0.75012903, -0.23575807, 0.01000000, 0.75012903, -0.24900579, 0.01000000, 0.72367742, -0.31524436, 0.01000000, 0.71045161, -0.34173979, 0.01000000, 0.68400000, -0.36823522, 0.01000000, 0.55174194, -0.47421694, 0.01000000, 0.49883871, -0.50071237, 0.01000000, 0.47238710, -0.50071237, 0.01000000, 0.30045161, -0.40797836, 0.01000000, -0.04341935, -0.10328092, 0.01000000, -0.05664516, -0.06353778, 0.01000000)
+[node name="Ratkin_Hand" instance=ExtResource("1_base")]
+mass = 0.1
+geometry_mode = 1
+custom_model_path = NodePath("Model")
+paper_volume_enabled = true
+paper_volume_thickness = 0.08
+sprite_visible = false
+mesh_visible = true
+tags = Array[int]([2])
+metadata/source_png = "res://Assets/2DResources/Ratkin/Separated/Limbs/03_hand_left.png"
+metadata/pivot_is_initial_estimate = true
+[node name="CollisionShape3D" parent="." index="0"]
+position = Vector3(0, 0, 0)
+shape = SubResource("Shape")
+[node name="MeshInstance3D" parent="." index="2"]
+visible = false
+mesh = null
+[node name="Model" parent="." instance=ExtResource("2_model")]
+[node name="PaperVolume" type="MeshInstance3D" parent="Model"]
+scale = Vector3(1, 1, 0.08)
+mesh = ExtResource("3_mesh")
+metadata/flat_collision_depth = 0.02
+[node name="JointIn" type="Marker3D" parent="."]
+[node name="JointOut" type="Marker3D" parent="."]
+position = Vector3(0.51200000, -0.29068387, 0.00000000)

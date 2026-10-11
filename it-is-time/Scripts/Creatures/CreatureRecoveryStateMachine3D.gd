@@ -10,6 +10,7 @@ enum State { STANDING, FALLEN, ESTABLISH_SUPPORT, RIGHTING, STABILIZING, RETRY }
 		if is_instance_valid(_movement): _movement.set_recovery_control_active(value and _character_enabled and state != State.STANDING)
 @export var movement_controller_path: NodePath = NodePath("../GeneratedLegStepMovementController3D")
 @export_group("Fall Detection")
+@export var height_collapse_detection_enabled: bool = true
 @export_range(10.0, 90.0, 1.0) var fallen_angle_degrees: float = 60.0
 @export_range(0.1, 0.9, 0.01) var fallen_height_ratio: float = 0.65
 ## Require a settled body for upright collapse detection; tilted falls still react immediately.
@@ -160,7 +161,7 @@ func _measure(torsos: Array[RigidBody3D], feet: Array[RigidBody3D]) -> Dictionar
 func _is_fallen(metrics: Dictionary) -> bool:
 	if not metrics.ground_contact: return false
 	var tilted: bool = float(metrics.get("maximum_segment_angle", metrics.angle)) >= fallen_angle_degrees
-	var collapsed: bool = float(metrics.get("minimum_segment_height_ratio", metrics.height / _reference_height)) < fallen_height_ratio and metrics.speed <= collapse_detection_speed
+	var collapsed: bool = height_collapse_detection_enabled and float(metrics.get("minimum_segment_height_ratio", metrics.height / _reference_height)) < fallen_height_ratio and metrics.speed <= collapse_detection_speed
 	return tilted or collapsed
 
 func _transition(next: State, reason: StringName) -> void:

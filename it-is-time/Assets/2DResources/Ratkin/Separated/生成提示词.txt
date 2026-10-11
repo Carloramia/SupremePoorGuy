@@ -1,0 +1,11 @@
+Ratkin 拆分提示词记录
+
+模式：内置 image_gen 图像编辑，transparent_background=true。
+输入：../Ratkin.png。逐件独立生成，保留原图纸雕纹理、深灰毛层、橙褐色底层与各部件原有姿态；补齐遮挡的连接根部。
+
+初始提示词：generation_prompts.json
+最终提示词与定向修正：generation_prompts_final.json
+逐件文件名与尺寸：asset_manifest.json
+
+说明：透明 PNG 的 RGB 通道可能保留被 Alpha 隐藏的背景色；应使用支持 Alpha 的工具预览。请勿将 RGB 单独作为不透明贴图导入。
+

@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=3]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/_PhysicalSampleBodyParts.tscn" id="1_base"]
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/Ratkin/Models/Head/HeadMain.glb" id="2_model"]
+[ext_resource type="ArrayMesh" path="res://Resources/Meshes/Ratkin/Head/HeadMain.res" id="3_mesh"]
+[sub_resource type="ConvexPolygonShape3D" id="Shape"]
+resource_local_to_scene = true
+points = PackedVector3Array(-0.47369540, 0.23565531, -0.01000000, -0.41249115, 0.45121745, -0.01000000, -0.35128689, 0.63598500, -0.01000000, -0.16767414, 0.75916336, -0.01000000, 0.01593861, 0.82075255, -0.01000000, 0.29135773, 0.85154714, -0.01000000, 0.38316411, 0.85154714, -0.01000000, 0.71978749, 0.82075255, -0.01000000, 0.90340024, 0.75916336, -0.01000000, 1.20942149, 0.63598500, -0.01000000, 1.33182999, 0.57439581, -0.01000000, 1.39303424, 0.51280663, -0.01000000, 1.85206612, 0.05088776, -0.01000000, 1.91327037, -0.01070142, -0.01000000, 1.91327037, -0.07229060, -0.01000000, 1.85206612, -0.13387979, -0.01000000, 1.72965762, -0.25705815, -0.01000000, 1.48484061, -0.41103111, -0.01000000, 0.41376623, -0.47262029, -0.01000000, 0.38316411, -0.47262029, -0.01000000, -0.10646989, -0.25705815, -0.01000000, -0.16767414, -0.22626356, -0.01000000, -0.32068477, -0.13387979, -0.01000000, -0.44309327, 0.02009317, -0.01000000, -0.47369540, 0.20486072, -0.01000000, -0.47369540, 0.23565531, 0.01000000, -0.41249115, 0.45121745, 0.01000000, -0.35128689, 0.63598500, 0.01000000, -0.16767414, 0.75916336, 0.01000000, 0.01593861, 0.82075255, 0.01000000, 0.29135773, 0.85154714, 0.01000000, 0.38316411, 0.85154714, 0.01000000, 0.71978749, 0.82075255, 0.01000000, 0.90340024, 0.75916336, 0.01000000, 1.20942149, 0.63598500, 0.01000000, 1.33182999, 0.57439581, 0.01000000, 1.39303424, 0.51280663, 0.01000000, 1.85206612, 0.05088776, 0.01000000, 1.91327037, -0.01070142, 0.01000000, 1.91327037, -0.07229060, 0.01000000, 1.85206612, -0.13387979, 0.01000000, 1.72965762, -0.25705815, 0.01000000, 1.48484061, -0.41103111, 0.01000000, 0.41376623, -0.47262029, 0.01000000, 0.38316411, -0.47262029, 0.01000000, -0.10646989, -0.25705815, 0.01000000, -0.16767414, -0.22626356, 0.01000000, -0.32068477, -0.13387979, 0.01000000, -0.44309327, 0.02009317, 0.01000000, -0.47369540, 0.20486072, 0.01000000)
+[node name="Ratkin_HeadMain" instance=ExtResource("1_base")]
+mass = 0.45
+geometry_mode = 1
+custom_model_path = NodePath("Model")
+paper_volume_enabled = true
+paper_volume_thickness = 0.08
+sprite_visible = false
+mesh_visible = true
+tags = Array[int]([3])
+metadata/source_png = "res://Assets/2DResources/Ratkin/Separated/Base/02_head.png"
+metadata/pivot_is_initial_estimate = true
+[node name="CollisionShape3D" parent="." index="0"]
+position = Vector3(0, 0, 0)
+shape = SubResource("Shape")
+[node name="MeshInstance3D" parent="." index="2"]
+visible = false
+mesh = null
+[node name="Model" parent="." instance=ExtResource("2_model")]
+[node name="PaperVolume" type="MeshInstance3D" parent="Model"]
+scale = Vector3(1, 1, 0.08)
+mesh = ExtResource("3_mesh")
+metadata/flat_collision_depth = 0.02
+[node name="JointIn" type="Marker3D" parent="."]
+[node name="JointOut" type="Marker3D" parent="."]
+position = Vector3(1.39312987, 0.01350000, 0.00000000)

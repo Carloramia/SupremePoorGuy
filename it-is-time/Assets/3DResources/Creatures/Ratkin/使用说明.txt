@@ -1,0 +1,64 @@
+Ratkin 模型与物理部件
+
+交付：21 个模型、21 个冻结包装场景、21 个继承 _PhysicalSampleBodyParts.tscn 的物理部件、21 个预烘焙立体网格，以及一个部件总览场景。
+
+文件结构
+Assets/3DResources/Creatures/Ratkin/Models：GLB 源平面，保留内嵌原始 PNG。
+Assets/3DResources/Creatures/Ratkin/Textures：同分类贴图副本，与 Separated 图片内容相同。
+Assets/3DResources/Creatures/Ratkin/Scenes：冻结的模型包装场景，适合素材查看。
+Assets/3DResources/Creatures/Ratkin/Previews/RatkinPartsPreview.tscn：可直接运行的物理部件总览。
+Assets/3DResources/Creatures/Ratkin/Metadata/build_settings.json：初始尺寸、质量、标签、厚度及连接点估算。
+Assets/3DResources/Creatures/Ratkin/Metadata/model_manifest.json：模型、贴图、物理场景和网格对应路径，以及可见范围、坐标、源文件哈希。
+Assets/3DResources/Creatures/Ratkin/Tools/build_models.py：独立构建脚本。
+Resources/Meshes/Ratkin：包含正面、背面、侧面三个表面的 ArrayMesh。
+Scenes/Creatures/Bodyparts/Ratkin：用于后续角色组装的 PhysicalPart 场景。
+
+部件分类
+Torso：TorsoMain、Pelvis、NeckMane。
+Head：HeadMain、EarRound、EarPointedLeft、EarPointedRight。
+Arms/Left、Arms/Right：每组 UpperArm、Forearm、Hand。
+Legs/Left、Legs/Right：每组 UpperLeg、LowerLeg、Foot。
+Tail：完整尾巴 Tail。
+Connectors：可重复使用的 Rivet。
+
+物理与显示
+沿用 HornedBeast 的 CustomModel + PaperVolume 方案。
+正反面共用原始贴图，侧面沿透明轮廓生成。背面从背后观察时自然镜像。
+PhysicalPart 隐藏源 GLB 平面，仅显示烘焙立体网格，避免重叠。
+默认厚度 0.08，可在物理部件 Inspector 的 Paper Volume Thickness 中调整，仅改变 Z 厚度，不改变 X/Y 尺寸。
+用于生成器时，PartWidth / OverallScale 遵循现有生成器的最终厚度规则。
+凸包碰撞适合动态刚体，但会填满爪间凹陷、尾巴弯曲内侧和透明孔洞。完整尾巴目前是一个刚体；需要可弯曲尾链时，应另行分段。
+每个物理场景具有独立的碰撞 Shape；修改一个实例厚度不会修改其他实例。
+原始 2D 图片未重新编码或覆盖。
+
+标签
+TorsoMain、Pelvis：Torso。
+HeadMain：Head。
+UpperArm、Forearm、Hand：Arm。实际装备槽位、ArmSwingBinding 和控制组在组装角色时配置。
+UpperLeg、LowerLeg：LegLimb。
+Foot：Leg。
+Tail：Tail。
+NeckMane、耳朵、Rivet：空标签，用于装饰；毛领并非独立的 Neck 物理标签。
+左右名称对应原图的不同姿态，不保证是镜像，不代表已完成角色骨骼绑定。
+
+尺寸和连接点
+AI 拆分图片没有共同的像素比例，本次按 alpha>=128 的轮廓范围指定初始美术尺寸。
+主躯干高 3.5，头高 1.35，骨盆高 1.8，大腿高 1.75，小腿高 1.45。
+手、脚、耳朵、毛领、尾巴等独立设置初始大小，完整数据见 build_settings.json。
+图像右方映射局部 +X，上方映射局部 +Y，正面映射局部 +Z。
+joint_in / joint_out 是可见轮廓包围盒内的归一化图像坐标（Y 向下）。
+JointIn 位于 Part 原点；JointOut 是按关节装饰与连接根部估算的 Marker3D。
+这些连接点可在场景中编辑。当前交付独立部件，完整角色的拼合姿态、Joint3D 和控制器需在角色组装阶段配置。
+
+重新构建
+1. Python（需要 Pillow）运行：
+   python Assets/3DResources/Creatures/Ratkin/Tools/build_models.py
+2. Godot 重新导入项目，使 GLB 可加载。
+3. Godot --headless --path 项目目录 --script res://Tools/BakeRatkinVolumes.gd
+4. python Assets/3DResources/Creatures/Ratkin/Tools/build_models.py --physical
+5. Godot --headless --path 项目目录 --script res://Tests/ValidateRatkinParts3D.gd
+
+构建脚本保留已有 GLB、包装场景、PhysicalPart 和预览，防止覆盖手动连接点。
+改变 build_settings 后，先备份并移走需要重建的对应输出，再按顺序构建；烘焙操作会更新对应 .res 网格。
+此脚本与配置只输出 Ratkin 资源，不修改 HornedBeast 的默认数据或文件。
+

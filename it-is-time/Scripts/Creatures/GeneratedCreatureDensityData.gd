@@ -15,11 +15,16 @@ extends Resource
 @export_range(0.0, 100.0, 0.01, "or_greater") var wing_tip: float = 1.0
 @export_range(0.0, 100.0, 0.001, "or_greater") var feather: float = 0.01
 
+@export_group("Tail and Horns")
+@export_range(0.0, 100.0, 0.01, "or_greater") var tail: float = 1.0
+@export_range(0.0, 100.0, 0.01, "or_greater") var horn: float = 1.0
+
 const TYPE_PROPERTIES = {
 	"Torso": &"torso", "SubTorso": &"sub_torso", "Leg": &"leg",
 	"ForeLeg": &"fore_leg", "LegLimb": &"leg_limb", "Neck": &"neck", "Head": &"head",
 	"WingRoot": &"wing_root", "WingMiddle": &"wing_middle", "WingTip": &"wing_tip",
 	"Feather": &"feather",
+	"Tail": &"tail", "Horn": &"horn",
 }
 
 func get_density(part_type: String, fallback: float) -> float:

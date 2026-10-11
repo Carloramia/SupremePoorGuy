@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=3]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/_PhysicalSampleBodyParts.tscn" id="1_base"]
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/HornedBeast/SegmentedTail_v1/Models/TailMiddle.glb" id="2_model"]
+[ext_resource type="ArrayMesh" path="res://Resources/Meshes/HornedBeast/SegmentedTail_v1/TailMiddle.res" id="3_mesh"]
+[sub_resource type="ConvexPolygonShape3D" id="Shape"]
+resource_local_to_scene = true
+points = PackedVector3Array(-0.94059845, 0.07231082, -0.01000000, -0.92689326, 0.08601601, -0.01000000, -0.85836730, 0.14083678, -0.01000000, -0.81725173, 0.16824716, -0.01000000, -0.74872577, 0.20936274, -0.01000000, -0.68019981, 0.23677312, -0.01000000, -0.63908424, 0.25047831, -0.01000000, -0.57055828, 0.26418350, -0.01000000, -0.29645445, 0.26418350, -0.01000000, -0.22792849, 0.25047831, -0.01000000, -0.18681292, 0.23677312, -0.01000000, -0.13199215, 0.20936274, -0.01000000, -0.10458177, 0.19565755, -0.01000000, -0.06346619, 0.15454197, -0.01000000, -0.04976100, 0.14083678, -0.01000000, -0.03605581, 0.12713159, -0.01000000, 0.04617534, 0.03119525, -0.01000000, 0.05988053, 0.00378486, -0.01000000, 0.05988053, -0.00992033, -0.01000000, 0.04617534, -0.03733071, -0.01000000, 0.03247015, -0.05103590, -0.01000000, -0.03605581, -0.06474109, -0.01000000, -0.07717138, -0.06474109, -0.01000000, -0.94059845, 0.00378486, -0.01000000, -0.94059845, 0.07231082, 0.01000000, -0.92689326, 0.08601601, 0.01000000, -0.85836730, 0.14083678, 0.01000000, -0.81725173, 0.16824716, 0.01000000, -0.74872577, 0.20936274, 0.01000000, -0.68019981, 0.23677312, 0.01000000, -0.63908424, 0.25047831, 0.01000000, -0.57055828, 0.26418350, 0.01000000, -0.29645445, 0.26418350, 0.01000000, -0.22792849, 0.25047831, 0.01000000, -0.18681292, 0.23677312, 0.01000000, -0.13199215, 0.20936274, 0.01000000, -0.10458177, 0.19565755, 0.01000000, -0.06346619, 0.15454197, 0.01000000, -0.04976100, 0.14083678, 0.01000000, -0.03605581, 0.12713159, 0.01000000, 0.04617534, 0.03119525, 0.01000000, 0.05988053, 0.00378486, 0.01000000, 0.05988053, -0.00992033, 0.01000000, 0.04617534, -0.03733071, 0.01000000, 0.03247015, -0.05103590, 0.01000000, -0.03605581, -0.06474109, 0.01000000, -0.07717138, -0.06474109, 0.01000000, -0.94059845, 0.00378486, 0.01000000)
+[node name="HornedBeast_TailMiddle" instance=ExtResource("1_base")]
+mass = 0.05
+geometry_mode = 1
+custom_model_path = NodePath("Model")
+paper_volume_enabled = true
+paper_volume_thickness = 0.08
+sprite_visible = false
+mesh_visible = true
+tags = Array[int]([10])
+metadata/source_png = "res://Assets/2DResources/HornedBeast/SegmentedTail_v1/03_tail_middle.png"
+metadata/pivot_is_initial_estimate = true
+[node name="CollisionShape3D" parent="." index="0"]
+position = Vector3(0, 0, 0)
+shape = SubResource("Shape")
+[node name="MeshInstance3D" parent="." index="2"]
+visible = false
+mesh = null
+[node name="Model" parent="." instance=ExtResource("2_model")]
+[node name="PaperVolume" type="MeshInstance3D" parent="Model"]
+scale = Vector3(1, 1, 0.08)
+mesh = ExtResource("3_mesh")
+metadata/flat_collision_depth = 0.02
+[node name="JointIn" type="Marker3D" parent="."]
+[node name="JointOut" type="Marker3D" parent="."]
+position = Vector3(-0.90349992, 0.04495951, 0.00000000)

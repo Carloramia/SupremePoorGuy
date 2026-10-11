@@ -43,6 +43,13 @@ static func fit(part: PhysicalBodyPart3D, target: Vector3, rule: RULE, role: Str
 		part.bottom_distance = dimensions.y * 0.5
 		part.collision_thickness = dimensions.z
 		part.prepare_generated_geometry()
+		if role == "Tail":
+			# A box tail grows toward -X from the center of its front shell.
+			var tail_bounds := bounds(part)
+			var inlet := part.get_node_or_null("JointIn") as Marker3D
+			var outlet := part.get_node_or_null("JointOut") as Marker3D
+			if inlet != null: inlet.position = tail_bounds.get_center() + Vector3(tail_bounds.size.x * 0.5, 0, 0)
+			if outlet != null: outlet.position = tail_bounds.get_center() - Vector3(tail_bounds.size.x * 0.5, 0, 0)
 		return bounds(part)
 	var ratio := Vector3.ONE
 	# Paper depth is fitted separately so source thickness never constrains XY.

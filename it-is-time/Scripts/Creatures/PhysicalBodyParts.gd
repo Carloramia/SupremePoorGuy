@@ -22,6 +22,8 @@ enum BodyPartTag {
 	Wing, # All wing blocks; intermediate blocks additionally carry WingLimb.
 	WingLimb,
 	Feather,
+	Tail,
+	Horn,
 }
 
 @export_group("Classification")

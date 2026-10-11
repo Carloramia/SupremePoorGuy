@@ -1,0 +1,51 @@
+Ratkin 部位拆分与生物生成建议
+
+交付：21 张独立透明 PNG。原始图片复制为 ../Ratkin.png，Unclassified/Ratkin.png 保持不变。
+工具：内置 image_gen 图像编辑，补齐遮挡连接根部。
+这是 AI 重建版本，不是逐像素裁切。被遮挡区域为推测补绘；各图画布、比例和关节位置需要在组装时校准。
+
+分类与清单
+Base/01_torso.png — 躯干
+Base/02_head.png — 头部
+Base/03_neck_mane.png — 颈部毛领
+Base/04_pelvis.png — 腰胯毛裙
+Limbs/01_arm_upper_left.png — 左上臂
+Limbs/02_arm_lower_left.png — 左前臂
+Limbs/03_hand_left.png — 左手爪
+Limbs/04_arm_upper_right.png — 右上臂
+Limbs/05_arm_lower_right.png — 右前臂
+Limbs/06_hand_right.png — 右手爪
+Limbs/07_leg_upper_left.png — 左大腿
+Limbs/08_leg_lower_left.png — 左小腿
+Limbs/09_foot_left.png — 左脚爪
+Limbs/10_leg_upper_right.png — 右大腿
+Limbs/11_leg_lower_right.png — 右小腿
+Limbs/12_foot_right.png — 右脚爪
+Attachments/01_tail.png — 尾巴
+Attachments/02_ear_round.png — 圆耳
+Attachments/03_ear_pointed_left.png — 尖耳左
+Attachments/04_ear_pointed_right.png — 尖耳右
+Attachments/05_rivet.png — 铆钉
+
+补绘与命名
+1. 头部与耳朵分离，补齐后脑和耳根。圆耳与两张尖耳分别保留，可按需要组合。
+2. 中央身体拆为躯干和骨盆毛裙；上方独立毛领单独保留。腰带/肩部圆片等装饰仍可能与主体结合，组装时允许视觉覆盖。
+3. 两组手臂均分为上臂、前臂、手爪；两组腿部分为大腿、小腿、脚爪。拆分后的腕、踝、膝根部做完整补绘。
+4. left/right 按原素材图的两组姿态命名，并非已经指定游戏骨骼的左右。不要假设两组是镜像。
+5. 尾巴暂保留为完整一张图片，保留原有分节外观；铆钉提供一个可复用模板。
+
+可进一步拆分的部位
+优先：尾巴。原图有明确分节接缝，可沿这些接缝创建尾根、中段、尾尖并补齐相接处；需要摆动/断裂时再制作独立物理链。
+可选：肩部和髋部圆片，可提取为 SubTorso 的视觉附件，但它们不自动等同于承重结构。
+可选：胸、腹、骨盆。当前已经分出骨盆；需要多体节躯干时，可继续把胸与腹分开，但需补绘重叠边界。
+低优先：下颌可拆作张嘴动作；手指/脚趾可拆作抓握或弯曲。增加独立物理体会增加关节、碰撞和稳定成本。
+毛层、内衬与铆钉优先作为装饰，不建议逐层建立物理关节。
+
+后续模型与物理部件
+当前为“两段肢体 + 手/脚末端”的图片组合；原生成器的肢段数量、连接方向和尺寸需要相应匹配。
+手臂可映射 Arm，腿部肢段可映射 LegLimb，接地末端可映射 Leg/ForeLeg；标签按最终角色用途指定。
+建议在 Part 场景中显式设置 JointIn/JointOut，以连接点对齐，不用图片画布中心代替关节位置。
+各图未统一像素比例。组装时参考清单中的 alpha_bounds_50_percent 与实际轮廓；图片画布并非实际部件尺寸。
+保留 RGBA 原始输出，不做脚本裁切、缩放或阈值抠图。支持 Alpha 的预览页用于检查正常显示效果。
+本次仅整理 2D 图片与说明，未接入生成器、3D 模型或 PhysicalPart 场景。
+

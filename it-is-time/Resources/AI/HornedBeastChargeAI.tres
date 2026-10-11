@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="NPCBehaviorData" format=3 uid="uid://bw6oy4layenxp"]
+
+[ext_resource type="Script" uid="uid://d4d3pxjthc0yt" path="res://Scripts/Creatures/NPCBehaviorData.gd" id="1"]
+[ext_resource type="Script" uid="uid://bqypvnhjbnrap" path="res://Scripts/Creatures/NPCAttackData.gd" id="2"]
+
+[sub_resource type="Resource" id="Charge"]
+script = ExtResource("2")
+action_id = &"ground_charge"
+receiver_path = NodePath("ChargeAttackController3D")
+minimum_range = 8.0
+maximum_range = 40.0
+preferred_distance = 15.0
+cooldown = 5.0
+maximum_duration = 20.0
+
+[sub_resource type="Resource" id="Stomp"]
+script = ExtResource("2")
+maximum_range = 7.0
+preferred_distance = 4.0
+cooldown = 3.0
+
+[resource]
+script = ExtResource("1")
+preferred_distance = 15.0
+attacks = Array[ExtResource("2")]([SubResource("Charge"), SubResource("Stomp")])

@@ -1,0 +1,643 @@
+[gd_scene format=4]
+
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Generators/_BaseCreatureGenerator.tscn" id="ratkin_generator_base"]
+
+[ext_resource type="Script" path="res://Scripts/Creatures/Generators/RatkinGenerator.gd" id="2"]
+[ext_resource type="Script" path="res://Scripts/Creatures/Generators/GeneratedPartSceneRule.gd" id="2_rnfus"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Ratkin/Torso/TorsoNoJointCaps.tscn" id="3_0j4e2"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Ratkin/Torso/Pelvis.tscn" id="4_m5mek"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Ratkin/Connectors/Rivet.tscn" id="5_i46f7"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Ratkin/Legs/Left/UpperLeg.tscn" id="6_umv74"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Ratkin/Legs/Left/LowerLeg.tscn" id="7_ibmq0"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Ratkin/Legs/Right/Foot.tscn" id="8_pp0rc"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Ratkin/Legs/Right/UpperLeg.tscn" id="9_8n5mr"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Ratkin/Legs/Right/LowerLeg.tscn" id="10_pgvqi"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Ratkin/Arms/Left/UpperArm.tscn" id="11_wsbk8"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Ratkin/Arms/Left/Forearm.tscn" id="12_26x20"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Ratkin/Arms/Right/Hand.tscn" id="13_njoax"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Ratkin/Arms/Right/UpperArm.tscn" id="14_nm75i"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Ratkin/Arms/Right/Forearm.tscn" id="15_ullyn"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Ratkin/Arms/Left/Hand.tscn" id="16_5v2eh"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Ratkin/Head/HeadMain.tscn" id="17_r3tn5"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Ratkin/Torso/NeckMane.tscn" id="18_v0y7y"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Ratkin/Head/EarRound.tscn" id="20_2555n"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Ratkin/Tail/Tail.tscn" id="21_qdfei"]
+
+[sub_resource type="Resource" id="Resource_1wvmm"]
+resource_local_to_scene = true
+script = ExtResource("2_rnfus")
+part_key = "Torso"
+part_scene = ExtResource("3_0j4e2")
+
+[sub_resource type="Resource" id="Resource_rnfus"]
+resource_local_to_scene = true
+script = ExtResource("2_rnfus")
+part_key = "Pelvis"
+part_scene = ExtResource("4_m5mek")
+size_mode = 0
+
+[sub_resource type="Resource" id="Resource_0j4e2"]
+resource_local_to_scene = true
+script = ExtResource("2_rnfus")
+part_key = "SubTorso_Leg_1"
+part_type = "SubTorso"
+part_scene = ExtResource("5_i46f7")
+size_mode = 0
+
+[sub_resource type="Resource" id="Resource_m5mek"]
+resource_local_to_scene = true
+script = ExtResource("2_rnfus")
+part_key = "Leg_1_Limb_2"
+part_type = "LegLimb"
+part_scene = ExtResource("6_umv74")
+size_mode = 0
+
+[sub_resource type="Resource" id="Resource_i46f7"]
+resource_local_to_scene = true
+script = ExtResource("2_rnfus")
+part_key = "Leg_1_Limb_1"
+part_type = "LegLimb"
+part_scene = ExtResource("7_ibmq0")
+size_mode = 0
+
+[sub_resource type="Resource" id="Resource_umv74"]
+resource_local_to_scene = true
+script = ExtResource("2_rnfus")
+part_key = "Leg_1"
+part_type = "Leg"
+part_scene = ExtResource("8_pp0rc")
+size_mode = 0
+
+[sub_resource type="Resource" id="Resource_ibmq0"]
+resource_local_to_scene = true
+script = ExtResource("2_rnfus")
+part_key = "SubTorso_Leg_2"
+part_type = "SubTorso"
+part_scene = ExtResource("5_i46f7")
+size_mode = 0
+
+[sub_resource type="Resource" id="Resource_pp0rc"]
+resource_local_to_scene = true
+script = ExtResource("2_rnfus")
+part_key = "Leg_2_Limb_2"
+part_type = "LegLimb"
+part_scene = ExtResource("9_8n5mr")
+size_mode = 0
+
+[sub_resource type="Resource" id="Resource_8n5mr"]
+resource_local_to_scene = true
+script = ExtResource("2_rnfus")
+part_key = "Leg_2_Limb_1"
+part_type = "LegLimb"
+part_scene = ExtResource("10_pgvqi")
+size_mode = 0
+
+[sub_resource type="Resource" id="Resource_pgvqi"]
+resource_local_to_scene = true
+script = ExtResource("2_rnfus")
+part_key = "Leg_2"
+part_type = "Leg"
+part_scene = ExtResource("8_pp0rc")
+size_mode = 0
+
+[sub_resource type="Resource" id="Resource_wsbk8"]
+resource_local_to_scene = true
+script = ExtResource("2_rnfus")
+part_key = "Arm_1_Limb_2"
+part_type = "ArmLimb"
+part_scene = ExtResource("11_wsbk8")
+size_mode = 0
+
+[sub_resource type="Resource" id="Resource_26x20"]
+resource_local_to_scene = true
+script = ExtResource("2_rnfus")
+part_key = "Arm_1_Limb_1"
+part_type = "ArmLimb"
+part_scene = ExtResource("12_26x20")
+size_mode = 0
+
+[sub_resource type="Resource" id="Resource_njoax"]
+resource_local_to_scene = true
+script = ExtResource("2_rnfus")
+part_key = "Arm_1"
+part_type = "Arm"
+part_scene = ExtResource("13_njoax")
+size_mode = 0
+
+[sub_resource type="Resource" id="Resource_nm75i"]
+resource_local_to_scene = true
+script = ExtResource("2_rnfus")
+part_key = "Arm_2_Limb_2"
+part_type = "ArmLimb"
+part_scene = ExtResource("14_nm75i")
+size_mode = 0
+
+[sub_resource type="Resource" id="Resource_ullyn"]
+resource_local_to_scene = true
+script = ExtResource("2_rnfus")
+part_key = "Arm_2_Limb_1"
+part_type = "ArmLimb"
+part_scene = ExtResource("15_ullyn")
+size_mode = 0
+
+[sub_resource type="Resource" id="Resource_5v2eh"]
+resource_local_to_scene = true
+script = ExtResource("2_rnfus")
+part_key = "Arm_2"
+part_type = "Arm"
+part_scene = ExtResource("16_5v2eh")
+size_mode = 0
+
+[sub_resource type="Resource" id="Resource_r3tn5"]
+resource_local_to_scene = true
+script = ExtResource("2_rnfus")
+part_key = "Head"
+part_type = "Head"
+part_scene = ExtResource("17_r3tn5")
+
+[sub_resource type="Resource" id="Resource_v0y7y"]
+resource_local_to_scene = true
+script = ExtResource("2_rnfus")
+part_key = "NeckMane"
+part_type = "Decoration"
+part_scene = ExtResource("18_v0y7y")
+size_mode = 0
+
+[sub_resource type="Resource" id="Resource_2o4b3"]
+resource_local_to_scene = true
+script = ExtResource("2_rnfus")
+part_key = "EarLeft"
+part_type = "Decoration"
+part_scene = ExtResource("20_2555n")
+size_mode = 0
+
+[sub_resource type="Resource" id="Resource_2555n"]
+resource_local_to_scene = true
+script = ExtResource("2_rnfus")
+part_key = "EarRight"
+part_type = "Decoration"
+part_scene = ExtResource("20_2555n")
+size_mode = 0
+
+[sub_resource type="Resource" id="Resource_qdfei"]
+resource_local_to_scene = true
+script = ExtResource("2_rnfus")
+part_key = "Tail"
+part_type = "Tail"
+part_scene = ExtResource("21_qdfei")
+size_mode = 0
+
+[sub_resource type="Curve" id="Curve_onmql"]
+_data = [Vector2(0, 0.19101131), 0.0, 0.0, 0, 0, Vector2(0.44957983, 0.77528095), 0.0, 0.0, 0, 0, Vector2(1, 0.3370787), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Curve" id="Curve_jjxsw"]
+_limits = [-3.0, 3.0, 0.0, 1.0]
+_data = [Vector2(0, -0.32458997), 0.0, 0.0, 0, 0, Vector2(0.4873949, -0.9101124), 0.0, 0.0, 0, 0, Vector2(0.9397759, -0.60000014), 0.0, 0.0, 0, 0, Vector2(1, -0.46229506), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="Curve" id="Curve_u5v10"]
+_limits = [-3.0, 3.0, 0.0, 1.0]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_7veqs"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5wng4"]
+shading_mode = 0
+albedo_color = Color(0.2, 0.9, 1, 1)
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_p1hiw"]
+_surfaces = [{
+"aabb": AABB(-0.8445383, -0.9, -0.04, 1.6890765, 1.8, 0.08),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("qTNYv2ZmZr8K1yO9qTNYP2ZmZr8K1yO9qTNYP2ZmZr8K1yO9qTNYP2ZmZj8K1yO9qTNYP2ZmZj8K1yO9qTNYv2ZmZj8K1yO9qTNYv2ZmZj8K1yO9qTNYv2ZmZr8K1yO9qTNYv2ZmZr8K1yM9qTNYP2ZmZr8K1yM9qTNYP2ZmZr8K1yM9qTNYP2ZmZj8K1yM9qTNYP2ZmZj8K1yM9qTNYv2ZmZj8K1yM9qTNYv2ZmZj8K1yM9qTNYv2ZmZr8K1yM9qTNYv2ZmZr8K1yO9qTNYv2ZmZr8K1yM9qTNYP2ZmZr8K1yO9qTNYP2ZmZr8K1yM9qTNYP2ZmZj8K1yO9qTNYP2ZmZj8K1yM9qTNYv2ZmZj8K1yO9qTNYv2ZmZj8K1yM9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_0kbjf"]
+_surfaces = [{
+"aabb": AABB(-0.79426146, -0.885495, -0.04, 1.5885229, 1.77099, 0.08),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("uFRLv82vYr8K1yO9uFRLP82vYr8K1yO9uFRLP82vYr8K1yO9uFRLP82vYj8K1yO9uFRLP82vYj8K1yO9uFRLv82vYj8K1yO9uFRLv82vYj8K1yO9uFRLv82vYr8K1yO9uFRLv82vYr8K1yM9uFRLP82vYr8K1yM9uFRLP82vYr8K1yM9uFRLP82vYj8K1yM9uFRLP82vYj8K1yM9uFRLv82vYj8K1yM9uFRLv82vYj8K1yM9uFRLv82vYr8K1yM9uFRLv82vYr8K1yO9uFRLv82vYr8K1yM9uFRLP82vYr8K1yO9uFRLP82vYr8K1yM9uFRLP82vYj8K1yO9uFRLP82vYj8K1yM9uFRLv82vYj8K1yO9uFRLv82vYj8K1yM9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_dynm0"]
+_surfaces = [{
+"aabb": AABB(-0.059988968, -0.058557644, -0.04, 0.119977936, 0.11711529, 0.08),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("/rZ1vSTab70K1yO9/rZ1PSTab70K1yO9/rZ1PSTab70K1yO9/rZ1PSTabz0K1yO9/rZ1PSTabz0K1yO9/rZ1vSTabz0K1yO9/rZ1vSTabz0K1yO9/rZ1vSTab70K1yO9/rZ1vSTab70K1yM9/rZ1PSTab70K1yM9/rZ1PSTab70K1yM9/rZ1PSTabz0K1yM9/rZ1PSTabz0K1yM9/rZ1vSTabz0K1yM9/rZ1vSTabz0K1yM9/rZ1vSTab70K1yM9/rZ1vSTab70K1yO9/rZ1vSTab70K1yM9/rZ1PSTab70K1yO9/rZ1PSTab70K1yM9/rZ1PSTabz0K1yO9/rZ1PSTabz0K1yM9/rZ1vSTabz0K1yO9/rZ1vSTabz0K1yM9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_a5sfu"]
+_surfaces = [{
+"aabb": AABB(-0.61566895, -0.86954683, -0.04, 1.2313379, 1.7390937, 0.08),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("e5wdv5+aXr8K1yO9e5wdP5+aXr8K1yO9e5wdP5+aXr8K1yO9e5wdP5+aXj8K1yO9e5wdP5+aXj8K1yO9e5wdv5+aXj8K1yO9e5wdv5+aXj8K1yO9e5wdv5+aXr8K1yO9e5wdv5+aXr8K1yM9e5wdP5+aXr8K1yM9e5wdP5+aXr8K1yM9e5wdP5+aXj8K1yM9e5wdP5+aXj8K1yM9e5wdv5+aXj8K1yM9e5wdv5+aXj8K1yM9e5wdv5+aXr8K1yM9e5wdv5+aXr8K1yO9e5wdv5+aXr8K1yM9e5wdP5+aXr8K1yO9e5wdP5+aXr8K1yM9e5wdP5+aXj8K1yO9e5wdP5+aXj8K1yM9e5wdv5+aXj8K1yO9e5wdv5+aXj8K1yM9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_of3h8"]
+_surfaces = [{
+"aabb": AABB(-0.3958066, -0.73228556, -0.04, 0.7916132, 1.4645711, 0.08),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("KqfKvhF3O78K1yO9KqfKPhF3O78K1yO9KqfKPhF3O78K1yO9KqfKPhF3Oz8K1yO9KqfKPhF3Oz8K1yO9KqfKvhF3Oz8K1yO9KqfKvhF3Oz8K1yO9KqfKvhF3O78K1yO9KqfKvhF3O78K1yM9KqfKPhF3O78K1yM9KqfKPhF3O78K1yM9KqfKPhF3Oz8K1yM9KqfKPhF3Oz8K1yM9KqfKvhF3Oz8K1yM9KqfKvhF3Oz8K1yM9KqfKvhF3O78K1yM9KqfKvhF3O78K1yO9KqfKvhF3O78K1yM9KqfKPhF3O78K1yO9KqfKPhF3O78K1yM9KqfKPhF3Oz8K1yO9KqfKPhF3Oz8K1yM9KqfKvhF3Oz8K1yO9KqfKvhF3Oz8K1yM9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_x43x3"]
+_surfaces = [{
+"aabb": AABB(-0.4750651, -0.23902647, -0.04, 0.9501302, 0.47805294, 0.08),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("vDvzvlvDdL4K1yO9vDvzPlvDdL4K1yO9vDvzPlvDdL4K1yO9vDvzPlvDdD4K1yO9vDvzPlvDdD4K1yO9vDvzvlvDdD4K1yO9vDvzvlvDdD4K1yO9vDvzvlvDdL4K1yO9vDvzvlvDdL4K1yM9vDvzPlvDdL4K1yM9vDvzPlvDdL4K1yM9vDvzPlvDdD4K1yM9vDvzPlvDdD4K1yM9vDvzvlvDdD4K1yM9vDvzvlvDdD4K1yM9vDvzvlvDdL4K1yM9vDvzvlvDdL4K1yO9vDvzvlvDdL4K1yM9vDvzPlvDdL4K1yO9vDvzPlvDdL4K1yM9vDvzPlvDdD4K1yO9vDvzPlvDdD4K1yM9vDvzvlvDdD4K1yO9vDvzvlvDdD4K1yM9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_6jjyd"]
+_surfaces = [{
+"aabb": AABB(-0.059988968, -0.058557644, -0.04, 0.119977936, 0.11711529, 0.08),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("/rZ1vSTab70K1yO9/rZ1PSTab70K1yO9/rZ1PSTab70K1yO9/rZ1PSTabz0K1yO9/rZ1PSTabz0K1yO9/rZ1vSTabz0K1yO9/rZ1vSTabz0K1yO9/rZ1vSTab70K1yO9/rZ1vSTab70K1yM9/rZ1PSTab70K1yM9/rZ1PSTab70K1yM9/rZ1PSTabz0K1yM9/rZ1PSTabz0K1yM9/rZ1vSTabz0K1yM9/rZ1vSTabz0K1yM9/rZ1vSTab70K1yM9/rZ1vSTab70K1yO9/rZ1vSTab70K1yM9/rZ1PSTab70K1yO9/rZ1PSTab70K1yM9/rZ1PSTabz0K1yO9/rZ1PSTabz0K1yM9/rZ1vSTabz0K1yO9/rZ1vSTabz0K1yM9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_0umu2"]
+_surfaces = [{
+"aabb": AABB(-0.9746154, -0.87309295, -0.04, 1.9492308, 1.7461859, 0.08),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("ZYB5vwWDX78K1yO9ZYB5PwWDX78K1yO9ZYB5PwWDX78K1yO9ZYB5PwWDXz8K1yO9ZYB5PwWDXz8K1yO9ZYB5vwWDXz8K1yO9ZYB5vwWDXz8K1yO9ZYB5vwWDX78K1yO9ZYB5vwWDX78K1yM9ZYB5PwWDX78K1yM9ZYB5PwWDX78K1yM9ZYB5PwWDXz8K1yM9ZYB5PwWDXz8K1yM9ZYB5vwWDXz8K1yM9ZYB5vwWDXz8K1yM9ZYB5vwWDX78K1yM9ZYB5vwWDX78K1yO9ZYB5vwWDX78K1yM9ZYB5PwWDX78K1yO9ZYB5PwWDX78K1yM9ZYB5PwWDXz8K1yO9ZYB5PwWDXz8K1yM9ZYB5vwWDXz8K1yO9ZYB5vwWDXz8K1yM9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_sll3p"]
+_surfaces = [{
+"aabb": AABB(-0.46988207, -0.7272913, -0.04, 0.93976414, 1.4545826, 0.08),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("YpTwvsMvOr8K1yO9YpTwPsMvOr8K1yO9YpTwPsMvOr8K1yO9YpTwPsMvOj8K1yO9YpTwPsMvOj8K1yO9YpTwvsMvOj8K1yO9YpTwvsMvOj8K1yO9YpTwvsMvOr8K1yO9YpTwvsMvOr8K1yM9YpTwPsMvOr8K1yM9YpTwPsMvOr8K1yM9YpTwPsMvOj8K1yM9YpTwPsMvOj8K1yM9YpTwvsMvOj8K1yM9YpTwvsMvOj8K1yM9YpTwvsMvOr8K1yM9YpTwvsMvOr8K1yO9YpTwvsMvOr8K1yM9YpTwPsMvOr8K1yO9YpTwPsMvOr8K1yM9YpTwPsMvOj8K1yO9YpTwPsMvOj8K1yM9YpTwvsMvOj8K1yO9YpTwvsMvOj8K1yM9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_2c3ir"]
+_surfaces = [{
+"aabb": AABB(-0.4750651, -0.23902647, -0.04, 0.9501302, 0.47805294, 0.08),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("vDvzvlvDdL4K1yO9vDvzPlvDdL4K1yO9vDvzPlvDdL4K1yO9vDvzPlvDdD4K1yO9vDvzPlvDdD4K1yO9vDvzvlvDdD4K1yO9vDvzvlvDdD4K1yO9vDvzvlvDdL4K1yO9vDvzvlvDdL4K1yM9vDvzPlvDdL4K1yM9vDvzPlvDdL4K1yM9vDvzPlvDdD4K1yM9vDvzPlvDdD4K1yM9vDvzvlvDdD4K1yM9vDvzvlvDdD4K1yM9vDvzvlvDdL4K1yM9vDvzvlvDdL4K1yO9vDvzvlvDdL4K1yM9vDvzPlvDdL4K1yO9vDvzPlvDdL4K1yM9vDvzPlvDdD4K1yO9vDvzPlvDdD4K1yM9vDvzvlvDdD4K1yO9vDvzvlvDdD4K1yM9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_rv8qe"]
+_surfaces = [{
+"aabb": AABB(-0.76221335, -0.6903065, -0.04, 1.5244267, 1.380613, 0.08),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("aiBDv+23ML8K1yO9aiBDP+23ML8K1yO9aiBDP+23ML8K1yO9aiBDP+23MD8K1yO9aiBDP+23MD8K1yO9aiBDv+23MD8K1yO9aiBDv+23MD8K1yO9aiBDv+23ML8K1yO9aiBDv+23ML8K1yM9aiBDP+23ML8K1yM9aiBDP+23ML8K1yM9aiBDP+23MD8K1yM9aiBDP+23MD8K1yM9aiBDv+23MD8K1yM9aiBDv+23MD8K1yM9aiBDv+23ML8K1yM9aiBDv+23ML8K1yO9aiBDv+23ML8K1yM9aiBDP+23ML8K1yO9aiBDP+23ML8K1yM9aiBDP+23MD8K1yO9aiBDP+23MD8K1yM9aiBDv+23MD8K1yO9aiBDv+23MD8K1yM9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_8k7vy"]
+_surfaces = [{
+"aabb": AABB(-0.67591596, -0.54838467, -0.04, 1.3518319, 1.0967693, 0.08),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("1Agtv/BiDL8K1yO91AgtP/BiDL8K1yO91AgtP/BiDL8K1yO91AgtP/BiDD8K1yO91AgtP/BiDD8K1yO91Agtv/BiDD8K1yO91Agtv/BiDD8K1yO91Agtv/BiDL8K1yO91Agtv/BiDL8K1yM91AgtP/BiDL8K1yM91AgtP/BiDL8K1yM91AgtP/BiDD8K1yM91AgtP/BiDD8K1yM91Agtv/BiDD8K1yM91Agtv/BiDD8K1yM91Agtv/BiDL8K1yM91Agtv/BiDL8K1yO91Agtv/BiDL8K1yM91AgtP/BiDL8K1yO91AgtP/BiDL8K1yM91AgtP/BiDD8K1yO91AgtP/BiDD8K1yM91Agtv/BiDD8K1yO91Agtv/BiDD8K1yM9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_f462f"]
+_surfaces = [{
+"aabb": AABB(-0.39699855, -0.42834055, -0.04, 0.7939971, 0.8566811, 0.08),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("ZUPLvnRP274K1yO9ZUPLPnRP274K1yO9ZUPLPnRP274K1yO9ZUPLPnRP2z4K1yO9ZUPLPnRP2z4K1yO9ZUPLvnRP2z4K1yO9ZUPLvnRP2z4K1yO9ZUPLvnRP274K1yO9ZUPLvnRP274K1yM9ZUPLPnRP274K1yM9ZUPLPnRP274K1yM9ZUPLPnRP2z4K1yM9ZUPLPnRP2z4K1yM9ZUPLvnRP2z4K1yM9ZUPLvnRP2z4K1yM9ZUPLvnRP274K1yM9ZUPLvnRP274K1yO9ZUPLvnRP274K1yM9ZUPLPnRP274K1yO9ZUPLPnRP274K1yM9ZUPLPnRP2z4K1yO9ZUPLPnRP2z4K1yM9ZUPLvnRP2z4K1yO9ZUPLvnRP2z4K1yM9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_a8kf7"]
+_surfaces = [{
+"aabb": AABB(-0.53127533, -0.7025201, -0.04, 1.0625507, 1.4050401, 0.08),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("qQEIv1vYM78K1yO9qQEIP1vYM78K1yO9qQEIP1vYM78K1yO9qQEIP1vYMz8K1yO9qQEIP1vYMz8K1yO9qQEIv1vYMz8K1yO9qQEIv1vYMz8K1yO9qQEIv1vYM78K1yO9qQEIv1vYM78K1yM9qQEIP1vYM78K1yM9qQEIP1vYM78K1yM9qQEIP1vYMz8K1yM9qQEIP1vYMz8K1yM9qQEIv1vYMz8K1yM9qQEIv1vYMz8K1yM9qQEIv1vYM78K1yM9qQEIv1vYM78K1yO9qQEIv1vYM78K1yM9qQEIP1vYM78K1yO9qQEIP1vYM78K1yM9qQEIP1vYMz8K1yO9qQEIP1vYMz8K1yM9qQEIv1vYMz8K1yO9qQEIv1vYMz8K1yM9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_tshsr"]
+_surfaces = [{
+"aabb": AABB(-0.6710355, -0.4132163, -0.04, 1.342071, 0.8264326, 0.08),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("/MgrvxaR074K1yO9/MgrPxaR074K1yO9/MgrPxaR074K1yO9/MgrPxaR0z4K1yO9/MgrPxaR0z4K1yO9/MgrvxaR0z4K1yO9/MgrvxaR0z4K1yO9/MgrvxaR074K1yO9/MgrvxaR074K1yM9/MgrPxaR074K1yM9/MgrPxaR074K1yM9/MgrPxaR0z4K1yM9/MgrPxaR0z4K1yM9/MgrvxaR0z4K1yM9/MgrvxaR0z4K1yM9/MgrvxaR074K1yM9/MgrvxaR074K1yO9/MgrvxaR074K1yM9/MgrPxaR074K1yO9/MgrPxaR074K1yM9/MgrPxaR0z4K1yO9/MgrPxaR0z4K1yM9/MgrvxaR0z4K1yO9/MgrvxaR0z4K1yM9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_2ax1f"]
+_surfaces = [{
+"aabb": AABB(-0.4033871, -0.3311929, -0.04, 0.8067742, 0.6623858, 0.08),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("wYjOvh6Sqb4K1yO9wYjOPh6Sqb4K1yO9wYjOPh6Sqb4K1yO9wYjOPh6SqT4K1yO9wYjOPh6SqT4K1yO9wYjOvh6SqT4K1yO9wYjOvh6SqT4K1yO9wYjOvh6Sqb4K1yO9wYjOvh6Sqb4K1yM9wYjOPh6Sqb4K1yM9wYjOPh6Sqb4K1yM9wYjOPh6SqT4K1yM9wYjOPh6SqT4K1yM9wYjOvh6SqT4K1yM9wYjOvh6SqT4K1yM9wYjOvh6Sqb4K1yM9wYjOvh6Sqb4K1yO9wYjOvh6Sqb4K1yM9wYjOPh6Sqb4K1yO9wYjOPh6Sqb4K1yM9wYjOPh6SqT4K1yO9wYjOPh6SqT4K1yM9wYjOvh6SqT4K1yO9wYjOvh6SqT4K1yM9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_3gxsq"]
+_surfaces = [{
+"aabb": AABB(-0.9734129, -0.54, -0.04, 1.9468257, 1.08, 0.08),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("ljF5v3E9Cr8K1yO9ljF5P3E9Cr8K1yO9ljF5P3E9Cr8K1yO9ljF5P3E9Cj8K1yO9ljF5P3E9Cj8K1yO9ljF5v3E9Cj8K1yO9ljF5v3E9Cj8K1yO9ljF5v3E9Cr8K1yO9ljF5v3E9Cr8K1yM9ljF5P3E9Cr8K1yM9ljF5P3E9Cr8K1yM9ljF5P3E9Cj8K1yM9ljF5P3E9Cj8K1yM9ljF5v3E9Cj8K1yM9ljF5v3E9Cj8K1yM9ljF5v3E9Cr8K1yM9ljF5v3E9Cr8K1yO9ljF5v3E9Cr8K1yM9ljF5P3E9Cr8K1yO9ljF5P3E9Cr8K1yM9ljF5P3E9Cj8K1yO9ljF5P3E9Cj8K1yM9ljF5v3E9Cj8K1yO9ljF5v3E9Cj8K1yM9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_2lqio"]
+_surfaces = [{
+"aabb": AABB(-0.72822154, -0.6015744, -0.04, 1.4564431, 1.2031488, 0.08),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("umw6v8gAGr8K1yO9umw6P8gAGr8K1yO9umw6P8gAGr8K1yO9umw6P8gAGj8K1yO9umw6P8gAGj8K1yO9umw6v8gAGj8K1yO9umw6v8gAGj8K1yO9umw6v8gAGr8K1yO9umw6v8gAGr8K1yM9umw6P8gAGr8K1yM9umw6P8gAGr8K1yM9umw6P8gAGj8K1yM9umw6P8gAGj8K1yM9umw6v8gAGj8K1yM9umw6v8gAGj8K1yM9umw6v8gAGr8K1yM9umw6v8gAGr8K1yO9umw6v8gAGr8K1yM9umw6P8gAGr8K1yO9umw6P8gAGr8K1yM9umw6P8gAGj8K1yO9umw6P8gAGj8K1yM9umw6v8gAGj8K1yO9umw6v8gAGj8K1yM9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_mvcik"]
+_surfaces = [{
+"aabb": AABB(-0.446445, -0.3723641, -0.04, 0.89289, 0.7447282, 0.08),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("cJTkvoKmvr4K1yO9cJTkPoKmvr4K1yO9cJTkPoKmvr4K1yO9cJTkPoKmvj4K1yO9cJTkPoKmvj4K1yO9cJTkvoKmvj4K1yO9cJTkvoKmvj4K1yO9cJTkvoKmvr4K1yO9cJTkvoKmvr4K1yM9cJTkPoKmvr4K1yM9cJTkPoKmvr4K1yM9cJTkPoKmvj4K1yM9cJTkPoKmvj4K1yM9cJTkvoKmvj4K1yM9cJTkvoKmvj4K1yM9cJTkvoKmvr4K1yM9cJTkvoKmvr4K1yO9cJTkvoKmvr4K1yM9cJTkPoKmvr4K1yO9cJTkPoKmvr4K1yM9cJTkPoKmvj4K1yO9cJTkPoKmvj4K1yM9cJTkvoKmvj4K1yO9cJTkvoKmvj4K1yM9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_6bnex"]
+_surfaces = [{
+"aabb": AABB(-0.446445, -0.3723641, -0.04, 0.89289, 0.7447282, 0.08),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("cJTkvoKmvr4K1yO9cJTkPoKmvr4K1yO9cJTkPoKmvr4K1yO9cJTkPoKmvj4K1yO9cJTkPoKmvj4K1yO9cJTkvoKmvj4K1yO9cJTkvoKmvj4K1yO9cJTkvoKmvr4K1yO9cJTkvoKmvr4K1yM9cJTkPoKmvr4K1yM9cJTkPoKmvr4K1yM9cJTkPoKmvj4K1yM9cJTkPoKmvj4K1yM9cJTkvoKmvj4K1yM9cJTkvoKmvj4K1yM9cJTkvoKmvr4K1yM9cJTkvoKmvr4K1yO9cJTkvoKmvr4K1yM9cJTkPoKmvr4K1yO9cJTkPoKmvr4K1yM9cJTkPoKmvj4K1yO9cJTkPoKmvj4K1yM9cJTkvoKmvj4K1yO9cJTkvoKmvj4K1yM9")
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_cy83o"]
+_surfaces = [{
+"aabb": AABB(-0.7915015, -1.492437, -0.04, 1.583003, 2.984874, 0.08),
+"format": 34359738369,
+"primitive": 1,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("2J9Kvy0Iv78K1yO92J9KPy0Iv78K1yO92J9KPy0Iv78K1yO92J9KPy0Ivz8K1yO92J9KPy0Ivz8K1yO92J9Kvy0Ivz8K1yO92J9Kvy0Ivz8K1yO92J9Kvy0Iv78K1yO92J9Kvy0Iv78K1yM92J9KPy0Iv78K1yM92J9KPy0Iv78K1yM92J9KPy0Ivz8K1yM92J9KPy0Ivz8K1yM92J9Kvy0Ivz8K1yM92J9Kvy0Ivz8K1yM92J9Kvy0Iv78K1yM92J9Kvy0Iv78K1yO92J9Kvy0Iv78K1yM92J9KPy0Iv78K1yO92J9KPy0Iv78K1yM92J9KPy0Ivz8K1yO92J9KPy0Ivz8K1yM92J9Kvy0Ivz8K1yO92J9Kvy0Ivz8K1yM9")
+}]
+
+[node name="RatkinGenerator" instance=ExtResource("ratkin_generator_base")]
+visible = false
+script = ExtResource("2")
+part_scene_rules = Array[ExtResource("2_rnfus")]([SubResource("Resource_1wvmm"), SubResource("Resource_rnfus"), SubResource("Resource_0j4e2"), SubResource("Resource_m5mek"), SubResource("Resource_i46f7"), SubResource("Resource_umv74"), SubResource("Resource_ibmq0"), SubResource("Resource_pp0rc"), SubResource("Resource_8n5mr"), SubResource("Resource_pgvqi"), SubResource("Resource_wsbk8"), SubResource("Resource_26x20"), SubResource("Resource_njoax"), SubResource("Resource_nm75i"), SubResource("Resource_ullyn"), SubResource("Resource_5v2eh"), SubResource("Resource_r3tn5"), SubResource("Resource_v0y7y"), SubResource("Resource_2o4b3"), SubResource("Resource_2555n"), SubResource("Resource_qdfei")])
+overall_scale = 1.0
+part_width = 0.08
+torso_upper_curve = SubResource("Curve_onmql")
+torso_lower_curve = SubResource("Curve_jjxsw")
+torso_height_offset_curve = SubResource("Curve_u5v10")
+sub_torso_height_curve = SubResource("Curve_7veqs")
+
+[node name="ManualLayout" type="Node3D" parent="." unique_id=1719419165]
+
+[node name="Torso" type="MeshInstance3D" parent="ManualLayout" unique_id=178189459]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.25999993, 4.644357, 0.005)
+material_override = SubResource("StandardMaterial3D_5wng4")
+mesh = SubResource("ArrayMesh_p1hiw")
+
+[node name="@Label3D@4" type="Label3D" parent="ManualLayout/Torso" unique_id=345924635]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1999999, 0)
+billboard = 1
+text = "Torso"
+
+[node name="Pelvis" type="MeshInstance3D" parent="ManualLayout" unique_id=745011967]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.1245108, 0)
+material_override = SubResource("StandardMaterial3D_5wng4")
+mesh = SubResource("ArrayMesh_0kbjf")
+
+[node name="@Label3D@5" type="Label3D" parent="ManualLayout/Pelvis" unique_id=524168548]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.185495, 0)
+billboard = 1
+text = "Pelvis"
+
+[node name="SubTorso_Leg_1" type="MeshInstance3D" parent="ManualLayout" unique_id=515993157]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.08493343, 3.0058312, -0.08)
+material_override = SubResource("StandardMaterial3D_5wng4")
+mesh = SubResource("ArrayMesh_dynm0")
+
+[node name="@Label3D@6" type="Label3D" parent="ManualLayout/SubTorso_Leg_1" unique_id=1015624003]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35855764, 0)
+billboard = 1
+text = "SubTorso_Leg_1"
+
+[node name="Leg_1_Limb_2" type="MeshInstance3D" parent="ManualLayout" unique_id=357589997]
+transform = Transform3D(0.7543776, -0.65644073, 0, 0.65644073, 0.7543776, 0, 0, 0, 1, 0.11712733, 2.2992373, -0.08)
+material_override = SubResource("StandardMaterial3D_5wng4")
+mesh = SubResource("ArrayMesh_a5sfu")
+
+[node name="@Label3D@7" type="Label3D" parent="ManualLayout/Leg_1_Limb_2" unique_id=1825848697]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1695468, 0)
+billboard = 1
+text = "Leg_1_Limb_2"
+
+[node name="Leg_1_Limb_1" type="MeshInstance3D" parent="ManualLayout" unique_id=44321057]
+transform = Transform3D(0.99981797, 0.0190804, 0, -0.0190804, 0.99981797, 0, 0, 0, 1, 0.08783406, 0.97547764, -0.08)
+material_override = SubResource("StandardMaterial3D_5wng4")
+mesh = SubResource("ArrayMesh_of3h8")
+
+[node name="@Label3D@8" type="Label3D" parent="ManualLayout/Leg_1_Limb_1" unique_id=1510617939]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0322856, 0)
+billboard = 1
+text = "Leg_1_Limb_1"
+
+[node name="Leg_1" type="MeshInstance3D" parent="ManualLayout" unique_id=1892726628]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3580699, 0.23902644, -0.08)
+material_override = SubResource("StandardMaterial3D_5wng4")
+mesh = SubResource("ArrayMesh_x43x3")
+
+[node name="@Label3D@9" type="Label3D" parent="ManualLayout/Leg_1" unique_id=1101984284]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5390265, 0)
+billboard = 1
+text = "Leg_1"
+
+[node name="SubTorso_Leg_2" type="MeshInstance3D" parent="ManualLayout" unique_id=129035844]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.030028641, 3.0331903, 0.08)
+material_override = SubResource("StandardMaterial3D_5wng4")
+mesh = SubResource("ArrayMesh_6jjyd")
+
+[node name="@Label3D@10" type="Label3D" parent="ManualLayout/SubTorso_Leg_2" unique_id=805349251]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35855764, 0)
+billboard = 1
+text = "SubTorso_Leg_2"
+
+[node name="Leg_2_Limb_2" type="MeshInstance3D" parent="ManualLayout" unique_id=1258396250]
+transform = Transform3D(0.8045983, 0.59381956, 0, -0.59381956, 0.8045983, 0, 0, 0, 1, 0.33861405, 2.2972474, 0.08)
+material_override = SubResource("StandardMaterial3D_5wng4")
+mesh = SubResource("ArrayMesh_0umu2")
+
+[node name="@Label3D@11" type="Label3D" parent="ManualLayout/Leg_2_Limb_2" unique_id=350874171]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.173093, 0)
+billboard = 1
+text = "Leg_2_Limb_2"
+
+[node name="Leg_2_Limb_1" type="MeshInstance3D" parent="ManualLayout" unique_id=1704758762]
+transform = Transform3D(0.96690357, 0.25514203, 0, -0.25514203, 0.96690357, 0, 0, 0, 1, -0.066768765, 1.0033786, 0.08)
+material_override = SubResource("StandardMaterial3D_5wng4")
+mesh = SubResource("ArrayMesh_sll3p")
+
+[node name="@Label3D@12" type="Label3D" parent="ManualLayout/Leg_2_Limb_1" unique_id=1705304339]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0272913, 0)
+billboard = 1
+text = "Leg_2_Limb_1"
+
+[node name="Leg_2" type="MeshInstance3D" parent="ManualLayout" unique_id=424771276]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.35806984, 0.23902644, 0.08)
+material_override = SubResource("StandardMaterial3D_5wng4")
+mesh = SubResource("ArrayMesh_2c3ir")
+
+[node name="@Label3D@13" type="Label3D" parent="ManualLayout/Leg_2" unique_id=850647826]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5390265, 0)
+billboard = 1
+text = "Leg_2"
+
+[node name="Arm_1_Limb_2" type="MeshInstance3D" parent="ManualLayout" unique_id=2089312726]
+transform = Transform3D(0.61710453, -0.78688115, 0, 0.78688115, 0.61710453, 0, 0, 0, 1, 0.04557669, 4.5580125, -0.075)
+material_override = SubResource("StandardMaterial3D_5wng4")
+mesh = SubResource("ArrayMesh_rv8qe")
+
+[node name="@Label3D@14" type="Label3D" parent="ManualLayout/Arm_1_Limb_2" unique_id=1505566356]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9903065, 0)
+billboard = 1
+text = "Arm_1_Limb_2"
+
+[node name="Arm_1_Limb_1" type="MeshInstance3D" parent="ManualLayout" unique_id=1858208989]
+transform = Transform3D(0.7627039, 0.6467478, 0, -0.6467478, 0.7627039, 0, 0, 0, 1, 0.2513979, 3.28341, -0.075)
+material_override = SubResource("StandardMaterial3D_5wng4")
+mesh = SubResource("ArrayMesh_8k7vy")
+
+[node name="@Label3D@15" type="Label3D" parent="ManualLayout/Arm_1_Limb_1" unique_id=1513152049]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8483847, 0)
+billboard = 1
+text = "Arm_1_Limb_1"
+
+[node name="Arm_1" type="MeshInstance3D" parent="ManualLayout" unique_id=1229008600]
+transform = Transform3D(0.889584, 0.45677158, 0, -0.45677158, 0.889584, 0, 0, 0, 1, 0.5597114, 2.176793, -0.075)
+material_override = SubResource("StandardMaterial3D_5wng4")
+mesh = SubResource("ArrayMesh_f462f")
+
+[node name="@Label3D@16" type="Label3D" parent="ManualLayout/Arm_1" unique_id=923476198]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.72834057, 0)
+billboard = 1
+text = "Arm_1"
+
+[node name="Arm_2_Limb_2" type="MeshInstance3D" parent="ManualLayout" unique_id=2124216961]
+transform = Transform3D(0.868206, 0.49620396, 0, -0.49620396, 0.868206, 0, 0, 0, 1, 0.059328943, 4.626245, 0.085)
+material_override = SubResource("StandardMaterial3D_5wng4")
+mesh = SubResource("ArrayMesh_a8kf7")
+
+[node name="@Label3D@17" type="Label3D" parent="ManualLayout/Arm_2_Limb_2" unique_id=1691335463]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0025201, 0)
+billboard = 1
+text = "Arm_2_Limb_2"
+
+[node name="Arm_2_Limb_1" type="MeshInstance3D" parent="ManualLayout" unique_id=1459174981]
+transform = Transform3D(0.6240721, 0.7813668, 0, -0.7813668, 0.6240721, 0, 0, 0, 1, 0.2380274, 3.4838681, 0.085)
+material_override = SubResource("StandardMaterial3D_5wng4")
+mesh = SubResource("ArrayMesh_tshsr")
+
+[node name="@Label3D@18" type="Label3D" parent="ManualLayout/Arm_2_Limb_1" unique_id=756083203]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7132163, 0)
+billboard = 1
+text = "Arm_2_Limb_1"
+
+[node name="Arm_2" type="MeshInstance3D" parent="ManualLayout" unique_id=1020623502]
+transform = Transform3D(0.7019714, 0.7122051, 0, -0.7122051, 0.7019714, 0, 0, 0, 1, 0.521737, 2.517417, 0.085)
+material_override = SubResource("StandardMaterial3D_5wng4")
+mesh = SubResource("ArrayMesh_2ax1f")
+
+[node name="@Label3D@19" type="Label3D" parent="ManualLayout/Arm_2" unique_id=1589605284]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6311929, 0)
+billboard = 1
+text = "Arm_2"
+
+[node name="Head" type="MeshInstance3D" parent="ManualLayout" unique_id=1215394715]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.89706355, 5.648885, 0)
+material_override = SubResource("StandardMaterial3D_5wng4")
+mesh = SubResource("ArrayMesh_3gxsq")
+
+[node name="@Label3D@20" type="Label3D" parent="ManualLayout/Head" unique_id=382855353]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.84000003, 0)
+billboard = 1
+text = "Head"
+
+[node name="NeckMane" type="MeshInstance3D" parent="ManualLayout" unique_id=533922979]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.4443574, 0.048)
+material_override = SubResource("StandardMaterial3D_5wng4")
+mesh = SubResource("ArrayMesh_2lqio")
+
+[node name="@Label3D@21" type="Label3D" parent="ManualLayout/NeckMane" unique_id=318951314]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.90157443, 0)
+billboard = 1
+text = "NeckMane"
+
+[node name="EarLeft" type="MeshInstance3D" parent="ManualLayout" unique_id=807523628]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0410209, 6.2999425, -0.048)
+material_override = SubResource("StandardMaterial3D_5wng4")
+mesh = SubResource("ArrayMesh_mvcik")
+
+[node name="@Label3D@22" type="Label3D" parent="ManualLayout/EarLeft" unique_id=376549240]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6723641, 0)
+billboard = 1
+text = "EarLeft"
+
+[node name="EarRight" type="MeshInstance3D" parent="ManualLayout" unique_id=212882827]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0410209, 6.2999425, 0.048)
+material_override = SubResource("StandardMaterial3D_5wng4")
+mesh = SubResource("ArrayMesh_6bnex")
+
+[node name="@Label3D@23" type="Label3D" parent="ManualLayout/EarRight" unique_id=470305264]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6723641, 0)
+billboard = 1
+text = "EarRight"
+
+[node name="Tail" type="MeshInstance3D" parent="ManualLayout" unique_id=1939434139]
+transform = Transform3D(0.18548876, -0.9826464, 0, 0.9826464, 0.18548876, 0, 0, 0, 1, -2.082984, 2.8130875, 0)
+material_override = SubResource("StandardMaterial3D_5wng4")
+mesh = SubResource("ArrayMesh_cy83o")
+
+[node name="@Label3D@24" type="Label3D" parent="ManualLayout/Tail" unique_id=1835542018]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.792437, 0)
+billboard = 1
+text = "Tail"

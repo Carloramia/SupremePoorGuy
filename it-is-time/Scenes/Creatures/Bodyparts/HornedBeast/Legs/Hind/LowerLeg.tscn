@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=3]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/_PhysicalSampleBodyParts.tscn" id="1_base"]
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/HornedBeast/Models/Legs/Hind/LowerLeg.glb" id="2_model"]
+[ext_resource type="ArrayMesh" path="res://Resources/Meshes/HornedBeast/Legs/Hind/LowerLeg.res" id="3_mesh"]
+[sub_resource type="ConvexPolygonShape3D" id="Shape"]
+resource_local_to_scene = true
+points = PackedVector3Array(-0.27429756, 0.09173267, -0.01000000, -0.24205245, 0.12403465, -0.01000000, -0.17756222, 0.18863861, -0.01000000, -0.14531710, 0.22094059, -0.01000000, -0.04858175, 0.25324257, -0.01000000, 0.04815360, 0.25324257, -0.01000000, 0.17713406, 0.18863861, -0.01000000, 0.20937918, 0.15633663, -0.01000000, 0.24162430, 0.09173267, -0.01000000, 0.24162430, -0.84502475, -0.01000000, 0.14488895, -1.26495050, -0.01000000, 0.08039872, -1.32955446, -0.01000000, 0.01590848, -1.36185644, -0.01000000, -0.11307198, -1.36185644, -0.01000000, -0.17756222, -1.32955446, -0.01000000, -0.24205245, -1.26495050, -0.01000000, -0.27429756, -0.19898515, -0.01000000, -0.27429756, 0.09173267, 0.01000000, -0.24205245, 0.12403465, 0.01000000, -0.17756222, 0.18863861, 0.01000000, -0.14531710, 0.22094059, 0.01000000, -0.04858175, 0.25324257, 0.01000000, 0.04815360, 0.25324257, 0.01000000, 0.17713406, 0.18863861, 0.01000000, 0.20937918, 0.15633663, 0.01000000, 0.24162430, 0.09173267, 0.01000000, 0.24162430, -0.84502475, 0.01000000, 0.14488895, -1.26495050, 0.01000000, 0.08039872, -1.32955446, 0.01000000, 0.01590848, -1.36185644, 0.01000000, -0.11307198, -1.36185644, 0.01000000, -0.17756222, -1.32955446, 0.01000000, -0.24205245, -1.26495050, 0.01000000, -0.27429756, -0.19898515, 0.01000000)
+[node name="HornedBeast_LowerLeg" instance=ExtResource("1_base")]
+mass = 0.15
+geometry_mode = 1
+custom_model_path = NodePath("Model")
+paper_volume_enabled = true
+paper_volume_thickness = 0.08
+sprite_visible = false
+mesh_visible = true
+tags = Array[int]([5])
+metadata/source_png = "res://Assets/2DResources/HornedBeast/Separated/Limbs/05_hindleg_lower.png"
+metadata/pivot_is_initial_estimate = true
+[node name="CollisionShape3D" parent="." index="0"]
+position = Vector3(0, 0, 0)
+shape = SubResource("Shape")
+[node name="MeshInstance3D" parent="." index="2"]
+visible = false
+mesh = null
+[node name="Model" parent="." instance=ExtResource("2_model")]
+[node name="PaperVolume" type="MeshInstance3D" parent="Model"]
+scale = Vector3(1, 1, 0.08)
+mesh = ExtResource("3_mesh")
+metadata/flat_collision_depth = 0.02
+[node name="JointIn" type="Marker3D" parent="."]
+[node name="JointOut" type="Marker3D" parent="."]
+position = Vector3(-0.05445545, -1.14400000, 0.00000000)

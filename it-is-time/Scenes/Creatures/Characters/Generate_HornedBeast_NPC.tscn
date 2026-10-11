@@ -1,0 +1,13 @@
+[gd_scene format=3]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Characters/Generate_HornedBeast.tscn" id="1"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/NPCStateMachine3D.tscn" id="2"]
+[ext_resource type="Resource" path="res://Resources/AI/HornedBeastChargeAI.tres" id="3"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/ChargeAttackController3D.tscn" id="4"]
+[node name="GenerateHornedBeastNPC" instance=ExtResource("1")]
+faction_id = 1
+[node name="NPCStateMachine3D" parent="." instance=ExtResource("2")]
+behavior = ExtResource("3")
+navigation_origin_path = NodePath("")
+generated_x_axis_facing = true
+facing_x_dead_zone = 1.0
+[node name="ChargeAttackController3D" parent="." instance=ExtResource("4")]

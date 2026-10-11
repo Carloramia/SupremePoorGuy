@@ -1,0 +1,44 @@
+[gd_scene format=3 uid="uid://bco12ach77coa"]
+
+[ext_resource type="PackedScene" uid="uid://y2gn44xh763h" path="res://Scenes/Creatures/Bodyparts/_PhysicalSampleBodyParts.tscn" id="1_base"]
+[ext_resource type="PackedScene" uid="uid://diamt7gcfe6sg" path="res://Assets/3DResources/Creatures/HornedBeast/Models/Tail/Tail.glb" id="2_model"]
+[ext_resource type="ArrayMesh" path="res://Resources/Meshes/HornedBeast/Tail/Tail.res" id="3_mesh"]
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_ybca4"]
+resource_local_to_scene = true
+points = PackedVector3Array(-2.1203654, 0.953178, -0.04, -2.072431, 1.0969809, -0.04, -1.9765625, 1.2887182, -0.04, -1.6410222, 1.8639301, -0.04, -1.5451536, 1.9597987, -0.04, -1.4972193, 2.007733, -0.04, -1.305482, 2.0556674, -0.04, -0.39472988, 2.0556674, -0.04, -0.20299257, 2.007733, -0.04, -0.05918962, 1.9597987, -0.04, 0.03667903, 1.9118644, -0.04, 0.18048199, 1.8159958, -0.04, 0.3722193, 1.6242585, -0.04, 0.51602226, 1.4804555, -0.04, 0.56395656, 1.4325212, -0.04, 0.6118909, 1.3366525, -0.04, 1.1391684, -0.00550847, -0.04, 1.1391684, -0.24518009, -0.04, 1.0912341, -0.29311442, -0.04, 1.0432998, -0.34104872, -0.04, 0.8994968, -0.38898304, -0.04, 0.27635065, -0.43691736, -0.04, 0.22841631, -0.43691736, -0.04, -1.5930879, -0.24518009, -0.04, -1.7848252, -0.14931144, -0.04, -1.8806939, -0.0534428, -0.04, -1.9765625, 0.04242585, -0.04, -2.072431, 0.18622881, -0.04, -2.1203654, 0.33003178, -0.04, -2.1203654, 0.953178, 0.04, -2.072431, 1.0969809, 0.04, -1.9765625, 1.2887182, 0.04, -1.6410222, 1.8639301, 0.04, -1.5451536, 1.9597987, 0.04, -1.4972193, 2.007733, 0.04, -1.305482, 2.0556674, 0.04, -0.39472988, 2.0556674, 0.04, -0.20299257, 2.007733, 0.04, -0.05918962, 1.9597987, 0.04, 0.03667903, 1.9118644, 0.04, 0.18048199, 1.8159958, 0.04, 0.3722193, 1.6242585, 0.04, 0.51602226, 1.4804555, 0.04, 0.56395656, 1.4325212, 0.04, 0.6118909, 1.3366525, 0.04, 1.1391684, -0.00550847, 0.04, 1.1391684, -0.24518009, 0.04, 1.0912341, -0.29311442, 0.04, 1.0432998, -0.34104872, 0.04, 0.8994968, -0.38898304, 0.04, 0.27635065, -0.43691736, 0.04, 0.22841631, -0.43691736, 0.04, -1.5930879, -0.24518009, 0.04, -1.7848252, -0.14931144, 0.04, -1.8806939, -0.0534428, 0.04, -1.9765625, 0.04242585, 0.04, -2.072431, 0.18622881, 0.04, -2.1203654, 0.33003178, 0.04)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xvgk3"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+
+[node name="HornedBeast_Tail" unique_id=1411770556 instance=ExtResource("1_base")]
+mass = 0.15
+tags = Array[int]([10])
+geometry_mode = 1
+custom_model_path = NodePath("Model")
+paper_volume_enabled = true
+metadata/source_png = "res://Assets/2DResources/HornedBeast/Separated/Attachments/01_tail.png"
+metadata/pivot_is_initial_estimate = true
+
+[node name="CollisionShape3D" parent="." index="0" unique_id=1899992271]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+shape = SubResource("ConvexPolygonShape3D_ybca4")
+
+[node name="MeshInstance3D" parent="." index="2" unique_id=1504749449]
+visible = false
+mesh = null
+
+[node name="Model" parent="." index="3" unique_id=498744232 instance=ExtResource("2_model")]
+
+[node name="PaperVolume" type="MeshInstance3D" parent="Model" index="1" unique_id=1650781001]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.08, 0, 0, 0)
+mesh = ExtResource("3_mesh")
+surface_material_override/2 = SubResource("StandardMaterial3D_xvgk3")
+metadata/flat_collision_depth = 0.02
+
+[node name="JointIn" type="Marker3D" parent="." index="4" unique_id=1218978785]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9365896, -0.13001347, 0)
+
+[node name="JointOut" type="Marker3D" parent="." index="5" unique_id=1750109214]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3125, 1.575, 0)

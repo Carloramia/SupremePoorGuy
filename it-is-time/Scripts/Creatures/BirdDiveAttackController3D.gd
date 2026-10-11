@@ -137,6 +137,8 @@ func _select_target() -> Node3D:
 	return best
 
 func try_start_action(action_id: StringName = &"bird_dive", target: Node3D = null) -> bool:
+	var charge := get_parent().get_node_or_null("ChargeAttackController3D")
+	if charge != null and charge.is_active(): return false
 	if is_active() or _cooldown>0.0 or not has_npc_attack(action_id): return false
 	var module := get_parent().get_node_or_null("CreatureActionController3D")
 	if module != null and module.is_active(): return false

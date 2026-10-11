@@ -1,0 +1,21 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/_PhysicalSampleBodyParts.tscn" id="1"]
+[sub_resource type="StandardMaterial3D" id="TailMaterial"]
+albedo_color = Color(0.28, 0.22, 0.16, 1)
+
+[node name="Tail" instance=ExtResource("1")]
+tags = Array[int]([10])
+sprite_visible = false
+mesh_visible = true
+left_distance = 0.6
+right_distance = 0.6
+top_distance = 0.125
+bottom_distance = 0.125
+collision_thickness = 0.08
+[node name="MeshInstance3D" parent="." index="2"]
+material_override = SubResource("TailMaterial")
+[node name="JointIn" type="Marker3D" parent="."]
+position = Vector3(0.6, 0, 0)
+[node name="JointOut" type="Marker3D" parent="."]
+position = Vector3(-0.6, 0, 0)
