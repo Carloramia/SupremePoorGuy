@@ -7,6 +7,8 @@ func _initialize() -> void:
 	call_deferred("_run")
 
 func capture(file: String) -> void:
+	while app.board_motion.busy:
+		await process_frame
 	await process_frame
 	await process_frame
 	await RenderingServer.frame_post_draw
@@ -29,6 +31,10 @@ func _run() -> void:
 	app._refresh_ritual()
 	await capture("03_engraved")
 	app._summon()
+	# Only this isolated visual capture fixes forms to showcase all three illustration slots.
+	for i in 3:
+		app.state.data.monsters[i].form = ["兽形", "人形", "蛇形"][i]
+		app.state.data.monsters[i].name = "纸雕示意·"+app.state.data.monsters[i].form+" %02d" % (i+1)
 	app.view.elapsed = 1.2
 	await capture("04_eruption")
 	app.view.skip_eruption()
@@ -40,6 +46,9 @@ func _run() -> void:
 	app._close_all()
 	app.state.store_pending()
 	app.state.move_monster(app.state.data.monsters[0].id,"team")
+	app._warehouse("")
+	await capture("10_warehouse")
+	app._close_all()
 	app._show("battle")
 	await capture("08_battle")
 	app._skip_battle()

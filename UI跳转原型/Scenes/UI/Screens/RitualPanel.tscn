@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3]
 [ext_resource type="PackedScene" path="res://Scenes/UI/Components/RuneBoard.tscn" id="Board"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/Components/ActionButton.tscn" id="Button"]
-[ext_resource type="Theme" path="res://Assets/UI/PrototypeTheme.tres" id="Theme"]
+[ext_resource type="Theme" path="res://Assets/UI/PaperRelief/PaperReliefTheme.tres" id="Theme"]
 [node name="RitualPanel" type="VBoxContainer"]
 offset_right = 1196.0
 offset_bottom = 530.0
@@ -107,4 +107,6 @@ text = "清空阵面"
 [node name="Summon" parent="Controls" instance=ExtResource("Button")]
 unique_name_in_owner = true
 layout_mode = 2
+theme_type_variation = &"PrimaryButton"
+theme_type_variation = &"PrimaryButton"
 text = "确认召唤 · 3 只"

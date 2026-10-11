@@ -80,6 +80,7 @@ func _run() -> void:
 	check(not failed.summon(rules,"grassland","world"),"save failure rejects summon")
 	check(failed.data.magic==300 and failed.data.monsters.is_empty(),"save failure rolls back")
 	var app = Scene.instantiate()
+	app.animate_panels = false
 	app.state.save_path = "user://native_ui_scene_test_%d.json" % Time.get_ticks_usec()
 	root.add_child(app)
 	await process_frame

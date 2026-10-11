@@ -1,29 +1,58 @@
 @tool
 extends Control
-## Runtime vector placeholders, not production monster assets.
+## Editable illustration slots. Reference examples are not generated monster appearances.
 @export_enum("人形", "兽形", "蛇形") var form: String = "兽形":
 	set(value):
 		form = value
+		_sync_reference()
 		queue_redraw()
 @export var tint: Color = Color("839b78"):
 	set(value):
 		tint = value
 		queue_redraw()
 var _last_artwork: Texture2D
+@export_group("Reference examples (prototype only)")
+@export var use_reference_examples := true
+@export var human_reference: Texture2D
+@export var beast_reference: Texture2D
+@export var snake_reference: Texture2D
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	resized.connect(queue_redraw)
+	_sync_reference()
 
 func _process(_delta: float) -> void:
+	_sync_reference()
 	var artwork := get_node_or_null("Artwork") as TextureRect
 	if artwork != null and artwork.texture != _last_artwork:
 		_last_artwork = artwork.texture
 		queue_redraw()
 
+func _sync_reference() -> void:
+	var reference := get_node_or_null("ReferenceArt") as TextureRect
+	var caption := get_node_or_null("ReferenceCaption") as Label
+	var artwork := get_node_or_null("Artwork") as TextureRect
+	if reference == null or caption == null:
+		return
+	var candidate: Texture2D = beast_reference
+	if form == "人形":
+		candidate = human_reference
+	elif form == "蛇形":
+		candidate = snake_reference
+	var show_reference := use_reference_examples and candidate != null and (artwork == null or artwork.texture == null)
+	if reference.texture != candidate or reference.visible != show_reference:
+		reference.texture = candidate
+		reference.visible = show_reference
+		caption.visible = show_reference
+		queue_redraw()
+
 func _draw() -> void:
 	var artwork := get_node_or_null("Artwork") as TextureRect
 	if artwork != null and artwork.texture != null:
+		return
+	var reference := get_node_or_null("ReferenceArt") as TextureRect
+	if reference != null and reference.visible and reference.texture != null:
 		return
 	var origin := size * Vector2(0.5, 0.56)
 	var s := minf(size.x / 240.0, size.y / 180.0)

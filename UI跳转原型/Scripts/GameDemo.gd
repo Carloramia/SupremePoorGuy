@@ -1,11 +1,13 @@
 extends Control
 ## Flow controller only. Visual structure belongs to Scenes/UI and Assets/UI.
+@export var animate_panels := true
 signal location_interaction_requested(location_id: String, kind: String)
 signal scene_requested(kind: String, location_id: String)
 signal party_changed(monster_ids: Array)
 const State = preload("res://Scripts/PrototypeState.gd")
 const Rules = preload("res://Scripts/Ritual/RuneRules.gd")
 const ActionButton = preload("res://Scenes/UI/Components/ActionButton.tscn")
+const StatButton = preload("res://Scenes/UI/Components/StatButton.tscn")
 const RelicButton = preload("res://Scenes/UI/Components/RelicButton.tscn")
 const RuneReference = preload("res://Scenes/UI/Components/RuneReferenceRow.tscn")
 const ActiveRune = preload("res://Scenes/UI/Components/ActiveRuneRow.tscn")
@@ -31,6 +33,7 @@ var header: Label
 var status: Label
 var actions: HFlowContainer
 var overlay: ColorRect
+var board_motion
 var modal_stack: Array[Dictionary] = []
 var modal_box: VBoxContainer
 var modal_title: Label
@@ -73,6 +76,9 @@ func _build() -> void:
 	view.ritual_requested.connect(_open_ritual)
 	view.eruption_finished.connect(_eruption_done)
 	overlay = %ModalHost
+	board_motion = overlay.get_node("%BoardMotion")
+	board_motion.enabled = animate_panels
+	board_motion.completed.connect(_motion_completed)
 	modal_box = overlay.get_node("%Body")
 	modal_title = overlay.get_node("%Title")
 	modal_scroll = overlay.get_node("%Scroll")
@@ -108,7 +114,7 @@ func _show(next: String) -> void:
 			_btn(actions,"跳过召唤演出",func(): view.skip_eruption())
 			status.text = "法阵喷涌 · 妖兽正在显形"
 	_update_header()
-	if not modal_stack.is_empty():
+	if is_instance_valid(overlay) and overlay.visible:
 		_block_base(base,true)
 
 func _update_header() -> void:
@@ -317,7 +323,7 @@ func _monster_card(parent: Node, monster: Dictionary, result_card: bool) -> void
 	card.get_node("%Name").text = monster.name
 	card.get_node("%State").text = "%s　·　%s" % [monster.form,{"pending":"待安置","warehouse":"仓库","team":"出战"}[monster.position]]
 	for pair in [["生命",monster.hp],["攻击",monster.attack],["护甲",monster.armor],["移速",monster.speed]]:
-		_btn(card.get_node("%Stats"),"%s %s" % [pair[0],pair[1]],func(): _term(pair[0],TERMS[pair[0]]))
+		_btn(card.get_node("%Stats"),"%s %s" % [pair[0],pair[1]],func(): _term(pair[0],TERMS[pair[0]]),StatButton)
 	for ability_name in monster.traits:
 		_btn(card.get_node("%Traits"),"【%s】" % ability_name,func(): _trait(ability_name))
 	card.get_node("%Detail").pressed.connect(func(): _detail(monster.id))
@@ -401,10 +407,14 @@ func _confirm(title: String, text: String, callback: Callable) -> void:
 		_btn(page.get_node("%Commands"),"确认",callback))
 
 func _modal(title: String, builder: Callable) -> void:
+	var first := modal_stack.is_empty()
 	modal_stack.append({"title":title,"build":builder})
 	_render_modal()
+	if first:
+		board_motion.reveal()
 
 func _render_modal() -> void:
+	board_motion.snap()
 	_clear(modal_box)
 	overlay.visible = not modal_stack.is_empty()
 	_block_base(base,overlay.visible)
@@ -427,7 +437,10 @@ func _close_modal(store_results: bool = true) -> void:
 			_notice(state.last_error)
 			return
 	modal_stack.pop_back()
-	_render_modal()
+	if modal_stack.is_empty() and store_results and animate_panels:
+		board_motion.dismiss()
+	else:
+		_render_modal()
 	_refresh_sidebar()
 	_update_header()
 	if route == "battle":
@@ -436,6 +449,12 @@ func _close_modal(store_results: bool = true) -> void:
 func _close_all() -> void:
 	modal_stack.clear()
 	_render_modal()
+
+func _motion_completed(kind: String) -> void:
+	if kind == "exit" and modal_stack.is_empty():
+		_render_modal()
+	elif kind == "enter" and not modal_stack.is_empty():
+		close_button.grab_focus()
 
 func _block_base(node: Node, blocked: bool) -> void:
 	if node is Button:
@@ -449,6 +468,8 @@ func _block_base(node: Node, blocked: bool) -> void:
 		_block_base(child,blocked)
 
 func _unhandled_key_input(event: InputEvent) -> void:
+	if board_motion.busy:
+		return
 	if not event is InputEventKey or not event.pressed or event.echo:
 		return
 	if get_viewport().gui_get_focus_owner() is LineEdit:
@@ -481,8 +502,8 @@ func _text_screen(parent: Node, text: String) -> VBoxContainer:
 	page.get_node("%Description").text = text
 	return page
 
-func _btn(parent: Node, text: String, callback: Callable) -> Button:
-	var button := ActionButton.instantiate()
+func _btn(parent: Node, text: String, callback: Callable, component: PackedScene = ActionButton) -> Button:
+	var button := component.instantiate()
 	button.text = text
 	button.pressed.connect(callback)
 	parent.add_child(button)

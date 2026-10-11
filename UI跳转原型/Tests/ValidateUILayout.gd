@@ -36,6 +36,7 @@ func _run() -> void:
 	root.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
 	root.content_scale_aspect = Window.CONTENT_SCALE_ASPECT_KEEP
 	app = Scene.instantiate()
+	app.animate_panels = false
 	app.state.save_path = "user://native_layout_test_%d.json" % Time.get_ticks_usec()
 	root.add_child(app)
 	app._show("world")

@@ -2,7 +2,7 @@
 [ext_resource type="Script" path="res://Scripts/GameDemo.gd" id="1"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/Components/AppShell.tscn" id="Shell"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/Components/ModalHost.tscn" id="Modal"]
-[ext_resource type="Theme" path="res://Assets/UI/PrototypeTheme.tres" id="Theme"]
+[ext_resource type="Theme" path="res://Assets/UI/PaperRelief/PaperReliefTheme.tres" id="Theme"]
 [node name="GameDemo" type="Control"]
 layout_mode = 3
 anchors_preset = 15
@@ -20,7 +20,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.14902, 0.231373, 0.231373, 1)
+color = Color(0.153, 0.137, 0.122, 1)
 [node name="AppShell" parent="." instance=ExtResource("Shell")]
 unique_name_in_owner = true
 layout_mode = 1

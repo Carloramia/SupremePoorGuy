@@ -13,8 +13,8 @@ var freehand := false
 var last_pointer := Vector2.ZERO
 @export_group("Artwork")
 @export var board_texture: Texture2D
-@export var board_color := Color("263b3b")
-@export var rim_color := Color("bc8942")
+@export var board_color := Color("27231f")
+@export var rim_color := Color("bd7d32")
 @export var empty_cell_color := Color("e6d6b8")
 
 func _ready() -> void:
@@ -75,9 +75,9 @@ func _draw() -> void:
 		var poly := polygon(cell)
 		draw_colored_polygon(poly,color)
 		poly.append(poly[0])
-		draw_polyline(poly,Color("596b60"),1,true)
+		draw_polyline(poly,Color("75624c"),1,true)
 	for item in rules.placed:
-		_stroke(item.cells,Color("263b3b"),3)
+		_stroke(item.cells,Color("27231f"),3)
 	_stroke(rules.draft,Color("fff3d2"),4)
 	_stroke(preview_path,Color("fff3d2"),4)
 	if not selected_relic.is_empty() and not hovered.is_empty():
@@ -102,9 +102,9 @@ func _draw_preview() -> void:
 		var poly := PackedVector2Array()
 		for i in 6:
 			poly.append(at+Vector2(cos(deg_to_rad(i*60-30)),sin(deg_to_rad(i*60-30)))*unit*0.85)
-		draw_colored_polygon(poly,Color("376f68"))
+		draw_colored_polygon(poly,Color("94513f"))
 		poly.append(poly[0])
-		draw_polyline(poly,Color("bc8942"),1,true)
+		draw_polyline(poly,Color("bd7d32"),1,true)
 	if shifted.size()>1:
 		draw_polyline(shifted,Color("fff3d2"),2,true)
 

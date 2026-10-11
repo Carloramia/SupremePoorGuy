@@ -1,6 +1,13 @@
-[gd_scene load_steps=3 format=3]
-[ext_resource type="Theme" path="res://Assets/UI/PrototypeTheme.tres" id="Theme"]
+[gd_scene load_steps=6 format=3]
+[ext_resource type="Theme" path="res://Assets/UI/PaperRelief/PaperReliefTheme.tres" id="Theme"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/Components/ActionButton.tscn" id="Button"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/Components/BoardMotion.tscn" id="Motion"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/Components/BoardSurface.tscn" id="Surface"]
+[sub_resource type="StyleBoxEmpty" id="BoardContent"]
+content_margin_left = 32.0
+content_margin_top = 30.0
+content_margin_right = 32.0
+content_margin_bottom = 26.0
 [node name="ModalHost" type="ColorRect"]
 visible = false
 anchors_preset = 15
@@ -10,7 +17,10 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("Theme")
 color = Color(0.04, 0.08, 0.08, 0.8)
-[node name="Margin" type="MarginContainer" parent="."]
+clip_contents = true
+[node name="BoardMotion" parent="." instance=ExtResource("Motion")]
+unique_name_in_owner = true
+[node name="Margin" type="MarginContainer" parent="BoardMotion/MotionRoot"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -21,13 +31,16 @@ theme_override_constants/margin_left = 26
 theme_override_constants/margin_right = 26
 theme_override_constants/margin_top = 22
 theme_override_constants/margin_bottom = 22
-[node name="Panel" type="PanelContainer" parent="Margin"]
+[node name="BoardSurface" parent="BoardMotion/MotionRoot/Margin" instance=ExtResource("Surface")]
 layout_mode = 2
-[node name="Layout" type="VBoxContainer" parent="Margin/Panel"]
+[node name="Panel" type="PanelContainer" parent="BoardMotion/MotionRoot/Margin"]
 layout_mode = 2
-[node name="Header" type="HBoxContainer" parent="Margin/Panel/Layout"]
+theme_override_styles/panel = SubResource("BoardContent")
+[node name="Layout" type="VBoxContainer" parent="BoardMotion/MotionRoot/Margin/Panel"]
 layout_mode = 2
-[node name="Title" type="Label" parent="Margin/Panel/Layout/Header"]
+[node name="Header" type="HBoxContainer" parent="BoardMotion/MotionRoot/Margin/Panel/Layout"]
+layout_mode = 2
+[node name="Title" type="Label" parent="BoardMotion/MotionRoot/Margin/Panel/Layout/Header"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -35,23 +48,25 @@ theme_override_font_sizes/font_size = 26
 text = "窗口标题"
 clip_text = true
 text_overrun_behavior = 3
-[node name="Close" parent="Margin/Panel/Layout/Header" instance=ExtResource("Button")]
+[node name="Close" parent="BoardMotion/MotionRoot/Margin/Panel/Layout/Header" instance=ExtResource("Button")]
 unique_name_in_owner = true
 layout_mode = 2
 text = "返回 / Esc"
-[node name="Scroll" type="ScrollContainer" parent="Margin/Panel/Layout"]
+[node name="Scroll" type="ScrollContainer" parent="BoardMotion/MotionRoot/Margin/Panel/Layout"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
-[node name="Body" type="VBoxContainer" parent="Margin/Panel/Layout/Scroll"]
+[node name="Body" type="VBoxContainer" parent="BoardMotion/MotionRoot/Margin/Panel/Layout/Scroll"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-[node name="Feedback" type="Label" parent="Margin/Panel/Layout"]
+[node name="Feedback" type="Label" parent="BoardMotion/MotionRoot/Margin/Panel/Layout"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
 autowrap_mode = 3
 max_lines_visible = 2
+
+[editable path="BoardMotion"]
