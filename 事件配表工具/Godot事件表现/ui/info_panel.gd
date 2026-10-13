@@ -1,42 +1,18 @@
 extends CanvasLayer
 ## Non-mutating explanation layer. Hover hint and modal glossary share one renderer.
 const UI := preload("res://ui/layout_theme.gd")
-var _root: Control
-var _dim: ColorRect
-var _panel: PanelContainer
-var _heading: Label
-var _entries: VBoxContainer
-var _close: Button
+@onready var _root: Control = get_node("Root")
+@onready var _dim: ColorRect = get_node("Root/Dim")
+@onready var _panel: PanelContainer = get_node("%Panel")
+@onready var _heading: Label = get_node("%Heading")
+@onready var _entries: VBoxContainer = get_node("%Entries")
+@onready var _close: Button = get_node("%Close")
 var _mode := "closed"
 var _owner := 0
 var _previous_focus: WeakRef
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	layer = 120
-	_root = Control.new()
-	_root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	_root.theme = UI.create()
-	add_child(_root)
-	_dim = ColorRect.new()
-	_dim.color = Color(0, 0, 0, 0.55)
-	_dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	_root.add_child(_dim)
-	_panel = UI.panel(UI.PANEL, 20)
-	_root.add_child(_panel)
-	var column := VBoxContainer.new()
-	column.add_theme_constant_override("separation", 12)
-	_panel.add_child(column)
-	_heading = UI.label("", 26)
-	_heading.autowrap_mode = TextServer.AUTOWRAP_OFF
-	_heading.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	column.add_child(_heading)
-	column.add_child(HSeparator.new())
-	_entries = VBoxContainer.new()
-	_entries.add_theme_constant_override("separation", 8)
-	column.add_child(_entries)
-	_close = UI.button("关闭说明", true)
-	column.add_child(_close)
 	_close.pressed.connect(close)
 	_root.hide()
 

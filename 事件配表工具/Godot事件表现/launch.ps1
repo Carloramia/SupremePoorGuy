@@ -14,5 +14,5 @@ if (-not $GodotPath -or -not (Test-Path -LiteralPath $GodotPath)) {
     exit 1
 }
 $taskArgs = @('--path', ('"' + $PSScriptRoot + '"'))
-if ($Editor) { $taskArgs += '--editor' }
+if ($Editor) { $taskArgs += @('--editor', 'res://tools/event_workbench.tscn') }
 Start-Process -FilePath $GodotPath -ArgumentList $taskArgs -WorkingDirectory $PSScriptRoot -WindowStyle Normal

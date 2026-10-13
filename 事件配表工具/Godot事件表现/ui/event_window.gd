@@ -7,27 +7,29 @@ signal event_closed(event_id: String)
 
 const UI := preload("res://ui/layout_theme.gd")
 const CARDS := preload("res://ui/event_cards.gd")
-const INFO := preload("res://ui/info_panel.gd")
+const DEFINITION := preload("res://core/event_definition.gd")
+const LINE := preload("res://ui/dialogue_line.tscn")
 const GOLD := UI.TEXT
 const INK := UI.PANEL
-var _root: Control
-var _scroll: ScrollContainer
-var _log: VBoxContainer
-var _continue: Button
-var _latest: Button
-var _title: Label
-var _hint: Label
+@onready var _root: Control = get_node("Root")
+@onready var _scroll: ScrollContainer = get_node("%Scroll")
+@onready var _log: VBoxContainer = get_node("%Log")
+@onready var _continue: Button = get_node("%Continue")
+@onready var _latest: Button = get_node("%Latest")
+@onready var _title: Label = get_node("%Title")
+@onready var _hint: Label = get_node("%Hint")
 var _data: Dictionary = {}
 var _nodes: Dictionary = {}
 var _cursor := ""
+var _visible_node := ""
 var _state := "idle"
 var _request := ""
 var _session := ""
 var _reward_node: Dictionary = {}
 var _choices: GridContainer
 var _reward_display: Control
-var _badge: Label
-var _info: CanvasLayer
+@onready var _badge: Label = get_node("%Badge")
+@onready var _info: CanvasLayer = get_node("%Info")
 var _scroll_tween: Tween
 var _generation := 0
 var _receipt_added := false
@@ -35,9 +37,16 @@ var transcript: Array[Dictionary] = []
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	_build()
-	_info = INFO.new()
-	add_child(_info)
+	_continue.pressed.connect(advance)
+	_latest.pressed.connect(func(): _scroll_to_latest(_generation))
+	_latest.modulate.a = 0.0
+	_latest.disabled = true
+	_scroll.get_v_scroll_bar().value_changed.connect(_update_history_hint)
+	_scroll.get_v_scroll_bar().changed.connect(_update_history_hint)
+	_scroll.gui_input.connect(func(event: InputEvent):
+		if _scroll_tween and (event is InputEventMouseButton or event is InputEventPanGesture):
+			_scroll_tween.kill())
+	get_node("%Rules").pressed.connect(func(): _info.open_details("事件说明", [{"title": "记录", "text": "继续逐句追加。回看不推进剧情。"}, {"title": "奖励", "text": "预览会话不修改背包；正式奖励必须由外部系统确认。"}]))
 	_root.hide()
 
 func is_open() -> bool:
@@ -71,34 +80,19 @@ func open_event(definition: Dictionary, session_id: String) -> Error:
 	return OK
 
 func _valid(definition: Dictionary) -> bool:
-	for key in ["id", "title", "start", "nodes"]:
-		if not definition.has(key):
-			return false
-	if not definition.nodes is Dictionary or not definition.nodes.has(str(definition.start)):
-		return false
-	if str(definition.get("reward_mode", "auto")) not in ["auto", "manual"]:
-		return false
-	for value in definition.nodes.values():
-		if not value is Dictionary:
-			return false
-		var kind := str(value.get("type", ""))
-		if kind not in ["line", "choice", "reward", "end"]:
-			return false
-		if kind == "choice":
-			if not value.get("options", []) is Array or value.get("options", []).is_empty():
-				return false
-			for option in value.options:
-				if not option is Dictionary or not option.has("id") or not option.has("text") or not definition.nodes.has(str(option.get("next", ""))):
-					return false
-		elif kind != "end" and not definition.nodes.has(str(value.get("next", ""))):
-			return false
-		if kind == "reward":
-			if not value.get("rewards", []) is Array:
-				return false
-			for reward in value.get("rewards", []):
-				if not reward is Dictionary or not reward.has("id") or not reward.has("type"):
-					return false
-	return true
+	return DEFINITION.validate(definition).ok
+
+func get_runtime_snapshot() -> Dictionary:
+	return {"state": _state, "node_id": _visible_node, "next": _cursor, "event_id": str(_data.get("id", "")), "request_id": _request, "lines": transcript.size()}
+
+func abort_event() -> void:
+	# Cancellation is not completion and never emits event_closed.
+	_generation += 1
+	if _scroll_tween:
+		_scroll_tween.kill()
+	_state = "idle"
+	_info.close()
+	_root.hide()
 
 func advance() -> void:
 	if _info.is_modal_open():
@@ -111,6 +105,7 @@ func advance() -> void:
 		close_event()
 
 func _advance() -> void:
+	_visible_node = _cursor
 	var node: Dictionary = _nodes[_cursor]
 	match str(node.type):
 		"line":
@@ -134,6 +129,7 @@ func _advance() -> void:
 			_request = _session + ":" + str(_data.id) + ":" + _cursor
 			_receipt_added = false
 			_reward_node = node
+			_reward_display = null # Keep preceding reward receipts in the transcript.
 			_show_reward(false, "预览奖励 · 尚未领取")
 			if str(_data.get("reward_mode", "auto")) == "manual":
 				_state = "reward_ready"
@@ -209,11 +205,10 @@ func close_event() -> void:
 	event_closed.emit(event_id)
 
 func _add_line(speaker: String, body: String, player := false) -> void:
-	var box := VBoxContainer.new()
-	box.add_theme_constant_override("separation", 6)
-	_log.add_child(box)
-	box.add_child(_label(("你 · " if player else "") + speaker, 17, UI.MUTED))
-	box.add_child(_label(body, 21))
+	var line := LINE.instantiate()
+	line.get_node("%Speaker").text = ("你 · " if player else "") + speaker
+	line.get_node("%Body").text = body
+	_log.add_child(line)
 	transcript.append({"type": "line", "speaker": speaker, "text": body})
 
 func _scroll_to_latest(generation: int) -> void:
@@ -234,87 +229,3 @@ func _update_history_hint(_value: float = 0) -> void:
 	_latest.modulate.a = 1.0 if show_latest else 0.0
 	_latest.disabled = not show_latest
 	_latest.mouse_filter = Control.MOUSE_FILTER_STOP if show_latest else Control.MOUSE_FILTER_IGNORE
-
-func _build() -> void:
-	_root = Control.new()
-	_root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	add_child(_root)
-	_root.theme = UI.create()
-	var dim := ColorRect.new()
-	dim.color = Color(0, 0, 0, 0.32)
-	dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	_root.add_child(dim)
-	var center := CenterContainer.new()
-	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	center.anchor_left = 0.23
-	center.anchor_top = 0.12
-	_root.add_child(center)
-	var panel := PanelContainer.new()
-	panel.custom_minimum_size = Vector2(922, 560)
-	panel.add_theme_stylebox_override("panel", UI.style(INK, UI.BORDER, 24))
-	center.add_child(panel)
-	var column := VBoxContainer.new()
-	column.add_theme_constant_override("separation", 12)
-	panel.add_child(column)
-	var badge_row := HBoxContainer.new()
-	column.add_child(badge_row)
-	_badge = _label("地点事件", 15, UI.MUTED)
-	badge_row.add_child(_badge)
-	var rules := _button("说明 ⓘ")
-	rules.custom_minimum_size.y = 36
-	badge_row.add_child(rules)
-	rules.pressed.connect(func(): _info.open_details("事件说明", [{"title": "对话记录", "text": "继续会在同一记录中追加一句话。滚轮回看或回到最新不会推进剧情。"}, {"title": "选择与奖励", "text": "选择只显示对应分支；奖励先预览，再点击领取。返回探索不会再发一次奖励。"}, {"title": "当前演示", "text": "布局参考来自你提供的截图，颜色、图标与材质均为占位。"}]))
-	var title_row := HBoxContainer.new()
-	column.add_child(title_row)
-	var line_left := HSeparator.new()
-	line_left.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	title_row.add_child(line_left)
-	_title = _label("事件", 29)
-	_title.autowrap_mode = TextServer.AUTOWRAP_OFF
-	_title.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title_row.add_child(_title)
-	var line_right := HSeparator.new()
-	line_right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	title_row.add_child(line_right)
-	column.add_child(HSeparator.new())
-	_scroll = ScrollContainer.new()
-	_scroll.custom_minimum_size = Vector2(874, 310)
-	_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	column.add_child(_scroll)
-	_log = VBoxContainer.new()
-	_log.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_log.add_theme_constant_override("separation", 22)
-	_scroll.add_child(_log)
-	_scroll.get_v_scroll_bar().value_changed.connect(_update_history_hint)
-	_scroll.get_v_scroll_bar().changed.connect(_update_history_hint)
-	_scroll.gui_input.connect(func(event: InputEvent):
-		if _scroll_tween and (event is InputEventMouseButton or event is InputEventPanGesture):
-			_scroll_tween.kill())
-	column.add_child(HSeparator.new())
-	var footer := HBoxContainer.new()
-	footer.add_theme_constant_override("separation", 12)
-	column.add_child(footer)
-	var help := VBoxContainer.new()
-	help.custom_minimum_size.y = 76
-	help.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	footer.add_child(help)
-	_hint = _label("", 14, UI.MUTED)
-	help.add_child(_hint)
-	_latest = _button("回到最新 ↓")
-	_latest.custom_minimum_size.y = 48
-	help.add_child(_latest)
-	_latest.pressed.connect(func(): _scroll_to_latest(_generation))
-	_latest.modulate.a = 0.0
-	_latest.disabled = true
-	_continue = UI.button("继续 ↓", true)
-	_continue.custom_minimum_size = Vector2(210, 52)
-	footer.add_child(_continue)
-	_continue.pressed.connect(advance)
-
-func _label(value: String, size: int, color := Color("e5e4d7")) -> Label:
-	return UI.label(value, size, color)
-
-func _button(value: String) -> Button:
-	return UI.button(value)
