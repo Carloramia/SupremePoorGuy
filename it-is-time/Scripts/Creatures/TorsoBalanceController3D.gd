@@ -10,12 +10,17 @@ extends Node
 @export var controlled_body_path: NodePath = NodePath("..")
 
 var _controlled_body: RigidBody3D
+var _character_enabled := true
+
+func set_character_control_enabled(value: bool) -> void:
+	_character_enabled = value
+	set_physics_process(value)
 
 func _ready() -> void:
 	_resolve_controlled_body()
 
 func _physics_process(_delta: float) -> void:
-	if not balance_enabled:
+	if not balance_enabled or not _character_enabled:
 		return
 	if not is_instance_valid(_controlled_body):
 		_resolve_controlled_body()

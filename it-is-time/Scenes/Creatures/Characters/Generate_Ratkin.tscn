@@ -408,6 +408,14 @@ segment_spring_frequency = 3.0
 segment_spring_damping_ratio = 1.0
 
 [node name="GeneratedLegStepMovementController3D" parent="." index="0"]
+stable_turn_control_enabled = true
+turn_rate_integral_enabled = true
+grounded_stance_travel_ratio = 0.12
+turn_effective_inertia_scale = 1.0
+turn_foot_rate_servo_enabled = false
+turn_contact_force_multiplier = 4.0
+locomotion_height_support_enabled = true
+locomotion_support_weight_limit = 1.5
 sub_torso_weight_share = 0.7
 segment_z_balance_strength = 120.0
 segment_z_angular_damping = 22.0

@@ -1075,7 +1075,13 @@ billboard = 1
 text = "Wing_2"
 
 [node name="GeneratedLegStepMovementController3D" parent="." index="1"]
+stable_turn_control_enabled = true
+turn_effective_inertia_scale = 1.0
+turn_foot_rate_servo_enabled = false
+turn_contact_force_multiplier = 2.0
 stance_load_safety_factor = 5.0
+locomotion_height_support_enabled = true
+locomotion_support_weight_limit = 1.4
 slow_gait_data = ExtResource("5_gait")
 fast_gait_data = ExtResource("5_gait")
 

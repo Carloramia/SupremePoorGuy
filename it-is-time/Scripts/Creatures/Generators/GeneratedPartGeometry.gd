@@ -68,7 +68,8 @@ static func fit(part: PhysicalBodyPart3D, target: Vector3, rule: RULE, role: Str
 	if rule.align_connectors_to_frame:
 		var joint_in := part.get_node_or_null("JointIn") as Marker3D
 		if joint_in == null: return AABB()
-		if role == "Limb":
+		# Calibrated long feet may expose a toe endpoint as well as their knee ring.
+		if role == "Limb" or (role in ["Leg", "ForeLeg"] and part.get_meta(&"fit_leg_connector_span", false)):
 			var joint_out := part.get_node_or_null("JointOut") as Marker3D
 			if joint_out == null: return AABB()
 			var span := joint_in.position - joint_out.position

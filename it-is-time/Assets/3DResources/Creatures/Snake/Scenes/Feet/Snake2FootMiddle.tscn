@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3]
+[ext_resource type="ArrayMesh" path="res://Resources/Meshes/Snake/Feet/Snake2FootMiddle.res" id="1_mesh"]
+[node name="Snake2FootMiddle" type="Node3D"]
+metadata/source_png = "res://Assets/2DResources/Snake/Separated/Feet/05_snake2_foot_middle.png"
+[node name="PaperVolume" type="MeshInstance3D" parent="."]
+scale = Vector3(1, 1, 0.08)
+mesh = ExtResource("1_mesh")
+[node name="JointIn" type="Marker3D" parent="."]
+[node name="JointOut" type="Marker3D" parent="."]
+position = Vector3(0.56345, -0.5008444444444444, 0)

@@ -1,0 +1,16 @@
+[gd_scene format=3]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/Calibrated/Legs/Right_3/UpperLeg.tscn" id="base"]
+[ext_resource type="ArrayMesh" path="res://Resources/Meshes/Spider/FrameFitted/Legs/Right_3/UpperLeg.res" id="mesh"]
+[sub_resource type="BoxShape3D" id="FrameFittedBounds"]
+resource_local_to_scene = true
+size = Vector3(0.26904762, 2.3857143, 0.0800008)
+[node name="SpiderFrameFittedUpperLeg" instance=ExtResource("base")]
+metadata/source_png = "res://Assets/2DResources/Spider/FrameFitted/Limbs/Right_3/UpperLeg.png"
+metadata/original_source_png = "res://Assets/2DResources/Spider/Separated/Limbs/Right_3/UpperLeg.png"
+metadata/texture_pixels_per_unit = 420.0
+[node name="PaperVolume" parent="Model" index="0"]
+mesh = ExtResource("mesh")
+
+[node name="CollisionShape3D" parent="." index="0"]
+position = Vector3(0.00046354532, -0.012451887, 4.0233135e-07)
+shape = SubResource("FrameFittedBounds")

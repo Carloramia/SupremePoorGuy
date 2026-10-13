@@ -1,0 +1,35 @@
+[gd_scene load_steps=5 format=3]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/_PhysicalSampleBodyParts.tscn" id="1_base"]
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/Wolf/Models/Legs/Variants_2/Wolf2LowerLeg.glb" id="2_model"]
+[ext_resource type="ArrayMesh" path="res://Resources/Meshes/Wolf/Legs/Variants_2/Wolf2LowerLeg.res" id="3_mesh"]
+[sub_resource type="ConvexPolygonShape3D" id="Shape"]
+resource_local_to_scene = true
+points = PackedVector3Array(-0.34284623, 0.02819756, -0.01000000, -0.31817719, 0.07781059, -0.01000000, -0.24417006, 0.15223014, -0.01000000, -0.19483198, 0.20184318, -0.01000000, -0.12082485, 0.22664969, -0.01000000, 0.05185845, 0.22664969, -0.01000000, 0.10119654, 0.20184318, -0.01000000, 0.15053462, 0.17703666, -0.01000000, 0.17520367, 0.15223014, -0.01000000, 0.22454175, 0.10261711, -0.01000000, 1.01395112, -0.86483707, -0.01000000, 1.03862016, -0.91445010, -0.01000000, 1.03862016, -1.08809572, -0.01000000, 1.01395112, -1.13770876, -0.01000000, 0.98928208, -1.16251527, -0.01000000, 0.91527495, -1.23693483, -0.01000000, 0.86593686, -1.26174134, -0.01000000, 0.76726069, -1.28654786, -0.01000000, 0.74259165, -1.28654786, -0.01000000, 0.64391548, -1.26174134, -0.01000000, 0.59457739, -1.23693483, -0.01000000, 0.52057026, -1.16251527, -0.01000000, -0.29350815, -0.26948065, -0.01000000, -0.31817719, -0.21986762, -0.01000000, -0.34284623, -0.17025458, -0.01000000, -0.34284623, 0.02819756, 0.01000000, -0.31817719, 0.07781059, 0.01000000, -0.24417006, 0.15223014, 0.01000000, -0.19483198, 0.20184318, 0.01000000, -0.12082485, 0.22664969, 0.01000000, 0.05185845, 0.22664969, 0.01000000, 0.10119654, 0.20184318, 0.01000000, 0.15053462, 0.17703666, 0.01000000, 0.17520367, 0.15223014, 0.01000000, 0.22454175, 0.10261711, 0.01000000, 1.01395112, -0.86483707, 0.01000000, 1.03862016, -0.91445010, 0.01000000, 1.03862016, -1.08809572, 0.01000000, 1.01395112, -1.13770876, 0.01000000, 0.98928208, -1.16251527, 0.01000000, 0.91527495, -1.23693483, 0.01000000, 0.86593686, -1.26174134, 0.01000000, 0.76726069, -1.28654786, 0.01000000, 0.74259165, -1.28654786, 0.01000000, 0.64391548, -1.26174134, 0.01000000, 0.59457739, -1.23693483, 0.01000000, 0.52057026, -1.16251527, 0.01000000, -0.29350815, -0.26948065, 0.01000000, -0.31817719, -0.21986762, 0.01000000, -0.34284623, -0.17025458, 0.01000000)
+[node name="Wolf_Wolf2LowerLeg" instance=ExtResource("1_base")]
+mass = 0.3
+geometry_mode = 1
+custom_model_path = NodePath("Model")
+paper_volume_enabled = true
+paper_volume_thickness = 0.08
+sprite_visible = false
+mesh_visible = true
+tags = Array[int]([5])
+metadata/source_png = "res://Assets/2DResources/Wolf/Separated/Limbs/14_wolf2_extra2_lower.png"
+metadata/pivot_is_initial_estimate = true
+metadata/wolf_forward_axis = "+X"
+[node name="CollisionShape3D" parent="." index="0"]
+rotation = Vector3(0, 3.141592653589793, 0)
+position = Vector3(0, 0, 0)
+shape = SubResource("Shape")
+[node name="MeshInstance3D" parent="." index="2"]
+visible = false
+mesh = null
+[node name="Model" parent="." instance=ExtResource("2_model")]
+rotation = Vector3(0, 3.141592653589793, 0)
+[node name="PaperVolume" type="MeshInstance3D" parent="Model"]
+scale = Vector3(1, 1, 0.08)
+mesh = ExtResource("3_mesh")
+metadata/flat_collision_depth = 0.02
+[node name="JointIn" type="Marker3D" parent="."]
+[node name="JointOut" type="Marker3D" parent="."]
+position = Vector3(-0.76367108, -1.05, 0.0)

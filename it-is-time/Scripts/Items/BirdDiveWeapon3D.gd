@@ -5,13 +5,9 @@ var attached_shape: CollisionShape3D
 var attached_head: PhysicalBodyPart3D
 
 func attach_to_head(head: PhysicalBodyPart3D, length_ratio: float, radius_ratio: float) -> void:
-	freeze = true
-	collision_layer = 0
-	collision_mask = 0
-	can_be_picked_up = false
 	attached_head = head
 	var character: Node = preload("res://Scripts/Player/PlayerControlContext.gd").character_of(head)
-	set_wielder(character, character.get_faction_id())
+	prepare_temporary_attack(character)
 	head.broken.connect(_on_head_broken)
 	attached_shape = CollisionShape3D.new()
 	attached_shape.name = "DiveWeaponCone"

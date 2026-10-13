@@ -66,11 +66,13 @@ func run() -> void:
 			var upper := joint.get_node(joint.node_a) as PhysicalBodyPart3D
 			check(PhysicalBodyPart3D.BodyPartTag.LegLimb in upper.tags, "Both slider frames must follow their upper limb endpoint")
 			check(joint.global_basis.y.normalized().dot(upper.global_basis.y.normalized()) > 0.999, "Slide axis must align with upper-limb length")
-			check(joint.get_param_y(Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT) > 0.0, "Both root and knee must allow bounded axial travel")
+			var knee: bool = joint.get_meta(&"spider_axial_slide").connection == "knee"
+			check((joint.get_param_y(Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT) > 0.0) == not knee, "Roots may slide within their bounded axis; aligned knees must remain pivots")
 			for axis: String in ["x", "y", "z"]:
-				var independent: bool = joint.get_meta(&"spider_independent_root", false)
-				check(bool(joint.call("get_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_LINEAR_LIMIT)) != independent, "Root joints must release linear load while knees retain their limits")
-				if independent: check(not joint.call("get_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_LINEAR_SPRING), "Independent roots must not transmit spring load")
+				check(bool(joint.call("get_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_LINEAR_LIMIT)), "Every leg joint must retain its linear limits")
+				if knee or axis != "y":
+					check(is_zero_approx(joint.call("get_param_" + axis, Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT)) and is_zero_approx(joint.call("get_param_" + axis, Generic6DOFJoint3D.PARAM_LINEAR_LOWER_LIMIT)), "Knees and transverse root translation must be locked")
+				check(bool(joint.call("get_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_LINEAR_SPRING)) == (not knee and axis == "y"), "Only the bounded root slider needs a return spring")
 			check(is_zero_approx(joint.get_param_x(Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT)) and is_zero_approx(joint.get_param_z(Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT)), "Transverse travel must remain locked")
 			var spring: Vector2 = actor.get_spider_joint_spring(joint)
 			var inertia: float = joint.get_meta(&"spider_effective_inertia", 0.0)
@@ -116,12 +118,13 @@ func run() -> void:
 			movement._spider_step_times[foot] = 0.8
 			var observed_profile: Dictionary = movement.get_leg_motion_profile(foot)
 			check(is_equal_approx(observed_profile.occupied_step_duration, 0.88), "Measured full-step time must include 10 percent margin without adding lift and confirmation twice")
-			check(observed_profile.cycle >= 8.0 * 0.88 / observed_profile.support_capacity - 0.001, "Slow real steps must still constrain the available step slots")
+			var aggregate: Dictionary = movement.get_automatic_motion_diagnostics().spider_motion_budget
+			check(aggregate.occupied_slots <= aggregate.slot_budget + 0.001, "Unequal real step times must fit the whole-creature support budget")
 			check(observed_profile.stride <= observed_profile.usable_stance_stride_limit + 0.001, "Adapted stride must fit the interior landing and rear trigger")
 			check(observed_profile.usable_stance_stride_limit <= observed_profile.structural_stride_limit, "Support travel may not spend structural safety margins")
 			if observed_profile.usable_stance_stride_limit > profile.stride + 0.001 and observed_profile.required_stance_stride > profile.stride + 0.001:
 				check(observed_profile.stride > profile.stride, "Long observed steps must expand stride beyond the old preferred length ratio when reach allows")
-			check(is_equal_approx(observed_profile.required_stance_stride, observed_profile.target_speed * 0.88 * (8.0 / observed_profile.support_capacity - 1.0)), "Required support stride must derive from target speed and occupied slots")
+			check(is_equal_approx(observed_profile.cycle, observed_profile.stance_duration + observed_profile.occupied_step_duration), "Each leg's cycle must include its own planted and occupied time")
 			movement._spider_step_times.erase(foot)
 			var saved_basis := foot.basis
 			foot.global_basis = Basis(Vector3.BACK, deg_to_rad(70.0) + (PI if float(foot.get_meta(&"spider_up_axis_sign")) < 0.0 else 0.0))

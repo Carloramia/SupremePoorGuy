@@ -27,7 +27,7 @@ func run() -> void:
 	generator.foreleg_count = mini((6), 2)
 	generator.unsymmetrie = 60.0
 	generator.overall_scale = 4.0
-	generator.neck_number = 0
+	generator.neck_number = 1
 
 	generator._random.seed = 43
 	check(actor.generate_creature(), "Generation must succeed")

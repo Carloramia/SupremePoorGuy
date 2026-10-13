@@ -22,7 +22,8 @@ func run() -> void:
 	generator.rear_leg_count = 2
 	var forelegs := 4 if OS.get_cmdline_user_args().has("--four-forelegs") else 2
 	generator.foreleg_count = forelegs
-	generator.neck_number = 0
+	# A head is required by the current character viability rules.
+	generator.neck_number = 1
 	generator._random.seed = 43
 	check(actor.generate_creature(),"Action fixture generation failed")
 	var player = PLAYER.instantiate()

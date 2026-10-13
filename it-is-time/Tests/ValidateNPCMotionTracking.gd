@@ -24,6 +24,7 @@ func run() -> void:
 	var second := spawn("CharacterTestNPC2")
 	await process_frame
 	var console := root.get_node("RuntimeConsole")
+	console.execute_command("motiondetail full")
 	var movement: Node = first.get_node("NPCLegStepMovementController3D")
 	var execution: Dictionary = movement.get_npc_motion_execution_diagnostics()
 	check(execution.legs.size() == 2, "Execution diagnostics must include both Hip joints")

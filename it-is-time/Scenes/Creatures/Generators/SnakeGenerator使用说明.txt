@@ -1,0 +1,182 @@
+SnakeGenerator / Generate_Snake / Generate_Snake_NPC
+
+当前默认模式：所有 Torso、Head、Jaw 的刚体初始局部 Z=0。行进时原始贴地躯干按弧长依次通过世界空间 S 形路线；抬起躯干保留生成时完整的XY回弯布局，叠加与地面路线同步的Z摆动。待机时仅抬起部分主动摆动。
+玩家移动、转向、NPC 寻路及NPC啃咬已启用。重力补偿、S 形站姿维持、地面碰撞保留。
+
+使用：
+1. 打开 SnakeGenerator.tscn，点击“生成随机框架”（蛇形生成是确定性的，不使用随机偏移）。
+2. 打开 Generate_Snake.tscn，选中根节点，点击“生成框架与物理角色”。
+3. 角色下的 SnakeGenerator 节点保存该角色的生成设置；修改后重新生成。
+4. “将当前参数保存为当前物种默认值”只写 Resources/Generators/SnakeGeneratorDefaults.tres，不影响其他生成器。
+5. 原有“将当前部件姿态写入生成器”、清除手动布局及连接点对齐功能可用。
+
+主要参数（基础单位，Overall Scale 在最后统一生效）：
+- Body Length：身体中心路径的目标长度，不含 Head/Jaw。以完整 Torso 累加满足，最终长度可能多出不足一段；最少四段，最多128段。
+- Torso Overlap Percent：每段长度中留给相邻端部重叠的比例，5%~35%。不会拉伸贴图。
+- Part Width：所有模型的局部 Z 厚度。所有 Torso、Head、Jaw 的刚体中心初始局部 Z=0；角色整体可以在世界 Z 轴移动，此规则不锁定世界坐标。
+- Overall Scale：等比缩放整体尺寸和厚度，部件根节点保持单位缩放。
+- Snake Torso Scaling / Segment Size Curve：按身体路径从尾端0到头端1采样，纵轴为每节Torso的XY等比尺寸倍率。默认全部1；0.5为半尺寸，1.5为1.5倍。模型和碰撞箱同步缩放，保持宽高比例，Z厚度仍由Part Width控制；Head和Jaw不受这条曲线影响。改变它也会影响总段数。
+- Raised Body Ratio：抬起前段的段数比例，默认35%；为形成S形，前段至少三段，后段至少一段。
+- Raised Height Ratio / S Bend Ratio：控制前段上升和前后弯折。曲线按可用的前段长度归一化，实际高度取决于长度、段数和弯折；不会拉伸单段。
+- Head Overlap Ratio：Head 与前端 Torso 的 XY 重叠比例。头部保持直立、朝向 +X。
+- Snake Materials / Torso Part Scene：默认重复 Snake2BodyFront，保留现有躯干生成设置。
+- Snake Materials / Snake Head Scene：默认引用 Scenes/Creatures/Bodyparts/Snake/Head/Snake3UpperJaw.tscn，作为独立 Head（上颚）。
+- Snake Materials / Snake Jaw Scene：默认引用 Scenes/Creatures/Bodyparts/Snake/Mouth/Snake3LowerJaw.tscn，生成独立的 Jaw，通过 SnakeJaw 关节连接 Head；两者使用各自 JointIn 的 XY 位置对齐嘴部连接孔，自动计入等比缩放。使用带下颚的完整 Head 素材时，将 Snake Jaw Scene 清空可避免重复下颚。
+- Physical Part Scenes / Part Scene Rules：支持逐部件替换；Torso_001 从尾端开始编号。Snake 始终采用 XY 等比拟合，不采用 FIT_BOX，不按素材孔洞自动拉齐。
+- Generate_Snake 根节点 / Snake Bend Limit Degrees：相邻部件（包括 Head-Jaw）相对生成姿态的 Z 弯折范围，默认正负25度。相对 X/Y 旋转锁定；Torso-Torso、Torso-Head 的 Z 位移改为居中双向滑移，范围为正负相邻两部位较小的实际 PartWidth，总行程仍为2倍 PartWidth。Head-Jaw 三轴位移继续锁定。
+- Generate_Snake 根节点 / Snake Joint X Slack Ratio、Snake Joint Y Slack Ratio：Torso-Torso、Torso-Head 的对称 X/Y 滑移范围分别设置，X 默认正负相邻较短部件实际 X 长度的15%，Y 维持5%。Overall Scale 已计入，Jaw 不受影响。保存的结构、NPC 和重新生成的结构都应用同一规则。
+
+结构继承：
+SnakeGenerator -> _BaseCreatureGenerator。
+Generate_Snake -> _SampleCharacter；脚本 SnakeCharacter3D -> GeneratedCreatureCharacter3D -> PhysicalCharacterController。
+Generate_Snake_NPC -> Generate_Snake。
+直接使用角色基类，避免继承 _BaseGeneratedCreature 场景中依赖腿部的移动、起身及踏地组件。
+
+Torso 和 Head 保留对应物理标签；独立 Jaw 暂不增加新标签。没有 Arm、Leg、LegLimb、SubTorso、Neck 或 Tail。
+保留现有血量、断裂、阵营及角色内部碰撞忽略功能；原始 PNG 和网格不修改。Snake3UpperJaw / Snake3LowerJaw 的 JointIn 已按透明连接孔中心校准，视觉模型和碰撞箱不移动。
+编辑器预览被冻结。运行时由 SnakeMovementController3D 负责轨迹跟随、整体移动及 S 形姿态维持。Jaw 不施加独立轨迹或推进控制，保留原关节并随 Head 被动运动。关闭整个控制器后恢复普通物理下落。
+
+缩放曲线使用：
+选中 Generate_Snake 或 Generate_Snake_NPC 下的 SnakeGenerator，在 Snake Torso Scaling 中展开 Segment Size Curve 并编辑控制点，然后选中角色根节点点击“生成框架与物理角色”。空曲线或未指定曲线按1倍生成；倍率应至少0.1。曲线随场景保存，也可使用物种默认值按钮保存。每个角色实例的曲线独立。
+若 Use Manual Layout 已开启，手动布局会优先；需要按曲线重新生成时，先清除手动布局（这会清除已捕获的手动姿态）。默认曲线保持1，所以当前默认结构不变。建议使用平滑曲线，避免相邻Torso尺寸突变影响接合。
+
+Snake 移动（2026-10-12）：
+1. Generate_Snake 和其 NPC 子类均搭载 SnakeMovementController3D，不继承腿部迈步控制器。
+2. SnakeMovementController3D / Locomotion Enabled 和 NPCStateMachine3D / Enabled 默认开启；Attack Execution Enabled 与 SnakeBiteAttackController3D / Enabled 仍关闭。玩家 Controller 接入时替代 NPC 指令来源，脱离后恢复 NPC 寻路。
+3. 关闭 Locomotion Enabled 可以暂停移动和转向，保留轨迹和站姿；关闭整个 Enabled 才会释放所有运动控制。导航起点仍为后半身腹部中心。
+4. 选中 SnakeMovementController3D，展开 Motion Data，或直接编辑 Resources/Movement/SnakeMotion.tres。Enabled 可关闭整个组件；需要独立调整单个角色时，将 Motion Data 设为独立资源。
+
+主要移动参数：
+- Target Speed：世界单位/秒，默认5.0。只要任意一个存活 Torso 当前接地，每个存活 Torso 和 Head 都按自身质量施加移动力，受 Maximum Acceleration 上限约束。所有 Torso 离地时立即停止推进，保留惯性。
+- Velocity Response Time：速度误差的响应时间，默认0.35秒；越小启动和制动越快，但对接触抖动更敏感。计算包含原有线性阻尼补偿。
+- 原虚拟腹部牵引周期及摩擦占比上限已移除，不再用腹部回位周期截断整体推进。
+- Raised Pose Strength / Damping：Torso 和 Head 的位置、姿态恢复强度及阻尼，默认35/12。默认由共同路线控制水平目标，抬起躯干保留高度和姿态维持；旧模式保留原来的局部位置跟随。只使用物理力与扭矩，不直接设置刚体坐标。
+- Maximum Pose Acceleration / Maximum Angular Acceleration：恢复加速度上限，默认40/30；Maximum Pose Torque 是惯量换算后的最终力矩上限。体型越大、质量越大，需要的最终力和力矩也越大。
+- Support Release Time：接触减少时重力补偿淡出的时间，默认0.12秒。全部离地后会恢复下落，不能在空中推进或持续悬浮。
+- Turn Speed Degrees：请求的转向角速度上限，默认90度/秒；Turn Response Time 为转向响应时间，默认0.5秒。固定路线模式跟随历史路线的平均朝向，大角度转身回退到原有整体转向；无需释放现有相对Y轴关节限位。实际转速仍受体长、质量分布及施力上限影响。
+
+移动边界：接地判断覆盖全部 Torso，使用实际碰撞求解器接触；仅 StaticBody3D / AnimatableBody3D 地面及平台提供支撑，其他角色或掉落物不算地面。路线朝向按水平输入规划；受现有相对 Y 轴锁定限制，横向指令采用缓弯，不是立即平移。窄路、急转弯及陡峭地形仍需要实际关卡测试；导航网格不模拟整条长身体的空间占用。
+临时布娃娃、死亡停用、断裂部位排除沿用角色基类；关闭组件或部位断裂时，会恢复原碰撞摩擦材质。只有Snake的Torso启用额外接触缓存，其他生物默认不增加扫描。重新生成时重建关节和轨迹缓存。
+
+可选 Head 圆周与延迟轨迹：
+- Motion Data / Head Orbit / Head Orbit Enabled：默认关闭，作为可选的旧 X-Y 圆周模式保留。圆心为随身体整体移动的原始 Head 位置；使用角色局部 X-Y 平面，不主动改变 Head 的原始朝向。
+- Head Orbit Radius Widths：默认2，半径为生成后实际 PartWidth 的2倍，不重复应用 Overall Scale。
+- Head Orbit Period：默认4秒，从局部+Z看为逆时针，启动用0.5秒渐入。
+- Motion Data / Trajectory Following / Trajectory Following Enabled：默认开启；新模式使用共同世界路线，以下延迟参数只作用于关闭 Ground Path 或启用 Head Orbit 的旧模式。跟随顺序来自连接拓扑，不根据实时X坐标排序。
+- Trajectory Follow Delay：默认每相邻两节0.05秒。记录相对于移动身体参考系和原始姿态的实际位移，按时间插值后作为后节目标，保留原始间距和S形。接地节仅复制局部X变化；未接地节复制XYZ变化。启用 Z Wave 时，所有延迟轨迹的 Z 分量都被过滤，由同一个正弦波规划器负责，避免重复施力。
+- 跟随目标受关节可达滑移范围约束。移动控制为姿态变化保留相应速度分量，并移除其净平移分量，避免推进制动与圆周运动互相抵消或放大静止漂移。实际轨迹仍有物理解算误差，不能视为坐标动画的精确圆。
+
+Ground S Path（2026-10-12，当前默认）：
+- 参数位置：SnakeMovementController3D / Motion Data / Ground S Path，共享资源为 Resources/Movement/SnakeMotion.tres。普通 Snake 和 NPC 共用；无需重新生成模型。
+- Ground Path Enabled：默认开启。需要同时开启 Sway Enabled 和 Trajectory Following Enabled，并关闭 Head Orbit Enabled。关闭本开关可以恢复原来的时间行波；旧 Head Orbit 模式仍单独可用。
+- 初次开始移动时，以最靠前的原始贴地 Torso 建立世界空间水平路线。历史路线保持原坐标；仅原始贴地躯干按弧长经过地面路线，分类依据生成时的snake_grounded/row.belly，短暂离地不会切换规则。抬起躯干及Head保留相对领头贴地Torso的原始XY偏移，包括向-X回弯的中段；不再用单调递增的路径间距重排上半身。不是逐节复制上一帧的偏移，也不是每帧重画整条地面正弦曲线。
+- 行进进度由领头贴地 Torso 的实际位置在路线上的向前投影更新，始终向前推进。速度变化只改变经过路线的快慢，不改变波长。移动方向变化时，在未占用的前方地面路线直接拼接新方向，形成折角；不再按曲率逐步转弯。已被贴地体节占用的路线保持不变，抬起部分不会占用地面预览。正弦相位连续，并在折角重新定位正弦中心线，保证连接点不跳动。180度折返允许新旧路线重叠，投影只选择当前及前方分支，防止卡在旧分支。缓存前后均有限长。
+- Path Wavelength Ratio：默认1.0。一个周期的纵向波长 = 生成时抬起链的总长度 × 此倍率，按实际生成尺寸计算；行进频率由实际路线进度计算。修改波长、振幅参数后，重新生成角色或重新启用组件建立新路线；Target Speed 可以运行时直接调整。
+- Path Amplitude Ratio：默认0.8。独立按相邻关节 Z 行程、X 滑移余量和波长计算安全振幅，再乘本倍率；不再复用旧时间波的振幅上限或额外乘0.5。计算保留物理解算余量，增大倍率不会突破计算上限。
+- Path Joint Slide Widths：默认4.0。共同路线控制期间，关节 X/Z 位移限位放宽到可覆盖折返时的相邻体节距离，Y 位移限位维持原值；X 转动仍锁定，Y 转动允许有限的被动偏转。攻击接管后逐关节收紧到当前保形目标所需的范围，不再让 Head 和抬起链沿用行走的大行程。贴地 S 型所需的滑移保留；重新行走时恢复路线范围。待机波仍按原限位计算。
+- Path Transition Time：默认0.5秒，用于从当前姿态平滑接入完整S形路线；初始化时整段历史和前方预览已具有完整空间波形，不再等待一个波长渐入。历史曲线保持固定，速度变化只改变经过曲线的快慢。
+- 按曲线曲率和目标速度提供水平加速度前馈，减少大振幅弯道追踪滞后；仍受 Maximum Acceleration 限制，全部Torso离地时不推进。
+- 抬起部分锚定在领头贴地Torso，保留生成时每节的完整XY偏移及原始俯仰、横滚，整体转向时旋转这份布局。前进、后退和侧向移动均不改变其XY排布。上半身的Z摆动共用地面路线的波长、振幅和相位；相位沿上半身原始三维链长传递，并扣除根部同相位偏移，使接地边界的相对摆幅为零。链长仅用于Z相位，不作为重排XY的弧长约束；上半身不参与伸缩波。速度目标包含锚点平移、Z摆动和整体朝向变化。停止后仅抬起部分恢复小幅待机摆动，贴地部分停在当前曲线上，不拉回 Z=0。
+- 水平追踪由共同路线独占。旧的延迟水平追踪和独立移动 Z 波不叠加；继续使用物理力、速度追踪、姿态力矩和重力补偿，不直接改刚体坐标。Jaw 仍被动连接 Head。
+- 各部位的水平局部 +X 由姿态力矩稳定到 Snake 的共同朝向，初始为世界 +X。仅移动指令反向时，路线折返但体节不随局部切线逐一旋转；显式整体转向会更新共同朝向。有限的 Y 轴被动转动用于物理缓冲。
+- 指令朝向与当前整体朝向差超过35度时，暂时退出固定路线，沿用整体转身；误差小于5度后重新建立路线。普通方向变化和反向折返只修改未占用的前方预览。路径折角立即生成，刚体仍受加速度和关节限制，在折角附近会出现短暂的减速和追踪误差；锐角路径不代表刚体速度瞬时改变。
+- 断裂、死亡、布娃娃、停用及重新生成会释放或重建地面路线缓存和上半身原始姿态参考。攻击控制权优先，恢复普通移动时重建地面路线。
+- 诊断字段：ground_path_active、path_turning、path_progress、path_speed、path_frequency、path_amplitude、path_max_amplitude、path_joint_slide_widths、path_wavelength、path_blend、path_points；完整部位输出额外包含 path_target、path_distance、path_velocity、path_acceleration、path_error。
+
+Segment Spacing Wave / 体节间距波（2026-10-12）：
+- 参数位置：SnakeMovementController3D / Motion Data / Segment Spacing Wave，普通 Snake 和 NPC 共用 Resources/Movement/SnakeMotion.tres。原 Path X Wave 参数和路线 X 波函数已移除；直行路线恢复 x(u)=u、z(u)=Az×sin(2πu/λ)。
+- Spacing Wave Enabled 默认开启；Amplitude Ratio 默认0.8，范围0～0.8，以相邻原始贴地体节弧长间距的15%为基础振幅。仅两个原始贴地Torso之间生成这项约束。目标沿地面路线的弧长前后移动；模型、碰撞箱和生成布局不缩放、不改写。
+- Spacing Wave Frequency Ratio 默认2.0，范围0.5～8.0；沿身体的空间相位以实际生成链长为距离参考，每个地面 Z 波的纵向波长对应2个间距波周期。Phase Degrees 默认0°，范围-180°～180°。间距波的相位随领头贴地 Torso 实际路线进度前进；不是每秒固定2次。
+- 相邻贴地目标间距 = 原始弧长间距 + 15%原始间距 × 有效振幅比例 × sin(实际进度相位 + 该连接在身体上的空间相位)。领头贴地 Torso 作为路线参考点，向尾部沿地面路线累加弧长。抬起Torso和Head不参与，Jaw被动跟随Head。关闭伸缩波不会关闭上半身Z摆动或原始XY姿态维持。
+- 贴地体节的位置和速度目标从新弧长采样；上半身目标来自原始XY布局和Z摆动。所有相邻体节仍受大小相等、方向相反且带阻尼的连接力约束；跨越贴地边界及上半身内部的连接力使用原始布局目标，不使用地面弧长间距。该力受最大加速度预算限制，关节仍保留宽松的机械行程保护。
+- 地面碰撞继续生效；抬起部位保留原始高度和姿态。去除参考中心中重复累计的伸缩高度，防止整条链逐帧漂移。
+- 加速度限幅根据链上累计伸缩的振幅、频率和目标速度计算，并为 Z 曲线追踪及物理求解留出余量。因此0.8是请求上限，高频或高速时实际振幅可能较小。
+- 使用物理力追踪位置和速度，不直接移动刚体。Path Transition Time（默认0.5秒）也用于渐入和停步/关闭开关后的渐出。停步后恢复生成时的间距，保持基础世界 S 路线；攻击接管、布娃娃、转身退出路线、停用及重新生成时释放间距控制。
+- Enabled、Amplitude Ratio 和 Target Speed 可运行时调整；修改频率、初始相位、波长或关节参数后，重新运行游戏、重新生成角色或重新启用组件，重建相位缓存和关节范围。
+- 摘要日志：spacing_wave_active、spacing_axis_mode=path_arc_length、spacing_scope=grounded_layout、raised_path_mode=authored_xy、spacing_requested_ratio、spacing_effective_ratio、spacing_wave_frequency_ratio、spacing_wave_phase、spacing_wave_frequency、spacing_wave_phase_rate、spacing_wave_blend、spacing_acceleration_bound、spacing_limit_reason、path_reversing。frequency为实际每秒周期数，phase_rate为带符号角速度；折返期间路线进度仍向前。
+- 完整部位日志：贴地对包含spacing_target_s、spacing_actual_s、spacing_error_s；所有部位继续输出pair_force、joint_anchor_offset、path_route_target。path_role=ground表示地面路线，raised_rest表示上半身原始布局；connection_rule=path_arc_length或rest_pose区分两种连接目标。上半身新增raised_rest_offset、raised_target_offset、raised_actual_offset（相对领头贴地Torso的生成/目标/实际偏移）和raised_layout_error_xy（当前布局误差），用于逐节检查中段回弯。上半身不再输出地面弧长误差。继续使用motiondetail full和tracknpcmotion on GenerateSnakeNPC；showsnakepath显示地面S路线。
+
+Z Wave / 待机与可选旧行波：
+- Sway Segment Delay 默认0.2秒。M 为 Head 到第一节原始接地 Torso 的连接数；待机周期为 M×Delay，Head 的待机振幅向接地边界衰减。full_raised_frequency 描述待机波，不是当前行进路线频率；行进请看 path_frequency。
+- Sway Amplitude Ratio 默认0.8，控制待机波相对结构安全振幅的比例；Sway Transition Time 默认0.5秒；Sway Stop Speed 默认0.15。
+- Ground Path Enabled 关闭时，保留旧的移动等振幅行波；独立回归测试仍覆盖该模式。
+
+控制台诊断：
+showsnakepath on GenerateSnakeNPC    显示此角色的地面路线；支持角色名称、完整路径或实例ID。
+showsnakepath on                     显示所有Snake的路线，普通角色和NPC均支持；单独使用showsnakepath切换开关。
+showsnakepath off                    关闭显示并立即清理轨迹网格。默认关闭，与日志追踪开关独立。
+青色表示当前身体所在及后方历史路线，橙色表示领头贴地Torso前方的预览路线。以地形射线投射到真实表面，作为无碰撞调试叠加显示，可透过生物观察；没有地面的采样段不绘制。每0.2秒刷新，每角色最多128次采样；建议过滤单个角色，关闭时无刷新开销。大角度转身或路线控制被取消时会清理旧线，重新建立路线后自动显示。
+trackmotion                         开关追踪当前被Controller控制的角色。
+tracknpcmotion on GenerateSnakeNPC   追踪匹配此名称的NPC；实例名称不同则替换过滤词。
+motiondetail full                   增加各部位接地、前方跟随对象、目标/实际偏移、轨迹速度、推进力、支撑力及恢复力矩数据。
+motiondetail summary                恢复简要速度、接触数量、总推进力等数据。
+tracknpc                            开关NPC状态机诊断（包括导航状态、目标与寻路阻断原因）。
+trackcontrolperf                    开关控制组件耗时统计，Snake阶段名称为snake_motion。
+getlogs                             按现有机制导出本轮运行日志。
+
+Snake NPC 固定支点啃咬（2026-10-13）：
+Generate_Snake_NPC 使用独立 SnakeBiteAttackController3D；普通 Generate_Snake 保留原结构和移动。只有 NPC AI 调用啃咬，玩家接入后不响应攻击输入。Enabled 或 Attack Execution Enabled 关闭时保留普通寻路。
+
+动作分为：
+1. positioning：正式攻击前先接近可达位置，制动并对齐攻击平面；这个阶段仍允许整体转向。
+2. preparing：保存此刻每节接地躯干的世界水平位置和共同朝向，暂停地面 S 路线。仅抬起部分 Torso、Head 和 Jaw 后收、抬高及瞄准。
+3. lunging / closing：固定根部，通过原关节范围内的链式求解伸头、下探、合口。没有整身起攻冲量、持续推进或恢复后退。
+4. recovering / rejoining：仅上半身返回自然姿态，检查闭口、头部位置、身体制动和全部物理连接；通过后交还移动控制。
+
+接地躯干由物理恢复力和阻尼维持捕获的世界水平位置，继续保留重力、地形碰撞和上半身反作用力，不冻结刚体、不瞬移。允许物理求解产生少量位置误差；修改了地面接触状态不会把上半身误认成支点。支点全部离地且支撑缓冲耗尽时输出 ground_support_lost 并释放控制。正式攻击中目标明显离开固定攻击平面时进入恢复，输出 target_left_attack_plane；重新定位与转向留给下一次攻击前处理。
+
+攻击距离由实际地面根部、抬起链、Head 尺寸和当前关节限位共同决定。AI 不再把整身突进距离计入可达范围；超出范围先正常寻路接近。行走中预测使用当前地面根部位置，对齐完成及准备结束各复算一次；固定支点后的预测和执行使用同一 FK、原 Z 转角范围和嘴部碰撞体。目标速度做短时滤波；已有地面接触/吸附的目标不将步态瞬时 Y 速度外推成持续升降。若 Head 速度参考要求更长的伸展时间，同时更新接触时刻和目标外推位置；无法收敛时输出 intercept_time_unstable，不报告虚假的可命中结果。
+
+常态闭口仍由 SnakeGenerator / Snake Materials / Jaw Closed Angle Degrees 定义，默认32°，修改后重新生成并保存。Head-Jaw 的 Z 限位仅在攻击期间临时放宽，结束或中断后恢复。临时嘴部伤害盒只参与伤害查询；Head/Jaw 与本次目标的实体碰撞临时忽略，地形碰撞保留。伤害仍按嘴部速度、Head+Jaw质量和目标质量估计冲量，进入全局伤害与 Armor 结算，同次攻击同一 Part 只结算一次有效伤害，不伤害友军。
+
+参数位置：NPC / SnakeBiteAttackController3D / Data，资源 Resources/Attacks/SnakeBite.tres，脚本 SnakeBiteAttackData 继承 CreatureAttackData。
+- Preparation Time / Extra Wait：准备时长及未就绪时的额外等待，参考体型默认0.7/1.0秒。
+- Lift Ratio / Retract Ratio：相对于抬起链长度的抬高、后收比例，默认0.06/0.03。
+- Preserved Root Ratio：保留根部 S 弯折的比例，默认0.3；此区域除第一根关节外使用原 Z 弯折范围的30%。第一根关节可带动上半身俯身，提高此值通常会减小有效范围。
+- Aim Tolerance Degrees：真实头部视觉轴和目标连线的允许角误差，默认15°。准备时逐帧用末端至多4节关节重新瞄准，不旋转地面支点。自然轴来自生成后 Head 的 JointIn → JointOut；当前素材相对节点局部+X向上倾斜约19.23°，没有有效标记时才回退到+X。
+- Jaw Open Degrees / Jaw Close Time：张嘴角度与合口时长，默认40°/0.18秒。
+- Burst Speed：参考 Head 伸展速度，默认16；不再代表整身冲锋速度。目标距离过长时可延长计划伸展时间，实际速度仍受施力上限及物理结构影响。
+- Lunge Time：参考伸展时间，默认1.5秒。计划时间至少为 Lunge Time×体型时间倍率÷Head Extension Speed Multiplier，同时考虑伸头距离和速度参考。
+- Head Extension Speed Multiplier：头部及抬起链的前伸倍率，默认1.5，范围1~3；计划时间缩短，lunging 的追踪刚度按倍率平方、阻尼按倍率提高，仍保留原力和力矩上限。准备、地面支撑和恢复不使用此倍率。
+- Lunge Extra Wait：计划伸展后允许物理追赶的最长额外时间，默认0.5秒。嘴部真实接触可提前合口，受阻不会永久等待。
+- Reference Chain Length：参考抬起链长，默认25；时间和速度乘 sqrt(实际链长/参考链长)，不是直接读取根节点scale。
+- Extension Ratio：超过预测目标的嘴部伸展余量，以实际 Head 的 X 尺寸为基准，默认0.15。
+- Maximum Acceleration / Burst Response Time：攻击前制动与固定地面支撑的加速度上限和响应时间，默认100/0.1。地面位置追踪采用一半响应时间及临界阻尼，不控制整身突进。
+- Maximum Pose Acceleration / Maximum Angular Acceleration：抬起链的姿态施力上限；Angular Strength / Damping 控制 Jaw。
+- Recovery Time / Extra Wait：自然姿态恢复时长和连接检查额外等待，默认1.2/2.0秒。已移除整体后退距离和初始突进速度比例设置。
+- Damage Box Ratio / Center Ratio：嘴部查询盒相对实际 Head 的大小与位置。
+- Impulse Multiplier：接触冲量估计倍率，默认2；Cooldown：动作结束后的冷却，默认2.8秒，AI行为资源仍可独立限制调用频率。
+
+恢复保留原有连接保护：逐关节按实际锚点收紧 X/Z 行程，使用有界、等大反向的锚点修复力。恢复进度根据最差追踪误差减速；只有全部完成条件通过才输出 completed，超时输出 rejoin_timeout。无移动输入时继续保留地面 S 型和最后朝向，有移动输入时接回普通路线。目标消失/死亡进入恢复；组件停用、布娃娃、部位断裂、移除或重新生成释放支点锁、控制权、临时伤害盒以及关节/碰撞临时设置。
+
+诊断命令（沿用原有开关，每0.1秒输出一次）：
+tracksnakeattacks on GenerateSnakeNPC
+tracksnakeattacks off
+tracknpcstate on GenerateSnakeNPC
+tracknpcmotion on GenerateSnakeNPC
+motiondetail full
+trackdamage
+trackcontrolperf
+getlogs
+
+攻击快照中的 support_locked 为地面支点锁定状态；ground_displacement 为当前最大地面水平追踪误差；head_traveled 为起攻后 Head 相对起攻位置的位移（正式起攻前为0），不代表身体突进。body_velocity 用于检查剩余支点运动。head_forward_source/local/rest/world、head_aim_error_degrees 用于核对自然视觉轴和准备瞄准；head_extension_time / speed_multiplier、planned_contact_time、intercept_aim / pose_error、predicted_target_velocity / target_supported 用于检查拦截。
+connections.ready / limits_ready 表示连接和行程收紧是否完成；maximum_error / maximum_excess / maximum_error_ratio / worst_part 指出最差锚点误差。motiondetail full 的逐部位 connection_target/error/relative_velocity 可定位连接问题；摘要新增 attack_support_locked 和 attack_ground_error。AI 的 snake_reposition_* 继续显示持有的候选站位及 arrived/stalled/timeout 原因；预测失败不会每次重新选择站位。
+
+回归：ValidateSnakeFixedSupportAttack3D 覆盖不同体型固定世界支点、真实伤害、不可达目标、慢速 Head 的预测时刻、目标离开攻击平面及支撑丢失清理；ValidateSnakeAttacks3D 覆盖高低目标、重复AI攻击、旋转、移动目标与中断；ValidateSnakeHeadAim3D 验证自然轴与前伸倍率；ValidateSnakeIntercept3D 检查 TestLevel 实战拦截及恢复。普通行走由 ValidateSnakeRaisedLayout3D / ValidateSnakeGroundPath3D 验证。
+
+锐角路径的平滑物理执行（2026-10-13）：
+- 世界S路线继续直接锐角换向，已占用的历史路线不改变。新增执行目标在水平面内积分连续的位置、速度和加速度；贴地体节执行加速度不超过Movement / Maximum Acceleration，其变化率不超过Path Maximum Jerk。实际刚体由物理力追踪执行目标，不直接改写位置或速度。
+- SnakeMovementController3D / Motion Data / Path Execution（普通Snake和NPC共用Resources/Movement/SnakeMotion.tres）：Path Execution Response Time默认0.25秒，越大响应越柔和、滞后越明显；Path Maximum Jerk默认180，越小施力变化越缓慢；Path Corner Rounding Widths默认2.0，以生成后的实际PartWidth计算转弯余量，越小越倾向降低折角速度。
+- 根据折角角度、剩余弧长、加速度、施力变化率和转弯余量计算领头体节的速度上限。各贴地体节提前混合出弯速度方向；后续体节以领头体节实际路径进度提供速度前馈，避免路径受阻时仍按请求速度追赶。发现执行目标滞后增大时协调降低推进速度，追上后恢复，不另设固定停顿时间。
+- 转弯余量是速度规划的参考，不是刚体瞬移或硬性的几何半径。新输入在身体附近突然插入折角时，原有速度需要制动距离；执行目标可短暂出现圆角偏离和沿路径的相位滞后。制动距离约为v²/(2a)+v×a/J；提高速度或降低a/J会扩大这部分余量。需要严格通过几何折角时必须允许充分减速。
+- 抬起Torso和Head使用平滑后的领头贴地Torso作为共同锚点，保留生成时完整的相对XY布局及Z摆动，不施加地面弧长间距约束。Jaw继续被动跟随。竖直重力补偿、地面碰撞、姿态扭矩和攻击姿态控制保留原机制。
+- 路线控制中的移动、位置追踪和节间连接使用同一执行位置/速度参考。水平力先合并，再按max(Maximum Acceleration, Maximum Pose Acceleration)统一限幅，并以Path Maximum Jerk限制最终控制加速度变化；不会对碰撞或物理关节求解产生的外力做硬性裁剪。攻击、布娃娃、停用、重新生成及整身转向退出路线时释放执行状态，重新接管时从当前实际速度开始。
+- 继续使用motiondetail full、tracknpcmotion on GenerateSnakeNPC、showsnakepath on GenerateSnakeNPC。绘制的仍是锐角计划路线。完整部位输出新增path_raw_target/path_raw_velocity（原始计划）、path_target/path_velocity/path_acceleration（执行参考）、path_execution_offset（执行与原始计划之差，包含沿路径滞后）、path_desired_velocity/path_corner_speed（预瞄速度）、path_applied_force/path_drive_acceleration（合并后实际施加的水平控制力/加速度）。摘要新增path_execution_speed_scale（跟随滞后导致的速度比例）、path_corner_speed_limit（领头折角速度上限）和path_corners。原movement_force/support_force/pair_force是各通道的请求值；drive_force在路线模式下改为合并后实际水平控制力的总和。
+
+攻击规划性能修复（2026-10-13）：
+- 同一次完整规划只捕获一次实时根部，所有IK、准备瞄准与扫掠采样复用同一快照。重新定位、起攻前与再生成仍读取新的真实根部；缓存额外检查根部位移，避免以旧快照代替实际支点。
+- IK保留原16轮迭代、目标权重和全部转角约束；每次调整关节只绕同一枢轴更新该关节及后方链段，不再为每个关节重算整个链并重复遍历全身刚体。
+- 目标在保守可达包络之外时，站位先以包络80%的距离引导接近，进入包络后切回原精确站位与命中预测；该估计不授权发动攻击。直接预测远处目标也可在IK前拒绝。正式攻击依然需要原来的扫掠、支撑和状态检查。
+- 继续使用trackcontrolperf。SnakeBiteAttackController3D新增attack_range_estimate（站位估算）、attack_planning（完整规划及缓存查找）、ik_solve（求解）、prediction_sweep（碰撞预测）计时；它们为包含子调用的计时，不能直接相加。
+- 新增计数coarse_range_estimates、prediction_range_rejects、plan_requests、plan_builds、plan_cache_hits、fk_evaluations、ik_iterations和prediction_shape_queries。fk_evaluations表示完整链构造次数，不含逐关节更新后方链段的工作；攻击执行snake_attack保持原含义。
+- 性能回归Tests/ValidateSnakePlanningPerformance3D.gd检查远处不求解、真实根部读取次数、整链构造次数、计划缓存复用及失效、再生成刷新。原固定支点、头部瞄准、不同体型攻击、TestLevel移动目标和行走恢复测试继续有效。

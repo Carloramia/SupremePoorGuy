@@ -186,6 +186,10 @@ func _transition(next: State, reason: StringName) -> void:
 		print("[creature_recovery] character=", get_parent().name, " from=", State.keys()[previous], " to=", State.keys()[state], " reason=", reason, " metrics=", _metrics, " attempt=", _attempts)
 
 func _physics_process(delta: float) -> void:
+	var wolf_attacks := get_parent().get_node_or_null("WolfAttackController3D")
+	if wolf_attacks != null and wolf_attacks.is_npc_attack_active():
+		_fall_elapsed = 0.0
+		return
 	var flight := get_parent().get_node_or_null("BirdFlightController3D")
 	if flight != null and flight.is_airborne(): return
 	if is_instance_valid(_movement) and (_movement.simplified_physics_mode or _movement._planar_mode_active()):

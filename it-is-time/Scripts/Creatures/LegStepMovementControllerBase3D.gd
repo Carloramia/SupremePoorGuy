@@ -1,8 +1,11 @@
 extends Node
 
 var _movement_perf := preload("res://Scripts/Debug/ControlPerformanceStats.gd").new()
+var _convex_foot_cache: Dictionary = {}
+var _convex_foot_cache_frame: int = -1
 
 const PLAYER_CONTEXT = preload("res://Scripts/Player/PlayerControlContext.gd")
+var _performance_mode: Resource = preload("res://Resources/Settings/PerformanceOptimization.tres")
 
 const LEG_TAG: int = 1
 const TORSO_TAG: int = 0
@@ -356,9 +359,26 @@ var _diagnostic_elapsed: float = 0.0
 var _diagnostic_last_event_times: Dictionary[String, float] = {}
 var _last_landing_rejection_reason: StringName = &""
 
+var _gait_validation_frame: int = -1
+var _gait_validity: Dictionary = {}
+# Reuse immutable query results only while a synchronous movement update is running.
+var _movement_batch_active: bool = false
+var _batch_torsos: Array[RigidBody3D] = []
+var _batch_torsos_ready: bool = false
+var _batch_foot_positions: Dictionary = {}
+
 func _get_gait_data() -> GAIT_DATA:
 	var data := fast_gait_data if is_fast_speed_active() else slow_gait_data
-	return data if data != null and data.is_valid() else null
+	if data == null: return null
+	if not _performance_mode.enabled: return data if data.is_valid() else null
+	var frame := Engine.get_physics_frames()
+	if _gait_validation_frame != frame:
+		_gait_validation_frame = frame
+		_gait_validity.clear()
+	if not _gait_validity.has(data):
+		_gait_validity[data] = data.is_valid()
+		_movement_perf.count(&"gait_resource_validations")
+	return data if _gait_validity[data] else null
 
 var _automatic_profiles: Dictionary = {}
 var _automatic_profiles_frame: int = -1
@@ -400,6 +420,9 @@ func _motion_setting(key: String, fallback: float, leg: RigidBody3D = null) -> f
 	return float(get_leg_motion_profile(leg).get(key, fallback))
 
 func get_leg_step_distance(leg: RigidBody3D) -> float:
+	if _performance_mode.enabled and _automatic_motion_enabled():
+		var profile := get_leg_motion_profile(leg)
+		if profile.has("stride"): return float(profile.stride)
 	return _motion_setting("stride", get_current_step_distance(), leg)
 
 func _get_gait_reference_length() -> float:
@@ -542,8 +565,11 @@ func _physics_process(delta: float) -> void:
 	var input_direction := get_input_movement_direction() if input_enabled else Vector3.ZERO
 	_update_walk_start_stagger(delta,input_direction)
 	var fast_speed_active := is_fast_speed_active() if input_enabled and not _turn_planning_active else false
+	var planning_started: int = _movement_perf.start()
 	_refresh_torso_force_support()
 	_update_fast_velocity_gait(delta, input_direction, fast_speed_active)
+	_movement_perf.finish(&"support_and_fast_planning", planning_started)
+	planning_started = _movement_perf.start()
 	if _get_gait_data() != null and (not _turn_planning_active or _resource_turn_blending_enabled()):
 		_update_resource_gait(delta, input_direction)
 	else:
@@ -574,8 +600,11 @@ func _physics_process(delta: float) -> void:
 					if not _legs.is_empty(): _next_leg_index = (_next_leg_index+1)%_legs.size()
 		if _step_state != StepState.IDLE:
 			_update_active_step(delta)
+	_movement_perf.finish(&"step_execution", planning_started)
 	_update_fast_float_lift(delta, input_direction, fast_speed_active)
+	var adhesion_started: int = _movement_perf.start()
 	update_leg_surface_adhesion()
+	_movement_perf.finish(&"surface_adhesion", adhesion_started)
 	_ground_brake_force = Vector3.ZERO
 	if _adhesion_release_time_remaining <= 0.0:
 		var response_started: int = _movement_perf.start()
@@ -625,6 +654,11 @@ func _update_fast_velocity_gait(
 	input_direction: Vector3,
 	fast_speed_active: bool
 ) -> void:
+	if _performance_mode.enabled and not fast_speed_active:
+		_desired_fast_velocity = _desired_fast_velocity.move_toward(Vector3.ZERO, fast_velocity_response * delta)
+		_next_fast_step_start_time = _physics_elapsed
+		_fast_gait_anchor_valid = false
+		return
 	var scale := _get_fast_movement_scale()
 	_fast_step_frequency = _calculate_fast_step_frequency()
 	_fast_step_interval = 1.0 / maxf(_fast_step_frequency, MIN_STEP_TIME)
@@ -1222,6 +1256,7 @@ func get_torso_parts() -> Array[RigidBody3D]:
 	return result
 
 func _get_cached_torso_parts() -> Array[RigidBody3D]:
+	if _movement_batch_active and _batch_torsos_ready: return _batch_torsos.duplicate()
 	var parts_root := get_node_or_null(parts_root_path)
 	if _body_cache_dirty or parts_root != _body_cache_root:
 		_rebuild_character_exclusion_rids()
@@ -1238,6 +1273,9 @@ func _get_cached_torso_parts() -> Array[RigidBody3D]:
 	for body: RigidBody3D in _torso_parts_cache:
 		if is_instance_valid(body) and body.is_inside_tree() and not body.is_queued_for_deletion() and not _is_body_broken(body):
 			result.append(body)
+	if _movement_batch_active:
+		_batch_torsos = result.duplicate()
+		_batch_torsos_ready = true
 	return result
 
 ## Returns the normalized sum of all currently attached Leg surface normals.
@@ -1358,7 +1396,12 @@ func _get_current_hip_limits(leg: RigidBody3D) -> Vector4:
 func _get_surface_below_leg(leg: RigidBody3D, probe_distance: float) -> Dictionary:
 	if not is_instance_valid(leg) or not is_inside_tree():
 		return {}
-	var foot_position := _get_foot_world_position(leg)
+	var foot_position: Vector3
+	if _movement_batch_active:
+		if not _batch_foot_positions.has(leg): _batch_foot_positions[leg] = _get_foot_world_position(leg)
+		foot_position = _batch_foot_positions[leg]
+	else:
+		foot_position = _get_foot_world_position(leg)
 	var physics_frame := Engine.get_physics_frames()
 	if _ground_probe_cache_physics_frame != physics_frame:
 		_begin_ground_probe_frame()
@@ -1838,21 +1881,49 @@ func _get_foot_world_position(leg: RigidBody3D) -> Vector3:
 	var box := collision.shape as BoxShape3D
 	if collision.shape is ConvexPolygonShape3D:
 		# Imported paper feet use an offset polygon, not a centered box.
-		var points := (collision.shape as ConvexPolygonShape3D).points
-		var lowest := INF
-		for point: Vector3 in points:
-			lowest = minf(lowest,(collision.global_transform * point).y)
-		var sole := Vector3.ZERO
-		var count := 0
-		for point: Vector3 in points:
-			var world_point := collision.global_transform * point
-			if world_point.y <= lowest + 0.001:
-				sole += world_point
-				count += 1
-		return sole / float(count) if count > 0 else collision.global_position
+		return _get_convex_foot_world_position(collision, Vector3.UP, 0.001)
 	if box == null:
 		return collision.global_position
 	return collision.global_transform * Vector3(0.0, -box.size.y * 0.5, 0.0)
+
+func _invalidate_convex_foot_cache() -> void:
+	_convex_foot_cache.clear()
+
+func _get_convex_foot_world_position(collision: CollisionShape3D, up: Vector3, tolerance: float) -> Vector3:
+	var frame := Engine.get_physics_frames()
+	if frame != _convex_foot_cache_frame:
+		_convex_foot_cache_frame = frame
+		_convex_foot_cache.clear()
+	var shape := collision.shape as ConvexPolygonShape3D
+	var pose := collision.global_transform
+	var cached: Dictionary = _convex_foot_cache.get(collision, {})
+	if not cached.is_empty() and cached.shape == shape and cached.pose == pose and cached.up == up and cached.tolerance == tolerance:
+		_movement_perf.count(&"foot_contact_cache_hits")
+		return cached.position
+	# Shape edits and same-frame teleports must invalidate an otherwise valid result.
+	if not shape.changed.is_connected(_invalidate_convex_foot_cache):
+		shape.changed.connect(_invalidate_convex_foot_cache)
+	var started: int = _movement_perf.start()
+	var points := shape.points
+	var lowest := INF
+	var world_points := PackedVector3Array()
+	world_points.resize(points.size())
+	for index: int in points.size():
+		var point := pose * points[index]
+		world_points[index] = point
+		lowest = minf(lowest, point.dot(up))
+	var sole := Vector3.ZERO
+	var count := 0
+	for point: Vector3 in world_points:
+		if point.dot(up) <= lowest + tolerance:
+			sole += point
+			count += 1
+	var position := sole / float(count) if count > 0 else pose.origin
+	_convex_foot_cache[collision] = {"shape": shape, "pose": pose, "up": up, "tolerance": tolerance, "position": position}
+	_movement_perf.count(&"foot_contact_builds")
+	_movement_perf.count(&"foot_contact_vertices", points.size())
+	_movement_perf.finish(&"foot_contact_build", started)
+	return position
 
 func _find_leg_collision_shape(leg: RigidBody3D) -> CollisionShape3D:
 	var cached := _leg_collision_shape_cache.get(leg) as CollisionShape3D
@@ -1903,6 +1974,7 @@ func refresh_physics_query_cache() -> void:
 
 func _refresh_physics_query_cache() -> void:
 	_physics_query_cache_dirty = false
+	_invalidate_convex_foot_cache()
 	_leg_collision_shape_cache.clear()
 	_ground_probe_cache.clear()
 	_refresh_leg_order()

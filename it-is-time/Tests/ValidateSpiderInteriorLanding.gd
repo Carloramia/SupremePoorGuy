@@ -33,7 +33,13 @@ func run() -> void:
 	for foot: RigidBody3D in movement.get_leg_parts():
 		var torso: RigidBody3D = movement._chains[foot].root
 		for direction: Vector3 in [Vector3.RIGHT, Vector3.LEFT]:
-			torso.linear_velocity = direction * 0.8
+			# At speed, a future landing was previously tested against today's root.
+			for speed: float in [0.8, 3.0, 6.0]:
+				torso.linear_velocity = direction * speed
+				var predicted: Dictionary = movement._find_structural_landing(foot, direction, 0.35)
+				check(not predicted.is_empty(), "Future-root validation must accept reachable terrain at speed for " + str(foot.name))
+				check(movement._landing_reach_attachment(foot).is_equal_approx(torso.to_global(movement._chains[foot].anchor)), "Prediction must not leak into unrelated reach checks")
+			torso.linear_velocity = direction * 3.0
 			var hit: Dictionary = movement._find_structural_landing(foot, direction, 0.35)
 			check(not hit.is_empty(), "Flat ground must provide an interior landing for " + str(foot.name))
 			if hit.is_empty(): continue
@@ -51,6 +57,11 @@ func run() -> void:
 			var point: Vector3 = movement._current_step.extra.landing_surface_point
 			var updated: float = (point - Vector3(refreshed.reference)).dot(direction)
 			check(updated >= refreshed.half * 0.2 - 0.001 and updated < refreshed.half, "Airborne retargeting must follow root motion into the interior")
+			movement._step_state = movement.StepState.LANDING
+			torso.position += direction * 0.3
+			movement._refresh_structural_landing()
+			check(movement._current_step.extra.landing_surface_point.is_equal_approx(point), "Final descent must keep its world landing point instead of chasing the moving torso")
+			torso.position -= direction * 0.3
 			movement.cancel_step(&"test_complete")
 			torso.position -= direction * 0.3
 			torso.linear_velocity = Vector3.ZERO
@@ -63,6 +74,12 @@ func run() -> void:
 		movement._current_step.extra.spider_completion = verdict
 		movement._finish_current_step()
 		check(movement._spider_recovery_steps.has(foot), "Early landing must queue a recovery without reporting successful touchdown")
+		var recovery_hit: Dictionary = movement._find_structural_landing(foot, Vector3.RIGHT, 0.35)
+		check(not recovery_hit.is_empty(), "Recovery must find an interior foothold")
+		if not recovery_hit.is_empty():
+			var recovery_frame: Dictionary = movement._structural_landing_frame(foot, Vector3.RIGHT, 0.35)
+			var recovery_projection: float = (Vector3(recovery_hit.position) - Vector3(recovery_frame.reference)).dot(Vector3.RIGHT)
+			check(recovery_projection <= recovery_frame.half * 0.25 + 0.001, "Recovery must regain stance before requesting full forward reach")
 		movement._begin_leg_motion(foot, reference + Vector3.RIGHT, Vector3.UP, Vector3.RIGHT)
 		check(movement._current_step.extra.spider_catch_up.recovery, "Queued recovery must use its catch-up trajectory")
 		var good: Dictionary = movement._spider_landing_verdict(foot, reference, {"reference": reference, "direction": Vector3.RIGHT, "half": 0.3})

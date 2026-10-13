@@ -42,7 +42,7 @@ func run() -> void:
 			joint.set_meta(&"spider_world_angle", {"child_is_a": child_is_a, "initial_angle": deg_to_rad(30.0 * side), "parent_path": joint.get_path_to(parent_body), "parent_rest_basis": parent_body.global_basis})
 			owner_script._update_spider_world_limits(joint)
 			if not child.global_transform.is_equal_approx(before): failed = true
-			cases.append({"child": child, "side": side})
+			cases.append({"child": child, "parent": parent_body, "joint": joint, "side": side})
 	await physics_frame
 	for entry: Dictionary in cases: entry.child.rotation.z = deg_to_rad(100.0 * entry.side)
 	for tick: int in 90: await physics_frame
@@ -50,6 +50,16 @@ func run() -> void:
 		var angle: float = entry.child.rotation_degrees.z
 		print("SPIDER_WORLD_LIMIT final_angle=", angle)
 		if absf(angle) > 76.0: failed = true
+		var limits := Vector2.ZERO
+		for yaw: float in [0.0, PI * 0.5, PI - 0.0001, PI, PI + 0.0001]:
+			entry.parent.global_basis = Basis(Vector3.UP, yaw) * Basis(Vector3.BACK, deg_to_rad(0.25))
+			entry.joint.set_meta(&"spider_world_limits_initialized", false)
+			owner_script._update_spider_world_limits(entry.joint)
+			var actual := Vector2(entry.joint.get_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_LOWER_LIMIT), entry.joint.get_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_UPPER_LIMIT))
+			if yaw == 0.0: limits = actual
+			elif not actual.is_equal_approx(limits):
+				failed = true
+				push_error("Yaw must not change a Spider hinge's world pitch limits")
 	world.free()
 	owner_script.free()
 	if not failed: print("PASS: Absolute Y angle limits preserve authored pose and constrain both signs at roots and knees.")

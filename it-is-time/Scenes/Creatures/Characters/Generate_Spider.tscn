@@ -5,8 +5,198 @@
 [ext_resource type="Resource" uid="uid://che6gghyela31" path="res://Resources/Movement/SpiderWalk.tres" id="3_walk"]
 [ext_resource type="Script" uid="uid://c5e64buybn16o" path="res://Scripts/Creatures/SpiderLegStepMovementController3D.gd" id="4_77gc7"]
 [ext_resource type="Resource" uid="uid://brikjiquees" path="res://Resources/Creatures/SpiderDensity.tres" id="4_density"]
-[ext_resource type="PackedScene" uid="uid://bxchfdbxm5uur" path="res://Scenes/Creatures/Bodyparts/PhysicalTestCreatureParts/TestCreature_Part.tscn" id="14_jvk18"]
+[ext_resource type="Script" uid="uid://dmavu4dhvd2ls" path="res://Scripts/Creatures/Generators/GeneratedPartSceneRule.gd" id="7_w7jap"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/Calibrated/Head/Head.tscn" id="15_qwq08"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/FrameFitted/Legs/Left_1/LowerLeg.tscn" id="16_jf7pk"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/FrameFitted/Legs/Left_1/UpperLeg.tscn" id="17_4cqmp"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/FrameFitted/Legs/Left_2/LowerLeg.tscn" id="18_j4clh"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/FrameFitted/Legs/Left_2/UpperLeg.tscn" id="19_prioa"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/FrameFitted/Legs/Left_3/LowerLeg.tscn" id="20_u1ew2"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/FrameFitted/Legs/Left_3/UpperLeg.tscn" id="21_nctal"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/FrameFitted/Legs/Left_4/LowerLeg.tscn" id="22_a37my"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/FrameFitted/Legs/Left_4/UpperLeg.tscn" id="23_x5w5q"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/FrameFitted/Legs/Right_1/LowerLeg.tscn" id="24_y1tqa"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/FrameFitted/Legs/Right_1/UpperLeg.tscn" id="25_cujeo"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/FrameFitted/Legs/Right_2/LowerLeg.tscn" id="26_85g43"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/FrameFitted/Legs/Right_2/UpperLeg.tscn" id="27_x5xew"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/FrameFitted/Legs/Right_3/LowerLeg.tscn" id="28_foork"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/FrameFitted/Legs/Right_3/UpperLeg.tscn" id="29_d0vi3"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/FrameFitted/Legs/Right_4/LowerLeg.tscn" id="30_x5s6i"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/FrameFitted/Legs/Right_4/UpperLeg.tscn" id="31_383r7"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/Calibrated/Torso/FrontTorso.tscn" id="32_scshk"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/Calibrated/Torso/RearTorso.tscn" id="33_ogp8s"]
+[ext_resource type="Shader" uid="uid://0h31275qrxho" path="res://Shaders/BodyPartOutline.gdshader" id="35_r3yfo"]
+[ext_resource type="Texture2D" uid="uid://w8hh3xjagvuh" path="res://Assets/2DResources/Samples/WhiteCube.png" id="36_qma56"]
 [ext_resource type="PackedScene" path="res://Scenes/Creatures/Characters/_BaseGeneratedCreature.tscn" id="spider_character_base"]
+[ext_resource type="Script" path="res://Scripts/Creatures/SpiderPounceController3D.gd" id="spider_pounce"]
+
+[sub_resource type="Resource" id="Resource_8t3bx"]
+resource_local_to_scene = true
+script = ExtResource("7_w7jap")
+part_name = "Head"
+part_key = "Head"
+part_type = "Head"
+part_scene = ExtResource("15_qwq08")
+size_mode = 2
+
+[sub_resource type="Resource" id="Resource_ltcfk"]
+resource_local_to_scene = true
+script = ExtResource("7_w7jap")
+part_name = "Leg_1"
+part_key = "Leg_1"
+part_type = "Leg"
+part_scene = ExtResource("16_jf7pk")
+size_mode = 2
+
+[sub_resource type="Resource" id="Resource_1osjp"]
+resource_local_to_scene = true
+script = ExtResource("7_w7jap")
+part_name = "Leg_1_Limb_1"
+part_key = "Leg_1_Limb_1"
+part_type = "LegLimb"
+part_scene = ExtResource("17_4cqmp")
+size_mode = 2
+
+[sub_resource type="Resource" id="Resource_6vsm7"]
+resource_local_to_scene = true
+script = ExtResource("7_w7jap")
+part_name = "Leg_2"
+part_key = "Leg_2"
+part_type = "Leg"
+part_scene = ExtResource("18_j4clh")
+size_mode = 2
+
+[sub_resource type="Resource" id="Resource_7dvn6"]
+resource_local_to_scene = true
+script = ExtResource("7_w7jap")
+part_name = "Leg_2_Limb_1"
+part_key = "Leg_2_Limb_1"
+part_type = "LegLimb"
+part_scene = ExtResource("19_prioa")
+size_mode = 2
+
+[sub_resource type="Resource" id="Resource_vqf76"]
+resource_local_to_scene = true
+script = ExtResource("7_w7jap")
+part_name = "Leg_3"
+part_key = "Leg_3"
+part_type = "Leg"
+part_scene = ExtResource("20_u1ew2")
+size_mode = 2
+
+[sub_resource type="Resource" id="Resource_lam7b"]
+resource_local_to_scene = true
+script = ExtResource("7_w7jap")
+part_name = "Leg_3_Limb_1"
+part_key = "Leg_3_Limb_1"
+part_type = "LegLimb"
+part_scene = ExtResource("21_nctal")
+size_mode = 2
+
+[sub_resource type="Resource" id="Resource_eiayi"]
+resource_local_to_scene = true
+script = ExtResource("7_w7jap")
+part_name = "Leg_4"
+part_key = "Leg_4"
+part_type = "Leg"
+part_scene = ExtResource("22_a37my")
+size_mode = 2
+
+[sub_resource type="Resource" id="Resource_56q41"]
+resource_local_to_scene = true
+script = ExtResource("7_w7jap")
+part_name = "Leg_4_Limb_1"
+part_key = "Leg_4_Limb_1"
+part_type = "LegLimb"
+part_scene = ExtResource("23_x5w5q")
+size_mode = 2
+
+[sub_resource type="Resource" id="Resource_bsaoo"]
+resource_local_to_scene = true
+script = ExtResource("7_w7jap")
+part_name = "Leg_5"
+part_key = "Leg_5"
+part_type = "Leg"
+part_scene = ExtResource("24_y1tqa")
+size_mode = 2
+
+[sub_resource type="Resource" id="Resource_0rfpe"]
+resource_local_to_scene = true
+script = ExtResource("7_w7jap")
+part_name = "Leg_5_Limb_1"
+part_key = "Leg_5_Limb_1"
+part_type = "LegLimb"
+part_scene = ExtResource("25_cujeo")
+size_mode = 2
+
+[sub_resource type="Resource" id="Resource_vls1w"]
+resource_local_to_scene = true
+script = ExtResource("7_w7jap")
+part_name = "Leg_6"
+part_key = "Leg_6"
+part_type = "Leg"
+part_scene = ExtResource("26_85g43")
+size_mode = 2
+
+[sub_resource type="Resource" id="Resource_v3m3u"]
+resource_local_to_scene = true
+script = ExtResource("7_w7jap")
+part_name = "Leg_6_Limb_1"
+part_key = "Leg_6_Limb_1"
+part_type = "LegLimb"
+part_scene = ExtResource("27_x5xew")
+size_mode = 2
+
+[sub_resource type="Resource" id="Resource_wafjd"]
+resource_local_to_scene = true
+script = ExtResource("7_w7jap")
+part_name = "Leg_7"
+part_key = "Leg_7"
+part_type = "Leg"
+part_scene = ExtResource("28_foork")
+size_mode = 2
+
+[sub_resource type="Resource" id="Resource_t7fwy"]
+resource_local_to_scene = true
+script = ExtResource("7_w7jap")
+part_name = "Leg_7_Limb_1"
+part_key = "Leg_7_Limb_1"
+part_type = "LegLimb"
+part_scene = ExtResource("29_d0vi3")
+size_mode = 2
+
+[sub_resource type="Resource" id="Resource_8b3sp"]
+resource_local_to_scene = true
+script = ExtResource("7_w7jap")
+part_name = "Leg_8"
+part_key = "Leg_8"
+part_type = "Leg"
+part_scene = ExtResource("30_x5s6i")
+size_mode = 2
+
+[sub_resource type="Resource" id="Resource_yrogd"]
+resource_local_to_scene = true
+script = ExtResource("7_w7jap")
+part_name = "Leg_8_Limb_1"
+part_key = "Leg_8_Limb_1"
+part_type = "LegLimb"
+part_scene = ExtResource("31_383r7")
+size_mode = 2
+
+[sub_resource type="Resource" id="Resource_37k7u"]
+resource_local_to_scene = true
+script = ExtResource("7_w7jap")
+part_name = "Torso_Front"
+part_key = "Torso_Front"
+part_scene = ExtResource("32_scshk")
+size_mode = 2
+
+[sub_resource type="Resource" id="Resource_y1iye"]
+resource_local_to_scene = true
+script = ExtResource("7_w7jap")
+part_name = "Torso_Rear"
+part_key = "Torso_Rear"
+part_scene = ExtResource("33_ogp8s")
 
 [sub_resource type="Curve" id="Curve_vftp3"]
 _data = [Vector2(0, 0.19101131), 0.0, 0.0, 0, 0, Vector2(0.44957983, 0.77528095), 0.0, 0.0, 0, 0, Vector2(1, 0.3370787), 0.0, 0.0, 0, 0]
@@ -26,11 +216,181 @@ point_count = 2
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 2
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_jwokx"]
+resource_local_to_scene = true
+size = Vector3(1.4, 0.9, 0.2)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_jgj7g"]
+render_priority = 0
+shader = ExtResource("35_r3yfo")
+shader_parameter/sprite_texture = ExtResource("36_qma56")
+shader_parameter/sprite_axis = 2
+shader_parameter/edge_distances = Vector4(1.281, 1.28, 1.28, 1.28)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_v7sgd"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ga0f7"]
+resource_local_to_scene = true
+size = Vector3(2, 1.2926174, 0.2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hmk71"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_hfgf0"]
+resource_local_to_scene = true
+size = Vector3(0.25, 2, 0.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_part"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dn2d0"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_slvgo"]
+resource_local_to_scene = true
+size = Vector3(0.3, 2.8, 0.2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vse4l"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2ssjv"]
+resource_local_to_scene = true
+size = Vector3(0.25, 1.9999999, 0.2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_w2bg5"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_txkyy"]
+resource_local_to_scene = true
+size = Vector3(0.3, 2.8, 0.2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_u8fax"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ueui2"]
+resource_local_to_scene = true
+size = Vector3(0.25, 1.9999999, 0.2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2jyf6"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_dqt1j"]
+resource_local_to_scene = true
+size = Vector3(0.3, 2.8, 0.2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sakco"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_qwq08"]
+resource_local_to_scene = true
+size = Vector3(0.25, 2, 0.2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jf7pk"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_4cqmp"]
+resource_local_to_scene = true
+size = Vector3(0.3, 2.8, 0.2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_j4clh"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_prioa"]
+resource_local_to_scene = true
+size = Vector3(0.25, 2, 0.2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_u1ew2"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_nctal"]
+resource_local_to_scene = true
+size = Vector3(0.3, 2.8, 0.2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_a37my"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_x5w5q"]
+resource_local_to_scene = true
+size = Vector3(0.25, 1.9999999, 0.2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_y1tqa"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_cujeo"]
+resource_local_to_scene = true
+size = Vector3(0.3, 2.8, 0.2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_85g43"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_x5xew"]
+resource_local_to_scene = true
+size = Vector3(0.25, 1.9999999, 0.2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_foork"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_d0vi3"]
+resource_local_to_scene = true
+size = Vector3(0.3, 2.8, 0.2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_x5s6i"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_383r7"]
+resource_local_to_scene = true
+size = Vector3(0.25, 2, 0.2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_scshk"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ogp8s"]
+resource_local_to_scene = true
+size = Vector3(0.3, 2.8, 0.2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yvphb"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_r3yfo"]
+resource_local_to_scene = true
+size = Vector3(0.65, 0.45, 0.2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qma56"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+
 [node name="GenerateSpider" unique_id=1413880667 instance=ExtResource("spider_character_base")]
 script = ExtResource("1_mnwgo")
+spider_limb_visual_stretch_enabled = false
+spider_limb_visual_end_ratio = 0.15
 spider_leg_bend_limit_degrees = 75.0
 spider_leg_spring_stiffness = 300.0
 spider_leg_spring_damping = 30.0
+spider_scale_joint_springs = true
+spider_independent_torso_support = true
+spider_axial_sliding_enabled = true
+spider_root_slide_ratio = 0.02
+spider_knee_slide_ratio = 0.03
+spider_axial_spring_frequency = 8.0
+spider_axial_damping_ratio = 1.0
 generator_path = NodePath("SpiderGenerator")
 manual_layout_connection_tolerance = 0.01
 generate_on_ready = true
@@ -76,6 +436,16 @@ segment_spring_damping_ratio = 1.0
 
 [node name="GeneratedLegStepMovementController3D" parent="." index="0"]
 script = ExtResource("4_77gc7")
+structural_stride_enabled = true
+structural_stride_safety_ratio = 0.8
+structural_landing_forward_ratio = 0.65
+step_lift_multiplier = 1.35
+catch_up_speed_ratio = 0.75
+maximum_catch_up_duration = 1.2
+touchdown_target_tolerance_ratio = 0.5
+torso_support_frequency = 1.5
+torso_support_damping_ratio = 1.0
+torso_support_maximum_acceleration = 30.0
 stance_travel_length_ratio = 0.06
 stalled_step_delay = 0.8
 joint_limit_reserve_degrees = 5.0
@@ -83,7 +453,10 @@ support_polygon_tolerance = 0.2
 liftoff_assist_acceleration = 20.0
 liftoff_assist_delay = 0.2
 maximum_liftoff_time = 1.0
+maximum_adhesion_acceleration = 30.0
 grounded_joint_stiffness_ratio = 0.5
+stepping_joint_stiffness_ratio = 0.15
+stepping_joint_damping_ratio = 0.5
 touchdown_brake_time = 0.08
 touchdown_brake_acceleration = 40.0
 touchdown_confirmation_time = 0.04
@@ -109,31 +482,33 @@ stable_confirmation_duration = 0.5
 stable_height_ratio = 0.65
 
 [node name="CreatureActionController3D" parent="." index="2"]
-enabled = false
+script = ExtResource("spider_pounce")
+enabled = true
 
 [node name="SpiderGenerator" parent="." index="3" unique_id=691937953 instance=ExtResource("2_generator")]
 visible = false
+part_scene_rules = Array[ExtResource("7_w7jap")]([SubResource("Resource_8t3bx"), SubResource("Resource_ltcfk"), SubResource("Resource_1osjp"), SubResource("Resource_6vsm7"), SubResource("Resource_7dvn6"), SubResource("Resource_vqf76"), SubResource("Resource_lam7b"), SubResource("Resource_eiayi"), SubResource("Resource_56q41"), SubResource("Resource_bsaoo"), SubResource("Resource_0rfpe"), SubResource("Resource_vls1w"), SubResource("Resource_v3m3u"), SubResource("Resource_wafjd"), SubResource("Resource_t7fwy"), SubResource("Resource_8b3sp"), SubResource("Resource_yrogd"), SubResource("Resource_37k7u"), SubResource("Resource_y1iye")])
 overall_scale = 1.0
 torso_upper_curve = SubResource("Curve_vftp3")
 torso_lower_curve = SubResource("Curve_tnuoe")
 torso_height_offset_curve = SubResource("Curve_hhag5")
 sub_torso_height_curve = SubResource("Curve_hy0wv")
 
-[node name="GeneratedParts" type="Node3D" parent="." index="4" unique_id=2120518074]
+[node name="GeneratedParts" type="Node3D" parent="." index="4" unique_id=1461710800]
 
-[node name="Torso_Front" parent="GeneratedParts" index="0" unique_id=298589033 instance=ExtResource("14_jvk18")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.2007546, 0)
-mass = 10.0
+[node name="Torso_Front" parent="GeneratedParts" index="0" unique_id=2096769030 instance=ExtResource("32_scshk")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1103677, 0)
+mass = 0.5039999
 freeze = true
 linear_damp = 0.15
 angular_damp = 1.0
-tags = Array[int]([0])
-sprite_visible = false
-left_distance = 2.8
-right_distance = 2.8
-top_distance = 1.8
-bottom_distance = 1.8
-collision_thickness = 0.8
+left_distance = 0.7
+right_distance = 0.7
+top_distance = 0.45
+bottom_distance = 0.45
+collision_thickness = 0.2
+metadata/generated_scene_path = "res://Scenes/Creatures/Bodyparts/Spider/Calibrated/Torso/FrontTorso.tscn"
+metadata/generated_scene_rule_key = "Torso_Front"
 metadata/body_segment_id = 0
 metadata/segment_layout_version = 3
 metadata/generated_layout = {
@@ -141,91 +516,127 @@ metadata/generated_layout = {
 "part_key": "Torso_Front",
 "role": "Torso",
 "segment_id": 0,
-"size": Vector3(5.6, 3.6, 0.8),
-"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.2007546, 0)
+"size": Vector3(1.4, 0.9, 0.2),
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1103677, 0)
 }
 metadata/generated_role = "Torso"
 metadata/generated_part_key = "Torso_Front"
 metadata/generated_part_type = "Torso"
 metadata/generated_density = 2.0
-metadata/generated_size = Vector3(5.6, 3.6, 0.8)
-metadata/generated_framework_size = Vector3(5.6, 3.6, 0.8)
-metadata/generated_segment_rest_height = 5.000755
+metadata/generated_size = Vector3(1.4, 0.9, 0.2)
+metadata/generated_framework_size = Vector3(1.4, 0.9, 0.2)
+metadata/generated_segment_rest_height = 1.3823444917798042
 metadata/generated_segment_rest_offset = Vector3(0, 0, 0)
 
-[node name="JointOut_Torso_Rear" type="Marker3D" parent="GeneratedParts/Torso_Front" index="3" unique_id=119270116]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.56, 0, 0)
+[node name="CollisionShape3D" parent="GeneratedParts/Torso_Front" index="0" unique_id=1899992271]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+shape = SubResource("BoxShape3D_jwokx")
+
+[node name="Sprite3D" parent="GeneratedParts/Torso_Front" index="1" unique_id=1806091758]
+transform = Transform3D(0.3635446, 0, 0, 0, 0.37159452, 0, 0, 0, 2.5, 0.0010127199, -0.0036230497, 0)
+material_override = SubResource("ShaderMaterial_jgj7g")
+
+[node name="MeshInstance3D" parent="GeneratedParts/Torso_Front" index="2" unique_id=1504749449]
+transform = Transform3D(0.9310377, 0, 0, 0, 0.95128196, 0, 0, 0, 2.5025, 0.00083093916, -0.0036230497, 0)
+
+[node name="Model" parent="GeneratedParts/Torso_Front" index="3"]
+transform = Transform3D(0.3635446, 0, 0, 0, 0.37159452, 0, 0, 0, 2.5, 0.0010127199, -0.0036230497, 0)
+
+[node name="PaperVolume" parent="GeneratedParts/Torso_Front/Model" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.08, 0, 0, 0)
+surface_material_override/2 = SubResource("StandardMaterial3D_v7sgd")
+
+[node name="JointIn" parent="GeneratedParts/Torso_Front" index="4"]
+transform = Transform3D(0.3635446, 0, 0, 0, 0.37159452, 0, 0, 0, 2.5, 0.6071583, -0.13092026, 0)
+
+[node name="JointOut" parent="GeneratedParts/Torso_Front" index="5"]
+transform = Transform3D(0.3635446, 0, 0, 0, 0.37159452, 0, 0, 0, 2.5, -0.6114496, -0.13174921, 0)
+
+[node name="SpiderRoot_1" parent="GeneratedParts/Torso_Front" index="6"]
+transform = Transform3D(0.3635446, 0, 0, 0, 0.37159452, 0, 0, 0, 2.5, 0.44747669, 0.2911098, 0)
+
+[node name="SpiderRoot_2" parent="GeneratedParts/Torso_Front" index="7"]
+transform = Transform3D(0.3635446, 0, 0, 0, 0.37159452, 0, 0, 0, 2.5, 0.18253513, -0.32713088, 0)
+
+[node name="SpiderRoot_3" parent="GeneratedParts/Torso_Front" index="8"]
+transform = Transform3D(0.3635446, 0, 0, 0, 0.37159452, 0, 0, 0, 2.5, -0.18492284, -0.326687, 0)
+
+[node name="SpiderRoot_4" parent="GeneratedParts/Torso_Front" index="9"]
+transform = Transform3D(0.3635446, 0, 0, 0, 0.37159452, 0, 0, 0, 2.5, -0.44972402, 0.29095173, 0)
+
+[node name="JointOut_Torso_Rear" type="Marker3D" parent="GeneratedParts/Torso_Front" index="10" unique_id=1962053443]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.64, 0.10184574, 0)
 metadata/generated_connection_port = true
 metadata/joint_name = "Joint_001_Torso"
 metadata/connected_part = "Torso_Rear"
 
-[node name="JointOut_Leg_1_Limb_1" type="Marker3D" parent="GeneratedParts/Torso_Front" index="4" unique_id=952554594]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.24, 0.60105944, -0.4)
+[node name="JointOut_Leg_1_Limb_1" type="Marker3D" parent="GeneratedParts/Torso_Front" index="11" unique_id=1866495818]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.56, 0.18851519, -0.1)
 metadata/generated_connection_port = true
 metadata/joint_name = "Joint_002_Limb"
 metadata/connected_part = "Leg_1_Limb_1"
 
-[node name="JointOut_Leg_2_Limb_1" type="Marker3D" parent="GeneratedParts/Torso_Front" index="5" unique_id=1836188755]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.74666667, -0.6010587, -0.4)
+[node name="JointOut_Leg_2_Limb_1" type="Marker3D" parent="GeneratedParts/Torso_Front" index="12" unique_id=1432238074]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.18666667, -0.18851507, -0.1)
 metadata/generated_connection_port = true
 metadata/joint_name = "Joint_004_Limb"
 metadata/connected_part = "Leg_2_Limb_1"
 
-[node name="JointOut_Leg_3_Limb_1" type="Marker3D" parent="GeneratedParts/Torso_Front" index="6" unique_id=888933134]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.74666667, -0.6010587, -0.4)
+[node name="JointOut_Leg_3_Limb_1" type="Marker3D" parent="GeneratedParts/Torso_Front" index="13" unique_id=599901645]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.18666667, -0.18851507, -0.1)
 metadata/generated_connection_port = true
 metadata/joint_name = "Joint_006_Limb"
 metadata/connected_part = "Leg_3_Limb_1"
 
-[node name="JointOut_Leg_4_Limb_1" type="Marker3D" parent="GeneratedParts/Torso_Front" index="7" unique_id=1643302183]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.24, 0.60105944, -0.4)
+[node name="JointOut_Leg_4_Limb_1" type="Marker3D" parent="GeneratedParts/Torso_Front" index="14" unique_id=1956153596]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.56, 0.18851519, -0.1)
 metadata/generated_connection_port = true
 metadata/joint_name = "Joint_008_Limb"
 metadata/connected_part = "Leg_4_Limb_1"
 
-[node name="JointOut_Leg_5_Limb_1" type="Marker3D" parent="GeneratedParts/Torso_Front" index="8" unique_id=1656879718]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.24, 0.60105944, 0.4)
+[node name="JointOut_Leg_5_Limb_1" type="Marker3D" parent="GeneratedParts/Torso_Front" index="15" unique_id=1512597282]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.56, 0.18851519, 0.1)
 metadata/generated_connection_port = true
 metadata/joint_name = "Joint_010_Limb"
 metadata/connected_part = "Leg_5_Limb_1"
 
-[node name="JointOut_Leg_6_Limb_1" type="Marker3D" parent="GeneratedParts/Torso_Front" index="9" unique_id=880329257]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.74666667, -0.6010587, 0.4)
+[node name="JointOut_Leg_6_Limb_1" type="Marker3D" parent="GeneratedParts/Torso_Front" index="16" unique_id=259210939]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.18666667, -0.18851507, 0.1)
 metadata/generated_connection_port = true
 metadata/joint_name = "Joint_012_Limb"
 metadata/connected_part = "Leg_6_Limb_1"
 
-[node name="JointOut_Leg_7_Limb_1" type="Marker3D" parent="GeneratedParts/Torso_Front" index="10" unique_id=868291449]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.74666667, -0.6010587, 0.4)
+[node name="JointOut_Leg_7_Limb_1" type="Marker3D" parent="GeneratedParts/Torso_Front" index="17" unique_id=1658228015]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.18666667, -0.18851507, 0.1)
 metadata/generated_connection_port = true
 metadata/joint_name = "Joint_014_Limb"
 metadata/connected_part = "Leg_7_Limb_1"
 
-[node name="JointOut_Leg_8_Limb_1" type="Marker3D" parent="GeneratedParts/Torso_Front" index="11" unique_id=882998795]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.24, 0.60105944, 0.4)
+[node name="JointOut_Leg_8_Limb_1" type="Marker3D" parent="GeneratedParts/Torso_Front" index="18" unique_id=841897659]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.56, 0.18851519, 0.1)
 metadata/generated_connection_port = true
 metadata/joint_name = "Joint_016_Limb"
 metadata/connected_part = "Leg_8_Limb_1"
 
-[node name="JointOut_Head" type="Marker3D" parent="GeneratedParts/Torso_Front" index="12" unique_id=1279406389]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.72, 0, 0)
+[node name="JointOut_Head" type="Marker3D" parent="GeneratedParts/Torso_Front" index="19" unique_id=6118318]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.68, 0, 0)
 metadata/generated_connection_port = true
 metadata/joint_name = "Joint_018_Neck"
 metadata/connected_part = "Head"
 
-[node name="Torso_Rear" parent="GeneratedParts" index="1" unique_id=1992710832 instance=ExtResource("14_jvk18")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.32, 5.800755, 0)
-mass = 10.0
+[node name="Torso_Rear" parent="GeneratedParts" index="1" unique_id=389098036 instance=ExtResource("33_ogp8s")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.58, 1.5103678, 0)
+mass = 1.0304674
 freeze = true
 linear_damp = 0.15
 angular_damp = 1.0
-tags = Array[int]([0])
-sprite_visible = false
-left_distance = 4.0
-right_distance = 4.0
-top_distance = 4.0
-bottom_distance = 4.0
-collision_thickness = 0.8
+left_distance = 1.0
+right_distance = 1.0
+top_distance = 0.6463087
+bottom_distance = 0.6463087
+collision_thickness = 0.2
+metadata/generated_scene_path = "res://Scenes/Creatures/Bodyparts/Spider/Calibrated/Torso/RearTorso.tscn"
+metadata/generated_scene_rule_key = "Torso_Rear"
 metadata/body_segment_id = 0
 metadata/segment_layout_version = 3
 metadata/generated_layout = {
@@ -233,35 +644,59 @@ metadata/generated_layout = {
 "part_key": "Torso_Rear",
 "role": "Torso",
 "segment_id": 0,
-"size": Vector3(8, 8, 0.8),
-"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.32, 5.800755, 0)
+"size": Vector3(2, 1.2926174, 0.2),
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.58, 1.5103678, 0)
 }
 metadata/generated_role = "Torso"
 metadata/generated_part_key = "Torso_Rear"
 metadata/generated_part_type = "Torso"
 metadata/generated_density = 2.0
-metadata/generated_size = Vector3(8, 8, 0.8)
-metadata/generated_framework_size = Vector3(8, 8, 0.8)
+metadata/generated_size = Vector3(2, 1.2926174, 0.2)
+metadata/generated_framework_size = Vector3(2, 1.2926174, 0.2)
 
-[node name="JointIn_Torso_Front" type="Marker3D" parent="GeneratedParts/Torso_Rear" index="3" unique_id=638619907]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7600002, -1.6000004, 0)
+[node name="CollisionShape3D" parent="GeneratedParts/Torso_Rear" index="0" unique_id=1899992271]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+shape = SubResource("BoxShape3D_ga0f7")
+
+[node name="Sprite3D" parent="GeneratedParts/Torso_Rear" index="1" unique_id=1806091758]
+transform = Transform3D(0.31970012, 0, 0, 0, 0.31970012, 0, 0, 0, 2.5, 0.7699919, -0.35023317, 0)
+material_override = SubResource("ShaderMaterial_jgj7g")
+
+[node name="MeshInstance3D" parent="GeneratedParts/Torso_Rear" index="2" unique_id=1504749449]
+transform = Transform3D(0.818752, 0, 0, 0, 0.8184323, 0, 0, 0, 2.5025, 0.769832, -0.35023317, 0)
+
+[node name="Model" parent="GeneratedParts/Torso_Rear" index="3"]
+transform = Transform3D(0.31970012, 0, 0, 0, 0.31970012, 0, 0, 0, 2.5, 0.7699919, -0.35023317, 0)
+
+[node name="PaperVolume" parent="GeneratedParts/Torso_Rear/Model" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.08, 0, 0, 0)
+surface_material_override/2 = SubResource("StandardMaterial3D_hmk71")
+
+[node name="JointIn" parent="GeneratedParts/Torso_Rear" index="4"]
+transform = Transform3D(0.31970012, 0, 0, 0, 0.31970012, 0, 0, 0, 2.5, 0.8532024, -0.3869341, 0)
+
+[node name="JointOut" parent="GeneratedParts/Torso_Rear" index="5"]
+transform = Transform3D(0.31970012, 0, 0, 0, 0.31970012, 0, 0, 0, 2.5, -0.9099356, 0.39617738, 0)
+
+[node name="JointIn_Torso_Front" type="Marker3D" parent="GeneratedParts/Torso_Rear" index="6" unique_id=457187187]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.94000006, -0.29815435, 0)
 metadata/generated_connection_port = true
 metadata/joint_name = "Joint_001_Torso"
 metadata/connected_part = "Torso_Front"
 
-[node name="Leg_1_Limb_1" parent="GeneratedParts" index="2" unique_id=1255256593 instance=ExtResource("14_jvk18")]
-transform = Transform3D(0.7036317, 0.7105648, 0, -0.7105648, 0.7036317, 0, 0, 0, 1, 4.5138073, 7.053436, -0.8)
-mass = 10.0
+[node name="Leg_1_Limb_1" parent="GeneratedParts" index="2" unique_id=944417670 instance=ExtResource("17_4cqmp")]
+transform = Transform3D(0.7036317, 0.71056485, 0, -0.71056485, 0.7036317, 0, 0, 0, 1, 1.2705648, 2.0025146, -0.2)
+mass = 0.1
 freeze = true
 linear_damp = 0.15
 angular_damp_mode = 1
-tags = Array[int]([5])
-sprite_visible = false
-left_distance = 0.5
-right_distance = 0.5
-top_distance = 3.2000003
-bottom_distance = 3.2000003
-collision_thickness = 0.8
+left_distance = 0.125
+right_distance = 0.125
+top_distance = 1.0
+bottom_distance = 1.0
+collision_thickness = 0.2
+metadata/generated_scene_path = "res://Scenes/Creatures/Bodyparts/Spider/FrameFitted/Legs/Left_1/UpperLeg.tscn"
+metadata/generated_scene_rule_key = "Leg_1_Limb_1"
 metadata/body_segment_id = 0
 metadata/segment_layout_version = 3
 metadata/generated_layout = {
@@ -269,43 +704,71 @@ metadata/generated_layout = {
 "part_key": "Leg_1_Limb_1",
 "role": "Limb",
 "segment_id": 0,
-"size": Vector3(1, 6.4000006, 0.8),
-"transform": Transform3D(0.7036317, 0.7105648, 0, -0.7105648, 0.7036317, 0, 0, 0, 1, 4.5138073, 7.053436, -0.8)
+"size": Vector3(0.25, 2, 0.2),
+"transform": Transform3D(0.7036317, 0.71056485, 0, -0.71056485, 0.7036317, 0, 0, 0, 1, 1.2705648, 2.0025146, -0.2)
 }
 metadata/generated_role = "Limb"
 metadata/generated_part_key = "Leg_1_Limb_1"
 metadata/generated_part_type = "LegLimb"
-metadata/generated_density = 2.0
-metadata/generated_size = Vector3(1, 6.4000006, 0.8)
-metadata/generated_framework_size = Vector3(1, 6.4000006, 0.8)
+metadata/generated_density = 0.1
+metadata/generated_size = Vector3(0.25, 2, 0.2)
+metadata/generated_framework_size = Vector3(0.25, 2, 0.2)
+metadata/spider_up_axis_sign = 1.0
+metadata/spider_world_bend_limit = 1.3089969389957472
+metadata/spider_visual_uniform_scale = 0.9597608995152592
 
-[node name="JointIn_Torso_Front" type="Marker3D" parent="GeneratedParts/Leg_1_Limb_1" index="3" unique_id=2036310951]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.7683716e-07, -3.1999998, 0.4)
+[node name="CollisionShape3D" parent="GeneratedParts/Leg_1_Limb_1" index="0" unique_id=1899992271]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+shape = SubResource("BoxShape3D_hfgf0")
+
+[node name="Sprite3D" parent="GeneratedParts/Leg_1_Limb_1" index="1" unique_id=1806091758]
+transform = Transform3D(1.0022149, 0, 0, 0, 0.8135042, 0, 0, 0, 2.5, 0.00018627386, 0.008836471, 0)
+material_override = SubResource("ShaderMaterial_jgj7g")
+
+[node name="MeshInstance3D" parent="GeneratedParts/Leg_1_Limb_1" index="2" unique_id=1504749449]
+transform = Transform3D(2.5666723, 0, 0, 0, 2.0825708, 0, 0, 0, 2.5025, -0.00031485702, 0.008836471, 0)
+visible = false
+mesh = SubResource("BoxMesh_part")
+
+[node name="Model" parent="GeneratedParts/Leg_1_Limb_1" index="3"]
+transform = Transform3D(0.9555825, 0.089459665, 0, -0.089459665, 0.9555825, 0, 0, 0, 2.5, 0.08945984, -0.04441756, 0)
+
+[node name="PaperVolume" parent="GeneratedParts/Leg_1_Limb_1/Model" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.08, 0, 0, 0)
+surface_material_override/2 = SubResource("StandardMaterial3D_dn2d0")
+
+[node name="JointIn" parent="GeneratedParts/Leg_1_Limb_1" index="4"]
+transform = Transform3D(0.95558244, 0.08945966, 0, -0.08945966, 0.95558244, 0, 0, 0, 2.4999998, 0.1789195, 0.9111648, 0)
+
+[node name="JointOut" parent="GeneratedParts/Leg_1_Limb_1" index="5"]
+transform = Transform3D(0.95558244, 0.08945966, 0, -0.08945966, 0.95558244, 0, 0, 0, 2.4999998, 1.7881393e-07, -1, 0)
+
+[node name="JointIn_Torso_Front" type="Marker3D" parent="GeneratedParts/Leg_1_Limb_1" index="6" unique_id=1729305312]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7881393e-07, -1, 0.1)
 metadata/generated_connection_port = true
 metadata/joint_name = "Joint_002_Limb"
 metadata/connected_part = "Torso_Front"
 
-[node name="JointOut_Leg_1" type="Marker3D" parent="GeneratedParts/Leg_1_Limb_1" index="4" unique_id=729689138]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.3841858e-07, 3.2000008, -0.40000004)
+[node name="JointOut_Leg_1" type="Marker3D" parent="GeneratedParts/Leg_1_Limb_1" index="7" unique_id=2078499300]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1789195, 0.91116476, -0.10000001)
 metadata/generated_connection_port = true
 metadata/joint_name = "Joint_003_Limb"
 metadata/connected_part = "Leg_1"
 
-[node name="Leg_1" parent="GeneratedParts" index="3" unique_id=1026902371 instance=ExtResource("14_jvk18")]
-transform = Transform3D(-0.9497051, 0.31314558, 0, -0.31314558, -0.9497051, 0, 0, 0, 1, 8.290714, 4.7464724, -1.6)
-axis_lock_angular_x = true
-axis_lock_angular_z = true
-mass = 10.0
+[node name="Leg_1" parent="GeneratedParts" index="3" unique_id=1821157537 instance=ExtResource("16_jf7pk")]
+transform = Transform3D(-0.9497052, 0.3131456, 0, -0.3131456, -0.9497052, 0, 0, 0, 1, 2.4195335, 1.376559, -0.4)
+mass = 0.1
 freeze = true
 linear_damp = 0.15
 angular_damp = 1.0
-tags = Array[int]([1])
-sprite_visible = false
-left_distance = 0.6
-right_distance = 0.6
-top_distance = 4.8000007
-bottom_distance = 4.8000007
-collision_thickness = 0.8
+lock_foot_pitch_roll = false
+left_distance = 0.15
+right_distance = 0.15
+top_distance = 1.4
+bottom_distance = 1.4
+collision_thickness = 0.2
+metadata/generated_scene_path = "res://Scenes/Creatures/Bodyparts/Spider/FrameFitted/Legs/Left_1/LowerLeg.tscn"
+metadata/generated_scene_rule_key = "Leg_1"
 metadata/body_segment_id = 0
 metadata/segment_layout_version = 3
 metadata/generated_layout = {
@@ -313,38 +776,65 @@ metadata/generated_layout = {
 "part_key": "Leg_1",
 "role": "Leg",
 "segment_id": 0,
-"size": Vector3(1.2, 9.600001, 0.8),
-"transform": Transform3D(-0.9497051, 0.31314558, 0, -0.31314558, -0.9497051, 0, 0, 0, 1, 8.290714, 4.7464724, -1.6)
+"size": Vector3(0.3, 2.8, 0.2),
+"transform": Transform3D(-0.9497052, 0.3131456, 0, -0.3131456, -0.9497052, 0, 0, 0, 1, 2.4195335, 1.376559, -0.4)
 }
 metadata/generated_role = "Leg"
 metadata/generated_part_key = "Leg_1"
 metadata/generated_part_type = "Leg"
-metadata/generated_density = 4.0
-metadata/generated_size = Vector3(1.2, 9.600001, 0.8)
-metadata/generated_framework_size = Vector3(1.2, 9.600001, 0.8)
-metadata/foot_previous_locks = Vector2i(0, 0)
-metadata/generated_attachment_rest_offset = Vector3(8.290714, 0.5457177, -1.6)
-metadata/generated_layout_foot_offset = Vector3(11.450714, -0.254282, -1.6)
+metadata/generated_density = 0.1
+metadata/generated_size = Vector3(0.3, 2.8, 0.2)
+metadata/generated_framework_size = Vector3(0.3, 2.8, 0.2)
+metadata/spider_up_axis_sign = -1.0
+metadata/spider_world_bend_limit = 1.3089969389957472
+metadata/generated_attachment_rest_offset = Vector3(2.4195335, 0.26619136, -0.4)
+metadata/generated_layout_foot_offset = Vector3(3.6210544, -0.037991285, -0.4)
 
-[node name="JointIn_Leg_1_Limb_1" type="Marker3D" parent="GeneratedParts/Leg_1" index="3" unique_id=238198090]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.536743e-07, -4.800001, 0.39999998)
+[node name="CollisionShape3D" parent="GeneratedParts/Leg_1" index="0" unique_id=1899992271]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+shape = SubResource("BoxShape3D_slvgo")
+
+[node name="Sprite3D" parent="GeneratedParts/Leg_1" index="1" unique_id=1806091758]
+transform = Transform3D(-1.0194772, 8.1165915e-08, 0, -8.912553e-08, -0.92842984, 0, 0, 0, 2.5, -0.00022819864, 0.099561125, 0)
+material_override = SubResource("ShaderMaterial_jgj7g")
+
+[node name="MeshInstance3D" parent="GeneratedParts/Leg_1" index="2" unique_id=1504749449]
+transform = Transform3D(-2.610881, 2.0778474e-07, 0, -2.2825047e-07, -2.3767803, 0, 0, 0, 2.5025, 0.0002815638, 0.099561125, 0)
+visible = false
+mesh = SubResource("BoxMesh_part")
+
+[node name="Model" parent="GeneratedParts/Leg_1" index="3"]
+transform = Transform3D(-1.0194772, 8.1165915e-08, 0, -8.912553e-08, -0.92842984, 0, 0, 0, 2.5, -0.00022819864, 0.099561125, 0)
+
+[node name="PaperVolume" parent="GeneratedParts/Leg_1/Model" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.08, 0, 0, 0)
+surface_material_override/2 = SubResource("StandardMaterial3D_vse4l")
+
+[node name="JointIn" parent="GeneratedParts/Leg_1" index="4"]
+transform = Transform3D(-1.0194772, 8.1165915e-08, 0, -8.912553e-08, -0.92842984, 0, 0, 0, 2.5, -0.000228085, -1.2002406, 0)
+
+[node name="JointOut" parent="GeneratedParts/Leg_1" index="5"]
+transform = Transform3D(-1.0194772, 8.1165915e-08, 0, -8.912553e-08, -0.92842984, 0, 0, 0, 2.5, -0.00022831227, 1.3993628, 0)
+
+[node name="JointIn_Leg_1_Limb_1" type="Marker3D" parent="GeneratedParts/Leg_1" index="6" unique_id=38257890]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00022792816, -1.2002407, 0.099999994)
 metadata/generated_connection_port = true
 metadata/joint_name = "Joint_003_Limb"
 metadata/connected_part = "Leg_1_Limb_1"
 
-[node name="Leg_2_Limb_1" parent="GeneratedParts" index="4" unique_id=801548314 instance=ExtResource("14_jvk18")]
-transform = Transform3D(0.93797415, 0.34670523, 0, -0.34670523, 0.93797415, 0, 0, 0, 1, 1.8561232, 6.601213, -0.8)
-mass = 10.0
+[node name="Leg_2_Limb_1" parent="GeneratedParts" index="4" unique_id=1222237593 instance=ExtResource("19_prioa")]
+transform = Transform3D(0.93797415, 0.3467052, 0, -0.3467052, 0.93797415, 0, 0, 0, 1, 0.5333718, 1.8598267, -0.2)
+mass = 0.1
 freeze = true
 linear_damp = 0.15
 angular_damp_mode = 1
-tags = Array[int]([5])
-sprite_visible = false
-left_distance = 0.5
-right_distance = 0.5
-top_distance = 3.1999996
-bottom_distance = 3.1999996
-collision_thickness = 0.8
+left_distance = 0.125
+right_distance = 0.125
+top_distance = 0.99999995
+bottom_distance = 0.99999995
+collision_thickness = 0.2
+metadata/generated_scene_path = "res://Scenes/Creatures/Bodyparts/Spider/FrameFitted/Legs/Left_2/UpperLeg.tscn"
+metadata/generated_scene_rule_key = "Leg_2_Limb_1"
 metadata/body_segment_id = 0
 metadata/segment_layout_version = 3
 metadata/generated_layout = {
@@ -352,43 +842,71 @@ metadata/generated_layout = {
 "part_key": "Leg_2_Limb_1",
 "role": "Limb",
 "segment_id": 0,
-"size": Vector3(1, 6.399999, 0.8),
-"transform": Transform3D(0.93797415, 0.34670523, 0, -0.34670523, 0.93797415, 0, 0, 0, 1, 1.8561232, 6.601213, -0.8)
+"size": Vector3(0.25, 1.9999999, 0.2),
+"transform": Transform3D(0.93797415, 0.3467052, 0, -0.3467052, 0.93797415, 0, 0, 0, 1, 0.5333718, 1.8598267, -0.2)
 }
 metadata/generated_role = "Limb"
 metadata/generated_part_key = "Leg_2_Limb_1"
 metadata/generated_part_type = "LegLimb"
-metadata/generated_density = 2.0
-metadata/generated_size = Vector3(1, 6.399999, 0.8)
-metadata/generated_framework_size = Vector3(1, 6.399999, 0.8)
+metadata/generated_density = 0.1
+metadata/generated_size = Vector3(0.25, 1.9999999, 0.2)
+metadata/generated_framework_size = Vector3(0.25, 1.9999999, 0.2)
+metadata/spider_up_axis_sign = 1.0
+metadata/spider_world_bend_limit = 1.3089969389957472
+metadata/spider_visual_uniform_scale = 0.8765567990013121
 
-[node name="JointIn_Torso_Front" type="Marker3D" parent="GeneratedParts/Leg_2_Limb_1" index="3" unique_id=963606704]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.9604645e-08, -3.1999998, 0.4)
+[node name="CollisionShape3D" parent="GeneratedParts/Leg_2_Limb_1" index="0" unique_id=1899992271]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+shape = SubResource("BoxShape3D_2ssjv")
+
+[node name="Sprite3D" parent="GeneratedParts/Leg_2_Limb_1" index="1" unique_id=1806091758]
+transform = Transform3D(1.0016146, 0, 0, 0, 0.8233106, 0, 0, 0, 2.5, -3.0126557e-05, 0.0041799517, 0)
+material_override = SubResource("ShaderMaterial_jgj7g")
+
+[node name="MeshInstance3D" parent="GeneratedParts/Leg_2_Limb_1" index="2" unique_id=1504749449]
+transform = Transform3D(2.5651348, 0, 0, 0, 2.107675, 0, 0, 0, 2.5025, -0.00053095724, 0.0041799517, 0)
+visible = false
+mesh = SubResource("BoxMesh_part")
+
+[node name="Model" parent="GeneratedParts/Leg_2_Limb_1" index="3"]
+transform = Transform3D(0.87448907, 0.06017317, 0, -0.06017317, 0.87448907, 0, 0, 0, 2.5, 0.06017321, -0.12551099, 0)
+
+[node name="PaperVolume" parent="GeneratedParts/Leg_2_Limb_1/Model" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.08, 0, 0, 0)
+surface_material_override/2 = SubResource("StandardMaterial3D_w2bg5")
+
+[node name="JointIn" parent="GeneratedParts/Leg_2_Limb_1" index="4"]
+transform = Transform3D(0.874489, 0.060173165, 0, -0.060173165, 0.874489, 0, 0, 0, 2.4999998, 0.12034637, 0.74897796, 0)
+
+[node name="JointOut" parent="GeneratedParts/Leg_2_Limb_1" index="5"]
+transform = Transform3D(0.874489, 0.060173165, 0, -0.060173165, 0.874489, 0, 0, 0, 2.4999998, 4.4703484e-08, -1, 0)
+
+[node name="JointIn_Torso_Front" type="Marker3D" parent="GeneratedParts/Leg_2_Limb_1" index="6" unique_id=1798679959]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4703484e-08, -1, 0.1)
 metadata/generated_connection_port = true
 metadata/joint_name = "Joint_004_Limb"
 metadata/connected_part = "Torso_Front"
 
-[node name="JointOut_Leg_2" type="Marker3D" parent="GeneratedParts/Leg_2_Limb_1" index="4" unique_id=813055278]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.1999998, -0.40000004)
+[node name="JointOut_Leg_2" type="Marker3D" parent="GeneratedParts/Leg_2_Limb_1" index="7" unique_id=1239227233]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12034637, 0.7489778, -0.10000001)
 metadata/generated_connection_port = true
 metadata/joint_name = "Joint_005_Limb"
 metadata/connected_part = "Leg_2"
 
-[node name="Leg_2" parent="GeneratedParts" index="5" unique_id=655960451 instance=ExtResource("14_jvk18")]
-transform = Transform3D(-0.9927957, 0.11981981, 0, -0.11981981, -0.9927957, 0, 0, 0, 1, 3.5407147, 4.8373103, -1.6)
-axis_lock_angular_x = true
-axis_lock_angular_z = true
-mass = 10.0
+[node name="Leg_2" parent="GeneratedParts" index="5" unique_id=1610365381 instance=ExtResource("18_j4clh")]
+transform = Transform3D(-0.99279565, 0.11981981, 0, -0.11981981, -0.99279565, 0, 0, 0, 1, 1.0478247, 1.4078869, -0.4)
+mass = 0.1
 freeze = true
 linear_damp = 0.15
 angular_damp = 1.0
-tags = Array[int]([1])
-sprite_visible = false
-left_distance = 0.6
-right_distance = 0.6
-top_distance = 4.8
-bottom_distance = 4.8
-collision_thickness = 0.8
+lock_foot_pitch_roll = false
+left_distance = 0.15
+right_distance = 0.15
+top_distance = 1.4
+bottom_distance = 1.4
+collision_thickness = 0.2
+metadata/generated_scene_path = "res://Scenes/Creatures/Bodyparts/Spider/FrameFitted/Legs/Left_2/LowerLeg.tscn"
+metadata/generated_scene_rule_key = "Leg_2"
 metadata/body_segment_id = 0
 metadata/segment_layout_version = 3
 metadata/generated_layout = {
@@ -396,38 +914,65 @@ metadata/generated_layout = {
 "part_key": "Leg_2",
 "role": "Leg",
 "segment_id": 0,
-"size": Vector3(1.2, 9.6, 0.8),
-"transform": Transform3D(-0.9927957, 0.11981981, 0, -0.11981981, -0.9927957, 0, 0, 0, 1, 3.5407147, 4.8373103, -1.6)
+"size": Vector3(0.3, 2.8, 0.2),
+"transform": Transform3D(-0.99279565, 0.11981981, 0, -0.11981981, -0.99279565, 0, 0, 0, 1, 1.0478247, 1.4078869, -0.4)
 }
 metadata/generated_role = "Leg"
 metadata/generated_part_key = "Leg_2"
 metadata/generated_part_type = "Leg"
-metadata/generated_density = 4.0
-metadata/generated_size = Vector3(1.2, 9.6, 0.8)
-metadata/generated_framework_size = Vector3(1.2, 9.6, 0.8)
-metadata/foot_previous_locks = Vector2i(0, 0)
-metadata/generated_attachment_rest_offset = Vector3(3.5407147, 0.6365557, -1.6)
-metadata/generated_layout_foot_offset = Vector3(6.700715, -0.16344404, -1.6)
+metadata/generated_density = 0.1
+metadata/generated_size = Vector3(0.3, 2.8, 0.2)
+metadata/generated_framework_size = Vector3(0.3, 2.8, 0.2)
+metadata/spider_up_axis_sign = -1.0
+metadata/spider_world_bend_limit = 1.3089969389957472
+metadata/generated_attachment_rest_offset = Vector3(1.0478247, 0.2975192, -0.4)
+metadata/generated_layout_foot_offset = Vector3(2.2493458, -0.0066634417, -0.4)
 
-[node name="JointIn_Leg_2_Limb_1" type="Marker3D" parent="GeneratedParts/Leg_2" index="3" unique_id=636439861]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4.7999997, 0.39999998)
+[node name="CollisionShape3D" parent="GeneratedParts/Leg_2" index="0" unique_id=1899992271]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+shape = SubResource("BoxShape3D_txkyy")
+
+[node name="Sprite3D" parent="GeneratedParts/Leg_2" index="1" unique_id=1806091758]
+transform = Transform3D(-1.0524161, 7.871538e-08, 0, -9.200514e-08, -0.900399, 0, 0, 0, 2.5, 0.007546242, 0.13883601, 0)
+material_override = SubResource("ShaderMaterial_jgj7g")
+
+[node name="MeshInstance3D" parent="GeneratedParts/Leg_2" index="2" unique_id=1504749449]
+transform = Transform3D(-2.6952374, 2.0151138e-07, 0, -2.3562514e-07, -2.3050215, 0, 0, 0, 2.5025, 0.008072474, 0.13883601, 0)
+visible = false
+mesh = SubResource("BoxMesh_part")
+
+[node name="Model" parent="GeneratedParts/Leg_2" index="3"]
+transform = Transform3D(-1.0524161, 7.871538e-08, 0, -9.200514e-08, -0.900399, 0, 0, 0, 2.5, 0.007546242, 0.13883601, 0)
+
+[node name="PaperVolume" parent="GeneratedParts/Leg_2/Model" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.08, 0, 0, 0)
+surface_material_override/2 = SubResource("StandardMaterial3D_u8fax")
+
+[node name="JointIn" parent="GeneratedParts/Leg_2" index="4"]
+transform = Transform3D(-1.0524161, 7.871538e-08, 0, -9.200514e-08, -0.900399, 0, 0, 0, 2.5, 0.007546352, -1.1217226, 0)
+
+[node name="JointOut" parent="GeneratedParts/Leg_2" index="5"]
+transform = Transform3D(-1.0524161, 7.871538e-08, 0, -9.200514e-08, -0.900399, 0, 0, 0, 2.5, 0.0075461315, 1.3993946, 0)
+
+[node name="JointIn_Leg_2_Limb_1" type="Marker3D" parent="GeneratedParts/Leg_2" index="6" unique_id=658418787]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0075463057, -1.1217226, 0.099999994)
 metadata/generated_connection_port = true
 metadata/joint_name = "Joint_005_Limb"
 metadata/connected_part = "Leg_2_Limb_1"
 
-[node name="Leg_3_Limb_1" parent="GeneratedParts" index="6" unique_id=1831650676 instance=ExtResource("14_jvk18")]
-transform = Transform3D(0.93797415, -0.34670523, 0, 0.34670523, 0.93797415, 0, 0, 0, 1, -1.8561232, 6.601213, -0.8)
-mass = 10.0
+[node name="Leg_3_Limb_1" parent="GeneratedParts" index="6" unique_id=805956661 instance=ExtResource("21_nctal")]
+transform = Transform3D(0.93797415, -0.3467052, 0, 0.3467052, 0.93797415, 0, 0, 0, 1, -0.5333718, 1.8598267, -0.2)
+mass = 0.1
 freeze = true
 linear_damp = 0.15
 angular_damp_mode = 1
-tags = Array[int]([5])
-sprite_visible = false
-left_distance = 0.5
-right_distance = 0.5
-top_distance = 3.1999996
-bottom_distance = 3.1999996
-collision_thickness = 0.8
+left_distance = 0.125
+right_distance = 0.125
+top_distance = 0.99999995
+bottom_distance = 0.99999995
+collision_thickness = 0.2
+metadata/generated_scene_path = "res://Scenes/Creatures/Bodyparts/Spider/FrameFitted/Legs/Left_3/UpperLeg.tscn"
+metadata/generated_scene_rule_key = "Leg_3_Limb_1"
 metadata/body_segment_id = 0
 metadata/segment_layout_version = 3
 metadata/generated_layout = {
@@ -435,43 +980,71 @@ metadata/generated_layout = {
 "part_key": "Leg_3_Limb_1",
 "role": "Limb",
 "segment_id": 0,
-"size": Vector3(1, 6.399999, 0.8),
-"transform": Transform3D(0.93797415, -0.34670523, 0, 0.34670523, 0.93797415, 0, 0, 0, 1, -1.8561232, 6.601213, -0.8)
+"size": Vector3(0.25, 1.9999999, 0.2),
+"transform": Transform3D(0.93797415, -0.3467052, 0, 0.3467052, 0.93797415, 0, 0, 0, 1, -0.5333718, 1.8598267, -0.2)
 }
 metadata/generated_role = "Limb"
 metadata/generated_part_key = "Leg_3_Limb_1"
 metadata/generated_part_type = "LegLimb"
-metadata/generated_density = 2.0
-metadata/generated_size = Vector3(1, 6.399999, 0.8)
-metadata/generated_framework_size = Vector3(1, 6.399999, 0.8)
+metadata/generated_density = 0.1
+metadata/generated_size = Vector3(0.25, 1.9999999, 0.2)
+metadata/generated_framework_size = Vector3(0.25, 1.9999999, 0.2)
+metadata/spider_up_axis_sign = 1.0
+metadata/spider_world_bend_limit = 1.3089969389957472
+metadata/spider_visual_uniform_scale = 0.8550776415970752
 
-[node name="JointIn_Torso_Front" type="Marker3D" parent="GeneratedParts/Leg_3_Limb_1" index="3" unique_id=1977975080]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.9604645e-08, -3.1999998, 0.4)
+[node name="CollisionShape3D" parent="GeneratedParts/Leg_3_Limb_1" index="0" unique_id=1899992271]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+shape = SubResource("BoxShape3D_ueui2")
+
+[node name="Sprite3D" parent="GeneratedParts/Leg_3_Limb_1" index="1" unique_id=1806091758]
+transform = Transform3D(1.0028121, 0, 0, 0, 0.8357595, 0, 0, 0, 2.5, -0.0003324608, 0.017067766, 0)
+material_override = SubResource("ShaderMaterial_jgj7g")
+
+[node name="MeshInstance3D" parent="GeneratedParts/Leg_3_Limb_1" index="2" unique_id=1504749449]
+transform = Transform3D(2.5682018, 0, 0, 0, 2.1395442, 0, 0, 0, 2.5025, -0.0008338903, 0.017067766, 0)
+visible = false
+mesh = SubResource("BoxMesh_part")
+
+[node name="Model" parent="GeneratedParts/Leg_3_Limb_1" index="3"]
+transform = Transform3D(0.8518593, -0.074118376, 0, 0.074118376, 0.8518593, 0, 0, 0, 2.5, -0.07411843, -0.14814061, 0)
+
+[node name="PaperVolume" parent="GeneratedParts/Leg_3_Limb_1/Model" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.08, 0, 0, 0)
+surface_material_override/2 = SubResource("StandardMaterial3D_2jyf6")
+
+[node name="JointIn" parent="GeneratedParts/Leg_3_Limb_1" index="4"]
+transform = Transform3D(0.8518593, -0.07411838, 0, 0.074118376, 0.8518594, 0, 0, 0, 2.5, -0.14823681, 0.7037188, 0)
+
+[node name="JointOut" parent="GeneratedParts/Leg_3_Limb_1" index="5"]
+transform = Transform3D(0.8518593, -0.07411838, 0, 0.074118376, 0.8518594, 0, 0, 0, 2.5, -4.4703484e-08, -1, 0)
+
+[node name="JointIn_Torso_Front" type="Marker3D" parent="GeneratedParts/Leg_3_Limb_1" index="6" unique_id=438307488]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4703484e-08, -1, 0.1)
 metadata/generated_connection_port = true
 metadata/joint_name = "Joint_006_Limb"
 metadata/connected_part = "Torso_Front"
 
-[node name="JointOut_Leg_3" type="Marker3D" parent="GeneratedParts/Leg_3_Limb_1" index="4" unique_id=1073187670]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.1999998, -0.40000004)
+[node name="JointOut_Leg_3" type="Marker3D" parent="GeneratedParts/Leg_3_Limb_1" index="7" unique_id=2023609380]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.14823681, 0.7037188, -0.10000001)
 metadata/generated_connection_port = true
 metadata/joint_name = "Joint_007_Limb"
 metadata/connected_part = "Leg_3"
 
-[node name="Leg_3" parent="GeneratedParts" index="7" unique_id=1421280148 instance=ExtResource("14_jvk18")]
-transform = Transform3D(-0.9927957, -0.11981981, 0, 0.11981981, -0.9927957, 0, 0, 0, 1, -3.5407147, 4.8373103, -1.6)
-axis_lock_angular_x = true
-axis_lock_angular_z = true
-mass = 10.0
+[node name="Leg_3" parent="GeneratedParts" index="7" unique_id=1597232029 instance=ExtResource("20_u1ew2")]
+transform = Transform3D(-0.99279565, -0.11981981, 0, 0.11981981, -0.99279565, 0, 0, 0, 1, -1.0478247, 1.4078869, -0.4)
+mass = 0.1
 freeze = true
 linear_damp = 0.15
 angular_damp = 1.0
-tags = Array[int]([1])
-sprite_visible = false
-left_distance = 0.6
-right_distance = 0.6
-top_distance = 4.8
-bottom_distance = 4.8
-collision_thickness = 0.8
+lock_foot_pitch_roll = false
+left_distance = 0.15
+right_distance = 0.15
+top_distance = 1.4
+bottom_distance = 1.4
+collision_thickness = 0.2
+metadata/generated_scene_path = "res://Scenes/Creatures/Bodyparts/Spider/FrameFitted/Legs/Left_3/LowerLeg.tscn"
+metadata/generated_scene_rule_key = "Leg_3"
 metadata/body_segment_id = 0
 metadata/segment_layout_version = 3
 metadata/generated_layout = {
@@ -479,38 +1052,65 @@ metadata/generated_layout = {
 "part_key": "Leg_3",
 "role": "Leg",
 "segment_id": 0,
-"size": Vector3(1.2, 9.6, 0.8),
-"transform": Transform3D(-0.9927957, -0.11981981, 0, 0.11981981, -0.9927957, 0, 0, 0, 1, -3.5407147, 4.8373103, -1.6)
+"size": Vector3(0.3, 2.8, 0.2),
+"transform": Transform3D(-0.99279565, -0.11981981, 0, 0.11981981, -0.99279565, 0, 0, 0, 1, -1.0478247, 1.4078869, -0.4)
 }
 metadata/generated_role = "Leg"
 metadata/generated_part_key = "Leg_3"
 metadata/generated_part_type = "Leg"
-metadata/generated_density = 4.0
-metadata/generated_size = Vector3(1.2, 9.6, 0.8)
-metadata/generated_framework_size = Vector3(1.2, 9.6, 0.8)
-metadata/foot_previous_locks = Vector2i(0, 0)
-metadata/generated_attachment_rest_offset = Vector3(-3.5407147, 0.6365557, -1.6)
-metadata/generated_layout_foot_offset = Vector3(-0.38071465, -0.16344404, -1.6)
+metadata/generated_density = 0.1
+metadata/generated_size = Vector3(0.3, 2.8, 0.2)
+metadata/generated_framework_size = Vector3(0.3, 2.8, 0.2)
+metadata/spider_up_axis_sign = -1.0
+metadata/spider_world_bend_limit = 1.3089969389957472
+metadata/generated_attachment_rest_offset = Vector3(-1.0478247, 0.2975192, -0.4)
+metadata/generated_layout_foot_offset = Vector3(0.15369618, -0.0066634417, -0.4)
 
-[node name="JointIn_Leg_3_Limb_1" type="Marker3D" parent="GeneratedParts/Leg_3" index="3" unique_id=651108506]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4.7999997, 0.39999998)
+[node name="CollisionShape3D" parent="GeneratedParts/Leg_3" index="0" unique_id=1899992271]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+shape = SubResource("BoxShape3D_dqt1j")
+
+[node name="Sprite3D" parent="GeneratedParts/Leg_3" index="1" unique_id=1806091758]
+transform = Transform3D(-1.0255821, 7.7047766e-08, 0, -8.965923e-08, -0.8813237, 0, 0, 0, 2.5, -0.003398155, 0.16513105, 0)
+material_override = SubResource("ShaderMaterial_jgj7g")
+
+[node name="MeshInstance3D" parent="GeneratedParts/Leg_3" index="2" unique_id=1504749449]
+transform = Transform3D(-2.6265156, 1.9724227e-07, 0, -2.2961729e-07, -2.2561886, 0, 0, 0, 2.5025, -0.00288534, 0.16513105, 0)
+visible = false
+mesh = SubResource("BoxMesh_part")
+
+[node name="Model" parent="GeneratedParts/Leg_3" index="3"]
+transform = Transform3D(-1.0255821, 7.7047766e-08, 0, -8.965923e-08, -0.8813237, 0, 0, 0, 2.5, -0.003398155, 0.16513105, 0)
+
+[node name="PaperVolume" parent="GeneratedParts/Leg_3/Model" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.08, 0, 0, 0)
+surface_material_override/2 = SubResource("StandardMaterial3D_sakco")
+
+[node name="JointIn" parent="GeneratedParts/Leg_3" index="4"]
+transform = Transform3D(-1.0255821, 7.7047766e-08, 0, -8.965923e-08, -0.8813237, 0, 0, 0, 2.5, -0.0033980473, -1.068722, 0)
+
+[node name="JointOut" parent="GeneratedParts/Leg_3" index="5"]
+transform = Transform3D(-1.0255821, 7.7047766e-08, 0, -8.965923e-08, -0.8813237, 0, 0, 0, 2.5, -0.003398263, 1.3989842, 0)
+
+[node name="JointIn_Leg_3_Limb_1" type="Marker3D" parent="GeneratedParts/Leg_3" index="6" unique_id=1291602749]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0033980608, -1.0687221, 0.099999994)
 metadata/generated_connection_port = true
 metadata/joint_name = "Joint_007_Limb"
 metadata/connected_part = "Leg_3_Limb_1"
 
-[node name="Leg_4_Limb_1" parent="GeneratedParts" index="8" unique_id=936105557 instance=ExtResource("14_jvk18")]
-transform = Transform3D(0.7036317, -0.7105648, 0, 0.7105648, 0.7036317, 0, 0, 0, 1, -4.5138073, 7.053436, -0.8)
-mass = 10.0
+[node name="Leg_4_Limb_1" parent="GeneratedParts" index="8" unique_id=1684049735 instance=ExtResource("23_x5w5q")]
+transform = Transform3D(0.7036317, -0.71056485, 0, 0.71056485, 0.7036317, 0, 0, 0, 1, -1.2705648, 2.0025146, -0.2)
+mass = 0.1
 freeze = true
 linear_damp = 0.15
 angular_damp_mode = 1
-tags = Array[int]([5])
-sprite_visible = false
-left_distance = 0.5
-right_distance = 0.5
-top_distance = 3.2000003
-bottom_distance = 3.2000003
-collision_thickness = 0.8
+left_distance = 0.125
+right_distance = 0.125
+top_distance = 1.0
+bottom_distance = 1.0
+collision_thickness = 0.2
+metadata/generated_scene_path = "res://Scenes/Creatures/Bodyparts/Spider/FrameFitted/Legs/Left_4/UpperLeg.tscn"
+metadata/generated_scene_rule_key = "Leg_4_Limb_1"
 metadata/body_segment_id = 0
 metadata/segment_layout_version = 3
 metadata/generated_layout = {
@@ -518,43 +1118,71 @@ metadata/generated_layout = {
 "part_key": "Leg_4_Limb_1",
 "role": "Limb",
 "segment_id": 0,
-"size": Vector3(1, 6.4000006, 0.8),
-"transform": Transform3D(0.7036317, -0.7105648, 0, 0.7105648, 0.7036317, 0, 0, 0, 1, -4.5138073, 7.053436, -0.8)
+"size": Vector3(0.25, 2, 0.2),
+"transform": Transform3D(0.7036317, -0.71056485, 0, 0.71056485, 0.7036317, 0, 0, 0, 1, -1.2705648, 2.0025146, -0.2)
 }
 metadata/generated_role = "Limb"
 metadata/generated_part_key = "Leg_4_Limb_1"
 metadata/generated_part_type = "LegLimb"
-metadata/generated_density = 2.0
-metadata/generated_size = Vector3(1, 6.4000006, 0.8)
-metadata/generated_framework_size = Vector3(1, 6.4000006, 0.8)
+metadata/generated_density = 0.1
+metadata/generated_size = Vector3(0.25, 2, 0.2)
+metadata/generated_framework_size = Vector3(0.25, 2, 0.2)
+metadata/spider_up_axis_sign = 1.0
+metadata/spider_world_bend_limit = 1.3089969389957472
+metadata/spider_visual_uniform_scale = 0.963934953681821
 
-[node name="JointIn_Torso_Front" type="Marker3D" parent="GeneratedParts/Leg_4_Limb_1" index="3" unique_id=471606585]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.7683716e-07, -3.1999998, 0.4)
+[node name="CollisionShape3D" parent="GeneratedParts/Leg_4_Limb_1" index="0" unique_id=1899992271]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+shape = SubResource("BoxShape3D_qwq08")
+
+[node name="Sprite3D" parent="GeneratedParts/Leg_4_Limb_1" index="1" unique_id=1806091758]
+transform = Transform3D(1.0000001, 0, 0, 0, 0.82855964, 0, 0, 0, 2.5, 0, 0.009482804, 0)
+material_override = SubResource("ShaderMaterial_jgj7g")
+
+[node name="MeshInstance3D" parent="GeneratedParts/Leg_4_Limb_1" index="2" unique_id=1504749449]
+transform = Transform3D(2.561, 0, 0, 0, 2.1211126, 0, 0, 0, 2.5025, -0.0005000234, 0.009482804, 0)
+visible = false
+mesh = SubResource("BoxMesh_part")
+
+[node name="Model" parent="GeneratedParts/Leg_4_Limb_1" index="3"]
+transform = Transform3D(0.96012294, -0.085642286, 0, 0.085642286, 0.96012294, 0, 0, 0, 2.5, -0.08564246, -0.039877176, 0)
+
+[node name="PaperVolume" parent="GeneratedParts/Leg_4_Limb_1/Model" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.08, 0, 0, 0)
+surface_material_override/2 = SubResource("StandardMaterial3D_jf7pk")
+
+[node name="JointIn" parent="GeneratedParts/Leg_4_Limb_1" index="4"]
+transform = Transform3D(0.96012294, -0.08564228, 0, 0.085642286, 0.9601228, 0, 0, 0, 2.4999998, -0.17128474, 0.92024565, 0)
+
+[node name="JointOut" parent="GeneratedParts/Leg_4_Limb_1" index="5"]
+transform = Transform3D(0.96012294, -0.08564228, 0, 0.085642286, 0.9601228, 0, 0, 0, 2.4999998, -1.7881393e-07, -1, 0)
+
+[node name="JointIn_Torso_Front" type="Marker3D" parent="GeneratedParts/Leg_4_Limb_1" index="6" unique_id=508119163]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.7881393e-07, -1, 0.1)
 metadata/generated_connection_port = true
 metadata/joint_name = "Joint_008_Limb"
 metadata/connected_part = "Torso_Front"
 
-[node name="JointOut_Leg_4" type="Marker3D" parent="GeneratedParts/Leg_4_Limb_1" index="4" unique_id=721572468]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.3841858e-07, 3.2000008, -0.40000004)
+[node name="JointOut_Leg_4" type="Marker3D" parent="GeneratedParts/Leg_4_Limb_1" index="7" unique_id=1636471870]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.17128474, 0.92024565, -0.10000001)
 metadata/generated_connection_port = true
 metadata/joint_name = "Joint_009_Limb"
 metadata/connected_part = "Leg_4"
 
-[node name="Leg_4" parent="GeneratedParts" index="9" unique_id=799315739 instance=ExtResource("14_jvk18")]
-transform = Transform3D(-0.9497051, -0.31314558, 0, 0.31314558, -0.9497051, 0, 0, 0, 1, -8.290714, 4.7464724, -1.6)
-axis_lock_angular_x = true
-axis_lock_angular_z = true
-mass = 10.0
+[node name="Leg_4" parent="GeneratedParts" index="9" unique_id=1662395997 instance=ExtResource("22_a37my")]
+transform = Transform3D(-0.9497052, -0.3131456, 0, 0.3131456, -0.9497052, 0, 0, 0, 1, -2.4195335, 1.376559, -0.4)
+mass = 0.1
 freeze = true
 linear_damp = 0.15
 angular_damp = 1.0
-tags = Array[int]([1])
-sprite_visible = false
-left_distance = 0.6
-right_distance = 0.6
-top_distance = 4.8000007
-bottom_distance = 4.8000007
-collision_thickness = 0.8
+lock_foot_pitch_roll = false
+left_distance = 0.15
+right_distance = 0.15
+top_distance = 1.4
+bottom_distance = 1.4
+collision_thickness = 0.2
+metadata/generated_scene_path = "res://Scenes/Creatures/Bodyparts/Spider/FrameFitted/Legs/Left_4/LowerLeg.tscn"
+metadata/generated_scene_rule_key = "Leg_4"
 metadata/body_segment_id = 0
 metadata/segment_layout_version = 3
 metadata/generated_layout = {
@@ -562,38 +1190,65 @@ metadata/generated_layout = {
 "part_key": "Leg_4",
 "role": "Leg",
 "segment_id": 0,
-"size": Vector3(1.2, 9.600001, 0.8),
-"transform": Transform3D(-0.9497051, -0.31314558, 0, 0.31314558, -0.9497051, 0, 0, 0, 1, -8.290714, 4.7464724, -1.6)
+"size": Vector3(0.3, 2.8, 0.2),
+"transform": Transform3D(-0.9497052, -0.3131456, 0, 0.3131456, -0.9497052, 0, 0, 0, 1, -2.4195335, 1.376559, -0.4)
 }
 metadata/generated_role = "Leg"
 metadata/generated_part_key = "Leg_4"
 metadata/generated_part_type = "Leg"
-metadata/generated_density = 4.0
-metadata/generated_size = Vector3(1.2, 9.600001, 0.8)
-metadata/generated_framework_size = Vector3(1.2, 9.600001, 0.8)
-metadata/foot_previous_locks = Vector2i(0, 0)
-metadata/generated_attachment_rest_offset = Vector3(-8.290714, 0.5457177, -1.6)
-metadata/generated_layout_foot_offset = Vector3(-5.1307144, -0.254282, -1.6)
+metadata/generated_density = 0.1
+metadata/generated_size = Vector3(0.3, 2.8, 0.2)
+metadata/generated_framework_size = Vector3(0.3, 2.8, 0.2)
+metadata/spider_up_axis_sign = -1.0
+metadata/spider_world_bend_limit = 1.3089969389957472
+metadata/generated_attachment_rest_offset = Vector3(-2.4195335, 0.26619136, -0.4)
+metadata/generated_layout_foot_offset = Vector3(-1.2180126, -0.037991285, -0.4)
 
-[node name="JointIn_Leg_4_Limb_1" type="Marker3D" parent="GeneratedParts/Leg_4" index="3" unique_id=237970335]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.536743e-07, -4.800001, 0.39999998)
+[node name="CollisionShape3D" parent="GeneratedParts/Leg_4" index="0" unique_id=1899992271]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+shape = SubResource("BoxShape3D_4cqmp")
+
+[node name="Sprite3D" parent="GeneratedParts/Leg_4" index="1" unique_id=1806091758]
+transform = Transform3D(-1.0351349, 8.149094e-08, 0, -9.049437e-08, -0.9321477, 0, 0, 0, 2.5, 0.0049538845, 0.09388385, 0)
+material_override = SubResource("ShaderMaterial_jgj7g")
+
+[node name="MeshInstance3D" parent="GeneratedParts/Leg_4" index="2" unique_id=1504749449]
+transform = Transform3D(-2.6509805, 2.086168e-07, 0, -2.3175608e-07, -2.386298, 0, 0, 0, 2.5025, 0.0054714764, 0.09388385, 0)
+visible = false
+mesh = SubResource("BoxMesh_part")
+
+[node name="Model" parent="GeneratedParts/Leg_4" index="3"]
+transform = Transform3D(-1.0351349, 8.149094e-08, 0, -9.049437e-08, -0.9321477, 0, 0, 0, 2.5, 0.0049538845, 0.09388385, 0)
+
+[node name="PaperVolume" parent="GeneratedParts/Leg_4/Model" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.08, 0, 0, 0)
+surface_material_override/2 = SubResource("StandardMaterial3D_j4clh")
+
+[node name="JointIn" parent="GeneratedParts/Leg_4" index="4"]
+transform = Transform3D(-1.0351349, 8.149094e-08, 0, -9.049437e-08, -0.9321477, 0, 0, 0, 2.5, 0.0049539986, -1.2111229, 0)
+
+[node name="JointOut" parent="GeneratedParts/Leg_4" index="5"]
+transform = Transform3D(-1.0351349, 8.149094e-08, 0, -9.049437e-08, -0.9321477, 0, 0, 0, 2.5, 0.0049537704, 1.3988906, 0)
+
+[node name="JointIn_Leg_4_Limb_1" type="Marker3D" parent="GeneratedParts/Leg_4" index="6" unique_id=1137594005]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0049538612, -1.2111226, 0.099999994)
 metadata/generated_connection_port = true
 metadata/joint_name = "Joint_009_Limb"
 metadata/connected_part = "Leg_4_Limb_1"
 
-[node name="Leg_5_Limb_1" parent="GeneratedParts" index="10" unique_id=658039239 instance=ExtResource("14_jvk18")]
-transform = Transform3D(0.7036317, 0.7105648, 0, -0.7105648, 0.7036317, 0, 0, 0, 1, 4.5138073, 7.053436, 0.8)
-mass = 10.0
+[node name="Leg_5_Limb_1" parent="GeneratedParts" index="10" unique_id=681665731 instance=ExtResource("25_cujeo")]
+transform = Transform3D(0.7036317, 0.71056485, 0, -0.71056485, 0.7036317, 0, 0, 0, 1, 1.2705648, 2.0025146, 0.2)
+mass = 0.1
 freeze = true
 linear_damp = 0.15
 angular_damp_mode = 1
-tags = Array[int]([5])
-sprite_visible = false
-left_distance = 0.5
-right_distance = 0.5
-top_distance = 3.2000003
-bottom_distance = 3.2000003
-collision_thickness = 0.8
+left_distance = 0.125
+right_distance = 0.125
+top_distance = 1.0
+bottom_distance = 1.0
+collision_thickness = 0.2
+metadata/generated_scene_path = "res://Scenes/Creatures/Bodyparts/Spider/FrameFitted/Legs/Right_1/UpperLeg.tscn"
+metadata/generated_scene_rule_key = "Leg_5_Limb_1"
 metadata/body_segment_id = 0
 metadata/segment_layout_version = 3
 metadata/generated_layout = {
@@ -601,43 +1256,71 @@ metadata/generated_layout = {
 "part_key": "Leg_5_Limb_1",
 "role": "Limb",
 "segment_id": 0,
-"size": Vector3(1, 6.4000006, 0.8),
-"transform": Transform3D(0.7036317, 0.7105648, 0, -0.7105648, 0.7036317, 0, 0, 0, 1, 4.5138073, 7.053436, 0.8)
+"size": Vector3(0.25, 2, 0.2),
+"transform": Transform3D(0.7036317, 0.71056485, 0, -0.71056485, 0.7036317, 0, 0, 0, 1, 1.2705648, 2.0025146, 0.2)
 }
 metadata/generated_role = "Limb"
 metadata/generated_part_key = "Leg_5_Limb_1"
 metadata/generated_part_type = "LegLimb"
-metadata/generated_density = 2.0
-metadata/generated_size = Vector3(1, 6.4000006, 0.8)
-metadata/generated_framework_size = Vector3(1, 6.4000006, 0.8)
+metadata/generated_density = 0.1
+metadata/generated_size = Vector3(0.25, 2, 0.2)
+metadata/generated_framework_size = Vector3(0.25, 2, 0.2)
+metadata/spider_up_axis_sign = 1.0
+metadata/spider_world_bend_limit = 1.3089969389957472
+metadata/spider_visual_uniform_scale = 0.9591802
 
-[node name="JointIn_Torso_Front" type="Marker3D" parent="GeneratedParts/Leg_5_Limb_1" index="3" unique_id=2058455689]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.7683716e-07, -3.1999998, -0.4)
+[node name="CollisionShape3D" parent="GeneratedParts/Leg_5_Limb_1" index="0" unique_id=1899992271]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+shape = SubResource("BoxShape3D_prioa")
+
+[node name="Sprite3D" parent="GeneratedParts/Leg_5_Limb_1" index="1" unique_id=1806091758]
+transform = Transform3D(1.0213827, 0, 0, 0, 0.8644013, 0, 0, 0, 2.5, -0.00012032765, 0.0019222982, 0)
+material_override = SubResource("ShaderMaterial_jgj7g")
+
+[node name="MeshInstance3D" parent="GeneratedParts/Leg_5_Limb_1" index="2" unique_id=1504749449]
+transform = Transform3D(2.615761, 0, 0, 0, 2.2128673, 0, 0, 0, 2.5025, -0.0006310428, 0.0019222982, 0)
+visible = false
+mesh = SubResource("BoxMesh_part")
+
+[node name="Model" parent="GeneratedParts/Leg_5_Limb_1" index="3"]
+transform = Transform3D(0.9549474, 0.09001117, 0, -0.09001117, 0.9549474, 0, 0, 0, 2.5, 0.09001135, -0.045052588, 0)
+
+[node name="PaperVolume" parent="GeneratedParts/Leg_5_Limb_1/Model" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.08, 0, 0, 0)
+surface_material_override/2 = SubResource("StandardMaterial3D_u1ew2")
+
+[node name="JointIn" parent="GeneratedParts/Leg_5_Limb_1" index="4"]
+transform = Transform3D(0.95494735, 0.09001117, 0, -0.090011165, 0.9549474, 0, 0, 0, 2.5, 0.18002252, 0.9098948, 0)
+
+[node name="JointOut" parent="GeneratedParts/Leg_5_Limb_1" index="5"]
+transform = Transform3D(0.95494735, 0.09001117, 0, -0.090011165, 0.9549474, 0, 0, 0, 2.5, 1.7881393e-07, -1, 0)
+
+[node name="JointIn_Torso_Front" type="Marker3D" parent="GeneratedParts/Leg_5_Limb_1" index="6" unique_id=1790797694]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7881393e-07, -1, -0.1)
 metadata/generated_connection_port = true
 metadata/joint_name = "Joint_010_Limb"
 metadata/connected_part = "Torso_Front"
 
-[node name="JointOut_Leg_5" type="Marker3D" parent="GeneratedParts/Leg_5_Limb_1" index="4" unique_id=931670193]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.3841858e-07, 3.2000008, 0.40000004)
+[node name="JointOut_Leg_5" type="Marker3D" parent="GeneratedParts/Leg_5_Limb_1" index="7" unique_id=2088290446]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.18002266, 0.9098947, 0.10000001)
 metadata/generated_connection_port = true
 metadata/joint_name = "Joint_011_Limb"
 metadata/connected_part = "Leg_5"
 
-[node name="Leg_5" parent="GeneratedParts" index="11" unique_id=1833394496 instance=ExtResource("14_jvk18")]
-transform = Transform3D(-0.9497051, 0.31314558, 0, -0.31314558, -0.9497051, 0, 0, 0, 1, 8.290714, 4.7464724, 1.6)
-axis_lock_angular_x = true
-axis_lock_angular_z = true
-mass = 10.0
+[node name="Leg_5" parent="GeneratedParts" index="11" unique_id=848404644 instance=ExtResource("24_y1tqa")]
+transform = Transform3D(-0.9497052, 0.3131456, 0, -0.3131456, -0.9497052, 0, 0, 0, 1, 2.4195335, 1.376559, 0.4)
+mass = 0.1
 freeze = true
 linear_damp = 0.15
 angular_damp = 1.0
-tags = Array[int]([1])
-sprite_visible = false
-left_distance = 0.6
-right_distance = 0.6
-top_distance = 4.8000007
-bottom_distance = 4.8000007
-collision_thickness = 0.8
+lock_foot_pitch_roll = false
+left_distance = 0.15
+right_distance = 0.15
+top_distance = 1.4
+bottom_distance = 1.4
+collision_thickness = 0.2
+metadata/generated_scene_path = "res://Scenes/Creatures/Bodyparts/Spider/FrameFitted/Legs/Right_1/LowerLeg.tscn"
+metadata/generated_scene_rule_key = "Leg_5"
 metadata/body_segment_id = 0
 metadata/segment_layout_version = 3
 metadata/generated_layout = {
@@ -645,38 +1328,65 @@ metadata/generated_layout = {
 "part_key": "Leg_5",
 "role": "Leg",
 "segment_id": 0,
-"size": Vector3(1.2, 9.600001, 0.8),
-"transform": Transform3D(-0.9497051, 0.31314558, 0, -0.31314558, -0.9497051, 0, 0, 0, 1, 8.290714, 4.7464724, 1.6)
+"size": Vector3(0.3, 2.8, 0.2),
+"transform": Transform3D(-0.9497052, 0.3131456, 0, -0.3131456, -0.9497052, 0, 0, 0, 1, 2.4195335, 1.376559, 0.4)
 }
 metadata/generated_role = "Leg"
 metadata/generated_part_key = "Leg_5"
 metadata/generated_part_type = "Leg"
-metadata/generated_density = 4.0
-metadata/generated_size = Vector3(1.2, 9.600001, 0.8)
-metadata/generated_framework_size = Vector3(1.2, 9.600001, 0.8)
-metadata/foot_previous_locks = Vector2i(0, 0)
-metadata/generated_attachment_rest_offset = Vector3(8.290714, 0.5457177, 1.6)
-metadata/generated_layout_foot_offset = Vector3(11.450714, -0.254282, 1.6)
+metadata/generated_density = 0.1
+metadata/generated_size = Vector3(0.3, 2.8, 0.2)
+metadata/generated_framework_size = Vector3(0.3, 2.8, 0.2)
+metadata/spider_up_axis_sign = -1.0
+metadata/spider_world_bend_limit = 1.3089969389957472
+metadata/generated_attachment_rest_offset = Vector3(2.4195335, 0.26619136, 0.4)
+metadata/generated_layout_foot_offset = Vector3(3.6210544, -0.037991285, 0.4)
 
-[node name="JointIn_Leg_5_Limb_1" type="Marker3D" parent="GeneratedParts/Leg_5" index="3" unique_id=1241921599]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.536743e-07, -4.800001, -0.39999998)
+[node name="CollisionShape3D" parent="GeneratedParts/Leg_5" index="0" unique_id=1899992271]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+shape = SubResource("BoxShape3D_nctal")
+
+[node name="Sprite3D" parent="GeneratedParts/Leg_5" index="1" unique_id=1806091758]
+transform = Transform3D(-1.0122446, 8.1094576e-08, 0, -8.849323e-08, -0.9276138, 0, 0, 0, 2.5, 0.00041705335, 0.099972, 0)
+material_override = SubResource("ShaderMaterial_jgj7g")
+
+[node name="MeshInstance3D" parent="GeneratedParts/Leg_5" index="2" unique_id=1504749449]
+transform = Transform3D(-2.5923584, 2.076021e-07, 0, -2.2663116e-07, -2.3746912, 0, 0, 0, 2.5025, 0.0009231993, 0.099972, 0)
+visible = false
+mesh = SubResource("BoxMesh_part")
+
+[node name="Model" parent="GeneratedParts/Leg_5" index="3"]
+transform = Transform3D(-1.0122446, 8.1094576e-08, 0, -8.849323e-08, -0.9276138, 0, 0, 0, 2.5, 0.00041705335, 0.099972, 0)
+
+[node name="PaperVolume" parent="GeneratedParts/Leg_5/Model" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.08, 0, 0, 0)
+surface_material_override/2 = SubResource("StandardMaterial3D_a37my")
+
+[node name="JointIn" parent="GeneratedParts/Leg_5" index="4"]
+transform = Transform3D(-1.0122446, 8.1094576e-08, 0, -8.849323e-08, -0.9276138, 0, 0, 0, 2.5, 0.00041716688, -1.1986873, 0)
+
+[node name="JointOut" parent="GeneratedParts/Leg_5" index="5"]
+transform = Transform3D(-1.0122446, 8.1094576e-08, 0, -8.849323e-08, -0.9276138, 0, 0, 0, 2.5, 0.00041693982, 1.3986313, 0)
+
+[node name="JointIn_Leg_5_Limb_1" type="Marker3D" parent="GeneratedParts/Leg_5" index="6" unique_id=997984061]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0004172325, -1.198687, -0.099999994)
 metadata/generated_connection_port = true
 metadata/joint_name = "Joint_011_Limb"
 metadata/connected_part = "Leg_5_Limb_1"
 
-[node name="Leg_6_Limb_1" parent="GeneratedParts" index="12" unique_id=55618067 instance=ExtResource("14_jvk18")]
-transform = Transform3D(0.93797415, 0.34670523, 0, -0.34670523, 0.93797415, 0, 0, 0, 1, 1.8561232, 6.601213, 0.8)
-mass = 10.0
+[node name="Leg_6_Limb_1" parent="GeneratedParts" index="12" unique_id=1980855153 instance=ExtResource("27_x5xew")]
+transform = Transform3D(0.93797415, 0.3467052, 0, -0.3467052, 0.93797415, 0, 0, 0, 1, 0.5333718, 1.8598267, 0.2)
+mass = 0.1
 freeze = true
 linear_damp = 0.15
 angular_damp_mode = 1
-tags = Array[int]([5])
-sprite_visible = false
-left_distance = 0.5
-right_distance = 0.5
-top_distance = 3.1999996
-bottom_distance = 3.1999996
-collision_thickness = 0.8
+left_distance = 0.125
+right_distance = 0.125
+top_distance = 0.99999995
+bottom_distance = 0.99999995
+collision_thickness = 0.2
+metadata/generated_scene_path = "res://Scenes/Creatures/Bodyparts/Spider/FrameFitted/Legs/Right_2/UpperLeg.tscn"
+metadata/generated_scene_rule_key = "Leg_6_Limb_1"
 metadata/body_segment_id = 0
 metadata/segment_layout_version = 3
 metadata/generated_layout = {
@@ -684,43 +1394,71 @@ metadata/generated_layout = {
 "part_key": "Leg_6_Limb_1",
 "role": "Limb",
 "segment_id": 0,
-"size": Vector3(1, 6.399999, 0.8),
-"transform": Transform3D(0.93797415, 0.34670523, 0, -0.34670523, 0.93797415, 0, 0, 0, 1, 1.8561232, 6.601213, 0.8)
+"size": Vector3(0.25, 1.9999999, 0.2),
+"transform": Transform3D(0.93797415, 0.3467052, 0, -0.3467052, 0.93797415, 0, 0, 0, 1, 0.5333718, 1.8598267, 0.2)
 }
 metadata/generated_role = "Limb"
 metadata/generated_part_key = "Leg_6_Limb_1"
 metadata/generated_part_type = "LegLimb"
-metadata/generated_density = 2.0
-metadata/generated_size = Vector3(1, 6.399999, 0.8)
-metadata/generated_framework_size = Vector3(1, 6.399999, 0.8)
+metadata/generated_density = 0.1
+metadata/generated_size = Vector3(0.25, 1.9999999, 0.2)
+metadata/generated_framework_size = Vector3(0.25, 1.9999999, 0.2)
+metadata/spider_up_axis_sign = 1.0
+metadata/spider_world_bend_limit = 1.3089969389957472
+metadata/spider_visual_uniform_scale = 0.93578416
 
-[node name="JointIn_Torso_Front" type="Marker3D" parent="GeneratedParts/Leg_6_Limb_1" index="3" unique_id=216366218]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.9604645e-08, -3.1999998, -0.4)
+[node name="CollisionShape3D" parent="GeneratedParts/Leg_6_Limb_1" index="0" unique_id=1899992271]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+shape = SubResource("BoxShape3D_x5w5q")
+
+[node name="Sprite3D" parent="GeneratedParts/Leg_6_Limb_1" index="1" unique_id=1806091758]
+transform = Transform3D(1.0050731, 0, 0, 0, 0.8466133, 0, 0, 0, 2.5, -0.00013611624, 0.010096252, 0)
+material_override = SubResource("ShaderMaterial_jgj7g")
+
+[node name="MeshInstance3D" parent="GeneratedParts/Leg_6_Limb_1" index="2" unique_id=1504749449]
+transform = Transform3D(2.573992, 0, 0, 0, 2.16733, 0, 0, 0, 2.5025, -0.0006386762, 0.010096252, 0)
+visible = false
+mesh = SubResource("BoxMesh_part")
+
+[node name="Model" parent="GeneratedParts/Leg_6_Limb_1" index="3"]
+transform = Transform3D(0.93524116, 0.031873412, 0, -0.031873412, 0.93524116, 0, 0, 0, 2.5, 0.031873453, -0.0647589, 0)
+
+[node name="PaperVolume" parent="GeneratedParts/Leg_6_Limb_1/Model" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.08, 0, 0, 0)
+surface_material_override/2 = SubResource("StandardMaterial3D_y1tqa")
+
+[node name="JointIn" parent="GeneratedParts/Leg_6_Limb_1" index="4"]
+transform = Transform3D(0.9352411, 0.03187341, 0, -0.03187341, 0.9352411, 0, 0, 0, 2.4999998, 0.06374687, 0.87048227, 0)
+
+[node name="JointOut" parent="GeneratedParts/Leg_6_Limb_1" index="5"]
+transform = Transform3D(0.9352411, 0.03187341, 0, -0.03187341, 0.9352411, 0, 0, 0, 2.4999998, 4.4703484e-08, -1, 0)
+
+[node name="JointIn_Torso_Front" type="Marker3D" parent="GeneratedParts/Leg_6_Limb_1" index="6" unique_id=83665242]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4703484e-08, -1, -0.1)
 metadata/generated_connection_port = true
 metadata/joint_name = "Joint_012_Limb"
 metadata/connected_part = "Torso_Front"
 
-[node name="JointOut_Leg_6" type="Marker3D" parent="GeneratedParts/Leg_6_Limb_1" index="4" unique_id=1900832867]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.1999998, 0.40000004)
+[node name="JointOut_Leg_6" type="Marker3D" parent="GeneratedParts/Leg_6_Limb_1" index="7" unique_id=923590562]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.06374681, 0.8704823, 0.10000001)
 metadata/generated_connection_port = true
 metadata/joint_name = "Joint_013_Limb"
 metadata/connected_part = "Leg_6"
 
-[node name="Leg_6" parent="GeneratedParts" index="13" unique_id=1789543853 instance=ExtResource("14_jvk18")]
-transform = Transform3D(-0.9927957, 0.11981981, 0, -0.11981981, -0.9927957, 0, 0, 0, 1, 3.5407147, 4.8373103, 1.6)
-axis_lock_angular_x = true
-axis_lock_angular_z = true
-mass = 10.0
+[node name="Leg_6" parent="GeneratedParts" index="13" unique_id=644013890 instance=ExtResource("26_85g43")]
+transform = Transform3D(-0.99279565, 0.11981981, 0, -0.11981981, -0.99279565, 0, 0, 0, 1, 1.0478247, 1.4078869, 0.4)
+mass = 0.1
 freeze = true
 linear_damp = 0.15
 angular_damp = 1.0
-tags = Array[int]([1])
-sprite_visible = false
-left_distance = 0.6
-right_distance = 0.6
-top_distance = 4.8
-bottom_distance = 4.8
-collision_thickness = 0.8
+lock_foot_pitch_roll = false
+left_distance = 0.15
+right_distance = 0.15
+top_distance = 1.4
+bottom_distance = 1.4
+collision_thickness = 0.2
+metadata/generated_scene_path = "res://Scenes/Creatures/Bodyparts/Spider/FrameFitted/Legs/Right_2/LowerLeg.tscn"
+metadata/generated_scene_rule_key = "Leg_6"
 metadata/body_segment_id = 0
 metadata/segment_layout_version = 3
 metadata/generated_layout = {
@@ -728,38 +1466,65 @@ metadata/generated_layout = {
 "part_key": "Leg_6",
 "role": "Leg",
 "segment_id": 0,
-"size": Vector3(1.2, 9.6, 0.8),
-"transform": Transform3D(-0.9927957, 0.11981981, 0, -0.11981981, -0.9927957, 0, 0, 0, 1, 3.5407147, 4.8373103, 1.6)
+"size": Vector3(0.3, 2.8, 0.2),
+"transform": Transform3D(-0.99279565, 0.11981981, 0, -0.11981981, -0.99279565, 0, 0, 0, 1, 1.0478247, 1.4078869, 0.4)
 }
 metadata/generated_role = "Leg"
 metadata/generated_part_key = "Leg_6"
 metadata/generated_part_type = "Leg"
-metadata/generated_density = 4.0
-metadata/generated_size = Vector3(1.2, 9.6, 0.8)
-metadata/generated_framework_size = Vector3(1.2, 9.6, 0.8)
-metadata/foot_previous_locks = Vector2i(0, 0)
-metadata/generated_attachment_rest_offset = Vector3(3.5407147, 0.6365557, 1.6)
-metadata/generated_layout_foot_offset = Vector3(6.700715, -0.16344404, 1.6)
+metadata/generated_density = 0.1
+metadata/generated_size = Vector3(0.3, 2.8, 0.2)
+metadata/generated_framework_size = Vector3(0.3, 2.8, 0.2)
+metadata/spider_up_axis_sign = -1.0
+metadata/spider_world_bend_limit = 1.3089969389957472
+metadata/generated_attachment_rest_offset = Vector3(1.0478247, 0.2975192, 0.4)
+metadata/generated_layout_foot_offset = Vector3(2.2493458, -0.0066634417, 0.4)
 
-[node name="JointIn_Leg_6_Limb_1" type="Marker3D" parent="GeneratedParts/Leg_6" index="3" unique_id=2129742312]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4.7999997, -0.39999998)
+[node name="CollisionShape3D" parent="GeneratedParts/Leg_6" index="0" unique_id=1899992271]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+shape = SubResource("BoxShape3D_cujeo")
+
+[node name="Sprite3D" parent="GeneratedParts/Leg_6" index="1" unique_id=1806091758]
+transform = Transform3D(-1.0596746, 8.288156e-08, 0, -9.2639695e-08, -0.9480546, 0, 0, 0, 2.5, 0.0024230122, 0.07161125, 0)
+material_override = SubResource("ShaderMaterial_jgj7g")
+
+[node name="MeshInstance3D" parent="GeneratedParts/Leg_6" index="2" unique_id=1504749449]
+transform = Transform3D(-2.7138267, 2.1217681e-07, 0, -2.3725026e-07, -2.4270198, 0, 0, 0, 2.5025, 0.0029528742, 0.07161125, 0)
+visible = false
+mesh = SubResource("BoxMesh_part")
+
+[node name="Model" parent="GeneratedParts/Leg_6" index="3"]
+transform = Transform3D(-1.0596746, 8.288156e-08, 0, -9.2639695e-08, -0.9480546, 0, 0, 0, 2.5, 0.0024230122, 0.07161125, 0)
+
+[node name="PaperVolume" parent="GeneratedParts/Leg_6/Model" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.08, 0, 0, 0)
+surface_material_override/2 = SubResource("StandardMaterial3D_85g43")
+
+[node name="JointIn" parent="GeneratedParts/Leg_6" index="4"]
+transform = Transform3D(-1.0596746, 8.288156e-08, 0, -9.2639695e-08, -0.9480546, 0, 0, 0, 2.5, 0.002423128, -1.2556652, 0)
+
+[node name="JointOut" parent="GeneratedParts/Leg_6" index="5"]
+transform = Transform3D(-1.0596746, 8.288156e-08, 0, -9.2639695e-08, -0.9480546, 0, 0, 0, 2.5, 0.0024228962, 1.3988878, 0)
+
+[node name="JointIn_Leg_6_Limb_1" type="Marker3D" parent="GeneratedParts/Leg_6" index="6" unique_id=256329235]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0024231672, -1.255665, -0.099999994)
 metadata/generated_connection_port = true
 metadata/joint_name = "Joint_013_Limb"
 metadata/connected_part = "Leg_6_Limb_1"
 
-[node name="Leg_7_Limb_1" parent="GeneratedParts" index="14" unique_id=1582444617 instance=ExtResource("14_jvk18")]
-transform = Transform3D(0.93797415, -0.34670523, 0, 0.34670523, 0.93797415, 0, 0, 0, 1, -1.8561232, 6.601213, 0.8)
-mass = 10.0
+[node name="Leg_7_Limb_1" parent="GeneratedParts" index="14" unique_id=1680088124 instance=ExtResource("29_d0vi3")]
+transform = Transform3D(0.93797415, -0.3467052, 0, 0.3467052, 0.93797415, 0, 0, 0, 1, -0.5333718, 1.8598267, 0.2)
+mass = 0.1
 freeze = true
 linear_damp = 0.15
 angular_damp_mode = 1
-tags = Array[int]([5])
-sprite_visible = false
-left_distance = 0.5
-right_distance = 0.5
-top_distance = 3.1999996
-bottom_distance = 3.1999996
-collision_thickness = 0.8
+left_distance = 0.125
+right_distance = 0.125
+top_distance = 0.99999995
+bottom_distance = 0.99999995
+collision_thickness = 0.2
+metadata/generated_scene_path = "res://Scenes/Creatures/Bodyparts/Spider/FrameFitted/Legs/Right_3/UpperLeg.tscn"
+metadata/generated_scene_rule_key = "Leg_7_Limb_1"
 metadata/body_segment_id = 0
 metadata/segment_layout_version = 3
 metadata/generated_layout = {
@@ -767,43 +1532,71 @@ metadata/generated_layout = {
 "part_key": "Leg_7_Limb_1",
 "role": "Limb",
 "segment_id": 0,
-"size": Vector3(1, 6.399999, 0.8),
-"transform": Transform3D(0.93797415, -0.34670523, 0, 0.34670523, 0.93797415, 0, 0, 0, 1, -1.8561232, 6.601213, 0.8)
+"size": Vector3(0.25, 1.9999999, 0.2),
+"transform": Transform3D(0.93797415, -0.3467052, 0, 0.3467052, 0.93797415, 0, 0, 0, 1, -0.5333718, 1.8598267, 0.2)
 }
 metadata/generated_role = "Limb"
 metadata/generated_part_key = "Leg_7_Limb_1"
 metadata/generated_part_type = "LegLimb"
-metadata/generated_density = 2.0
-metadata/generated_size = Vector3(1, 6.399999, 0.8)
-metadata/generated_framework_size = Vector3(1, 6.399999, 0.8)
+metadata/generated_density = 0.1
+metadata/generated_size = Vector3(0.25, 1.9999999, 0.2)
+metadata/generated_framework_size = Vector3(0.25, 1.9999999, 0.2)
+metadata/spider_up_axis_sign = 1.0
+metadata/spider_world_bend_limit = 1.3089969389957472
+metadata/spider_visual_uniform_scale = 0.8970746
 
-[node name="JointIn_Torso_Front" type="Marker3D" parent="GeneratedParts/Leg_7_Limb_1" index="3" unique_id=1268773989]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.9604645e-08, -3.1999998, -0.4)
+[node name="CollisionShape3D" parent="GeneratedParts/Leg_7_Limb_1" index="0" unique_id=1899992271]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+shape = SubResource("BoxShape3D_x5xew")
+
+[node name="Sprite3D" parent="GeneratedParts/Leg_7_Limb_1" index="1" unique_id=1806091758]
+transform = Transform3D(0.92920357, 0, 0, 0, 0.8383233, 0, 0, 0, 2.499975, -0.00043072796, 0.010438707, -1.0058183e-06)
+material_override = SubResource("ShaderMaterial_jgj7g")
+
+[node name="MeshInstance3D" parent="GeneratedParts/Leg_7_Limb_1" index="2" unique_id=1504749449]
+transform = Transform3D(2.3796902, 0, 0, 0, 2.1461077, 0, 0, 0, 2.502475, -0.00089535146, 0.010438707, -1.0058183e-06)
+visible = false
+mesh = SubResource("BoxMesh_part")
+
+[node name="Model" parent="GeneratedParts/Leg_7_Limb_1" index="3"]
+transform = Transform3D(0.89558804, -0.051623028, 0, 0.051623028, 0.89558804, 0, 0, 0, 2.499975, -0.051623072, -0.10441196, -1.0058183e-06)
+
+[node name="PaperVolume" parent="GeneratedParts/Leg_7_Limb_1/Model" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.08, 0, 0, 0)
+surface_material_override/2 = SubResource("StandardMaterial3D_foork")
+
+[node name="JointIn" parent="GeneratedParts/Leg_7_Limb_1" index="4"]
+transform = Transform3D(0.89558804, -0.051623028, 0, 0.051623028, 0.89558804, 0, 0, 0, 2.499975, -0.1032461, 0.7911761, -1.0058183e-06)
+
+[node name="JointOut" parent="GeneratedParts/Leg_7_Limb_1" index="5"]
+transform = Transform3D(0.89558804, -0.051623028, 0, 0.051623028, 0.89558804, 0, 0, 0, 2.499975, -4.4703484e-08, -1, -1.0058183e-06)
+
+[node name="JointIn_Torso_Front" type="Marker3D" parent="GeneratedParts/Leg_7_Limb_1" index="6" unique_id=696217462]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4703484e-08, -1, -0.1)
 metadata/generated_connection_port = true
 metadata/joint_name = "Joint_014_Limb"
 metadata/connected_part = "Torso_Front"
 
-[node name="JointOut_Leg_7" type="Marker3D" parent="GeneratedParts/Leg_7_Limb_1" index="4" unique_id=1061676787]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.1999998, 0.40000004)
+[node name="JointOut_Leg_7" type="Marker3D" parent="GeneratedParts/Leg_7_Limb_1" index="7" unique_id=1168744413]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.10324609, 0.79117596, 0.0999995)
 metadata/generated_connection_port = true
 metadata/joint_name = "Joint_015_Limb"
 metadata/connected_part = "Leg_7"
 
-[node name="Leg_7" parent="GeneratedParts" index="15" unique_id=586068324 instance=ExtResource("14_jvk18")]
-transform = Transform3D(-0.9927957, -0.11981981, 0, 0.11981981, -0.9927957, 0, 0, 0, 1, -3.5407147, 4.8373103, 1.6)
-axis_lock_angular_x = true
-axis_lock_angular_z = true
-mass = 10.0
+[node name="Leg_7" parent="GeneratedParts" index="15" unique_id=1704817800 instance=ExtResource("28_foork")]
+transform = Transform3D(-0.99279565, -0.11981981, 0, 0.11981981, -0.99279565, 0, 0, 0, 1, -1.0478247, 1.4078869, 0.4)
+mass = 0.1
 freeze = true
 linear_damp = 0.15
 angular_damp = 1.0
-tags = Array[int]([1])
-sprite_visible = false
-left_distance = 0.6
-right_distance = 0.6
-top_distance = 4.8
-bottom_distance = 4.8
-collision_thickness = 0.8
+lock_foot_pitch_roll = false
+left_distance = 0.15
+right_distance = 0.15
+top_distance = 1.4
+bottom_distance = 1.4
+collision_thickness = 0.2
+metadata/generated_scene_path = "res://Scenes/Creatures/Bodyparts/Spider/FrameFitted/Legs/Right_3/LowerLeg.tscn"
+metadata/generated_scene_rule_key = "Leg_7"
 metadata/body_segment_id = 0
 metadata/segment_layout_version = 3
 metadata/generated_layout = {
@@ -811,38 +1604,65 @@ metadata/generated_layout = {
 "part_key": "Leg_7",
 "role": "Leg",
 "segment_id": 0,
-"size": Vector3(1.2, 9.6, 0.8),
-"transform": Transform3D(-0.9927957, -0.11981981, 0, 0.11981981, -0.9927957, 0, 0, 0, 1, -3.5407147, 4.8373103, 1.6)
+"size": Vector3(0.3, 2.8, 0.2),
+"transform": Transform3D(-0.99279565, -0.11981981, 0, 0.11981981, -0.99279565, 0, 0, 0, 1, -1.0478247, 1.4078869, 0.4)
 }
 metadata/generated_role = "Leg"
 metadata/generated_part_key = "Leg_7"
 metadata/generated_part_type = "Leg"
-metadata/generated_density = 4.0
-metadata/generated_size = Vector3(1.2, 9.6, 0.8)
-metadata/generated_framework_size = Vector3(1.2, 9.6, 0.8)
-metadata/foot_previous_locks = Vector2i(0, 0)
-metadata/generated_attachment_rest_offset = Vector3(-3.5407147, 0.6365557, 1.6)
-metadata/generated_layout_foot_offset = Vector3(-0.38071465, -0.16344404, 1.6)
+metadata/generated_density = 0.1
+metadata/generated_size = Vector3(0.3, 2.8, 0.2)
+metadata/generated_framework_size = Vector3(0.3, 2.8, 0.2)
+metadata/spider_up_axis_sign = -1.0
+metadata/spider_world_bend_limit = 1.3089969389957472
+metadata/generated_attachment_rest_offset = Vector3(-1.0478247, 0.2975192, 0.4)
+metadata/generated_layout_foot_offset = Vector3(0.15369618, -0.0066634417, 0.4)
 
-[node name="JointIn_Leg_7_Limb_1" type="Marker3D" parent="GeneratedParts/Leg_7" index="3" unique_id=11703934]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4.7999997, -0.39999998)
+[node name="CollisionShape3D" parent="GeneratedParts/Leg_7" index="0" unique_id=1899992271]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+shape = SubResource("BoxShape3D_d0vi3")
+
+[node name="Sprite3D" parent="GeneratedParts/Leg_7" index="1" unique_id=1806091758]
+transform = Transform3D(-1.023726, 8.016092e-08, 0, -8.949697e-08, -0.9169341, 0, 0, 0, 2.5, -0.0034927276, 0.116634786, 0)
+material_override = SubResource("ShaderMaterial_jgj7g")
+
+[node name="MeshInstance3D" parent="GeneratedParts/Leg_7" index="2" unique_id=1504749449]
+transform = Transform3D(-2.621762, 2.0521195e-07, 0, -2.2920172e-07, -2.347351, 0, 0, 0, 2.5025, -0.0029808409, 0.116634786, 0)
+visible = false
+mesh = SubResource("BoxMesh_part")
+
+[node name="Model" parent="GeneratedParts/Leg_7" index="3"]
+transform = Transform3D(-1.023726, 8.016092e-08, 0, -8.949697e-08, -0.9169341, 0, 0, 0, 2.5, -0.0034927276, 0.116634786, 0)
+
+[node name="PaperVolume" parent="GeneratedParts/Leg_7/Model" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.08, 0, 0, 0)
+surface_material_override/2 = SubResource("StandardMaterial3D_x5s6i")
+
+[node name="JointIn" parent="GeneratedParts/Leg_7" index="4"]
+transform = Transform3D(-1.023726, 8.016092e-08, 0, -8.949697e-08, -0.9169341, 0, 0, 0, 2.5, -0.0034926154, -1.167073, 0)
+
+[node name="JointOut" parent="GeneratedParts/Leg_7" index="5"]
+transform = Transform3D(-1.023726, 8.016092e-08, 0, -8.949697e-08, -0.9169341, 0, 0, 0, 2.5, -0.0034928399, 1.4003425, 0)
+
+[node name="JointIn_Leg_7_Limb_1" type="Marker3D" parent="GeneratedParts/Leg_7" index="6" unique_id=1004679165]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0034924746, -1.1670731, -0.1000005)
 metadata/generated_connection_port = true
 metadata/joint_name = "Joint_015_Limb"
 metadata/connected_part = "Leg_7_Limb_1"
 
-[node name="Leg_8_Limb_1" parent="GeneratedParts" index="16" unique_id=234281747 instance=ExtResource("14_jvk18")]
-transform = Transform3D(0.7036317, -0.7105648, 0, 0.7105648, 0.7036317, 0, 0, 0, 1, -4.5138073, 7.053436, 0.8)
-mass = 10.0
+[node name="Leg_8_Limb_1" parent="GeneratedParts" index="16" unique_id=951701254 instance=ExtResource("31_383r7")]
+transform = Transform3D(0.7036317, -0.71056485, 0, 0.71056485, 0.7036317, 0, 0, 0, 1, -1.2705648, 2.0025146, 0.2)
+mass = 0.1
 freeze = true
 linear_damp = 0.15
 angular_damp_mode = 1
-tags = Array[int]([5])
-sprite_visible = false
-left_distance = 0.5
-right_distance = 0.5
-top_distance = 3.2000003
-bottom_distance = 3.2000003
-collision_thickness = 0.8
+left_distance = 0.125
+right_distance = 0.125
+top_distance = 1.0
+bottom_distance = 1.0
+collision_thickness = 0.2
+metadata/generated_scene_path = "res://Scenes/Creatures/Bodyparts/Spider/FrameFitted/Legs/Right_4/UpperLeg.tscn"
+metadata/generated_scene_rule_key = "Leg_8_Limb_1"
 metadata/body_segment_id = 0
 metadata/segment_layout_version = 3
 metadata/generated_layout = {
@@ -850,43 +1670,71 @@ metadata/generated_layout = {
 "part_key": "Leg_8_Limb_1",
 "role": "Limb",
 "segment_id": 0,
-"size": Vector3(1, 6.4000006, 0.8),
-"transform": Transform3D(0.7036317, -0.7105648, 0, 0.7105648, 0.7036317, 0, 0, 0, 1, -4.5138073, 7.053436, 0.8)
+"size": Vector3(0.25, 2, 0.2),
+"transform": Transform3D(0.7036317, -0.71056485, 0, 0.71056485, 0.7036317, 0, 0, 0, 1, -1.2705648, 2.0025146, 0.2)
 }
 metadata/generated_role = "Limb"
 metadata/generated_part_key = "Leg_8_Limb_1"
 metadata/generated_part_type = "LegLimb"
-metadata/generated_density = 2.0
-metadata/generated_size = Vector3(1, 6.4000006, 0.8)
-metadata/generated_framework_size = Vector3(1, 6.4000006, 0.8)
+metadata/generated_density = 0.1
+metadata/generated_size = Vector3(0.25, 2, 0.2)
+metadata/generated_framework_size = Vector3(0.25, 2, 0.2)
+metadata/spider_up_axis_sign = 1.0
+metadata/spider_world_bend_limit = 1.3089969389957472
+metadata/spider_visual_uniform_scale = 0.9627555
 
-[node name="JointIn_Torso_Front" type="Marker3D" parent="GeneratedParts/Leg_8_Limb_1" index="3" unique_id=877845914]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.7683716e-07, -3.1999998, -0.4)
+[node name="CollisionShape3D" parent="GeneratedParts/Leg_8_Limb_1" index="0" unique_id=1899992271]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+shape = SubResource("BoxShape3D_383r7")
+
+[node name="Sprite3D" parent="GeneratedParts/Leg_8_Limb_1" index="1" unique_id=1806091758]
+transform = Transform3D(1.0000014, 0, 0, 0, 0.83041936, 0, 0, 0, 2.5, -1.63913e-07, 0.03061618, 0)
+material_override = SubResource("ShaderMaterial_jgj7g")
+
+[node name="MeshInstance3D" parent="GeneratedParts/Leg_8_Limb_1" index="2" unique_id=1504749449]
+transform = Transform3D(2.5610034, 0, 0, 0, 2.1258736, 0, 0, 0, 2.5025, -0.000500188, 0.03061618, 0)
+visible = false
+mesh = SubResource("BoxMesh_part")
+
+[node name="Model" parent="GeneratedParts/Leg_8_Limb_1" index="3"]
+transform = Transform3D(0.9595902, -0.078005195, 0, 0.078005195, 0.9595902, 0, 0, 0, 2.5, -0.07800538, -0.040409684, 0)
+
+[node name="PaperVolume" parent="GeneratedParts/Leg_8_Limb_1/Model" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.08, 0, 0, 0)
+surface_material_override/2 = SubResource("StandardMaterial3D_scshk")
+
+[node name="JointIn" parent="GeneratedParts/Leg_8_Limb_1" index="4"]
+transform = Transform3D(0.9595902, -0.078005195, 0, 0.078005195, 0.9595902, 0, 0, 0, 2.5000002, -0.15601057, 0.9191805, 0)
+
+[node name="JointOut" parent="GeneratedParts/Leg_8_Limb_1" index="5"]
+transform = Transform3D(0.9595902, -0.078005195, 0, 0.078005195, 0.9595902, 0, 0, 0, 2.5000002, -1.7881393e-07, -1, 0)
+
+[node name="JointIn_Torso_Front" type="Marker3D" parent="GeneratedParts/Leg_8_Limb_1" index="6" unique_id=219655595]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.7881393e-07, -1, -0.1)
 metadata/generated_connection_port = true
 metadata/joint_name = "Joint_016_Limb"
 metadata/connected_part = "Torso_Front"
 
-[node name="JointOut_Leg_8" type="Marker3D" parent="GeneratedParts/Leg_8_Limb_1" index="4" unique_id=718728807]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.3841858e-07, 3.2000008, 0.40000004)
+[node name="JointOut_Leg_8" type="Marker3D" parent="GeneratedParts/Leg_8_Limb_1" index="7" unique_id=791832536]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.15601057, 0.9191804, 0.10000001)
 metadata/generated_connection_port = true
 metadata/joint_name = "Joint_017_Limb"
 metadata/connected_part = "Leg_8"
 
-[node name="Leg_8" parent="GeneratedParts" index="17" unique_id=1191020804 instance=ExtResource("14_jvk18")]
-transform = Transform3D(-0.9497051, -0.31314558, 0, 0.31314558, -0.9497051, 0, 0, 0, 1, -8.290714, 4.7464724, 1.6)
-axis_lock_angular_x = true
-axis_lock_angular_z = true
-mass = 10.0
+[node name="Leg_8" parent="GeneratedParts" index="17" unique_id=594467934 instance=ExtResource("30_x5s6i")]
+transform = Transform3D(-0.9497052, -0.3131456, 0, 0.3131456, -0.9497052, 0, 0, 0, 1, -2.4195335, 1.376559, 0.4)
+mass = 0.1
 freeze = true
 linear_damp = 0.15
 angular_damp = 1.0
-tags = Array[int]([1])
-sprite_visible = false
-left_distance = 0.6
-right_distance = 0.6
-top_distance = 4.8000007
-bottom_distance = 4.8000007
-collision_thickness = 0.8
+lock_foot_pitch_roll = false
+left_distance = 0.15
+right_distance = 0.15
+top_distance = 1.4
+bottom_distance = 1.4
+collision_thickness = 0.2
+metadata/generated_scene_path = "res://Scenes/Creatures/Bodyparts/Spider/FrameFitted/Legs/Right_4/LowerLeg.tscn"
+metadata/generated_scene_rule_key = "Leg_8"
 metadata/body_segment_id = 0
 metadata/segment_layout_version = 3
 metadata/generated_layout = {
@@ -894,38 +1742,65 @@ metadata/generated_layout = {
 "part_key": "Leg_8",
 "role": "Leg",
 "segment_id": 0,
-"size": Vector3(1.2, 9.600001, 0.8),
-"transform": Transform3D(-0.9497051, -0.31314558, 0, 0.31314558, -0.9497051, 0, 0, 0, 1, -8.290714, 4.7464724, 1.6)
+"size": Vector3(0.3, 2.8, 0.2),
+"transform": Transform3D(-0.9497052, -0.3131456, 0, 0.3131456, -0.9497052, 0, 0, 0, 1, -2.4195335, 1.376559, 0.4)
 }
 metadata/generated_role = "Leg"
 metadata/generated_part_key = "Leg_8"
 metadata/generated_part_type = "Leg"
-metadata/generated_density = 4.0
-metadata/generated_size = Vector3(1.2, 9.600001, 0.8)
-metadata/generated_framework_size = Vector3(1.2, 9.600001, 0.8)
-metadata/foot_previous_locks = Vector2i(0, 0)
-metadata/generated_attachment_rest_offset = Vector3(-8.290714, 0.5457177, 1.6)
-metadata/generated_layout_foot_offset = Vector3(-5.1307144, -0.254282, 1.6)
+metadata/generated_density = 0.1
+metadata/generated_size = Vector3(0.3, 2.8, 0.2)
+metadata/generated_framework_size = Vector3(0.3, 2.8, 0.2)
+metadata/spider_up_axis_sign = -1.0
+metadata/spider_world_bend_limit = 1.3089969389957472
+metadata/generated_attachment_rest_offset = Vector3(-2.4195335, 0.26619136, 0.4)
+metadata/generated_layout_foot_offset = Vector3(-1.2180126, -0.037991285, 0.4)
 
-[node name="JointIn_Leg_8_Limb_1" type="Marker3D" parent="GeneratedParts/Leg_8" index="3" unique_id=1599426659]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.536743e-07, -4.800001, -0.39999998)
+[node name="CollisionShape3D" parent="GeneratedParts/Leg_8" index="0" unique_id=1899992271]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+shape = SubResource("BoxShape3D_ogp8s")
+
+[node name="Sprite3D" parent="GeneratedParts/Leg_8" index="1" unique_id=1806091758]
+transform = Transform3D(-1.0292416, 8.1948485e-08, 0, -8.997915e-08, -0.93738145, 0, 0, 0, 2.5, -0.0028080856, 0.08801338, 0)
+material_override = SubResource("ShaderMaterial_jgj7g")
+
+[node name="MeshInstance3D" parent="GeneratedParts/Leg_8" index="2" unique_id=1504749449]
+transform = Transform3D(-2.6358876, 2.0978811e-07, 0, -2.3043661e-07, -2.3996964, 0, 0, 0, 2.5025, -0.0022934407, 0.08801338, 0)
+visible = false
+mesh = SubResource("BoxMesh_part")
+
+[node name="Model" parent="GeneratedParts/Leg_8" index="3"]
+transform = Transform3D(-1.0292416, 8.1948485e-08, 0, -8.997915e-08, -0.93738145, 0, 0, 0, 2.5, -0.0028080856, 0.08801338, 0)
+
+[node name="PaperVolume" parent="GeneratedParts/Leg_8/Model" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.08, 0, 0, 0)
+surface_material_override/2 = SubResource("StandardMaterial3D_yvphb")
+
+[node name="JointIn" parent="GeneratedParts/Leg_8" index="4"]
+transform = Transform3D(-1.0292416, 8.1948485e-08, 0, -8.997915e-08, -0.93738145, 0, 0, 0, 2.5, -0.0028079709, -1.2243207, 0)
+
+[node name="JointOut" parent="GeneratedParts/Leg_8" index="5"]
+transform = Transform3D(-1.0292416, 8.1948485e-08, 0, -8.997915e-08, -0.93738145, 0, 0, 0, 2.5, -0.0028082004, 1.4003475, 0)
+
+[node name="JointIn_Leg_8_Limb_1" type="Marker3D" parent="GeneratedParts/Leg_8" index="6" unique_id=1949275420]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.002808094, -1.2243208, -0.099999994)
 metadata/generated_connection_port = true
 metadata/joint_name = "Joint_017_Limb"
 metadata/connected_part = "Leg_8_Limb_1"
 
-[node name="Head" parent="GeneratedParts" index="18" unique_id=51410717 instance=ExtResource("14_jvk18")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9399998, 4.2007546, 0)
-mass = 3.7439997
+[node name="Head" parent="GeneratedParts" index="18" unique_id=1868745637 instance=ExtResource("15_qwq08")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.98499995, 1.1103677, 0)
+mass = 0.1
 freeze = true
 linear_damp = 0.15
 angular_damp = 1.0
-tags = Array[int]([3])
-sprite_visible = false
-left_distance = 1.3
-right_distance = 1.3
-top_distance = 0.9
-bottom_distance = 0.9
-collision_thickness = 0.8
+left_distance = 0.325
+right_distance = 0.325
+top_distance = 0.225
+bottom_distance = 0.225
+collision_thickness = 0.2
+metadata/generated_scene_path = "res://Scenes/Creatures/Bodyparts/Spider/Calibrated/Head/Head.tscn"
+metadata/generated_scene_rule_key = "Head"
 metadata/body_segment_id = 0
 metadata/segment_layout_version = 3
 metadata/generated_layout = {
@@ -933,26 +1808,50 @@ metadata/generated_layout = {
 "part_key": "Head",
 "role": "Head",
 "segment_id": 0,
-"size": Vector3(2.6, 1.8, 0.8),
-"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9399998, 4.2007546, 0)
+"size": Vector3(0.65, 0.45, 0.2),
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.98499995, 1.1103677, 0)
 }
 metadata/generated_role = "Head"
 metadata/generated_part_key = "Head"
 metadata/generated_part_type = "Head"
 metadata/generated_density = 1.0
-metadata/generated_size = Vector3(2.6, 1.8, 0.8)
-metadata/generated_framework_size = Vector3(2.6, 1.8, 0.8)
+metadata/generated_size = Vector3(0.65, 0.45, 0.2)
+metadata/generated_framework_size = Vector3(0.65, 0.45, 0.2)
 
-[node name="JointIn_Torso_Front" type="Marker3D" parent="GeneratedParts/Head" index="3" unique_id=1939352387]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2199998, 0, 0)
+[node name="CollisionShape3D" parent="GeneratedParts/Head" index="0" unique_id=1899992271]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+shape = SubResource("BoxShape3D_r3yfo")
+
+[node name="Sprite3D" parent="GeneratedParts/Head" index="1" unique_id=1806091758]
+transform = Transform3D(0.24532372, 0, 0, 0, 0.18431959, 0, 0, 0, 2.5, -0.221751, -0.04537416, 0)
+material_override = SubResource("ShaderMaterial_jgj7g")
+
+[node name="MeshInstance3D" parent="GeneratedParts/Head" index="2" unique_id=1504749449]
+transform = Transform3D(0.628274, 0, 0, 0, 0.4718581, 0, 0, 0, 2.5025, -0.22187367, -0.04537416, 0)
+
+[node name="Model" parent="GeneratedParts/Head" index="3"]
+transform = Transform3D(0.24532372, 0, 0, 0, 0.18431959, 0, 0, 0, 2.5, -0.221751, -0.04537416, 0)
+
+[node name="PaperVolume" parent="GeneratedParts/Head/Model" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.08, 0, 0, 0)
+surface_material_override/2 = SubResource("StandardMaterial3D_qma56")
+
+[node name="JointIn" parent="GeneratedParts/Head" index="4"]
+transform = Transform3D(0.24532372, 0, 0, 0, 0.18431959, 0, 0, 0, 2.5, -0.26102397, -0.07833696, 0)
+
+[node name="JointOut" parent="GeneratedParts/Head" index="5"]
+transform = Transform3D(0.24532372, 0, 0, 0, 0.18431959, 0, 0, 0, 2.5, 0.11768323, -0.06795331, 0)
+
+[node name="JointIn_Torso_Front" type="Marker3D" parent="GeneratedParts/Head" index="6" unique_id=1625123212]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.30499995, 0, 0)
 metadata/generated_connection_port = true
 metadata/joint_name = "Joint_018_Neck"
 metadata/connected_part = "Torso_Front"
 
-[node name="Joints" type="Node3D" parent="GeneratedParts" index="19" unique_id=690201607]
+[node name="Joints" type="Node3D" parent="GeneratedParts" index="19" unique_id=1079276610]
 
-[node name="Joint_001_Torso" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="0" unique_id=1302912317]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.56, 4.2007546, 0)
+[node name="Joint_001_Torso" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="0" unique_id=1452012117]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.64, 1.2122134, 0)
 node_a = NodePath("../../Torso_Front")
 node_b = NodePath("../../Torso_Rear")
 angular_spring_x/stiffness = 30.0
@@ -963,347 +1862,826 @@ angular_spring_z/stiffness = 30.0
 angular_spring_z/damping = 5.0
 metadata/generated_connection_kind = "Torso"
 metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0, 1)
-metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.56, 0, 0)
-metadata/generated_joint_frame_b = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7600002, -1.6000004, 0)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.64, 0.10184574, 0)
+metadata/generated_joint_frame_b = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.94000006, -0.29815435, 0)
+metadata/diagnostic_activation_frames = {
+"a": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.64, 0.10184574, 0),
+"a_id": 87610624378,
+"b": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.94000006, -0.29815435, 0),
+"b_id": 87946168703,
+"frame": 1
+}
 
-[node name="Joint_002_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="1" unique_id=1775033444]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.24, 4.801814, -0.4)
-node_a = NodePath("../../Torso_Front")
-node_b = NodePath("../../Leg_1_Limb_1")
-angular_limit_x/upper_angle = 1.0471976
-angular_limit_x/lower_angle = -1.0471976
-angular_limit_y/upper_angle = 1.0471976
-angular_limit_y/lower_angle = -1.0471976
-angular_limit_z/upper_angle = 1.0471976
-angular_limit_z/lower_angle = -1.0471976
+[node name="Joint_002_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="1" unique_id=1836877246]
+transform = Transform3D(0.7036317, 0.71056485, 0, -0.71056485, 0.7036317, 0, 0, 0, 1, 0.56, 1.2988828, -0.1)
+node_a = NodePath("../../Leg_1_Limb_1")
+node_b = NodePath("../../Torso_Front")
+linear_limit_y/upper_distance = 0.04
+linear_limit_y/lower_distance = -0.04
+linear_spring_x/stiffness = 0.0
+linear_spring_x/damping = 0.0
+linear_spring_y/enabled = true
+linear_spring_y/stiffness = 210.83043
+linear_spring_y/damping = 8.388677
+linear_spring_z/stiffness = 0.0
+linear_spring_z/damping = 0.0
+angular_limit_z/upper_angle = 2.0992975
+angular_limit_z/lower_angle = -0.51869625
 angular_spring_x/stiffness = 30.0
 angular_spring_x/damping = 5.0
 angular_spring_y/stiffness = 30.0
 angular_spring_y/damping = 5.0
-angular_spring_z/stiffness = 30.0
-angular_spring_z/damping = 5.0
+angular_spring_z/enabled = true
+angular_spring_z/stiffness = 27.543415
+angular_spring_z/damping = 2.7543414
 metadata/generated_connection_kind = "Limb"
-metadata/generated_rest_b_relative_a = Quaternion(0, 0, -0.38494694, 0.9229387)
-metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.24, 0.60105944, -0.4)
-metadata/generated_joint_frame_b = Transform3D(0.70363176, -0.71056485, 0, 0.71056485, 0.70363176, 0, 0, 0, 1, 4.7683716e-07, -3.1999998, 0.4)
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.38494694, 0.9229387)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7881393e-07, -1, 0.1)
+metadata/generated_joint_frame_b = Transform3D(0.7036317, 0.71056485, 0, -0.71056485, 0.7036317, 0, 0, 0, 1, 0.56, 0.18851519, -0.1)
+metadata/spider_axial_slide = {
+"connection": "root",
+"damping": 8.388676340708523,
+"effective_mass": 0.08344370660136212,
+"half_travel": 0.04,
+"stiffness": 210.83043172249924,
+"upper": &"Leg_1_Limb_1",
+"upper_length": 2.0
+}
+metadata/spider_independent_root = true
+metadata/authored_walk_limits = Vector3(0, 0, 1.3089969)
+metadata/spider_world_angle = {
+"child_is_a": true,
+"initial_angle": -0.7903006623651115,
+"parent_path": NodePath("../../Torso_Front"),
+"parent_rest_basis": Basis(1, 0, 0, 0, 1, 0, 0, 0, 1)
+}
+metadata/diagnostic_activation_frames = {
+"a": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7881393e-07, -1, 0.1),
+"a_id": 88214604177,
+"b": Transform3D(0.7036317, 0.71056485, 0, -0.71056485, 0.7036317, 0, 0, 0, 1, 0.56, 0.18851519, -0.1),
+"b_id": 87610624378,
+"frame": 1
+}
+metadata/spider_effective_inertia = 0.09181137934448907
 
-[node name="Joint_003_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="2" unique_id=1617520147]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.787615, 9.305058, -1.2)
+[node name="Joint_003_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="2" unique_id=268479603]
+transform = Transform3D(0.7036317, 0.71056485, 0, -0.71056485, 0.7036317, 0, 0, 0, 1, 2.0439, 2.5165052, -0.3)
 node_a = NodePath("../../Leg_1_Limb_1")
 node_b = NodePath("../../Leg_1")
-angular_limit_x/upper_angle = 1.0471976
-angular_limit_x/lower_angle = -1.0471976
-angular_limit_y/upper_angle = 1.0471976
-angular_limit_y/lower_angle = -1.0471976
-angular_limit_z/upper_angle = 1.0471976
-angular_limit_z/lower_angle = -1.0471976
+linear_spring_x/stiffness = 0.0
+linear_spring_x/damping = 0.0
+linear_spring_y/stiffness = 126.33094
+linear_spring_y/damping = 5.0265484
+linear_spring_z/stiffness = 0.0
+linear_spring_z/damping = 0.0
+angular_limit_z/upper_angle = 1.6275003
+angular_limit_z/lower_angle = -0.99049354
 angular_spring_x/stiffness = 30.0
 angular_spring_x/damping = 5.0
 angular_spring_y/stiffness = 30.0
 angular_spring_y/damping = 5.0
-angular_spring_z/stiffness = 30.0
-angular_spring_z/damping = 5.0
+angular_spring_z/enabled = true
+angular_spring_z/stiffness = 26.58067
+angular_spring_z/damping = 2.658067
 metadata/generated_connection_kind = "Limb"
 metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.8502154, -0.526435)
-metadata/generated_joint_frame_a = Transform3D(0.70363176, -0.71056485, 0, 0.71056485, 0.70363176, 0, 0, 0, 1, 2.3841858e-07, 3.2000008, -0.40000004)
-metadata/generated_joint_frame_b = Transform3D(-0.94970524, -0.3131456, 0, 0.3131456, -0.94970524, 0, 0, 0, 1, 9.536743e-07, -4.800001, 0.39999998)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1789195, 0.91116476, -0.10000001)
+metadata/generated_joint_frame_b = Transform3D(-0.44573233, -0.89516616, 0, 0.89516616, -0.44573233, 0, 0, 0, 1, -0.00022792816, -1.2002407, 0.099999994)
+metadata/spider_axial_slide = {
+"connection": "knee",
+"damping": 5.026548320645075,
+"effective_mass": 0.05,
+"half_travel": 0.0,
+"stiffness": 126.33093821642144,
+"upper": &"Leg_1_Limb_1",
+"upper_length": 2.0
+}
+metadata/spider_independent_root = false
+metadata/authored_walk_limits = Vector3(0, 0, 1.3089969)
+metadata/spider_world_angle = {
+"child_is_a": false,
+"initial_angle": 0.3185034082019347,
+"parent_path": NodePath("../../Leg_1_Limb_1"),
+"parent_rest_basis": Basis(0.7036317, 0.71056485, 0, -0.71056485, 0.7036317, 0, 0, 0, 1)
+}
+metadata/diagnostic_activation_frames = {
+"a": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.9604645e-08, 0.99999976, -0.10000001),
+"a_id": 88214604177,
+"b": Transform3D(-0.44573233, -0.89516616, 0, 0.89516616, -0.44573233, 0, 0, 0, 1, 0, -1.3999997, 0.099999994),
+"b_id": 88415930783,
+"frame": 1
+}
+metadata/spider_hole_aligned = true
 
-[node name="Joint_004_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="3" unique_id=865616010]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.74666667, 3.599696, -0.4)
-node_a = NodePath("../../Torso_Front")
-node_b = NodePath("../../Leg_2_Limb_1")
-angular_limit_x/upper_angle = 1.0471976
-angular_limit_x/lower_angle = -1.0471976
-angular_limit_y/upper_angle = 1.0471976
-angular_limit_y/lower_angle = -1.0471976
-angular_limit_z/upper_angle = 1.0471976
-angular_limit_z/lower_angle = -1.0471976
+[node name="Joint_004_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="3" unique_id=80110634]
+transform = Transform3D(0.93797415, 0.3467052, 0, -0.3467052, 0.93797415, 0, 0, 0, 1, 0.18666667, 0.9218526, -0.1)
+node_a = NodePath("../../Leg_2_Limb_1")
+node_b = NodePath("../../Torso_Front")
+linear_limit_y/upper_distance = 0.039999995
+linear_limit_y/lower_distance = -0.039999995
+linear_spring_x/stiffness = 0.0
+linear_spring_x/damping = 0.0
+linear_spring_y/enabled = true
+linear_spring_y/stiffness = 210.83043
+linear_spring_y/damping = 8.388677
+linear_spring_z/stiffness = 0.0
+linear_spring_z/damping = 0.0
+angular_limit_z/upper_angle = 1.663053
+angular_limit_z/lower_angle = -0.9549408
 angular_spring_x/stiffness = 30.0
 angular_spring_x/damping = 5.0
 angular_spring_y/stiffness = 30.0
 angular_spring_y/damping = 5.0
-angular_spring_z/stiffness = 30.0
-angular_spring_z/damping = 5.0
+angular_spring_z/enabled = true
+angular_spring_z/stiffness = 21.34034
+angular_spring_z/damping = 2.134034
 metadata/generated_connection_kind = "Limb"
-metadata/generated_rest_b_relative_a = Quaternion(0, 0, -0.17610487, 0.9843714)
-metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.74666667, -0.6010587, -0.4)
-metadata/generated_joint_frame_b = Transform3D(0.93797415, -0.34670523, 0, 0.34670523, 0.93797415, 0, 0, 0, 1, 5.9604645e-08, -3.1999998, 0.4)
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.17610486, 0.9843714)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4703484e-08, -1, 0.1)
+metadata/generated_joint_frame_b = Transform3D(0.93797415, 0.3467052, 0, -0.3467052, 0.93797415, 0, 0, 0, 1, 0.18666667, -0.18851507, -0.1)
+metadata/spider_axial_slide = {
+"connection": "root",
+"damping": 8.388676340708523,
+"effective_mass": 0.08344370660136212,
+"half_travel": 0.03999999523162842,
+"stiffness": 210.83043172249924,
+"upper": &"Leg_2_Limb_1",
+"upper_length": 1.9999998
+}
+metadata/spider_independent_root = true
+metadata/authored_walk_limits = Vector3(0, 0, 1.3089969)
+metadata/spider_world_angle = {
+"child_is_a": true,
+"initial_angle": -0.354056132594124,
+"parent_path": NodePath("../../Torso_Front"),
+"parent_rest_basis": Basis(1, 0, 0, 0, 1, 0, 0, 0, 1)
+}
+metadata/diagnostic_activation_frames = {
+"a": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4703484e-08, -1, 0.1),
+"a_id": 88617257385,
+"b": Transform3D(0.93797415, 0.3467052, 0, -0.3467052, 0.93797415, 0, 0, 0, 1, 0.18666667, -0.18851507, -0.1),
+"b_id": 87610624378,
+"frame": 1
+}
+metadata/spider_effective_inertia = 0.07113446086045219
 
-[node name="Joint_005_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="4" unique_id=273664843]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.9655797, 9.60273, -1.2)
+[node name="Joint_005_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="4" unique_id=1290615471]
+transform = Transform3D(0.93797415, 0.3467052, 0, -0.3467052, 0.93797415, 0, 0, 0, 1, 0.90592813, 2.520624, -0.3)
 node_a = NodePath("../../Leg_2_Limb_1")
 node_b = NodePath("../../Leg_2")
-angular_limit_x/upper_angle = 1.0471976
-angular_limit_x/lower_angle = -1.0471976
-angular_limit_y/upper_angle = 1.0471976
-angular_limit_y/lower_angle = -1.0471976
-angular_limit_z/upper_angle = 1.0471976
-angular_limit_z/lower_angle = -1.0471976
+linear_spring_x/stiffness = 0.0
+linear_spring_x/damping = 0.0
+linear_spring_y/stiffness = 126.33094
+linear_spring_y/damping = 5.0265484
+linear_spring_z/stiffness = 0.0
+linear_spring_z/damping = 0.0
+angular_limit_z/upper_angle = 1.4291053
+angular_limit_z/lower_angle = -1.1888885
 angular_spring_x/stiffness = 30.0
 angular_spring_x/damping = 5.0
 angular_spring_y/stiffness = 30.0
 angular_spring_y/damping = 5.0
-angular_spring_z/stiffness = 30.0
-angular_spring_z/damping = 5.0
+angular_spring_z/enabled = true
+angular_spring_z/stiffness = 26.58067
+angular_spring_z/damping = 2.658067
 metadata/generated_connection_kind = "Limb"
-metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.9720275, -0.23486751)
-metadata/generated_joint_frame_a = Transform3D(0.93797415, -0.34670523, 0, 0.34670523, 0.93797415, 0, 0, 0, 1, 0, 3.1999998, -0.40000004)
-metadata/generated_joint_frame_b = Transform3D(-0.9927956, -0.1198198, 0, 0.1198198, -0.9927956, 0, 0, 0, 1, 0, -4.7999997, 0.39999998)
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.9720275, -0.2348675)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12034637, 0.7489778, -0.10000001)
+metadata/generated_joint_frame_b = Transform3D(-0.8896745, -0.4565953, 0, 0.4565953, -0.8896745, 0, 0, 0, 1, 0.0075463057, -1.1217226, 0.099999994)
+metadata/spider_axial_slide = {
+"connection": "knee",
+"damping": 5.026548320645075,
+"effective_mass": 0.05,
+"half_travel": 0.0,
+"stiffness": 126.33093821642144,
+"upper": &"Leg_2_Limb_1",
+"upper_length": 1.9999998
+}
+metadata/spider_independent_root = false
+metadata/authored_walk_limits = Vector3(0, 0, 1.3089969)
+metadata/spider_world_angle = {
+"child_is_a": false,
+"initial_angle": 0.1201083863820406,
+"parent_path": NodePath("../../Leg_2_Limb_1"),
+"parent_rest_basis": Basis(0.93797415, 0.3467052, 0, -0.3467052, 0.93797415, 0, 0, 0, 1)
+}
+metadata/diagnostic_activation_frames = {
+"a": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.99999964, -0.10000001),
+"a_id": 88617257385,
+"b": Transform3D(-0.8896745, -0.4565953, 0, 0.4565953, -0.8896745, 0, 0, 0, 1, -1.1920929e-07, -1.4, 0.099999994),
+"b_id": 88818583987,
+"frame": 1
+}
+metadata/spider_hole_aligned = true
 
-[node name="Joint_006_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="5" unique_id=1685703741]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.74666667, 3.599696, -0.4)
-node_a = NodePath("../../Torso_Front")
-node_b = NodePath("../../Leg_3_Limb_1")
-angular_limit_x/upper_angle = 1.0471976
-angular_limit_x/lower_angle = -1.0471976
-angular_limit_y/upper_angle = 1.0471976
-angular_limit_y/lower_angle = -1.0471976
-angular_limit_z/upper_angle = 1.0471976
-angular_limit_z/lower_angle = -1.0471976
+[node name="Joint_006_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="5" unique_id=484461825]
+transform = Transform3D(0.93797415, -0.3467052, 0, 0.3467052, 0.93797415, 0, 0, 0, 1, -0.18666667, 0.9218526, -0.1)
+node_a = NodePath("../../Leg_3_Limb_1")
+node_b = NodePath("../../Torso_Front")
+linear_limit_y/upper_distance = 0.04
+linear_limit_y/lower_distance = -0.04
+linear_spring_x/stiffness = 0.0
+linear_spring_x/damping = 0.0
+linear_spring_y/enabled = true
+linear_spring_y/stiffness = 210.83043
+linear_spring_y/damping = 8.388677
+linear_spring_z/stiffness = 0.0
+linear_spring_z/damping = 0.0
+angular_limit_z/upper_angle = 0.9549408
+angular_limit_z/lower_angle = -1.663053
 angular_spring_x/stiffness = 30.0
 angular_spring_x/damping = 5.0
 angular_spring_y/stiffness = 30.0
 angular_spring_y/damping = 5.0
-angular_spring_z/stiffness = 30.0
-angular_spring_z/damping = 5.0
+angular_spring_z/enabled = true
+angular_spring_z/stiffness = 21.34034
+angular_spring_z/damping = 2.134034
 metadata/generated_connection_kind = "Limb"
-metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.17610487, 0.9843714)
-metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.74666667, -0.6010587, -0.4)
-metadata/generated_joint_frame_b = Transform3D(0.93797415, 0.34670523, 0, -0.34670523, 0.93797415, 0, 0, 0, 1, -5.9604645e-08, -3.1999998, 0.4)
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, -0.17610486, 0.9843714)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4703484e-08, -1, 0.1)
+metadata/generated_joint_frame_b = Transform3D(0.93797415, -0.3467052, 0, 0.3467052, 0.93797415, 0, 0, 0, 1, -0.18666667, -0.18851507, -0.1)
+metadata/spider_axial_slide = {
+"connection": "root",
+"damping": 8.388676340708523,
+"effective_mass": 0.08344370660136212,
+"half_travel": 0.04,
+"stiffness": 210.83043172249924,
+"upper": &"Leg_3_Limb_1",
+"upper_length": 2.0
+}
+metadata/spider_independent_root = true
+metadata/authored_walk_limits = Vector3(0, 0, 1.3089969)
+metadata/spider_world_angle = {
+"child_is_a": true,
+"initial_angle": 0.354056132594124,
+"parent_path": NodePath("../../Torso_Front"),
+"parent_rest_basis": Basis(1, 0, 0, 0, 1, 0, 0, 0, 1)
+}
+metadata/diagnostic_activation_frames = {
+"a": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4703484e-08, -1, 0.1),
+"a_id": 89019910589,
+"b": Transform3D(0.93797415, -0.3467052, 0, 0.3467052, 0.93797415, 0, 0, 0, 1, -0.18666667, -0.18851507, -0.1),
+"b_id": 87610624378,
+"frame": 1
+}
+metadata/spider_effective_inertia = 0.07113446296464976
 
-[node name="Joint_007_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="6" unique_id=219898996]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.9655797, 9.60273, -1.2)
+[node name="Joint_007_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="6" unique_id=1001383563]
+transform = Transform3D(0.93797415, -0.3467052, 0, 0.3467052, 0.93797415, 0, 0, 0, 1, -0.9163971, 2.4685023, -0.3)
 node_a = NodePath("../../Leg_3_Limb_1")
 node_b = NodePath("../../Leg_3")
-angular_limit_x/upper_angle = 1.0471976
-angular_limit_x/lower_angle = -1.0471976
-angular_limit_y/upper_angle = 1.0471976
-angular_limit_y/lower_angle = -1.0471976
-angular_limit_z/upper_angle = 1.0471976
-angular_limit_z/lower_angle = -1.0471976
+linear_spring_x/stiffness = 0.0
+linear_spring_x/damping = 0.0
+linear_spring_y/stiffness = 126.33094
+linear_spring_y/damping = 5.0265484
+linear_spring_z/stiffness = 0.0
+linear_spring_z/damping = 0.0
+angular_limit_z/upper_angle = 1.1888885
+angular_limit_z/lower_angle = -1.4291053
 angular_spring_x/stiffness = 30.0
 angular_spring_x/damping = 5.0
 angular_spring_y/stiffness = 30.0
 angular_spring_y/damping = 5.0
-angular_spring_z/stiffness = 30.0
-angular_spring_z/damping = 5.0
+angular_spring_z/enabled = true
+angular_spring_z/stiffness = 26.58067
+angular_spring_z/damping = 2.658067
 metadata/generated_connection_kind = "Limb"
-metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.9720275, 0.23486751)
-metadata/generated_joint_frame_a = Transform3D(0.93797415, 0.34670523, 0, -0.34670523, 0.93797415, 0, 0, 0, 1, 0, 3.1999998, -0.40000004)
-metadata/generated_joint_frame_b = Transform3D(-0.9927956, 0.1198198, 0, -0.1198198, -0.9927956, 0, 0, 0, 1, 0, -4.7999997, 0.39999998)
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.9720275, 0.2348675)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.14823681, 0.7037188, -0.10000001)
+metadata/generated_joint_frame_b = Transform3D(-0.8896745, 0.4565953, 0, -0.4565953, -0.8896745, 0, 0, 0, 1, -0.0033980608, -1.0687221, 0.099999994)
+metadata/spider_axial_slide = {
+"connection": "knee",
+"damping": 5.026548320645075,
+"effective_mass": 0.05,
+"half_travel": 0.0,
+"stiffness": 126.33093821642144,
+"upper": &"Leg_3_Limb_1",
+"upper_length": 2.0
+}
+metadata/spider_independent_root = false
+metadata/authored_walk_limits = Vector3(0, 0, 1.3089969)
+metadata/spider_world_angle = {
+"child_is_a": false,
+"initial_angle": -0.1201083863820406,
+"parent_path": NodePath("../../Leg_3_Limb_1"),
+"parent_rest_basis": Basis(0.93797415, -0.3467052, 0, 0.3467052, 0.93797415, 0, 0, 0, 1)
+}
+metadata/diagnostic_activation_frames = {
+"a": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.99999964, -0.10000001),
+"a_id": 89019910589,
+"b": Transform3D(-0.8896745, 0.4565953, 0, -0.4565953, -0.8896745, 0, 0, 0, 1, 1.1920929e-07, -1.4, 0.099999994),
+"b_id": 89221237191,
+"frame": 1
+}
+metadata/spider_hole_aligned = true
 
-[node name="Joint_008_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="7" unique_id=392988165]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.24, 4.801814, -0.4)
-node_a = NodePath("../../Torso_Front")
-node_b = NodePath("../../Leg_4_Limb_1")
-angular_limit_x/upper_angle = 1.0471976
-angular_limit_x/lower_angle = -1.0471976
-angular_limit_y/upper_angle = 1.0471976
-angular_limit_y/lower_angle = -1.0471976
-angular_limit_z/upper_angle = 1.0471976
-angular_limit_z/lower_angle = -1.0471976
-angular_spring_x/stiffness = 30.0
-angular_spring_x/damping = 5.0
-angular_spring_y/stiffness = 30.0
-angular_spring_y/damping = 5.0
-angular_spring_z/stiffness = 30.0
-angular_spring_z/damping = 5.0
-metadata/generated_connection_kind = "Limb"
-metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.38494694, 0.9229387)
-metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.24, 0.60105944, -0.4)
-metadata/generated_joint_frame_b = Transform3D(0.70363176, 0.71056485, 0, -0.71056485, 0.70363176, 0, 0, 0, 1, -4.7683716e-07, -3.1999998, 0.4)
-
-[node name="Joint_009_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="8" unique_id=980393445]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.787615, 9.305058, -1.2)
+[node name="Joint_008_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="7" unique_id=288106978]
+transform = Transform3D(0.7036317, -0.71056485, 0, 0.71056485, 0.7036317, 0, 0, 0, 1, -0.56, 1.2988828, -0.1)
 node_a = NodePath("../../Leg_4_Limb_1")
-node_b = NodePath("../../Leg_4")
-angular_limit_x/upper_angle = 1.0471976
-angular_limit_x/lower_angle = -1.0471976
-angular_limit_y/upper_angle = 1.0471976
-angular_limit_y/lower_angle = -1.0471976
-angular_limit_z/upper_angle = 1.0471976
-angular_limit_z/lower_angle = -1.0471976
+node_b = NodePath("../../Torso_Front")
+linear_limit_y/upper_distance = 0.04
+linear_limit_y/lower_distance = -0.04
+linear_spring_x/stiffness = 0.0
+linear_spring_x/damping = 0.0
+linear_spring_y/enabled = true
+linear_spring_y/stiffness = 210.83043
+linear_spring_y/damping = 8.388677
+linear_spring_z/stiffness = 0.0
+linear_spring_z/damping = 0.0
+angular_limit_z/upper_angle = 0.51869625
+angular_limit_z/lower_angle = -2.0992975
 angular_spring_x/stiffness = 30.0
 angular_spring_x/damping = 5.0
 angular_spring_y/stiffness = 30.0
 angular_spring_y/damping = 5.0
-angular_spring_z/stiffness = 30.0
-angular_spring_z/damping = 5.0
-metadata/generated_connection_kind = "Limb"
-metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.8502154, 0.526435)
-metadata/generated_joint_frame_a = Transform3D(0.70363176, 0.71056485, 0, -0.71056485, 0.70363176, 0, 0, 0, 1, -2.3841858e-07, 3.2000008, -0.40000004)
-metadata/generated_joint_frame_b = Transform3D(-0.94970524, 0.3131456, 0, -0.3131456, -0.94970524, 0, 0, 0, 1, -9.536743e-07, -4.800001, 0.39999998)
-
-[node name="Joint_010_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="9" unique_id=1789666612]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.24, 4.801814, 0.4)
-node_a = NodePath("../../Torso_Front")
-node_b = NodePath("../../Leg_5_Limb_1")
-angular_limit_x/upper_angle = 1.0471976
-angular_limit_x/lower_angle = -1.0471976
-angular_limit_y/upper_angle = 1.0471976
-angular_limit_y/lower_angle = -1.0471976
-angular_limit_z/upper_angle = 1.0471976
-angular_limit_z/lower_angle = -1.0471976
-angular_spring_x/stiffness = 30.0
-angular_spring_x/damping = 5.0
-angular_spring_y/stiffness = 30.0
-angular_spring_y/damping = 5.0
-angular_spring_z/stiffness = 30.0
-angular_spring_z/damping = 5.0
+angular_spring_z/enabled = true
+angular_spring_z/stiffness = 27.543415
+angular_spring_z/damping = 2.7543414
 metadata/generated_connection_kind = "Limb"
 metadata/generated_rest_b_relative_a = Quaternion(0, 0, -0.38494694, 0.9229387)
-metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.24, 0.60105944, 0.4)
-metadata/generated_joint_frame_b = Transform3D(0.70363176, -0.71056485, 0, 0.71056485, 0.70363176, 0, 0, 0, 1, 4.7683716e-07, -3.1999998, -0.4)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.7881393e-07, -1, 0.1)
+metadata/generated_joint_frame_b = Transform3D(0.7036317, -0.71056485, 0, 0.71056485, 0.7036317, 0, 0, 0, 1, -0.56, 0.18851519, -0.1)
+metadata/spider_axial_slide = {
+"connection": "root",
+"damping": 8.388676340708523,
+"effective_mass": 0.08344370660136212,
+"half_travel": 0.04,
+"stiffness": 210.83043172249924,
+"upper": &"Leg_4_Limb_1",
+"upper_length": 2.0
+}
+metadata/spider_independent_root = true
+metadata/authored_walk_limits = Vector3(0, 0, 1.3089969)
+metadata/spider_world_angle = {
+"child_is_a": true,
+"initial_angle": 0.7903006623651115,
+"parent_path": NodePath("../../Torso_Front"),
+"parent_rest_basis": Basis(1, 0, 0, 0, 1, 0, 0, 0, 1)
+}
+metadata/diagnostic_activation_frames = {
+"a": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.7881393e-07, -1, 0.1),
+"a_id": 89422563793,
+"b": Transform3D(0.7036317, -0.71056485, 0, 0.71056485, 0.7036317, 0, 0, 0, 1, -0.56, 0.18851519, -0.1),
+"b_id": 87610624378,
+"frame": 1
+}
+metadata/spider_effective_inertia = 0.09181137934448907
 
-[node name="Joint_011_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="10" unique_id=884252842]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.787615, 9.305058, 1.2)
-node_a = NodePath("../../Leg_5_Limb_1")
-node_b = NodePath("../../Leg_5")
-angular_limit_x/upper_angle = 1.0471976
-angular_limit_x/lower_angle = -1.0471976
-angular_limit_y/upper_angle = 1.0471976
-angular_limit_y/lower_angle = -1.0471976
-angular_limit_z/upper_angle = 1.0471976
-angular_limit_z/lower_angle = -1.0471976
+[node name="Joint_009_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="8" unique_id=1803020262]
+transform = Transform3D(0.7036317, -0.71056485, 0, 0.71056485, 0.7036317, 0, 0, 0, 1, -2.0449805, 2.5283198, -0.3)
+node_a = NodePath("../../Leg_4_Limb_1")
+node_b = NodePath("../../Leg_4")
+linear_spring_x/stiffness = 0.0
+linear_spring_x/damping = 0.0
+linear_spring_y/stiffness = 126.33094
+linear_spring_y/damping = 5.0265484
+linear_spring_z/stiffness = 0.0
+linear_spring_z/damping = 0.0
+angular_limit_z/upper_angle = 0.99049354
+angular_limit_z/lower_angle = -1.6275003
 angular_spring_x/stiffness = 30.0
 angular_spring_x/damping = 5.0
 angular_spring_y/stiffness = 30.0
 angular_spring_y/damping = 5.0
-angular_spring_z/stiffness = 30.0
-angular_spring_z/damping = 5.0
-metadata/generated_connection_kind = "Limb"
-metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.8502154, -0.526435)
-metadata/generated_joint_frame_a = Transform3D(0.70363176, -0.71056485, 0, 0.71056485, 0.70363176, 0, 0, 0, 1, 2.3841858e-07, 3.2000008, 0.40000004)
-metadata/generated_joint_frame_b = Transform3D(-0.94970524, -0.3131456, 0, 0.3131456, -0.94970524, 0, 0, 0, 1, 9.536743e-07, -4.800001, -0.39999998)
-
-[node name="Joint_012_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="11" unique_id=1618315174]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.74666667, 3.599696, 0.4)
-node_a = NodePath("../../Torso_Front")
-node_b = NodePath("../../Leg_6_Limb_1")
-angular_limit_x/upper_angle = 1.0471976
-angular_limit_x/lower_angle = -1.0471976
-angular_limit_y/upper_angle = 1.0471976
-angular_limit_y/lower_angle = -1.0471976
-angular_limit_z/upper_angle = 1.0471976
-angular_limit_z/lower_angle = -1.0471976
-angular_spring_x/stiffness = 30.0
-angular_spring_x/damping = 5.0
-angular_spring_y/stiffness = 30.0
-angular_spring_y/damping = 5.0
-angular_spring_z/stiffness = 30.0
-angular_spring_z/damping = 5.0
-metadata/generated_connection_kind = "Limb"
-metadata/generated_rest_b_relative_a = Quaternion(0, 0, -0.17610487, 0.9843714)
-metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.74666667, -0.6010587, 0.4)
-metadata/generated_joint_frame_b = Transform3D(0.93797415, -0.34670523, 0, 0.34670523, 0.93797415, 0, 0, 0, 1, 5.9604645e-08, -3.1999998, -0.4)
-
-[node name="Joint_013_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="12" unique_id=1774359593]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.9655797, 9.60273, 1.2)
-node_a = NodePath("../../Leg_6_Limb_1")
-node_b = NodePath("../../Leg_6")
-angular_limit_x/upper_angle = 1.0471976
-angular_limit_x/lower_angle = -1.0471976
-angular_limit_y/upper_angle = 1.0471976
-angular_limit_y/lower_angle = -1.0471976
-angular_limit_z/upper_angle = 1.0471976
-angular_limit_z/lower_angle = -1.0471976
-angular_spring_x/stiffness = 30.0
-angular_spring_x/damping = 5.0
-angular_spring_y/stiffness = 30.0
-angular_spring_y/damping = 5.0
-angular_spring_z/stiffness = 30.0
-angular_spring_z/damping = 5.0
-metadata/generated_connection_kind = "Limb"
-metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.9720275, -0.23486751)
-metadata/generated_joint_frame_a = Transform3D(0.93797415, -0.34670523, 0, 0.34670523, 0.93797415, 0, 0, 0, 1, 0, 3.1999998, 0.40000004)
-metadata/generated_joint_frame_b = Transform3D(-0.9927956, -0.1198198, 0, 0.1198198, -0.9927956, 0, 0, 0, 1, 0, -4.7999997, -0.39999998)
-
-[node name="Joint_014_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="13" unique_id=1478697475]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.74666667, 3.599696, 0.4)
-node_a = NodePath("../../Torso_Front")
-node_b = NodePath("../../Leg_7_Limb_1")
-angular_limit_x/upper_angle = 1.0471976
-angular_limit_x/lower_angle = -1.0471976
-angular_limit_y/upper_angle = 1.0471976
-angular_limit_y/lower_angle = -1.0471976
-angular_limit_z/upper_angle = 1.0471976
-angular_limit_z/lower_angle = -1.0471976
-angular_spring_x/stiffness = 30.0
-angular_spring_x/damping = 5.0
-angular_spring_y/stiffness = 30.0
-angular_spring_y/damping = 5.0
-angular_spring_z/stiffness = 30.0
-angular_spring_z/damping = 5.0
-metadata/generated_connection_kind = "Limb"
-metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.17610487, 0.9843714)
-metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.74666667, -0.6010587, 0.4)
-metadata/generated_joint_frame_b = Transform3D(0.93797415, 0.34670523, 0, -0.34670523, 0.93797415, 0, 0, 0, 1, -5.9604645e-08, -3.1999998, -0.4)
-
-[node name="Joint_015_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="14" unique_id=1701575992]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.9655797, 9.60273, 1.2)
-node_a = NodePath("../../Leg_7_Limb_1")
-node_b = NodePath("../../Leg_7")
-angular_limit_x/upper_angle = 1.0471976
-angular_limit_x/lower_angle = -1.0471976
-angular_limit_y/upper_angle = 1.0471976
-angular_limit_y/lower_angle = -1.0471976
-angular_limit_z/upper_angle = 1.0471976
-angular_limit_z/lower_angle = -1.0471976
-angular_spring_x/stiffness = 30.0
-angular_spring_x/damping = 5.0
-angular_spring_y/stiffness = 30.0
-angular_spring_y/damping = 5.0
-angular_spring_z/stiffness = 30.0
-angular_spring_z/damping = 5.0
-metadata/generated_connection_kind = "Limb"
-metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.9720275, 0.23486751)
-metadata/generated_joint_frame_a = Transform3D(0.93797415, 0.34670523, 0, -0.34670523, 0.93797415, 0, 0, 0, 1, 0, 3.1999998, 0.40000004)
-metadata/generated_joint_frame_b = Transform3D(-0.9927956, 0.1198198, 0, -0.1198198, -0.9927956, 0, 0, 0, 1, 0, -4.7999997, -0.39999998)
-
-[node name="Joint_016_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="15" unique_id=1507343783]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.24, 4.801814, 0.4)
-node_a = NodePath("../../Torso_Front")
-node_b = NodePath("../../Leg_8_Limb_1")
-angular_limit_x/upper_angle = 1.0471976
-angular_limit_x/lower_angle = -1.0471976
-angular_limit_y/upper_angle = 1.0471976
-angular_limit_y/lower_angle = -1.0471976
-angular_limit_z/upper_angle = 1.0471976
-angular_limit_z/lower_angle = -1.0471976
-angular_spring_x/stiffness = 30.0
-angular_spring_x/damping = 5.0
-angular_spring_y/stiffness = 30.0
-angular_spring_y/damping = 5.0
-angular_spring_z/stiffness = 30.0
-angular_spring_z/damping = 5.0
-metadata/generated_connection_kind = "Limb"
-metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.38494694, 0.9229387)
-metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.24, 0.60105944, 0.4)
-metadata/generated_joint_frame_b = Transform3D(0.70363176, 0.71056485, 0, -0.71056485, 0.70363176, 0, 0, 0, 1, -4.7683716e-07, -3.1999998, -0.4)
-
-[node name="Joint_017_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="16" unique_id=192916797]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.787615, 9.305058, 1.2)
-node_a = NodePath("../../Leg_8_Limb_1")
-node_b = NodePath("../../Leg_8")
-angular_limit_x/upper_angle = 1.0471976
-angular_limit_x/lower_angle = -1.0471976
-angular_limit_y/upper_angle = 1.0471976
-angular_limit_y/lower_angle = -1.0471976
-angular_limit_z/upper_angle = 1.0471976
-angular_limit_z/lower_angle = -1.0471976
-angular_spring_x/stiffness = 30.0
-angular_spring_x/damping = 5.0
-angular_spring_y/stiffness = 30.0
-angular_spring_y/damping = 5.0
-angular_spring_z/stiffness = 30.0
-angular_spring_z/damping = 5.0
+angular_spring_z/enabled = true
+angular_spring_z/stiffness = 26.58067
+angular_spring_z/damping = 2.658067
 metadata/generated_connection_kind = "Limb"
 metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.8502154, 0.526435)
-metadata/generated_joint_frame_a = Transform3D(0.70363176, 0.71056485, 0, -0.71056485, 0.70363176, 0, 0, 0, 1, -2.3841858e-07, 3.2000008, 0.40000004)
-metadata/generated_joint_frame_b = Transform3D(-0.94970524, 0.3131456, 0, -0.3131456, -0.94970524, 0, 0, 0, 1, -9.536743e-07, -4.800001, -0.39999998)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.17128474, 0.92024565, -0.10000001)
+metadata/generated_joint_frame_b = Transform3D(-0.44573233, 0.89516616, 0, -0.89516616, -0.44573233, 0, 0, 0, 1, 0.0049538612, -1.2111226, 0.099999994)
+metadata/spider_axial_slide = {
+"connection": "knee",
+"damping": 5.026548320645075,
+"effective_mass": 0.05,
+"half_travel": 0.0,
+"stiffness": 126.33093821642144,
+"upper": &"Leg_4_Limb_1",
+"upper_length": 2.0
+}
+metadata/spider_independent_root = false
+metadata/authored_walk_limits = Vector3(0, 0, 1.3089969)
+metadata/spider_world_angle = {
+"child_is_a": false,
+"initial_angle": -0.3185034082019347,
+"parent_path": NodePath("../../Leg_4_Limb_1"),
+"parent_rest_basis": Basis(0.7036317, -0.71056485, 0, 0.71056485, 0.7036317, 0, 0, 0, 1)
+}
+metadata/diagnostic_activation_frames = {
+"a": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.9604645e-08, 0.99999976, -0.10000001),
+"a_id": 89422563793,
+"b": Transform3D(-0.44573233, 0.89516616, 0, -0.89516616, -0.44573233, 0, 0, 0, 1, 0, -1.3999997, 0.099999994),
+"b_id": 89623890395,
+"frame": 1
+}
+metadata/spider_hole_aligned = true
 
-[node name="Joint_018_Neck" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="17" unique_id=867833993]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.72, 4.2007546, 0)
+[node name="Joint_010_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="9" unique_id=343835276]
+transform = Transform3D(0.7036317, 0.71056485, 0, -0.71056485, 0.7036317, 0, 0, 0, 1, 0.56, 1.2988828, 0.1)
+node_a = NodePath("../../Leg_5_Limb_1")
+node_b = NodePath("../../Torso_Front")
+linear_limit_y/upper_distance = 0.04
+linear_limit_y/lower_distance = -0.04
+linear_spring_x/stiffness = 0.0
+linear_spring_x/damping = 0.0
+linear_spring_y/enabled = true
+linear_spring_y/stiffness = 210.83043
+linear_spring_y/damping = 8.388677
+linear_spring_z/stiffness = 0.0
+linear_spring_z/damping = 0.0
+angular_limit_z/upper_angle = 2.0992975
+angular_limit_z/lower_angle = -0.51869625
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/enabled = true
+angular_spring_z/stiffness = 27.543415
+angular_spring_z/damping = 2.7543414
+metadata/generated_connection_kind = "Limb"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.38494694, 0.9229387)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7881393e-07, -1, -0.1)
+metadata/generated_joint_frame_b = Transform3D(0.7036317, 0.71056485, 0, -0.71056485, 0.7036317, 0, 0, 0, 1, 0.56, 0.18851519, 0.1)
+metadata/spider_axial_slide = {
+"connection": "root",
+"damping": 8.388676340708523,
+"effective_mass": 0.08344370660136212,
+"half_travel": 0.04,
+"stiffness": 210.83043172249924,
+"upper": &"Leg_5_Limb_1",
+"upper_length": 2.0
+}
+metadata/spider_independent_root = true
+metadata/authored_walk_limits = Vector3(0, 0, 1.3089969)
+metadata/spider_world_angle = {
+"child_is_a": true,
+"initial_angle": -0.7903006623651115,
+"parent_path": NodePath("../../Torso_Front"),
+"parent_rest_basis": Basis(1, 0, 0, 0, 1, 0, 0, 0, 1)
+}
+metadata/diagnostic_activation_frames = {
+"a": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7881393e-07, -1, -0.1),
+"a_id": 89825216997,
+"b": Transform3D(0.7036317, 0.71056485, 0, -0.71056485, 0.7036317, 0, 0, 0, 1, 0.56, 0.18851519, 0.1),
+"b_id": 87610624378,
+"frame": 1
+}
+metadata/spider_effective_inertia = 0.09181137934448907
+
+[node name="Joint_011_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="10" unique_id=2078131004]
+transform = Transform3D(0.7036317, 0.71056485, 0, -0.71056485, 0.7036317, 0, 0, 0, 1, 2.0437737, 2.5148277, 0.3)
+node_a = NodePath("../../Leg_5_Limb_1")
+node_b = NodePath("../../Leg_5")
+linear_spring_x/stiffness = 0.0
+linear_spring_x/damping = 0.0
+linear_spring_y/stiffness = 126.33094
+linear_spring_y/damping = 5.0265484
+linear_spring_z/stiffness = 0.0
+linear_spring_z/damping = 0.0
+angular_limit_z/upper_angle = 1.6275003
+angular_limit_z/lower_angle = -0.99049354
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/enabled = true
+angular_spring_z/stiffness = 26.58067
+angular_spring_z/damping = 2.658067
+metadata/generated_connection_kind = "Limb"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.8502154, -0.526435)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.18002266, 0.9098947, 0.10000001)
+metadata/generated_joint_frame_b = Transform3D(-0.44573233, -0.89516616, 0, 0.89516616, -0.44573233, 0, 0, 0, 1, 0.0004172325, -1.198687, -0.099999994)
+metadata/spider_axial_slide = {
+"connection": "knee",
+"damping": 5.026548320645075,
+"effective_mass": 0.05,
+"half_travel": 0.0,
+"stiffness": 126.33093821642144,
+"upper": &"Leg_5_Limb_1",
+"upper_length": 2.0
+}
+metadata/spider_independent_root = false
+metadata/authored_walk_limits = Vector3(0, 0, 1.3089969)
+metadata/spider_world_angle = {
+"child_is_a": false,
+"initial_angle": 0.3185034082019347,
+"parent_path": NodePath("../../Leg_5_Limb_1"),
+"parent_rest_basis": Basis(0.7036317, 0.71056485, 0, -0.71056485, 0.7036317, 0, 0, 0, 1)
+}
+metadata/diagnostic_activation_frames = {
+"a": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.9604645e-08, 0.99999976, 0.10000001),
+"a_id": 89825216997,
+"b": Transform3D(-0.44573233, -0.89516616, 0, 0.89516616, -0.44573233, 0, 0, 0, 1, 0, -1.3999997, -0.099999994),
+"b_id": 90026543599,
+"frame": 1
+}
+metadata/spider_hole_aligned = true
+
+[node name="Joint_012_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="11" unique_id=659583154]
+transform = Transform3D(0.93797415, 0.3467052, 0, -0.3467052, 0.93797415, 0, 0, 0, 1, 0.18666667, 0.9218526, 0.1)
+node_a = NodePath("../../Leg_6_Limb_1")
+node_b = NodePath("../../Torso_Front")
+linear_limit_y/upper_distance = 0.04
+linear_limit_y/lower_distance = -0.04
+linear_spring_x/stiffness = 0.0
+linear_spring_x/damping = 0.0
+linear_spring_y/enabled = true
+linear_spring_y/stiffness = 210.83043
+linear_spring_y/damping = 8.388677
+linear_spring_z/stiffness = 0.0
+linear_spring_z/damping = 0.0
+angular_limit_z/upper_angle = 1.663053
+angular_limit_z/lower_angle = -0.9549408
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/enabled = true
+angular_spring_z/stiffness = 21.34034
+angular_spring_z/damping = 2.134034
+metadata/generated_connection_kind = "Limb"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.17610486, 0.9843714)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4703484e-08, -1, -0.1)
+metadata/generated_joint_frame_b = Transform3D(0.93797415, 0.3467052, 0, -0.3467052, 0.93797415, 0, 0, 0, 1, 0.18666667, -0.18851507, 0.1)
+metadata/spider_axial_slide = {
+"connection": "root",
+"damping": 8.388676340708523,
+"effective_mass": 0.08344370660136212,
+"half_travel": 0.03999999761581421,
+"stiffness": 210.83043172249924,
+"upper": &"Leg_6_Limb_1",
+"upper_length": 1.9999999
+}
+metadata/spider_independent_root = true
+metadata/authored_walk_limits = Vector3(0, 0, 1.3089969)
+metadata/spider_world_angle = {
+"child_is_a": true,
+"initial_angle": -0.354056132594124,
+"parent_path": NodePath("../../Torso_Front"),
+"parent_rest_basis": Basis(1, 0, 0, 0, 1, 0, 0, 0, 1)
+}
+metadata/diagnostic_activation_frames = {
+"a": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4703484e-08, -1, -0.1),
+"a_id": 90227870201,
+"b": Transform3D(0.93797415, 0.3467052, 0, -0.3467052, 0.93797415, 0, 0, 0, 1, 0.18666667, -0.18851507, 0.1),
+"b_id": 87610624378,
+"frame": 1
+}
+metadata/spider_effective_inertia = 0.07113446191255099
+
+[node name="Joint_013_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="12" unique_id=463541267]
+transform = Transform3D(0.93797415, 0.3467052, 0, -0.3467052, 0.93797415, 0, 0, 0, 1, 0.89496547, 2.6542153, 0.3)
+node_a = NodePath("../../Leg_6_Limb_1")
+node_b = NodePath("../../Leg_6")
+linear_spring_x/stiffness = 0.0
+linear_spring_x/damping = 0.0
+linear_spring_y/stiffness = 126.33094
+linear_spring_y/damping = 5.0265484
+linear_spring_z/stiffness = 0.0
+linear_spring_z/damping = 0.0
+angular_limit_z/upper_angle = 1.4291053
+angular_limit_z/lower_angle = -1.1888885
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/enabled = true
+angular_spring_z/stiffness = 26.58067
+angular_spring_z/damping = 2.658067
+metadata/generated_connection_kind = "Limb"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.9720275, -0.2348675)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.06374681, 0.8704823, 0.10000001)
+metadata/generated_joint_frame_b = Transform3D(-0.8896745, -0.4565953, 0, 0.4565953, -0.8896745, 0, 0, 0, 1, 0.0024231672, -1.255665, -0.099999994)
+metadata/spider_axial_slide = {
+"connection": "knee",
+"damping": 5.026548320645075,
+"effective_mass": 0.05,
+"half_travel": 0.0,
+"stiffness": 126.33093821642144,
+"upper": &"Leg_6_Limb_1",
+"upper_length": 1.9999999
+}
+metadata/spider_independent_root = false
+metadata/authored_walk_limits = Vector3(0, 0, 1.3089969)
+metadata/spider_world_angle = {
+"child_is_a": false,
+"initial_angle": 0.1201083863820406,
+"parent_path": NodePath("../../Leg_6_Limb_1"),
+"parent_rest_basis": Basis(0.93797415, 0.3467052, 0, -0.3467052, 0.93797415, 0, 0, 0, 1)
+}
+metadata/diagnostic_activation_frames = {
+"a": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.99999964, 0.10000001),
+"a_id": 90227870201,
+"b": Transform3D(-0.8896745, -0.4565953, 0, 0.4565953, -0.8896745, 0, 0, 0, 1, -1.1920929e-07, -1.4, -0.099999994),
+"b_id": 90429196803,
+"frame": 1
+}
+metadata/spider_hole_aligned = true
+
+[node name="Joint_014_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="13" unique_id=1998576554]
+transform = Transform3D(0.93797415, -0.3467052, 0, 0.3467052, 0.93797415, 0, 0, 0, 1, -0.18666667, 0.9218526, 0.1)
+node_a = NodePath("../../Leg_7_Limb_1")
+node_b = NodePath("../../Torso_Front")
+linear_limit_y/upper_distance = 0.039999995
+linear_limit_y/lower_distance = -0.039999995
+linear_spring_x/stiffness = 0.0
+linear_spring_x/damping = 0.0
+linear_spring_y/enabled = true
+linear_spring_y/stiffness = 210.83043
+linear_spring_y/damping = 8.388677
+linear_spring_z/stiffness = 0.0
+linear_spring_z/damping = 0.0
+angular_limit_z/upper_angle = 0.9549408
+angular_limit_z/lower_angle = -1.663053
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/enabled = true
+angular_spring_z/stiffness = 21.34034
+angular_spring_z/damping = 2.134034
+metadata/generated_connection_kind = "Limb"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, -0.17610486, 0.9843714)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4703484e-08, -1, -0.1)
+metadata/generated_joint_frame_b = Transform3D(0.93797415, -0.3467052, 0, 0.3467052, 0.93797415, 0, 0, 0, 1, -0.18666667, -0.18851507, 0.1)
+metadata/spider_axial_slide = {
+"connection": "root",
+"damping": 8.388676340708523,
+"effective_mass": 0.08344370660136212,
+"half_travel": 0.03999999523162842,
+"stiffness": 210.83043172249924,
+"upper": &"Leg_7_Limb_1",
+"upper_length": 1.9999998
+}
+metadata/spider_independent_root = true
+metadata/authored_walk_limits = Vector3(0, 0, 1.3089969)
+metadata/spider_world_angle = {
+"child_is_a": true,
+"initial_angle": 0.354056132594124,
+"parent_path": NodePath("../../Torso_Front"),
+"parent_rest_basis": Basis(1, 0, 0, 0, 1, 0, 0, 0, 1)
+}
+metadata/diagnostic_activation_frames = {
+"a": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4703484e-08, -1, -0.1),
+"a_id": 90630523405,
+"b": Transform3D(0.93797415, -0.3467052, 0, 0.3467052, 0.93797415, 0, 0, 0, 1, -0.18666667, -0.18851507, 0.1),
+"b_id": 87610624378,
+"frame": 1
+}
+metadata/spider_effective_inertia = 0.07113446086045219
+
+[node name="Joint_015_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="14" unique_id=1352111705]
+transform = Transform3D(0.93797415, -0.3467052, 0, 0.3467052, 0.93797415, 0, 0, 0, 1, -0.90451884, 2.5661335, 0.2999995)
+node_a = NodePath("../../Leg_7_Limb_1")
+node_b = NodePath("../../Leg_7")
+linear_spring_x/stiffness = 0.0
+linear_spring_x/damping = 0.0
+linear_spring_y/stiffness = 126.33094
+linear_spring_y/damping = 5.0265484
+linear_spring_z/stiffness = 0.0
+linear_spring_z/damping = 0.0
+angular_limit_z/upper_angle = 1.1888885
+angular_limit_z/lower_angle = -1.4291053
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/enabled = true
+angular_spring_z/stiffness = 26.58067
+angular_spring_z/damping = 2.658067
+metadata/generated_connection_kind = "Limb"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.9720275, 0.2348675)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.10324609, 0.79117596, 0.0999995)
+metadata/generated_joint_frame_b = Transform3D(-0.8896745, 0.4565953, 0, -0.4565953, -0.8896745, 0, 0, 0, 1, -0.0034924746, -1.1670731, -0.1000005)
+metadata/spider_axial_slide = {
+"connection": "knee",
+"damping": 5.026548320645075,
+"effective_mass": 0.05,
+"half_travel": 0.0,
+"stiffness": 126.33093821642144,
+"upper": &"Leg_7_Limb_1",
+"upper_length": 1.9999998
+}
+metadata/spider_independent_root = false
+metadata/authored_walk_limits = Vector3(0, 0, 1.3089969)
+metadata/spider_world_angle = {
+"child_is_a": false,
+"initial_angle": -0.1201083863820406,
+"parent_path": NodePath("../../Leg_7_Limb_1"),
+"parent_rest_basis": Basis(0.93797415, -0.3467052, 0, 0.3467052, 0.93797415, 0, 0, 0, 1)
+}
+metadata/diagnostic_activation_frames = {
+"a": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.99999964, 0.10000001),
+"a_id": 90630523405,
+"b": Transform3D(-0.8896745, 0.4565953, 0, -0.4565953, -0.8896745, 0, 0, 0, 1, 1.1920929e-07, -1.4, -0.099999994),
+"b_id": 90831850007,
+"frame": 1
+}
+metadata/spider_hole_aligned = true
+
+[node name="Joint_016_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="15" unique_id=1404685670]
+transform = Transform3D(0.7036317, -0.71056485, 0, 0.71056485, 0.7036317, 0, 0, 0, 1, -0.56, 1.2988828, 0.1)
+node_a = NodePath("../../Leg_8_Limb_1")
+node_b = NodePath("../../Torso_Front")
+linear_limit_y/upper_distance = 0.04
+linear_limit_y/lower_distance = -0.04
+linear_spring_x/stiffness = 0.0
+linear_spring_x/damping = 0.0
+linear_spring_y/enabled = true
+linear_spring_y/stiffness = 210.83043
+linear_spring_y/damping = 8.388677
+linear_spring_z/stiffness = 0.0
+linear_spring_z/damping = 0.0
+angular_limit_z/upper_angle = 0.51869625
+angular_limit_z/lower_angle = -2.0992975
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/enabled = true
+angular_spring_z/stiffness = 27.543415
+angular_spring_z/damping = 2.7543414
+metadata/generated_connection_kind = "Limb"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, -0.38494694, 0.9229387)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.7881393e-07, -1, -0.1)
+metadata/generated_joint_frame_b = Transform3D(0.7036317, -0.71056485, 0, 0.71056485, 0.7036317, 0, 0, 0, 1, -0.56, 0.18851519, 0.1)
+metadata/spider_axial_slide = {
+"connection": "root",
+"damping": 8.388676340708523,
+"effective_mass": 0.08344370660136212,
+"half_travel": 0.04,
+"stiffness": 210.83043172249924,
+"upper": &"Leg_8_Limb_1",
+"upper_length": 2.0
+}
+metadata/spider_independent_root = true
+metadata/authored_walk_limits = Vector3(0, 0, 1.3089969)
+metadata/spider_world_angle = {
+"child_is_a": true,
+"initial_angle": 0.7903006623651115,
+"parent_path": NodePath("../../Torso_Front"),
+"parent_rest_basis": Basis(1, 0, 0, 0, 1, 0, 0, 0, 1)
+}
+metadata/diagnostic_activation_frames = {
+"a": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.7881393e-07, -1, -0.1),
+"a_id": 91033176609,
+"b": Transform3D(0.7036317, -0.71056485, 0, 0.71056485, 0.7036317, 0, 0, 0, 1, -0.56, 0.18851519, 0.1),
+"b_id": 87610624378,
+"frame": 1
+}
+metadata/spider_effective_inertia = 0.09181137934448907
+
+[node name="Joint_017_Limb" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="16" unique_id=1650407658]
+transform = Transform3D(0.7036317, -0.71056485, 0, 0.71056485, 0.7036317, 0, 0, 0, 1, -2.033476, 2.5384235, 0.3)
+node_a = NodePath("../../Leg_8_Limb_1")
+node_b = NodePath("../../Leg_8")
+linear_spring_x/stiffness = 0.0
+linear_spring_x/damping = 0.0
+linear_spring_y/stiffness = 126.33094
+linear_spring_y/damping = 5.0265484
+linear_spring_z/stiffness = 0.0
+linear_spring_z/damping = 0.0
+angular_limit_z/upper_angle = 0.99049354
+angular_limit_z/lower_angle = -1.6275003
+angular_spring_x/stiffness = 30.0
+angular_spring_x/damping = 5.0
+angular_spring_y/stiffness = 30.0
+angular_spring_y/damping = 5.0
+angular_spring_z/enabled = true
+angular_spring_z/stiffness = 26.580671
+angular_spring_z/damping = 2.6580672
+metadata/generated_connection_kind = "Limb"
+metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0.8502154, 0.526435)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.15601057, 0.9191804, 0.10000001)
+metadata/generated_joint_frame_b = Transform3D(-0.44573233, 0.89516616, 0, -0.89516616, -0.44573233, 0, 0, 0, 1, -0.002808094, -1.2243208, -0.099999994)
+metadata/spider_axial_slide = {
+"connection": "knee",
+"damping": 5.026548320645075,
+"effective_mass": 0.05,
+"half_travel": 0.0,
+"stiffness": 126.33093821642144,
+"upper": &"Leg_8_Limb_1",
+"upper_length": 2.0
+}
+metadata/spider_independent_root = false
+metadata/authored_walk_limits = Vector3(0, 0, 1.3089969)
+metadata/spider_world_angle = {
+"child_is_a": false,
+"initial_angle": -0.3185034082019347,
+"parent_path": NodePath("../../Leg_8_Limb_1"),
+"parent_rest_basis": Basis(0.7036317, -0.71056485, 0, 0.71056485, 0.7036317, 0, 0, 0, 1)
+}
+metadata/diagnostic_activation_frames = {
+"a": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.9604645e-08, 0.99999976, 0.10000001),
+"a_id": 91033176609,
+"b": Transform3D(-0.44573233, 0.89516616, 0, -0.89516616, -0.44573233, 0, 0, 0, 1, 0, -1.3999997, -0.099999994),
+"b_id": 91234503211,
+"frame": 1
+}
+metadata/spider_hole_aligned = true
+
+[node name="Joint_018_Neck" type="Generic6DOFJoint3D" parent="GeneratedParts/Joints" index="17" unique_id=1074885981]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.68, 1.1103677, 0)
 node_a = NodePath("../../Torso_Front")
 node_b = NodePath("../../Head")
 linear_limit_x/upper_distance = 0.06
@@ -1329,5 +2707,32 @@ angular_spring_z/stiffness = 30.0
 angular_spring_z/damping = 5.0
 metadata/generated_connection_kind = "Neck"
 metadata/generated_rest_b_relative_a = Quaternion(0, 0, 0, 1)
-metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.72, 0, 0)
-metadata/generated_joint_frame_b = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2199998, 0, 0)
+metadata/generated_joint_frame_a = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.68, 0, 0)
+metadata/generated_joint_frame_b = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.30499995, 0, 0)
+metadata/diagnostic_activation_frames = {
+"a": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.68, 0, 0),
+"a_id": 87610624378,
+"b": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.30499995, 0, 0),
+"b_id": 91435829813,
+"frame": 1
+}
+
+[editable path="GeneratedParts/Torso_Front"]
+[editable path="GeneratedParts/Torso_Rear"]
+[editable path="GeneratedParts/Leg_1_Limb_1"]
+[editable path="GeneratedParts/Leg_1"]
+[editable path="GeneratedParts/Leg_2_Limb_1"]
+[editable path="GeneratedParts/Leg_2"]
+[editable path="GeneratedParts/Leg_3_Limb_1"]
+[editable path="GeneratedParts/Leg_3"]
+[editable path="GeneratedParts/Leg_4_Limb_1"]
+[editable path="GeneratedParts/Leg_4"]
+[editable path="GeneratedParts/Leg_5_Limb_1"]
+[editable path="GeneratedParts/Leg_5"]
+[editable path="GeneratedParts/Leg_6_Limb_1"]
+[editable path="GeneratedParts/Leg_6"]
+[editable path="GeneratedParts/Leg_7_Limb_1"]
+[editable path="GeneratedParts/Leg_7"]
+[editable path="GeneratedParts/Leg_8_Limb_1"]
+[editable path="GeneratedParts/Leg_8"]
+[editable path="GeneratedParts/Head"]

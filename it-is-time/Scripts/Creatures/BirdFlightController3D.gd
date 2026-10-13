@@ -65,6 +65,8 @@ var _elapsed := 0.0
 var _fold_ratio := 0.0
 var _initial_state_pending := true
 var _standing_contact_elapsed := 0.0
+var _heading_goal := 0.0
+var _heading_initialized := false
 
 func _ready() -> void:
 	add_to_group(&"bird_physics_diagnostics")
@@ -97,6 +99,7 @@ func refresh_physics_query_cache() -> void:
 	_fold_ratio = 0.0
 	_initial_state_pending = true
 	_standing_contact_elapsed = 0.0
+	_heading_initialized = false
 	_character_enabled = true
 	_movement = get_parent().get_node_or_null("GeneratedLegStepMovementController3D")
 	var container := get_parent().get_node_or_null("GeneratedParts")
@@ -154,6 +157,7 @@ func _set_state(next: State, reason: String = "control_disabled") -> void:
 		if _alive(leg.body): leg.body.axis_lock_angular_z = false if next == State.AIRBORNE or _landing_transition else leg.lock_z
 	if is_instance_valid(_movement):
 		if next == State.AIRBORNE:
+			_heading_initialized = false
 			_movement.cancel_step(&"flight")
 			_movement.release_all_support_pins()
 			_movement._release_all_foot_heading_locks()
@@ -302,6 +306,22 @@ func _apply_flight_posture(delta: float, structure: Dictionary) -> void:
 	var error := axis.normalized()*angle
 	var denominator := 1.0+flight_pose_damping*delta+flight_pose_strength*delta*delta
 	var correction := ((error*flight_pose_strength-Vector3(structure.angular_velocity).slide(Vector3.UP)*(flight_pose_damping+flight_pose_strength*delta))/denominator).limit_length(maximum_flight_pose_acceleration)
+	var heading := atan2(-_torso.global_basis.x.z, _torso.global_basis.x.x)
+	if not _heading_initialized:
+		_heading_goal = heading
+		_heading_initialized = true
+	var source: Node = _movement.get_player_command_source() if is_instance_valid(_movement) else null
+	if source != null and source.has_method("get_generated_facing_direction"):
+		var command: Vector3 = source.get_generated_facing_direction(delta)
+		if not command.slide(Vector3.UP).is_zero_approx(): _heading_goal = atan2(-command.z, command.x)
+	var heading_error := wrapf(_heading_goal - heading, -PI, PI)
+	if absf(heading_error) > deg_to_rad(175.0): heading_error = -absf(heading_error) if cos(_heading_goal) < 0.0 else absf(heading_error)
+	var rate_limit := deg_to_rad(_movement._motion_setting("turning_speed_degrees", 60.0)) if is_instance_valid(_movement) else deg_to_rad(60.0)
+	var acceleration_limit := minf(maximum_flight_pose_acceleration, rate_limit * 4.0)
+	var requested_rate := clampf(heading_error * 3.0, -rate_limit, rate_limit)
+	requested_rate = clampf(requested_rate, -sqrt(2.0 * acceleration_limit * absf(heading_error)), sqrt(2.0 * acceleration_limit * absf(heading_error)))
+	var yaw_acceleration := clampf((requested_rate - Vector3(structure.angular_velocity).y) * 8.0, -acceleration_limit, acceleration_limit)
+	correction += Vector3.UP * yaw_acceleration
 	var torque: Vector3 = Basis(structure.inertia)*correction
 	if flight_absolute_torque_limit_enabled: torque = torque.limit_length(maximum_pose_torque)
 	var submitted_torque := Vector3.ZERO
@@ -327,6 +347,9 @@ func _apply_flight_posture(delta: float, structure: Dictionary) -> void:
 		_last_command["structure_velocity"] = structure.velocity
 		_last_command["posture_acceleration"] = correction
 		_last_command["absolute_torque_limit_enabled"] = flight_absolute_torque_limit_enabled
+		_last_command["heading_goal_degrees"] = rad_to_deg(_heading_goal)
+		_last_command["heading_error_degrees"] = rad_to_deg(heading_error)
+		_last_command["requested_yaw_rate_degrees"] = rad_to_deg(requested_rate)
 
 func get_leg_tuck_target(leg: Dictionary) -> Vector3:
 	var support: PhysicalBodyPart3D = leg.support

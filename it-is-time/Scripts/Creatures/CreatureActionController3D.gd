@@ -159,7 +159,7 @@ func try_start_action(action_id: StringName = &"foreleg_stomp") -> bool:
 				if not feet.has(foot): shared = true
 			_torsos.append({"body": body,"segment": id,"height": body.global_position.dot(_up),"lift": length*_data.torso_lift_ratio*(0.5 if shared else 1.0),"force": Vector3.ZERO})
 	for row: Dictionary in _feet: _capture_forward_plan(row)
-	_movement.begin_action_control(feet,bodies)
+	_movement.begin_action_control(feet,bodies,self)
 	_reason = &"started"
 	_shockwaves_spawned = 0
 	_confirmation = 0.0
@@ -432,7 +432,7 @@ func cancel_action(reason: StringName = &"cancelled") -> void:
 	if not is_active(): return
 	if reason != &"completed" or _reason == &"started": _reason = reason
 	_cooldown = _data.cooldown
-	if is_instance_valid(_movement): _movement.end_action_control()
+	if is_instance_valid(_movement): _movement.end_action_control(self)
 	_set_phase(Phase.IDLE)
 	_feet.clear()
 	_torsos.clear()

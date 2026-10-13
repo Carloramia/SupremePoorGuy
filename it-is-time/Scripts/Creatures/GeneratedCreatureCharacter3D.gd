@@ -8,6 +8,7 @@ var _control_perf: PERFORMANCE_STATS = PERFORMANCE_STATS.new()
 
 const PART_SCENE: PackedScene = preload("res://Scenes/Creatures/Bodyparts/PhysicalTestCreatureParts/TestCreature_Part.tscn")
 const PART_GEOMETRY = preload("res://Scripts/Creatures/Generators/GeneratedPartGeometry.gd")
+const PART_SNAPSHOT = preload("res://Scripts/Creatures/Generators/ManualPartSnapshot.gd")
 const DAMAGE_SCENE: PackedScene = preload("res://Scenes/Creatures/Components/CharacterDamageController3D.tscn")
 const GEOMETRY = preload("res://Scripts/Creatures/CreatureBoxGeometry.gd")
 const SEGMENT_CONSTRAINT = preload("res://Scripts/Creatures/SegmentConstraint3D.gd")
@@ -128,6 +129,16 @@ func _capture_manual_layout() -> bool:
 		layout.merge({"name": str(body.name), "part_key": key, "role": str(body.get_meta(&"generated_role", "")), "size": body.get_meta(&"generated_framework_size", body.get_meta(&"generated_size", Vector3.ONE)), "transform": pose}, true)
 		layout.erase("scene_rule")
 		layout.size /= multiplier
+		var rule: Resource = generator.get_part_scene_rule(_get_generated_part_type(layout), str(body.name), key)
+		var source_scene: PackedScene = PART_SCENE if rule == null else rule.part_scene
+		if source_scene == null:
+			push_warning("[manual_layout] Missing source Part scene for %s; previous layout retained." % body.name)
+			return false
+		var snapshot := PART_SNAPSHOT.capture(body, multiplier, source_scene.resource_path)
+		if snapshot.is_empty(): return false
+		layout["internal_snapshot"] = snapshot
+		var current_bounds := PART_GEOMETRY.bounds(body)
+		if current_bounds.size != Vector3.ZERO: layout.size = current_bounds.size / multiplier
 		if layout.has("connector_span"): layout.connector_span /= multiplier
 		if body.has_meta(&"body_segment_id"): layout["segment_id"] = int(body.get_meta(&"body_segment_id"))
 		layout["sub_torso"] = BODY_PART.BodyPartTag.SubTorso in body.tags
@@ -438,10 +449,7 @@ func _perf_impl__on_framework_generated(plan: Dictionary) -> void:
 	var previous := get_node_or_null("GeneratedParts")
 	# The runtime-only action script is a placeholder while generating in the editor.
 	if not Engine.is_editor_hint():
-		var action := get_node_or_null("CreatureActionController3D")
-		if action != null: action.cancel_action(&"regenerated")
-		var dive := get_node_or_null("BirdDiveAttackController3D")
-		if dive != null: dive.cancel_action(&"regenerated")
+		cancel_character_actions(&"regenerated")
 	if previous != null:
 		remove_child(previous)
 		previous.queue_free()
@@ -610,6 +618,8 @@ func _activate_parts(container: Node) -> void:
 		if node.has_method("refresh_physics_query_cache"):
 			node.call("refresh_physics_query_cache")
 	_sync_planar_constraints()
+	if not Engine.is_editor_hint():
+		preload("res://Scripts/Debug/JointMotionDiagnostics3D.gd").capture_activation(container)
 
 func _is_limb_subtorso_pair(a: PhysicalBodyPart3D, b: PhysicalBodyPart3D) -> bool:
 	return (BODY_PART.BodyPartTag.LegLimb in a.tags and BODY_PART.BodyPartTag.SubTorso in b.tags) or (BODY_PART.BodyPartTag.LegLimb in b.tags and BODY_PART.BodyPartTag.SubTorso in a.tags)
@@ -1014,6 +1024,10 @@ func _instantiate_blueprint(blueprint: Dictionary, generator_transform: Transfor
 			material.albedo_color = layout.get("feather_color",Color.WHITE)
 			material.roughness = 0.9
 			mesh.material_override = material
+		if blueprint.get("manual_layout", false) and layout.has("internal_snapshot"):
+			if PART_SNAPSHOT.apply_to(part, layout.internal_snapshot, float(blueprint.get("overall_scale",1.0)), scene.resource_path):
+				var restored_bounds := PART_GEOMETRY.bounds(part)
+				if restored_bounds.size != Vector3.ZERO: size = restored_bounds.size
 		var part_type := _get_generated_part_type(layout)
 		var density := mass_density if density_data == null else density_data.get_density(part_type, mass_density)
 		var minimum_mass := minimum_feather_mass if layout.role == "Feather" else minimum_part_mass

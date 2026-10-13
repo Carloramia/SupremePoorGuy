@@ -1,0 +1,9 @@
+[gd_scene format=3]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Spider/Calibrated/Legs/Left_2/LowerLeg.tscn" id="base"]
+[ext_resource type="ArrayMesh" path="res://Resources/Meshes/Spider/FrameFitted/Legs/Left_2/LowerLeg.res" id="mesh"]
+[node name="SpiderFrameFittedLowerLeg" instance=ExtResource("base")]
+metadata/source_png = "res://Assets/2DResources/Spider/FrameFitted/Limbs/Left_2/LowerLeg.png"
+metadata/original_source_png = "res://Assets/2DResources/Spider/Separated/Limbs/Left_2/LowerLeg.png"
+metadata/texture_pixels_per_unit = 570.0
+[node name="PaperVolume" parent="Model" index="0"]
+mesh = ExtResource("mesh")

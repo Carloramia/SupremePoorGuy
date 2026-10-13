@@ -30,7 +30,7 @@ func run() -> void:
 	# Remove every physical leg-to-Torso connection. Floating Torso height
 	# must survive without any possible leg contact or constraint support.
 	for joint: Generic6DOFJoint3D in actor.get_node("GeneratedParts/Joints").get_children():
-		if joint.get_meta(&"spider_independent_root", false):
+		if joint.get_meta(&"spider_axial_slide", {}).get("connection", "") == "root":
 			joint.node_a = NodePath("")
 			joint.node_b = NodePath("")
 	for part: Node in actor.get_node("GeneratedParts").get_children():

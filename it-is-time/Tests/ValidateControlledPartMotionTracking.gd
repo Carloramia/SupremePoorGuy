@@ -31,6 +31,7 @@ func run() -> void:
 	source.add_to_group(&"player_controller_3d")
 	source.target = actor
 	var console := root.get_node("RuntimeConsole")
+	console.execute_command("motiondetail full")
 	var body_count := 0
 	var broken: PhysicalBodyPart3D
 	for body: RigidBody3D in actor._get_physical_body_parts():

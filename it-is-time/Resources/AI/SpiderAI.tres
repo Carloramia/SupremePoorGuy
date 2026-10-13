@@ -1,5 +1,16 @@
-[gd_resource type="Resource" script_class="NPCBehaviorData" format=3]
-[ext_resource type="Script" path="res://Scripts/Creatures/NPCBehaviorData.gd" id="1"]
+[gd_resource type="Resource" script_class="NPCBehaviorData" format=3 uid="uid://j5ew0sdm3ip4"]
+
+[ext_resource type="Script" uid="uid://d4d3pxjthc0yt" path="res://Scripts/Creatures/NPCBehaviorData.gd" id="1"]
+[ext_resource type="Script" uid="uid://bqypvnhjbnrap" path="res://Scripts/Creatures/NPCAttackData.gd" id="2"]
+
+[sub_resource type="Resource" id="Attack_spider_pounce"]
+script = ExtResource("2")
+action_id = &"spider_pounce"
+maximum_range = 100.0
+preferred_distance = 6.0
+maximum_duration = 5.0
+
 [resource]
 script = ExtResource("1")
 preferred_distance = 6.0
+attacks = Array[ExtResource("2")]([SubResource("Attack_spider_pounce")])

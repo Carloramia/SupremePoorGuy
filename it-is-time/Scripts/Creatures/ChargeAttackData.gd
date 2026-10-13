@@ -1,6 +1,6 @@
+@tool
 class_name ChargeAttackData
-extends Resource
-@export var enabled: bool = true
+extends "res://Scripts/Creatures/CreatureAttackData.gd"
 @export_range(0.01, 5.0, 0.01) var z_tolerance: float = 0.3
 @export_range(0.1, 30.0, 0.1) var starting_speed: float = 2.0
 @export_range(0.1, 60.0, 0.1) var maximum_speed: float = 12.0
@@ -34,12 +34,13 @@ extends Resource
 ## Allow all feet to step using a bounded flight lease from real ground contact.
 @export var allow_all_feet_airborne: bool = true
 @export_range(0.0, 3.0, 0.1) var airborne_timeout: float = 0.5
-@export_range(0.0, 20.0, 0.1) var cooldown: float = 5.0
 @export_range(0.1, 3.0, 0.05) var weapon_length_ratio: float = 0.8
 @export_range(0.1, 2.0, 0.05) var weapon_radius_ratio: float = 0.45
 @export_flags_3d_physics var obstacle_mask: int = 1
 @export_range(0.01, 5.0, 0.01) var navigation_endpoint_tolerance: float = 0.2
 @export_range(0.1, 10.0, 0.1) var navigation_projection_tolerance: float = 2.0
+func _default_cooldown() -> float: return 5.0
+
 func is_valid() -> bool:
 	for value: float in [head_lower_angle_degrees,head_lower_transition_time,touchdown_brake_margin,touchdown_brake_duration,touchdown_stop_time,touchdown_maximum_acceleration,z_tolerance,starting_speed,maximum_speed,acceleration,deceleration,velocity_gain,maximum_acceleration,pass_margin,alignment_timeout,maximum_charge_time,maximum_braking_time,stuck_timeout,airborne_timeout,cooldown,weapon_length_ratio,weapon_radius_ratio,navigation_endpoint_tolerance,navigation_projection_tolerance]:
 		if not is_finite(value) or value < 0.0: return false

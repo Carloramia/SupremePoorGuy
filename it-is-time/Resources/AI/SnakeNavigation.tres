@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="NPCBehaviorData" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Creatures/NPCBehaviorData.gd" id="1"]
+[ext_resource type="Script" path="res://Scripts/Creatures/NPCAttackData.gd" id="2"]
+
+[sub_resource type="Resource" id="Attack_bite"]
+script = ExtResource("2")
+action_id = &"snake_lunge_bite"
+receiver_path = NodePath("SnakeBiteAttackController3D")
+minimum_range = 0.0
+maximum_range = 100.0
+cooldown = 2.8
+charge_time = 0.7
+prediction_samples = 16
+maximum_duration = 15.0
+
+[resource]
+script = ExtResource("1")
+preferred_distance = 5.0
+require_line_of_sight = false
+attacks = Array[ExtResource("2")]([SubResource("Attack_bite")])

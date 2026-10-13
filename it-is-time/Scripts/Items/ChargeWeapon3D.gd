@@ -7,13 +7,9 @@ var _previous_center := Vector3.ZERO
 var _has_previous_center := false
 
 func attach_to_body(body: PhysicalBodyPart3D, length_ratio: float, radius_ratio: float) -> void:
-	freeze = true
-	collision_layer = 0
-	collision_mask = 0
-	can_be_picked_up = false
 	attached_body = body
 	var character: Node = preload("res://Scripts/Player/PlayerControlContext.gd").character_of(body)
-	set_wielder(character, character.get_faction_id())
+	prepare_temporary_attack(character)
 	body.broken.connect(_on_body_broken)
 	attached_shape = CollisionShape3D.new()
 	attached_shape.name = "ChargeWeaponBox"
@@ -33,8 +29,8 @@ func update_ground_box(direction: float, terrain_mask: int, deal_damage: bool = 
 	var body_size: Vector3 = attached_body.get_meta(&"generated_size",Vector3.ONE)
 	var center := attached_body.global_position
 	center.x += direction*(body_size.x*0.45 + box.size.x*0.5)
-	var exclude: Array[RID] = [get_rid()]
-	for part: RigidBody3D in wielder_character._get_physical_body_parts(): exclude.append(part.get_rid())
+	var exclude: Array[RID] = wielder_character.get_physical_body_rids()
+	exclude.append(get_rid())
 	var ray := PhysicsRayQueryParameters3D.create(center+Vector3.UP*maxf(body_size.y,1.0),center-Vector3.UP*maxf(body_size.y*8.0,100.0),terrain_mask,exclude)
 	var ground := {}
 	# Dynamic characters are not terrain even if they share its collision layer.

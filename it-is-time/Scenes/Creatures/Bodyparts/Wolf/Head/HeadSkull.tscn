@@ -1,0 +1,35 @@
+[gd_scene load_steps=5 format=3]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/_PhysicalSampleBodyParts.tscn" id="1_base"]
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/Wolf/Models/Head/HeadSkull.glb" id="2_model"]
+[ext_resource type="ArrayMesh" path="res://Resources/Meshes/Wolf/Head/HeadSkull.res" id="3_mesh"]
+[sub_resource type="ConvexPolygonShape3D" id="Shape"]
+resource_local_to_scene = true
+points = PackedVector3Array(-2.55176923, 0.35376923, -0.01000000, -2.50303846, 0.45123077, -0.01000000, -1.28476923, 2.15680769, -0.01000000, -1.23603846, 2.20553846, -0.01000000, -0.84619231, 2.49792308, -0.01000000, -0.74873077, 2.49792308, -0.01000000, 0.85938462, 1.96188462, -0.01000000, 1.05430769, 1.62076923, -0.01000000, 1.05430769, 1.52330769, -0.01000000, 0.95684615, 1.27965385, -0.01000000, 0.27461538, -0.18226923, -0.01000000, 0.22588462, -0.23100000, -0.01000000, 0.12842308, -0.27973077, -0.01000000, -0.11523077, -0.27973077, -0.01000000, -2.16192308, 0.01265385, -0.01000000, -2.35684615, 0.11011538, -0.01000000, -2.45430769, 0.15884615, -0.01000000, -2.55176923, 0.25630769, -0.01000000, -2.55176923, 0.35376923, 0.01000000, -2.50303846, 0.45123077, 0.01000000, -1.28476923, 2.15680769, 0.01000000, -1.23603846, 2.20553846, 0.01000000, -0.84619231, 2.49792308, 0.01000000, -0.74873077, 2.49792308, 0.01000000, 0.85938462, 1.96188462, 0.01000000, 1.05430769, 1.62076923, 0.01000000, 1.05430769, 1.52330769, 0.01000000, 0.95684615, 1.27965385, 0.01000000, 0.27461538, -0.18226923, 0.01000000, 0.22588462, -0.23100000, 0.01000000, 0.12842308, -0.27973077, 0.01000000, -0.11523077, -0.27973077, 0.01000000, -2.16192308, 0.01265385, 0.01000000, -2.35684615, 0.11011538, 0.01000000, -2.45430769, 0.15884615, 0.01000000, -2.55176923, 0.25630769, 0.01000000)
+[node name="Wolf_HeadSkull" instance=ExtResource("1_base")]
+mass = 0.6
+geometry_mode = 1
+custom_model_path = NodePath("Model")
+paper_volume_enabled = true
+paper_volume_thickness = 0.08
+sprite_visible = false
+mesh_visible = true
+tags = Array[int]([3])
+metadata/source_png = "res://Assets/2DResources/Wolf/Separated/Base/03_head_without_jaw.png"
+metadata/pivot_is_initial_estimate = true
+metadata/wolf_forward_axis = "+X"
+[node name="CollisionShape3D" parent="." index="0"]
+rotation = Vector3(0, 3.141592653589793, 0)
+position = Vector3(0, 0, 0)
+shape = SubResource("Shape")
+[node name="MeshInstance3D" parent="." index="2"]
+visible = false
+mesh = null
+[node name="Model" parent="." instance=ExtResource("2_model")]
+rotation = Vector3(0, 3.141592653589793, 0)
+[node name="PaperVolume" type="MeshInstance3D" parent="Model"]
+scale = Vector3(1, 1, 0.08)
+mesh = ExtResource("3_mesh")
+metadata/flat_collision_depth = 0.02
+[node name="JointIn" type="Marker3D" parent="."]
+[node name="JointOut" type="Marker3D" parent="."]
+position = Vector3(0.80139231, 0.42, 0.0)

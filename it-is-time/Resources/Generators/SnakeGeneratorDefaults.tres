@@ -1,0 +1,28 @@
+[gd_resource type="Resource" format=3 uid="uid://cx1xwsx1y8owi"]
+
+[ext_resource type="Script" uid="uid://c4l6ywxm51pi" path="res://Scripts/Creatures/Generators/CreatureGeneratorDefaults.gd" id="1"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Snake/Head/Snake3UpperJaw.tscn" id="2_head"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Snake/Mouth/Snake3LowerJaw.tscn" id="3_jaw"]
+
+[sub_resource type="Curve" id="Curve_torso_scale"]
+resource_local_to_scene = true
+_limits = [0.1, 2.0, 0.0, 1.0]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[resource]
+script = ExtResource("1")
+parameters = {
+"body_length": 18.0,
+"head_overlap_ratio": 0.15,
+"jaw_closed_angle_degrees": 32.0,
+"overall_scale": 1.0,
+"part_width": 0.4,
+"raised_body_ratio": 0.35,
+"raised_height_ratio": 0.8,
+"s_bend_ratio": 0.45,
+"segment_size_curve": SubResource("Curve_torso_scale"),
+"snake_head_scene": ExtResource("2_head"),
+"snake_jaw_scene": ExtResource("3_jaw"),
+"torso_overlap_percent": 20.0
+}

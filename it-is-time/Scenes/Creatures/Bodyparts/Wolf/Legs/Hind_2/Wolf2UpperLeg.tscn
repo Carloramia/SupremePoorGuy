@@ -1,0 +1,45 @@
+[gd_scene format=3 uid="uid://dkna6830e6hqx"]
+
+[ext_resource type="PackedScene" uid="uid://y2gn44xh763h" path="res://Scenes/Creatures/Bodyparts/_PhysicalSampleBodyParts.tscn" id="1_base"]
+[ext_resource type="PackedScene" uid="uid://lgfxitt32io5" path="res://Assets/3DResources/Creatures/Wolf/Models/Legs/Hind_2/Wolf2UpperLeg.glb" id="2_model"]
+[ext_resource type="ArrayMesh" path="res://Resources/Meshes/Wolf/Legs/Hind_2/Wolf2UpperLeg.res" id="3_mesh"]
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_78h0l"]
+resource_local_to_scene = true
+points = PackedVector3Array(-0.7771921, -0.12662978, -0.04, -0.68723226, 0.05442146, -0.04, -0.5073126, 0.23547271, -0.04, -0.3273929, 0.32599834, -0.04, -0.10249331, 0.37126115, -0.04, -0.05751339, 0.37126115, -0.04, 0.21236613, 0.32599834, -0.04, 0.30232596, 0.28073552, -0.04, 2.2814424, -0.76030916, -0.04, 2.3264225, -0.805572, -0.04, 2.3714023, -0.8960976, -0.04, 2.3714023, -1.1224116, -0.04, 2.3264225, -1.2129372, -0.04, 2.2364626, -1.3034629, -0.04, 2.1465027, -1.3487257, -0.04, 1.0220047, -1.3939885, -0.04, 0.52722555, -1.3939885, -0.04, 0.25734606, -1.3034629, -0.04, 0.1673862, -1.2582, -0.04, -0.46233267, -0.9413604, -0.04, -0.5972724, -0.8508348, -0.04, -0.6422523, -0.805572, -0.04, -0.7322122, -0.66978353, -0.04, -0.7771921, -0.5792579, -0.04, -0.7771921, -0.12662978, 0.04, -0.68723226, 0.05442146, 0.04, -0.5073126, 0.23547271, 0.04, -0.3273929, 0.32599834, 0.04, -0.10249331, 0.37126115, 0.04, -0.05751339, 0.37126115, 0.04, 0.21236613, 0.32599834, 0.04, 0.30232596, 0.28073552, 0.04, 2.2814424, -0.76030916, 0.04, 2.3264225, -0.805572, 0.04, 2.3714023, -0.8960976, 0.04, 2.3714023, -1.1224116, 0.04, 2.3264225, -1.2129372, 0.04, 2.2364626, -1.3034629, 0.04, 2.1465027, -1.3487257, 0.04, 1.0220047, -1.3939885, 0.04, 0.52722555, -1.3939885, 0.04, 0.25734606, -1.3034629, 0.04, 0.1673862, -1.2582, 0.04, -0.46233267, -0.9413604, 0.04, -0.5972724, -0.8508348, 0.04, -0.6422523, -0.805572, 0.04, -0.7322122, -0.66978353, 0.04, -0.7771921, -0.5792579, 0.04)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2skcl"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+
+[node name="Wolf_Wolf2UpperLeg" unique_id=752940203 instance=ExtResource("1_base")]
+mass = 0.3
+tags = Array[int]([5])
+geometry_mode = 1
+custom_model_path = NodePath("Model")
+paper_volume_enabled = true
+metadata/source_png = "res://Assets/2DResources/Wolf/Separated/Limbs/08_wolf2_hind2_upper.png"
+metadata/pivot_is_initial_estimate = true
+metadata/wolf_forward_axis = "+X"
+
+[node name="CollisionShape3D" parent="." index="0" unique_id=1899992271]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+shape = SubResource("ConvexPolygonShape3D_78h0l")
+
+[node name="MeshInstance3D" parent="." index="2" unique_id=1504749449]
+visible = false
+mesh = null
+
+[node name="Model" parent="." index="3" unique_id=1346195859 instance=ExtResource("2_model")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+
+[node name="PaperVolume" type="MeshInstance3D" parent="Model" index="1" unique_id=976425533]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.08, 0, 0, 0)
+mesh = ExtResource("3_mesh")
+surface_material_override/2 = SubResource("StandardMaterial3D_2skcl")
+metadata/flat_collision_depth = 0.02
+
+[node name="JointIn" type="Marker3D" parent="." index="4" unique_id=1938058033]
+
+[node name="JointOut" type="Marker3D" parent="." index="5" unique_id=231254839]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8933735, -1.05, 0)

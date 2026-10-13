@@ -80,6 +80,11 @@ var _startup_status: StringName = &"idle"
 
 @export_group("SubTorso Support")
 @export var sub_torso_support_enabled: bool = true
+## Carry the torso and suspended attachments without relying on stance torque.
+@export var independent_torso_height_support: bool = false
+## Extra standing support yields to an action's established lift/landing profile.
+@export var locomotion_height_support_enabled: bool = false
+@export_range(1.0, 2.0, 0.05) var locomotion_support_weight_limit: float = 1.4
 @export_range(0.0, 1.0, 0.05) var sub_torso_weight_share: float = 0.5
 @export_range(0.0, 100.0, 0.1) var sub_torso_height_gain: float = 12.0
 @export_range(0.0, 2.0, 0.05) var sub_torso_damping_ratio: float = 1.0
@@ -89,6 +94,8 @@ var _startup_status: StringName = &"idle"
 ## Keep some downward load on the feet even while correcting body height.
 @export_range(0.0, 0.95, 0.05) var auxiliary_support_weight_limit: float = 0.85
 @export_range(0.8, 1.0, 0.005) var standing_chain_reach_ratio: float = 0.98
+## Zero preserves the sphere envelope. Bent chains can reserve a smaller planted travel budget.
+@export_range(0.0, 0.5, 0.01) var grounded_stance_travel_ratio: float = 0.0
 @export_group("Grounded Movement Feedback")
 @export_range(0.0, 30.0, 0.1) var maximum_grounded_drive_acceleration: float = 4.0
 @export var grounded_directional_feedback: bool = true
@@ -182,6 +189,12 @@ var _last_step_failure: StringName = &""
 @export_range(1.0, 180.0, 1.0) var segment_layout_turn_speed_degrees: float = 45.0
 @export_range(0.0, 90.0, 1.0) var segment_layout_heading_lead_degrees: float = 12.0
 @export var segment_layout_turn_steps_enabled: bool = true
+## Opt in per species; existing stable creatures retain their tuned turn controller.
+@export var stable_turn_control_enabled: bool = false
+@export_range(1.0, 8.0, 0.1) var turn_contact_force_multiplier: float = 1.0
+@export_range(1.0, 2.0, 0.1) var turn_effective_inertia_scale: float = 1.0
+@export var turn_foot_rate_servo_enabled: bool = false
+@export var turn_rate_integral_enabled: bool = false
 @export_range(1.0, 30.0, 0.5) var segment_layout_heading_tolerance_degrees: float = 10.0
 @export_range(1.0, 45.0, 1.0) var segment_layout_step_angle_degrees: float = 10.0
 @export_range(0.0, 30.0, 0.1) var turn_leg_traction_gain: float = 8.0
@@ -248,6 +261,11 @@ var _segment_layout_initialized: bool = false
 var _segment_target_yaw: float = 0.0
 var _segment_goal_yaw: float = 0.0
 var _segment_heading_initialized: bool = false
+var _turn_command_initialized: bool = false
+var _turn_command_goal: float = 0.0
+var _turn_command_pending: bool = false
+var _turn_stable_elapsed: float = 0.0
+var _turn_rate_integral: float = 0.0
 
 @export_group("Generated Stance Stability")
 ## Restores the generated relative joint pose only on grounded, non-stepping chains.
@@ -298,6 +316,7 @@ var _foot_alignment_torques: Dictionary = {}
 var recovery_control_active: bool = false
 var _action_feet: Dictionary = {}
 var _action_body_weights: Dictionary = {}
+var _action_owners: Dictionary = {}
 
 func get_creature_action_controller() -> Node:
 	return get_parent().get_node_or_null("CreatureActionController3D")
@@ -305,9 +324,16 @@ func get_creature_action_controller() -> Node:
 func is_action_turn_blocked() -> bool:
 	return _foot_heading_turn_active()
 
-func begin_action_control(feet: Array[RigidBody3D], bodies: Array[RigidBody3D]) -> void:
-	if get_parent().has_method("set_limb_action_limits"): get_parent().set_limb_action_limits(feet,true)
+func begin_action_control(feet: Array[RigidBody3D], bodies: Array[RigidBody3D], owner: Node = null) -> void:
+	var key: Node = owner if owner != null else self
+	_action_owners[key] = {"feet": feet.duplicate(), "bodies": bodies.duplicate()}
+	if key != self:
+		var release := end_action_control.bind(key)
+		if not key.tree_exiting.is_connected(release): key.tree_exiting.connect(release)
+	var previously_claimed := _action_feet.duplicate()
+	_refresh_action_claims()
 	for foot: RigidBody3D in feet:
+		if not is_instance_valid(foot) or previously_claimed.has(foot): continue
 		_action_feet[foot] = false
 		_release_support_pin(foot)
 		_gallop_contacts.erase(foot)
@@ -315,12 +341,32 @@ func begin_action_control(feet: Array[RigidBody3D], bodies: Array[RigidBody3D]) 
 		for index: int in range(_active_steps.size()-1,-1,-1):
 			if _active_steps[index].leg == foot: _active_steps.remove_at(index)
 	if feet.has(_active_leg): _current_step = StepMotion.new()
-	for body: RigidBody3D in bodies: _action_body_weights[body] = 0.0
 
-func end_action_control() -> void:
-	if get_parent().has_method("set_limb_action_limits"): get_parent().set_limb_action_limits([] as Array[RigidBody3D],false)
-	_action_feet.clear()
-	_action_body_weights.clear()
+func end_action_control(owner: Node = null) -> void:
+	if owner == null: _action_owners.clear()
+	elif not _action_owners.erase(owner): return
+	_refresh_action_claims()
+
+func _refresh_action_claims() -> void:
+	var feet: Array[RigidBody3D] = []
+	var bodies: Array[RigidBody3D] = []
+	for claim: Dictionary in _action_owners.values():
+		for foot: Variant in claim.feet:
+			if is_instance_valid(foot) and not foot.is_queued_for_deletion() and not feet.has(foot): feet.append(foot)
+		for body: Variant in claim.bodies:
+			if is_instance_valid(body) and not body.is_queued_for_deletion() and not bodies.has(body): bodies.append(body)
+	for foot: Variant in _action_feet.keys():
+		if not is_instance_valid(foot) or not feet.has(foot): _action_feet.erase(foot)
+	for body: Variant in _action_body_weights.keys():
+		if not is_instance_valid(body) or not bodies.has(body): _action_body_weights.erase(body)
+	for foot: RigidBody3D in feet:
+		if not _action_feet.has(foot): _action_feet[foot] = false
+	for body: RigidBody3D in bodies:
+		if not _action_body_weights.has(body): _action_body_weights[body] = 0.0
+	var actor := get_parent()
+	if actor != null and actor.has_method("set_limb_action_limits"):
+		actor.set_limb_action_limits([] as Array[RigidBody3D],false)
+		if not feet.is_empty(): actor.set_limb_action_limits(feet,true)
 
 func _is_leg_action_controlled(leg: RigidBody3D) -> bool:
 	return _action_feet.has(leg)
@@ -358,6 +404,13 @@ func action_ground_foot(foot: RigidBody3D, normal: Vector3, elapsed: float, _del
 var _chains: Dictionary = {}
 var _chains_ready: bool = false
 var _generated_diagnostic_elapsed: float = 0.0
+var _batch_heading: float = 0.0
+var _batch_heading_ready: bool = false
+var _batch_metrics_ready: bool = false
+var _batch_intact_chains: Dictionary = {}
+var _batch_gait: LegMovementData
+var _batch_gait_ready: bool = false
+var _batch_surface_contacts: Dictionary = {}
 
 func _ready() -> void:
 	parts_root_path = NodePath("../GeneratedParts")
@@ -431,14 +484,23 @@ func get_charge_airborne_support() -> Dictionary:
 	return result
 
 func _get_gait_data() -> LegMovementData:
+	if _movement_batch_active and _batch_gait_ready: return _batch_gait
+	var data := _resolve_generated_gait_data()
+	if _movement_batch_active:
+		_batch_gait = data
+		_batch_gait_ready = true
+	return data
+
+func _resolve_generated_gait_data() -> LegMovementData:
 	var original := super._get_gait_data()
 	if original == null or not _charge_gait_active():
-		_charge_gait_override = null
-		_charge_gait_source = null
-		_charge_retry_until.clear()
-		_charge_retry_scales.clear()
-		_charge_ground_phases.clear()
-		_charge_start_pending = false
+		if not _performance_mode.enabled or _charge_gait_override != null:
+			_charge_gait_override = null
+			_charge_gait_source = null
+			_charge_retry_until.clear()
+			_charge_retry_scales.clear()
+			_charge_ground_phases.clear()
+			_charge_start_pending = false
 		return original
 	if _charge_gait_override == null or _charge_gait_source != original:
 		_charge_gait_source = original
@@ -492,6 +554,13 @@ func _discover_leg_parts() -> Array[RigidBody3D]:
 	return feet
 
 func refresh_physics_query_cache() -> void:
+	_batch_foot_positions.clear()
+	_batch_surface_contacts.clear()
+	_batch_torsos_ready = false
+	_batch_heading_ready = false
+	_batch_metrics_ready = false
+	_batch_gait_ready = false
+	_batch_intact_chains.clear()
 	_release_all_foot_heading_locks()
 	_body_cache_dirty = true
 	_torso_cache_frame = -1
@@ -632,6 +701,11 @@ func _capture_chains() -> void:
 		_chains[foot] = {"bodies": bodies, "joints": joints, "root": current, "anchor": previous_local, "length": length, "rest_rotations": rest_rotations, "stance_weight": 0.0, "stance_torques": []}
 
 func _chain_is_intact(foot: RigidBody3D) -> bool:
+	if not _movement_batch_active: return _check_chain_is_intact(foot)
+	if not _batch_intact_chains.has(foot): _batch_intact_chains[foot] = _check_chain_is_intact(foot)
+	return _batch_intact_chains[foot]
+
+func _check_chain_is_intact(foot: RigidBody3D) -> bool:
 	if not _chains.has(foot): return false
 	for body in _chains[foot].bodies:
 		if not is_instance_valid(body) or _is_body_broken(body): return false
@@ -690,16 +764,20 @@ func _is_landing_point_valid(leg: RigidBody3D, current_foot: Vector3, hit: Dicti
 		_last_landing_rejection_reason = &"limb_chain_broken"
 		return false
 	var chain: Dictionary = _chains[leg]
-	var root_body: RigidBody3D = chain.root
-	var attachment := root_body.to_global(chain.anchor)
+	var attachment := _landing_reach_attachment(leg)
 	var target := _body_position_for_ground_contact(leg, hit.position)
-	if _gallop_active() and _get_gait_data().speed_based_gait:
-		var plan := _get_speed_leg_plan(leg)
-		if not plan.is_empty(): attachment += Vector3(plan.predicted_travel)
 	if target.distance_to(attachment) > float(chain.length) * chain_reach_ratio:
 		_last_landing_rejection_reason = &"limb_chain_reach_exceeded"
 		return false
 	return true
+
+func _landing_reach_attachment(leg: RigidBody3D) -> Vector3:
+	var chain: Dictionary = _chains[leg]
+	var attachment: Vector3 = chain.root.to_global(chain.anchor)
+	if _gallop_active() and _get_gait_data().speed_based_gait:
+		var plan := _get_speed_leg_plan(leg)
+		if not plan.is_empty(): attachment += Vector3(plan.predicted_travel)
+	return attachment
 
 func _capture_hip_joint_limits() -> void:
 	# The foot reaches its Torso through several rotational joints; never stretch their linear limits.
@@ -734,6 +812,10 @@ func _capture_body_segments() -> void:
 	_turn_landing_rejections.clear()
 	_segments.clear()
 	_segment_heading_initialized = false
+	_turn_command_initialized = false
+	_turn_command_pending = false
+	_turn_stable_elapsed = 0.0
+	_turn_rate_integral = 0.0
 	_segment_layout_initialized = false
 	_layout_turn_owned = false
 	_layout_turn_cursor = 0
@@ -801,6 +883,8 @@ func _connected_body_segments(start: int) -> Array[int]:
 	return result
 
 func _update_segment_metrics() -> void:
+	if _movement_batch_active and _batch_metrics_ready: return
+	_batch_metrics_ready = _movement_batch_active
 	for id: int in _segments:
 		var segment: Dictionary = _segments[id]
 		segment.mass = 0.0
@@ -961,6 +1045,14 @@ func _get_extension_step_demand(foot: RigidBody3D, direction: Vector3) -> Dictio
 	if not is_leg_grounded(foot):
 		result.reason = "not_grounded"
 		return result
+	if stable_turn_control_enabled and _layout_turn_owned and _turn_command_pending and not _charge_gait_active():
+		# Translation's reach events must not starve the feet reserved for a turn.
+		var root_body: RigidBody3D = _chains[foot].root
+		var root_error := absf(wrapf(_segment_goal_yaw - atan2(-root_body.global_basis.x.z, root_body.global_basis.x.x), -PI, PI))
+		result.requested = root_error > deg_to_rad(segment_layout_heading_tolerance_degrees)
+		result.reason = "turn_alignment" if result.requested else "turn_aligned"
+		result["step_priority"] = root_error
+		return result
 	if _charge_gait_active() and _physics_elapsed < float(_charge_retry_until.get(foot,0.0)):
 		result.reason = "charge_retry_wait"
 		result["retry_in"] = float(_charge_retry_until[foot])-_physics_elapsed
@@ -986,6 +1078,8 @@ func _get_extension_step_demand(foot: RigidBody3D, direction: Vector3) -> Dictio
 	var lead := clampf(float(plan.get("air_duration",get_leg_motion_profile(foot).swing_duration))*0.15,0.06,0.18)
 	if _charge_gait_active():
 		return _get_charge_extension_demand(foot,travel,attachment,remaining,approach,plan,result)
+	if grounded_stance_travel_ratio > 0.0 and not _turn_command_pending:
+		return _get_bounded_stance_demand(foot, travel, attachment, remaining, approach, lead, result)
 	var threshold := maxf(length*0.12,0.03)
 	result.remaining_distance = remaining
 	result.approach_speed = approach
@@ -1022,6 +1116,37 @@ func _get_extension_step_demand(foot: RigidBody3D, direction: Vector3) -> Dictio
 			result.reason = "reach_recovery"
 			return result
 	result.reason = "distance_limit" if result.requested and remaining <= threshold else ("predicted_limit" if result.requested else "holding")
+	return result
+
+# shortcut: This uses an authored-pose travel budget; replace it with a sampled joint envelope if arbitrary bent chains need exact reach bounds.
+func _get_bounded_stance_demand(foot: RigidBody3D, travel: Vector3, attachment: Vector3, geometric_remaining: float, approach: float, lead: float, result: Dictionary) -> Dictionary:
+	var budget := maxf(float(_chains[foot].length) * grounded_stance_travel_ratio, 0.02)
+	var offset := (foot.global_position - _get_leg_rest_world_position(foot)).dot(travel)
+	var remaining := maxf(minf(geometric_remaining, offset + budget), 0.0)
+	var threshold := budget * 0.2
+	# A stopped body can still exhaust a bent chain before its outer sphere.
+	# Target-speed preview is capped and requires real rearward stance travel.
+	var preview := minf(maxf(approach, _get_gait_data().target_speed) * lead, budget * 0.7)
+	result.policy = "bounded_stance"
+	result.remaining_distance = remaining
+	result.approach_speed = approach
+	result["stance_offset"] = offset
+	result["stance_travel_budget"] = budget
+	result["distance_threshold"] = threshold
+	result["lead_time"] = lead
+	result["emergency"] = remaining <= threshold
+	result.requested = remaining <= threshold or (offset < -budget * 0.1 and remaining <= preview)
+	result.reason = "stance_limit" if remaining <= threshold else ("stance_preview" if result.requested else "holding")
+	if _extension_rearm.has(foot):
+		var stance: Dictionary = _extension_rearm[foot]
+		var progress := (attachment - Vector3(stance.origin)).dot(travel)
+		result["rearm_progress"] = progress
+		result["rearm_required_progress"] = budget * 0.15
+		if offset >= 0.0 or progress >= budget * 0.15 or travel.dot(Vector3(stance.direction)) < 0.5:
+			_extension_rearm.erase(foot)
+		elif remaining > threshold:
+			result.requested = false
+			result.reason = "rearming_stance"
 	return result
 
 ## A chain-length sphere is only an outer bound: hinge limits can stop a
@@ -1076,6 +1201,9 @@ func _update_extension_gait(delta: float, direction: Vector3) -> void:
 	var demands: Dictionary = {}
 	for foot: RigidBody3D in candidates: demands[foot] = _get_extension_step_demand(foot,direction)
 	candidates.sort_custom(func(a,b):
+		var a_priority := float(demands[a].get("step_priority",0.0))
+		var b_priority := float(demands[b].get("step_priority",0.0))
+		if not is_equal_approx(a_priority,b_priority): return a_priority>b_priority
 		var a_rank := _walk_start_pending.find(a)
 		var b_rank := _walk_start_pending.find(b)
 		if not _charge_gait_active() and a_rank>=0 and b_rank>=0 and not _walk_start_emergency(a) and not _walk_start_emergency(b): return a_rank<b_rank
@@ -1190,6 +1318,7 @@ func _gallop_window() -> float:
 func _gallop_active() -> bool:
 	# An action reserves front feet; walking must retain real rear support.
 	if not _action_feet.is_empty(): return false
+	if stable_turn_control_enabled and _layout_turn_owned and _turn_command_pending and not _charge_gait_active(): return false
 	var data := _get_gait_data()
 	if data == null or not data.automatic_motion or not data.gallop_enabled or not input_enabled or recovery_control_active or simplified_physics_mode or (_turn_planning_active and not data.speed_based_gait) or _adhesion_release_time_remaining > 0.0: return false
 	if get_input_movement_direction().is_zero_approx() or _legs.is_empty(): return false
@@ -1231,9 +1360,14 @@ func _try_gallop_takeoff(foot: RigidBody3D) -> void:
 
 func _update_gallop_contacts() -> void:
 	if not _gallop_active():
-		_gallop_contacts.clear()
+		if _airborne_height_support_authorized():
+			for foot in _gallop_contacts.keys():
+				if not is_instance_valid(foot) or not _chain_is_intact(foot) or _physics_elapsed - float(_gallop_contacts[foot].time) >= _gallop_contact_duration(foot):
+					_gallop_contacts.erase(foot)
+		else:
+			_gallop_contacts.clear()
 		_gallop_reach_released.clear()
-		_gallop_diagnostics = {"active": false}
+		_gallop_diagnostics = {"active": false, "retained_height_support": not _gallop_contacts.is_empty()}
 		return
 	for foot: RigidBody3D in _legs:
 		if not _chain_is_intact(foot) or foot.freeze: continue
@@ -1301,7 +1435,7 @@ func _contact_drive_supports(feet: Array) -> Array[RigidBody3D]:
 
 func _gallop_support(feet: Array, up: Vector3 = Vector3.UP) -> Dictionary:
 	var result := {"weight": 0.0, "height": 0.0, "feet": 0}
-	if not _gallop_active(): return result
+	if not _airborne_height_support_authorized(): return result
 	var total := 0.0
 	for foot in feet:
 		if not _gallop_contacts.has(foot) or not _chain_is_intact(foot) or foot.freeze: continue
@@ -1507,6 +1641,22 @@ func _apply_torso_response() -> void:
 	var total_torso_mass := 0.0
 	for body: RigidBody3D in get_torso_parts():
 		if not _is_body_broken(body): total_torso_mass += body.mass
+	var support_mass_scale := 1.0
+	var locomotion_support := locomotion_height_support_enabled and _action_owners.is_empty()
+	var independent_support := independent_torso_height_support or locomotion_support
+	if independent_support:
+		var assembly_mass := 0.0
+		var assigned_mass := 0.0
+		var carries_limbs := _height_support_carries_limb_weight()
+		var passive_leg_bodies := {}
+		for chain: Dictionary in _chains.values():
+			for body: RigidBody3D in chain.bodies:
+				if not _has_body_tag(body, TORSO_TAG): passive_leg_bodies[body] = true
+		for body: Node in get_node(parts_root_path).get_children():
+			# Default support excludes leg weight; full-flight support carries the whole assembly.
+			if body is RigidBody3D and (carries_limbs or not passive_leg_bodies.has(body)) and not _is_body_broken(body) and not body.freeze: assembly_mass += body.mass
+		for segment: Dictionary in _segments.values(): assigned_mass += float(segment.mass)
+		support_mass_scale = assembly_mass / maxf(assigned_mass, 0.001)
 	for id: int in _segments:
 		var segment: Dictionary = _segments[id]
 		var support_floor := 0.0
@@ -1549,6 +1699,8 @@ func _apply_torso_response() -> void:
 		var previous_lift := float(segment.auxiliary_force)
 		var normal_support_weight := 1.0-_action_segment_weight(segment)
 		segment.auxiliary_force = 0.0
+		segment["support_target_height"] = 0.0
+		segment["support_mass"] = 0.0
 		var grounded_support := contact_count > 0 and _adhesion_release_time_remaining <= 0.0
 		var supported: bool = grounded_support or air_support.weight > 0.0
 		var target_blend := 1.0 if supported else 0.0
@@ -1557,22 +1709,27 @@ func _apply_torso_response() -> void:
 			# Bounded airborne support remembers the last real floor; it never samples a new floor in air.
 			if supported:
 				var target_height: float = (floor_height / float(grounded) if grounded > 0 else (support_floor if grounded_support else float(air_support.height))) + segment.reference_height
-				target_height = _limit_supported_torso_height(segment, target_height, up)
+				if not independent_support: target_height = _limit_supported_torso_height(segment, target_height, up)
 				var height_error: float = target_height - Vector3(segment.torso_center).dot(up)
 				var damping := 2.0 * sub_torso_damping_ratio * sqrt(sub_torso_height_gain)
-				var lift: float = segment.mass * (gravity.length() * sub_torso_weight_share + height_error * sub_torso_height_gain - vertical_speed / torso_mass * damping)
+				var support_mass: float = segment.mass * support_mass_scale
+				segment["support_target_height"] = target_height
+				segment["support_mass"] = support_mass
+				var lift: float = support_mass * (gravity.length() * _height_support_weight_share() + height_error * sub_torso_height_gain - vertical_speed / torso_mass * damping)
 				var support_limit := minf(sub_torso_maximum_weight_share, auxiliary_support_weight_limit)
-				if not grounded_support: support_limit = minf(support_limit,(0.45 if _get_gait_data().speed_based_gait else _get_gait_data().gallop_airborne_support_ratio) * float(air_support.weight) * _gallop_intensity())
-				lift = clampf(lift, 0.0, segment.mass * gravity.length() * support_limit) * segment.support_blend * normal_support_weight
-				var blend := 1.0 if sub_torso_force_smoothing_time <= 0.0 else 1.0 - exp(-_support_delta / sub_torso_force_smoothing_time)
-				lift = minf(lerpf(previous_lift, lift, blend),segment.mass * gravity.length() * support_limit*normal_support_weight)
+				if locomotion_support: support_limit = locomotion_support_weight_limit
+				if not grounded_support: support_limit = minf(support_limit, _airborne_height_support_limit(float(air_support.weight)))
+				lift = clampf(lift, 0.0, support_mass * gravity.length() * support_limit) * segment.support_blend * normal_support_weight
+				var smoothing_time := minf(sub_torso_force_smoothing_time, 0.05) if locomotion_support else sub_torso_force_smoothing_time
+				var blend := 1.0 if smoothing_time <= 0.0 else 1.0 - exp(-_support_delta / smoothing_time)
+				lift = minf(lerpf(previous_lift, lift, blend),support_mass * gravity.length() * support_limit*normal_support_weight)
 				# Nonnegative weights make off-center supports carry the segment COM.
 				var points: Array[Vector3] = []
 				for body: RigidBody3D in sub_torsos: points.append(_stance_body_center(body))
 				var weights := _solve_stance_support_weights(points, segment.center, up)
 				for index: int in range(sub_torsos.size()): sub_torsos[index].apply_central_force(up * lift * weights[index])
 				segment.auxiliary_force = lift
-				if not grounded_support: _gallop_diagnostics.airborne_support += up * lift
+				if not grounded_support: _gallop_diagnostics["airborne_support"] = Vector3(_gallop_diagnostics.get("airborne_support", Vector3.ZERO)) + up * lift
 				_last_auxiliary_support_force += up * lift
 		elif not simplified_physics_mode and torso_response_enabled and supported and grounded > 0:
 			# Height demand comes from body height, never sole displacement.
@@ -1583,6 +1740,18 @@ func _apply_torso_response() -> void:
 			_apply_contact_drive(segment.feet, lift, float(segment.mass), up)
 		if _gallop_diagnostics.get("active",false):
 			_gallop_diagnostics.segments.append({"id": id,"ground_support": grounded_support,"air_weight": air_support.weight,"drive": force,"support": segment.auxiliary_force})
+
+func _height_support_carries_limb_weight() -> bool:
+	return false
+
+func _airborne_height_support_authorized() -> bool:
+	return _gallop_active()
+
+func _height_support_weight_share() -> float:
+	return 1.0 if locomotion_height_support_enabled and _action_owners.is_empty() else sub_torso_weight_share
+
+func _airborne_height_support_limit(weight: float) -> float:
+	return (0.45 if _get_gait_data().speed_based_gait else _get_gait_data().gallop_airborne_support_ratio) * weight * _gallop_intensity()
 
 func _get_contact_drive_body(foot: RigidBody3D) -> RigidBody3D:
 	if not _chain_is_intact(foot): return null
@@ -1622,6 +1791,12 @@ func get_body_segment_diagnostics() -> Array[Dictionary]:
 	for id: int in _segments:
 		var segment: Dictionary = _segments[id]
 		result.append({"segment": id, "torso_count": segment.bodies.size(), "foot_count": segment.feet.size(), "mass": segment.mass, "center": segment.center, "reference_height": segment.reference_height, "balanced": segment.balanced, "movement_scale": segment.get("movement_scale",1.0), "support_blend": segment.support_blend, "auxiliary_force": segment.auxiliary_force, "balance_torque": segment.get("balance_torque", Vector3.ZERO), "balance_error_xy": segment.get("balance_error", Vector2.ZERO), "balance_error_z": segment.get("balance_error_z", 0.0), "balance_torque_limited": segment.get("balance_torque_limited", false)})
+	if independent_torso_height_support or locomotion_height_support_enabled:
+		for row: Dictionary in result:
+			var segment: Dictionary = _segments[row.segment]
+			row["support_target_height"] = segment.get("support_target_height", 0.0)
+			row["actual_torso_height"] = Vector3(segment.torso_center).y
+			row["support_mass"] = segment.get("support_mass", 0.0)
 	return result
 
 func _apply_ground_movement_brake(direction: Vector3) -> void:
@@ -1688,6 +1863,19 @@ func set_recovery_control_active(active: bool) -> void:
 	_last_torso_response_force = Vector3.ZERO
 
 func _physics_process(delta: float) -> void:
+	_movement_batch_active = _performance_mode.enabled
+	_batch_torsos_ready = false
+	_batch_heading_ready = false
+	_batch_metrics_ready = false
+	_batch_gait_ready = false
+	_batch_intact_chains.clear()
+	_process_generated_movement(delta)
+	# Never carry a snapshot into another component's update, damage callback or editor operation.
+	_movement_batch_active = false
+
+func _process_generated_movement(delta: float) -> void:
+	_batch_foot_positions.clear()
+	_batch_surface_contacts.clear()
 	var flight := get_parent().get_node_or_null("BirdFlightController3D")
 	if flight != null and flight.is_airborne():
 		_reset_walk_start_stagger(&"flight")
@@ -1757,6 +1945,7 @@ func _physics_process(delta: float) -> void:
 	_movement_perf.finish(&"movement_generated_full", full_control_started)
 
 func _exit_tree() -> void:
+	end_action_control()
 	_release_all_foot_heading_locks()
 	super._exit_tree()
 
@@ -1796,6 +1985,7 @@ func _update_foot_heading_constraints() -> void:
 		var forward := foot.global_basis.x.slide(Vector3.UP)
 		if forward.is_zero_approx(): continue
 		var yaw := atan2(-forward.z, forward.x)
+		if stable_turn_control_enabled: yaw = atan2(foot.global_basis.z.x, foot.global_basis.z.z)
 		var error := wrapf(target - yaw, -PI, PI)
 		var tolerance := deg_to_rad(foot_heading_lock_tolerance_degrees)
 		var release_tolerance := deg_to_rad(maxf(foot_heading_unlock_tolerance_degrees, foot_heading_lock_tolerance_degrees))
@@ -1818,6 +2008,11 @@ func _update_foot_heading_constraints() -> void:
 		_foot_heading_diagnostics[foot] = {"state": &"locked" if locked else &"aligning", "target_degrees": rad_to_deg(target), "error_degrees": rad_to_deg(error), "torque": torque}
 
 func _support_surface_contact(body: RigidBody3D) -> Dictionary:
+	if not _movement_batch_active: return _query_support_surface_contact(body)
+	if not _batch_surface_contacts.has(body): _batch_surface_contacts[body] = _query_support_surface_contact(body)
+	return _batch_surface_contacts[body]
+
+func _query_support_surface_contact(body: RigidBody3D) -> Dictionary:
 	var hit := _get_surface_below_leg(body, ground_probe_distance)
 	if hit.is_empty() or not _surface_is_walkable(hit.normal):
 		_contact_states.erase(body)
@@ -1853,16 +2048,19 @@ func _apply_stance_stabilization(delta: float) -> void:
 		_chains[foot].stance_torque_vectors = []
 
 var _passive_hinge_rows: Array[Dictionary] = []
+func _get_passive_limb_damping(_foot: RigidBody3D) -> float:
+	var configured: Variant = get_parent().get("limb_hinge_damping")
+	return maxf(float(configured) if configured != null else 3.0, 0.0)
+
 func _apply_passive_limb_damping() -> void:
 	_passive_hinge_rows.clear()
-	var configured: Variant = get_parent().get("limb_hinge_damping")
-	var damping := maxf(float(configured) if configured != null else 3.0, 0.0)
 	# Exponential decay cannot over-brake and reverse the hinge in one step.
 	var dt := maxf(get_physics_process_delta_time(), 0.000001)
-	var effective_damping := (1.0-exp(-damping*dt))/dt
 	var seen: Array[RigidBody3D] = []
 	for foot: RigidBody3D in _chains:
 		if not _chain_is_intact(foot): continue
+		var damping := _get_passive_limb_damping(foot)
+		var effective_damping := (1.0-exp(-damping*dt))/dt
 		var chain: Dictionary = _chains[foot]
 		for index: int in range(1, chain.bodies.size() - 1):
 			var body: RigidBody3D = chain.bodies[index]
@@ -2022,6 +2220,8 @@ func _solve_stance_support_weights(contacts: Array[Vector3], center: Vector3, up
 	if contacts.is_empty(): return weights
 	weights.resize(contacts.size())
 	weights.fill(1.0 / float(contacts.size()))
+	# A single support has exactly one feasible allocation; no solver is needed.
+	if _performance_mode.enabled and contacts.size() == 1: return weights
 	var offsets: Array[Vector3] = []
 	var bound := 0.0
 	for contact: Vector3 in contacts:
@@ -2036,7 +2236,14 @@ func _solve_stance_support_weights(contacts: Array[Vector3], center: Vector3, up
 		var next := weights.duplicate()
 		for index: int in range(weights.size()):
 			next[index] -= rate * (offsets[index].dot(residual) + regularization * (weights[index] - 1.0 / float(weights.size())))
-		weights = _project_stance_weights(next)
+		var projected := _project_stance_weights(next)
+		if _performance_mode.enabled:
+			var change := 0.0
+			for index: int in range(weights.size()): change = maxf(change, absf(projected[index] - weights[index]))
+			weights = projected
+			if change < 0.0000001: break
+		else:
+			weights = projected
 	return weights
 
 func _project_stance_weights(values: PackedFloat64Array) -> PackedFloat64Array:
@@ -2108,7 +2315,32 @@ func set_segment_facing_direction(direction: Vector3) -> void:
 	_segment_goal_yaw = atan2(-direction.z, direction.x)
 
 ## Share one heading frame across all links; cap its advance during a turn.
+func _update_turn_command_state(delta: float) -> void:
+	if not _turn_command_initialized:
+		_turn_command_goal = _get_physical_heading_yaw()
+		_turn_command_initialized = true
+	if absf(wrapf(_segment_goal_yaw - _turn_command_goal, -PI, PI)) > 0.001:
+		if _get_maximum_heading_error(_segment_goal_yaw) >= deg_to_rad(30.0): _turn_command_pending = true
+		_turn_command_goal = _segment_goal_yaw
+		_turn_stable_elapsed = 0.0
+		_turn_rate_integral = 0.0
+	var settled := _get_maximum_heading_error(_segment_goal_yaw) <= deg_to_rad(segment_layout_heading_tolerance_degrees)
+	for body: RigidBody3D in get_torso_parts():
+		if not _is_body_broken(body) and absf(body.angular_velocity.y) > deg_to_rad(5.0): settled = false
+	_turn_stable_elapsed = _turn_stable_elapsed + delta if settled and not recovery_control_active else 0.0
+	if _turn_stable_elapsed >= 0.5: _turn_command_pending = false
+	if turn_rate_integral_enabled and stable_turn_control_enabled and _turn_command_pending and not recovery_control_active and _action_feet.is_empty() and _turn_drive_diagnostics.get("blocked", &"none") == &"":
+		var error := wrapf(_segment_goal_yaw - _get_physical_heading_yaw(), -PI, PI)
+		if absf(error) > deg_to_rad(175.0): error = -absf(error) if cos(_segment_goal_yaw) < 0.0 else absf(error)
+		var limit := deg_to_rad(_motion_setting("turning_speed_degrees", segment_heading_speed_degrees))
+		if absf(error) <= deg_to_rad(10.0): _turn_rate_integral = move_toward(_turn_rate_integral, 0.0, limit * 8.0 * delta)
+		elif not _turn_drive_diagnostics.get("force_limited", false):
+			var requested := clampf(error * 3.0, -limit, limit)
+			_turn_rate_integral = clampf(_turn_rate_integral + (requested - _get_physical_yaw_rate()) * delta * 2.0, -limit * 4.0, limit * 4.0)
+	else: _turn_rate_integral = 0.0
+
 func _update_segment_layout(delta: float) -> void:
+	if stable_turn_control_enabled or grounded_stance_travel_ratio > 0.0: _update_turn_command_state(delta)
 	var direction := Vector3.ZERO
 	for body: RigidBody3D in get_torso_parts():
 		if not _is_body_broken(body): direction += body.global_basis.x.slide(Vector3.UP).normalized() * body.mass
@@ -2135,10 +2367,15 @@ func _update_segment_layout(delta: float) -> void:
 	_update_layout_turn_steps(delta)
 
 func _get_physical_heading_yaw() -> float:
+	if _movement_batch_active and _batch_heading_ready: return _batch_heading
 	var direction := Vector3.ZERO
 	for body: RigidBody3D in get_torso_parts():
 		if not _is_body_broken(body): direction += body.global_basis.x.slide(Vector3.UP).normalized() * body.mass
-	return atan2(-direction.z, direction.x) if not direction.is_zero_approx() else _segment_layout_yaw
+	var yaw := atan2(-direction.z, direction.x) if not direction.is_zero_approx() else _segment_layout_yaw
+	if _movement_batch_active:
+		_batch_heading = yaw
+		_batch_heading_ready = true
+	return yaw
 
 func _get_physical_yaw_rate() -> float:
 	var mass := 0.0
@@ -2231,7 +2468,7 @@ func _update_layout_turn_steps(delta: float) -> void:
 	var error := wrapf(_segment_layout_yaw - actual_yaw, -PI, PI)
 	var heading_error := _get_maximum_heading_error(_segment_target_yaw)
 	var heading_tolerance := deg_to_rad(segment_layout_heading_tolerance_degrees * (1.0 if _layout_turn_owned else 1.5))
-	if absf(error) < deg_to_rad(5.0) and heading_error < heading_tolerance:
+	if absf(error) < deg_to_rad(5.0) and heading_error < heading_tolerance and (not stable_turn_control_enabled or not _turn_command_pending or _turn_stable_elapsed >= 0.5):
 		if _layout_turn_owned:
 			set_turn_planning_active(false)
 			_layout_turn_owned = false
@@ -2325,17 +2562,19 @@ func _apply_grounded_turn_traction() -> void:
 		var inverse := _stance_inverse_inertia(body)
 		if absf(inverse.determinant()) > 1e-18:
 			inertia += Vector3.UP.dot(inverse.inverse() * Vector3.UP) + body.mass * (body.global_position - center).slide(Vector3.UP).length_squared()
+	if stable_turn_control_enabled: inertia *= turn_effective_inertia_scale
 	var error := wrapf(_segment_goal_yaw - _get_physical_heading_yaw(), -PI, PI)
 	if absf(error) > deg_to_rad(175.0): error = -absf(error) if cos(_segment_goal_yaw) < 0.0 else absf(error)
 	var limit_rate := deg_to_rad(_motion_setting("turning_speed_degrees", segment_heading_speed_degrees))
-	var requested_rate := clampf(error * _motion_setting("turn_gain", turn_leg_yaw_gain), -limit_rate, limit_rate)
 	var actual_rate := _get_physical_yaw_rate()
-	var acceleration := clampf((requested_rate - actual_rate) * _motion_setting("turn_damping", turn_leg_yaw_damping), -maxf(limit_rate * 8.0,1.0), maxf(limit_rate * 8.0,1.0))
+	var control := _turn_traction_control(error, actual_rate, limit_rate)
+	var requested_rate: float = control.requested_rate
+	var acceleration: float = control.acceleration
 	var torque := inertia * acceleration * _flight_ground_blend()
 	if not _automatic_motion_enabled(): torque = clampf(torque,-turn_leg_yaw_torque_limit,turn_leg_yaw_torque_limit)
 	var forces: Array[Vector3] = []
 	var scale := 1.0
-	var force_limit := mass * _motion_setting("turn_acceleration",turn_leg_yaw_maximum_acceleration) / feet.size()
+	var force_limit := mass * _motion_setting("turn_acceleration",turn_leg_yaw_maximum_acceleration) * turn_contact_force_multiplier / feet.size()
 	for lever: Vector3 in levers:
 		var force := Vector3.UP.cross(lever) * torque / radius_sum
 		forces.append(force)
@@ -2353,6 +2592,16 @@ func _apply_grounded_turn_traction() -> void:
 	for body: RigidBody3D in bodies:
 		if not _is_body_broken(body): body.apply_central_force(-net_force * body.mass / mass)
 	_turn_drive_diagnostics = {"blocked": &"", "stance_feet": feet.size(), "requested_rate_degrees": rad_to_deg(requested_rate), "actual_rate_degrees": rad_to_deg(actual_rate), "yaw_inertia": inertia, "requested_torque": torque, "applied_torque": torque * scale, "force_scale": scale, "force_limited": scale < 0.999, "net_force_cancelled": net_force, "global_allocation": true}
+	_turn_drive_diagnostics["control_mode"] = control.get("mode", "turn")
+
+func _turn_traction_control(error: float, actual_rate: float, limit_rate: float) -> Dictionary:
+	if not stable_turn_control_enabled:
+		var requested := clampf(error * _motion_setting("turn_gain", turn_leg_yaw_gain), -limit_rate, limit_rate)
+		return {"requested_rate": requested, "acceleration": clampf((requested - actual_rate) * _motion_setting("turn_damping", turn_leg_yaw_damping), -maxf(limit_rate * 8.0, 1.0), maxf(limit_rate * 8.0, 1.0))}
+	var acceleration_limit := maxf(limit_rate * (8.0 if turn_rate_integral_enabled else 4.0), 1.0)
+	var stopping_rate := sqrt(2.0 * acceleration_limit * absf(error))
+	var requested := clampf(error * minf(_motion_setting("turn_gain", turn_leg_yaw_gain), 3.0), -minf(limit_rate, stopping_rate), minf(limit_rate, stopping_rate))
+	return {"requested_rate": requested, "acceleration": clampf((requested - actual_rate) * minf(_motion_setting("turn_damping", turn_leg_yaw_damping), 8.0) + _turn_rate_integral, -acceleration_limit, acceleration_limit)}
 
 func _resource_turn_blending_enabled() -> bool:
 	return _get_gait_data() != null
@@ -2409,7 +2658,7 @@ func _can_start_step_with_support(leg: RigidBody3D) -> bool:
 
 func try_start_step(movement_direction: Vector3 = Vector3.RIGHT) -> bool:
 	if _flight_ground_blend() < 1.0: return false
-	if _gallop_active() or not _layout_turn_owned or not _resource_turn_blending_enabled(): return _try_start_walk_step(movement_direction)
+	if _gallop_active() or not _layout_turn_owned or not _resource_turn_blending_enabled() or (stable_turn_control_enabled and not _turn_command_pending and not movement_direction.is_zero_approx()): return _try_start_walk_step(movement_direction)
 	if _legs.is_empty(): return false
 	var foot: RigidBody3D = _legs[_next_leg_index % _legs.size()]
 	if is_leg_stepping(foot) or not _can_start_step_with_support(foot): return false
@@ -2426,6 +2675,9 @@ func try_start_step(movement_direction: Vector3 = Vector3.RIGHT) -> bool:
 	var rate := clampf(error * _motion_setting("turn_gain",turn_leg_yaw_gain),-deg_to_rad(_motion_setting("turning_speed_degrees",segment_heading_speed_degrees)),deg_to_rad(_motion_setting("turning_speed_degrees",segment_heading_speed_degrees)))
 	var cycle := _legs.size() / maxf(get_planned_step_frequency(),0.01)
 	var angle := clampf(rate * cycle,-deg_to_rad(40.0),deg_to_rad(40.0))
+	if stable_turn_control_enabled:
+		rate = float(_turn_traction_control(error, _get_physical_yaw_rate(), deg_to_rad(_motion_setting("turning_speed_degrees", segment_heading_speed_degrees))).requested_rate)
+		angle = clampf(rate * cycle, -minf(absf(error), deg_to_rad(40.0)), minf(absf(error), deg_to_rad(40.0)))
 	var duration := _motion_setting("turn_step_duration",segment_layout_step_duration,foot)
 	var lead := movement_direction.slide(Vector3.UP) * get_expected_horizontal_speed() * duration
 	var desired := center + lead + Basis(Vector3.UP,yaw + angle) * Vector3(foot.get_meta(&"generated_layout_foot_offset",Vector3.ZERO))
@@ -2625,11 +2877,11 @@ func get_stance_support_diagnostics() -> Dictionary:
 	return {"planar_constraints": planar.get_diagnostics() if planar != null else {}, "planar_slide": _planar_slide_diagnostics, "zero_gravity_test_mode": simplified_physics_mode, "segment_rotation_constraints": rotation_constraints, "normal_control": normal_control, "recovery_active": recovery_control_active, "auto_allocation": false, "passive_limb_links": true, "passive_hinges": _passive_hinge_rows,
 		"contact_enter_distance": support_contact_enter_distance, "contact_exit_distance": maxf(support_contact_enter_distance, support_contact_exit_distance), "load_smoothing_time": support_load_smoothing_time,
 		"vertical_response_gain": vertical_response_gain, "vertical_damping_ratio": vertical_response_damping_ratio,
-		"stance_enabled": false, "total_mass": _stance_total_mass, "torso_mass": torso_mass,
+		"stance_enabled": false, "independent_torso_height_support": independent_torso_height_support or (locomotion_height_support_enabled and _action_owners.is_empty()), "locomotion_height_support": locomotion_height_support_enabled and _action_owners.is_empty(), "total_mass": _stance_total_mass, "torso_mass": torso_mass,
 		"total_weight": _stance_total_mass * gravity.length(), "estimated_ground_reaction": maxf(0.0, _stance_total_mass * gravity.length() - (_last_torso_response_force + _last_auxiliary_support_force).dot(-gravity.normalized())), "torso_weight": torso_mass * gravity.length(), "torso_response_force": _last_torso_response_force, "torso_response_force_limit": _get_torso_response_force_limit(torso_mass),
 		"supporting_feet": supporting_feet, "foot_count": _legs.size(), "center_of_mass": _stance_center_of_mass,
 		"support_balanced": _stance_support_balanced, "balance_error": _stance_balance_error, "balance_tolerance": stance_balance_tolerance,
-		"segments": get_body_segment_diagnostics(), "auxiliary_support_force": _last_auxiliary_support_force, "auxiliary_weight_limit": auxiliary_support_weight_limit, "grounded_drive_acceleration_limit": maximum_grounded_drive_acceleration, "segment_springs": _get_segment_spring_diagnostics(), "turn_leg_forces": _turn_leg_forces.values(), "turn_drive_diagnostics": _turn_drive_diagnostics, "turn_landing_rejections": _turn_landing_rejections, "parallel_turn_steps": _resource_turn_blending_enabled(), "gallop": _gallop_diagnostics, "turn_minimum_grounded_ratio": turn_minimum_grounded_ratio, "physical_heading_degrees": rad_to_deg(_get_physical_heading_yaw()), "maximum_heading_error_degrees": rad_to_deg(_get_maximum_heading_error(_segment_goal_yaw)), "turn_drive": "grounded_foot_attachment_forces", "turn_rate_degrees": rad_to_deg(_get_physical_yaw_rate()), "requested_turn_rate_degrees": _motion_setting("turning_speed_degrees", segment_heading_speed_degrees), "layout_reference_lead_degrees": rad_to_deg(wrapf(_segment_layout_yaw - _get_physical_heading_yaw(), -PI, PI)), "direct_heading_torque_enabled": false, "heading_goal_degrees": rad_to_deg(_segment_goal_yaw), "heading_target_degrees": rad_to_deg(_segment_target_yaw), "layout_turn_active": _layout_turn_owned, "layout_turn_status": _layout_turn_status, "layout_turn_elapsed": _layout_turn_elapsed, "layout_turn_stagnant": _layout_turn_stagnant, "layout_turn_target": _layout_turn_target, "unbalanced_compensation": maxf(unbalanced_stance_multiplier, 0.25), "applied_age_frames": applied_age,
+		"segments": get_body_segment_diagnostics(), "auxiliary_support_force": _last_auxiliary_support_force, "auxiliary_weight_limit": locomotion_support_weight_limit if locomotion_height_support_enabled and _action_owners.is_empty() else auxiliary_support_weight_limit, "grounded_drive_acceleration_limit": maximum_grounded_drive_acceleration, "segment_springs": _get_segment_spring_diagnostics(), "turn_leg_forces": _turn_leg_forces.values(), "turn_drive_diagnostics": _turn_drive_diagnostics, "turn_landing_rejections": _turn_landing_rejections, "parallel_turn_steps": _resource_turn_blending_enabled(), "gallop": _gallop_diagnostics, "turn_minimum_grounded_ratio": turn_minimum_grounded_ratio, "physical_heading_degrees": rad_to_deg(_get_physical_heading_yaw()), "maximum_heading_error_degrees": rad_to_deg(_get_maximum_heading_error(_segment_goal_yaw)), "turn_drive": "grounded_foot_attachment_forces", "turn_rate_degrees": rad_to_deg(_get_physical_yaw_rate()), "requested_turn_rate_degrees": _motion_setting("turning_speed_degrees", segment_heading_speed_degrees), "layout_reference_lead_degrees": rad_to_deg(wrapf(_segment_layout_yaw - _get_physical_heading_yaw(), -PI, PI)), "direct_heading_torque_enabled": false, "heading_goal_degrees": rad_to_deg(_segment_goal_yaw), "heading_target_degrees": rad_to_deg(_segment_target_yaw), "turn_command_pending": _turn_command_pending, "turn_stable_elapsed": _turn_stable_elapsed, "turn_rate_integral": _turn_rate_integral, "stable_turn_control_enabled": stable_turn_control_enabled, "layout_turn_active": _layout_turn_owned, "layout_turn_status": _layout_turn_status, "layout_turn_elapsed": _layout_turn_elapsed, "layout_turn_stagnant": _layout_turn_stagnant, "layout_turn_target": _layout_turn_target, "unbalanced_compensation": maxf(unbalanced_stance_multiplier, 0.25), "applied_age_frames": applied_age,
 		"allocation_age_frames": allocation_age, "joints": rows}
 
 
@@ -3107,8 +3359,11 @@ func _apply_turn_swing_orientation() -> void:
 			var inverse := _stance_inverse_inertia(_active_leg)
 			if absf(inverse.determinant()) > 1e-18:
 				var actual := atan2(-_active_leg.global_basis.x.z, _active_leg.global_basis.x.x)
+				if stable_turn_control_enabled: actual = atan2(_active_leg.global_basis.z.x, _active_leg.global_basis.z.z)
 				var error := wrapf(float(_current_step.extra.turn_swing_yaw) - actual, -PI, PI)
 				var swing_acceleration := Vector3.UP * (error * _motion_setting("turn_gain", foot_alignment_strength) - _active_leg.angular_velocity.y * _motion_setting("turn_damping", foot_alignment_damping))
+				if turn_foot_rate_servo_enabled:
+					swing_acceleration = Vector3.UP * float(_turn_traction_control(error, _active_leg.angular_velocity.y, deg_to_rad(_motion_setting("turning_speed_degrees", segment_heading_speed_degrees))).acceleration)
 				_active_leg.apply_torque((inverse.inverse() * swing_acceleration).limit_length(maximum_foot_alignment_torque))
 
 func _is_step_target_reached(close_enough: bool) -> bool:

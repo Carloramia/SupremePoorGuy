@@ -1,0 +1,35 @@
+[gd_scene load_steps=5 format=3]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/_PhysicalSampleBodyParts.tscn" id="1_base"]
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/Wolf/Models/Decorations/Wolf2LeafLower.glb" id="2_model"]
+[ext_resource type="ArrayMesh" path="res://Resources/Meshes/Wolf/Decorations/Wolf2LeafLower.res" id="3_mesh"]
+[sub_resource type="ConvexPolygonShape3D" id="Shape"]
+resource_local_to_scene = true
+points = PackedVector3Array(-0.47617569, -0.86364875, -0.01000000, -0.44986069, -0.73289606, -0.01000000, -0.42354568, -0.65444444, -0.01000000, -0.39723068, -0.60214337, -0.01000000, -0.34460066, -0.52369176, -0.01000000, 0.12906945, 0.15622222, -0.01000000, 0.15538446, 0.15622222, -0.01000000, 0.26064449, 0.05162007, -0.01000000, 0.36590451, -0.10528315, -0.01000000, 0.39221952, -0.15758423, -0.01000000, 0.44484953, -0.31448746, -0.01000000, 0.47116454, -0.44524014, -0.01000000, 0.47116454, -0.68059498, -0.01000000, 0.44484953, -0.81134767, -0.01000000, 0.41853452, -0.88979928, -0.01000000, 0.39221952, -0.94210036, -0.01000000, 0.36590451, -0.99440143, -0.01000000, 0.31327450, -1.07285305, -0.01000000, -0.23934064, -1.67431541, -0.01000000, -0.26565564, -1.67431541, -0.01000000, -0.29197065, -1.64816487, -0.01000000, -0.47617569, -0.99440143, -0.01000000, -0.47617569, -0.86364875, 0.01000000, -0.44986069, -0.73289606, 0.01000000, -0.42354568, -0.65444444, 0.01000000, -0.39723068, -0.60214337, 0.01000000, -0.34460066, -0.52369176, 0.01000000, 0.12906945, 0.15622222, 0.01000000, 0.15538446, 0.15622222, 0.01000000, 0.26064449, 0.05162007, 0.01000000, 0.36590451, -0.10528315, 0.01000000, 0.39221952, -0.15758423, 0.01000000, 0.44484953, -0.31448746, 0.01000000, 0.47116454, -0.44524014, 0.01000000, 0.47116454, -0.68059498, 0.01000000, 0.44484953, -0.81134767, 0.01000000, 0.41853452, -0.88979928, 0.01000000, 0.39221952, -0.94210036, 0.01000000, 0.36590451, -0.99440143, 0.01000000, 0.31327450, -1.07285305, 0.01000000, -0.23934064, -1.67431541, 0.01000000, -0.26565564, -1.67431541, 0.01000000, -0.29197065, -1.64816487, 0.01000000, -0.47617569, -0.99440143, 0.01000000)
+[node name="Wolf_Wolf2LeafLower" instance=ExtResource("1_base")]
+mass = 0.03
+geometry_mode = 1
+custom_model_path = NodePath("Model")
+paper_volume_enabled = true
+paper_volume_thickness = 0.08
+sprite_visible = false
+mesh_visible = true
+tags = Array[int]([])
+metadata/source_png = "res://Assets/2DResources/Wolf/Separated/Attachments/13_wolf2_leaf_lower.png"
+metadata/pivot_is_initial_estimate = true
+metadata/wolf_forward_axis = "+X"
+[node name="CollisionShape3D" parent="." index="0"]
+rotation = Vector3(0, 3.141592653589793, 0)
+position = Vector3(0, 0, 0)
+shape = SubResource("Shape")
+[node name="MeshInstance3D" parent="." index="2"]
+visible = false
+mesh = null
+[node name="Model" parent="." instance=ExtResource("2_model")]
+rotation = Vector3(0, 3.141592653589793, 0)
+[node name="PaperVolume" type="MeshInstance3D" parent="Model"]
+scale = Vector3(1, 1, 0.08)
+mesh = ExtResource("3_mesh")
+metadata/flat_collision_depth = 0.02
+[node name="JointIn" type="Marker3D" parent="."]
+[node name="JointOut" type="Marker3D" parent="."]
+position = Vector3(0.04651254, -1.52, 0.0)

@@ -1,0 +1,618 @@
+{
+  "source": "../Wolf_2.png",
+  "method": "built-in image_gen extraction and occlusion reconstruction; original preserved",
+  "assets": [
+    {
+      "key": "wolf2_head_main",
+      "file": "Base/05_wolf2_head.png",
+      "canvas_size": [
+        1254,
+        1254
+      ],
+      "alpha_bounds_50_percent": [
+        18,
+        35,
+        1238,
+        1203
+      ],
+      "transparent_pixel_ratio": 0.5489985475505496,
+      "sha256": "a5153cdb97db889e51f3a7622e740042aa34a05f5ad81488ca0f1cca8e51d1a7",
+      "source_sheet": "res://Assets/2DResources/Wolf/Wolf_2.png",
+      "description": "the large wolf HEAD in the upper LEFT, roughly x=10..480,y=20..460. Keep ears, snout, black/ochre mane, cream cheek/neck and red nose; exclude the detached flame-shaped piece underneath and all other objects."
+    },
+    {
+      "key": "wolf2_torso",
+      "file": "Base/06_wolf2_torso.png",
+      "canvas_size": [
+        1659,
+        948
+      ],
+      "alpha_bounds_50_percent": [
+        43,
+        91,
+        1641,
+        821
+      ],
+      "transparent_pixel_ratio": 0.5518734278948988,
+      "sha256": "844f17c1317151ca928625970a502eb523634aa90d37155daa827ceab574852d",
+      "source_sheet": "res://Assets/2DResources/Wolf/Wolf_2.png",
+      "description": "the large horizontal central TORSO at x=400..1130,y=330..640. Remove the overlapping round shoulder at its LEFT and rounded hip/upper-leg at its RIGHT; reconstruct the body beneath them as a continuous complete black, ochre, red and ivory layered paper wolf torso. Keep the back mane and curved ivory underside; no shoulder disks, limb, head or tail."
+    },
+    {
+      "key": "wolf2_tail",
+      "file": "Attachments/03_wolf2_tail.png",
+      "canvas_size": [
+        2172,
+        724
+      ],
+      "alpha_bounds_50_percent": [
+        58,
+        76,
+        2122,
+        626
+      ],
+      "transparent_pixel_ratio": 0.5285406682742692,
+      "sha256": "62e23b8a9b3326089000928f7b5e8e3f36c1095fbe128f866cdcfef6165fe36b",
+      "source_sheet": "res://Assets/2DResources/Wolf/Wolf_2.png",
+      "description": "the large sweeping TAIL in the middle RIGHT x=990..1530,y=350..535, with ochre root on left and black, gold, ivory layered streamers toward right. Include only this connected tail; reconstruct covered root. Do not include nearby top curls or lower leg."
+    },
+    {
+      "key": "wolf2_head_variant",
+      "file": "Base/07_wolf2_head_variant.png",
+      "canvas_size": [
+        1536,
+        1024
+      ],
+      "alpha_bounds_50_percent": [
+        206,
+        24,
+        1349,
+        1010
+      ],
+      "transparent_pixel_ratio": 0.5964043935139974,
+      "sha256": "e2e45cfedb3f607565b908ed354a711c27f85a428a6dcc8df96e576828fdc12f",
+      "source_sheet": "res://Assets/2DResources/Wolf/Wolf_2.png",
+      "description": "the ornamental alternate HEAD assembly at TOP CENTER x=600..1035,y=15..390: large red eye in gold/ivory arch with black/ochre/red curled muzzle and neck ornaments. Extract it as one coherent complete alternate head, remove floating eye at x620 and detached red mane above-right. Preserve the looping layered structure and fill obscured contours."
+    },
+    {
+      "key": "wolf2_ear",
+      "file": "Attachments/04_wolf2_ear.png",
+      "canvas_size": [
+        1254,
+        1254
+      ],
+      "alpha_bounds_50_percent": [
+        337,
+        47,
+        945,
+        1193
+      ],
+      "transparent_pixel_ratio": 0.7188092203831312,
+      "sha256": "591ac34eb9efa508c5e3f25e6abbb8e851057ace9b7395f69fc2b5a83797c15c",
+      "source_sheet": "res://Assets/2DResources/Wolf/Wolf_2.png",
+      "description": "the single detached pointed wolf EAR near x=435..550,y=30..195: charcoal outer leaf ear and red-orange inset. Exclude all nearby head/other objects."
+    },
+    {
+      "key": "wolf2_eye",
+      "file": "Attachments/05_wolf2_eye.png",
+      "canvas_size": [
+        1322,
+        1190
+      ],
+      "alpha_bounds_50_percent": [
+        216,
+        152,
+        1105,
+        1033
+      ],
+      "transparent_pixel_ratio": 0.6028375646779135,
+      "sha256": "c88ef3c9b6ba5b1900493035e636d116071c90f2b351066f40935a429edbb7e7",
+      "source_sheet": "res://Assets/2DResources/Wolf/Wolf_2.png",
+      "description": "the isolated round EYEBALL at x=565..670,y=35..130: ivory outer circle, reddish iris, black teardrop pupil, preserving all layers. Only the eyeball, no connected cream curls behind/below it."
+    },
+    {
+      "key": "wolf2_mane",
+      "file": "Attachments/06_wolf2_mane.png",
+      "canvas_size": [
+        1774,
+        887
+      ],
+      "alpha_bounds_50_percent": [
+        101,
+        94,
+        1707,
+        837
+      ],
+      "transparent_pixel_ratio": 0.6591223090894532,
+      "sha256": "a4ff8a51b4b3718a6573762452a9f8e5f7a9dd37714c55e06023a434154c0559",
+      "source_sheet": "res://Assets/2DResources/Wolf/Wolf_2.png",
+      "description": "the detached flowing red and ivory MANE assembly at TOP RIGHT-CENTER x=888..1235,y=10..230. Preserve layered long pointed red ribbons and cream wavy stripe. Exclude nearby eye/head, gold curl and black/gold leaves."
+    },
+    {
+      "key": "wolf2_ornament_flame",
+      "file": "Attachments/07_wolf2_flame.png",
+      "canvas_size": [
+        1536,
+        1024
+      ],
+      "alpha_bounds_50_percent": [
+        287,
+        76,
+        1241,
+        934
+      ],
+      "transparent_pixel_ratio": 0.7728595733642578,
+      "sha256": "1a61ea26b205a91691416243541c648a630652b3f3ea7d57be901ef7917a4ebb",
+      "source_sheet": "res://Assets/2DResources/Wolf/Wolf_2.png",
+      "description": "the detached curving flame/fur ornament beneath main head at x=120..345,y=325..540, with ochre outer border, dark charcoal center, red stripe and ivory long pointed stripe. Preserve complete crescent/flame silhouette; no head or leg."
+    },
+    {
+      "key": "wolf2_ornament_leaf_left",
+      "file": "Attachments/08_wolf2_leaf_left.png",
+      "canvas_size": [
+        1175,
+        1339
+      ],
+      "alpha_bounds_50_percent": [
+        343,
+        143,
+        881,
+        1207
+      ],
+      "transparent_pixel_ratio": 0.8020733160662927,
+      "sha256": "5f17caecd5ce068802bc42ae2495983a181e84dae80a6a9e1f48679b515546d8",
+      "source_sheet": "res://Assets/2DResources/Wolf/Wolf_2.png",
+      "description": "the detached tall two-tone black and gold fur LEAF between main head and alternate head, x=498..595,y=145..320. One pointed bent teardrop leaf, gold right/lower face and black left/upper face. No other pieces."
+    },
+    {
+      "key": "wolf2_ornament_leaf_gold",
+      "file": "Attachments/09_wolf2_leaf_gold.png",
+      "canvas_size": [
+        1536,
+        1024
+      ],
+      "alpha_bounds_50_percent": [
+        273,
+        33,
+        1265,
+        1000
+      ],
+      "transparent_pixel_ratio": 0.7140210469563802,
+      "sha256": "22e129b159060c264e1bac0fb1b357e89e8a25b1a2f97043a524293655447b13",
+      "source_sheet": "res://Assets/2DResources/Wolf/Wolf_2.png",
+      "description": "the detached black-and-gold pointed fur LEAF at upper right x=1198..1315,y=30..205. Charcoal upper/right and ochre lower/left, a narrow tapered gold curve. Only this one leaf."
+    },
+    {
+      "key": "wolf2_ornament_leaf_black",
+      "file": "Attachments/10_wolf2_leaf_black.png",
+      "canvas_size": [
+        1536,
+        1024
+      ],
+      "alpha_bounds_50_percent": [
+        373,
+        57,
+        1193,
+        967
+      ],
+      "transparent_pixel_ratio": 0.7992013295491537,
+      "sha256": "94af1cdb741cd3e51e0e538de9193deaeeec7d5fd35595c8165863e4b65ffe44",
+      "source_sheet": "res://Assets/2DResources/Wolf/Wolf_2.png",
+      "description": "the isolated dark charcoal LEAF at upper right x=1307..1435,y=25..175, a gently curving pointed fur leaf. No adjacent gold or ivory pieces."
+    },
+    {
+      "key": "wolf2_ornament_leaf_white",
+      "file": "Attachments/11_wolf2_leaf_white.png",
+      "canvas_size": [
+        1024,
+        1536
+      ],
+      "alpha_bounds_50_percent": [
+        321,
+        13,
+        748,
+        1515
+      ],
+      "transparent_pixel_ratio": 0.7778282165527344,
+      "sha256": "63ffd14a52daeb1533360b4ad56a36ff0897106aefa3488d3d22099c4ca317d5",
+      "source_sheet": "res://Assets/2DResources/Wolf/Wolf_2.png",
+      "description": "the detached tall ivory double-pointed fur LEAF at far TOP RIGHT x=1440..1535,y=20..350. Keep both layered ivory curves as one coherent ornament. Remove all background and adjacent pieces."
+    },
+    {
+      "key": "wolf2_ornament_curl",
+      "file": "Attachments/12_wolf2_curl.png",
+      "canvas_size": [
+        1536,
+        1024
+      ],
+      "alpha_bounds_50_percent": [
+        253,
+        45,
+        1283,
+        972
+      ],
+      "transparent_pixel_ratio": 0.7386201222737631,
+      "sha256": "98ef490a88917ca6c3480f919482698834e27d62e6d550e5461c4a8b34b2bd5a",
+      "source_sheet": "res://Assets/2DResources/Wolf/Wolf_2.png",
+      "description": "the detached ochre and charcoal curled hook-shaped ornament at x=1060..1295,y=175..370. Keep the gold spiral/hook, dark black edge and the round black root tab with gold circular center at its bottom right; no tail or head."
+    },
+    {
+      "key": "wolf2_ornament_leaf_lower",
+      "file": "Attachments/13_wolf2_leaf_lower.png",
+      "canvas_size": [
+        1024,
+        1536
+      ],
+      "alpha_bounds_50_percent": [
+        182,
+        52,
+        865,
+        1447
+      ],
+      "transparent_pixel_ratio": 0.6768849690755209,
+      "sha256": "694ef5fa32cd547a280f27390c2f270a7aca99e3ff205616652cf7cb899a2a8f",
+      "source_sheet": "res://Assets/2DResources/Wolf/Wolf_2.png",
+      "description": "the detached red/black/gold pointed fur LEAF at x=230..345,y=560..755 between the two leftmost shin assemblies. Keep only the long pointed three-color leaf, no shin or paw."
+    },
+    {
+      "key": "wolf2_ornament_red_left",
+      "file": "Attachments/14_wolf2_red_left.png",
+      "canvas_size": [
+        1536,
+        1024
+      ],
+      "alpha_bounds_50_percent": [
+        349,
+        152,
+        1127,
+        921
+      ],
+      "transparent_pixel_ratio": 0.8685455322265625,
+      "sha256": "8d6f349a4abc4ad5064a291e6aa637563efedfb1a5bae1e6e2fa62b4310f340c",
+      "source_sheet": "res://Assets/2DResources/Wolf/Wolf_2.png",
+      "description": "the isolated brick-red curved fur LEAF at x=1105..1240,y=640..780 to the left of the right-center shin. One red curved pointed piece; no limb."
+    },
+    {
+      "key": "wolf2_ornament_red_right",
+      "file": "Attachments/15_wolf2_red_right.png",
+      "canvas_size": [
+        1536,
+        1024
+      ],
+      "alpha_bounds_50_percent": [
+        302,
+        80,
+        1195,
+        959
+      ],
+      "transparent_pixel_ratio": 0.8261280059814453,
+      "sha256": "78a58f36d69c6bd6ff0f55bb6e9214991dbe1f6dca36a7090401d35cba7683d5",
+      "source_sheet": "res://Assets/2DResources/Wolf/Wolf_2.png",
+      "description": "the detached red fur LEAF at x=1390..1475,y=535..715 on the right, above the rightmost ivory shin. One red tapered curved leaf only."
+    },
+    {
+      "key": "wolf2_ornament_gold_right",
+      "file": "Attachments/16_wolf2_gold_right.png",
+      "canvas_size": [
+        1254,
+        1254
+      ],
+      "alpha_bounds_50_percent": [
+        350,
+        75,
+        1074,
+        1201
+      ],
+      "transparent_pixel_ratio": 0.844624792370952,
+      "sha256": "ecdb200d3183a3ca2de8618df0099b87a5f3a897e879031bb4cfdfee70c854b9",
+      "source_sheet": "res://Assets/2DResources/Wolf/Wolf_2.png",
+      "description": "the isolated narrow GOLD fur LEAF at far right x=1480..1525,y=575..727. One slim ochre pointed curving leaf; no red leaf or shin."
+    },
+    {
+      "key": "wolf2_rivet",
+      "file": "Attachments/17_wolf2_rivet.png",
+      "canvas_size": [
+        1254,
+        1254
+      ],
+      "alpha_bounds_50_percent": [
+        366,
+        368,
+        886,
+        880
+      ],
+      "transparent_pixel_ratio": 0.8614405195241257,
+      "sha256": "5cab920cd8004b6e7553291cc24b993dc0e4d707036288dffdce06b424ae0292",
+      "source_sheet": "res://Assets/2DResources/Wolf/Wolf_2.png",
+      "description": "ONE copper circular RIVET from the bottom row, around x=185,y=980. Only one small metallic round copper button, preserving its highlight and bevel. No other rivets."
+    },
+    {
+      "key": "wolf2_fore1_upper",
+      "file": "Limbs/05_wolf2_fore1_upper.png",
+      "canvas_size": [
+        1536,
+        1024
+      ],
+      "alpha_bounds_50_percent": [
+        265,
+        38,
+        1263,
+        979
+      ],
+      "transparent_pixel_ratio": 0.6756197611490885,
+      "sha256": "ffe8f5c2cb2cc0fd381d68a11ec1467a3329b22faaecf128fb0de3a4e9a27522",
+      "source_sheet": "res://Assets/2DResources/Wolf/Wolf_2.png",
+      "description": "the UPPER LEG/shoulder component at LEFT MIDDLE x=35..240,y=460..685, ending at the circular brown joint near (206,566). Keep the black upper lobe with ochre inset and pointed ochre lower lobe as one upper leg; no ivory shin at (160,715), no paw, no head."
+    },
+    {
+      "key": "wolf2_fore2_upper",
+      "file": "Limbs/06_wolf2_fore2_upper.png",
+      "canvas_size": [
+        1254,
+        1254
+      ],
+      "alpha_bounds_50_percent": [
+        193,
+        126,
+        1062,
+        1096
+      ],
+      "transparent_pixel_ratio": 0.747020062117015,
+      "sha256": "eae6cf572bfb6202bdf24c24416e768f6d166bd24992a9c8cd769555e87ec40e",
+      "source_sheet": "res://Assets/2DResources/Wolf/Wolf_2.png",
+      "description": "the UPPER LEG at lower center-left x=365..595,y=565..760, from the round ochre shoulder with hole (440,618) to the ivory round knee tab (563,724). Keep charcoal/red/ochre shoulder and cream curved link ending at the ivory knee; exclude the ivory shin continuing down-left from that knee and exclude the paw."
+    },
+    {
+      "key": "wolf2_hind1_upper",
+      "file": "Limbs/07_wolf2_hind1_upper.png",
+      "canvas_size": [
+        1536,
+        1024
+      ],
+      "alpha_bounds_50_percent": [
+        217,
+        137,
+        1305,
+        836
+      ],
+      "transparent_pixel_ratio": 0.7597014109293619,
+      "sha256": "0714e15bf7539bdfc392b6a8f4646073121da8c97465472eb0853e62fea4ec48",
+      "source_sheet": "res://Assets/2DResources/Wolf/Wolf_2.png",
+      "description": "the UPPER LEG at lower center-right x=785..1085,y=555..760, from ochre round hip hole near (831,640) to ivory knee tab near (1047,722). Keep black/ochre layered hip and ivory curved link to knee; remove the gold shin continuing downward-right and remove paw."
+    },
+    {
+      "key": "wolf2_hind2_upper",
+      "file": "Limbs/08_wolf2_hind2_upper.png",
+      "canvas_size": [
+        1536,
+        1024
+      ],
+      "alpha_bounds_50_percent": [
+        91,
+        125,
+        1438,
+        872
+      ],
+      "transparent_pixel_ratio": 0.6455338795979818,
+      "sha256": "3355333d390139a57e430e3435d14e0fe0330d77a6404a11718731bc499a7a8c",
+      "source_sheet": "res://Assets/2DResources/Wolf/Wolf_2.png",
+      "description": "the UPPER LEG at right middle x=1165..1330,y=540..700, from black/gold upper round joint hole (1190,582) to black lower round joint hole (1309,645). Keep the curled black/gold upper-leg link between these two holes; exclude separate red ornaments and the ivory-tabbed black/gold shin below."
+    },
+    {
+      "key": "wolf2_fore1_lower",
+      "file": "Limbs/09_wolf2_fore1_lower.png",
+      "canvas_size": [
+        1024,
+        1536
+      ],
+      "alpha_bounds_50_percent": [
+        218,
+        97,
+        813,
+        1455
+      ],
+      "transparent_pixel_ratio": 0.7344207763671875,
+      "sha256": "3857f4b96004bb1ffa6fd1f52ac7804ff2bdf78284fa38126e23a609fe0fbb30",
+      "source_sheet": "res://Assets/2DResources/Wolf/Wolf_2.png",
+      "description": "the LEFTMOST LOWER LEG SHIN at x=85..185,y=690..870: ivory curved upper tab with oval black insert near (155,720), then dark narrow shin down to round ankle at (111,827). Exclude clawed paw at bottom, shoulder at x200,y560 and gold feather alongside. Reconstruct this one complete ivory/black shin."
+    },
+    {
+      "key": "wolf2_fore2_lower",
+      "file": "Limbs/10_wolf2_fore2_lower.png",
+      "canvas_size": [
+        1268,
+        1240
+      ],
+      "alpha_bounds_50_percent": [
+        302,
+        94,
+        1109,
+        1150
+      ],
+      "transparent_pixel_ratio": 0.8240657118143889,
+      "sha256": "5e18abef76b57cf8bdf9aa6bd5e3c1a598d4802fdea35c240c68df29352aa41f",
+      "source_sheet": "res://Assets/2DResources/Wolf/Wolf_2.png",
+      "description": "the ivory LOWER LEG SHIN at x=445..590,y=695..870, from ivory round knee tab centered (563,724) down-left to ivory rounded ankle tab centered (515,837), with dark long insert along the upper section. Exclude upper shoulder and separate paw below."
+    },
+    {
+      "key": "wolf2_hind1_lower",
+      "file": "Limbs/11_wolf2_hind1_lower.png",
+      "canvas_size": [
+        1230,
+        1278
+      ],
+      "alpha_bounds_50_percent": [
+        255,
+        116,
+        1037,
+        1108
+      ],
+      "transparent_pixel_ratio": 0.8458579844014402,
+      "sha256": "e71e71b86a3687cc8df7684fa2424814d95f181ac0ba390bc4ad6b1683008887",
+      "source_sheet": "res://Assets/2DResources/Wolf/Wolf_2.png",
+      "description": "the gold/ochre LOWER LEG SHIN at x=1015..1135,y=690..860, from ivory circular knee tab at (1047,722) downward-right to dark rounded ankle at (1112,815), with narrow black/red inset on the inner side. Exclude upper hip and the gold paw below."
+    },
+    {
+      "key": "wolf2_hind2_lower",
+      "file": "Limbs/12_wolf2_hind2_lower.png",
+      "canvas_size": [
+        1254,
+        1254
+      ],
+      "alpha_bounds_50_percent": [
+        232,
+        162,
+        1020,
+        1057
+      ],
+      "transparent_pixel_ratio": 0.8292080970877244,
+      "sha256": "b696f4025d186d0837bf83d71fc9086617fc06f91272463317f0f105ba18d10d",
+      "source_sheet": "res://Assets/2DResources/Wolf/Wolf_2.png",
+      "description": "the black/gold LOWER LEG SHIN at x=1230..1350,y=690..860, from ivory circular knee near (1267,727) downward-right to black round ankle with hole (1321,815). Keep the narrow black/ochre shaft, exclude the upper curled shoulder and the black paw below."
+    },
+    {
+      "key": "wolf2_extra1_lower",
+      "file": "Limbs/13_wolf2_extra1_lower.png",
+      "canvas_size": [
+        1024,
+        1536
+      ],
+      "alpha_bounds_50_percent": [
+        215,
+        153,
+        909,
+        1372
+      ],
+      "transparent_pixel_ratio": 0.7802543640136719,
+      "sha256": "8c7bc4b789fb4d53b1d384eb28dd11b393d1a37d0c15491832142614153cfd8e",
+      "source_sheet": "res://Assets/2DResources/Wolf/Wolf_2.png",
+      "description": "the detached black/gold LOWER LEG SHIN at x=250..345,y=710..895, with ochre round upper tab/hole at (315,740), long tapered black shaft angling down-left toward its ankle, gold strip on left. Exclude the large red/black/gold leaf above it and exclude the clawed paw below."
+    },
+    {
+      "key": "wolf2_extra2_lower",
+      "file": "Limbs/14_wolf2_extra2_lower.png",
+      "canvas_size": [
+        1292,
+        1218
+      ],
+      "alpha_bounds_50_percent": [
+        191,
+        131,
+        1100,
+        1113
+      ],
+      "transparent_pixel_ratio": 0.7868727345747737,
+      "sha256": "6e4182ca53a87b19603f23cb671b396b51e55b6e298e07ac9e22812c4eeb59c7",
+      "source_sheet": "res://Assets/2DResources/Wolf/Wolf_2.png",
+      "description": "the FAR RIGHT ivory/black LOWER LEG SHIN at x=1365..1500,y=690..865, with ivory upper tab and long black insert, bending down-right to rounded black ankle hole at (1473,827). Exclude red/gold ornaments above and clawed paw below."
+    },
+    {
+      "key": "wolf2_fore1_foot",
+      "file": "Feet/05_wolf2_fore1_foot.png",
+      "canvas_size": [
+        1536,
+        1024
+      ],
+      "alpha_bounds_50_percent": [
+        190,
+        308,
+        1399,
+        892
+      ],
+      "transparent_pixel_ratio": 0.7142333984375,
+      "sha256": "0b70fae00a97924178af72d7083062dc7bbe2f2ae5b0a77a7007c7385eb251bd",
+      "source_sheet": "res://Assets/2DResources/Wolf/Wolf_2.png",
+      "description": "the LEFTMOST clawed FOOT only at x=10..143,y=855..945: charcoal paw pointing left, ivory/ochre edge and reddish claws. Exclude the shin above ankle, preserve a clean ankle attachment at upper right."
+    },
+    {
+      "key": "wolf2_fore2_foot",
+      "file": "Feet/06_wolf2_fore2_foot.png",
+      "canvas_size": [
+        1536,
+        1024
+      ],
+      "alpha_bounds_50_percent": [
+        165,
+        155,
+        1399,
+        879
+      ],
+      "transparent_pixel_ratio": 0.7481924692789713,
+      "sha256": "eb4ca9018b2a3b3c44d700c8a44199b13326c59c895ebf9368113cdd32c5d36a",
+      "source_sheet": "res://Assets/2DResources/Wolf/Wolf_2.png",
+      "description": "the ivory clawed FOOT only at x=360..535,y=853..945, bottom center-left under the ivory shin: cream/ivory paw pointing left with three dark reddish claw tips and ivory round ankle near right. Exclude shin and shoulder above."
+    },
+    {
+      "key": "wolf2_hind1_foot",
+      "file": "Feet/07_wolf2_hind1_foot.png",
+      "canvas_size": [
+        1536,
+        1024
+      ],
+      "alpha_bounds_50_percent": [
+        235,
+        122,
+        1391,
+        901
+      ],
+      "transparent_pixel_ratio": 0.7030696868896484,
+      "sha256": "bdb87ec930ef5cf0562904abb7ccb9eb8e6123d5ebc39471bf9665b9b37eff89",
+      "source_sheet": "res://Assets/2DResources/Wolf/Wolf_2.png",
+      "description": "the ochre/gold FOOT only at x=975..1125,y=850..945, below gold shin. Gold paw pointing left with small reddish claw tips and dark rear edge. No shin or other legs."
+    },
+    {
+      "key": "wolf2_hind2_foot",
+      "file": "Feet/08_wolf2_hind2_foot.png",
+      "canvas_size": [
+        1536,
+        1024
+      ],
+      "alpha_bounds_50_percent": [
+        335,
+        96,
+        1202,
+        940
+      ],
+      "transparent_pixel_ratio": 0.7804775238037109,
+      "sha256": "f096d76c8ef8ad2d75426f9ef25e61076dd989caf8db80cebb49fcddd9dff4d3",
+      "source_sheet": "res://Assets/2DResources/Wolf/Wolf_2.png",
+      "description": "the charcoal FOOT only at x=1195..1335,y=855..945, below black/gold shin at x1320. Black paw pointing left with slight ochre accent, no long shin."
+    },
+    {
+      "key": "wolf2_extra1_foot",
+      "file": "Feet/09_wolf2_extra1_foot.png",
+      "canvas_size": [
+        1254,
+        1254
+      ],
+      "alpha_bounds_50_percent": [
+        69,
+        252,
+        1207,
+        1063
+      ],
+      "transparent_pixel_ratio": 0.6788255254636519,
+      "sha256": "caacc78e8ce6afdcb2a1b5709a4c2b9e774dc69e745bd7c8ea08a70c1c295291",
+      "source_sheet": "res://Assets/2DResources/Wolf/Wolf_2.png",
+      "description": "the SECOND clawed FOOT from the LEFT, at x=180..300,y=850..945: charcoal paw pointing left with separated pointed dark claws, ochre edge. Exclude long black/gold shin above."
+    },
+    {
+      "key": "wolf2_extra2_foot",
+      "file": "Feet/10_wolf2_extra2_foot.png",
+      "canvas_size": [
+        1536,
+        1024
+      ],
+      "alpha_bounds_50_percent": [
+        313,
+        322,
+        1246,
+        850
+      ],
+      "transparent_pixel_ratio": 0.7975762685139974,
+      "sha256": "f6d1b8e90e543539b54a5fbbda1454bc58b9df2897fdf5ef170cfb84c379c436",
+      "source_sheet": "res://Assets/2DResources/Wolf/Wolf_2.png",
+      "description": "the FAR RIGHT clawed FOOT at x=1350..1495,y=855..945, under ivory/black shin, dark charcoal paw with three red pointed claws and ochre edge. Exclude long shin and all other feet."
+    }
+  ]
+}

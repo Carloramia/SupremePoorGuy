@@ -1,0 +1,726 @@
+{
+  "method": "built-in image_gen extraction and occlusion completion; approved pixel-script alpha/edge cleanup without internal RGB edits",
+  "sources": [
+    {
+      "file": "Snake_1.png",
+      "original": "Assets/2DResources/AIGenerated/Unprocessed/Snake/Snake_1.png",
+      "sha256": "64c83f5929fd3edd05b5aca0f2391a398a9644223db3a1fc2f5a0f46d0c40d28"
+    },
+    {
+      "file": "Snake_2.png",
+      "original": "Assets/2DResources/AIGenerated/Unprocessed/Snake/Snake_2.png",
+      "sha256": "7a9d4b3d808135fac4a6af09c92bfb2bc8da16662a02fc1554cf4773b297c600"
+    },
+    {
+      "file": "Snake_3.png",
+      "original": "Assets/2DResources/AIGenerated/Unprocessed/Snake/Snake_3.png",
+      "sha256": "2702990e36d8f73f4d8e42308afc8dfefbe085096c1877ffa6876e6db1cc154a"
+    }
+  ],
+  "assets": [
+    {
+      "key": "snake1_head",
+      "file": "Base/01_snake1_head.png",
+      "source_sheet": "Snake_1.png",
+      "source_generated_file": "exec-23777ae0-b472-4d15-845f-c97b393962d2.png",
+      "category": "Head",
+      "name": "Snake1Head",
+      "role": "Head",
+      "texture_size": [
+        1394,
+        988
+      ],
+      "alpha_bounds": [
+        24,
+        24,
+        1370,
+        964
+      ],
+      "removed_chroma_pixels": 392,
+      "rgb_texture_preserved": true,
+      "sha256": "cff3a6299b5d532d57c7208ea0446d7a4a8b3e87717182e3b608b9977776c9da"
+    },
+    {
+      "key": "snake1_neck_upper",
+      "file": "Base/02_snake1_neck_upper.png",
+      "source_sheet": "Snake_1.png",
+      "source_generated_file": "exec-e121f22b-a762-40d7-83db-c613cfdfacac.png",
+      "category": "Neck",
+      "name": "Snake1NeckUpper",
+      "role": "Neck",
+      "texture_size": [
+        1035,
+        1236
+      ],
+      "alpha_bounds": [
+        24,
+        24,
+        1011,
+        1212
+      ],
+      "removed_chroma_pixels": 3344,
+      "rgb_texture_preserved": true,
+      "sha256": "4a5224e6e3ccd01dfa3a23a68eb9e0a7bdc425d4e4eb87db813c1d15df3f660e"
+    },
+    {
+      "key": "snake1_neck_lower",
+      "file": "Base/03_snake1_neck_lower.png",
+      "source_sheet": "Snake_1.png",
+      "source_generated_file": "exec-7aad2e08-ae4f-4460-9efb-6b856b2fce77.png",
+      "category": "Neck",
+      "name": "Snake1NeckLower",
+      "role": "Neck",
+      "texture_size": [
+        1277,
+        1011
+      ],
+      "alpha_bounds": [
+        24,
+        24,
+        1253,
+        987
+      ],
+      "removed_chroma_pixels": 2961,
+      "rgb_texture_preserved": true,
+      "sha256": "9af0f254cae83ffb3fd832eb7c636790317ef86a97b547d3412cd5284f7ed5a2"
+    },
+    {
+      "key": "snake1_body",
+      "file": "Base/04_snake1_body.png",
+      "source_sheet": "Snake_1.png",
+      "source_generated_file": "exec-855c52ea-70eb-4920-a18e-a5e3a5f0b187.png",
+      "category": "Torso",
+      "name": "Snake1Body",
+      "role": "Torso",
+      "texture_size": [
+        1156,
+        1090
+      ],
+      "alpha_bounds": [
+        24,
+        24,
+        1132,
+        1066
+      ],
+      "removed_chroma_pixels": 5284,
+      "rgb_texture_preserved": true,
+      "sha256": "6d4bc63d66491fba807edede926587645b399de08963c7124e72ee70169248ec"
+    },
+    {
+      "key": "snake1_body_curve",
+      "file": "Base/05_snake1_body_curve.png",
+      "source_sheet": "Snake_1.png",
+      "source_generated_file": "exec-fe9705f7-3dbf-4d12-a3c8-9c4415232083.png",
+      "category": "Torso",
+      "name": "Snake1BodyCurve",
+      "role": "Torso",
+      "texture_size": [
+        1204,
+        1013
+      ],
+      "alpha_bounds": [
+        24,
+        24,
+        1180,
+        989
+      ],
+      "removed_chroma_pixels": 2368,
+      "rgb_texture_preserved": true,
+      "sha256": "eb7607da99d5bd7725d79b86ad1c25ee7098192c215a1814f509792ee81b431e"
+    },
+    {
+      "key": "snake1_tail",
+      "file": "Attachments/01_snake1_tail.png",
+      "source_sheet": "Snake_1.png",
+      "source_generated_file": "exec-5ce0ecbc-2c85-4e94-86e4-61fd12fe9702.png",
+      "category": "Tail",
+      "name": "Snake1Tail",
+      "role": "Tail",
+      "texture_size": [
+        1666,
+        798
+      ],
+      "alpha_bounds": [
+        24,
+        24,
+        1642,
+        774
+      ],
+      "removed_chroma_pixels": 1317,
+      "rgb_texture_preserved": true,
+      "sha256": "9c41442ba3e6c50d04e55e6264c7150b2fc2b8c5706be532784e94cb791c6f06"
+    },
+    {
+      "key": "snake1_foot_left",
+      "file": "Feet/01_snake1_foot_left.png",
+      "source_sheet": "Snake_1.png",
+      "source_generated_file": "exec-d375147a-68ab-4582-b6f4-71c36b645ec2.png",
+      "category": "Feet",
+      "name": "Snake1FootLeft",
+      "role": "Leg",
+      "texture_size": [
+        1389,
+        1098
+      ],
+      "alpha_bounds": [
+        24,
+        24,
+        1365,
+        1074
+      ],
+      "removed_chroma_pixels": 50,
+      "rgb_texture_preserved": true,
+      "sha256": "9882138837da24f07eeb8fc3c39ed8a5e4822efe7959563e141c2ec9bad02000"
+    },
+    {
+      "key": "snake1_foot_middle",
+      "file": "Feet/02_snake1_foot_middle.png",
+      "source_sheet": "Snake_1.png",
+      "source_generated_file": "exec-38e3e9b3-938a-4c5f-8d00-770338edbf46.png",
+      "category": "Feet",
+      "name": "Snake1FootMiddle",
+      "role": "Leg",
+      "texture_size": [
+        1095,
+        963
+      ],
+      "alpha_bounds": [
+        24,
+        24,
+        1071,
+        939
+      ],
+      "removed_chroma_pixels": 0,
+      "rgb_texture_preserved": true,
+      "sha256": "4c37b370c498d02e90d4e1c6e2c2a55a56db13a164324ccfc1cd3497e5e109ad"
+    },
+    {
+      "key": "snake1_foot_right",
+      "file": "Feet/03_snake1_foot_right.png",
+      "source_sheet": "Snake_1.png",
+      "source_generated_file": "exec-f16571e4-b820-4345-9512-bb50445d2e05.png",
+      "category": "Feet",
+      "name": "Snake1FootRight",
+      "role": "Leg",
+      "texture_size": [
+        1201,
+        1102
+      ],
+      "alpha_bounds": [
+        24,
+        24,
+        1177,
+        1078
+      ],
+      "removed_chroma_pixels": 980,
+      "rgb_texture_preserved": true,
+      "sha256": "2a40fbd92b4cad5a7c487b6332b9b1f6b4432ccc2732f46fd9b9d2d04aadff21"
+    },
+    {
+      "key": "snake1_rivet",
+      "file": "Attachments/02_snake1_rivet.png",
+      "source_sheet": "Snake_1.png",
+      "source_generated_file": "exec-650e5a12-4f6c-48c4-959f-35361193e912.png",
+      "category": "Decorations",
+      "name": "Snake1Rivet",
+      "role": "Decoration",
+      "texture_size": [
+        869,
+        1017
+      ],
+      "alpha_bounds": [
+        24,
+        24,
+        845,
+        993
+      ],
+      "removed_chroma_pixels": 700,
+      "rgb_texture_preserved": true,
+      "sha256": "9169f1c382b64765eeb3b2e5f67f82b02b62b935f6736ac1ed509728e4e113d2"
+    },
+    {
+      "key": "snake2_head",
+      "file": "Base/06_snake2_head.png",
+      "source_sheet": "Snake_2.png",
+      "source_generated_file": "exec-0bd1d4c9-b04f-4f23-aef3-d7903a7c9098.png",
+      "category": "Head",
+      "name": "Snake2Head",
+      "role": "Head",
+      "texture_size": [
+        1493,
+        1107
+      ],
+      "alpha_bounds": [
+        24,
+        24,
+        1469,
+        1083
+      ],
+      "removed_chroma_pixels": 280,
+      "rgb_texture_preserved": true,
+      "sha256": "65c0d98bb6718066e23935ed568f25492968df8b2fc9ae4d82b320dc8f87ec9e"
+    },
+    {
+      "key": "snake2_neck",
+      "file": "Base/07_snake2_neck.png",
+      "source_sheet": "Snake_2.png",
+      "source_generated_file": "exec-17d02035-2369-4f72-b251-37ba4650e060.png",
+      "category": "Neck",
+      "name": "Snake2Neck",
+      "role": "Neck",
+      "texture_size": [
+        1082,
+        1228
+      ],
+      "alpha_bounds": [
+        24,
+        24,
+        1058,
+        1204
+      ],
+      "removed_chroma_pixels": 1296,
+      "rgb_texture_preserved": true,
+      "sha256": "98b413c6b04dbb75849388c7cca709ac528ef53afa1fd2e045787fa27e0ab343"
+    },
+    {
+      "key": "snake2_body_rear",
+      "file": "Base/08_snake2_body_rear.png",
+      "source_sheet": "Snake_2.png",
+      "source_generated_file": "exec-b5cfbb3e-ed0d-4bbb-be1f-f4262b0fc145.png",
+      "category": "Torso",
+      "name": "Snake2BodyRear",
+      "role": "Torso",
+      "texture_size": [
+        1456,
+        924
+      ],
+      "alpha_bounds": [
+        24,
+        24,
+        1432,
+        900
+      ],
+      "removed_chroma_pixels": 3568,
+      "rgb_texture_preserved": true,
+      "sha256": "26ef00aa75f0bcceb90a624d42c8850ef264f331de11d223505163dcfb9d3479"
+    },
+    {
+      "key": "snake2_body_middle",
+      "file": "Base/09_snake2_body_middle.png",
+      "source_sheet": "Snake_2.png",
+      "source_generated_file": "exec-cc1a3879-faab-4747-a114-069e94454873.png",
+      "category": "Torso",
+      "name": "Snake2BodyMiddle",
+      "role": "Torso",
+      "texture_size": [
+        1166,
+        979
+      ],
+      "alpha_bounds": [
+        24,
+        24,
+        1142,
+        955
+      ],
+      "removed_chroma_pixels": 3,
+      "rgb_texture_preserved": true,
+      "sha256": "b936f88deb386531692d4474de5ce2995d2f698fa6b211f11e38709993fb9a4a"
+    },
+    {
+      "key": "snake2_body_front",
+      "file": "Base/10_snake2_body_front.png",
+      "source_sheet": "Snake_2.png",
+      "source_generated_file": "exec-6863d3b5-fe81-44b6-bc50-60c7df7672af.png",
+      "category": "Torso",
+      "name": "Snake2BodyFront",
+      "role": "Torso",
+      "texture_size": [
+        1421,
+        989
+      ],
+      "alpha_bounds": [
+        24,
+        24,
+        1397,
+        965
+      ],
+      "removed_chroma_pixels": 4889,
+      "rgb_texture_preserved": true,
+      "sha256": "8e981f62453e70e02fada9fa5f0f567d53478db9e7ebfd7532c0de5ff95dff9c"
+    },
+    {
+      "key": "snake2_tail",
+      "file": "Attachments/03_snake2_tail.png",
+      "source_sheet": "Snake_2.png",
+      "source_generated_file": "exec-ccf0aa9d-ff8c-4ed6-a465-e61423071c80.png",
+      "category": "Tail",
+      "name": "Snake2Tail",
+      "role": "Tail",
+      "texture_size": [
+        1537,
+        1047
+      ],
+      "alpha_bounds": [
+        24,
+        24,
+        1513,
+        1023
+      ],
+      "removed_chroma_pixels": 0,
+      "rgb_texture_preserved": true,
+      "sha256": "8a634007475f63198cc8f0bade97ae55a88d976c874d85f60da21dc14083f920"
+    },
+    {
+      "key": "snake2_foot_left",
+      "file": "Feet/04_snake2_foot_left.png",
+      "source_sheet": "Snake_2.png",
+      "source_generated_file": "exec-d710508b-5001-4449-8886-0693743a20aa.png",
+      "category": "Feet",
+      "name": "Snake2FootLeft",
+      "role": "Leg",
+      "texture_size": [
+        1200,
+        1026
+      ],
+      "alpha_bounds": [
+        24,
+        24,
+        1176,
+        1002
+      ],
+      "removed_chroma_pixels": 99,
+      "rgb_texture_preserved": true,
+      "sha256": "661f89519b9ead55f633cc2bfd2d997e2a043473ccb61198aa43a808b17e1dd0"
+    },
+    {
+      "key": "snake2_foot_middle",
+      "file": "Feet/05_snake2_foot_middle.png",
+      "source_sheet": "Snake_2.png",
+      "source_generated_file": "exec-b2218344-0da5-4531-9c59-3bdf2a82bdd6.png",
+      "category": "Feet",
+      "name": "Snake2FootMiddle",
+      "role": "Leg",
+      "texture_size": [
+        1056,
+        992
+      ],
+      "alpha_bounds": [
+        24,
+        24,
+        1032,
+        968
+      ],
+      "removed_chroma_pixels": 615,
+      "rgb_texture_preserved": true,
+      "sha256": "e39aaf7bdc2aae48d0557e87eb7055351002166156bd9dc16eb300bd2afb0626"
+    },
+    {
+      "key": "snake2_foot_right",
+      "file": "Feet/06_snake2_foot_right.png",
+      "source_sheet": "Snake_2.png",
+      "source_generated_file": "exec-db9279f6-889d-4f89-add9-6179c7ed8b69.png",
+      "category": "Feet",
+      "name": "Snake2FootRight",
+      "role": "Leg",
+      "texture_size": [
+        892,
+        803
+      ],
+      "alpha_bounds": [
+        24,
+        24,
+        868,
+        779
+      ],
+      "removed_chroma_pixels": 313,
+      "rgb_texture_preserved": true,
+      "sha256": "bb268207dabd8c5100bcefb0bdf307c21498f97329873e68d9ea47947c4187f5"
+    },
+    {
+      "key": "snake2_rivet",
+      "file": "Attachments/04_snake2_rivet.png",
+      "source_sheet": "Snake_2.png",
+      "source_generated_file": "exec-4321a8db-bac1-4684-b1b3-befd45e05e95.png",
+      "category": "Decorations",
+      "name": "Snake2Rivet",
+      "role": "Decoration",
+      "texture_size": [
+        1097,
+        1089
+      ],
+      "alpha_bounds": [
+        24,
+        24,
+        1073,
+        1065
+      ],
+      "removed_chroma_pixels": 1033,
+      "rgb_texture_preserved": true,
+      "sha256": "a9e98cd084857af6098780e7c7371948994875fdf89395e9eb426d8ecb2ccddb"
+    },
+    {
+      "key": "snake3_head",
+      "file": "Base/11_snake3_head.png",
+      "source_sheet": "Snake_3.png",
+      "source_generated_file": "exec-e2ce35bb-7688-4fd1-a52d-cd1ed08c0c02.png",
+      "category": "Head",
+      "name": "Snake3Head",
+      "role": "Head",
+      "texture_size": [
+        1593,
+        959
+      ],
+      "alpha_bounds": [
+        24,
+        24,
+        1569,
+        935
+      ],
+      "removed_chroma_pixels": 4463,
+      "rgb_texture_preserved": true,
+      "sha256": "553dcc36df9f6a43b14ad49156588b84a6ed87ccafebe6a4f387f0b1f8551d0c"
+    },
+    {
+      "key": "snake3_upper_jaw",
+      "file": "Base/12_snake3_upper_jaw.png",
+      "source_sheet": "Snake_3.png",
+      "source_generated_file": "exec-481e171a-e484-42d9-a761-0392233cd448.png",
+      "category": "Head",
+      "name": "Snake3UpperJaw",
+      "role": "Head",
+      "texture_size": [
+        1722,
+        858
+      ],
+      "alpha_bounds": [
+        24,
+        24,
+        1698,
+        834
+      ],
+      "removed_chroma_pixels": 868,
+      "rgb_texture_preserved": true,
+      "sha256": "475d0228d4e2249b17835d4c79bd16cd3461a2e1f0ba5a6aff7c0dcdfc659cae"
+    },
+    {
+      "key": "snake3_lower_jaw",
+      "file": "Base/13_snake3_lower_jaw.png",
+      "source_sheet": "Snake_3.png",
+      "source_generated_file": "exec-7b28edbe-3dcb-40cd-affb-ab15691b14c2.png",
+      "category": "Mouth",
+      "name": "Snake3LowerJaw",
+      "role": "Jaw",
+      "texture_size": [
+        1734,
+        771
+      ],
+      "alpha_bounds": [
+        24,
+        24,
+        1710,
+        747
+      ],
+      "removed_chroma_pixels": 6836,
+      "rgb_texture_preserved": true,
+      "sha256": "50d8ad5355422a4d568fb44a50e5fa0917ccd3959a7d2a6327977940e87c29c3"
+    },
+    {
+      "key": "snake3_tongue",
+      "file": "Attachments/05_snake3_tongue.png",
+      "source_sheet": "Snake_3.png",
+      "source_generated_file": "exec-aba55a72-0709-4231-b972-4031a1f19b2b.png",
+      "category": "Mouth",
+      "name": "Snake3Tongue",
+      "role": "Tongue",
+      "texture_size": [
+        1911,
+        829
+      ],
+      "alpha_bounds": [
+        24,
+        24,
+        1887,
+        805
+      ],
+      "removed_chroma_pixels": 1016,
+      "rgb_texture_preserved": true,
+      "sha256": "b777d57194d03dbd1e7e349bfceda275bba71927a92dfa4a1e7f89344d98b28d"
+    },
+    {
+      "key": "snake3_tail",
+      "file": "Attachments/06_snake3_tail.png",
+      "source_sheet": "Snake_3.png",
+      "source_generated_file": "exec-5bef30d0-236c-478e-9142-b7e80cd40970.png",
+      "category": "Tail",
+      "name": "Snake3Tail",
+      "role": "Tail",
+      "texture_size": [
+        1526,
+        949
+      ],
+      "alpha_bounds": [
+        24,
+        24,
+        1502,
+        925
+      ],
+      "removed_chroma_pixels": 2328,
+      "rgb_texture_preserved": true,
+      "sha256": "8cbe26b5a1d0ad72a271bcae1e8b71e107c1dc5497584bf1c7c5d08215eef70b"
+    },
+    {
+      "key": "snake3_body_middle",
+      "file": "Base/14_snake3_body_middle.png",
+      "source_sheet": "Snake_3.png",
+      "source_generated_file": "exec-36d8d984-64f1-4ad5-8a45-d81b16de602e.png",
+      "category": "Torso",
+      "name": "Snake3BodyMiddle",
+      "role": "Torso",
+      "texture_size": [
+        1296,
+        804
+      ],
+      "alpha_bounds": [
+        24,
+        24,
+        1272,
+        780
+      ],
+      "removed_chroma_pixels": 2601,
+      "rgb_texture_preserved": true,
+      "sha256": "6edbf7b3c6a6e0d747007ead7dc58546f36a39a8c87819002f531e8694bd22a1"
+    },
+    {
+      "key": "snake3_body_front",
+      "file": "Base/15_snake3_body_front.png",
+      "source_sheet": "Snake_3.png",
+      "source_generated_file": "exec-bbd976d4-0b8f-4638-8c02-d84fd99c6a4d.png",
+      "category": "Torso",
+      "name": "Snake3BodyFront",
+      "role": "Torso",
+      "texture_size": [
+        1414,
+        1034
+      ],
+      "alpha_bounds": [
+        24,
+        24,
+        1390,
+        1010
+      ],
+      "removed_chroma_pixels": 2804,
+      "rgb_texture_preserved": true,
+      "sha256": "e4bf52b8c0cab74540e73c81bb6b9bdef7c3fbb429e09ecdfb40b111c7f494d6"
+    },
+    {
+      "key": "snake3_foot_left",
+      "file": "Feet/07_snake3_foot_left.png",
+      "source_sheet": "Snake_3.png",
+      "source_generated_file": "exec-16ce27af-d557-4c0e-9dbc-04a4617eb90c.png",
+      "category": "Feet",
+      "name": "Snake3FootLeft",
+      "role": "Leg",
+      "texture_size": [
+        1434,
+        1053
+      ],
+      "alpha_bounds": [
+        24,
+        24,
+        1410,
+        1029
+      ],
+      "removed_chroma_pixels": 893,
+      "rgb_texture_preserved": true,
+      "sha256": "bae59899c4314cad9e7e15935836191b126c5e6ea761bf7ff9167a287e9ff6d3"
+    },
+    {
+      "key": "snake3_foot_middle_left",
+      "file": "Feet/08_snake3_foot_middle_left.png",
+      "source_sheet": "Snake_3.png",
+      "source_generated_file": "exec-32e4cd30-0b4a-439d-b917-aa3e5aeb7d7f.png",
+      "category": "Feet",
+      "name": "Snake3FootMiddleLeft",
+      "role": "Leg",
+      "texture_size": [
+        1248,
+        1124
+      ],
+      "alpha_bounds": [
+        24,
+        24,
+        1224,
+        1100
+      ],
+      "removed_chroma_pixels": 1116,
+      "rgb_texture_preserved": true,
+      "sha256": "8a71c53f1354b7d7fb577da94febdd1cd6f0d42bea3d321766df09a9a695eab0"
+    },
+    {
+      "key": "snake3_foot_middle_right",
+      "file": "Feet/09_snake3_foot_middle_right.png",
+      "source_sheet": "Snake_3.png",
+      "source_generated_file": "exec-db3af3b6-197d-4859-9388-1185fdc7577f.png",
+      "category": "Feet",
+      "name": "Snake3FootMiddleRight",
+      "role": "Leg",
+      "texture_size": [
+        1255,
+        1120
+      ],
+      "alpha_bounds": [
+        24,
+        24,
+        1231,
+        1096
+      ],
+      "removed_chroma_pixels": 726,
+      "rgb_texture_preserved": true,
+      "sha256": "b91f74ce0a043351ebdca3f8b42ee23dbbb224156cc805ce7d4008d39bae46c1"
+    },
+    {
+      "key": "snake3_foot_right",
+      "file": "Feet/10_snake3_foot_right.png",
+      "source_sheet": "Snake_3.png",
+      "source_generated_file": "exec-a66a670d-a3ee-4a2b-abef-d10c3da167a3.png",
+      "category": "Feet",
+      "name": "Snake3FootRight",
+      "role": "Leg",
+      "texture_size": [
+        1191,
+        1168
+      ],
+      "alpha_bounds": [
+        24,
+        24,
+        1167,
+        1144
+      ],
+      "removed_chroma_pixels": 1000,
+      "rgb_texture_preserved": true,
+      "sha256": "d8581d1184c7020fc283edb90961b205434fe83ef25813c89263309c39344a20"
+    },
+    {
+      "key": "snake3_rivet",
+      "file": "Attachments/07_snake3_rivet.png",
+      "source_sheet": "Snake_3.png",
+      "source_generated_file": "exec-5b4638a5-a51a-45b1-bb5b-a0720ae8d698.png",
+      "category": "Decorations",
+      "name": "Snake3Rivet",
+      "role": "Decoration",
+      "texture_size": [
+        797,
+        790
+      ],
+      "alpha_bounds": [
+        24,
+        24,
+        773,
+        766
+      ],
+      "removed_chroma_pixels": 4687,
+      "rgb_texture_preserved": true,
+      "sha256": "b8575d279ceb77d1cee2874dd3b495e394f9d41fe80d9495fbf14ef071b75096"
+    }
+  ]
+}

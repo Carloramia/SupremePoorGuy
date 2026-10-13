@@ -1,7 +1,6 @@
 extends "res://Scripts/Creatures/NPCStateMachine3D.gd"
 
-## Spiders currently have no ForeLeg attack. Keep pursuit usable until an
-## applicable attack receiver is configured; configured attacks use the base logic.
+## Keep pursuit usable when its attack module is disabled or limbs are broken.
 func _plan_attack_distance(distance: float, attacks: Array[ATTACK]) -> bool:
 	if not attacks.is_empty(): return super._plan_attack_distance(distance, attacks)
 	_distance_attack = null

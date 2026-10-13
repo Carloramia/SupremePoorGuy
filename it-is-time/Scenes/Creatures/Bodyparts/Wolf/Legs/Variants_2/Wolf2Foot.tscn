@@ -1,0 +1,35 @@
+[gd_scene load_steps=5 format=3]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/_PhysicalSampleBodyParts.tscn" id="1_base"]
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/Wolf/Models/Legs/Variants_2/Wolf2Foot.glb" id="2_model"]
+[ext_resource type="ArrayMesh" path="res://Resources/Meshes/Wolf/Legs/Variants_2/Wolf2Foot.res" id="3_mesh"]
+[sub_resource type="ConvexPolygonShape3D" id="Shape"]
+resource_local_to_scene = true
+points = PackedVector3Array(-0.99723485, -0.45769154, -0.01000000, -0.97178030, -0.40646226, -0.01000000, -0.86996212, -0.20154517, -0.01000000, -0.84450758, -0.17593053, -0.01000000, -0.79359848, -0.12470126, -0.01000000, -0.74268939, -0.09908662, -0.01000000, -0.69178030, -0.07347198, -0.01000000, -0.25905303, 0.13144511, -0.01000000, 0.04640152, 0.13144511, -0.01000000, 0.22458333, -0.09908662, -0.01000000, 0.25003788, -0.17593053, -0.01000000, 0.25003788, -0.30400372, -0.01000000, 0.22458333, -0.38084763, -0.01000000, 0.14821970, -0.45769154, -0.01000000, 0.07185606, -0.48330617, -0.01000000, -0.51359848, -0.56015009, -0.01000000, -0.53905303, -0.56015009, -0.01000000, -0.79359848, -0.53453545, -0.01000000, -0.99723485, -0.48330617, -0.01000000, -0.99723485, -0.45769154, 0.01000000, -0.97178030, -0.40646226, 0.01000000, -0.86996212, -0.20154517, 0.01000000, -0.84450758, -0.17593053, 0.01000000, -0.79359848, -0.12470126, 0.01000000, -0.74268939, -0.09908662, 0.01000000, -0.69178030, -0.07347198, 0.01000000, -0.25905303, 0.13144511, 0.01000000, 0.04640152, 0.13144511, 0.01000000, 0.22458333, -0.09908662, 0.01000000, 0.25003788, -0.17593053, 0.01000000, 0.25003788, -0.30400372, 0.01000000, 0.22458333, -0.38084763, 0.01000000, 0.14821970, -0.45769154, 0.01000000, 0.07185606, -0.48330617, 0.01000000, -0.51359848, -0.56015009, 0.01000000, -0.53905303, -0.56015009, 0.01000000, -0.79359848, -0.53453545, 0.01000000, -0.99723485, -0.48330617, 0.01000000)
+[node name="Wolf_Wolf2Foot" instance=ExtResource("1_base")]
+mass = 0.12
+geometry_mode = 1
+custom_model_path = NodePath("Model")
+paper_volume_enabled = true
+paper_volume_thickness = 0.08
+sprite_visible = false
+mesh_visible = true
+tags = Array[int]([1])
+metadata/source_png = "res://Assets/2DResources/Wolf/Separated/Feet/10_wolf2_extra2_foot.png"
+metadata/pivot_is_initial_estimate = true
+metadata/wolf_forward_axis = "+X"
+[node name="CollisionShape3D" parent="." index="0"]
+rotation = Vector3(0, 3.141592653589793, 0)
+position = Vector3(0, 0, 0)
+shape = SubResource("Shape")
+[node name="MeshInstance3D" parent="." index="2"]
+visible = false
+mesh = null
+[node name="Model" parent="." instance=ExtResource("2_model")]
+rotation = Vector3(0, 3.141592653589793, 0)
+[node name="PaperVolume" type="MeshInstance3D" parent="Model"]
+scale = Vector3(1, 1, 0.08)
+mesh = ExtResource("3_mesh")
+metadata/flat_collision_depth = 0.02
+[node name="JointIn" type="Marker3D" parent="."]
+[node name="JointOut" type="Marker3D" parent="."]
+position = Vector3(0.80400568, -0.42, 0.0)
