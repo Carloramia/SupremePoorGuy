@@ -1,6 +1,10 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 [ext_resource type="Theme" path="res://Assets/UI/PaperRelief/PaperReliefTheme.tres" id="Theme"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/Components/UISkinSlots.tscn" id="SkinSlots"]
 [node name="ActionButton" type="Button"]
 custom_minimum_size = Vector2(0, 42)
 theme = ExtResource("Theme")
 text = "操作"
+
+[node name="VisualSkin" parent="." instance=ExtResource("SkinSlots")]
+surface_target = NodePath("__button_surface__")

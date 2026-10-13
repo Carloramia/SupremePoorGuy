@@ -6,6 +6,7 @@ const SAVE_VERSION = 1
 var save_path: String = "user://prototype_session.json"
 var data: Dictionary = {}
 var last_error: String = ""
+var last_recycled_name := ""
 
 func _init() -> void:
 	reset()
@@ -198,14 +199,41 @@ func summon(rules, location: String, return_route: String) -> bool:
 		return false
 	return true
 
-func claim_once(id: String, reward: int) -> bool:
+func claim_once(id: String, reward: int, rune_ids: Array = [], relic_ids: Array = []) -> bool:
 	if id in data.completed:
 		last_error = "此奖励已经领取"
 		return false
 	var before := data.duplicate(true)
 	data.magic += maxi(0,reward)
 	data.completed.append(id)
+	for pair in [["known_runes",rune_ids],["known_relics",relic_ids]]:
+		if not data.has(pair[0]):
+			data[pair[0]] = known_references(pair[0] == "known_relics")
+		for reference_id in pair[1]:
+			if not Rules.definition(reference_id,pair[0] == "known_relics").is_empty() and reference_id not in data[pair[0]]:
+				data[pair[0]].append(reference_id)
 	if not save():
 		data = before
 		return false
 	return true
+
+func recycle_monster(id: String) -> bool:
+	var monster := monster_by_id(id)
+	if monster.is_empty() or monster.position == "pending":
+		last_error = "待安置或不存在的怪物不能回收"
+		return false
+	var before := data.duplicate(true)
+	last_recycled_name = monster.name
+	data.monsters.erase(monster)
+	if not save():
+		data = before
+		return false
+	return true
+
+func known_references(relics: bool = false) -> Array:
+	var key := "known_relics" if relics else "known_runes"
+	# Older prototype saves had every test reference open; preserve that compatibility.
+	return data.get(key,(Rules.RELICS if relics else Rules.RUNES).map(func(item): return item.id)).duplicate()
+
+func has_save() -> bool:
+	return FileAccess.file_exists(save_path)

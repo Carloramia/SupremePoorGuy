@@ -51,7 +51,7 @@ func _run() -> void:
 	check(not restored.placed[0].enabled,"enabled roundtrip")
 	rules.placed[0].enabled = true
 	var state = State.new()
-	state.save_path = "user://native_ui_test_%d.json" % Time.get_ticks_usec()
+	state.save_path = ProjectSettings.globalize_path("res://Tests/.runtime") + "/native_ui_test_%d.json" % Time.get_ticks_usec()
 	check(state.summon(rules,"forest","world"),"summon succeeds")
 	check(state.data.magic==296 and state.data.pending.size()==3,"cost and count")
 	check(not state.summon(rules,"forest","world"),"pending blocks duplicate summon")
@@ -76,12 +76,12 @@ func _run() -> void:
 	check(state.claim_once("battle_test",20),"claim")
 	check(not state.claim_once("battle_test",20) and state.data.magic==money+20,"reward exactly once")
 	var failed = State.new()
-	failed.save_path = "user://missing_test_directory/session.json"
+	failed.save_path = ProjectSettings.globalize_path("res://Tests/.runtime") + "/missing_test_directory/session.json"
 	check(not failed.summon(rules,"grassland","world"),"save failure rejects summon")
 	check(failed.data.magic==300 and failed.data.monsters.is_empty(),"save failure rolls back")
 	var app = Scene.instantiate()
 	app.animate_panels = false
-	app.state.save_path = "user://native_ui_scene_test_%d.json" % Time.get_ticks_usec()
+	app.state.save_path = ProjectSettings.globalize_path("res://Tests/.runtime") + "/native_ui_scene_test_%d.json" % Time.get_ticks_usec()
 	root.add_child(app)
 	await process_frame
 	check(app.route=="main","native entry")

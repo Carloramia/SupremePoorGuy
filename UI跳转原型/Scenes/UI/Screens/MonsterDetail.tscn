@@ -3,32 +3,38 @@
 [ext_resource type="PackedScene" path="res://Scenes/UI/Components/ActionButton.tscn" id="Button"]
 [ext_resource type="Theme" path="res://Assets/UI/PaperRelief/PaperReliefTheme.tres" id="Theme"]
 [node name="MonsterDetail" type="VBoxContainer"]
+theme_override_constants/separation = 8
 size_flags_horizontal = 3
 theme = ExtResource("Theme")
 [node name="Portrait" parent="." instance=ExtResource("Portrait")]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(150, 190)
+custom_minimum_size = Vector2(150, 140)
 layout_mode = 2
 [node name="Name" type="Label" parent="."]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 24
 text = "妖兽名称"
 [node name="Stats" type="Label" parent="."]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 18
 text = "生命 100　攻击 20　护甲 5　移速 1.0\n来源：草原"
 autowrap_mode = 3
-[node name="NameInput" type="LineEdit" parent="."]
+[node name="Rename" type="HBoxContainer" parent="."]
+layout_mode = 2
+[node name="NameInput" type="LineEdit" parent="Rename"]
+size_flags_horizontal = 3
 unique_name_in_owner = true
 layout_mode = 2
 max_length = 24
 placeholder_text = "输入妖兽名称"
-[node name="Save" parent="." instance=ExtResource("Button")]
+[node name="Save" parent="Rename" instance=ExtResource("Button")]
+theme_type_variation = &"SecondaryButton"
 unique_name_in_owner = true
 layout_mode = 2
-text = "保存名称"
-[node name="Traits" type="VBoxContainer" parent="."]
+text = "保存"
+tooltip_text = "保存怪物名称"
+[node name="Traits" type="HFlowContainer" parent="."]
 unique_name_in_owner = true
 layout_mode = 2

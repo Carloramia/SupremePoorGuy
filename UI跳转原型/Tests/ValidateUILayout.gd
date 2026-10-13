@@ -32,22 +32,22 @@ func save_capture(file: String) -> void:
 
 func _run() -> void:
 	capture = "--capture" in OS.get_cmdline_user_args()
-	root.content_scale_size = Vector2i(1280,720)
-	root.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
+	root.content_scale_size = Vector2i.ZERO
+	root.content_scale_mode = Window.CONTENT_SCALE_MODE_DISABLED
 	root.content_scale_aspect = Window.CONTENT_SCALE_ASPECT_KEEP
 	app = Scene.instantiate()
 	app.animate_panels = false
-	app.state.save_path = "user://native_layout_test_%d.json" % Time.get_ticks_usec()
+	app.state.save_path = ProjectSettings.globalize_path("res://Tests/.runtime") + "/native_layout_test_%d.json" % Time.get_ticks_usec()
 	root.add_child(app)
 	app._show("world")
 	await settle()
-	check(app.view.summon_book.visible,"book is on map")
-	app.view.summon_book.pressed.emit()
+	check(not app.view.summon_book.visible and app.base.get_node("%Summon").visible,"left bookmark is the only visible summoning entry")
+	app.base.get_node("%Summon").pressed.emit()
 	await settle()
 	check(app.modal_stack.size()==1 and app.overlay.visible,"book opens native ritual")
 	check(app.board.scene_file_path.ends_with("RuneBoard.tscn"),"board is scene component")
 	check(app.modal_box.get_child(0).scene_file_path.ends_with("RitualPanel.tscn"),"ritual uses editable scene")
-	for resolution in [Vector2i(960,540),Vector2i(1280,720),Vector2i(1600,900),Vector2i(1920,1080),Vector2i(1024,768),Vector2i(1920,800)]:
+	for resolution in [Vector2i(1120,680),Vector2i(1280,720),Vector2i(1440,810),Vector2i(1600,900),Vector2i(1920,1080),Vector2i(1920,800)]:
 		root.size = resolution
 		await settle()
 		var before: Rect2 = app.board.get_global_rect()

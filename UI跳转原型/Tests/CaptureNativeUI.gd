@@ -7,6 +7,7 @@ func _initialize() -> void:
 	call_deferred("_run")
 
 func capture(file: String) -> void:
+	await create_timer(0.75).timeout
 	while app.board_motion.busy:
 		await process_frame
 	await process_frame
@@ -19,7 +20,7 @@ func _run() -> void:
 	root.size = Vector2i(1280,720)
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("res://Tests/screenshots"))
 	app = Scene.instantiate()
-	app.state.save_path = "user://native_capture_%d.json" % Time.get_ticks_usec()
+	app.state.save_path = ProjectSettings.globalize_path("res://Tests/.runtime") + "/native_capture_%d.json" % Time.get_ticks_usec()
 	root.add_child(app)
 	app._show("world")
 	await capture("01_world")
