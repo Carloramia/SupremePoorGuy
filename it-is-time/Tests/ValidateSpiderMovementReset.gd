@@ -14,7 +14,9 @@ func validate(actor: Node) -> void:
 	var generator = actor.get_node("SpiderGenerator")
 	check(not generator.use_manual_layout and generator.manual_layout == null, "Post-import manual layouts must be cleared")
 	check(not generator.has_method("_authored_markers") and not generator.has_method("_align_spider_leg_depths"), "Imported holes must not override the restored frame")
-	check(generator.rear_torso_size.is_equal_approx(Vector3(2, 2, 1.6)), "Original rear torso proportions must be restored")
+	check(generator.rear_torso_size.is_equal_approx(Vector3(2, 2.0 * 963.0 / 1490.0, 1.6)), "Rear torso frame must preserve its width and source art proportions")
+	var rear_model: Node3D = actor.get_node("GeneratedParts/Torso_Rear/Model")
+	check(is_equal_approx(rear_model.scale.x, rear_model.scale.y), "Rear torso source art must use uniform XY scaling")
 	check(is_equal_approx(generator.upper_limb_length, 2.0) and is_equal_approx(generator.lower_leg_length, 2.8), "Original leg lengths must be restored")
 	var mapping: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://Assets/3DResources/Creatures/Spider/Metadata/generator_part_mapping.json"))
 	check(generator.part_scene_rules.size() == 19, "All nineteen imported Part associations must survive")
@@ -29,12 +31,9 @@ func validate(actor: Node) -> void:
 		check(collision.shape is BoxShape3D, "Every Part must use the original box collider: " + str(layout.name))
 		check(collision.transform.is_equal_approx(Transform3D.IDENTITY), "Legacy colliders must remain centered without local rotation or scaling")
 		check(is_equal_approx(part.collision_thickness, layout.size.z * generator.overall_scale), "Inspector collision depth must match the original box")
-		if layout.name == "Leg_7_Limb_1":
+		if layout.role == "Limb":
 			var model := part.get_node("Model") as Node3D
-			var volume := model.get_node("PaperVolume") as MeshInstance3D
-			var visual_bounds: AABB = model.transform * volume.transform * volume.mesh.get_aabb()
-			check(visual_bounds.size.is_equal_approx(layout.size * generator.overall_scale), "Leg 7 visual must fit the restored frame without using obsolete source collision bounds")
-			check(visual_bounds.get_center().length() < 0.0001, "Leg 7 visual must remain centered in its frame")
+			check(is_equal_approx(model.scale.x, model.scale.y), "Upper-limb visuals must retain their source aspect ratio")
 		check(part.get_meta(&"generated_scene_path", "") == mapping[str(layout.name)], "Imported Part reference must be preserved: " + str(layout.name))
 		var rule = generator.get_part_scene_rule(str(part.get_meta(&"generated_part_type")), str(part.name), str(part.name))
 		check(not rule.use_joint_markers and not rule.align_connectors_to_frame, "Imported markers must not move procedural joints")
@@ -53,9 +52,9 @@ func validate(actor: Node) -> void:
 		count += 1
 		var slide: Dictionary = joint.get_meta("spider_axial_slide")
 		var knee: bool = slide.connection == "knee"
-		check(joint.get_flag_y(Generic6DOFJoint3D.FLAG_ENABLE_LINEAR_LIMIT) == knee, "Knee travel must be bounded; independent root translation must be released")
-		check(joint.get_flag_y(Generic6DOFJoint3D.FLAG_ENABLE_LINEAR_SPRING) == knee, "Knee axial spring must be restored")
-		check(is_equal_approx(joint.get_param_y(Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT), float(slide.upper_length) * (0.03 if knee else 0.02)), "Captured slider distances must match pre-import ratios")
+		check(joint.get_flag_y(Generic6DOFJoint3D.FLAG_ENABLE_LINEAR_LIMIT), "Both root and knee travel must remain bounded")
+		check(joint.get_flag_y(Generic6DOFJoint3D.FLAG_ENABLE_LINEAR_SPRING) == not knee, "Only bounded root travel uses an axial spring")
+		check(is_equal_approx(joint.get_param_y(Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT), 0.0 if knee else float(slide.upper_length) * 0.02), "Knee holes must pivot without translation; root tuning must remain unchanged")
 		check(is_zero_approx(joint.get_param_x(Generic6DOFJoint3D.PARAM_ANGULAR_UPPER_LIMIT)) and is_zero_approx(joint.get_param_y(Generic6DOFJoint3D.PARAM_ANGULAR_UPPER_LIMIT)), "Out-of-plane rotations must retain their hinge limits")
 	check(count == 16, "All sixteen original physical joints must remain configured")
 	for foot: RigidBody3D in movement.get_leg_parts():

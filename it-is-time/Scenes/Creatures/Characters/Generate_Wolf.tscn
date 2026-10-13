@@ -2461,6 +2461,10 @@ segment_spring_frequency = 3.0
 segment_spring_damping_ratio = 1.0
 
 [node name="GeneratedLegStepMovementController3D" parent="." index="0"]
+stable_turn_control_enabled = true
+turn_effective_inertia_scale = 2.0
+turn_foot_rate_servo_enabled = true
+turn_contact_force_multiplier = 1.0
 script = ExtResource("wolf_movement")
 sub_torso_damping_ratio = 1.2
 foot_joint_yaw_lock_enabled = true

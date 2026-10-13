@@ -13,6 +13,12 @@ var _wolf_walking_speed: float = 0.0
 var _wolf_gallop_reason: String = "inactive"
 var _wolf_relief_remaining: float = 0.0
 var _wolf_deliberate_turn: bool = false
+var _wolf_turn_stable_elapsed: float = 0.0
+var _wolf_turn_goal: float = 0.0
+var _wolf_turn_state_frame: int = -1
+var _wolf_plane_blend: float = 1.0
+var _wolf_turn_resume_blend: float = 1.0
+var _wolf_turn_resume_speed: float = 0.0
 var _wolf_rotation_locks: Dictionary = {}
 var _wolf_rotation_diagnostics: Dictionary = {}
 var _wolf_plane_links: Array[Dictionary] = []
@@ -107,6 +113,10 @@ func refresh_physics_query_cache() -> void:
 	_wolf_gallop_timer = 0.0
 	_wolf_relief_remaining = 0.0
 	_wolf_deliberate_turn = false
+	_wolf_turn_stable_elapsed = 0.0
+	_wolf_turn_state_frame = -1
+	_wolf_plane_blend = 1.0
+	_wolf_turn_resume_blend = 1.0
 	super.refresh_physics_query_cache()
 	_cache_wolf_plane_links()
 
@@ -135,11 +145,13 @@ func _wolf_unlocked_inverse_inertia(body: RigidBody3D) -> Basis:
 func _update_wolf_plane_constraints(delta: float) -> void:
 	_wolf_plane_rows.clear()
 	_foot_heading_diagnostics.clear()
-	if _planar_mode_active() or recovery_control_active or not is_instance_valid(_torso) or _is_body_broken(_torso) or _wolf_heading_turn_active():
+	if _planar_mode_active() or recovery_control_active or not is_instance_valid(_torso) or _is_body_broken(_torso):
+		_wolf_plane_blend = 0.0
 		_wolf_foot_lock_timers.clear()
 		_release_all_foot_heading_locks()
 		return
 	var data = _get_gait_data()
+	_wolf_plane_blend = move_toward(_wolf_plane_blend, 1.0, delta / maxf(data.limb_plane_restore_time, delta))
 	var generator: Node = get_parent().get_node_or_null(get_parent().generator_path)
 	var scale: float = float(generator.overall_scale) if generator != null else 1.0
 	# Couples only plane normals: rotation about the hinge normal remains free.
@@ -148,6 +160,7 @@ func _update_wolf_plane_constraints(delta: float) -> void:
 		var a: RigidBody3D = link.a
 		var b: RigidBody3D = link.b
 		if _is_body_broken(a) or _is_body_broken(b): continue
+		if _wolf_heading_turn_active() and not _has_body_tag(b, SUB_TORSO_TAG): continue
 		var na: Vector3 = (a.global_basis * Vector3(link.normal_a)).normalized()
 		var nb: Vector3 = (b.global_basis * Vector3(link.normal_b)).normalized()
 		var angle := nb.angle_to(na)
@@ -163,11 +176,14 @@ func _update_wolf_plane_constraints(delta: float) -> void:
 			var ib := _wolf_unlocked_inverse_inertia(b)
 			var inverse := direction.dot(Basis(ia.x + ib.x, ia.y + ib.y, ia.z + ib.z) * direction)
 			if inverse > 0.000001:
-				torque = direction * minf(acceleration.length() / inverse, data.limb_plane_maximum_torque * pow(scale, 5.0))
+				torque = direction * minf(acceleration.length() / inverse, data.limb_plane_maximum_torque * pow(scale, 5.0)) * _wolf_plane_blend
 				if not a.freeze: a.apply_torque(-torque)
 				if not b.freeze: b.apply_torque(torque)
 		_wolf_plane_rows.append({"frame": Engine.get_physics_frames(), "a": a.name, "b": b.name, "plane_error_degrees": rad_to_deg(angle), "relative_rate": relative_rate, "a_torque": -torque, "b_torque": torque})
-	_update_wolf_foot_plane_locks(delta)
+	if _wolf_heading_turn_active():
+		_wolf_foot_lock_timers.clear()
+		_release_all_foot_heading_locks()
+	elif _wolf_plane_blend >= 1.0: _update_wolf_foot_plane_locks(delta)
 
 func _update_wolf_foot_plane_locks(delta: float) -> void:
 	if not foot_heading_lock_enabled:
@@ -223,13 +239,41 @@ func _wolf_gallop_eligible() -> bool:
 
 func _wolf_heading_turn_active() -> bool:
 	if _turn_planning_active and not _layout_turn_owned: return true
-	if not _segment_heading_initialized: return false
+	return _wolf_deliberate_turn
+
+func _update_segment_layout(delta: float) -> void:
+	_update_wolf_heading_state(delta)
+	super._update_segment_layout(delta)
+
+func _update_wolf_heading_state(delta: float) -> void:
+	if _wolf_turn_state_frame == Engine.get_physics_frames(): return
+	_wolf_turn_state_frame = Engine.get_physics_frames()
+	if not _segment_heading_initialized or recovery_control_active or _planar_mode_active() or not _action_feet.is_empty():
+		_wolf_deliberate_turn = false
+		_wolf_turn_stable_elapsed = 0.0
+		return
 	var data = _get_gait_data()
-	var error := absf(wrapf(_segment_goal_yaw - _get_physical_heading_yaw(), -PI, PI))
+	var error := _get_maximum_heading_error(_segment_goal_yaw)
+	_wolf_turn_resume_blend = move_toward(_wolf_turn_resume_blend, 1.0, delta / maxf(data.deliberate_turn_resume_time, delta))
 	var entry := deg_to_rad(data.deliberate_turn_entry_degrees)
 	var exit := deg_to_rad(minf(data.deliberate_turn_exit_degrees, data.deliberate_turn_entry_degrees * 0.5))
-	_wolf_deliberate_turn = error > exit if _wolf_deliberate_turn else error >= entry
-	return _wolf_deliberate_turn
+	if absf(wrapf(_segment_goal_yaw - _wolf_turn_goal, -PI, PI)) > 0.001:
+		_wolf_turn_goal = _segment_goal_yaw
+		_wolf_turn_stable_elapsed = 0.0
+	if not _wolf_deliberate_turn:
+		_wolf_deliberate_turn = error >= entry and _turn_command_pending
+		return
+	var maximum_rate := 0.0
+	for body: RigidBody3D in get_torso_parts():
+		if not _is_body_broken(body): maximum_rate = maxf(maximum_rate, absf(body.angular_velocity.y))
+	var settled := error <= exit and maximum_rate <= deg_to_rad(data.deliberate_turn_settle_speed_degrees)
+	_wolf_turn_stable_elapsed = _wolf_turn_stable_elapsed + delta if settled else 0.0
+	if _wolf_turn_stable_elapsed >= data.deliberate_turn_settle_time:
+		_wolf_deliberate_turn = false
+		_wolf_turn_stable_elapsed = 0.0
+		_wolf_plane_blend = 0.0
+		_wolf_turn_resume_speed = minf(super._get_expected_horizontal_speed(), data.target_speed)
+		_wolf_turn_resume_blend = 0.0
 
 func _update_layout_turn_steps(delta: float) -> void:
 	if _charge_gait_active() or recovery_control_active or _planar_mode_active() or not _action_feet.is_empty() or _wolf_heading_turn_active():
@@ -332,7 +376,7 @@ func _gallop_intensity() -> float:
 	return super._gallop_intensity()
 
 func _get_expected_horizontal_speed() -> float:
-	if _wolf_auto_gallop and _gallop_active() and not _charge_gait_active(): return _get_gait_data().target_speed
+	if _wolf_auto_gallop and _gallop_active() and not _charge_gait_active(): return lerpf(_wolf_turn_resume_speed, _get_gait_data().target_speed, smoothstep(0.0, 1.0, _wolf_turn_resume_blend))
 	return super._get_expected_horizontal_speed()
 
 func _height_support_carries_limb_weight() -> bool:
@@ -816,7 +860,7 @@ func get_stance_support_diagnostics() -> Dictionary:
 	var result := super.get_stance_support_diagnostics()
 	result["wolf_rotation_constraints"] = _wolf_rotation_diagnostics.duplicate()
 	result["wolf_limb_planes"] = {"enabled": _get_gait_data().limb_plane_stabilization_enabled, "active": not _wolf_plane_rows.is_empty() and int(_wolf_plane_rows[0].frame) == Engine.get_physics_frames(), "parts": _wolf_plane_rows.duplicate(true), "force_meaning": "paired commanded torques, not measured solver impulses"}
-	result["wolf_heading"] = {"deliberate_turn": _wolf_heading_turn_active(), "error_degrees": rad_to_deg(wrapf(_segment_goal_yaw - _get_physical_heading_yaw(), -PI, PI)), "entry_degrees": _get_gait_data().deliberate_turn_entry_degrees, "exit_degrees": _get_gait_data().deliberate_turn_exit_degrees, "retained_flight_support": not _gallop_active() and _airborne_height_support_authorized()}
+	result["wolf_heading"] = {"deliberate_turn": _wolf_heading_turn_active(), "error_degrees": rad_to_deg(wrapf(_segment_goal_yaw - _get_physical_heading_yaw(), -PI, PI)), "maximum_error_degrees": rad_to_deg(_get_maximum_heading_error(_segment_goal_yaw)), "stable_seconds": _wolf_turn_stable_elapsed, "plane_restore_blend": _wolf_plane_blend, "walk_resume_blend": _wolf_turn_resume_blend, "entry_degrees": _get_gait_data().deliberate_turn_entry_degrees, "exit_degrees": _get_gait_data().deliberate_turn_exit_degrees, "retained_flight_support": not _gallop_active() and _airborne_height_support_authorized()}
 	result["wolf_flight_height_support"] = {"carries_limb_weight": _height_support_carries_limb_weight(), "gravity_weight_share": _height_support_weight_share(), "maximum_airborne_weight_share": _airborne_height_support_limit(1.0), "real_ground_lease_required": true}
 	var references: Array[Dictionary] = []
 	for foot: RigidBody3D in _chains:
@@ -833,6 +877,8 @@ func get_stance_support_diagnostics() -> Dictionary:
 func _physics_process(delta: float) -> void:
 	var attacks := get_parent().get_node_or_null("WolfAttackController3D")
 	if attacks != null and attacks.blocks_locomotion():
+		_wolf_deliberate_turn = false
+		_wolf_turn_stable_elapsed = 0.0
 		_apply_passive_limb_damping()
 		_apply_torso_tilt_stabilization()
 		_update_wolf_plane_constraints(delta)

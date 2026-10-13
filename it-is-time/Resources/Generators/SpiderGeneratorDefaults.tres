@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" uid="uid://c4l6ywxm51pi" path="res://Scripts/Creatures/Generators/CreatureGeneratorDefaults.gd" id="1"]
 [ext_resource type="Script" uid="uid://dmavu4dhvd2ls" path="res://Scripts/Creatures/Generators/GeneratedPartSceneRule.gd" id="1_td182"]
-
 [ext_resource type="Resource" path="res://Resources/Generators/SpiderParts/Head.tres" id="spider_part_0"]
 [ext_resource type="Resource" path="res://Resources/Generators/SpiderParts/Leg_1.tres" id="spider_part_1"]
 [ext_resource type="Resource" path="res://Resources/Generators/SpiderParts/Leg_1_Limb_1.tres" id="spider_part_2"]
@@ -21,7 +20,7 @@
 [ext_resource type="Resource" path="res://Resources/Generators/SpiderParts/Leg_8.tres" id="spider_part_15"]
 [ext_resource type="Resource" path="res://Resources/Generators/SpiderParts/Leg_8_Limb_1.tres" id="spider_part_16"]
 [ext_resource type="Resource" path="res://Resources/Generators/SpiderParts/Torso_Front.tres" id="spider_part_17"]
-[ext_resource type="Resource" path="res://Resources/Generators/SpiderParts/Torso_Rear.tres" id="spider_part_18"]
+[ext_resource type="Resource" uid="uid://bajsltk2he36m" path="res://Resources/Generators/SpiderParts/Torso_Rear.tres" id="spider_part_18"]
 
 [sub_resource type="Curve" id="Curve_u70iv"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
@@ -86,7 +85,7 @@ parameters = {
 "overall_scale": 4.0,
 "part_scene_rules": Array[ExtResource("1_td182")]([ExtResource("spider_part_0"), ExtResource("spider_part_1"), ExtResource("spider_part_2"), ExtResource("spider_part_3"), ExtResource("spider_part_4"), ExtResource("spider_part_5"), ExtResource("spider_part_6"), ExtResource("spider_part_7"), ExtResource("spider_part_8"), ExtResource("spider_part_9"), ExtResource("spider_part_10"), ExtResource("spider_part_11"), ExtResource("spider_part_12"), ExtResource("spider_part_13"), ExtResource("spider_part_14"), ExtResource("spider_part_15"), ExtResource("spider_part_16"), ExtResource("spider_part_17"), ExtResource("spider_part_18")]),
 "part_width": 0.2,
-"rear_torso_size": Vector3(2, 2, 1.6),
+"rear_torso_size": Vector3(2, 1.2926174, 1.6),
 "rear_torso_y_offset": 0.4,
 "spider_head_size": Vector3(0.65, 0.45, 0.7),
 "sub_torso_height_curve": SubResource("Curve_u70iv"),

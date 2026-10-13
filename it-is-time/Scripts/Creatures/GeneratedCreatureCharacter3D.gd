@@ -449,12 +449,7 @@ func _perf_impl__on_framework_generated(plan: Dictionary) -> void:
 	var previous := get_node_or_null("GeneratedParts")
 	# The runtime-only action script is a placeholder while generating in the editor.
 	if not Engine.is_editor_hint():
-		var action := get_node_or_null("CreatureActionController3D")
-		if action != null: action.cancel_action(&"regenerated")
-		var dive := get_node_or_null("BirdDiveAttackController3D")
-		if dive != null: dive.cancel_action(&"regenerated")
-		var wolf_attacks := get_node_or_null("WolfAttackController3D")
-		if wolf_attacks != null: wolf_attacks.cancel_action(&"regenerated")
+		cancel_character_actions(&"regenerated")
 	if previous != null:
 		remove_child(previous)
 		previous.queue_free()

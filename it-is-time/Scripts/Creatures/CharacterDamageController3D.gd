@@ -34,15 +34,24 @@ func _discover_parts() -> void:
 			var callback := _on_part_broken.bind(part)
 			if part.broken.is_connected(callback): part.broken.disconnect(callback)
 	_parts.clear()
-	for node: Node in get_parent().find_children("*", "PhysicalBodyPart3D", true, false):
+	var actor := get_parent()
+	var parts: Array = actor._get_physical_body_parts() if actor.has_method("_get_physical_body_parts") else actor.find_children("*", "PhysicalBodyPart3D", true, false)
+	for node: Node in parts:
 		var part := node as PhysicalBodyPart3D
 		if part == null:
 			continue
 		_parts.append(part)
 		part.broken.connect(_on_part_broken.bind(part))
 		_watch_structure_node(part)
-	for node: Node in get_parent().find_children("*", "", true, false):
-		if _is_body_connection(node): _watch_structure_node(node)
+	for node: Node in _get_body_connections(): _watch_structure_node(node)
+
+func _get_body_connections() -> Array[Node]:
+	var actor := get_parent()
+	if actor.has_method("get_body_connections"): return actor.get_body_connections()
+	var result: Array[Node] = []
+	for node: Node in actor.find_children("*", "", true, false):
+		if _is_body_connection(node) and not node.is_queued_for_deletion(): result.append(node)
+	return result
 
 func _is_body_connection(node: Node) -> bool:
 	return (node is Joint3D and not node.has_meta(&"planar_depth_guide")) or node.has_method("is_segment_spring")
@@ -76,8 +85,7 @@ func _validate_body_integrity() -> void:
 	var graph: Dictionary = {}
 	for part: PhysicalBodyPart3D in _parts:
 		if not part.is_broken and not part.is_queued_for_deletion(): graph[part] = []
-	for node: Node in actor.find_children("*", "", true, false):
-		if not _is_body_connection(node) or node.is_queued_for_deletion(): continue
+	for node: Node in _get_body_connections():
 		if node.has_method("is_segment_spring") and not node.enabled: continue
 		var first := node.get_node_or_null(node.node_a)
 		var second := node.get_node_or_null(node.node_b)
@@ -148,9 +156,7 @@ func _handle_part_broken(part: PhysicalBodyPart3D, source: Node) -> void:
 
 func _remove_connected_joints(part: PhysicalBodyPart3D) -> Array[StringName]:
 	var removed: Array[StringName] = []
-	for joint: Node in get_parent().find_children("*", "", true, false):
-		if not _is_body_connection(joint) or joint.is_queued_for_deletion():
-			continue
+	for joint: Node in _get_body_connections():
 		var body_a := joint.get_node_or_null(joint.node_a)
 		var body_b := joint.get_node_or_null(joint.node_b)
 		if body_a != part and body_b != part:
@@ -161,9 +167,7 @@ func _remove_connected_joints(part: PhysicalBodyPart3D) -> Array[StringName]:
 
 func _get_connected_parts(part: PhysicalBodyPart3D) -> Array[PhysicalBodyPart3D]:
 	var connected: Array[PhysicalBodyPart3D] = []
-	for joint: Node in get_parent().find_children("*", "", true, false):
-		if not _is_body_connection(joint) or joint.is_queued_for_deletion():
-			continue
+	for joint: Node in _get_body_connections():
 		var body_a := joint.get_node_or_null(joint.node_a) as PhysicalBodyPart3D
 		var body_b := joint.get_node_or_null(joint.node_b) as PhysicalBodyPart3D
 		var other: PhysicalBodyPart3D
@@ -190,16 +194,7 @@ func _disable_character_controllers() -> void:
 	if _character_disabled:
 		return
 	_character_disabled = true
-	for child: Node in get_parent().find_children("*", "", true, false):
-		if child is PhysicalBodyPart3D or child is Joint3D or child == self:
-			continue
-		if child.has_method("set_character_control_enabled"):
-			child.call("set_character_control_enabled", false)
-		elif child.name.to_lower().contains("controller") or child.name.to_lower().contains("state_machine"):
-			child.set_process(false)
-			child.set_physics_process(false)
-			child.set_process_input(false)
-			child.set_process_unhandled_input(false)
+	get_parent().disable_character_controls()
 
 func is_character_disabled() -> bool:
 	return _character_disabled

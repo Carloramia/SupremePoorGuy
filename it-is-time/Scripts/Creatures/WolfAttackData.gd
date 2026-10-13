@@ -1,9 +1,7 @@
 @tool
-extends Resource
+extends "res://Scripts/Creatures/CreatureAttackData.gd"
 ## Pounce distances/time/speed are reference values for reference_body_length.
 ## Melee timing stays in seconds; pounce time and speed scale with sqrt(body size).
-@export var enabled := true
-@export_range(0.0, 20.0, 0.05) var cooldown := 1.2
 @export_group("AI Distance")
 ## Fraction of the dynamic legal range used as the preferred stopping distance.
 @export_range(0.0, 1.0, 0.01) var preferred_range_ratio := 0.8
@@ -36,19 +34,7 @@ extends Resource
 @export_range(0.0, 0.8, 0.01) var pounce_foreleg_retract_ratio := 0.25
 @export_range(0.0, 0.8, 0.01) var pounce_foreleg_extend_ratio := 0.45
 @export_range(0.1, 0.9, 0.01) var pounce_foreleg_fold_drop_ratio := 0.35
-@export_group("Claw")
-@export_range(0.01, 2.0, 0.01) var windup_time := 0.25
-@export_range(0.01, 1.0, 0.01) var stagger_time := 0.14
-@export_range(0.1, 1.0, 0.01) var reach_ratio := 0.98
-@export_range(0.0, 1.0, 0.01) var torso_lift_ratio := 0.12
-@export_range(0.0, 2.0, 0.01) var claw_lift_timeout := 0.8
-## Chain lengths per second; controls the reference trajectory, not phase completion.
-@export_range(0.1, 10.0, 0.05) var claw_motion_speed_ratio := 2.5
-@export_range(0.005, 0.2, 0.005) var claw_position_tolerance_ratio := 0.03
-@export_range(0.01, 1.0, 0.01) var claw_relative_speed_tolerance_ratio := 0.12
-@export_range(0.0, 0.5, 0.01) var claw_settle_time := 0.06
-## Abort a blocked action; never count a timeout as successful arrival.
-@export_range(1.0, 30.0, 0.5) var claw_phase_timeout := 6.0
+@export_group("Physical Tracking")
 @export_range(0.0, 200.0, 1.0) var position_gain := 80.0
 @export_range(0.0, 100.0, 1.0) var velocity_gain := 16.0
 @export_range(1.0, 500.0, 1.0) var maximum_acceleration := 120.0

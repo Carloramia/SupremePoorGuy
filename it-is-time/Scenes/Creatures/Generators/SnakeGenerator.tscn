@@ -1,0 +1,11 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Generators/_BaseCreatureGenerator.tscn" id="1_base"]
+[ext_resource type="Script" path="res://Scripts/Creatures/Generators/SnakeGenerator.gd" id="2_generator"]
+
+[node name="SnakeGenerator" instance=ExtResource("1_base")]
+script = ExtResource("2_generator")
+overall_scale = 1.0
+part_width = 0.4
+body_length = 18.0
+torso_overlap_percent = 20.0

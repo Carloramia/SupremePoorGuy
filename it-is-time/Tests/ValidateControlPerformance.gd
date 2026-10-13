@@ -62,6 +62,7 @@ func _validate() -> void:
 	var output := "\n".join(console._output_lines)
 	assert(output.contains("[trackcontrolperf]") and output.contains("anchor_lookup{") and output.contains("projection_corners"))
 	var generated_movement := generated.get_node("GeneratedLegStepMovementController3D")
+	generated_movement.segment_balance_enabled = false
 	generated_movement.consume_control_performance_stats()
 	generated_movement.set_performance_tracking_enabled(true)
 	console.performance_tracking_interval = 10.0

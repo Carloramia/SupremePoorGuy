@@ -102,22 +102,28 @@ func _perf_impl__find_movement(character: Node3D) -> Node:
 	var descendants := character.find_children("*", "", true, false)
 	_control_perf.count(&"movement_lookup_nodes", descendants.size())
 	for component: Node in descendants:
+		if component.has_method("get_input_movement_direction") and component.has_method("cancel_motion"):
+			return component
 		if component.has_method("get_leg_parts") and component.has_method("cancel_step"):
 			return component
 	return null
 
-func _find_torso(character: Node3D) -> RigidBody3D:
+func _find_torso(character: Node3D) -> Node3D:
 	var started: int = _control_perf.start()
-	var result: RigidBody3D = _perf_impl__find_torso(character)
+	var result: Node3D = _perf_impl__find_torso(character)
 	_control_perf.finish(&"anchor_lookup", started)
 	return result
 
-func _perf_impl__find_torso(character: Node3D) -> RigidBody3D:
+func _perf_impl__find_torso(character: Node3D) -> Node3D:
 	if not is_instance_valid(character): return null
 	var movement := _find_movement(character)
 	if movement != null:
-		var reference := movement.get_node_or_null(movement.torso_path) as RigidBody3D
-		if reference != null and not (reference is PhysicalBodyPart3D and reference.is_broken): return reference
+		if movement.has_method("get_control_anchor"):
+			var anchor: Node3D = movement.get_control_anchor()
+			if is_instance_valid(anchor): return anchor
+		if movement.get("torso_path") != null:
+			var reference := movement.get_node_or_null(movement.torso_path) as RigidBody3D
+			if reference != null and not (reference is PhysicalBodyPart3D and reference.is_broken): return reference
 	var largest: RigidBody3D
 	for node: Node in character.find_children("*", "PhysicalBodyPart3D", true, false):
 		var part := node as PhysicalBodyPart3D
@@ -183,8 +189,8 @@ func _release_character() -> void:
 	_clear_commands_and_actions()
 	if is_instance_valid(_movement):
 		_movement.command_source = null
-		_movement.cancel_step(&"player_detached")
-		_movement.set_turn_planning_active(false)
+		_cancel_movement(&"player_detached")
+		if _movement.has_method("set_turn_planning_active"): _movement.set_turn_planning_active(false)
 	for snapshot: Dictionary in _ai_snapshot:
 		var node: Node = snapshot.node
 		if is_instance_valid(node) and (not is_instance_valid(_character) or _character.get_node_or_null("CharacterDamageController3D") == null or not _character.get_node("CharacterDamageController3D").is_character_disabled()):
@@ -203,11 +209,16 @@ func _clear_commands_and_actions() -> void:
 	_direction = Vector3.ZERO
 	_jump = false
 	_fast = false
-	if is_instance_valid(_movement): _movement.cancel_step(&"player_input_suspended")
+	_cancel_movement(&"player_input_suspended")
 	if is_instance_valid(_character):
 		for node: Node in _character.find_children("*", "", true, false):
 			if node.has_method("cancel_player_actions"): node.cancel_player_actions()
 	_block_held_attacks()
+
+func _cancel_movement(reason: StringName) -> void:
+	if not is_instance_valid(_movement): return
+	if _movement.has_method("cancel_motion"): _movement.cancel_motion(reason)
+	else: _movement.cancel_step(reason)
 
 func _external_interface_open() -> bool:
 	var started: int = _control_perf.start()

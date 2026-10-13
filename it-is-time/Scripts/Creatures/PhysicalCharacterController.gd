@@ -7,6 +7,59 @@ var _combat_anchor: Node3D
 var _ragdoll_sources: Dictionary = {}
 var _ragdoll_modes: Dictionary = {}
 var _hit_ragdoll_timer: Timer
+var _control_components: Array[Node] = []
+var _control_components_dirty := true
+var _control_refresh_pending := false
+
+func _is_control_component(node: Node) -> bool:
+	if node is PhysicalBodyPart3D or node is Joint3D or node is CharacterDamageController3D: return false
+	var label := str(node.name).to_lower()
+	return node.has_method("set_character_control_enabled") or label.contains("controller") or label.contains("statemachine") or label.contains("state_machine")
+
+func _invalidate_control_components() -> void:
+	_control_components_dirty = true
+
+func get_control_components() -> Array[Node]:
+	if _control_components_dirty or Engine.is_editor_hint():
+		_control_components.clear()
+		for node: Node in find_children("*", "", true, false):
+			if not _is_control_component(node) or node.is_queued_for_deletion(): continue
+			_control_components.append(node)
+			if not node.tree_exiting.is_connected(_invalidate_control_components): node.tree_exiting.connect(_invalidate_control_components)
+		_control_components_dirty = false
+	var result: Array[Node] = []
+	for node: Node in _control_components:
+		if is_instance_valid(node) and not node.is_queued_for_deletion() and is_ancestor_of(node): result.append(node)
+	return result
+
+func _cancel_component_actions(component: Node, reason: StringName) -> void:
+	if component.has_method("cancel_action"): component.cancel_action(reason)
+	elif component.has_method("cancel_player_actions"): component.cancel_player_actions()
+	elif component.has_method("cancel_npc_attack"): component.cancel_npc_attack()
+
+func cancel_character_actions(reason: StringName) -> void:
+	for component: Node in get_control_components(): _cancel_component_actions(component, reason)
+
+func disable_character_controls() -> void:
+	for component: Node in get_control_components():
+		_cancel_component_actions(component, &"character_disabled")
+		if component.has_method("set_character_control_enabled"):
+			component.set_character_control_enabled(false)
+		else:
+			component.set_process(false)
+			component.set_physics_process(false)
+			component.set_process_input(false)
+			component.set_process_unhandled_input(false)
+
+func _suspend_ragdoll_components() -> void:
+	_control_refresh_pending = false
+	if not is_temporarily_ragdolled(): return
+	for component: Node in get_control_components():
+		if _ragdoll_modes.has(component): continue
+		_ragdoll_modes[component] = component.process_mode
+		_cancel_component_actions(component, &"ragdoll")
+		if component.has_method("release_support_for_impact"): component.release_support_for_impact(0.1)
+		component.process_mode = Node.PROCESS_MODE_DISABLED
 
 func is_temporarily_ragdolled() -> bool:
 	return not _ragdoll_sources.is_empty()
@@ -35,15 +88,7 @@ func set_temporary_ragdoll(source: Node, value: bool) -> void:
 		if _ragdoll_sources.has(id): return
 		_ragdoll_sources[id] = true
 		if _ragdoll_sources.size() > 1: return
-		for child: Node in get_children():
-			if child is PhysicalBodyPart3D or child is CharacterDamageController3D: continue
-			if not child.has_method("set_character_control_enabled") and not str(child.name).contains("Controller") and not str(child.name).contains("StateMachine"): continue
-			_ragdoll_modes[child] = child.process_mode
-			if child.has_method("cancel_npc_attack"): child.cancel_npc_attack()
-			elif child.has_method("cancel_player_actions"): child.cancel_player_actions()
-			elif child.has_method("cancel_action"): child.cancel_action()
-			if child.has_method("release_support_for_impact"): child.release_support_for_impact(0.1)
-			child.process_mode = Node.PROCESS_MODE_DISABLED
+		_suspend_ragdoll_components()
 	else:
 		_ragdoll_sources.erase(id)
 		if not _ragdoll_sources.is_empty(): return
@@ -102,6 +147,37 @@ var _body_parts_cache: Array[RigidBody3D] = []
 var _body_rids_cache: Array[RID] = []
 var _body_parts_cache_dirty: bool = true
 var _body_parts_revision: int = 0
+var _body_connections: Array[Node] = []
+var _body_connections_dirty := true
+
+func _invalidate_body_connections() -> void:
+	_body_connections_dirty = true
+
+func get_body_connections() -> Array[Node]:
+	if _body_connections_dirty or Engine.is_editor_hint():
+		_body_connections.clear()
+		for node: Node in find_children("*", "", true, false):
+			if not node is Joint3D and not node.has_method("is_segment_spring"): continue
+			_body_connections.append(node)
+			if not node.tree_exiting.is_connected(_invalidate_body_connections): node.tree_exiting.connect(_invalidate_body_connections)
+		_body_connections_dirty = false
+	var result: Array[Node] = []
+	for node: Node in _body_connections:
+		if is_instance_valid(node) and not node.is_queued_for_deletion() and is_ancestor_of(node) and not node.has_meta(&"planar_depth_guide"):
+			result.append(node)
+	return result
+
+func get_body_parts_with_tag(tag: int, include_broken: bool = false) -> Array[RigidBody3D]:
+	var result: Array[RigidBody3D] = []
+	for part: PhysicalBodyPart3D in _get_physical_body_parts():
+		if tag in part.tags and (include_broken or not part.is_broken): result.append(part)
+	return result
+
+func get_living_body_mass() -> float:
+	var total := 0.0
+	for part: PhysicalBodyPart3D in _get_physical_body_parts():
+		if not part.is_broken: total += part.mass
+	return total
 
 func _ready() -> void:
 	if Engine.is_editor_hint(): return
@@ -155,7 +231,14 @@ func _invalidate_body_parts_cache() -> void:
 	_combat_anchor = null
 
 func _on_body_part_added(node: Node) -> void:
-	if node is PhysicalBodyPart3D and is_ancestor_of(node): _invalidate_body_parts_cache()
+	if not is_ancestor_of(node): return
+	if node is PhysicalBodyPart3D: _invalidate_body_parts_cache()
+	if node is Joint3D or node.has_method("is_segment_spring"): _invalidate_body_connections()
+	if _is_control_component(node):
+		_invalidate_control_components()
+		if is_temporarily_ragdolled() and not _control_refresh_pending:
+			_control_refresh_pending = true
+			call_deferred("_suspend_ragdoll_components")
 
 func _on_cached_part_broken(_source: Node) -> void:
 	_invalidate_body_parts_cache()

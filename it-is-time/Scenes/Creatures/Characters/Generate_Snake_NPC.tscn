@@ -1,0 +1,23 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Characters/Generate_Snake.tscn" id="1_actor"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/NPCStateMachine3D.tscn" id="2_ai"]
+[ext_resource type="Script" path="res://Scripts/Creatures/SnakeNPCStateMachine3D.gd" id="3_script"]
+[ext_resource type="Resource" path="res://Resources/AI/SnakeNavigation.tres" id="4_behavior"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/SnakeBiteAttackController3D.tscn" id="5_attack"]
+
+[node name="GenerateSnakeNPC" instance=ExtResource("1_actor")]
+faction_id = 1
+
+[node name="NPCStateMachine3D" parent="." instance=ExtResource("2_ai")]
+script = ExtResource("3_script")
+behavior = ExtResource("4_behavior")
+enabled = true
+attack_execution_enabled = true
+auto_start_when_target_exists = true
+auto_find_target_by_group = false
+generated_x_axis_facing = false
+navigation_origin_path = NodePath("../SnakeMovementController3D/NavigationOrigin")
+
+[node name="SnakeBiteAttackController3D" parent="." instance=ExtResource("5_attack")]
+enabled = true

@@ -91,7 +91,7 @@ func _target_check(target: Node3D, check_path: bool = true) -> Dictionary:
 		var excluded: Array[RID] = []
 		for part: PhysicalBodyPart3D in _parts:
 			if _alive(part): excluded.append(part.get_rid())
-		for part: RigidBody3D in actor._get_physical_body_parts(): excluded.append(part.get_rid())
+		excluded.append_array(actor.get_physical_body_rids())
 		var forward := (aim-head.global_position).normalized()
 		var up := Vector3.UP.slide(forward).normalized()
 		if up.is_zero_approx(): up = Vector3.RIGHT.slide(forward).normalized()

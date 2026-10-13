@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Creatures/SnakeMovementController3D.gd" id="1"]
+[ext_resource type="Resource" path="res://Resources/Movement/SnakeMotion.tres" id="2"]
+
+[node name="SnakeMovementController3D" type="Node3D"]
+script = ExtResource("1")
+locomotion_enabled = true
+motion_data = ExtResource("2")
+
+[node name="NavigationOrigin" type="Marker3D" parent="."]

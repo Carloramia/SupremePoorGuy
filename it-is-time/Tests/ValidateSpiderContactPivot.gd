@@ -5,6 +5,9 @@ class TestFoot extends RigidBody3D:
 
 class PivotController extends "res://Scripts/Creatures/SpiderLegStepMovementController3D.gd":
 	var terrain: StaticBody3D
+	# This fixture supplies its own chain; it has no generated character parent.
+	func refresh_physics_query_cache() -> void: pass
+	func _independent_support_enabled() -> bool: return false
 	func _chain_is_intact(_leg: RigidBody3D) -> bool: return true
 	func is_leg_grounded(_leg: RigidBody3D) -> bool: return true
 	func _get_surface_below_leg(leg: RigidBody3D, _distance: float) -> Dictionary:

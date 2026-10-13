@@ -5,7 +5,8 @@ Fangs and the rivet remain unconnected.
 
 Rear Torso uses FIT_UNIFORM to preserve the original visible art ratio (1490:963,
 approximately 1.547:1). Its frame is 2.0 by 1.29261745 before generator scaling;
-the fitted collision hull is about 2.0 by 1.288084 because of hull sampling.
+the final box collider uses that same frame size. The source sampled hull is
+slightly shorter (about 2.0 by 1.288084) before the Spider box override.
 Depth remains PartWidth. Its connection hole stays aligned to Front Torso.
 The default density is unchanged, so the smaller volume reduces fitted mass.
 

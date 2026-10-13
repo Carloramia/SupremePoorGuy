@@ -1,0 +1,33 @@
+[gd_scene load_steps=5 format=3]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/_PhysicalSampleBodyParts.tscn" id="1_base"]
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/Snake/Models/Feet/Snake1FootRight.glb" id="2_model"]
+[ext_resource type="ArrayMesh" path="res://Resources/Meshes/Snake/Feet/Snake1FootRight.res" id="3_mesh"]
+[sub_resource type="ConvexPolygonShape3D" id="Shape"]
+resource_local_to_scene = true
+points = PackedVector3Array(-0.27168974, 0.04229842, -0.01000000, -0.23874818, 0.10854752, -0.01000000, -0.13992348, 0.20792116, -0.01000000, -0.09051113, 0.22448343, -0.01000000, 0.10713826, 0.22448343, -0.01000000, 0.17302139, 0.19135889, -0.01000000, 0.23890452, 0.12510979, -0.01000000, 0.25537530, 0.10854752, -0.01000000, 0.93067740, -0.65331706, -0.01000000, 0.96361896, -0.71956616, -0.01000000, 0.98008974, -0.75269071, -0.01000000, 0.98008974, -0.86862662, -0.01000000, 0.84832348, -0.91831344, -0.01000000, 0.60126174, -0.91831344, -0.01000000, 0.55184939, -0.90175117, -0.01000000, 0.43655391, -0.83550207, -0.01000000, 0.38714157, -0.80237753, -0.01000000, -0.04109879, -0.48769433, -0.01000000, -0.09051113, -0.43800751, -0.01000000, -0.13992348, -0.38832069, -0.01000000, -0.17286505, -0.35519614, -0.01000000, -0.20580661, -0.30550932, -0.01000000, -0.22227740, -0.27238477, -0.01000000, -0.25521896, -0.20613568, -0.01000000, -0.27168974, -0.15644886, -0.01000000, -0.27168974, 0.04229842, 0.01000000, -0.23874818, 0.10854752, 0.01000000, -0.13992348, 0.20792116, 0.01000000, -0.09051113, 0.22448343, 0.01000000, 0.10713826, 0.22448343, 0.01000000, 0.17302139, 0.19135889, 0.01000000, 0.23890452, 0.12510979, 0.01000000, 0.25537530, 0.10854752, 0.01000000, 0.93067740, -0.65331706, 0.01000000, 0.96361896, -0.71956616, 0.01000000, 0.98008974, -0.75269071, 0.01000000, 0.98008974, -0.86862662, 0.01000000, 0.84832348, -0.91831344, 0.01000000, 0.60126174, -0.91831344, 0.01000000, 0.55184939, -0.90175117, 0.01000000, 0.43655391, -0.83550207, 0.01000000, 0.38714157, -0.80237753, 0.01000000, -0.04109879, -0.48769433, 0.01000000, -0.09051113, -0.43800751, 0.01000000, -0.13992348, -0.38832069, 0.01000000, -0.17286505, -0.35519614, 0.01000000, -0.20580661, -0.30550932, 0.01000000, -0.22227740, -0.27238477, 0.01000000, -0.25521896, -0.20613568, 0.01000000, -0.27168974, -0.15644886, 0.01000000)
+[node name="Snake_Snake1FootRight" instance=ExtResource("1_base")]
+mass = 0.1
+geometry_mode = 1
+custom_model_path = NodePath("Model")
+paper_volume_enabled = true
+paper_volume_thickness = 0.08
+sprite_visible = false
+mesh_visible = true
+tags = Array[int]([1])
+metadata/source_png = "res://Assets/2DResources/Snake/Separated/Feet/03_snake1_foot_right.png"
+metadata/pivot_is_initial_estimate = true
+metadata/anatomical_role = "Leg"
+[node name="CollisionShape3D" parent="." index="0"]
+position = Vector3(0, 0, 0)
+shape = SubResource("Shape")
+[node name="MeshInstance3D" parent="." index="2"]
+visible = false
+mesh = null
+[node name="Model" parent="." instance=ExtResource("2_model")]
+[node name="PaperVolume" type="MeshInstance3D" parent="Model"]
+scale = Vector3(1, 1, 0.08)
+mesh = ExtResource("3_mesh")
+metadata/flat_collision_depth = 0.02
+[node name="JointIn" type="Marker3D" parent="."]
+[node name="JointOut" type="Marker3D" parent="."]
+position = Vector3(0.79695000, -0.78634068, 0.00000000)

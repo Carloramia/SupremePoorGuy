@@ -1,6 +1,8 @@
 extends "res://Scripts/Creatures/GeneratedLegStepMovementController3D.gd"
 
 const STRIDE_GEOMETRY = preload("res://Scripts/Creatures/SpiderStrideGeometry.gd")
+# Share the admission lead with the speed budget so neither overbooks stance time.
+const STEP_ADMISSION_LOOKAHEAD: float = 0.23
 @export_group("Spider Structural Stride")
 @export var structural_stride_enabled: bool = true
 @export_range(0.1, 0.95, 0.05) var structural_stride_safety_ratio: float = 0.8
@@ -10,6 +12,7 @@ var _spider_reach_geometry: Dictionary = {}
 var _spider_stride_intervals: Dictionary = {}
 var _spider_last_touchdowns: Dictionary = {}
 var _spider_recovery_steps: Dictionary = {}
+var _spider_strained_roots: Dictionary = {}
 @export_group("Spider Catch-up Steps")
 @export_range(1.0, 3.0, 0.05) var step_lift_multiplier: float = 1.35
 @export_range(0.1, 2.0, 0.05) var catch_up_speed_ratio: float = 0.75
@@ -20,11 +23,11 @@ var _spider_recovery_steps: Dictionary = {}
 @export_range(0.1, 5.0, 0.1) var torso_support_frequency: float = 1.5
 @export_range(0.1, 3.0, 0.05) var torso_support_damping_ratio: float = 1.0
 @export_range(1.0, 100.0, 1.0) var torso_support_maximum_acceleration: float = 30.0
-@export_range(0.1, 10.0, 0.1) var root_follow_frequency: float = 3.0
-@export_range(1.0, 100.0, 1.0) var root_follow_maximum_acceleration: float = 30.0
 var _spider_support_rows: Array[Dictionary] = []
 var _spider_root_rows: Array[Dictionary] = []
 var _spider_support_exclusions: Array[RID] = []
+var _spider_landing_attachment := Vector3.INF
+var _spider_axis_alignment: Dictionary = {}
 
 func _independent_support_enabled() -> bool:
 	return is_instance_valid(get_parent()) and bool(get_parent().get("spider_independent_torso_support"))
@@ -36,6 +39,8 @@ func _physics_process(delta: float) -> void:
 	super._physics_process(delta)
 	_spider_support_rows.clear()
 	_spider_root_rows.clear()
+	_spider_axis_alignment.clear()
+	if not _planar_mode_active() and not simplified_physics_mode: _reinforce_spider_hinge_axes()
 	if _independent_support_enabled() and not _planar_mode_active() and not simplified_physics_mode:
 		var support_started := _movement_perf.start()
 		_apply_spider_independent_support()
@@ -46,7 +51,41 @@ func _physics_process(delta: float) -> void:
 		_performance_max_usec = maxi(_performance_max_usec, elapsed)
 	_movement_perf.finish(&"movement_spider_full", started)
 
+func _reinforce_spider_hinge_axes() -> void:
+	# Correct only relative X/Y drift; the live Z hinge remains free to bend.
+	# Exponential velocity correction avoids a stiff explicit torque servo.
+	var omega := TAU * 4.0
+	var delta := maxf(get_physics_process_delta_time(), 0.000001)
+	for foot: RigidBody3D in _chains:
+		if not _chain_is_intact(foot): continue
+		var chain: Dictionary = _chains[foot]
+		for index: int in range(chain.joints.size() - 1, -1, -1):
+			var hinge: Generic6DOFJoint3D = chain.joints[index]
+			var child: RigidBody3D = chain.bodies[index]
+			var parent_body: RigidBody3D = chain.bodies[index + 1]
+			if child.freeze: continue
+			var child_is_a := hinge.get_node(hinge.node_a) == child
+			var child_frame: Transform3D = hinge.get_meta(&"generated_joint_frame_a" if child_is_a else &"generated_joint_frame_b")
+			var parent_frame: Transform3D = hinge.get_meta(&"generated_joint_frame_b" if child_is_a else &"generated_joint_frame_a")
+			var current: Vector3 = (child.global_basis * child_frame.basis).z.normalized()
+			var target: Vector3 = (parent_body.global_basis * parent_frame.basis).z.normalized()
+			var cross_axis := current.cross(target)
+			var error := cross_axis.normalized() * atan2(cross_axis.length(), current.dot(target))
+			var velocity := (child.angular_velocity - parent_body.angular_velocity).slide(target)
+			var velocity_change := (error * (1.0 - exp(-omega * delta)) / delta - velocity).limit_length(320.0 * delta)
+			var acceleration := velocity_change / delta
+			var inverse_inertia := child.get_inverse_inertia_tensor()
+			if inverse_inertia.determinant() <= 0.0: continue
+			var impulse := inverse_inertia.inverse() * velocity_change
+			var torque := impulse / delta
+			child.apply_torque_impulse(impulse)
+			_spider_axis_alignment[hinge] = {"error_degrees": rad_to_deg(error.length()), "torque": torque, "impulse": impulse, "angular_acceleration": acceleration, "hinge_axis": target, "mode": "relative_axis_impulse"}
+
 func _apply_torso_response() -> void:
+	if _spider_action_owns_motion():
+		_last_torso_response_force = Vector3.ZERO
+		_reset_contact_drive_diagnostics()
+		return
 	if not _independent_support_enabled():
 		super._apply_torso_response()
 		return
@@ -77,6 +116,8 @@ func _apply_torso_response() -> void:
 		_last_torso_response_force += _apply_contact_drive(segment.feet, requested, float(segment.mass), up)
 
 func _apply_spider_independent_support() -> void:
+	var action := get_creature_action_controller()
+	if action != null and action.has_method("owns_height_support") and action.owns_height_support(): return
 	_update_segment_metrics()
 	var gravity := _gravity_acceleration()
 	var up := -gravity.normalized() if not gravity.is_zero_approx() else Vector3.UP
@@ -99,27 +140,27 @@ func _apply_spider_independent_support() -> void:
 			var force := compensation + up * correction * body.mass
 			body.apply_central_force(force)
 			_spider_support_rows.append({"body": body.name, "gravity_compensation": compensation, "height_error": error, "has_floor": has_floor, "force": force})
-	# Follow the Torso attachment with force on the upper limb only. No equal
-	# reaction is applied to Torso, so this servo cannot make the leg carry it.
 	for chain: Dictionary in _chains.values():
-		for joint: Generic6DOFJoint3D in chain.joints:
-			if not is_instance_valid(joint): continue
-			if not joint.get_meta(&"spider_independent_root", false): continue
-			var upper := joint.get_node_or_null(joint.node_a) as RigidBody3D
-			var torso := joint.get_node_or_null(joint.node_b) as RigidBody3D
-			if upper == null or torso == null or upper.freeze or _is_body_broken(upper) or _is_body_broken(torso): continue
-			var upper_frame: Transform3D = joint.get_meta(&"generated_joint_frame_a")
-			var torso_frame: Transform3D = joint.get_meta(&"generated_joint_frame_b")
-			var anchor := torso.to_global(torso_frame.origin)
-			var current := upper.to_global(upper_frame.origin)
-			var target_velocity := torso.linear_velocity + torso.angular_velocity.cross(anchor - torso.global_position)
-			var current_velocity := upper.linear_velocity + upper.angular_velocity.cross(current - upper.global_position)
-			var rate := TAU * root_follow_frequency
-			var acceleration := ((anchor - current) * rate * rate + (target_velocity - current_velocity) * 2.0 * rate).limit_length(root_follow_maximum_acceleration)
-			var state := PhysicsServer3D.body_get_direct_state(upper.get_rid())
-			if state == null: continue
-			upper.apply_central_force((acceleration - state.total_gravity) * upper.mass)
-			_spider_root_rows.append({"upper": upper.name, "torso": torso.name, "gap": anchor.distance_to(current), "force": (acceleration - state.total_gravity) * upper.mass, "reaction_on_torso": Vector3.ZERO})
+		var joint: Generic6DOFJoint3D = chain.joints[-1]
+		if not is_instance_valid(joint) or not joint.get_meta(&"spider_root_anchor", false): continue
+		var upper: RigidBody3D = chain.bodies[-2]
+		var torso: RigidBody3D = chain.root
+		var a: Transform3D = joint.get_meta(&"generated_joint_frame_a")
+		var b: Transform3D = joint.get_meta(&"generated_joint_frame_b")
+		_spider_root_rows.append({"upper": upper.name, "torso": torso.name, "gap": upper.to_global(a.origin).distance_to(torso.to_global(b.origin)), "mode": "one_way_constraint", "reaction_on_torso": Vector3.ZERO})
+
+func _spider_action_owns_motion() -> bool:
+	var action := get_creature_action_controller()
+	return action != null and action.has_method("blocks_locomotion") and action.blocks_locomotion()
+
+func _apply_segment_balance(delta: float) -> void:
+	if _spider_action_owns_motion():
+		_update_segment_layout(delta)
+		return
+	super._apply_segment_balance(delta)
+
+func _apply_torso_tilt_stabilization() -> void:
+	if not _spider_action_owns_motion(): super._apply_torso_tilt_stabilization()
 
 func get_stance_support_diagnostics() -> Dictionary:
 	var result := super.get_stance_support_diagnostics()
@@ -139,6 +180,8 @@ func get_stance_support_diagnostics() -> Dictionary:
 @export_range(0.0, 1.0, 0.05) var liftoff_assist_delay: float = 0.2
 @export_range(0.1, 2.0, 0.05) var maximum_liftoff_time: float = 1.0
 @export_group("Spider Contact Pivot")
+## Keep released feet grounded without overpowering their lightweight hinge chain.
+@export_range(1.0, 100.0, 1.0) var maximum_adhesion_acceleration: float = 30.0
 ## Keep damping while allowing the bent leg to rotate around its grounded toe.
 @export_range(0.0, 1.0, 0.05) var grounded_joint_stiffness_ratio: float = 0.5
 ## A stepping chain must bend freely enough to lift, without losing its spring.
@@ -156,6 +199,8 @@ var _spider_step_times: Dictionary = {}
 var _spider_profiles: Dictionary = {}
 var _spider_profile_context: Array = []
 var _spider_motion_summary: Dictionary = {}
+var _spider_budget_speed: float = -1.0
+var _spider_budget_time: float = 0.0
 
 func _ensure_spider_profile_cache() -> void:
 	var data := _get_gait_data()
@@ -177,22 +222,100 @@ func _get_expected_horizontal_speed() -> float:
 	var charge := get_parent().get_node_or_null("ChargeAttackController3D")
 	if charge != null and charge.owns_velocity(): return charge.get_expected_speed()
 	_ensure_spider_profile_cache()
+	_ensure_spider_motion_budget()
 	if not _spider_motion_summary.has("speed"):
 		_spider_motion_summary.speed = super._get_expected_horizontal_speed()
+		if _automatic_motion_enabled() and _foot_heading_turn_active():
+			_spider_motion_summary.speed = minf(float(_spider_motion_summary.speed), _get_gait_data().target_speed * 0.5)
+		# Resume from the turn's actual planning speed instead of jumping back
+		# to a stale pre-turn walking budget while the feet are still settling.
+		_spider_budget_speed = float(_spider_motion_summary.speed)
+		_spider_budget_time = _physics_elapsed
 	return float(_spider_motion_summary.speed)
 
 func get_planned_step_frequency() -> float:
 	_ensure_spider_profile_cache()
+	_ensure_spider_motion_budget()
 	if not _spider_motion_summary.has("frequency"):
 		_spider_motion_summary.frequency = super.get_planned_step_frequency()
 	return float(_spider_motion_summary.frequency)
+
+func _ensure_spider_motion_budget() -> void:
+	if _spider_motion_summary.has("budget") or _spider_motion_summary.has("budget_blocked") or not _automatic_motion_enabled() or _legs.is_empty(): return
+	if recovery_control_active or simplified_physics_mode or _layout_turn_owned:
+		_spider_motion_summary["budget_blocked"] = true
+		return
+	var profiles: Array[Dictionary] = []
+	for foot: RigidBody3D in _legs:
+		if not _chain_is_intact(foot) or not _structural_landing_enabled(foot):
+			_spider_motion_summary["budget_blocked"] = true
+			return
+		profiles.append(get_leg_motion_profile(foot))
+	var data := _get_gait_data()
+	var budget := calculate_spider_motion_budget(profiles, data.target_speed, get_maximum_stepping_feet(), data.maximum_step_frequency)
+	# Observations already adapt gradually; smooth the remaining budget change
+	# once per physics time, including queries made by logging and the AI.
+	if _spider_budget_speed < 0.0: _spider_budget_speed = budget.speed
+	var elapsed := maxf(_physics_elapsed - _spider_budget_time, 0.0)
+	_spider_budget_speed = lerpf(_spider_budget_speed, float(budget.speed), 1.0 - exp(-3.0 * elapsed))
+	_spider_budget_time = _physics_elapsed
+	_spider_budget_speed = minf(_spider_budget_speed, maxf(data.target_speed, 0.0))
+	var usage := _spider_budget_usage(profiles, _spider_budget_speed)
+	budget["planned_speed"] = _spider_budget_speed
+	budget["planned_occupied_slots"] = usage.x
+	budget["planned_frequency"] = usage.y
+	_spider_motion_summary = {"speed": _spider_budget_speed, "frequency": usage.y, "budget": budget}
+	for profile: Dictionary in profiles:
+		var stance := float(profile.stride) / maxf(_spider_budget_speed, 0.001)
+		profile.stance_duration = stance
+		profile.cycle = stance + float(profile.occupied_step_duration)
+		profile.frequency = 1.0 / profile.cycle if _spider_budget_speed > 0.0 else 0.0
+		profile.total_frequency = usage.y
+		profile.reachable_speed = _spider_budget_speed
+		profile.speed_limited = _spider_budget_speed + 0.001 < data.target_speed
+		profile.limiting_reason = budget.limiting_reason
+		profile["average_slot_usage"] = float(profile.occupied_step_duration) * float(profile.frequency)
+		profile.cycle_travel = _spider_budget_speed * float(profile.cycle)
+		profile.airborne_body_travel = _spider_budget_speed * float(profile.occupied_step_duration)
+
+static func _spider_budget_usage(profiles: Array[Dictionary], speed: float) -> Vector2:
+	var usage := Vector2.ZERO
+	if speed <= 0.0: return usage
+	for profile: Dictionary in profiles:
+		var occupied := maxf(float(profile.occupied_step_duration), 0.01)
+		var cycle := maxf(float(profile.stride), 0.001) / speed + occupied
+		usage += Vector2(occupied, 1.0) / cycle
+	return usage
+
+static func calculate_spider_motion_budget(profiles: Array[Dictionary], requested: float, capacity: int, frequency_limit: float) -> Dictionary:
+	var slots := maxf(float(capacity), 0.0) * 0.9
+	var high := maxf(requested, 0.0) if not profiles.is_empty() and capacity > 0 else 0.0
+	var usage := _spider_budget_usage(profiles, high)
+	var reason := "spider_no_step_capacity" if capacity <= 0 and requested > 0.0 else "none"
+	if usage.x > slots or (frequency_limit > 0.0 and usage.y > frequency_limit):
+		reason = "spider_occupied_slots" if usage.x > slots else "spider_reference_frequency"
+		var low := 0.0
+		for iteration: int in 24:
+			var middle := (low + high) * 0.5
+			usage = _spider_budget_usage(profiles, middle)
+			if usage.x <= slots and (frequency_limit <= 0.0 or usage.y <= frequency_limit): low = middle
+			else: high = middle
+		high = low
+	usage = _spider_budget_usage(profiles, high)
+	return {"speed": high, "requested_speed": requested, "occupied_slots": usage.x, "slot_budget": slots,
+		"capacity": capacity, "frequency": usage.y, "frequency_limit": frequency_limit, "limiting_reason": reason,
+		"policy": "per_leg_stance_plus_observed_step"}
 
 func refresh_physics_query_cache() -> void:
 	_spider_profile_context.clear()
 	_spider_profiles.clear()
 	_spider_motion_summary.clear()
+	_spider_budget_speed = -1.0
+	_spider_budget_time = _physics_elapsed
 	_spider_last_touchdowns.clear()
 	_spider_recovery_steps.clear()
+	_spider_strained_roots.clear()
+	_spider_axis_alignment.clear()
 	_spider_reach_geometry.clear()
 	_spider_stride_intervals.clear()
 	_spider_stall_since.clear()
@@ -203,7 +326,10 @@ func refresh_physics_query_cache() -> void:
 	# Shared chain capture restores relative limits; restore the absolute-Y
 	# bounds before both physics and structural reach capture use them.
 	for joint: Generic6DOFJoint3D in get_parent()._spider_angle_joints:
+		# Cache capture must not take the runtime warm-start shortcut.
+		joint.set_meta(&"spider_world_limits_initialized", false)
 		get_parent()._update_spider_world_limits(joint)
+	get_parent()._bind_spider_root_anchors()
 	_spider_support_exclusions.clear()
 	for body: Node in get_parent().find_children("*", "PhysicsBody3D", true, false):
 		_spider_support_exclusions.append(body.get_rid())
@@ -222,7 +348,8 @@ func get_spider_stride_limits(foot: RigidBody3D) -> Dictionary:
 		if direction.is_zero_approx(): direction = _chains[foot].root.global_basis.x.slide(Vector3.UP).normalized()
 		var local_direction: Vector3 = _chains[foot].root.global_basis.orthonormalized().inverse() * direction
 		var cached: Dictionary = _spider_stride_intervals.get(foot, {})
-		if cached.get("frame", -1) == Engine.get_physics_frames() and is_equal_approx(float(cached.get("safety", 0.0)), structural_stride_safety_ratio) and Vector3(cached.direction).is_equal_approx(local_direction): return cached.result
+		# Captured reach geometry is static until regeneration; only direction/safety change its projection.
+		if (_performance_mode.enabled or cached.get("frame", -1) == Engine.get_physics_frames()) and is_equal_approx(float(cached.get("safety", 0.0)), structural_stride_safety_ratio) and Vector3(cached.direction).is_equal_approx(local_direction): return cached.result
 		result = STRIDE_GEOMETRY.interval(_spider_reach_geometry[foot], local_direction, structural_stride_safety_ratio)
 		_spider_stride_intervals[foot] = {"frame": Engine.get_physics_frames(), "direction": local_direction, "safety": structural_stride_safety_ratio, "result": result}
 	return result
@@ -240,13 +367,59 @@ func get_leg_step_distance(foot: RigidBody3D) -> float:
 func _structural_landing_enabled(leg: RigidBody3D) -> bool:
 	return not _planar_mode_active() and not _foot_heading_turn_active() and _action_feet.is_empty() and not _gallop_active() and get_spider_stride_limits(leg).valid
 
+func _apply_leg_tracking_force(desired_position: Vector3, desired_velocity: Vector3) -> void:
+	if _structural_landing_enabled(_active_leg) and _current_step.extra.get("liftoff_complete", false):
+		if _step_state == StepState.LANDING:
+			# Reach real ground contact rather than hovering at the nominal offset.
+			desired_position.y -= foot_ground_offset + 0.02
+		else:
+			# Body-centre lift alone does not clear the tip of an inclined long foot.
+			var t := clampf(_step_elapsed / _active_step_duration, 0.0, 1.0)
+			var minimum_gap := minf(_get_effective_step_height() * 0.4, 0.15) * (1.0 - smoothstep(0.65, 1.0, t))
+			var ground: Vector3 = _current_step.extra.landing_surface_point
+			var minimum_y := _active_leg.global_position.y + ground.y + minimum_gap - _get_foot_world_position(_active_leg).y
+			if desired_position.y < minimum_y:
+				desired_position.y = minimum_y
+				desired_velocity.y = maxf(desired_velocity.y, 0.0)
+	if _chain_is_intact(_active_leg) and not _planar_mode_active():
+		var chain: Dictionary = _chains[_active_leg]
+		var torso: RigidBody3D = chain.root
+		if _spider_reach_geometry.has(_active_leg):
+			# Locked X/Y hinges move in Torso's current sheet, including during yaw.
+			var normal := torso.global_basis.z.normalized()
+			var plane := torso.to_global(_spider_reach_geometry[_active_leg].reference)
+			desired_position -= normal * (desired_position - plane).dot(normal)
+			var plane_velocity := torso.linear_velocity + torso.angular_velocity.cross(desired_position - torso.global_position)
+			desired_velocity -= normal * (desired_velocity - plane_velocity).dot(normal)
+		var anchor := torso.to_global(chain.anchor)
+		var offset := desired_position - anchor
+		var radius := float(chain.length) * 0.97
+		if offset.length() > radius:
+			var normal := offset.normalized()
+			desired_position = anchor + normal * radius
+			var anchor_velocity := torso.linear_velocity + torso.angular_velocity.cross(anchor - torso.global_position)
+			var relative := desired_velocity - anchor_velocity
+			desired_velocity -= normal * maxf(relative.dot(normal), 0.0)
+			_current_step.extra["spider_tracking_reach_clamped"] = true
+		else:
+			_current_step.extra["spider_tracking_reach_clamped"] = false
+	super._apply_leg_tracking_force(desired_position, desired_velocity)
+
+func _apply_turn_swing_orientation() -> void:
+	# The root constraint carries yaw. Independent foot-yaw torque fights the locked hinges.
+	pass
+
 func _structural_landing_frame(leg: RigidBody3D, direction: Vector3, remaining_time: float) -> Dictionary:
 	var limits := get_spider_stride_limits(leg)
 	var torso: RigidBody3D = _chains[leg].root
 	var reference: Vector3 = torso.to_global(_spider_reach_geometry[leg].reference)
 	# Predict only the remaining airborne travel. Never spend spring stretch as reach.
 	var travel := torso.linear_velocity.slide(Vector3.UP) * maxf(remaining_time, 0.0)
-	return {"reference": reference + travel, "direction": direction.slide(Vector3.UP).normalized(), "half": float(limits.half_travel)}
+	return {"reference": reference + travel, "attachment": torso.to_global(_chains[leg].anchor) + travel, "direction": direction.slide(Vector3.UP).normalized(), "half": float(limits.half_travel)}
+
+func _landing_reach_attachment(leg: RigidBody3D) -> Vector3:
+	if _spider_landing_attachment.is_finite(): return _spider_landing_attachment
+	return super._landing_reach_attachment(leg)
 
 func _find_structural_landing(leg: RigidBody3D, direction: Vector3, remaining_time: float) -> Dictionary:
 	var frame := _structural_landing_frame(leg, direction, remaining_time)
@@ -254,18 +427,27 @@ func _find_structural_landing(leg: RigidBody3D, direction: Vector3, remaining_ti
 	# Every fallback stays in the leading interior, rather than sampling back
 	# through the rear boundary when the first terrain candidate is obstructed.
 	var count := maxi(landing_search_samples, 2)
+	var rejection: StringName = &"spider_no_interior_landing"
+	# After an incomplete landing, regain a reachable stance before taking a
+	# full forward step. This also lets a leg recover after a physical turn.
+	var forward_ratio := minf(structural_landing_forward_ratio, 0.25) if _spider_recovery_steps.has(leg) else structural_landing_forward_ratio
 	for index: int in count:
-		var ratio := lerpf(structural_landing_forward_ratio, 0.2, float(index) / float(count - 1))
+		var ratio := lerpf(forward_ratio, 0.2, float(index) / float(count - 1))
 		var sample: Vector3 = frame.reference + frame.direction * float(frame.half) * ratio
 		var from := sample + Vector3.UP * ray_start_height
 		var query := PhysicsRayQueryParameters3D.create(from, from + Vector3.DOWN * ray_length, terrain_collision_mask, _get_character_exclusion_rids())
 		query.collide_with_areas = false
 		var hit := _intersect_ray(query)
-		if not _is_landing_point_valid(leg, toe, hit): continue
+		_spider_landing_attachment = frame.attachment
+		var valid := _is_landing_point_valid(leg, toe, hit)
+		_spider_landing_attachment = Vector3.INF
+		if not valid:
+			rejection = _last_landing_rejection_reason
+			continue
 		var projection := (Vector3(hit.position) - Vector3(frame.reference)).dot(frame.direction)
 		if projection < float(frame.half) * 0.2 - 0.001 or projection > float(frame.half) * structural_landing_forward_ratio + 0.001: continue
 		return hit
-	_last_landing_rejection_reason = &"spider_no_interior_landing"
+	_last_landing_rejection_reason = rejection
 	return {}
 
 func find_landing_point(leg: RigidBody3D, movement_direction: Vector3 = Vector3.RIGHT) -> Dictionary:
@@ -276,6 +458,8 @@ func find_landing_point(leg: RigidBody3D, movement_direction: Vector3 = Vector3.
 
 func _refresh_structural_landing() -> void:
 	if not _structural_landing_enabled(_active_leg) or _current_step.direction.slide(Vector3.UP).is_zero_approx(): return
+	# Final descent must settle on a world point, not chase the moving Torso.
+	if _step_state == StepState.LANDING: return
 	var remaining := maxf(_active_step_duration - _step_elapsed, 0.0)
 	var frame := _structural_landing_frame(_active_leg, _current_step.direction, remaining)
 	var old_point: Vector3 = _current_step.extra.get("landing_surface_point", _get_foot_world_position(_active_leg))
@@ -332,7 +516,7 @@ func _get_extension_step_demand(foot: RigidBody3D, direction: Vector3) -> Dictio
 	else:
 		_spider_stall_since.erase(foot)
 	var stalled_time := _physics_elapsed - float(_spider_stall_since.get(foot, _physics_elapsed))
-	var predicted := maxf(speed, get_expected_horizontal_speed()) * 0.15
+	var predicted := maxf(speed, get_expected_horizontal_speed()) * STEP_ADMISSION_LOOKAHEAD
 	result.policy = "spider_contact_travel"
 	result["stance_progress"] = progress
 	result["stance_anchor"] = stance.anchor
@@ -341,10 +525,14 @@ func _get_extension_step_demand(foot: RigidBody3D, direction: Vector3) -> Dictio
 	result["stance_travel_budget"] = budget
 	result["geometric_remaining"] = result.remaining_distance
 	result.remaining_distance = remaining
+	result.approach_speed = maxf(speed, get_expected_horizontal_speed())
+	result.time_to_limit = remaining / maxf(float(result.approach_speed), 0.001)
+	result["step_priority"] = 1.0 / (1.0 + float(result.time_to_limit))
 	result["stall_elapsed"] = stalled_time
 	result["retry_in"] = 0.0
-	result.requested = remaining <= maxf(budget * 0.2, predicted) or stalled_time >= stalled_step_delay
-	result.reason = "spider_stall_recovery" if result.requested and stalled_time >= stalled_step_delay else ("spider_stance_limit" if result.requested else "spider_holding")
+	result.requested = _spider_root_strained(foot) or remaining <= maxf(budget * 0.2, predicted) or stalled_time >= stalled_step_delay
+	result["root_attachment_strained"] = _spider_root_strained(foot)
+	result.reason = "spider_root_strain" if result.root_attachment_strained else "spider_stall_recovery" if result.requested and stalled_time >= stalled_step_delay else ("spider_stance_limit" if result.requested else "spider_holding")
 	return result
 
 func _begin_leg_motion(foot: RigidBody3D, target: Vector3, normal: Vector3 = Vector3.UP, direction: Vector3 = Vector3.ZERO) -> void:
@@ -436,7 +624,10 @@ func _record_spider_step_time() -> void:
 	_spider_step_times[_active_leg] = lerpf(previous, clampf(elapsed, previous * 0.75, previous * 1.25), 0.2)
 
 func get_automatic_motion_diagnostics() -> Dictionary:
+	_ensure_spider_profile_cache()
+	_ensure_spider_motion_budget()
 	var result := super.get_automatic_motion_diagnostics()
+	result["spider_motion_budget"] = _spider_motion_summary.get("budget", {}).duplicate()
 	for profile: Dictionary in result.legs:
 		for foot: RigidBody3D in _legs:
 			if profile.foot != foot.name or not _chains.has(foot): continue
@@ -464,7 +655,30 @@ func _get_foot_world_position(leg: RigidBody3D) -> Vector3:
 func _get_support_pin_world_position(leg: RigidBody3D) -> Vector3:
 	return _get_foot_world_position(leg)
 
+func _calculate_leg_adhesion_force(leg: RigidBody3D, hit: Dictionary, multiplier: float) -> Vector3:
+	return super._calculate_leg_adhesion_force(leg, hit, multiplier).limit_length(leg.mass * maximum_adhesion_acceleration)
+
+func _spider_root_strained(leg: RigidBody3D) -> bool:
+	if not _chains.has(leg) or not _independent_support_enabled() or _planar_mode_active(): return false
+	var chain: Dictionary = _chains[leg]
+	var hip: Generic6DOFJoint3D = chain.joints[-1]
+	if not is_instance_valid(hip) or not hip.get_meta(&"spider_root_anchor", false): return false
+	var upper: RigidBody3D = chain.bodies[-2]
+	var torso: RigidBody3D = chain.root
+	var a: Transform3D = hip.get_meta(&"generated_joint_frame_a")
+	var b: Transform3D = hip.get_meta(&"generated_joint_frame_b")
+	var slide: Dictionary = hip.get_meta(&"spider_axial_slide")
+	var tolerance := maxf(float(slide.upper_length) * 0.02, 0.005)
+	var gap := upper.to_global(a.origin).distance_to(torso.to_global(b.origin))
+	if gap > float(slide.half_travel) + tolerance: _spider_strained_roots[leg] = true
+	elif gap < tolerance * 0.5: _spider_strained_roots.erase(leg)
+	return _spider_strained_roots.has(leg)
+
 func _update_support_foot_lock(leg: RigidBody3D, normal: Vector3) -> void:
+	# A planted toe must not overconstrain a root that already exhausted its slack.
+	if _spider_root_strained(leg):
+		_release_support_pin(leg)
+		return
 	if _foot_heading_turn_active() and not _planar_mode_active():
 		_release_support_pin(leg)
 		return
@@ -513,6 +727,7 @@ func get_support_foot_diagnostics(leg: RigidBody3D) -> Dictionary:
 		for joint: Generic6DOFJoint3D in _chains[leg].joints:
 			if not is_instance_valid(joint): continue
 			springs.append({"joint": joint.name, "effective_inertia": joint.get_meta(&"spider_effective_inertia", 1.0), "stiffness": joint.get_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_SPRING_STIFFNESS), "damping": joint.get_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_SPRING_DAMPING), "weights": joint.get_meta(&"spider_spring_weights", Vector2.ONE)})
+			springs[-1]["axis_alignment"] = _spider_axis_alignment.get(joint, {})
 			if joint.has_meta(&"spider_world_angle"):
 				springs[-1]["absolute_limit_degrees"] = get_parent().spider_leg_bend_limit_degrees
 				springs[-1]["relative_z_limits_degrees"] = Vector2(rad_to_deg(joint.get_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_LOWER_LIMIT)), rad_to_deg(joint.get_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_UPPER_LIMIT)))
@@ -562,17 +777,16 @@ func _calculate_spider_motion_profile(leg: RigidBody3D) -> Dictionary:
 	var usable_limit := structural_limit
 	var required_stride := stride
 	var admission_reserve := 0.0
-	if _automatic_motion_enabled() and _structural_landing_enabled(leg):
+	var structural := _automatic_motion_enabled() and _structural_landing_enabled(leg)
+	if structural:
 		var half := structural_limit * 0.5
 		# A support phase runs from an interior landing to the rear trigger,
 		# not from the full front boundary to the full rear boundary.
-		admission_reserve = maxf(half * 0.2, float(profile.target_speed) * 0.15)
+		admission_reserve = maxf(half * 0.2, float(profile.target_speed) * STEP_ADMISSION_LOOKAHEAD)
 		usable_limit = maxf(0.02, half * (1.0 + structural_landing_forward_ratio) - admission_reserve)
 		usable_limit = minf(usable_limit, structural_limit)
-		var occupied_estimate := maxf(observed * 1.1, float(original.swing_duration) + touchdown_confirmation_time)
-		var support_time := occupied_estimate * maxf(float(count) / capacity - 1.0, 0.0)
-		required_stride = float(profile.target_speed) * support_time
-		stride = minf(maxf(stride, required_stride), usable_limit)
+		stride = usable_limit
+		required_stride = stride
 	# The reach budget is spent while planted. During swing the body keeps
 	# travelling; charging that time against the planted reach underestimates
 	# attainable speed. The global frequency and support budget still apply.
@@ -588,6 +802,13 @@ func _calculate_spider_motion_profile(leg: RigidBody3D) -> Dictionary:
 	var nominal_occupied := swing + touchdown_confirmation_time
 	var occupied := maxf(nominal_occupied, observed * 1.1)
 	cycle = maxf(cycle, count * occupied / capacity)
+	if structural:
+		# Each leg spends its own stance distance and occupied time. Longer
+		# swings need fewer starts, rather than an equal share of every slot.
+		swing = clampf(float(original.swing_duration), 0.06, 0.35)
+		nominal_occupied = swing + touchdown_confirmation_time
+		occupied = maxf(nominal_occupied, observed * 1.1)
+		cycle = stride / maxf(float(profile.target_speed), 0.001) + occupied
 	# Long inclined collision boxes need geometric clearance even with short strides.
 	var lift := clampf(float(profile.length) * 0.035 + stride * 0.04, 0.03, float(profile.length) * 0.1)
 	var gain := clampf(16.0 / (swing * swing), 20.0, 4000.0)
@@ -662,7 +883,9 @@ func _update_active_step(delta: float) -> void:
 		# The servo above applies its resultant at the centre. Add only the
 		# equivalent moment of its normal component at the toe, so lifting bends
 		# the chain instead of merely raising/rotating the centre around the toe.
-		_active_leg.apply_torque((toe - _active_leg.global_position).cross(normal * _tracking_force.dot(normal)))
+		var hinge_axis: Vector3 = root_body.global_basis.z.normalized()
+		var lift_moment := (toe - _active_leg.global_position).cross(normal * _tracking_force.dot(normal))
+		_active_leg.apply_torque(hinge_axis * lift_moment.dot(hinge_axis))
 		_current_step.extra["spider_liftoff"] = {"elapsed": elapsed, "assist_force": assist, "assist_acceleration": acceleration, "timeout": maxf(maximum_liftoff_time, _active_step_duration * 2.0), "toe_gap": gap, "target_clearance": clearance, "horizontal_reference": desired_velocity.slide(normal)}
 		if _step_has_lifted:
 			_current_step.extra["liftoff_complete"] = true

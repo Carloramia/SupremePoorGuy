@@ -1,8 +1,8 @@
-extends Resource
+@tool
+extends "res://Scripts/Creatures/CreatureAttackData.gd"
 
 @export var action_id: StringName = &"foreleg_stomp"
 @export var input_action: StringName = &"MouseLeft"
-@export var enabled: bool = true
 @export_group("Shockwave")
 @export var shockwave: StompShockwaveData = preload("res://Resources/Actions/ForeLegStompShockwave.tres")
 @export_group("Lift")
@@ -31,7 +31,8 @@ extends Resource
 @export_range(1.0,20000.0,1.0) var maximum_force: float = 5000.0
 @export_group("Recovery")
 @export_range(0.05,2.0,0.01) var recovery_time: float = 0.3
-@export_range(0.0,5.0,0.01) var cooldown: float = 0.4
+
+func _default_cooldown() -> float: return 0.4
 
 func is_valid() -> bool:
 	for value: float in [foot_lift_ratio,torso_lift_ratio,rise_time,rise_timeout,support_loss_timeout,height_confirmation_ratio,rearward_tolerance_ratio,forward_extension_ratio,stomp_time,downward_acceleration,landing_timeout,contact_confirmation_time,position_gain,damping_ratio,maximum_acceleration,maximum_force,recovery_time,cooldown]:

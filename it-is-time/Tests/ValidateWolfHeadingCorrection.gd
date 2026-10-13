@@ -59,6 +59,9 @@ func run() -> void:
 		var motion = movement._current_step
 		assert(motion.extra.has("wolf_step") and motion.extra.gallop_step)
 		movement._segment_goal_yaw = PI
+		movement._turn_command_pending = true
+		movement._wolf_turn_state_frame = -1
+		movement._update_wolf_heading_state(0.016)
 		assert(movement._wolf_heading_turn_active(), "A real turn must still activate")
 		movement._update_automatic_wolf_gallop(0.016)
 		assert(not movement._gallop_active())
@@ -76,7 +79,17 @@ func run() -> void:
 		movement._segment_goal_yaw = deg_to_rad(15)
 		assert(movement._wolf_heading_turn_active(), "Turn hysteresis must prevent threshold chatter")
 		movement._segment_goal_yaw = deg_to_rad(5)
+		assert(movement._wolf_heading_turn_active(), "Reading a diagnostic must not advance the settle timer")
+		for body: RigidBody3D in movement.get_torso_parts():
+			body.global_rotation.y = deg_to_rad(5)
+			body.angular_velocity = Vector3.ZERO
+		for index: int in range(40):
+			movement._wolf_turn_state_frame = -1
+			movement._update_wolf_heading_state(0.016)
 		assert(not movement._wolf_heading_turn_active())
+		assert(is_zero_approx(movement._wolf_plane_blend), "Completing a deliberate turn must start gradual plane restoration")
+		movement._update_wolf_plane_constraints(0.016)
+		assert(movement._wolf_plane_blend > 0.0 and movement._wolf_plane_blend < 1.0)
 		actor.free()
 	print("PASS: Wolf/NPC drift preserves gallop and steps, bounded yaw correction, deliberate-turn hysteresis and finite retained flight support.")
 	quit()

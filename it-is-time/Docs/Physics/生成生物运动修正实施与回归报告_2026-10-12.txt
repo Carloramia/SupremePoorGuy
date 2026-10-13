@@ -1,0 +1,137 @@
+﻿生成生物运动修正实施与回归报告
+完成记录日期：2026-10-12（本批次从 2026-10-11 开始）
+项目：D:/GameJamWorkspace/ItIsTime/it-is-time
+
+结论与交付边界
+已落地 Wolf、Bird、Ratkin 的部分转向/支撑修正，以及 HornedBeast 的常态换步修正。原方案的全部性能目标尚未完成，不能将本报告视为“所有物种在所有情况下都已修好”。为保护原有功能，Beast 的候选转向/支撑配置和 Spider 的候选侧摆方案已撤回。
+
+最终对照涵盖 15 个场景的 90 组地面动作；NPC 和同物种非 NPC 在隔离条件下结果相同。四向正常平移未发现相对于原基线超过 5% 的速度下降；这些测试均无 Broken 和非有限物理数值。未启用新配置的 Creature Test、Beast/Creature NPC、StumpBeast/NPC、Spider/NPC、旧 SegmentedTail 的六组地面动作指标与基线完全一致。此结论仅针对以下测试条件，不能替代完整游戏、坡地和战斗验证。
+
+一、实际保留的实现
+1. 公共执行器 GeneratedLegStepMovementController3D
+   新逻辑按物种显式启用，默认关闭，保留既有继承关系和旧预设。
+   转向状态在物理更新中推进；查询与诊断不推进计时。以所有 Torso 的最大朝向误差、各 Torso 的角速度及连续稳定时间判定结束。接近目标时限制请求角速度并制动。
+   明确转身时为转向换脚保留机会；普通朝向漂移继续普通行走。转向仍靠接地脚授权的附着点作用力，保留净水平合力抵消；没有加入地面 Torso 直接 yaw 力矩或瞬移旋转。
+   新增有限站姿行程，用原始站姿及链长的一定比例提前触发换步；实际速度已很低时也可申请，落地后使用重新解锁条件避免原地反复抬脚。该方案是保守的站姿行程近似，不是对所有多节关节的精确可达包络。
+   新增常态站高支撑配置，只在没有动作所有者时生效；动作接管时退回既有支撑份额。真实/已有合法接地租约仍是支撑前提，没有永久空中支撑权限。
+
+2. Wolf
+   完整转向的查询函数改为只读；最大体节误差 ≤ 10°、最大 yaw 角速度 ≤ 5°/s 并持续 0.5s 才退出完整转向。
+   完整转向时松开脚部方向锁和肢体平面修正，保留 SubTorso 的配对平面稳定。退出后用 0.3s 恢复平面修正，最后恢复脚部锁；用 1.0s 渐进恢复步行/飞奔需求。
+   脚部 yaw 参照肢体平面法向，避免脚在 Z 铰链弯曲时局部 X 轴投影翻向。WolfWalk.tres 中仅调整已有小角度朝向修正：gain=3、damping=8、速度上限=30°/s、角加速度上限=180°/s²。
+   没有重启已取消的世界 X/Y 轴锁。没有修改视觉模型、孔位、碰撞形状、生成布局或目标速度 8.0。NPC 从原有继承路径获得配置。
+
+3. Bird
+   飞行姿态控制器读取现有朝向命令，用结构惯量换算有限 yaw 扭矩，目标转向速度沿用移动 tres。俯冲接管时常态控制退让；每次进入空中状态重新初始化保持朝向。
+   地面启用稳定转向和单独的常态支撑配置，最大支撑预算为应承担重量的 1.4 倍；攻击接管时不叠加这份增强预算。
+   翼/羽毛、收腿、飞行速度、降落与俯冲预设未改。
+
+4. Ratkin
+   常态支撑预算为应承担重量的 1.5 倍，避免参考站高被错误压低后反复恢复。
+   启用有限站姿行程，比例 0.12；启用有饱和保护、接地和动作占用条件约束的转向角速度积分补偿。
+   目标速度仍为 1.2，生成姿态与碰撞资源未改。
+
+5. HornedBeast
+   常态站姿行程比例 0.12，改善全脚接地后不再换步的停滞。
+   冲锋仍走原专用分支；明确转身期间不套用新的常态行程限制。因此本次没有改变其原地/移动转向结果。
+
+6. 撤回的候选
+   Beast 的增强站高支撑影响了踏地阶段的抬升等待；增强转向最初造成连续反向转身时反向拖行，调整步态交接虽消除了拖行，却降低了转身后斜向平移位移。因此最终 Generate_Beast.tscn 恢复为本轮开始时的原文件，Creature NPC 同样保留原行为。
+   Spider 的小范围髋部侧摆实验降低了实际侧移速度，没有通过回归；SpiderCharacter3D、SpiderLegStepMovementController3D、SpiderStrideGeometry 均恢复为本轮开始时版本，最终未改关节自由度或布局。
+
+二、统一测试条件与指标
+引擎 Godot 4.7.2，Jolt，60 Hz，种子 43，独立 1000×1000 平地；关闭 PlanarConstraints 和自主 AI，默认尺度。初始化等待 3s，四向动作 6s，速度取动作末 3s 的质量加权 Torso 速度在指令方向上的投影。正数表示沿指令前进，负数表示反向漂移。
+四向平移均保持初始 +X 朝向；-X 是后退，不等于转身后的前进。原地/移动转向通常观察 15s；Wolf 最终延长到 30s，另有 Ratkin 30s 静止和移动转向诊断。
+统计中的“稳定时间”是所有采样 Torso 误差 ≤ 10° 并从该时刻一直保持到观测结束、且至少剩余 0.5s；不包含角速度条件。生产控制器的退出条件还额外检查角速度和连续 0.5s。不能混用两种口径。
+
+三、四向速度对照（单位：世界单位/s）
+物种 | +X 修改前→后 | -X 修改前→后 | +Z 修改前→后 | -Z 修改前→后
+Generate_Creature_Test | 2.740 → 2.740 | 2.943 → 2.943 | 2.970 → 2.970 | 2.973 → 2.973
+Generate_Beast | 2.599 → 2.599 | 2.975 → 2.975 | 2.328 → 2.328 | 2.605 → 2.605
+Generate_StumpBeast | 2.815 → 2.815 | 3.061 → 3.061 | 2.948 → 2.948 | 2.895 → 2.895
+Generate_HornedBeast | 0.556 → 2.309 | 2.869 → 3.377 | 0.415 → 1.015 | 0.032 → 2.247
+Generate_Ratkin | 0.934 → 1.180 | -0.072 → 1.174 | 0.033 → 1.153 | 0.872 → 1.136
+Generate_Spider | 2.922 → 2.922 | 2.927 → 2.927 | 1.097 → 1.097 | 1.157 → 1.157
+Generate_Wolf | 7.874 → 7.874 | 7.778 → 7.780 | 7.695 → 7.696 | 3.749 → 7.775
+Generate_Bird | 2.506 → 2.495 | 2.768 → 2.747 | 2.345 → 2.776 | 2.743 → 2.869
+Generate_HornedBeast_SegmentedTail | 1.255 → 1.255 | 1.587 → 1.587 | 1.270 → 1.270 | 1.224 → 1.224
+
+四、稳定转向对照（秒）
+物种 | 原地180° 修改前→后 | 移动180° 修改前→后
+Generate_Creature_Test | 4.20 → 4.20 | 7.30 → 7.30
+Generate_Beast | 5.00 → 5.00 | 7.50 → 7.50
+Generate_StumpBeast | 4.40 → 4.40 | 4.60 → 4.60
+Generate_HornedBeast | 5.10 → 5.10 | 未稳定 → 未稳定
+Generate_Ratkin | 未稳定 → 12.40 | 未稳定 → 未稳定
+Generate_Spider | 4.20 → 4.20 | 4.10 → 4.10
+Generate_Wolf | 未稳定 → 10.40 | 未稳定 → 16.80
+Generate_Bird | 7.40 → 3.50 | 未稳定 → 7.60
+Generate_HornedBeast_SegmentedTail | 4.30 → 4.30 | 5.90 → 5.90
+注：Wolf 修改前在 15s 内未稳定，修改后移动中于 30s 扩展观测内从 16.8s 起保持稳定，不能宣称达到原方案的 8s 目标。NPC 与对应物种结果一致。
+
+五、飞行与扩展动作测试
+Bird 和 Bird NPC 空中四向速度仍约 4.762（目标5.0，约95.2%），没有速度下降。空中180°稳定时间由15s未完成改善到3.1s。
+在 OverallScale=1、1.5、4 时，空中转向均约3.1s，最大 Torso 倾角分别约1.74°、1.57°、1.99°。这些是隔离飞行测试，不代表不同体型下的完整战斗负载。
+连续动作测试：左转行走12s、右转行走12s、斜向行走6s。最终五个目标物种都保持正向位移、有限数值和部件完整；该测试不以朝向完全收敛作为 PASS 条件，朝向和倾角另行记录。Wolf 的第二次转身峰值倾角约40.4°，Bird 转身后斜向移动峰值倾角约50.7°，仍有明显姿态风险，见未解决项。
+
+六、兼容验证的完整状态
+最终验证条目：31；通过：28；失败：3。
+通过项包括 Wolf 飞扑/啃咬、步态/飞奔相关控制检查、HornedBeast 冲锋、Bird 飞行/体型/降落诊断/俯冲/鸟类 NPC、空中接地交接、统一转向、动作所有权、伤害冲击波、Spider 根锚点与性能模式，以及本次新增状态查询和连续换向检查。
+“通过”仅表示对应脚本中的断言通过，不表示所有性能指标达标。
+以下失败在本轮修改前副本中也能复现，不能隐去或算作通过：
+- ValidateWolfStrideLimiter：ForeLeg_2 未实际接地，旧测试却预期能在后边界申请换步。
+- ValidateCreatureActions3D：剩余后腿在动作中行走/推进断言失败；取消动作后的复用断言失败，随后访问空动作数组。采用同一修正后的有效测试角色（带 Head）时，修改前和最终版本失败信息相同。Beast 生产配置最终未改。
+- ValidateSpiderPounce：攻击后普通行走平均速度2.771，未满足旧脚本的恢复速度阈值；修改前同样失败。攻击本身有命中与伤害，但不能因此将整体测试算为通过。
+部分旧夹具原先生成没有 Head 的角色，现有角色存活规则会禁用它；本次将相关有效测试夹具设为有一个 Head，并为命令测试明确开启 input_enabled。没有删除或放宽生产运动断言。
+根证书存储错误在修改前也存在，是 Windows 本机引擎启动提示；报告判定仅排除这一条已确认环境提示，其余脚本错误和断言失败均算失败。
+完整清单：D:\GameJamWorkspace\Reports\CreatureMotionFix_2026-10-11\final_validation\results.json
+
+七、性能对照
+8个相互隔离的 NPC，Wolf/StumpBeast/HornedBeast/Creature NPC 各2个，AI关闭，保持完整物理更新。依次运行修改前、最终版本；3s初始化、3s热身、3s测量。
+移动控制器总耗时：22.788 → 22.686 ms/物理帧。
+墙钟时间：36.861 → 36.210 ms/物理帧。
+本次未观察到新增明显控制器负担；单次小差异不能作为显著性能优化结论。两者都超过60 FPS的16.7ms预算，且没有渲染、完整AI和战斗负载，因此不能宣称“8个NPC已稳定60FPS”或“50个NPC预算已满足”。
+
+八、仍未达标及风险
+1. Wolf：转向已能稳定，但仍慢于原方案6s/8s目标；普通侧移朝向仍可能偏离约25°到32°，连续反转会有较大倾斜。
+2. Bird：地面原地3.5s、移动7.6s明显改善，但侧移和连续斜向行走倾角仍会超过15°目标；普通+X行走也有约43°最大朝向偏差。空中结果良好不能代表地面已完全解决。
+3. Ratkin：四向达到目标约95%到98%、恢复循环消失；原地转向仍约12.4s，移动转向30s仍未持续收敛，普通+X行走最大朝向偏差也约63°。30s静止虽站高稳定，但仍有约4m水平漂移，不能宣称完全静止稳定。
+4. HornedBeast：+Z约1.015仍只有目标3.0的34%；-X约3.377略高于目标，移动转向仍未收敛。有限站姿行程是近似，需要真实关节可达包络后续替换。
+5. Beast、Spider：为避免连带影响，候选改动已撤回，原有侧移/站高问题仍保留；本轮没有实现原方案全部改进。
+6. 未覆盖所有随机生成布局、斜坡、地形边缘、受击/断肢、完整NPC混战、渲染帧率和50NPC压力。不应对这些范围作“其他性能绝对不受影响”的保证。
+
+九、参数与诊断入口
+Generate_Wolf/Generate_Bird/Generate_Ratkin 的 GeneratedLegStepMovementController3D：Segment Layout 分组中的 StableTurnControlEnabled、TurnContactForceMultiplier、TurnEffectiveInertiaScale 等。
+Bird/Ratkin 的 SubTorso Support：LocomotionHeightSupportEnabled、LocomotionSupportWeightLimit。HornedBeast/Ratkin 的 GroundedStanceTravelRatio 也在此分组。
+Wolf专用新参数位于 WolfLegMovementData.gd，可通过 WolfWalk.tres 调整：DeliberateTurnSettleTime、DeliberateTurnResumeTime、DeliberateTurnSettleSpeedDegrees、LimbPlaneRestoreTime。
+沿用控制台命令：trackturn、trackgenerated、trackmotion、motiondetail full、tracknpcmotion on 实际节点名、trackflight on；无须新增命令。新增诊断字段包括 turn_command_pending、turn_stable_elapsed、turn_rate_integral、wolf_heading.stable_seconds/plane_restore_blend/walk_resume_blend，以及常态支撑的目标站高、实际站高、承担质量和预算。需要完整部件快照时只对单个目标短时开启，避免日志放大成本。
+
+十、文件与可复查证据
+本批次修改前的1040个文本文件快照：D:\GameJamWorkspace\Reports\CreatureMotionFix_2026-10-11\before
+对照90个动作的数字和原始日志路径：D:\GameJamWorkspace\Reports\CreatureMotionFix_2026-10-11\FinalComparison.csv
+机器可读对照：D:\GameJamWorkspace\Reports\CreatureMotionFix_2026-10-11\FinalComparison.json
+连续换向结果：D:\GameJamWorkspace\Reports\CreatureMotionFix_2026-10-11\FinalTransitions.json
+最终验证日志：D:\GameJamWorkspace\Reports\CreatureMotionFix_2026-10-11\final_validation
+修改文件（相对于项目根目录；不包括本报告）：
+- Scripts/Creatures/BirdFlightController3D.gd
+- Scripts/Creatures/GeneratedLegStepMovementController3D.gd
+- Scripts/Creatures/WolfLegMovementData.gd
+- Scripts/Creatures/WolfLegStepMovementController3D.gd
+- Resources/Movement/WolfWalk.tres
+- Scenes/Creatures/Characters/Generate_Bird.tscn
+- Scenes/Creatures/Characters/Generate_HornedBeast.tscn
+- Scenes/Creatures/Characters/Generate_Ratkin.tscn
+- Scenes/Creatures/Characters/Generate_Wolf.tscn
+- Tests/AssessGeneratedCreatureMotion3D.gd
+- Tests/ValidateCreatureActions3D.gd
+- Tests/ValidateGeneratedContactAndFacing3D.gd
+- Tests/ValidateGeneratedUnifiedTurning3D.gd
+- Tests/ValidateWolfHeadingCorrection.gd
+- Tests/ValidateWolfLimbPlanes.gd
+- Tests/ValidateWolfRotationConstraints.gd
+- Tests/AssessGeneratedMotionDiagnostics3D.gd
+- Tests/ValidateCreatureMotionCorrections3D.gd
+- Tests/ValidateCreatureMotionPerformance3D.gd
+- Tests/ValidateGeneratedTurnTransitions3D.gd
+
+本批次没有提交或推送 Git，也没有覆盖用户原有未提交工作。所有撤回仅恢复本轮开始时的快照内容。

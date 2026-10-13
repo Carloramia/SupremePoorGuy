@@ -56,8 +56,14 @@ func run() -> void:
 			if item.a == root_body.name and item.b == limb.name:
 				assert(item.plane_error_degrees < 0.001 and Vector3(item.b_torque).length() < 0.000001)
 		move._segment_goal_yaw = PI
+		move._turn_command_pending = true
+		move._wolf_turn_state_frame = -1
+		move._update_wolf_heading_state(0.016)
 		move._update_wolf_plane_constraints(0.016)
-		assert(move._wolf_plane_rows.is_empty() and move._foot_heading_previous_locks.is_empty(), "Yield to deliberate turns")
+		assert(move._foot_heading_previous_locks.is_empty(), "Deliberate turns must release foot heading locks")
+		for item: Dictionary in move._wolf_plane_rows:
+			var body: RigidBody3D = actor.get_node("GeneratedParts/" + str(item.b))
+			assert(move._has_body_tag(body, move.SUB_TORSO_TAG), "Only the torso structure may retain paired plane correction during a deliberate turn")
 		move._segment_goal_yaw = 0.0
 		move._wolf_deliberate_turn = false
 		move.recovery_control_active = true

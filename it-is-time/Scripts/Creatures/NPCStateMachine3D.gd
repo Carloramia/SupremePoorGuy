@@ -3,6 +3,10 @@ extends Node3D
 const PLAYER_CONTEXT = preload("res://Scripts/Player/PlayerControlContext.gd")
 const BEHAVIOR = preload("res://Scripts/Creatures/NPCBehaviorData.gd")
 const ATTACK = preload("res://Scripts/Creatures/NPCAttackData.gd")
+var _performance_mode: Resource = preload("res://Resources/Settings/PerformanceOptimization.tres")
+var _combat_decision_elapsed: float = 1.0
+var _movement_direction_frame: int = -1
+var _cached_movement_direction: Vector3 = Vector3.ZERO
 
 signal state_changed(previous_state: State, current_state: State)
 
@@ -120,6 +124,7 @@ func _ready() -> void:
 	call_deferred("_initialize_navigation")
 
 func _physics_process(delta: float) -> void:
+	_movement_direction_frame = -1
 	if not enabled or not _character_enabled or PLAYER_CONTEXT.controlled_character(self) == get_parent():
 		_cancel_attack()
 		change_state(State.IDLE)
@@ -163,6 +168,7 @@ func change_state(next_state: State) -> void:
 		return
 	var previous_state := current_state
 	current_state = next_state
+	_movement_direction_frame = -1
 	if current_state != State.MOVE_TO_TARGET: _friendly_steering = Vector3.ZERO
 	state_changed.emit(previous_state, current_state)
 	_log_state_event(&"transition", {"from":State.keys()[previous_state],"to":State.keys()[current_state]})
@@ -222,6 +228,13 @@ func get_movement_direction() -> Vector3:
 	if walking_attack and _distance_attack != null and absf(_distance_error) <= _attack_distance_tolerance(_distance_attack): return Vector3.ZERO
 	if (current_state != State.MOVE_TO_TARGET and not walking_attack) or not _has_requested_target:
 		return Vector3.ZERO
+	var frame := Engine.get_physics_frames()
+	if _performance_mode.enabled and _movement_direction_frame == frame: return _cached_movement_direction
+	_cached_movement_direction = _calculate_movement_direction()
+	_movement_direction_frame = frame
+	return _cached_movement_direction
+
+func _calculate_movement_direction() -> Vector3:
 	var flight := get_parent().get_node_or_null("BirdFlightController3D")
 	if flight != null and flight.is_airborne():
 		# Airborne navigation follows the combat destination on XZ, not ground mesh paths.
@@ -335,6 +348,7 @@ func _set_agent_target(target_position: Vector3) -> void:
 		or navigation_agent.target_position.distance_to(navigation_target) >= target_repath_distance
 	)
 	_requested_target_position = navigation_target
+	_movement_direction_frame = -1
 	_has_requested_target = true
 	if should_repath:
 		if _performance_tracking_enabled:
@@ -608,6 +622,7 @@ func _visible(actor: Node3D, target_part: Node3D = null) -> bool:
 	return get_world_3d().direct_space_state.intersect_ray(query).is_empty()
 
 func _update_combat(delta: float) -> void:
+	_combat_decision_elapsed += delta
 	_target_switch_remaining = maxf(0.0, _target_switch_remaining - delta)
 	for key in _cooldowns: _cooldowns[key] = maxf(float(_cooldowns[key])-delta, 0.0)
 	_attack_retry = maxf(_attack_retry-delta,0.0)
@@ -620,6 +635,14 @@ func _update_combat(delta: float) -> void:
 		_attack_predictions.clear()
 		_target = null
 		_has_requested_target = false
+	if _performance_mode.enabled:
+		# Finish/cancel attacks on the real physics tick; do not delay their timers or controls.
+		if current_state == State.ATTACK and _active_attack != null and is_instance_valid(_target) and _target.get("is_broken") != true and (not _active_attack.allow_movement or _combat_decision_elapsed < _performance_mode.ai_decision_interval):
+			_advance_active_attack(delta)
+			return
+		if _combat_decision_elapsed < _performance_mode.ai_decision_interval and _scan_elapsed > 0.0 and is_instance_valid(_target) and _target.get("is_broken") != true:
+			return
+	_combat_decision_elapsed = 0.0
 	if _scan_elapsed <= 0.0:
 		_scan_elapsed = maxf(behavior.scan_interval,0.05)
 		if current_state != State.ATTACK and behavior.auto_find_enemies:
@@ -664,13 +687,7 @@ func _update_combat(delta: float) -> void:
 	var attacks := _available_attacks()
 	var reposition := _plan_attack_distance(distance, attacks)
 	if current_state == State.ATTACK:
-		_attack_elapsed += delta
-		var duration_limit: float = _active_attack.maximum_duration
-		if is_instance_valid(_attack_receiver) and _attack_receiver.has_method("get_npc_attack_maximum_duration"):
-			duration_limit = maxf(duration_limit, _attack_receiver.get_npc_attack_maximum_duration(_active_attack.action_id))
-		if not is_instance_valid(_attack_receiver) or not _attack_receiver.is_npc_attack_active() or _attack_elapsed >= duration_limit:
-			_cancel_attack()
-			change_state(State.WAITING)
+		_advance_active_attack(delta)
 		return
 	if _attack_retry <= 0.0:
 		if _try_attack(distance): return
@@ -683,6 +700,15 @@ func _update_combat(delta: float) -> void:
 			reposition = _plan_attack_distance(distance,attacks)
 	change_state(State.MOVE_TO_TARGET if reposition else State.WAITING)
 
+func _advance_active_attack(delta: float) -> void:
+	_attack_elapsed += delta
+	var duration_limit: float = _active_attack.maximum_duration
+	if is_instance_valid(_attack_receiver) and _attack_receiver.has_method("get_npc_attack_maximum_duration"):
+		duration_limit = maxf(duration_limit, _attack_receiver.get_npc_attack_maximum_duration(_active_attack.action_id))
+	if not is_instance_valid(_attack_receiver) or not _attack_receiver.is_npc_attack_active() or _attack_elapsed >= duration_limit:
+		_cancel_attack()
+		change_state(State.WAITING)
+
 func _predict_attack(attack: ATTACK, target: Node3D) -> Dictionary:
 	if not attack.prediction_enabled: return {"hit":true,"reason":&"prediction_disabled","confidence":1.0}
 	var receiver := get_parent().get_node_or_null(attack.receiver_path)
@@ -694,7 +720,9 @@ func _predict_attack(attack: ATTACK, target: Node3D) -> Dictionary:
 
 func _attack_target_candidates() -> Array[Node3D]:
 	var result: Array[Node3D] = []
-	if _enemy.has_method("_get_physical_body_parts"):
+	if _enemy.has_method("get_body_parts_with_tag"):
+		result.assign(_enemy.get_body_parts_with_tag(PhysicalBodyPart3D.BodyPartTag.Torso))
+	elif _enemy.has_method("_get_physical_body_parts"):
 		for part: RigidBody3D in _enemy._get_physical_body_parts():
 			if not part.is_broken and 0 in part.tags: result.append(part)
 	var origin := _get_navigation_origin_position()
@@ -754,7 +782,7 @@ func _try_attack(_distance: float) -> bool:
 			_attack_predictions.append(row)
 			if not prediction.get("hit",false): continue
 			var score := attack.selection_weight*clampf(float(prediction.get("confidence",1.0)),0.01,1.0)
-			choices.append({"attack":attack,"target":target,"weight":score})
+			choices.append({"attack":attack,"target":target,"weight":score,"prediction":prediction})
 			weight += score
 			break
 	if choices.is_empty() or weight <= 0.0:
@@ -769,9 +797,10 @@ func _try_attack(_distance: float) -> bool:
 			choice = candidate
 			break
 	var selected: ATTACK = choice.attack
-	var prediction := _predict_attack(selected,choice.target)
-	if not prediction.get("hit",false):
-		_attack_block_reason = &"prediction_recheck_failed"
+	# Selection is synchronous; keep the receiver's start-time safety checks.
+	var prediction: Dictionary = choice.prediction
+	if not is_instance_valid(choice.target) or choice.target.is_queued_for_deletion():
+		_attack_block_reason = &"target_invalidated"
 		return false
 	_target = choice.target
 	var distance := _horizontal_distance_to(_target.global_position)

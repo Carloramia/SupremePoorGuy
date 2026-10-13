@@ -50,8 +50,7 @@ func refresh_physics_query_cache() -> void:
 	cancel_action(&"regenerated")
 	movement = get_parent().get_node_or_null("GeneratedLegStepMovementController3D")
 	torso = movement._torso if movement != null else null
-	_rids.clear()
-	for part: RigidBody3D in get_parent()._get_physical_body_parts(): _rids.append(part.get_rid())
+	_rids.assign(get_parent().get_physical_body_rids())
 	for module: MODULE in _modules():
 		module.controller = self
 		if module.has_method("refresh"): module.refresh()
@@ -181,10 +180,10 @@ func sync_foot_ownership() -> void:
 			for body: RigidBody3D in module.owned_bodies:
 				if is_instance_valid(body) and not bodies.has(body): bodies.append(body)
 	if wanted == _claimed and bodies == _claimed_bodies: return
-	if not _claimed.is_empty() or not _claimed_bodies.is_empty(): movement.end_action_control()
+	if not _claimed.is_empty() or not _claimed_bodies.is_empty(): movement.end_action_control(self)
 	_claimed = wanted
 	_claimed_bodies = bodies
-	if not wanted.is_empty() or not bodies.is_empty(): movement.begin_action_control(wanted,bodies)
+	if not wanted.is_empty() or not bodies.is_empty(): movement.begin_action_control(wanted,bodies,self)
 
 func try_end_combo(target: PhysicalBodyPart3D) -> void:
 	_combo_target = target

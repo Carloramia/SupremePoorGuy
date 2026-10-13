@@ -27,6 +27,13 @@ func set_wielder(character: Node, team_id: int) -> void:
 func clear_wielder() -> void:
 	wielder_character = null
 
+func prepare_temporary_attack(character: Node) -> void:
+	freeze = true
+	collision_layer = 0
+	collision_mask = 0
+	can_be_picked_up = false
+	set_wielder(character, character.get_faction_id())
+
 func begin_damage_swing() -> void:
 	swing_sequence += 1
 	_active_swing_count += 1

@@ -1,0 +1,364 @@
+[gd_scene format=3]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Snake/Head/Snake1Head.tscn" id="1"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Snake/Neck/Snake1NeckUpper.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Snake/Neck/Snake1NeckLower.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Snake/Torso/Snake1Body.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Snake/Torso/Snake1BodyCurve.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Snake/Tail/Snake1Tail.tscn" id="6"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Snake/Feet/Snake1FootLeft.tscn" id="7"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Snake/Feet/Snake1FootMiddle.tscn" id="8"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Snake/Feet/Snake1FootRight.tscn" id="9"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Snake/Decorations/Snake1Rivet.tscn" id="10"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Snake/Head/Snake2Head.tscn" id="11"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Snake/Neck/Snake2Neck.tscn" id="12"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Snake/Torso/Snake2BodyRear.tscn" id="13"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Snake/Torso/Snake2BodyMiddle.tscn" id="14"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Snake/Torso/Snake2BodyFront.tscn" id="15"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Snake/Tail/Snake2Tail.tscn" id="16"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Snake/Feet/Snake2FootLeft.tscn" id="17"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Snake/Feet/Snake2FootMiddle.tscn" id="18"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Snake/Feet/Snake2FootRight.tscn" id="19"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Snake/Decorations/Snake2Rivet.tscn" id="20"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Snake/Head/Snake3Head.tscn" id="21"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Snake/Head/Snake3UpperJaw.tscn" id="22"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Snake/Mouth/Snake3LowerJaw.tscn" id="23"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Snake/Mouth/Snake3Tongue.tscn" id="24"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Snake/Tail/Snake3Tail.tscn" id="25"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Snake/Torso/Snake3BodyMiddle.tscn" id="26"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Snake/Torso/Snake3BodyFront.tscn" id="27"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Snake/Feet/Snake3FootLeft.tscn" id="28"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Snake/Feet/Snake3FootMiddleLeft.tscn" id="29"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Snake/Feet/Snake3FootMiddleRight.tscn" id="30"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Snake/Feet/Snake3FootRight.tscn" id="31"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Snake/Decorations/Snake3Rivet.tscn" id="32"]
+[sub_resource type="Environment" id="Env"]
+background_mode = 1
+background_color = Color(0.16, 0.18, 0.22, 1)
+[node name="SnakePartsPreview" type="Node3D"]
+[node name="Camera3D" type="Camera3D" parent="."]
+position = Vector3(0, 0, 35)
+projection = 1
+size = 37.0
+current = true
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Env")
+[node name="Snake1Head" parent="." instance=ExtResource("1")]
+position = Vector3(-12.9295, 14.967351411589895, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label0" type="Label3D" parent="."]
+position = Vector3(-12, 12.9, 1)
+text = "Snake1Head"
+font_size = 40
+pixel_size = 0.009
+[node name="Snake1NeckUpper" parent="." instance=ExtResource("2")]
+position = Vector3(-5.307, 14.119531914893617, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label1" type="Label3D" parent="."]
+position = Vector3(-6, 12.9, 1)
+text = "Snake1NeckUpper"
+font_size = 40
+pixel_size = 0.009
+[node name="Snake1NeckLower" parent="." instance=ExtResource("3")]
+position = Vector3(0.58275, 15.345551668022782, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label2" type="Label3D" parent="."]
+position = Vector3(0, 12.9, 1)
+text = "Snake1NeckLower"
+font_size = 40
+pixel_size = 0.009
+[node name="Snake1Body" parent="." instance=ExtResource("4")]
+position = Vector3(5.4687, 15.0, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label3" type="Label3D" parent="."]
+position = Vector3(6, 12.9, 1)
+text = "Snake1Body"
+font_size = 40
+pixel_size = 0.009
+[node name="Snake1BodyCurve" parent="." instance=ExtResource("5")]
+position = Vector3(11.4148, 15.011102508650518, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label4" type="Label3D" parent="."]
+position = Vector3(12, 12.9, 1)
+text = "Snake1BodyCurve"
+font_size = 40
+pixel_size = 0.009
+[node name="Snake1Tail" parent="." instance=ExtResource("6")]
+position = Vector3(-10.6536, 10.170210135970335, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label5" type="Label3D" parent="."]
+position = Vector3(-12, 7.9, 1)
+text = "Snake1Tail"
+font_size = 40
+pixel_size = 0.009
+[node name="Snake1FootLeft" parent="." instance=ExtResource("7")]
+position = Vector3(-5.52585, 10.396862416107382, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label6" type="Label3D" parent="."]
+position = Vector3(-6, 7.9, 1)
+text = "Snake1FootLeft"
+font_size = 40
+pixel_size = 0.009
+[node name="Snake1FootMiddle" parent="." instance=ExtResource("8")]
+position = Vector3(-0.51, 10.458810888252149, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label7" type="Label3D" parent="."]
+position = Vector3(0, 7.9, 1)
+text = "Snake1FootMiddle"
+font_size = 40
+pixel_size = 0.009
+[node name="Snake1FootRight" parent="." instance=ExtResource("9")]
+position = Vector3(5.6458, 10.346915004336513, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label8" type="Label3D" parent="."]
+position = Vector3(6, 7.9, 1)
+text = "Snake1FootRight"
+font_size = 40
+pixel_size = 0.009
+[node name="Snake1Rivet" parent="." instance=ExtResource("10")]
+position = Vector3(12.0, 10.0, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label9" type="Label3D" parent="."]
+position = Vector3(12, 7.9, 1)
+text = "Snake1Rivet"
+font_size = 40
+pixel_size = 0.009
+[node name="Snake2Head" parent="." instance=ExtResource("11")]
+position = Vector3(-13.1151, 4.90271124567474, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label10" type="Label3D" parent="."]
+position = Vector3(-12, 2.9, 1)
+text = "Snake2Head"
+font_size = 40
+pixel_size = 0.009
+[node name="Snake2Neck" parent="." instance=ExtResource("12")]
+position = Vector3(-6.168, 4.376905222437138, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label11" type="Label3D" parent="."]
+position = Vector3(-6, 2.9, 1)
+text = "Snake2Neck"
+font_size = 40
+pixel_size = 0.009
+[node name="Snake2BodyRear" parent="." instance=ExtResource("13")]
+position = Vector3(-0.8221499999999999, 5.119983380681818, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label12" type="Label3D" parent="."]
+position = Vector3(0, 2.9, 1)
+text = "Snake2BodyRear"
+font_size = 40
+pixel_size = 0.009
+[node name="Snake2BodyMiddle" parent="." instance=ExtResource("14")]
+position = Vector3(5.3112, 4.930050089445438, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label13" type="Label3D" parent="."]
+position = Vector3(6, 2.9, 1)
+text = "Snake2BodyMiddle"
+font_size = 40
+pixel_size = 0.009
+[node name="Snake2BodyFront" parent="." instance=ExtResource("15")]
+position = Vector3(11.28865, 4.904871959213401, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label14" type="Label3D" parent="."]
+position = Vector3(12, 2.9, 1)
+text = "Snake2BodyFront"
+font_size = 40
+pixel_size = 0.009
+[node name="Snake2Tail" parent="." instance=ExtResource("16")]
+position = Vector3(-12.5104, 0.6634728676964405, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label15" type="Label3D" parent="."]
+position = Vector3(-12, -2.1, 1)
+text = "Snake2Tail"
+font_size = 40
+pixel_size = 0.009
+[node name="Snake2FootLeft" parent="." instance=ExtResource("17")]
+position = Vector3(-5.8624, 0.09491354166666666, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label16" type="Label3D" parent="."]
+position = Vector3(-6, -2.1, 1)
+text = "Snake2FootLeft"
+font_size = 40
+pixel_size = 0.009
+[node name="Snake2FootMiddle" parent="." instance=ExtResource("18")]
+position = Vector3(-0.191, 0.08943650793650791, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label17" type="Label3D" parent="."]
+position = Vector3(0, -2.1, 1)
+text = "Snake2FootMiddle"
+font_size = 40
+pixel_size = 0.009
+[node name="Snake2FootRight" parent="." instance=ExtResource("19")]
+position = Vector3(5.76645, 0.20118424170616114, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label18" type="Label3D" parent="."]
+position = Vector3(6, -2.1, 1)
+text = "Snake2FootRight"
+font_size = 40
+pixel_size = 0.009
+[node name="Snake2Rivet" parent="." instance=ExtResource("20")]
+position = Vector3(12.0, 0.0, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label19" type="Label3D" parent="."]
+position = Vector3(12, -2.1, 1)
+text = "Snake2Rivet"
+font_size = 40
+pixel_size = 0.009
+[node name="Snake3Head" parent="." instance=ExtResource("21")]
+position = Vector3(-13.323, -5.4086233009708735, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label20" type="Label3D" parent="."]
+position = Vector3(-12, -7.1, 1)
+text = "Snake3Head"
+font_size = 40
+pixel_size = 0.009
+[node name="Snake3UpperJaw" parent="." instance=ExtResource("22")]
+position = Vector3(-6.720000000000001, -5.293951612903226, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label21" type="Label3D" parent="."]
+position = Vector3(-6, -7.1, 1)
+text = "Snake3UpperJaw"
+font_size = 40
+pixel_size = 0.009
+[node name="Snake3LowerJaw" parent="." instance=ExtResource("23")]
+position = Vector3(-0.8196250000000002, -4.759750444839858, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label22" type="Label3D" parent="."]
+position = Vector3(0, -7.1, 1)
+text = "Snake3LowerJaw"
+font_size = 40
+pixel_size = 0.009
+[node name="Snake3Tongue" parent="." instance=ExtResource("24")]
+position = Vector3(5.27225, -5.111616344605475, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label23" type="Label3D" parent="."]
+position = Vector3(6, -7.1, 1)
+text = "Snake3Tongue"
+font_size = 40
+pixel_size = 0.009
+[node name="Snake3Tail" parent="." instance=ExtResource("25")]
+position = Vector3(12.432, -5.424286874154262, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label24" type="Label3D" parent="."]
+position = Vector3(12, -7.1, 1)
+text = "Snake3Tail"
+font_size = 40
+pixel_size = 0.009
+[node name="Snake3BodyMiddle" parent="." instance=ExtResource("26")]
+position = Vector3(-12.93525, -9.479568509615385, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label25" type="Label3D" parent="."]
+position = Vector3(-12, -12.1, 1)
+text = "Snake3BodyMiddle"
+font_size = 40
+pixel_size = 0.009
+[node name="Snake3BodyFront" parent="." instance=ExtResource("27")]
+position = Vector3(-6.3915, -10.42388616398243, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label26" type="Label3D" parent="."]
+position = Vector3(-6, -12.1, 1)
+text = "Snake3BodyFront"
+font_size = 40
+pixel_size = 0.009
+[node name="Snake3FootLeft" parent="." instance=ExtResource("28")]
+position = Vector3(0.544, -9.628744588744588, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label27" type="Label3D" parent="."]
+position = Vector3(0, -12.1, 1)
+text = "Snake3FootLeft"
+font_size = 40
+pixel_size = 0.009
+[node name="Snake3FootMiddleLeft" parent="." instance=ExtResource("29")]
+position = Vector3(6.132, -9.63416, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label28" type="Label3D" parent="."]
+position = Vector3(6, -12.1, 1)
+text = "Snake3FootMiddleLeft"
+font_size = 40
+pixel_size = 0.009
+[node name="Snake3FootMiddleRight" parent="." instance=ExtResource("30")]
+position = Vector3(11.6685, -9.603661971830986, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label29" type="Label3D" parent="."]
+position = Vector3(12, -12.1, 1)
+text = "Snake3FootMiddleRight"
+font_size = 40
+pixel_size = 0.009
+[node name="Snake3FootRight" parent="." instance=ExtResource("31")]
+position = Vector3(-12.1715, -14.579877515310587, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label30" type="Label3D" parent="."]
+position = Vector3(-12, -17.1, 1)
+text = "Snake3FootRight"
+font_size = 40
+pixel_size = 0.009
+[node name="Snake3Rivet" parent="." instance=ExtResource("32")]
+position = Vector3(-6.0, -15.0, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label31" type="Label3D" parent="."]
+position = Vector3(-6, -17.1, 1)
+text = "Snake3Rivet"
+font_size = 40
+pixel_size = 0.009

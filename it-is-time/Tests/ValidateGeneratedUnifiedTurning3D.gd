@@ -35,7 +35,7 @@ func run() -> void:
 		generator.foreleg_count = 2
 		generator.body_length = 4.0
 		generator.unsymmetrie = 0.0
-		generator.neck_number = 0
+		generator.neck_number = 1
 		generator._random.seed = 43
 		check(actor.generate_creature(), "Generation failed")
 		var movement = actor.get_node("GeneratedLegStepMovementController3D")
@@ -55,6 +55,7 @@ func run() -> void:
 		var commands := Commands.new()
 		actor.add_child(commands)
 		movement.command_source = commands
+		movement.input_enabled = true
 		for frame: int in range(180): await physics_frame
 		var previous: float = movement._get_physical_heading_yaw()
 		var total := 0.0

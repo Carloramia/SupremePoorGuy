@@ -2,13 +2,15 @@
 extends "res://Scripts/Creatures/GeneratedCreatureCharacter3D.gd"
 
 const LIMB_VISUAL_STRETCH = preload("res://Scripts/Creatures/SpiderLimbVisualStretch3D.gd")
+const LIMB_HOLE_ALIGNMENT = preload("res://Scripts/Creatures/SpiderLimbHoleAlignment.gd")
+var _spider_root_anchors: Dictionary = {}
 var _spider_stretch_rows: Array = []
 var _spider_stretch_container_id: int = 0
 var _spider_stretch_dirty := true
 
 @export_group("Spider Limb Visual Stretch")
 ## Connect the rendered upper-limb holes to Torso/Leg anchors without changing physics.
-@export var spider_limb_visual_stretch_enabled: bool = true:
+@export var spider_limb_visual_stretch_enabled: bool = false:
 	set(value):
 		spider_limb_visual_stretch_enabled = value
 		_spider_stretch_dirty = true
@@ -24,6 +26,7 @@ func _process(_delta: float) -> void:
 
 func _exit_tree() -> void:
 	_restore_spider_limb_visuals()
+	_clear_spider_root_anchors()
 
 func _restore_spider_limb_visuals() -> void:
 	for row: RefCounted in _spider_stretch_rows: row.restore()
@@ -66,23 +69,44 @@ var _spider_angle_joints: Array[Generic6DOFJoint3D] = []
 
 func _physics_process(_delta: float) -> void:
 	if Engine.is_editor_hint(): return
+	_update_spider_root_anchors(_delta)
 	for joint: Generic6DOFJoint3D in _spider_angle_joints:
 		if is_instance_valid(joint): _update_spider_world_limits(joint)
 
 func _update_spider_world_limits(joint: Generic6DOFJoint3D) -> void:
+	if joint.is_queued_for_deletion() or joint.node_a.is_empty() or joint.node_b.is_empty(): return
+	if joint.get_meta(&"spider_attack_knee", false): return
 	var data: Dictionary = joint.get_meta(&"spider_world_angle")
 	var parent_body := joint.get_node_or_null(data.parent_path) as RigidBody3D
 	if parent_body == null: return
-	var rotation := (parent_body.global_basis.orthonormalized() * Basis(data.parent_rest_basis).inverse()).get_rotation_quaternion()
-	var axis := joint.global_basis.z.normalized()
-	var delta := wrapf(2.0 * atan2(Vector3(rotation.x, rotation.y, rotation.z).dot(axis), rotation.w), -PI, PI)
+	# Measure in the parent's live sheet: quaternion twist about a fixed world
+	# Z axis becomes singular when the creature turns through 180 degrees of yaw.
+	var current := parent_body.global_basis.orthonormalized()
+	var rest := Basis(data.parent_rest_basis).orthonormalized()
+	var current_angle := atan2(current.z.dot(Vector3.UP.cross(current.y)), Vector3.UP.dot(current.y))
+	var rest_angle := atan2(rest.z.dot(Vector3.UP.cross(rest.y)), Vector3.UP.dot(rest.y))
+	var delta := wrapf(current_angle - rest_angle, -PI, PI)
 	var center := float(data.initial_angle) + delta
 	var bound := deg_to_rad(spider_leg_bend_limit_degrees)
 	# Godot's Z limit is A relative to B; the child endpoint changes at the knee.
 	var low := -bound - center if data.child_is_a else center - bound
 	var high := bound - center if data.child_is_a else center + bound
-	joint.set_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_LOWER_LIMIT, maxf(low, -PI))
-	joint.set_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_UPPER_LIMIT, minf(high, PI))
+	var previous_low := joint.get_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_LOWER_LIMIT)
+	var previous_high := joint.get_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_UPPER_LIMIT)
+	var a := joint.get_node_or_null(joint.node_a) as RigidBody3D
+	var b := joint.get_node_or_null(joint.node_b) as RigidBody3D
+	if a == null or b == null: return
+	var frame_a: Transform3D = joint.get_meta(&"generated_joint_frame_a", Transform3D.IDENTITY)
+	var frame_b: Transform3D = joint.get_meta(&"generated_joint_frame_b", Transform3D.IDENTITY)
+	var relative := (b.global_basis * frame_b.basis).orthonormalized().inverse() * (a.global_basis * frame_a.basis).orthonormalized()
+	var angle := atan2(relative.x.y, relative.x.x)
+	var guard := deg_to_rad(5.0)
+	# Changing a Jolt angular bound rebuilds its entire constraint. Keep the
+	# warm start while both old and desired bounds safely contain the hinge.
+	if joint.get_meta(&"spider_world_limits_initialized", false) and previous_low < previous_high and angle > maxf(previous_low, low) + guard and angle < minf(previous_high, high) - guard: return
+	joint.set_meta(&"spider_world_limits_initialized", true)
+	if not is_equal_approx(previous_low, maxf(low, -PI)): joint.set_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_LOWER_LIMIT, maxf(low, -PI))
+	if not is_equal_approx(previous_high, minf(high, PI)): joint.set_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_UPPER_LIMIT, minf(high, PI))
 
 func _capture_spider_world_limits(joint: Generic6DOFJoint3D) -> void:
 	var a := joint.get_node(joint.node_a) as PhysicalBodyPart3D
@@ -97,13 +121,14 @@ func _capture_spider_world_limits(joint: Generic6DOFJoint3D) -> void:
 	var angle := atan2(joint.global_basis.z.normalized().dot(Vector3.UP.cross(up_axis)), Vector3.UP.dot(up_axis))
 	joint.set_meta(&"spider_world_angle", {"child_is_a": not knee, "initial_angle": angle, "parent_path": joint.get_path_to(parent_body), "parent_rest_basis": parent_body.global_basis.orthonormalized()})
 	_spider_angle_joints.append(joint)
+	joint.set_meta(&"spider_world_limits_initialized", false)
 	_update_spider_world_limits(joint)
 @export_range(0.0, 10000.0, 1.0, "or_greater") var spider_leg_spring_stiffness: float = 300.0
 @export_range(0.0, 1000.0, 1.0, "or_greater") var spider_leg_spring_damping: float = 30.0
 ## Spring values are specified per unit of effective hinge inertia (kg m²).
 @export var spider_scale_joint_springs: bool = true
 @export_group("Spider Independent Torso Support")
-## Root joints retain angular limits, but cannot transmit linear load to Torso.
+## Torso supports its own weight; bounded root joints keep the limbs attached.
 @export var spider_independent_torso_support: bool = true
 @export_group("Spider Axial Sliding")
 @export var spider_axial_sliding_enabled: bool = true
@@ -133,7 +158,9 @@ func _configure_spider_axial_joint(joint: Generic6DOFJoint3D, a: PhysicalBodyPar
 	var length: float = collision.shape.size.y * collision.global_basis.y.length()
 	var knee := BODY_PART.BodyPartTag.Leg in other.tags
 	var ratio := spider_knee_slide_ratio if knee else spider_root_slide_ratio
-	var slack := length * ratio if spider_axial_sliding_enabled else 0.0
+	# A ring-to-ring knee is a pivot, so axial sliding would separate its holes.
+	var locked_hole: bool = knee and bool(joint.get_meta(&"spider_hole_aligned", false))
+	var slack := length * ratio if spider_axial_sliding_enabled and not locked_hole else 0.0
 	var mass := upper.mass * other.mass / maxf(upper.mass + other.mass, 0.000001)
 	var omega := TAU * spider_axial_spring_frequency
 	var stiffness := mass * omega * omega
@@ -149,10 +176,6 @@ func _configure_spider_axial_joint(joint: Generic6DOFJoint3D, a: PhysicalBodyPar
 		joint.call("set_param_" + axis, Generic6DOFJoint3D.PARAM_LINEAR_SPRING_DAMPING, damping if travel > 0.0 else 0.0)
 		joint.call("set_param_" + axis, Generic6DOFJoint3D.PARAM_LINEAR_SPRING_EQUILIBRIUM_POINT, 0.0)
 	joint.set_meta(&"spider_axial_slide", {"upper": upper.name, "connection": "knee" if knee else "root", "half_travel": slack, "upper_length": length, "effective_mass": mass, "stiffness": stiffness, "damping": damping})
-	if spider_independent_torso_support and not knee:
-		for axis: String in ["x", "y", "z"]:
-			joint.call("set_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_LINEAR_LIMIT, false)
-			joint.call("set_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_LINEAR_SPRING, false)
 	joint.set_meta(&"spider_independent_root", spider_independent_torso_support and not knee)
 
 func get_spider_joint_spring(joint: Generic6DOFJoint3D) -> Vector2:
@@ -207,9 +230,14 @@ func _instantiate_blueprint(blueprint: Dictionary, generator_transform: Transfor
 		part.bottom_distance = size.y * 0.5
 		part.collision_thickness = size.z
 		part.set_meta(&"generated_size", size)
+	LIMB_HOLE_ALIGNMENT.align(container)
 	return container
 
 func _activate_parts(container: Node) -> void:
+	_clear_spider_root_anchors()
+	_restore_spider_limb_visuals()
+	LIMB_HOLE_ALIGNMENT.align(container)
+	_spider_stretch_dirty = true
 	_spider_angle_joints.clear()
 	for part: Node in container.get_children():
 		if part is PhysicalBodyPart3D and BODY_PART.BodyPartTag.Leg in part.tags:
@@ -240,3 +268,52 @@ func _activate_parts(container: Node) -> void:
 		var spring := get_spider_joint_spring(joint)
 		joint.set_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_SPRING_STIFFNESS, spring.x)
 		joint.set_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_SPRING_DAMPING, spring.y)
+
+	_bind_spider_root_anchors()
+
+func _bind_spider_root_anchors() -> void:
+	if not Engine.is_editor_hint() and spider_independent_torso_support and not planar_constraints_enabled:
+		for joint: Generic6DOFJoint3D in _spider_angle_joints:
+			if not is_instance_valid(joint) or joint.is_queued_for_deletion() or joint.node_a.is_empty() or joint.node_b.is_empty(): continue
+			if not joint.get_meta(&"spider_independent_root", false): continue
+			var torso := joint.get_node(joint.node_b) as RigidBody3D
+			if torso.is_broken: continue
+			if not _spider_root_anchors.has(torso):
+				var anchor := PhysicsServer3D.body_create()
+				PhysicsServer3D.body_set_mode(anchor, PhysicsServer3D.BODY_MODE_KINEMATIC)
+				PhysicsServer3D.body_set_collision_layer(anchor, 0)
+				PhysicsServer3D.body_set_collision_mask(anchor, 0)
+				PhysicsServer3D.body_set_state(anchor, PhysicsServer3D.BODY_STATE_TRANSFORM, torso.global_transform)
+				PhysicsServer3D.body_set_space(anchor, get_world_3d().space)
+				_spider_root_anchors[torso] = anchor
+			var upper := joint.get_node(joint.node_a) as RigidBody3D
+			# Keep logical NodePaths for damage/chain discovery; the physical parent
+			# follows Torso without feeding foot-pin constraint forces back into it.
+			PhysicsServer3D.joint_make_generic_6dof(joint.get_rid(), upper.get_rid(), joint.get_meta(&"generated_joint_frame_a"), _spider_root_anchors[torso], joint.get_meta(&"generated_joint_frame_b"))
+			for axis: int in 3:
+				var suffix: String = ["x", "y", "z"][axis]
+				for param: int in Generic6DOFJoint3D.PARAM_MAX:
+					PhysicsServer3D.generic_6dof_joint_set_param(joint.get_rid(), axis, param, joint.call("get_param_" + suffix, param))
+				for flag: int in Generic6DOFJoint3D.FLAG_MAX:
+					PhysicsServer3D.generic_6dof_joint_set_flag(joint.get_rid(), axis, flag, joint.call("get_flag_" + suffix, flag))
+			joint.set_meta(&"spider_root_anchor", true)
+
+func _update_spider_root_anchors(delta: float) -> void:
+	for torso: Variant in _spider_root_anchors.keys():
+		if not is_instance_valid(torso) or torso.is_broken:
+			PhysicsServer3D.free_rid(_spider_root_anchors[torso])
+			_spider_root_anchors.erase(torso)
+			continue
+		var target: Transform3D = torso.global_transform
+		target.origin += torso.linear_velocity * delta
+		if not torso.angular_velocity.is_zero_approx(): target.basis = Basis(torso.angular_velocity.normalized(), torso.angular_velocity.length() * delta) * target.basis
+		PhysicsServer3D.body_set_state(_spider_root_anchors[torso], PhysicsServer3D.BODY_STATE_TRANSFORM, target)
+
+func _clear_spider_root_anchors() -> void:
+	for anchor: RID in _spider_root_anchors.values(): PhysicsServer3D.free_rid(anchor)
+	_spider_root_anchors.clear()
+
+func _sync_planar_constraints() -> void:
+	super._sync_planar_constraints()
+	if planar_constraints_enabled: _clear_spider_root_anchors()
+	else: _bind_spider_root_anchors()

@@ -8,7 +8,7 @@
 [ext_resource type="PackedScene" path="res://Scenes/VFX/TerrainArcIndicator3D.tscn" id="7_terrain_arc"]
 [ext_resource type="PackedScene" path="res://Scenes/Player/Controller.tscn" id="8_player_controller"]
 [ext_resource type="PackedScene" uid="uid://dstgtopkigikh" path="res://Scenes/Creatures/Characters/Character_Test_NPC.tscn" id="9_a7u0l"]
-[ext_resource type="PackedScene" path="res://Scenes/Creatures/Characters/Generate_Spider_NPC.tscn" id="9_qhub5"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Characters/Generate_Snake_NPC.tscn" id="9_qhub5"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_flat_ground"]
 size = Vector3(200, 102, 200)
@@ -54,9 +54,48 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.69153404, 11.563919, -0.62
 camera_rig = NodePath("../DragCamera3D")
 terrain_cursor = NodePath("../TerrainCursor3D")
 
-[node name="CharacterTestNPC" parent="." unique_id=418755916 instance=ExtResource("9_a7u0l")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 143.19507, 1.3799999, -0.50146484)
-faction_id = 2
+[node name="GenerateSnakeNPC" parent="." unique_id=1256252707 instance=ExtResource("9_qhub5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -143.31006, 6.32587, 14.117783)
+snake_bend_limit_degrees = 25.0
+snake_joint_x_slack_ratio = 0.15
+snake_joint_y_slack_ratio = 0.05
+manual_layout_connection_tolerance = 0.01
+generate_on_ready = true
+show_framework = false
+zero_gravity_test_mode = false
+density_data = null
+mass_density = 1.0
+minimum_part_mass = 0.1
+minimum_feather_mass = 0.005
+maximum_part_mass = 10.0
+part_linear_damping = 0.15
+part_angular_damping = 1.0
+limb_angular_limit_degrees = 35.0
+neck_angular_limit_degrees = 20.0
+angular_spring_stiffness = 30.0
+angular_spring_damping = 5.0
+tail_joint_angular_limit_degrees = 25.0
+tail_joint_spring_stiffness = 80.0
+tail_joint_spring_damping = 8.0
+wing_joint_limits_enabled = true
+wing_root_limit_margin_degrees = 10.0
+wing_middle_limit_margin_degrees = 10.0
+wing_tip_limit_margin_degrees = 10.0
+neck_linear_springs_enabled = true
+neck_joint_linear_slack = Vector3(0.06, 0.06, 0.06)
+neck_linear_spring_stiffness = 80.0
+neck_linear_spring_damping = 8.0
+limb_hinge_damping = 3.0
+limb_joint_linear_slack = Vector3(0.03, 0.03, 0)
+segment_merge_length_percent = 10.0
+segment_weight_decay_ratio = 0.2
+segment_transverse_slack = 0.05
+segment_spring_maximum_acceleration = 50.0
+segment_maximum_distance_lock_enabled = true
+segment_maximum_distance_ratio = 1.15
+segment_spring_frequency = 3.0
+segment_spring_damping_ratio = 1.0
 
-[node name="GenerateSpiderNPC" parent="." unique_id=662865548 instance=ExtResource("9_qhub5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.56173015, 1.4623786, 0.87524223)
+[node name="CharacterTestNPC" parent="." unique_id=418755916 instance=ExtResource("9_a7u0l")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58.451416, 1.3799922, 13.03067)
+faction_id = 2

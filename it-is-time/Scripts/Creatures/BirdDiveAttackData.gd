@@ -1,6 +1,6 @@
-extends Resource
+@tool
+extends "res://Scripts/Creatures/CreatureAttackData.gd"
 
-@export var enabled: bool = true
 @export var input_action: StringName = &"MouseLeft"
 @export_group("Target")
 ## Downward angle from the horizontal plane; positive angles point below the Head.
@@ -37,7 +37,8 @@ extends Resource
 @export_range(0.1,20.0,0.1) var pull_up_speed: float = 5.0
 @export_range(0.1,5.0,0.05) var pull_up_time: float = 0.8
 @export_range(0.1,100.0,0.1) var maximum_pull_up_velocity_change: float = 30.0
-@export_range(0.0,20.0,0.1) var cooldown: float = 2.5
+
+func _default_cooldown() -> float: return 2.5
 
 func is_valid() -> bool:
 	if not is_finite(weapon_length_ratio) or weapon_length_ratio <= 0.0 or not is_finite(weapon_radius_ratio) or weapon_radius_ratio <= 0.0: return false

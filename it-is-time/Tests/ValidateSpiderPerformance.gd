@@ -43,17 +43,17 @@ func run() -> void:
 	faster_profile.target_speed = 6.0
 	var fast_plan: Dictionary = controller._plan_spider_catch_up(faster_profile, 2.5, 0.35, 0.4, false)
 	check(fast_plan.relative_speed >= slow_plan.relative_speed and fast_plan.duration <= slow_plan.duration, "Higher configured speed must not reduce catch-up capability")
-	check(fast_plan.acceleration_budget <= fast_plan.acceleration_ceiling and is_equal_approx(fast_plan.duration, 0.35), "Configured demand must respect the joint-safe acceleration envelope even when speed saturates")
+	check(fast_plan.acceleration_budget <= 2000.0 and fast_plan.duration >= fast_plan.minimum_safe_duration and fast_plan.duration >= 0.35, "Configured demand must respect the acceleration envelope even when speed saturates")
 	var limited_profile := before.duplicate()
 	limited_profile.reachable_speed = 0.1
 	check(controller._plan_spider_catch_up(limited_profile, 2.5, 0.35, 0.4, false) == slow_plan, "Catch-up must not feed back the reduced reachable speed")
 	var far_plan: Dictionary = controller._plan_spider_catch_up(before, 20.0, 0.35, 0.4, false)
-	check(is_equal_approx(far_plan.duration, 0.35) and far_plan.acceleration_budget <= far_plan.acceleration_ceiling, "Long catch-up must keep planned time while respecting the force budget")
-	check(is_equal_approx(slow_plan.duration, 0.35), "Catch-up must use the requested timeline")
+	check(far_plan.duration >= far_plan.minimum_safe_duration and far_plan.acceleration_budget <= 2000.0, "Long catch-up must respect the current force budget")
+	check(slow_plan.duration >= 0.35, "Catch-up must not shorten the requested timeline")
 	controller._spider_step_times[foot] = 1.5
 	var after: Dictionary = controller.get_leg_motion_profile(foot)
 	check(after.observed_step_duration == 1.5 and before.observed_step_duration != 1.5, "Same-frame observed duration must invalidate the cache")
-	check(is_equal_approx(after.swing_duration, before.swing_duration) and is_equal_approx(after.cycle, before.cycle), "Observed delays must not stretch subsequent swing timelines")
+	check(is_equal_approx(after.swing_duration, before.swing_duration) and after.occupied_step_duration >= 1.5, "Observed delays must update occupancy without stretching the swing timeline")
 	controller._spider_step_times.erase(foot)
 	controller.structural_stride_enabled = false
 	check(not controller.get_spider_stride_limits(foot).valid, "Structural mode toggle must take effect immediately")

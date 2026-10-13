@@ -298,10 +298,44 @@ func _log_collision_event(event_name: String, body: Node3D) -> void:
 		ignored, global_position, linear_velocity, is_broken
 	])
 
+## Opt-in solver contact cache. Ordinary creatures do not pay for this scan.
+var surface_contact_tracking: bool = false
+## Snake support must come from terrain/platforms, not from another creature or item.
+var surface_contact_terrain_only: bool = false
+var _support_surface_contact: Dictionary = {}
+
+func get_support_surface_contact() -> Dictionary:
+	if not surface_contact_tracking or is_broken: return {}
+	if Engine.get_physics_frames() > int(_support_surface_contact.get("frame", -10)) + 1:
+		# Sleeping bodies stop integration callbacks; retain their still-existing solver contact.
+		if not sleeping or _support_surface_contact.is_empty(): return {}
+		var collider := instance_from_id(int(_support_surface_contact.collider_id)) as Node3D
+		if not is_instance_valid(collider) or not collider.is_inside_tree() or collider not in get_colliding_bodies(): return {}
+	return _support_surface_contact
+
+func _record_support_surface(state: PhysicsDirectBodyState3D) -> void:
+	_support_surface_contact = {}
+	var gravity := state.total_gravity
+	var up := -gravity.normalized() if not gravity.is_zero_approx() else Vector3.UP
+	var best := 0.5
+	for index: int in state.get_contact_count():
+		var collider := state.get_contact_collider_object(index)
+		if collider == null or (collider is PhysicalBodyPart3D and collider.get_parent() == get_parent()): continue
+		if surface_contact_terrain_only and not (collider is StaticBody3D or collider is AnimatableBody3D): continue
+		var normal := state.get_contact_local_normal(index).normalized()
+		var alignment := normal.dot(up)
+		if alignment < best: continue
+		best = alignment
+		_support_surface_contact = {"frame": Engine.get_physics_frames(), "normal": normal,
+			"position": state.get_contact_collider_position(index),
+			"velocity": state.get_contact_collider_velocity_at_position(index),
+			"collider_id": state.get_contact_collider_id(index)}
+
 func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
 	if Engine.is_editor_hint() or is_broken:
 		return
 	_record_foot_contacts(state)
+	if surface_contact_tracking: _record_support_surface(state)
 	var weapon_impulses: Dictionary = {}
 	for contact_index: int in range(state.get_contact_count()):
 		# Hits against the held weapon geometry do not damage the holder's own body part.

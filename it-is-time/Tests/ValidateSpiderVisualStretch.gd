@@ -88,6 +88,7 @@ func run() -> void:
 	for name: String in ["Generate_Spider", "Generate_Spider_NPC"]:
 		var actor: Node = load("res://Scenes/Creatures/Characters/" + name + ".tscn").instantiate()
 		actor.generate_on_ready = false
+		actor.spider_limb_visual_stretch_enabled = true
 		root.add_child(actor)
 		validate(actor)
 		check(actor.generate_creature(), "Spider must regenerate with render-only deformation")

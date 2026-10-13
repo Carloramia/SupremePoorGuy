@@ -14,6 +14,10 @@ extends "res://Scripts/Creatures/LegMovementData.gd"
 @export_range(0.0, 1.0, 0.01) var foot_plane_unlock_confirmation: float = 0.12
 @export_range(5.0, 90.0, 1.0) var deliberate_turn_entry_degrees: float = 30.0
 @export_range(1.0, 45.0, 1.0) var deliberate_turn_exit_degrees: float = 10.0
+@export_range(0.1, 1.5, 0.05) var deliberate_turn_settle_time: float = 0.5
+@export_range(0.1, 3.0, 0.1) var deliberate_turn_resume_time: float = 1.0
+@export_range(1.0, 30.0, 1.0) var deliberate_turn_settle_speed_degrees: float = 5.0
+@export_range(0.0, 1.0, 0.05) var limb_plane_restore_time: float = 0.3
 @export_range(0.1, 10.0, 0.1) var heading_correction_gain: float = 2.0
 @export_range(0.1, 20.0, 0.1) var heading_correction_damping: float = 4.0
 @export_range(1.0, 45.0, 1.0) var heading_correction_speed_degrees: float = 10.0

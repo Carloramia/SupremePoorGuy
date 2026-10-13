@@ -30,12 +30,16 @@ func run():
    assert(body.axis_lock_angular_x and body.axis_lock_angular_y)
   assert(move._wolf_rotation_diagnostics.state=="locked")
   move._segment_goal_yaw=PI
+  move._turn_command_pending=true
+  move._wolf_turn_state_frame=-1
+  move._update_wolf_heading_state(0.016)
   move._update_foot_heading_constraints()
   for body in originals:
    assert(body.axis_lock_angular_x)
    assert(body.axis_lock_angular_y==bool(originals[body].y))
   assert(move._wolf_rotation_diagnostics.state=="turning")
   move._segment_goal_yaw=0.0
+  move._wolf_deliberate_turn=false
   var limb=actor.get_node("GeneratedParts/ForeLeg_1_Limb_1")
   var rest=limb.global_basis
   limb.freeze=false

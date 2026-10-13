@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3]
+[ext_resource type="ArrayMesh" path="res://Resources/Meshes/Snake/Mouth/Snake3LowerJaw.res" id="1_mesh"]
+[node name="Snake3LowerJaw" type="Node3D"]
+metadata/source_png = "res://Assets/2DResources/Snake/Separated/Base/13_snake3_lower_jaw.png"
+[node name="PaperVolume" type="MeshInstance3D" parent="."]
+scale = Vector3(1, 1, 0.08)
+mesh = ExtResource("1_mesh")
+[node name="JointIn" type="Marker3D" parent="."]
+[node name="JointOut" type="Marker3D" parent="."]
+position = Vector3(1.6703750000000002, -0.5071935053380783, 0)

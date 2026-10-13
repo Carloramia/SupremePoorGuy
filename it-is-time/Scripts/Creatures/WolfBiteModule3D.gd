@@ -1,6 +1,6 @@
 @tool
 extends "res://Scripts/Creatures/WolfAttackModule3D.gd"
-const HITBOX = preload("res://Scripts/Items/WolfAttackHitbox3D.gd")
+const HITBOX = preload("res://Scripts/Items/TemporaryAttackHitbox3D.gd")
 var jaw: PhysicalBodyPart3D
 var head: PhysicalBodyPart3D
 var joint: Generic6DOFJoint3D
