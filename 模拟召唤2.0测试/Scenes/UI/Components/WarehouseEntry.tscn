@@ -1,0 +1,47 @@
+[gd_scene load_steps=3 format=3]
+[ext_resource type="PackedScene" path="res://Scenes/UI/Components/MonsterPortrait.tscn" id="Portrait"]
+[ext_resource type="Theme" path="res://Assets/UI/PaperRelief/PaperReliefTheme.tres" id="Theme"]
+[node name="WarehouseEntry" type="Button"]
+custom_minimum_size = Vector2(0, 96)
+size_flags_horizontal = 3
+toggle_mode = true
+theme = ExtResource("Theme")
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 2
+mouse_filter = 2
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+[node name="Row" type="HBoxContainer" parent="Margin"]
+layout_mode = 2
+mouse_filter = 2
+[node name="Portrait" parent="Margin/Row" instance=ExtResource("Portrait")]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(84, 72)
+show_reference_caption = false
+mouse_filter = 2
+[node name="Text" type="VBoxContainer" parent="Margin/Row"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+[node name="Name" type="Label" parent="Margin/Row/Text"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "妖兽名称"
+mouse_filter = 2
+theme_override_font_sizes/font_size = 21
+clip_text = true
+text_overrun_behavior = 3
+[node name="Hint" type="Label" parent="Margin/Row/Text"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "兽形 · 一段 · 1队位"
+mouse_filter = 2
+theme_override_font_sizes/font_size = 16
+autowrap_mode = 3

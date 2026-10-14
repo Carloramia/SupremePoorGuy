@@ -1,0 +1,188 @@
+[gd_scene load_steps=5 format=3]
+[ext_resource type="Script" path="res://Scripts/UI/WarehouseBook.gd" id="Script"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/Components/ActionButton.tscn" id="Button"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/Screens/MonsterDetail.tscn" id="Detail"]
+[ext_resource type="Theme" path="res://Assets/UI/PaperRelief/PaperReliefTheme.tres" id="Theme"]
+[node name="WarehousePanel" type="VBoxContainer"]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("Script")
+theme = ExtResource("Theme")
+[node name="Summary" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+text = "妖兽名册 · 队位摘要"
+theme_override_font_sizes/font_size = 19
+autowrap_mode = 3
+[node name="BookPages" type="HBoxContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 16
+[node name="LeftPage" type="VBoxContainer" parent="BookPages"]
+layout_mode = 2
+custom_minimum_size = Vector2(430, 0)
+size_flags_vertical = 3
+[node name="Title" type="Label" parent="BookPages/LeftPage"]
+layout_mode = 2
+text = "妖兽名册"
+theme_override_font_sizes/font_size = 24
+[node name="Tabs" type="HFlowContainer" parent="BookPages/LeftPage"]
+layout_mode = 2
+
+[node name="Warehouse" parent="BookPages/LeftPage/Tabs" instance=ExtResource("Button")]
+unique_name_in_owner = true
+layout_mode = 2
+text = "未编队"
+[node name="Team" parent="BookPages/LeftPage/Tabs" instance=ExtResource("Button")]
+unique_name_in_owner = true
+layout_mode = 2
+text = "已编队"
+[node name="All" parent="BookPages/LeftPage/Tabs" instance=ExtResource("Button")]
+unique_name_in_owner = true
+layout_mode = 2
+text = "全部"
+[node name="Search" type="LineEdit" parent="BookPages/LeftPage"]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "按名称搜索"
+max_length = 24
+[node name="Advanced" type="CheckButton" parent="BookPages/LeftPage"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "筛选与排序"
+[node name="Filters" type="HFlowContainer" parent="BookPages/LeftPage"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="TierFilter" type="OptionButton" parent="BookPages/LeftPage/Filters"]
+unique_name_in_owner = true
+layout_mode = 2
+selected = 0
+item_count = 5
+popup/item_0/text = "全部等段"
+popup/item_0/id = 0
+popup/item_1/text = "一段"
+popup/item_1/id = 1
+popup/item_2/text = "二段"
+popup/item_2/id = 2
+popup/item_3/text = "三段"
+popup/item_3/id = 3
+popup/item_4/text = "四段"
+popup/item_4/id = 4
+[node name="ShapeFilter" type="OptionButton" parent="BookPages/LeftPage/Filters"]
+unique_name_in_owner = true
+layout_mode = 2
+selected = 0
+item_count = 4
+popup/item_0/text = "全部形态"
+popup/item_0/id = 0
+popup/item_1/text = "人形"
+popup/item_1/id = 1
+popup/item_2/text = "兽形"
+popup/item_2/id = 2
+popup/item_3/text = "蛇形"
+popup/item_3/id = 3
+[node name="MutationFilter" type="OptionButton" parent="BookPages/LeftPage/Filters"]
+unique_name_in_owner = true
+layout_mode = 2
+selected = 0
+item_count = 3
+popup/item_0/text = "全部状态"
+popup/item_0/id = 0
+popup/item_1/text = "畸变体"
+popup/item_1/id = 1
+popup/item_2/text = "普通体"
+popup/item_2/id = 2
+[node name="Sort" type="OptionButton" parent="BookPages/LeftPage/Filters"]
+unique_name_in_owner = true
+layout_mode = 2
+selected = 0
+item_count = 3
+popup/item_0/text = "新获得优先"
+popup/item_0/id = 0
+popup/item_1/text = "等段优先"
+popup/item_1/id = 1
+popup/item_2/text = "名称排序"
+popup/item_2/id = 2
+[node name="ClearFilters" parent="BookPages/LeftPage/Filters" instance=ExtResource("Button")]
+unique_name_in_owner = true
+layout_mode = 2
+text = "清除筛选"
+[node name="LeftScroll" type="ScrollContainer" parent="BookPages/LeftPage"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+[node name="Cards" type="VBoxContainer" parent="BookPages/LeftPage/LeftScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+[node name="Empty" type="Label" parent="BookPages/LeftPage"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "名册为空"
+autowrap_mode = 3
+[node name="ResultCount" type="Label" parent="BookPages/LeftPage"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+autowrap_mode = 3
+[node name="Spine" type="VSeparator" parent="BookPages"]
+layout_mode = 2
+custom_minimum_size = Vector2(12, 0)
+[node name="RightPage" type="VBoxContainer" parent="BookPages"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+[node name="Title" type="Label" parent="BookPages/RightPage"]
+layout_mode = 2
+text = "所选妖兽"
+theme_override_font_sizes/font_size = 24
+[node name="RightScroll" type="ScrollContainer" parent="BookPages/RightPage"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+[node name="Detail" parent="BookPages/RightPage/RightScroll" instance=ExtResource("Detail")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+[node name="NameInput" parent="BookPages/RightPage/RightScroll/Detail" index="8"]
+visible = false
+[node name="Save" parent="BookPages/RightPage/RightScroll/Detail" index="9"]
+visible = false
+[node name="NoSelection" type="Label" parent="BookPages/RightPage"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "从左页选择妖兽查看详情"
+autowrap_mode = 3
+[node name="Commands" type="VBoxContainer" parent="BookPages/RightPage"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="MoveHint" type="Label" parent="BookPages/RightPage/Commands"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "队位预览"
+autowrap_mode = 3
+theme_override_font_sizes/font_size = 16
+[node name="RenameRow" type="HBoxContainer" parent="BookPages/RightPage/Commands"]
+layout_mode = 2
+
+[node name="NameInput" type="LineEdit" parent="BookPages/RightPage/Commands/RenameRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+max_length = 24
+placeholder_text = "名称"
+[node name="SaveName" parent="BookPages/RightPage/Commands/RenameRow" instance=ExtResource("Button")]
+unique_name_in_owner = true
+layout_mode = 2
+text = "保存名称"
+[node name="Move" parent="BookPages/RightPage/Commands" instance=ExtResource("Button")]
+unique_name_in_owner = true
+layout_mode = 2
+text = "加入编队"
+
+[editable path="BookPages/RightPage/RightScroll/Detail"]
