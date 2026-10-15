@@ -1,38 +1,64 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene format=3 uid="uid://bxok6w4njyxoo"]
 
-[ext_resource type="PackedScene" path="res://Scenes/Items/_SampleWeapon.tscn" id="1_base"]
-[ext_resource type="Texture2D" path="res://Assets/2DResources/Human/Separated/Weapons/01_human1_spear.png" id="2_texture"]
+[ext_resource type="PackedScene" uid="uid://ct5i18a0njdxn" path="res://Scenes/Items/_SampleWeapon.tscn" id="1_base"]
+[ext_resource type="Texture2D" uid="uid://eavlv321hmsl" path="res://Assets/2DResources/Human/Separated/Weapons/01_human1_spear.png" id="2_texture"]
+[ext_resource type="Script" uid="uid://c7ehnswep16hc" path="res://Scripts/Items/ItemGripSettings.gd" id="3_576st"]
 [ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/Human/Scenes/Weapons/Human1Spear.tscn" id="3_model"]
+[ext_resource type="Resource" path="res://Resources/Items/Spear1IdleGripPose.tres" id="4_idle_pose"]
+
+[sub_resource type="Resource" id="Resource_r0rw1"]
+resource_local_to_scene = true
+script = ExtResource("3_576st")
+
+[sub_resource type="Resource" id="Resource_7tp57"]
+resource_local_to_scene = true
+script = ExtResource("3_576st")
 
 [sub_resource type="ConvexPolygonShape3D" id="Shape"]
 resource_local_to_scene = true
-points = PackedVector3Array(-9.460010214, 10.230266895, -0.040000000, -9.090751346, 10.230266895, -0.040000000, -8.906121912, 10.046404102, -0.040000000, -7.982974741, 9.127090137, -0.040000000, 2.540903004, -1.904677441, -0.040000000, 3.464050174, -3.191716992, -0.040000000, 3.833309042, -3.927168164, -0.040000000, 3.833309042, -4.111030957, -0.040000000, 3.464050174, -4.111030957, -0.040000000, 2.910161872, -3.743305371, -0.040000000, 2.356273569, -3.375579785, -0.040000000, 1.617755833, -2.823991406, -0.040000000, -9.460010214, 9.862541309, -0.040000000, -9.460010214, 10.230266895, 0.040000000, -9.090751346, 10.230266895, 0.040000000, -8.906121912, 10.046404102, 0.040000000, -7.982974741, 9.127090137, 0.040000000, 2.540903004, -1.904677441, 0.040000000, 3.464050174, -3.191716992, 0.040000000, 3.833309042, -3.927168164, 0.040000000, 3.833309042, -4.111030957, 0.040000000, 3.464050174, -4.111030957, 0.040000000, 2.910161872, -3.743305371, 0.040000000, 2.356273569, -3.375579785, 0.040000000, 1.617755833, -2.823991406, 0.040000000, -9.460010214, 9.862541309, 0.040000000)
+points = PackedVector3Array(-9.460011, 10.230267, -0.04, -9.090752, 10.230267, -0.04, -8.906122, 10.046404, -0.04, -7.9829745, 9.12709, -0.04, 2.540903, -1.9046774, -0.04, 3.4640503, -3.191717, -0.04, 3.833309, -3.9271681, -0.04, 3.833309, -4.111031, -0.04, 3.4640503, -4.111031, -0.04, 2.910162, -3.7433054, -0.04, 2.3562737, -3.3755798, -0.04, 1.6177559, -2.8239913, -0.04, -9.460011, 9.862541, -0.04, -9.460011, 10.230267, 0.04, -9.090752, 10.230267, 0.04, -8.906122, 10.046404, 0.04, -7.9829745, 9.12709, 0.04, 2.540903, -1.9046774, 0.04, 3.4640503, -3.191717, 0.04, 3.833309, -3.9271681, 0.04, 3.833309, -4.111031, 0.04, 3.4640503, -4.111031, 0.04, 2.910162, -3.7433054, 0.04, 2.3562737, -3.3755798, 0.04, 1.6177559, -2.8239913, 0.04, -9.460011, 9.862541, 0.04)
 
-[node name="Human1Spear" instance=ExtResource("1_base")]
-mass = 0.500000000
-can_be_picked_up = true
+[node name="Human1Spear" unique_id=1133922224 instance=ExtResource("1_base")]
+mass = 0.5
 weapon_tags = Array[int]([0])
 primary_attack_tag = 0
-attack_forward_local = Vector3(0.700930318, -0.713229759, 0.000000000)
+arm_attack_preset_override = null
+attack_forward_local = Vector3(0.7009303, -0.7132298, 0)
+passive_hit_cooldown = 0.25
 display_name = "Human1 长矛"
 item_image = ExtResource("2_texture")
-sprite_visible = false
-mesh_visible = true
-attachment_local_position = Vector3(0.117284180, -0.141446484, 0.000000000)
-item_rotation = 2.356194490
+attachment_local_position = Vector3(-2.0817628, 2.304294, 0)
+item_rotation = 0.40054545
 preferred_holder_name = &""
 has_attachment_point = true
+grip_point_count = 2
+active_grip_point = 1
+grip_point_poses = Array[Transform3D]([Transform3D(0.047794323, -0.9988572, 0, 0.9988572, 0.047794323, 0, 0, 0, 1, -6.8149095, 7.4255395, 0), Transform3D(0.9208484, -0.38992068, 0, 0.38992068, 0.9208484, 0, 0, 0, 1, -2.0817628, 2.304294, 0)])
+grip_point_arm_paths = Array[NodePath]([NodePath("Arm_L"), NodePath("Arm_R")])
+grip_point_settings = Array[ExtResource("3_576st")]([SubResource("Resource_r0rw1"), SubResource("Resource_7tp57")])
+idle_grip_pose = ExtResource("4_idle_pose")
 metadata/source_png = "res://Assets/2DResources/Human/Separated/Weapons/01_human1_spear.png"
 metadata/source_model_scene = "res://Assets/3DResources/Creatures/Human/Scenes/Weapons/Human1Spear.tscn"
 metadata/source_physical_scene = "res://Scenes/Creatures/Bodyparts/Human/Weapons/Human1Spear.tscn"
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." index="0" unique_id=1107347609]
 shape = SubResource("Shape")
 
-[node name="Sprite3D" type="Sprite3D" parent="."]
+[node name="Sprite3D" type="Sprite3D" parent="." index="1" unique_id=920668216]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.8133507, 3.059618, 0)
 visible = false
-position = Vector3(-2.813350586, 3.059617969, 0.000000000)
 pixel_size = 0.005878906
 texture = ExtResource("2_texture")
 
-[node name="Model" parent="." instance=ExtResource("3_model")]
+[node name="Model" parent="." index="2" unique_id=100273677 instance=ExtResource("3_model")]
+
+[node name="GripPoints" type="Node3D" parent="." index="3" unique_id=1305818243]
+metadata/weapon_grip_markers = true
+
+[node name="GripPoint_01" type="Marker3D" parent="GripPoints" index="0" unique_id=1059971017]
+transform = Transform3D(0.047794282, -0.9988572, 0, 0.9988572, 0.047794282, 0, 0, 0, 1, -6.8149095, 7.4255395, 0)
+metadata/weapon_grip_index = 0
+
+[node name="GripPoint_02" type="Marker3D" parent="GripPoints" index="1" unique_id=21750026]
+transform = Transform3D(0.92084855, -0.3899207, 0, 0.3899207, 0.92084855, 0, 0, 0, 1, -2.0817628, 2.304294, 0)
+metadata/weapon_grip_index = 1

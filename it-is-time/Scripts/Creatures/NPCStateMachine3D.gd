@@ -461,7 +461,8 @@ func _preferred_attack_distance(attack: ATTACK) -> float:
 	var maximum := _attack_maximum_range(attack,_target) - margin
 	# An impossible attack range must never make the character push into another body.
 	if minimum > maximum: return minimum
-	if humanoid_xz_positioning and include_limbs_and_equipment_in_standoff:
+	var weapon_spacing: bool = receiver != null and receiver.has_method("uses_weapon_attack_spacing") and receiver.uses_weapon_attack_spacing(attack.action_id)
+	if humanoid_xz_positioning and include_limbs_and_equipment_in_standoff and not weapon_spacing:
 		# Limb/weapon envelopes can overlap the attack range. Approach its far
 		# edge instead of making the attack unreachable or overriding prediction.
 		minimum = maxf(minimum, minf(_minimum_character_standoff() + margin, maximum))
@@ -694,7 +695,7 @@ func _update_combat(delta: float) -> void:
 		# Missing support/turn readiness is not evidence that the attack distance is wrong.
 		var distance_miss := not _attack_predictions.is_empty()
 		for prediction: Dictionary in _attack_predictions:
-			if prediction.get("reason") not in [&"shockwave_misses", &"swing_misses"]: distance_miss = false
+			if prediction.get("reason") not in [&"shockwave_misses", &"swing_misses", &"trajectory_misses"]: distance_miss = false
 		if _attack_block_reason == &"prediction_misses" and distance_miss and not reposition:
 			_prediction_distance_sample += 1
 			reposition = _plan_attack_distance(distance,attacks)

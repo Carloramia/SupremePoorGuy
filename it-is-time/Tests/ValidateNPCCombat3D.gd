@@ -98,6 +98,10 @@ func run() -> void:
 	check(is_equal_approx(attack.cooldown,0.5),"Runtime cooldown must not mutate shared resources")
 	# Exercise the real configurable arm receiver, not only the decision probe.
 	var arm_npc = load("res://Scenes/Creatures/Characters/Character_Test_NPC.tscn").instantiate()
+	# Decision probes must not become nearer phantom enemies of the real Arm fixture.
+	for probe: Node in [npc,ally,enemy]: probe.queue_free()
+	await process_frame
+	other.faction_id = arm_npc.faction_id+1
 	var target_torso = load("res://Scenes/Creatures/Bodyparts/PhysicalTestCreatureParts/TestCrature_Part_Physic_Torso.tscn").instantiate()
 	target_torso.freeze = true
 	other.add_child(target_torso)

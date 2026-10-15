@@ -34,6 +34,8 @@ const COMMAND_HELP: Array[Dictionary] = [
 	{&"name": "tracksnakeattacks [on|off] [filter]", &"description": "Track Snake preparation, lunge, jaw motion, hits and cancellation every 0.1s."},
 	{&"name": "trackturn", &"description": "Toggle facing decisions, combined walking/turning targets and Leg traction logs."},
 	{&"name": "trackswing", &"description": "Toggle Arm swing direction, load, and Joint diagnostics."},
+	{&"name": "trackgrip [on|off] [filter]", &"description": "Track equipment/grip changes and binding alignment every 0.1s; filter by character name, path or ID."},
+	{&"name": "gripstates [filter]", &"description": "Print a one-time equipment/grip snapshot, including empty inventories."},
 ]
 
 # Enable before starting the game to capture first-frame creature generation.
@@ -86,6 +88,9 @@ var _wolf_attack_filter := ""
 var _snake_attack_tracking_enabled := false
 var _snake_attack_filter := ""
 var _swing_tracking_enabled: bool = false
+var _grip_tracking_enabled := false
+var _grip_tracking_filter := ""
+var _grip_tracking_elapsed := 0.0
 var _turn_tracking_enabled: bool = true
 
 func _ready() -> void:
@@ -103,6 +108,11 @@ func _input(event: InputEvent) -> void:
 
 func _process(delta: float) -> void:
 	_output_refresh_elapsed += delta
+	if _grip_tracking_enabled:
+		_grip_tracking_elapsed += delta
+		if _grip_tracking_elapsed >= motion_tracking_interval:
+			_grip_tracking_elapsed = 0.0
+			_emit_weapon_grip_snapshot(_grip_tracking_filter)
 	if _joint_tracking_enabled:
 		_joint_tracking_elapsed += delta
 		if _joint_tracking_elapsed >= motion_tracking_interval and _joint_last_physics_frame != Engine.get_physics_frames():
@@ -162,6 +172,19 @@ func is_console_open() -> bool:
 
 func execute_command(command: String) -> String:
 	var args := command.strip_edges().split(" ",false)
+	if not args.is_empty() and args[0].to_lower() == "gripstates":
+		return "Weapon grip snapshots: %d" % _emit_weapon_grip_snapshot(" ".join(args.slice(1)))
+	if not args.is_empty() and args[0].to_lower() == "trackgrip":
+		if args.size() == 1:
+			_grip_tracking_enabled = not _grip_tracking_enabled
+			_grip_tracking_filter = ""
+		elif args[1].to_lower() in ["on", "off"]:
+			_grip_tracking_enabled = args[1].to_lower() == "on"
+			_grip_tracking_filter = " ".join(args.slice(2))
+		else: return "Usage: trackgrip [on|off] [character name, path or instance ID]"
+		_grip_tracking_elapsed = 0.0
+		var count := _emit_weapon_grip_snapshot(_grip_tracking_filter) if _grip_tracking_enabled else 0
+		return "Weapon grip tracking %s; filter=%s; matched=%d; interval=%.2fs" % ["enabled" if _grip_tracking_enabled else "disabled", _grip_tracking_filter if not _grip_tracking_filter.is_empty() else "all", count, motion_tracking_interval]
 	if not args.is_empty() and args[0].to_lower() == "perfmode":
 		if args.size() > 2 or (args.size() == 2 and args[1].to_lower() not in ["on", "off", "status"]): return "Usage: perfmode [on|off|status]"
 		if args.size() == 1: _performance_mode.set(&"enabled", not _performance_mode.enabled)
@@ -439,6 +462,25 @@ func is_turn_tracking_enabled() -> bool:
 
 func is_swing_tracking_enabled() -> bool:
 	return _swing_tracking_enabled
+
+func log_weapon_grip_event(inventory: Node, event: String) -> void:
+	if _grip_tracking_enabled and _weapon_grip_matches(inventory, _grip_tracking_filter):
+		_append_weapon_grip_snapshot(inventory, event)
+
+func _weapon_grip_matches(inventory: Node, filter: String) -> bool:
+	return is_instance_valid(inventory) and inventory.is_inside_tree() and not inventory.is_queued_for_deletion() and is_instance_valid(inventory.get_parent()) and not inventory.get_parent().is_queued_for_deletion() and _npc_matches(inventory, filter)
+
+func _emit_weapon_grip_snapshot(filter: String) -> int:
+	var count := 0
+	for inventory: Node in get_tree().get_nodes_in_group(&"weapon_grip_inventories"):
+		if not _weapon_grip_matches(inventory, filter): continue
+		_append_weapon_grip_snapshot(inventory, "snapshot")
+		count += 1
+	return count
+
+func _append_weapon_grip_snapshot(inventory: Node, event: String) -> void:
+	var actor := inventory.get_parent()
+	_append_log_output("[weapon_grip] character_path=%s character_id=%d event=%s data=%s" % [actor.get_path(), actor.get_instance_id(), event, inventory.get_weapon_grip_diagnostics()])
 
 func _set_damage_tracking(enabled: bool) -> void:
 	for component: Node in get_tree().get_nodes_in_group(&"damage_components"):

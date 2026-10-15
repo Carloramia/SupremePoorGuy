@@ -5,6 +5,7 @@ enum Motion { SWEEP, THRUST }
 
 @export_group("Weapon Motion")
 @export var motion: Motion = Motion.THRUST
+@export var aim_in_3d: bool = false
 ## Fractions of the actual shoulder-to-hand chain length.
 @export_range(0.1, 0.99, 0.01) var preparation_reach: float = 0.45
 @export_range(0.1, 0.99, 0.01) var strike_reach: float = 0.96

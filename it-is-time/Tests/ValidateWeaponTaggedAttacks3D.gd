@@ -43,6 +43,7 @@ func verify_weapon(name: String) -> void:
 	var state: Dictionary = swing._states[0].members[0]
 	check(weapon.primary_attack_tag in weapon.weapon_tags,"Primary tag must be present: "+name)
 	check(state.preset == weapon.get_arm_attack_preset(),"Actual holder must load the weapon preset: "+name)
+	check(swing.uses_dynamic_npc_attack_range(&"PrimaryArm") == (name in ["Spear1","Spear5"]),"Three-dimensional thrust spacing is limited to Spear presets: "+name)
 	check(state.binding.swing_preset.resource_path.ends_with("HumanArmSwing.tres"),"Weapon must not mutate the Arm's unarmed preset")
 	weapon.weapon_tags.append(SampleWeapon3D.WeaponTag.Sword)
 	check(weapon.get_arm_attack_preset() == state.preset,"Extra tags must not change the primary attack")

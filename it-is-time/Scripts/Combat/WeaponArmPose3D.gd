@@ -27,7 +27,7 @@ static func local_anchor(joint: Generic6DOFJoint3D, body: RigidBody3D) -> Vector
 
 static func reach(chain: Array[Dictionary]) -> float:
 	var result := 0.0
-	for link: Dictionary in chain: result += Vector3(link.distal-link.proximal).length()
+	for link: Dictionary in chain: result += (link.body.global_basis*Vector3(link.distal-link.proximal)).length()
 	return result
 
 static func poses(state: Dictionary, preset: WeaponArmAttackPreset, direction: Vector3, up: Vector3, progress: float) -> Array[Transform3D]:
@@ -40,7 +40,7 @@ static func poses(state: Dictionary, preset: WeaponArmAttackPreset, direction: V
 		# With no elbow, keep the shoulder attached and use a short aimed jab arc.
 		var link: Dictionary = chain[0]
 		var basis: Basis = anchor.global_basis*Basis(link.rest_basis)
-		var forward: Vector3 = basis*Vector3(state.weapon_forward_local)
+		var forward: Vector3 = basis*Vector3(state.get("weapon_aim_local",state.weapon_forward_local))
 		if not forward.is_zero_approx(): basis = Basis(Quaternion(forward.normalized(),direction))*basis
 		var axis := direction.cross(up).normalized()
 		var lever := basis*-Vector3(link.proximal)
@@ -57,7 +57,7 @@ static func poses(state: Dictionary, preset: WeaponArmAttackPreset, direction: V
 	# Deterministic bend plane prevents the IK solution flipping across a straight elbow.
 	for index: int in chain.size():
 		var link: Dictionary = chain[index]
-		lengths.append(Vector3(link.distal-link.proximal).length())
+		lengths.append((link.body.global_basis*Vector3(link.distal-link.proximal)).length())
 		var fraction := float(index+1)/chain.size()
 		points.append(pivot.lerp(end,fraction)-up*sin(fraction*PI)*length*0.35)
 	for iteration: int in 12:
@@ -79,7 +79,7 @@ static func poses(state: Dictionary, preset: WeaponArmAttackPreset, direction: V
 		if not rest_vector.is_zero_approx() and not desired.is_zero_approx():
 			basis = Basis(Quaternion(rest_vector.normalized(),desired.normalized()))*basis
 		if index == chain.size()-1 and chain.size() > 1:
-			var forward: Vector3 = basis*Vector3(state.weapon_forward_local)
+			var forward: Vector3 = basis*Vector3(state.get("weapon_aim_local",state.weapon_forward_local))
 			if not forward.is_zero_approx(): basis = Basis(Quaternion(forward.normalized(),direction))*basis
 		result.append(Transform3D(basis,points[index]-basis*Vector3(link.proximal)))
 	return result

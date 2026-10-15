@@ -1,0 +1,124 @@
+物品通用多点持握
+
+功能由 SampleItem3D、装备控制器和已有 Weapon Workshop 编辑器插件共同提供，所有继承 _SampleItem 的物品与 _SampleWeapon 武器都可使用。
+默认数量为 0，保留现有 Attachment 参数，不改变旧武器的持握姿态。
+
+一、创建与调整
+1. 打开具体物品或武器场景，选中根节点。在 Inspector 顶部找到“物品多点持握”。
+2. 将“数量”设为需要的数量，系统创建 GripPoints/GripPoint_01、GripPoint_02 等 Marker3D。
+   第一个点使用当前 Attachment Local Position 和 Item Rotation；新增点先放在同一位置，随后可分别调整。
+3. 在场景树选中一个 GripPoint Marker，移动它至希望持握的位置。
+4. 调整 Marker 的 Transform / Rotation Degrees / Z，即该点装备后武器的旋转角度。
+   Marker 的 X/Y 旋转应保持 0，Scale 保持 (1,1,1)。读取时使用相对于武器根节点的坐标。
+5. 在该 Marker 的 Inspector 点击“读取此 Marker 到持握点”，仅更新对应的点。
+   也可以回到武器根节点，点击“读取所有 Marker 到持握参数”，一次保存全部点位。
+6. 在根节点选择“主持握点”，然后保存场景。这个点负责刚性绑定；其余启用且指定 Arm 的点同时作为辅助握点生效。
+
+“生成/同步持握点 Marker”可补回被手动删除的 Marker。
+移动或旋转 Marker 不会自动提交；必须点击读取按钮，装备才会使用新的数据。
+读取当前点会同时更新根节点 Attachment Local Position、Item Rotation 和 Has Attachment Point。
+读取其他点只保存该点的数据，保持当前点不变。
+启用多持握点后，根节点 Attachment Local Position 与 Item Rotation 是当前点的镜像值；直接改这两个字段不会改持握点数据，下一次装备会重新应用当前点。
+Marker 是编辑辅助节点，不会增加游戏中的物理碰撞、质量或渲染模型。
+修改具体武器的持握数据不会修改它引用的图片、模型、碰撞形状、厚度或其他武器资产。
+
+每个持握点指定 Arm：
+1. 选中 GripPoints/GripPoint_01 等 Marker，在 Inspector 找到“吸附 Arm（角色内名称 / 路径）”。
+2. 填写 Arm_R、Arm_L 等部位名称，或相对于装备角色根节点的完整路径，例如 GeneratedParts/Arm_L。
+   先按相对路径查找；单独填写名称且角色根节点没有该部位时，在其内部查找唯一同名的物理部位。
+3. 点击“应用吸附 Arm 到持握点”，或在输入框内按回车，然后保存武器场景。
+   该设置立即保存到此持握点的数据中，不需要再点击“读取 Marker”；支持撤销/重做。
+4. 装备或运行时切换主持握点时，会将这个点对齐到对应 Arm 的 ItemSocket3D，并将物品的物理形状与质量绑定到该 Arm。
+   从一个 Arm 切换到另一个时，会取消原 Arm 的攻击、还原原质量/碰撞形状/视觉状态，再绑定新 Arm。
+   所有其他启用且指定了不同 Arm 的点会同时吸附；辅助 Arm 的质量保持原值，物品质量与碰撞形状只合并一次。
+
+主持握点的 Arm 留空时沿用 Preferred Holder Name 和物品栏默认 Arm；辅助点留空表示不绑定。旧单点物品不需要补填。
+指定的目标必须是本角色内、带有 Arm 标签且未断裂的 PhysicalBodyPart3D；不支持绝对路径、角色外部节点或属性路径。
+指定目标无效时不会自动改绑其他 Arm；初始装备会拒绝该武器，已装备武器切换持握点时返回 false 并保留原绑定。
+同名部位不唯一时请填写完整的角色内路径。独立编辑武器时可以先填写名称，运行时按实际装备角色解析；重新生成角色后会重新解析新部位。
+辅助目标缺失、断裂、被其他握点占用或重复指定同一个 Arm 时，只跳过该辅助点，其他有效握点继续生效。主点的配置优先。
+若需要让所选 Arm 参与攻击，该 Arm 还需配置 Arm Swing Bindings，并包含在角色 LimbSwingController 的相应控制组中。
+持握点数量减少时仍会保留停用点的 Arm 设置；数量设为 0 时使用旧 Attachment 和 Preferred Holder Name 设置。
+trackgrip on / gripstates 日志中的 requested_arm 显示主持握点指定的 Arm，holder 显示实际绑定部位。
+
+每点吸附参数：
+选中 Marker，点击“编辑吸附参数（启用 / 力度 / 阻尼 / 旋转）”，Inspector 会打开这个点独立的 ItemGripSettings 资源。
+Enabled：是否启用该点。主持握点必须启用；禁用的主点会拒绝装备。
+Position Frequency：位置追踪频率，默认 6 Hz，越大吸附越紧。
+Damping Ratio：阻尼比，默认 1，抑制追踪振荡。
+Maximum Acceleration / Maximum Force：质量计算之前的加速度上限和最终施力上限，默认 100 / 250。
+Follow Rotation：是否同时追踪 Marker 定义的持握朝向，默认关闭以减少闭合肢体链的冲突。
+Rotation Frequency / Maximum Torque：开启旋转追踪时的频率和最终力矩上限。
+修改后保存物品场景，重新装备或重新运行。每个点拥有独立设置，数量缩减时仍保留停用点的数据。
+
+辅助握点采用有阻尼、有限力的物理追踪，不瞬移肢体，不新增硬锁关节。追踪会暂时接管对应 Arm 及其 ArmLimb 链，避免与常态姿态恢复、独立挥舞同时驱动。
+装备期间为主绑定刚体补充与本角色其他部位的碰撞排除，防止合并到主手上的物品形状阻挡辅助手；卸下时恢复原有排除设置，外部角色和地形的碰撞保持生效。
+主持握动作决定武器攻击，辅助 Arm 跟随物品上的握点；同一武器不会因为辅助点增加而重复开启伤害窗口。
+辅助链断裂时只解除该点；主手断裂时沿用当前掉落规则并解除全部辅助点。卸下、切换、角色重新生成和布娃娃暂停都会清理/恢复相应控制状态。
+超出肢体可达范围时会朝可达边界追踪，日志标为 unreachable；不会强行拉长肢体或解除关节转动限位。物理辅助吸附可能有小量误差，快速攻击时会有短暂追踪滞后。
+
+逐点日志位于 grips 数组：point（从 1 开始）、role（primary/auxiliary）、requested_arm、holder、enabled、state。
+辅助点还输出 error_length、target_world、socket_world、reachable、reach、relative_speed、force 和 force_length。
+state 包含 rigid_bound、tracking、unreachable、disabled、unassigned、duplicate_arm、arm_unavailable、arm_busy、invalid_pose、broken。
+
+二、保存与撤销
+创建、读取、切换和数量调整都接入 Godot 的撤销/重做。
+每个 Marker 及对应持握数据保存在武器 tscn 中，重新打开或实例化时仍然保留。
+数量减少时停用并隐藏多出的 Marker，保留它们的数据，以兼容继承场景并避免删除继承节点；恢复数量后可继续使用。
+当前选择超出范围时自动回到有效范围；撤销可恢复此前的数量、选择和 Marker 姿态。
+数量设为 0 后，继续使用最后保留的 Attachment 参数。
+请优先编辑具体武器场景；修改基类场景的配置时，未覆盖这些配置的子场景会按 Godot 的场景继承规则继承它。
+
+三、装备与运行时
+每次装备使用一个主持握点和全部有效辅助点。玩家与 NPC 共用同一套装备流程，初始化装备会读取保存的配置。
+编辑场景后重新运行测试。脚本在运行时切换点位时，使用：
+
+weapon.select_grip_point(1)
+
+代码索引从 0 开始，因此上述代码将 Inspector 显示的第 2 个点设为主持握点；其他点会重新分配辅助角色。
+返回 true 表示成功，非法索引返回 false。
+切换已装备武器的点位时，先结束旧攻击并恢复关节，再重新对齐手部 ItemSocket3D、合并碰撞形状及计算质量中心。
+直接修改 active_grip_point 只会影响下一次装备；实时切换应调用 select_grip_point。此 API 已由 SampleItem3D 提供，普通物品和武器都可使用。
+程序生成普通物品可使用 InventoryController3D.equip_initial_item(scene)，武器保留原 equip_initial_weapon(scene) 接口；二者都使用同一装备流程。
+武器的 Attack Forward Local 仍表示武器局部的攻击端朝向；如果新的握点让该方向发生明显变化，请按攻击需要另行调整该向量。
+
+四、按钮未显示时
+确认 项目设置 / 插件 / Weapon Workshop 已启用；新增插件代码后可重新启用该插件或重启编辑器。
+这里的按钮通过 EditorInspectorPlugin 提供，不要求把武器及其所有子类改为 @tool，也不向场景序列化 Callable。
+
+五、Spear1 双手常态姿势
+Human1Spear.tscn 的 Grip Points / Idle Grip Pose 引用 Resources/Items/Spear1IdleGripPose.tres。
+此资源仅由 Spear1 使用，其他物品未设置时不增加姿态施力。
+默认让 Arm_R 的刚体原点高于 Arm_L，并让从 Arm_L 指向 Arm_R 的连线相对世界水平面保持约 30°。朝向左侧或右侧不改变高低角色。
+Higher Arm Path / Lower Arm Path 可填写角色相对路径或唯一部位名；两者必须是实际参与本次持握的不同 Arm，且其中一个为主持握部位。
+Use Line Angle 开启时使用 Line Angle Degrees（当前 30°），每帧按两只 Arm 的水平间距计算目标高度差：目标高度差 = 水平间距 × tan(角度)。Height Difference 只在关闭角度模式时使用。
+Frequency：接近目标的力度响应频率（Spear1 为 6 Hz）；Damping Ratio：抑制振荡的阻尼比（1.5）。
+Maximum Acceleration / Maximum Force：按手臂链质量计算施力前的加速度上限和最终施力上限（120 / 180）。Enabled 可关闭此效果。
+角度模式暂时接管主持握臂链的常态复位与角弹簧，避免原始空手姿态和持矛姿态互相拉扯；保留关节限位。辅助 Arm 继续追踪握点，并在接近辅助臂可达边界时施力调整武器位置。
+蓄力、攻击、持续挥舞和恢复阶段暂停此调节，完成恢复后重新生效；角色布娃娃、禁用、失去有效持握手或卸下时停止。
+这是有阻尼和力度上限的姿态目标，不是世界高度硬锁。肢体长度、关节限位、地形和外力会造成误差，无法保证任何体型都精确满足高度差与辅助握点位置。
+正常 Human 双手、左右朝向的静态隔离物理测试稳定在约 30.32°，辅助握点误差约 0.007；移动肩部支撑点时测试区间约 30.03°～31.13°。完整角色在地面静止测试 20 秒，稳定后约 30.3°。交换主持握点时仍需保证 Marker 旋转和肢体结构允许辅助握点到达。
+日志继续使用 trackgrip on GenerateHuman（或对应 NPC 名称）；idle_pose 输出 state、higher_arm、lower_arm、target_height_difference、actual_height_difference、height_error、force。
+角度模式还输出 angle_mode、target_angle_degrees、actual_angle_degrees、reach_force。
+state 包含 tracking、disabled、missing_pair、unbound_pair、frozen_primary、attacking、suspended。修改路径或 Arm 映射后重新装备，使绑定缓存更新。
+
+六、长矛 NPC 的刺击与站位
+Resources/Combat/Weapons/SpearAttack.tres 的 Aim In 3D 开启，实际刺击和预测共同对准目标躯干的三维位置。
+攻击最大距离与首选站位使用同一组刺击姿态、持握点和实际武器碰撞形状计算；凸形武器直接使用真实顶点，避免将包围盒虚构角点和长矛尾部当成向前攻击距离。
+首选站位位于准备与伸展姿态的矛尖距离之间，由 NPC Preferred Reach Ratio 控制；数值越大，越靠近刺击行程末端。
+NPC 保留躯干之间的避碰底线，但使用武器动作范围决定攻击站位，不再被自身长矛的整体碰撞包围范围推到攻击范围之外。
+NPC 优先通过三维轴线对准检查后释放，仍保留最大瞄准等待时限，超时也会释放以防止停滞；预测不中时可以重新采样攻击站位。预测命中才允许发起攻击，墙体和阵营规则继续生效。
+NPC Geometry Attack Range Enabled 关闭时保留原有的配置范围行为。
+tracknpcstate on GenerateHumanSpear1NPC 的 receiver_checks 输出 maximum、preferred、preparation_tip_reach、strike_tip_reach、aim_direction；trackgrip on GenerateHumanSpear1NPC 输出持握角度；trackswing 输出蓄力和释放阶段。
+冲量、护甲与 HP 结算继续由现有 DamageService 负责；攻击范围内发生接触并不意味着低于伤害阈值的碰撞也会扣血。
+Human Limb Pose 的 owner 会区分 attack、equipment_idle_pose 和 equipment_grip，辅助持握接管不再误标成攻击。
+
+代码入口
+Scripts/Items/SampleItem3D.gd：通用持握数据、主持握点与运行时选择。
+Scripts/Items/ItemGripSettings.gd：每点启用、位置/旋转追踪与力度上限。
+Scripts/Items/ItemGripIdlePose.gd：可选的双手常态高低姿态预设。
+Scripts/Items/EquipmentMultiGrip3D.gd：辅助肢体接管、有限力追踪、断裂与状态恢复。
+Scripts/Items/InventoryController3D.gd：主绑定、质量/碰撞、全部握点的装备生命周期。
+addons/weapon_workshop/grip_edit.gd：Marker 生成、读取、持久化与撤销快照。
+addons/weapon_workshop/grip_inspector.gd：武器根节点与单个 Marker 的 Inspector 控件。
+Tests/ValidateWeaponGripPoints3D.gd：编辑数据、保存重载、运行时重新装备与兼容性验证。

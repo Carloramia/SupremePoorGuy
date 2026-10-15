@@ -1,6 +1,7 @@
 extends Node3D
 
 const PLAYER_CONTEXT = preload("res://Scripts/Player/PlayerControlContext.gd")
+const MULTI_GRIP = preload("res://Scripts/Items/EquipmentMultiGrip3D.gd")
 
 signal inventory_changed(items: Array, selected_slot: int)
 signal pickup_rejected(reason: String)
@@ -30,9 +31,13 @@ var _equipped_collision_exceptions: Array[Dictionary] = []
 var _torso: RigidBody3D
 var _arm: RigidBody3D
 var _item_socket: Marker3D
+var _multi_grips := MULTI_GRIP.new()
+var _support_grips_dirty := false
+var _character_control_enabled := true
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	add_to_group(&"weapon_grip_inventories")
 	_items.resize(capacity)
 	refresh_physics_query_cache()
 	_configure_pickup_radius()
@@ -44,20 +49,46 @@ func refresh_physics_query_cache() -> void:
 	var next_arm := get_node_or_null(arm_path) as RigidBody3D
 	var holder_changed := _arm != next_arm
 	# Restore merged weapon geometry before a generated holder is replaced.
-	if is_instance_valid(_equipped_item) and _equipped_holder != next_arm:
+	var expected_holder := next_arm
+	if is_instance_valid(_equipped_item) and not _equipped_item.get_grip_arm_path().is_empty():
+		expected_holder = _resolve_grip_arm(_equipped_item.get_grip_arm_path())
+	if is_instance_valid(_equipped_item) and _equipped_holder != expected_holder:
 		_unequip_item(_equipped_item)
 	_torso = get_node_or_null(torso_path) as RigidBody3D
 	_arm = next_arm
 	_item_socket = get_node_or_null(item_socket_path) as Marker3D
 	if holder_changed and is_instance_valid(_arm): _equip_selected_item()
 
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:
 	if not _rigid_attachment_snapshot.is_empty() and not is_instance_valid(_equipped_item):
+		_trace_weapon_grip_event("item_deleted")
 		_remove_rigid_attachment(null)
 	if is_instance_valid(_torso):
 		_pickup_area.global_position = _torso.global_position
+	if not _character_control_enabled or get_tree().paused: return
+	if get_parent().has_method("is_temporarily_ragdolled") and get_parent().is_temporarily_ragdolled(): return
+	if is_instance_valid(_equipped_item) and is_instance_valid(_equipped_holder):
+		if _support_grips_dirty:
+			_multi_grips.configure(self, _equipped_item, _equipped_holder)
+			_support_grips_dirty = false
+		_multi_grips.update(delta)
+
+func cancel_player_actions() -> void:
+	_multi_grips.release()
+	_support_grips_dirty = true
+
+func suspend_idle_grip_pose() -> void:
+	_multi_grips.suspend_idle_pose()
+
+func set_character_control_enabled(value: bool) -> void:
+	_character_control_enabled = value
+	if not value: cancel_player_actions()
+
+func _exit_tree() -> void:
+	_multi_grips.release()
 
 func _unhandled_input(event: InputEvent) -> void:
+	if not _character_control_enabled: return
 	if get_parent().has_node("NPCStateMachine3D") and PLAYER_CONTEXT.controlled_character(self) != get_parent(): return
 	if PLAYER_CONTEXT.controller(self) != null: return
 	if _is_external_interface_open():
@@ -113,28 +144,118 @@ func get_selected_slot() -> int:
 func get_equipped_item() -> SampleItem3D:
 	return _equipped_item
 
+func refresh_equipped_item_attachment(item: SampleItem3D) -> bool:
+	if item != _equipped_item: return false
+	_equip_selected_item()
+	return _equipped_item == item
+
+func can_equip_weapon_grip(weapon: SampleWeapon3D, index: int) -> bool:
+	return can_equip_item_grip(weapon, index)
+
+func can_equip_item_grip(item: SampleItem3D, index: int) -> bool:
+	if not item.is_grip_enabled(index): return false
+	var path := item.get_grip_arm_path(index)
+	return path.is_empty() or _resolve_grip_arm(path) != null
+
+## Read-only: never create sockets, rebind equipment or change attacks while diagnosing.
+func get_weapon_grip_diagnostics() -> Dictionary:
+	var equipped := is_instance_valid(_equipped_item) and not _equipped_item.is_queued_for_deletion()
+	var item: SampleItem3D = _equipped_item if equipped else null
+	if item == null and _selected_slot >= 0 and _selected_slot < _items.size() and is_instance_valid(_items[_selected_slot]):
+		item = _items[_selected_slot]
+	var row := {"time_ms": Time.get_ticks_msec(), "physics_frame": Engine.get_physics_frames(),
+		"slot": _selected_slot + 1, "equipped": equipped,
+		"state": "equipped" if equipped else ("selected_not_equipped" if item != null else ("item_missing" if not _rigid_attachment_snapshot.is_empty() else "empty")),
+		"holder_valid": is_instance_valid(_equipped_holder), "merged_shapes": 0}
+	for shape: CollisionShape3D in _rigid_attachment_shapes:
+		if is_instance_valid(shape) and not shape.is_queued_for_deletion() and not shape.disabled:
+			row.merged_shapes += 1
+	if item == null: return row
+	row.merge({"item": str(item.get_path()) if item.is_inside_tree() else str(item.name),
+		"item_id": item.get_instance_id(), "scene": item.scene_file_path,
+		"has_attachment_point": item.has_attachment_point, "attachment_local": item.attachment_local_position,
+		"rotation_degrees": rad_to_deg(item.item_rotation), "item_mass": item.mass,
+		"item_frozen": item.freeze, "item_collision_layer": item.collision_layer, "item_collision_mask": item.collision_mask})
+	var valid_grip := item.active_grip_point >= 0 and item.active_grip_point < item.grip_point_count and item.active_grip_point < item.grip_point_poses.size()
+	row.merge({"grip_mode": "multiple" if item.grip_point_count > 0 else "legacy", "requested_arm": str(item.get_grip_arm_path()),
+		"grip_count": item.grip_point_count, "grip_point": item.active_grip_point+1 if item.grip_point_count > 0 else 0,
+		"grip_pose_valid": valid_grip, "grips": _multi_grips.rows.duplicate(true), "idle_pose": _multi_grips.idle_pose_diagnostics.duplicate(true)})
+	if valid_grip:
+		var pose := item.grip_point_poses[item.active_grip_point]
+		row.grip_pose_valid = pose.origin.is_finite() and pose.basis.is_finite()
+		if row.grip_pose_valid:
+			row.grip_data_matches = item.has_attachment_point and pose.origin.is_equal_approx(item.attachment_local_position) and is_equal_approx(pose.basis.get_euler().z, item.item_rotation)
+	if item is SampleWeapon3D:
+		var preset: LimbSwingPresetBase = item.get_arm_attack_preset()
+		row.damage_window = item.swing_damage_active
+		row.attack_preset = preset.resource_path if preset != null else "unarmed_fallback"
+	if not equipped or not is_instance_valid(_equipped_holder): return row
+	var holder := _equipped_holder
+	row.merge({"holder": str(holder.get_path()) if holder.is_inside_tree() else str(holder.name),
+		"holder_id": holder.get_instance_id(), "holder_mass": holder.mass,
+		"rigid_bound": item.rigid_attachment_holder == holder and item.get_parent() == holder and not _rigid_attachment_snapshot.is_empty(),
+		"ignored_body_count": _equipped_collision_exceptions.size()})
+	if holder is PhysicalBodyPart3D:
+		row.holder_broken = holder.is_broken
+		row.holder_visual_state = holder.get_visual_state()
+	if not _rigid_attachment_snapshot.is_empty():
+		row.mass_error = holder.mass - float(_rigid_attachment_snapshot.mass) - item.mass
+	var socket := holder.get_node_or_null("ItemSocket3D") as Marker3D
+	row.socket_valid = is_instance_valid(socket) and socket.is_inside_tree() and not socket.is_queued_for_deletion()
+	if not row.socket_valid or not item.is_inside_tree(): return row
+	var attachment_world := item.to_global(item.attachment_local_position if item.has_attachment_point else Vector3.ZERO)
+	var expected_basis := socket.global_basis * Basis(Vector3.BACK, item.item_rotation) if item.has_attachment_point else socket.global_basis
+	row.merge({"socket_world": socket.global_position, "attachment_world": attachment_world,
+		"error": attachment_world - socket.global_position, "error_length": attachment_world.distance_to(socket.global_position),
+		"rotation_error_degrees": rad_to_deg(expected_basis.orthonormalized().get_rotation_quaternion().angle_to(item.global_basis.orthonormalized().get_rotation_quaternion()))})
+	for grip: Dictionary in row.grips:
+		if grip.role == "primary": grip.merge({"error_length": row.error_length, "target_world": attachment_world, "socket_world": socket.global_position})
+	return row
+
+func _trace_weapon_grip_event(event: String) -> void:
+	var console := get_tree().root.get_node_or_null("RuntimeConsole")
+	if console != null: console.log_weapon_grip_event(self, event)
+
 ## Spawn equipment directly into an empty slot, without proximity pickup or slot toggling.
 func equip_initial_weapon(scene: PackedScene) -> bool:
+	return _equip_initial_item(scene, true)
+
+func equip_initial_item(scene: PackedScene) -> bool:
+	return _equip_initial_item(scene, false)
+
+func _equip_initial_item(scene: PackedScene, weapon_only: bool) -> bool:
 	if scene == null or is_instance_valid(_equipped_item): return false
 	var slot := _find_empty_slot()
 	if slot < 0: return false
 	var instance := scene.instantiate()
-	if not instance is SampleWeapon3D:
+	if not instance is SampleItem3D or (weapon_only and not instance is SampleWeapon3D):
 		instance.free()
-		_reject_pickup("Initial equipment scene must inherit SampleWeapon3D.")
+		_reject_pickup("Initial equipment scene has an incompatible item type.")
 		return false
-	var weapon := instance as SampleWeapon3D
+	var weapon := instance as SampleItem3D
+	if weapon.grip_point_count > 0 and not weapon.apply_selected_grip_point():
+		weapon.free()
+		_reject_pickup("Primary grip is disabled, missing or invalid.")
+		return false
 	var holder: RigidBody3D
-	var preferred := get_parent().get_node_or_null(NodePath(weapon.preferred_holder_name)) if not weapon.preferred_holder_name.is_empty() else null
-	if _is_available_initial_holder(preferred): holder = preferred
-	if holder == null:
-		for part: Node in get_parent().find_children("*","PhysicalBodyPart3D",true,false):
-			if _is_available_initial_holder(part): holder = part; break
+	var grip_arm := weapon.get_grip_arm_path()
+	if not grip_arm.is_empty():
+		holder = _resolve_grip_arm(grip_arm)
+		if holder == null:
+			weapon.free()
+			_reject_pickup("Configured grip Arm is missing, ambiguous, not an Arm or broken: " + str(grip_arm))
+			return false
+	else:
+		var preferred := get_parent().get_node_or_null(NodePath(weapon.preferred_holder_name)) if not weapon.preferred_holder_name.is_empty() else null
+		if _is_available_initial_holder(preferred, weapon is SampleWeapon3D): holder = preferred
+		if holder == null:
+			for part: Node in get_parent().find_children("*","PhysicalBodyPart3D",true,false):
+				if _is_available_initial_holder(part, weapon is SampleWeapon3D): holder = part; break
 	if holder == null:
 		weapon.free()
-		_reject_pickup("No living Arm with a swing binding is available.")
+		_reject_pickup("No living Arm is available for initial equipment.")
 		return false
-	weapon.preferred_holder_name = StringName(str(get_parent().get_path_to(holder)))
+	if grip_arm.is_empty(): weapon.preferred_holder_name = StringName(str(get_parent().get_path_to(holder)))
 	# Freeze before entering the tree, so equipment cannot fall during initialization.
 	weapon.freeze = true
 	_inventory_items.add_child(weapon)
@@ -150,8 +271,8 @@ func equip_initial_weapon(scene: PackedScene) -> bool:
 	print("[npc_equipment] character=",get_parent().get_path()," slot=",slot," holder=",holder.name," weapon_scene=",scene.resource_path)
 	return _equipped_item == weapon
 
-func _is_available_initial_holder(part: Node) -> bool:
-	return part is PhysicalBodyPart3D and not part.is_broken and not part.is_queued_for_deletion() and PhysicalBodyPart3D.BodyPartTag.Arm in part.tags and not part.arm_swing_bindings.is_empty()
+func _is_available_initial_holder(part: Node, require_swing: bool = true) -> bool:
+	return part is PhysicalBodyPart3D and not part.is_broken and not part.is_queued_for_deletion() and PhysicalBodyPart3D.BodyPartTag.Arm in part.tags and (not require_swing or not part.arm_swing_bindings.is_empty())
 
 func _store_item(item: SampleItem3D, slot_index: int) -> void:
 	item.set_meta(&"inventory_collision_layer", item.collision_layer)
@@ -182,9 +303,14 @@ func _equip_selected_item() -> void:
 	if _selected_slot < 0 or _selected_slot >= _items.size():
 		return
 	var item := _items[_selected_slot]
+	if is_instance_valid(item) and item.grip_point_count > 0 and not item.apply_selected_grip_point():
+		_trace_weapon_grip_event("equip_failed_invalid_primary_grip")
+		return
 	var holder := _resolve_holder(item)
 	var socket := _resolve_item_socket(holder)
 	if not is_instance_valid(item) or not is_instance_valid(holder) or not is_instance_valid(socket):
+		if is_instance_valid(item):
+			_trace_weapon_grip_event("equip_failed_missing_holder" if not is_instance_valid(holder) else "equip_failed_missing_socket")
 		return
 	_equipped_item = item
 	_equipped_holder = holder
@@ -213,20 +339,26 @@ func _equip_selected_item() -> void:
 		(item as SampleWeapon3D).set_wielder(get_parent(), team_id)
 	_add_character_collision_exceptions(item)
 	_create_rigid_attachment(item, holder)
+	_multi_grips.configure(self, item, holder)
+	_support_grips_dirty = false
 	var swing := get_parent().get_node_or_null("LimbSwingController3D")
 	if swing != null: swing.refresh_weapon_presets()
 	_log_attachment_state("equipped", item, holder, socket)
 	_log_attachment_after_physics(item, holder, socket)
+	_trace_weapon_grip_event("equipped")
 
 func _unequip_current_item() -> void:
+	var was_equipped := is_instance_valid(_equipped_item)
 	if is_instance_valid(_equipped_item):
 		_unequip_item(_equipped_item)
 	else:
 		_remove_rigid_attachment(null)
 	_equipped_item = null
 	_equipped_holder = null
+	if was_equipped: _trace_weapon_grip_event("unequipped")
 
 func _unequip_item(item: SampleItem3D) -> void:
+	_trace_weapon_grip_event("unequip_begin")
 	var swing := get_parent().get_node_or_null("LimbSwingController3D")
 	if swing != null and is_instance_valid(_equipped_holder): swing.cancel_attacks_for_holder(_equipped_holder)
 	_remove_rigid_attachment(item)
@@ -250,6 +382,7 @@ func notify_weapon_swing_finished() -> void:
 		(_equipped_item as SampleWeapon3D).end_damage_swing()
 
 func handle_part_broken(part: PhysicalBodyPart3D) -> void:
+	_multi_grips.release_part(part)
 	if not is_instance_valid(part) or part != _equipped_holder or not is_instance_valid(_equipped_item):
 		return
 	_drop_equipped_item()
@@ -258,6 +391,7 @@ func _drop_equipped_item() -> void:
 	var item := _equipped_item
 	if not is_instance_valid(item):
 		return
+	_trace_weapon_grip_event("holder_broken_drop")
 	var slot_index := _items.find(item)
 	var drop_transform := item.global_transform
 	var drop_linear_velocity := _equipped_holder.linear_velocity if is_instance_valid(_equipped_holder) else Vector3.ZERO
@@ -301,11 +435,20 @@ func _add_character_collision_exceptions(item: SampleItem3D) -> void:
 			body.add_collision_exception_with(item)
 		if not item_had_exception:
 			item.add_collision_exception_with(body)
-		_equipped_collision_exceptions.append({
+		var record := {
 			&"body": body,
 			&"body_had_exception": body_had_exception,
 			&"item_had_exception": item_had_exception,
-		})
+		}
+		# Merged item shapes belong to the primary body, so item-RID exceptions alone do not protect auxiliary hands.
+		if is_instance_valid(_equipped_holder) and body != _equipped_holder:
+			var holder_had := body in _equipped_holder.get_collision_exceptions()
+			var body_had := _equipped_holder in body.get_collision_exceptions()
+			record.merge({"holder": _equipped_holder, "holder_rid": _equipped_holder.get_rid(), "body_rid": body.get_rid(),
+				"holder_had_body": holder_had, "body_had_holder": body_had})
+			if not holder_had: _equipped_holder.add_collision_exception_with(body)
+			if not body_had: body.add_collision_exception_with(_equipped_holder)
+		_equipped_collision_exceptions.append(record)
 	if attachment_debug_logging:
 		print(
 			"[item_collision] item=%s character=%s ignored_body_count=%d"
@@ -315,6 +458,11 @@ func _add_character_collision_exceptions(item: SampleItem3D) -> void:
 func _remove_character_collision_exceptions(item: SampleItem3D) -> void:
 	for record: Dictionary in _equipped_collision_exceptions:
 		var body := record.get(&"body") as PhysicsBody3D
+		if record.has("holder"):
+			if is_instance_valid(record.holder) and not record.holder_had_body:
+				PhysicsServer3D.body_remove_collision_exception(record.holder.get_rid(), record.body_rid)
+			if is_instance_valid(body) and not record.body_had_holder:
+				PhysicsServer3D.body_remove_collision_exception(body.get_rid(), record.holder_rid)
 		if not is_instance_valid(body):
 			continue
 		if not bool(record.get(&"body_had_exception", false)):
@@ -361,6 +509,7 @@ func _create_rigid_attachment(item: SampleItem3D, holder: RigidBody3D) -> void:
 	item.collision_layer = 0
 	item.collision_mask = 0
 	item.rigid_attachment_holder = holder
+	item.set_meta(&"equipment_inventory", self)
 	item.reparent(holder, true)
 	if item is SampleWeapon3D and holder is PhysicalBodyPart3D and &"grip" in holder.get_available_visual_states():
 		var previous_state: StringName = holder.get_visual_state()
@@ -377,6 +526,8 @@ func _get_body_center_of_mass(body: RigidBody3D) -> Vector3:
 	return state.center_of_mass_local if state != null else Vector3.ZERO
 
 func _remove_rigid_attachment(item: SampleItem3D) -> void:
+	_multi_grips.release()
+	_support_grips_dirty = false
 	_remove_character_collision_exceptions(item)
 	if _rigid_attachment_snapshot.is_empty():
 		return
@@ -400,15 +551,32 @@ func _remove_rigid_attachment(item: SampleItem3D) -> void:
 			holder.set_visual_state(_rigid_attachment_snapshot.holder_visual_state)
 	if is_instance_valid(item):
 		item.rigid_attachment_holder = null
+		item.remove_meta(&"equipment_inventory")
 		item.reparent(_inventory_items, true)
 	_rigid_attachment_snapshot.clear()
 
 func _resolve_holder(item: SampleItem3D) -> RigidBody3D:
+	if is_instance_valid(item) and not item.get_grip_arm_path().is_empty():
+		return _resolve_grip_arm(item.get_grip_arm_path())
 	if is_instance_valid(item) and not item.preferred_holder_name.is_empty():
 		var preferred := get_parent().get_node_or_null(NodePath(item.preferred_holder_name)) as RigidBody3D
 		if is_instance_valid(preferred):
 			return preferred
 	return _arm
+
+func _resolve_grip_arm(path: NodePath) -> PhysicalBodyPart3D:
+	if path.is_empty() or path.is_absolute() or path.get_subname_count() > 0: return null
+	var actor := get_parent()
+	var candidate := actor.get_node_or_null(path)
+	# A bare part name also works for generated characters with nested GeneratedParts.
+	if candidate == null and path.get_name_count() == 1:
+		for part: Node in actor.find_children("*", "PhysicalBodyPart3D", true, false):
+			if str(part.name) != str(path): continue
+			if candidate != null: return null
+			candidate = part
+	if not candidate is PhysicalBodyPart3D or not actor.is_ancestor_of(candidate): return null
+	if candidate.is_queued_for_deletion() or candidate.is_broken or PhysicalBodyPart3D.BodyPartTag.Arm not in candidate.tags: return null
+	return candidate
 
 func _resolve_item_socket(holder: RigidBody3D) -> Marker3D:
 	if not is_instance_valid(holder):

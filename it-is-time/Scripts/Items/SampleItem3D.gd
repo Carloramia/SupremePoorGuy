@@ -26,12 +26,59 @@ extends RigidBody3D
 @export var preferred_holder_name: StringName = &"Arm_R"
 @export var has_attachment_point: bool = false
 
+@export_group("Grip Points")
+## Zero retains the legacy Attachment settings. Editor markers are managed by Weapon Workshop.
+@export_range(0, 32, 1, "or_greater") var grip_point_count: int = 0
+## Primary grip, zero-based in code; every other enabled, assigned point is auxiliary.
+@export_range(0, 31, 1, "or_greater") var active_grip_point: int = 0
+@export_storage var grip_point_poses: Array[Transform3D] = []
+## Per-point Arm name or path relative to the owning character; empty keeps the legacy holder.
+@export_storage var grip_point_arm_paths: Array[NodePath] = []
+@export_storage var grip_point_settings: Array[ItemGripSettings] = []
+## Optional posture for a pair of bound Arms outside attacks; absent preserves existing behavior.
+@export var idle_grip_pose: ItemGripIdlePose
+
+func get_grip_settings(index: int) -> ItemGripSettings:
+	return grip_point_settings[index] if index >= 0 and index < grip_point_settings.size() else null
+
+func is_grip_enabled(index: int) -> bool:
+	var settings := get_grip_settings(index)
+	return index >= 0 and index < grip_point_count and (settings == null or settings.enabled)
+
+func get_grip_arm_path(index: int = -1) -> NodePath:
+	if index < 0: index = active_grip_point
+	if index < 0 or index >= grip_point_count or index >= grip_point_arm_paths.size(): return NodePath()
+	return grip_point_arm_paths[index]
+
+func apply_selected_grip_point() -> bool:
+	if not is_grip_enabled(active_grip_point) or active_grip_point >= grip_point_poses.size(): return false
+	var pose := grip_point_poses[active_grip_point]
+	if not pose.origin.is_finite() or not pose.basis.is_finite(): return false
+	attachment_local_position = pose.origin
+	item_rotation = pose.basis.get_euler().z
+	has_attachment_point = true
+	return true
+
+## Rebuild the holder's compound shapes and inertia when switching grips at runtime.
+func select_grip_point(index: int) -> bool:
+	if not is_grip_enabled(index) or index >= grip_point_poses.size(): return false
+	if not grip_point_poses[index].origin.is_finite() or not grip_point_poses[index].basis.is_finite(): return false
+	var inventory: Node
+	if is_instance_valid(rigid_attachment_holder) and has_meta(&"equipment_inventory"):
+		inventory = get_meta(&"equipment_inventory")
+		if is_instance_valid(inventory) and not inventory.can_equip_item_grip(self, index): return false
+	active_grip_point = index
+	if not apply_selected_grip_point(): return false
+	if is_instance_valid(inventory): return inventory.refresh_equipped_item_attachment(self)
+	return true
+
 ## Non-null while this item shares the holder's compound rigid body.
 var rigid_attachment_holder: RigidBody3D
 
 var _temporary_item_image: Texture2D
 
 func _ready() -> void:
+	apply_selected_grip_point()
 	_sync_visual_visibility()
 	child_entered_tree.connect(_on_visual_child_entered)
 

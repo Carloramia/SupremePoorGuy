@@ -34,11 +34,82 @@ var _npc_aim_stable_elapsed := 0.0
 var _npc_aim_release_reason: StringName = &"charging"
 var _npc_reach_frame := -1
 var _npc_reach_cache: Dictionary = {}
+var _npc_thrust_frame := -1
+var _npc_thrust_cache: Dictionary = {}
+
+func _shape_points(shape: Shape3D) -> PackedVector3Array:
+	if shape is ConvexPolygonShape3D: return shape.points
+	var points := PackedVector3Array()
+	var bounds := shape.get_debug_mesh().get_aabb()
+	for index: int in 8: points.append(bounds.get_endpoint(index))
+	return points
+
+func uses_dynamic_npc_attack_range(action_id: StringName) -> bool:
+	refresh_weapon_presets()
+	if not npc_geometry_attack_range_enabled: return false
+	for index: int in control_groups.size():
+		if control_groups[index] == null or control_groups[index].group_name != action_id or index >= _states.size(): continue
+		for state: Dictionary in _states[index].members:
+			if _uses_weapon_pose(state) and state.preset.aim_in_3d: return true
+	return false
+
+func uses_weapon_attack_spacing(action_id: StringName) -> bool:
+	return uses_dynamic_npc_attack_range(action_id)
+
+## Measure only equipped weapon geometry on the same poses used to predict and execute.
+func _thrust_range(action_id: StringName, target: Node3D) -> Dictionary:
+	if not is_instance_valid(target): return {}
+	if _npc_thrust_frame != Engine.get_physics_frames():
+		_npc_thrust_frame = Engine.get_physics_frames()
+		_npc_thrust_cache.clear()
+	var key := str(action_id)+":"+str(target.get_instance_id())
+	if _npc_thrust_cache.has(key): return _npc_thrust_cache[key]
+	var maximum := 0.0
+	var preferred := 0.0
+	var start_reach := 0.0
+	var end_reach := 0.0
+	var aim := Vector3.ZERO
+	var origin: Node3D = get_parent().get_combat_anchor() if get_parent().has_method("get_combat_anchor") else null
+	for index: int in control_groups.size():
+		if control_groups[index] == null or control_groups[index].group_name != action_id or index >= _states.size(): continue
+		for state: Dictionary in _states[index].members:
+			if not _uses_weapon_pose(state) or not _chain_is_available(state) or not is_instance_valid(state.weapon): continue
+			var direction := _weapon_pose_direction(state,target.global_position)
+			var horizontal := direction.slide(Vector3.UP).normalized()
+			if horizontal.is_zero_approx(): continue
+			var anchor: RigidBody3D = state.anchor_body
+			var center := origin.global_position if is_instance_valid(origin) else anchor.global_position
+			var hand: RigidBody3D = state.effector
+			var front: Array[float] = []
+			for progress: float in [0.0,0.5,1.0]:
+				var poses := WEAPON_POSE.poses(state,state.preset,direction,-_get_gravity_direction(state.body),progress)
+				var reach := 0.0
+				for collision: CollisionShape3D in HIT_PREDICTION.shapes(hand):
+					if not collision.has_meta(&"equipped_item") or collision.get_meta(&"equipped_item") != state.weapon: continue
+					var pose: Transform3D = poses[-1]*(hand.global_transform.affine_inverse()*collision.global_transform)
+					for point: Vector3 in _shape_points(collision.shape): reach = maxf(reach,(pose*point-center).dot(horizontal))
+				front.append(reach)
+			var radius := 0.0
+			for collision: CollisionShape3D in HIT_PREDICTION.shapes(target):
+				for point: Vector3 in _shape_points(collision.shape): radius = maxf(radius,-(collision.global_transform*point-target.global_position).dot(horizontal))
+			maximum = maxf(maximum,maxf(front[0],maxf(front[1],front[2]))+radius)
+			preferred = maxf(preferred,lerpf(front[0],front[2],state.preset.npc_preferred_reach_ratio))
+			start_reach = maxf(start_reach,front[0])
+			end_reach = maxf(end_reach,front[2])
+			aim = direction
+	var result := {"maximum":maximum,"preferred":preferred,"preparation_tip_reach":start_reach,"strike_tip_reach":end_reach,"aim_direction":aim}
+	_npc_thrust_cache[key] = result
+	return result
+
+func get_npc_attack_range_diagnostics(action_id: StringName, target: Node3D) -> Dictionary:
+	if not uses_dynamic_npc_attack_range(action_id): return {}
+	return _thrust_range(action_id,target).duplicate()
 
 ## Conservative broad-phase reach. Only the existing trajectory prediction
 ## can authorize an attack inside this envelope.
 func get_npc_attack_maximum_range(action_id: StringName, target: Node3D) -> float:
 	refresh_weapon_presets()
+	if uses_dynamic_npc_attack_range(action_id): return float(_thrust_range(action_id,target).get("maximum",0.0))
 	if not npc_geometry_attack_range_enabled: return 0.0
 	if _npc_reach_frame != Engine.get_physics_frames():
 		_npc_reach_frame = Engine.get_physics_frames()
@@ -78,6 +149,7 @@ func get_npc_attack_maximum_range(action_id: StringName, target: Node3D) -> floa
 
 func get_npc_attack_preferred_distance(action_id: StringName, target: Node3D) -> float:
 	refresh_weapon_presets()
+	if uses_dynamic_npc_attack_range(action_id): return float(_thrust_range(action_id,target).get("preferred",0.0))
 	for index: int in control_groups.size():
 		if control_groups[index] == null or control_groups[index].group_name != action_id or index >= _states.size(): continue
 		for member: Dictionary in _states[index].members:
@@ -182,7 +254,7 @@ func has_npc_attack(action_id: StringName) -> bool:
 		var group := control_groups[index]
 		if group == null or not group.enabled or group.group_name != action_id or index >= _states.size(): continue
 		for member: Dictionary in _states[index].members:
-			if is_instance_valid(member.body) and not member.body.is_broken and is_instance_valid(member.joint): return true
+			if is_instance_valid(member.body) and not member.body.is_broken and is_instance_valid(member.joint) and _chain_is_available(member): return true
 	return false
 
 func try_start_npc_attack(action_id: StringName, target: Node3D, charge: float) -> bool:
@@ -204,6 +276,11 @@ func is_npc_attack_active() -> bool:
 	return _npc_group >= 0 and get_group_state(_npc_group) != SwingState.IDLE
 
 func is_body_driven(body: RigidBody3D) -> bool:
+	if is_instance_valid(body) and body.has_meta(&"equipment_grip_driver") and is_instance_valid(body.get_meta(&"equipment_grip_driver")): return true
+	if is_instance_valid(body) and body.has_meta(&"equipment_idle_pose_driver") and is_instance_valid(body.get_meta(&"equipment_idle_pose_driver")): return true
+	return is_body_attacking(body)
+
+func is_body_attacking(body: RigidBody3D) -> bool:
 	for group: Dictionary in _states:
 		for member: Dictionary in group.members:
 			if int(member.mode) in [SwingState.IDLE, SwingState.COOLDOWN]: continue
@@ -234,6 +311,13 @@ func _npc_should_hold_charge(delta: float) -> bool:
 			if int(member.mode) != SwingState.CHARGING or not member.preset.target_aim_enabled:
 				continue
 			if not is_instance_valid(member.body) or not is_instance_valid(member.anchor_body) or member.body.is_broken or member.anchor_body.is_broken:
+				continue
+			if _uses_weapon_pose(member) and member.preset.aim_in_3d:
+				var hand: RigidBody3D = member.effector
+				var wrist := hand.to_global(member.pose_chain[-1].proximal)
+				var axis := (hand.global_basis*Vector3(member.weapon_aim_local)).normalized()
+				var projection := (target.global_position-wrist).dot(axis)
+				if projection<=0.0 or HIT_PREDICTION.surface_distance(wrist+axis*projection,target,0.0)>0.05: aligned = false
 				continue
 			var aim := _calculate_target_aim(member, target.global_position)
 			if not aim.valid or absf(float(aim.error)) > deg_to_rad(npc_aim_tolerance_degrees):
@@ -469,7 +553,22 @@ func refresh_weapon_presets() -> void:
 			state.axis_local = Basis(state.joint_basis_local)[clampi(preset.joint_axis,0,2)]
 			if weapon != null:
 				state.weapon_forward_local = state.effector.global_basis.inverse()*weapon.global_basis*weapon.attack_forward_local.normalized()
+				state.weapon_aim_local = state.weapon_forward_local
+				if _uses_weapon_pose(state) and preset.aim_in_3d:
+					var best := -INF
+					var tip := Vector3.ZERO
+					var count := 0
+					for collision: CollisionShape3D in HIT_PREDICTION.shapes(state.effector):
+						if not collision.has_meta(&"equipped_item") or collision.get_meta(&"equipped_item") != weapon: continue
+						for point: Vector3 in _shape_points(collision.shape):
+							var world := collision.global_transform*point
+							var projection := weapon.to_local(world).dot(weapon.attack_forward_local.normalized())
+							if projection > best+0.001: best = projection; tip = world; count = 1
+							elif absf(projection-best)<=0.001: tip += world; count += 1
+					if count>0: state.weapon_aim_local = state.effector.to_local(tip/count)-Vector3(state.pose_chain[-1].proximal)
+			else: state.erase("weapon_aim_local")
 			_npc_reach_frame = -1
+			_npc_thrust_frame = -1
 			_log_member(index,state,"weapon_preset_changed")
 
 func _uses_weapon_pose(state: Dictionary) -> bool:
@@ -487,8 +586,8 @@ func _weapon_pose_direction(state: Dictionary, target_position: Variant = null) 
 	elif is_instance_valid(target):
 		direction = target.global_position-anchor.to_global(state.pose_anchor_local)
 	var up := -_get_gravity_direction(state.body)
-	# Keep charge/release on the horizontal aiming plane, like the existing swing.
-	direction = direction.slide(up).normalized()
+	# Spears aim at the target's height; other attacks retain their horizontal plane.
+	direction = direction.normalized() if state.preset is WeaponArmAttackPreset and state.preset.aim_in_3d else direction.slide(up).normalized()
 	return anchor.global_basis.x.normalized() if direction.is_zero_approx() else direction
 
 func _apply_weapon_pose(state: Dictionary, progress: float, delta: float, power: float = 1.0) -> void:
@@ -518,6 +617,7 @@ func _predict_weapon_pose(state: Dictionary, target: Node3D, charge: float, samp
 func _chain_is_available(state: Dictionary) -> bool:
 	var hand: Variant = state.get("effector", state.body)
 	if not is_instance_valid(hand) or hand.is_broken: return false
+	if hand.has_meta(&"equipment_grip_driver") and is_instance_valid(hand.get_meta(&"equipment_grip_driver")): return false
 	for link: Dictionary in state.get("followers", []):
 		if not is_instance_valid(link.body) or link.body.is_broken or not is_instance_valid(link.parent) or link.parent.is_broken or not is_instance_valid(link.joint) or link.joint.is_queued_for_deletion(): return false
 	return true
@@ -946,6 +1046,10 @@ func _begin_member(group_index: int, member_state: Dictionary) -> bool:
 		return false
 	if _body_owner_group.has(body) and int(_body_owner_group[body]) != group_index:
 		return false
+	var effector := member_state.get("effector",body) as PhysicalBodyPart3D
+	if is_instance_valid(effector) and effector.has_meta(&"equipment_idle_pose_driver"):
+		var inventory: Variant = effector.get_meta(&"equipment_idle_pose_driver")
+		if is_instance_valid(inventory): inventory.suspend_idle_grip_pose()
 	_body_owner_group[body] = group_index
 	var preset := member_state.preset as LimbSwingPresetBase
 	member_state.mode = SwingState.CHARGING

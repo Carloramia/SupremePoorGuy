@@ -39,7 +39,10 @@ func apply(movement: Node, delta: float) -> void:
 			_blends.erase(link.joint)
 			# Attack code owns its spring snapshots until recovery is finished.
 			if blocked and not attacking and link.claimed: _set_arm_springs(link, true)
-			rows.append({"joint":link.joint.name, "body":link.child.name, "owner":"attack" if attacking else "disabled", "torque":Vector3.ZERO})
+			var owner := "disabled"
+			if attacking:
+				owner = "attack" if swing.is_body_attacking(link.child) or swing.is_body_attacking(link.parent) else ("equipment_idle_pose" if link.child.has_meta(&"equipment_idle_pose_driver") or link.parent.has_meta(&"equipment_idle_pose_driver") else "equipment_grip")
+			rows.append({"joint":link.joint.name, "body":link.child.name, "owner":owner, "torque":Vector3.ZERO})
 			continue
 		if not link.claimed: _set_arm_springs(link, false)
 		_apply_joint(movement, link.child, link.parent, link.joint, link.rest, 1.0, "rest", delta)
