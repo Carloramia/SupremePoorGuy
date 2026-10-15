@@ -1,6 +1,28 @@
 class_name SampleWeapon3D
 extends SampleItem3D
 
+enum WeaponTag { Spear, Sword, Claw, Blunt, Shield }
+const ARM_ATTACK_PRESETS := {
+	WeaponTag.Spear: preload("res://Resources/Combat/Weapons/SpearAttack.tres"),
+	WeaponTag.Sword: preload("res://Resources/Combat/Weapons/SwordAttack.tres"),
+	WeaponTag.Claw: preload("res://Resources/Combat/Weapons/ClawAttack.tres"),
+	WeaponTag.Blunt: preload("res://Resources/Combat/Weapons/BluntAttack.tres"),
+	WeaponTag.Shield: preload("res://Resources/Combat/Weapons/ShieldAttack.tres"),
+}
+
+@export_group("Weapon Tags")
+@export var weapon_tags: Array[WeaponTag] = []
+## Must also be present in Weapon Tags; other tags do not select additional attacks.
+@export var primary_attack_tag: WeaponTag = WeaponTag.Spear
+## Empty uses the shared preset for the primary tag.
+@export var arm_attack_preset_override: LimbSwingPresetBase
+## Direction from the grip toward the striking end, in this item's local coordinates.
+@export var attack_forward_local: Vector3 = Vector3.UP
+
+func get_arm_attack_preset() -> LimbSwingPresetBase:
+	if primary_attack_tag not in weapon_tags: return null
+	return arm_attack_preset_override if arm_attack_preset_override != null else ARM_ATTACK_PRESETS.get(primary_attack_tag)
+
 @export_group("Hit Registration")
 @export_range(0.01, 5.0, 0.01, "or_greater") var passive_hit_cooldown: float = 0.25
 

@@ -1,0 +1,33 @@
+[gd_scene load_steps=5 format=3]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/_PhysicalSampleBodyParts.tscn" id="1_base"]
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/Human/Models/Weapons/Human2ClawGauntlet.glb" id="2_model"]
+[ext_resource type="ArrayMesh" path="res://Resources/Meshes/Human/Weapons/Human2ClawGauntlet.res" id="3_mesh"]
+[sub_resource type="ConvexPolygonShape3D" id="Shape"]
+resource_local_to_scene = true
+points = PackedVector3Array(-1.35380672, 0.40593277, -0.01000000, -1.28475630, 0.68046050, -0.01000000, -1.21570588, 0.81772437, -0.01000000, -1.14665546, 0.88635630, -0.01000000, -1.00855462, 1.02362017, -0.01000000, 1.75346218, 3.63163361, -0.01000000, 2.02966387, 3.70026555, -0.01000000, 2.37491597, 3.70026555, -0.01000000, 2.58206723, 3.63163361, -0.01000000, 3.41067227, 3.35710588, -0.01000000, 3.54877311, 3.28847395, -0.01000000, 3.61782353, 3.21984202, -0.01000000, 3.75592437, 3.08257815, -0.01000000, 3.82497479, 2.94531429, -0.01000000, 3.89402521, 2.80805042, -0.01000000, 4.03212605, 1.57267563, -0.01000000, 4.03212605, 1.22951597, -0.01000000, 3.96307563, 1.09225210, -0.01000000, 3.82497479, 0.95498824, -0.01000000, 3.75592437, 0.88635630, -0.01000000, 1.20105882, -1.17260168, -0.01000000, 0.57960504, -1.30986555, -0.01000000, 0.51055462, -1.30986555, -0.01000000, 0.02720168, -1.24123361, -0.01000000, -0.52520168, -1.10396975, -0.01000000, -1.28475630, -0.28038655, -0.01000000, -1.35380672, -0.00585882, -0.01000000, -1.35380672, 0.40593277, 0.01000000, -1.28475630, 0.68046050, 0.01000000, -1.21570588, 0.81772437, 0.01000000, -1.14665546, 0.88635630, 0.01000000, -1.00855462, 1.02362017, 0.01000000, 1.75346218, 3.63163361, 0.01000000, 2.02966387, 3.70026555, 0.01000000, 2.37491597, 3.70026555, 0.01000000, 2.58206723, 3.63163361, 0.01000000, 3.41067227, 3.35710588, 0.01000000, 3.54877311, 3.28847395, 0.01000000, 3.61782353, 3.21984202, 0.01000000, 3.75592437, 3.08257815, 0.01000000, 3.82497479, 2.94531429, 0.01000000, 3.89402521, 2.80805042, 0.01000000, 4.03212605, 1.57267563, 0.01000000, 4.03212605, 1.22951597, 0.01000000, 3.96307563, 1.09225210, 0.01000000, 3.82497479, 0.95498824, 0.01000000, 3.75592437, 0.88635630, 0.01000000, 1.20105882, -1.17260168, 0.01000000, 0.57960504, -1.30986555, 0.01000000, 0.51055462, -1.30986555, 0.01000000, 0.02720168, -1.24123361, 0.01000000, -0.52520168, -1.10396975, 0.01000000, -1.28475630, -0.28038655, 0.01000000, -1.35380672, -0.00585882, 0.01000000)
+[node name="Human_Human2ClawGauntlet" instance=ExtResource("1_base")]
+mass = 0.5
+geometry_mode = 1
+custom_model_path = NodePath("Model")
+paper_volume_enabled = true
+paper_volume_thickness = 0.08
+sprite_visible = false
+mesh_visible = true
+tags = Array[int]([])
+metadata/source_png = "res://Assets/2DResources/Human/Separated/Weapons/01_human2_claw_gauntlet.png"
+metadata/pivot_is_initial_estimate = true
+metadata/anatomical_role = "Weapon"
+[node name="CollisionShape3D" parent="." index="0"]
+position = Vector3(0, 0, 0)
+shape = SubResource("Shape")
+[node name="MeshInstance3D" parent="." index="2"]
+visible = false
+mesh = null
+[node name="Model" parent="." instance=ExtResource("2_model")]
+[node name="PaperVolume" type="MeshInstance3D" parent="Model"]
+scale = Vector3(1, 1, 0.08)
+mesh = ExtResource("3_mesh")
+metadata/flat_collision_depth = 0.02
+[node name="JointIn" type="Marker3D" parent="."]
+[node name="JointOut" type="Marker3D" parent="."]
+position = Vector3(2.94615126, 2.93820000, 0.00000000)

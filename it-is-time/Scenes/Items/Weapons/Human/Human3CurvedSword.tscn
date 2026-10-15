@@ -1,0 +1,38 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="PackedScene" path="res://Scenes/Items/_SampleWeapon.tscn" id="1_base"]
+[ext_resource type="Texture2D" path="res://Assets/2DResources/Human/Separated/Weapons/01_human3_curved_sword.png" id="2_texture"]
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/Human/Scenes/Weapons/Human3CurvedSword.tscn" id="3_model"]
+
+[sub_resource type="ConvexPolygonShape3D" id="Shape"]
+resource_local_to_scene = true
+points = PackedVector3Array(-0.438927734, 0.028762500, -0.040000000, -0.346164063, 0.211293750, -0.040000000, -0.160636719, 0.302559375, -0.040000000, 0.024890625, 0.302559375, -0.040000000, 0.210417969, 0.211293750, -0.040000000, 0.303181641, 0.120028125, -0.040000000, 0.395945312, 0.028762500, -0.040000000, 0.767000000, -0.518831250, -0.040000000, 1.138054687, -1.157690625, -0.040000000, 1.509109375, -1.887815625, -0.040000000, 1.601873047, -2.800471875, -0.040000000, 1.601873047, -3.804393750, -0.040000000, 1.509109375, -4.443253125, -0.040000000, 1.416345703, -4.717050000, -0.040000000, 1.230818359, -5.264643750, -0.040000000, 1.045291016, -5.629706250, -0.040000000, 0.674236328, -6.177300000, -0.040000000, 0.581472656, -6.268565625, -0.040000000, 0.303181641, -6.542362500, -0.040000000, 0.117654297, -6.724893750, -0.040000000, -0.067873047, -6.724893750, -0.040000000, -0.438927734, -0.153768750, -0.040000000, -0.438927734, 0.028762500, 0.040000000, -0.346164063, 0.211293750, 0.040000000, -0.160636719, 0.302559375, 0.040000000, 0.024890625, 0.302559375, 0.040000000, 0.210417969, 0.211293750, 0.040000000, 0.303181641, 0.120028125, 0.040000000, 0.395945312, 0.028762500, 0.040000000, 0.767000000, -0.518831250, 0.040000000, 1.138054687, -1.157690625, 0.040000000, 1.509109375, -1.887815625, 0.040000000, 1.601873047, -2.800471875, 0.040000000, 1.601873047, -3.804393750, 0.040000000, 1.509109375, -4.443253125, 0.040000000, 1.416345703, -4.717050000, 0.040000000, 1.230818359, -5.264643750, 0.040000000, 1.045291016, -5.629706250, 0.040000000, 0.674236328, -6.177300000, 0.040000000, 0.581472656, -6.268565625, 0.040000000, 0.303181641, -6.542362500, 0.040000000, 0.117654297, -6.724893750, 0.040000000, -0.067873047, -6.724893750, 0.040000000, -0.438927734, -0.153768750, 0.040000000)
+
+[node name="Human3CurvedSword" instance=ExtResource("1_base")]
+mass = 0.500000000
+can_be_picked_up = true
+weapon_tags = Array[int]([1])
+primary_attack_tag = 1
+attack_forward_local = Vector3(0.010578285, -0.999944048, 0.000000000)
+display_name = "Human3 弯刀"
+item_image = ExtResource("2_texture")
+sprite_visible = false
+mesh_visible = true
+attachment_local_position = Vector3(-0.089191414, -0.048675008, 0.000000000)
+item_rotation = 3.141592654
+preferred_holder_name = &""
+has_attachment_point = true
+metadata/source_png = "res://Assets/2DResources/Human/Separated/Weapons/01_human3_curved_sword.png"
+metadata/source_model_scene = "res://Assets/3DResources/Creatures/Human/Scenes/Weapons/Human3CurvedSword.tscn"
+metadata/source_physical_scene = "res://Scenes/Creatures/Bodyparts/Human/Weapons/Human3CurvedSword.tscn"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("Shape")
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+visible = false
+position = Vector3(0.581472635, -3.256799936, 0.000000000)
+pixel_size = 0.006914063
+texture = ExtResource("2_texture")
+
+[node name="Model" parent="." instance=ExtResource("3_model")]

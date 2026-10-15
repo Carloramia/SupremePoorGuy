@@ -1,0 +1,26 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Characters/Generate_Human.tscn" id="1_actor"]
+[ext_resource type="Script" path="res://Scripts/Creatures/GeneratedHumanNPCCharacter3D.gd" id="2_character"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/NPCStateMachine3D.tscn" id="3_ai"]
+[ext_resource type="Script" path="res://Scripts/Creatures/HumanNPCStateMachine3D.gd" id="4_state"]
+[ext_resource type="Resource" path="res://Resources/AI/HumanMeleeAI.tres" id="5_behavior"]
+[ext_resource type="PackedScene" path="res://Scenes/Items/CustomWeapon_1.tscn" id="6_weapon"]
+
+[node name="GenerateHumanNPC" instance=ExtResource("1_actor")]
+script = ExtResource("2_character")
+faction_id = 1
+initial_weapon_scene = ExtResource("6_weapon")
+
+[node name="InventoryController3D" parent="."]
+inventory_ui_enabled = false
+attachment_debug_logging = false
+
+[node name="NPCStateMachine3D" parent="." instance=ExtResource("3_ai")]
+script = ExtResource("4_state")
+behavior = ExtResource("5_behavior")
+use_fast_movement = false
+humanoid_xz_positioning = true
+generated_x_axis_facing = true
+facing_x_dead_zone = 0.5
+navigation_origin_path = NodePath("../GeneratedParts/Torso")

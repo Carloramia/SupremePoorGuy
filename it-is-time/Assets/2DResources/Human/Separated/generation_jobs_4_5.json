@@ -1,0 +1,1151 @@
+{
+  "method": "Built-in image_gen single-part extraction and occlusion completion; approved pixel edge cleanup; additive Human4/Human5 packaging",
+  "source_directory": "Assets/2DResources/AIGenerated/Unprocessed/Human",
+  "specs": [
+    {
+      "set": 4,
+      "key": "human4_head",
+      "label": "Head",
+      "group": "Base",
+      "file": "Base/01_human4_head.png",
+      "category": "Head",
+      "name": "Human4Head",
+      "role": "Head",
+      "size_axis": "height",
+      "visible_size": 2.76,
+      "joint_in": [
+        0.586435,
+        0.854384
+      ],
+      "joint_out": [
+        0.9,
+        0.57
+      ],
+      "tags": [
+        3
+      ],
+      "mass": 0.5,
+      "thickness": 0.08,
+      "prompt": "Use case: background-extraction / precise-object-edit.\nEdit target: the provided Humanoid_4.png paper-collage parts sheet (1448x1086). Extract ONLY the entire male HEAD and short NECK, facing image-right: black tied hair/ponytail and orange ribbon, pale angular face, black moustache, neck mounting hole. Remove the chest and every limb. Target region approximately x756..1087, y17..293 in the original.\nKeep the original paper-collage colors, visible fiber/brush textures, silhouette proportions and viewing angle. Do not redesign, rotate, straighten or mirror. Reconstruct only obscured connection ends; do not add long necks, extra joint disks, limbs or decorations. Existing circular mounting holes must remain genuinely transparent; black paper must stay opaque.\nOutput ONE isolated complete part, centered large, with about 5% transparent margin and no cropped extremities. Actual transparent alpha background. Remove all neighboring objects, external shadow, red/yellow fringe and stray pixels. No text, labels, checkerboard or opaque backdrop.",
+      "source": "Humanoid_4.png",
+      "source_bounds": [
+        756,
+        17,
+        1087,
+        293
+      ]
+    },
+    {
+      "set": 4,
+      "key": "human4_torso",
+      "label": "Torso",
+      "group": "Base",
+      "file": "Base/02_human4_torso.png",
+      "category": "Torso",
+      "name": "Human4Torso",
+      "role": "Torso",
+      "size_axis": "height",
+      "visible_size": 3.45,
+      "joint_in": [
+        0.52,
+        0.93
+      ],
+      "joint_out": [
+        0.53,
+        0.1
+      ],
+      "tags": [
+        0
+      ],
+      "mass": 2.5,
+      "thickness": 0.08,
+      "prompt": "Use case: background-extraction / precise-object-edit.\nEdit target: the provided Humanoid_4.png paper-collage parts sheet (1448x1086). Extract ONLY the UPPER TORSO only: asymmetric ochre/ivory crossed robe, black brush-print chest and both shoulder mounting disks. Stop above the red/orange waist belt. Remove head, belt, skirt and detached arms; complete only its concealed waist edge. Target region approximately x535..996, y211..556 in the original.\nKeep the original paper-collage colors, visible fiber/brush textures, silhouette proportions and viewing angle. Do not redesign, rotate, straighten or mirror. Reconstruct only obscured connection ends; do not add long necks, extra joint disks, limbs or decorations. Existing circular mounting holes must remain genuinely transparent; black paper must stay opaque.\nOutput ONE isolated complete part, centered large, with about 5% transparent margin and no cropped extremities. Actual transparent alpha background. Remove all neighboring objects, external shadow, red/yellow fringe and stray pixels. No text, labels, checkerboard or opaque backdrop.",
+      "source": "Humanoid_4.png",
+      "source_bounds": [
+        535,
+        211,
+        996,
+        556
+      ]
+    },
+    {
+      "set": 4,
+      "key": "human4_pelvis",
+      "label": "Pelvis",
+      "group": "Base",
+      "file": "Base/03_human4_pelvis.png",
+      "category": "Torso",
+      "name": "Human4Pelvis",
+      "role": "Pelvis",
+      "size_axis": "height",
+      "visible_size": 3.42,
+      "joint_in": [
+        0.4,
+        0.18
+      ],
+      "joint_out": [
+        0.14,
+        0.83
+      ],
+      "tags": [
+        0
+      ],
+      "mass": 0.8,
+      "thickness": 0.08,
+      "prompt": "Use case: background-extraction / precise-object-edit.\nEdit target: the provided Humanoid_4.png paper-collage parts sheet (1448x1086). Extract ONLY the orange WAISTBELT and layered SKIRT/PELVIS as one part, with ochre/ivory/black brush-print skirt panels and both hip holes. Remove upper chest and all detached legs. Complete the waist behind the chest. Target region approximately x492..1004, y503..845 in the original.\nKeep the original paper-collage colors, visible fiber/brush textures, silhouette proportions and viewing angle. Do not redesign, rotate, straighten or mirror. Reconstruct only obscured connection ends; do not add long necks, extra joint disks, limbs or decorations. Existing circular mounting holes must remain genuinely transparent; black paper must stay opaque.\nOutput ONE isolated complete part, centered large, with about 5% transparent margin and no cropped extremities. Actual transparent alpha background. Remove all neighboring objects, external shadow, red/yellow fringe and stray pixels. No text, labels, checkerboard or opaque backdrop.",
+      "source": "Humanoid_4.png",
+      "source_bounds": [
+        492,
+        503,
+        1004,
+        845
+      ]
+    },
+    {
+      "set": 4,
+      "key": "human4_upper_arm_left",
+      "label": "UpperArm",
+      "group": "Limbs",
+      "file": "Limbs/01_human4_upper_arm_left.png",
+      "category": "Arms/Left",
+      "name": "Human4UpperArmLeft",
+      "role": "UpperArm",
+      "size_axis": "height",
+      "visible_size": 1.27,
+      "joint_in": [
+        0.845256,
+        0.476422
+      ],
+      "joint_out": [
+        0.095262,
+        0.346489
+      ],
+      "tags": [
+        2
+      ],
+      "mass": 0.25,
+      "thickness": 0.08,
+      "prompt": "Use case: background-extraction / precise-object-edit.\nEdit target: the provided Humanoid_4.png paper-collage parts sheet (1448x1086). Extract ONLY the LEFT-SIDE UPPER ARM/SLEEVE, the nearly horizontal ochre and ivory curved sleeve between the torso's left shoulder and the raised black forearm; source shoulder hole near (478,293), elbow near (300,270). No black forearm, hand, string or torso. Reconstruct the covered elbow mounting end. Target region approximately x291..532, y230..357 in the original.\nKeep the original paper-collage colors, visible fiber/brush textures, silhouette proportions and viewing angle. Do not redesign, rotate, straighten or mirror. Reconstruct only obscured connection ends; do not add long necks, extra joint disks, limbs or decorations. Existing circular mounting holes must remain genuinely transparent; black paper must stay opaque.\nOutput ONE isolated complete part, centered large, with about 5% transparent margin and no cropped extremities. Actual transparent alpha background. Remove all neighboring objects, external shadow, red/yellow fringe and stray pixels. No text, labels, checkerboard or opaque backdrop.",
+      "source": "Humanoid_4.png",
+      "source_bounds": [
+        291,
+        230,
+        532,
+        357
+      ]
+    },
+    {
+      "set": 4,
+      "key": "human4_forearm_left",
+      "label": "Forearm",
+      "group": "Limbs",
+      "file": "Limbs/02_human4_forearm_left.png",
+      "category": "Arms/Left",
+      "name": "Human4ForearmLeft",
+      "role": "Forearm",
+      "size_axis": "height",
+      "visible_size": 1.86,
+      "joint_in": [
+        0.798449,
+        0.85142
+      ],
+      "joint_out": [
+        0.137744,
+        0.112939
+      ],
+      "tags": [
+        2
+      ],
+      "mass": 0.18,
+      "thickness": 0.08,
+      "prompt": "Use case: background-extraction / precise-object-edit.\nEdit target: the provided Humanoid_4.png paper-collage parts sheet (1448x1086). Extract ONLY the LEFT-SIDE BLACK FOREARM extending upward-left from elbow hole (300,270) to the raised hand wrist near (224,124). Black flecked paper, same diagonal direction. No hand, ochre upper sleeve or weapon cord; complete the hidden wrist. Target region approximately x205..341, y121..307 in the original.\nKeep the original paper-collage colors, visible fiber/brush textures, silhouette proportions and viewing angle. Do not redesign, rotate, straighten or mirror. Reconstruct only obscured connection ends; do not add long necks, extra joint disks, limbs or decorations. Existing circular mounting holes must remain genuinely transparent; black paper must stay opaque.\nOutput ONE isolated complete part, centered large, with about 5% transparent margin and no cropped extremities. Actual transparent alpha background. Remove all neighboring objects, external shadow, red/yellow fringe and stray pixels. No text, labels, checkerboard or opaque backdrop.",
+      "source": "Humanoid_4.png",
+      "source_bounds": [
+        205,
+        121,
+        341,
+        307
+      ]
+    },
+    {
+      "set": 4,
+      "key": "human4_hand_left",
+      "label": "Hand",
+      "group": "Limbs",
+      "file": "Limbs/03_human4_hand_left.png",
+      "category": "Arms/Left",
+      "name": "Human4HandLeft",
+      "role": "Hand",
+      "size_axis": "height",
+      "visible_size": 1.14,
+      "joint_in": [
+        0.81,
+        0.89
+      ],
+      "joint_out": [
+        0.511257,
+        0.460975
+      ],
+      "tags": [
+        2
+      ],
+      "mass": 0.1,
+      "thickness": 0.08,
+      "prompt": "Use case: background-extraction / precise-object-edit.\nEdit target: the provided Humanoid_4.png paper-collage parts sheet (1448x1086). Extract ONLY the RAISED LEFT-SIDE HAND, ochre/ivory curled gripping fingers at the upper-left. Keep the same grasping pose and direction. Remove EVERY rope/string, ring and weapon, black forearm and sleeve; reconstruct the occluded palm and wrist as the one complete hand. Target region approximately x143..252, y26..140 in the original.\nKeep the original paper-collage colors, visible fiber/brush textures, silhouette proportions and viewing angle. Do not redesign, rotate, straighten or mirror. Reconstruct only obscured connection ends; do not add long necks, extra joint disks, limbs or decorations. Existing circular mounting holes must remain genuinely transparent; black paper must stay opaque.\nOutput ONE isolated complete part, centered large, with about 5% transparent margin and no cropped extremities. Actual transparent alpha background. Remove all neighboring objects, external shadow, red/yellow fringe and stray pixels. No text, labels, checkerboard or opaque backdrop.",
+      "source": "Humanoid_4.png",
+      "source_bounds": [
+        143,
+        26,
+        252,
+        140
+      ]
+    },
+    {
+      "set": 4,
+      "key": "human4_upper_arm_right",
+      "label": "UpperArm",
+      "group": "Limbs",
+      "file": "Limbs/04_human4_upper_arm_right.png",
+      "category": "Arms/Right",
+      "name": "Human4UpperArmRight",
+      "role": "UpperArm",
+      "size_axis": "height",
+      "visible_size": 1.9,
+      "joint_in": [
+        0.148782,
+        0.271665
+      ],
+      "joint_out": [
+        0.893676,
+        0.816896
+      ],
+      "tags": [
+        2
+      ],
+      "mass": 0.25,
+      "thickness": 0.08,
+      "prompt": "Use case: background-extraction / precise-object-edit.\nEdit target: the provided Humanoid_4.png paper-collage parts sheet (1448x1086). Extract ONLY the detached RIGHT-SIDE UPPER ARM at upper-right: ivory diagonal sleeve with charcoal shoulder flap, proximal hole near (1088,297), distal end near (1220,415). No black forearm, hand, thigh or torso; complete the elbow connector. Target region approximately x1043..1264, y244..434 in the original.\nKeep the original paper-collage colors, visible fiber/brush textures, silhouette proportions and viewing angle. Do not redesign, rotate, straighten or mirror. Reconstruct only obscured connection ends; do not add long necks, extra joint disks, limbs or decorations. Existing circular mounting holes must remain genuinely transparent; black paper must stay opaque.\nOutput ONE isolated complete part, centered large, with about 5% transparent margin and no cropped extremities. Actual transparent alpha background. Remove all neighboring objects, external shadow, red/yellow fringe and stray pixels. No text, labels, checkerboard or opaque backdrop.",
+      "source": "Humanoid_4.png",
+      "source_bounds": [
+        1043,
+        244,
+        1264,
+        434
+      ]
+    },
+    {
+      "set": 4,
+      "key": "human4_forearm_right",
+      "label": "Forearm",
+      "group": "Limbs",
+      "file": "Limbs/05_human4_forearm_right.png",
+      "category": "Arms/Right",
+      "name": "Human4ForearmRight",
+      "role": "Forearm",
+      "size_axis": "height",
+      "visible_size": 1.95,
+      "joint_in": [
+        0.16868,
+        0.140521
+      ],
+      "joint_out": [
+        0.790539,
+        0.787967
+      ],
+      "tags": [
+        2
+      ],
+      "mass": 0.18,
+      "thickness": 0.08,
+      "prompt": "Use case: background-extraction / precise-object-edit.\nEdit target: the provided Humanoid_4.png paper-collage parts sheet (1448x1086). Extract ONLY the detached RIGHT-SIDE BLACK FOREARM just above the small dangling hand at far-right, from elbow hole near (1234,451) to wrist near (1318,599). Keep its down-right diagonal. No hand, white upper sleeve or beige thigh; complete wrist connector. Target region approximately x1194..1325, y417..612 in the original.\nKeep the original paper-collage colors, visible fiber/brush textures, silhouette proportions and viewing angle. Do not redesign, rotate, straighten or mirror. Reconstruct only obscured connection ends; do not add long necks, extra joint disks, limbs or decorations. Existing circular mounting holes must remain genuinely transparent; black paper must stay opaque.\nOutput ONE isolated complete part, centered large, with about 5% transparent margin and no cropped extremities. Actual transparent alpha background. Remove all neighboring objects, external shadow, red/yellow fringe and stray pixels. No text, labels, checkerboard or opaque backdrop.",
+      "source": "Humanoid_4.png",
+      "source_bounds": [
+        1194,
+        417,
+        1325,
+        612
+      ]
+    },
+    {
+      "set": 4,
+      "key": "human4_hand_right",
+      "label": "Hand",
+      "group": "Limbs",
+      "file": "Limbs/06_human4_hand_right.png",
+      "category": "Arms/Right",
+      "name": "Human4HandRight",
+      "role": "Hand",
+      "size_axis": "height",
+      "visible_size": 1.28,
+      "joint_in": [
+        0.183904,
+        0.20383
+      ],
+      "joint_out": [
+        0.77,
+        0.79
+      ],
+      "tags": [
+        2
+      ],
+      "mass": 0.1,
+      "thickness": 0.08,
+      "prompt": "Use case: background-extraction / precise-object-edit.\nEdit target: the provided Humanoid_4.png paper-collage parts sheet (1448x1086). Extract ONLY the small RIGHT-SIDE OPEN HAND at far-right, pale ochre wrist disk/hole and two long relaxed fingers pointing down-right. Remove black forearm and all other parts. Complete wrist behind the black sleeve. Target region approximately x1290..1398, y572..700 in the original.\nKeep the original paper-collage colors, visible fiber/brush textures, silhouette proportions and viewing angle. Do not redesign, rotate, straighten or mirror. Reconstruct only obscured connection ends; do not add long necks, extra joint disks, limbs or decorations. Existing circular mounting holes must remain genuinely transparent; black paper must stay opaque.\nOutput ONE isolated complete part, centered large, with about 5% transparent margin and no cropped extremities. Actual transparent alpha background. Remove all neighboring objects, external shadow, red/yellow fringe and stray pixels. No text, labels, checkerboard or opaque backdrop.",
+      "source": "Humanoid_4.png",
+      "source_bounds": [
+        1290,
+        572,
+        1398,
+        700
+      ]
+    },
+    {
+      "set": 4,
+      "key": "human4_upper_leg_left",
+      "label": "UpperLeg",
+      "group": "Limbs",
+      "file": "Limbs/07_human4_upper_leg_left.png",
+      "category": "Legs/Left",
+      "name": "Human4UpperLegLeft",
+      "role": "UpperLeg",
+      "size_axis": "height",
+      "visible_size": 2.97,
+      "joint_in": [
+        0.837146,
+        0.13904
+      ],
+      "joint_out": [
+        0.208911,
+        0.780617
+      ],
+      "tags": [
+        5
+      ],
+      "mass": 0.45,
+      "thickness": 0.08,
+      "prompt": "Use case: background-extraction / precise-object-edit.\nEdit target: the provided Humanoid_4.png paper-collage parts sheet (1448x1086). Extract ONLY the LEFT-SIDE UPPER LEG/THIGH, pale leaf-like paper with thin branch veins, diagonal from hip hole near (488,425) down-left to the ochre knee disk near (322,620). Keep the knee disk as part of this thigh. No black shin or foot; complete the distal mounting hole. Target region approximately x267..536, y383..680 in the original.\nKeep the original paper-collage colors, visible fiber/brush textures, silhouette proportions and viewing angle. Do not redesign, rotate, straighten or mirror. Reconstruct only obscured connection ends; do not add long necks, extra joint disks, limbs or decorations. Existing circular mounting holes must remain genuinely transparent; black paper must stay opaque.\nOutput ONE isolated complete part, centered large, with about 5% transparent margin and no cropped extremities. Actual transparent alpha background. Remove all neighboring objects, external shadow, red/yellow fringe and stray pixels. No text, labels, checkerboard or opaque backdrop.",
+      "source": "Humanoid_4.png",
+      "source_bounds": [
+        267,
+        383,
+        536,
+        680
+      ]
+    },
+    {
+      "set": 4,
+      "key": "human4_lower_leg_left",
+      "label": "LowerLeg",
+      "group": "Limbs",
+      "file": "Limbs/08_human4_lower_leg_left.png",
+      "category": "Legs/Left",
+      "name": "Human4LowerLegLeft",
+      "role": "LowerLeg",
+      "size_axis": "height",
+      "visible_size": 2.85,
+      "joint_in": [
+        0.789207,
+        0.091393
+      ],
+      "joint_out": [
+        0.25,
+        0.94
+      ],
+      "tags": [
+        5
+      ],
+      "mass": 0.35,
+      "thickness": 0.08,
+      "prompt": "Use case: background-extraction / precise-object-edit.\nEdit target: the provided Humanoid_4.png paper-collage parts sheet (1448x1086). Extract ONLY the LEFT-SIDE LOWER LEG/SHIN, long charcoal brush-print paper pointing down-left, from underneath the separate ochre knee disk to ankle near (243,910). Remove the beige thigh, its ochre knee disk and the ochre foot. Reconstruct a rounded proximal connector with a hole where obscured. Target region approximately x208..346, y639..924 in the original.\nKeep the original paper-collage colors, visible fiber/brush textures, silhouette proportions and viewing angle. Do not redesign, rotate, straighten or mirror. Reconstruct only obscured connection ends; do not add long necks, extra joint disks, limbs or decorations. Existing circular mounting holes must remain genuinely transparent; black paper must stay opaque.\nOutput ONE isolated complete part, centered large, with about 5% transparent margin and no cropped extremities. Actual transparent alpha background. Remove all neighboring objects, external shadow, red/yellow fringe and stray pixels. No text, labels, checkerboard or opaque backdrop.",
+      "source": "Humanoid_4.png",
+      "source_bounds": [
+        208,
+        639,
+        346,
+        924
+      ]
+    },
+    {
+      "set": 4,
+      "key": "human4_foot_left",
+      "label": "Foot",
+      "group": "Limbs",
+      "file": "Limbs/09_human4_foot_left.png",
+      "category": "Legs/Left",
+      "name": "Human4FootLeft",
+      "role": "Foot",
+      "size_axis": "height",
+      "visible_size": 1.13,
+      "joint_in": [
+        0.770645,
+        0.27026
+      ],
+      "joint_out": [
+        0.18,
+        0.76
+      ],
+      "tags": [
+        1
+      ],
+      "mass": 0.2,
+      "thickness": 0.08,
+      "prompt": "Use case: background-extraction / precise-object-edit.\nEdit target: the provided Humanoid_4.png paper-collage parts sheet (1448x1086). Extract ONLY the LEFT-SIDE FOOT at bottom-left, ochre triangular paper shoe pointing LEFT, ankle hole near (243,910). Remove charcoal shin and all other parts, complete concealed ankle edge. Target region approximately x100..291, y882..995 in the original.\nKeep the original paper-collage colors, visible fiber/brush textures, silhouette proportions and viewing angle. Do not redesign, rotate, straighten or mirror. Reconstruct only obscured connection ends; do not add long necks, extra joint disks, limbs or decorations. Existing circular mounting holes must remain genuinely transparent; black paper must stay opaque.\nOutput ONE isolated complete part, centered large, with about 5% transparent margin and no cropped extremities. Actual transparent alpha background. Remove all neighboring objects, external shadow, red/yellow fringe and stray pixels. No text, labels, checkerboard or opaque backdrop.",
+      "source": "Humanoid_4.png",
+      "source_bounds": [
+        100,
+        882,
+        291,
+        995
+      ]
+    },
+    {
+      "set": 4,
+      "key": "human4_upper_leg_right",
+      "label": "UpperLeg",
+      "group": "Limbs",
+      "file": "Limbs/10_human4_upper_leg_right.png",
+      "category": "Legs/Right",
+      "name": "Human4UpperLegRight",
+      "role": "UpperLeg",
+      "size_axis": "height",
+      "visible_size": 3.06,
+      "joint_in": [
+        0.193917,
+        0.133935
+      ],
+      "joint_out": [
+        0.792473,
+        0.765705
+      ],
+      "tags": [
+        5
+      ],
+      "mass": 0.45,
+      "thickness": 0.08,
+      "prompt": "Use case: background-extraction / precise-object-edit.\nEdit target: the provided Humanoid_4.png paper-collage parts sheet (1448x1086). Extract ONLY the RIGHT-SIDE UPPER LEG/THIGH, large ivory leaf-like veined paper below the detached white sleeve, diagonal down-right from hip hole (1030,472) to ochre knee disk (1168,664). Keep the knee disk as part of thigh. No sleeve, charcoal shin, hand or foot. Target region approximately x981..1220, y427..733 in the original.\nKeep the original paper-collage colors, visible fiber/brush textures, silhouette proportions and viewing angle. Do not redesign, rotate, straighten or mirror. Reconstruct only obscured connection ends; do not add long necks, extra joint disks, limbs or decorations. Existing circular mounting holes must remain genuinely transparent; black paper must stay opaque.\nOutput ONE isolated complete part, centered large, with about 5% transparent margin and no cropped extremities. Actual transparent alpha background. Remove all neighboring objects, external shadow, red/yellow fringe and stray pixels. No text, labels, checkerboard or opaque backdrop.",
+      "source": "Humanoid_4.png",
+      "source_bounds": [
+        981,
+        427,
+        1220,
+        733
+      ]
+    },
+    {
+      "set": 4,
+      "key": "human4_lower_leg_right",
+      "label": "LowerLeg",
+      "group": "Limbs",
+      "file": "Limbs/11_human4_lower_leg_right.png",
+      "category": "Legs/Right",
+      "name": "Human4LowerLegRight",
+      "role": "LowerLeg",
+      "size_axis": "height",
+      "visible_size": 2.63,
+      "joint_in": [
+        0.182478,
+        0.081498
+      ],
+      "joint_out": [
+        0.85,
+        0.91
+      ],
+      "tags": [
+        5
+      ],
+      "mass": 0.35,
+      "thickness": 0.08,
+      "prompt": "Use case: background-extraction / precise-object-edit.\nEdit target: the provided Humanoid_4.png paper-collage parts sheet (1448x1086). Extract ONLY the RIGHT-SIDE LOWER LEG/SHIN, long charcoal brush-print paper below the separate ochre knee disk, curving down-right to ankle near (1268,932). Remove beige thigh/knee disk and ochre foot. Reconstruct the hidden rounded knee connector/hole. Target region approximately x1117..1294, y693..956 in the original.\nKeep the original paper-collage colors, visible fiber/brush textures, silhouette proportions and viewing angle. Do not redesign, rotate, straighten or mirror. Reconstruct only obscured connection ends; do not add long necks, extra joint disks, limbs or decorations. Existing circular mounting holes must remain genuinely transparent; black paper must stay opaque.\nOutput ONE isolated complete part, centered large, with about 5% transparent margin and no cropped extremities. Actual transparent alpha background. Remove all neighboring objects, external shadow, red/yellow fringe and stray pixels. No text, labels, checkerboard or opaque backdrop.",
+      "source": "Humanoid_4.png",
+      "source_bounds": [
+        1117,
+        693,
+        1294,
+        956
+      ]
+    },
+    {
+      "set": 4,
+      "key": "human4_foot_right",
+      "label": "Foot",
+      "group": "Limbs",
+      "file": "Limbs/12_human4_foot_right.png",
+      "category": "Legs/Right",
+      "name": "Human4FootRight",
+      "role": "Foot",
+      "size_axis": "height",
+      "visible_size": 0.99,
+      "joint_in": [
+        0.345509,
+        0.293744
+      ],
+      "joint_out": [
+        0.84,
+        0.82
+      ],
+      "tags": [
+        1
+      ],
+      "mass": 0.2,
+      "thickness": 0.08,
+      "prompt": "Use case: background-extraction / precise-object-edit.\nEdit target: the provided Humanoid_4.png paper-collage parts sheet (1448x1086). Extract ONLY the RIGHT-SIDE FOOT at bottom-right, ochre triangular paper shoe pointing RIGHT with ankle hole near (1269,932). No charcoal shin or adjacent parts; complete ankle outline. Target region approximately x1198..1390, y911..1010 in the original.\nKeep the original paper-collage colors, visible fiber/brush textures, silhouette proportions and viewing angle. Do not redesign, rotate, straighten or mirror. Reconstruct only obscured connection ends; do not add long necks, extra joint disks, limbs or decorations. Existing circular mounting holes must remain genuinely transparent; black paper must stay opaque.\nOutput ONE isolated complete part, centered large, with about 5% transparent margin and no cropped extremities. Actual transparent alpha background. Remove all neighboring objects, external shadow, red/yellow fringe and stray pixels. No text, labels, checkerboard or opaque backdrop.",
+      "source": "Humanoid_4.png",
+      "source_bounds": [
+        1198,
+        911,
+        1390,
+        1010
+      ]
+    },
+    {
+      "set": 4,
+      "key": "human4_flail",
+      "label": "Weapon",
+      "group": "Weapons",
+      "file": "Weapons/01_human4_flail.png",
+      "category": "Weapons",
+      "name": "Human4Flail",
+      "role": "Weapon",
+      "size_axis": "height",
+      "visible_size": 5.52,
+      "joint_in": [
+        0.32,
+        0.04
+      ],
+      "joint_out": [
+        0.55,
+        0.91
+      ],
+      "tags": [],
+      "mass": 0.4,
+      "thickness": 0.08,
+      "prompt": "Use case: background-extraction / precise-object-edit.\nEdit target: the provided Humanoid_4.png paper-collage parts sheet (1448x1086). Extract ONLY ONLY the complete rope-and-ball FLAIL weapon at image-left: ochre cord with small loop at top and orange layered circular weight at bottom. Remove the gripping hand, charcoal forearm, ivory sleeve and every body part; reconstruct the cord hidden by the hand. Keep the thin cord, orange ball and original hanging orientation; no invented handle or blade. Target region approximately x145..438, y29..581 in the original.\nKeep the original paper-collage colors, visible fiber/brush textures, silhouette proportions and viewing angle. Do not redesign, rotate, straighten or mirror. Reconstruct only obscured connection ends; do not add long necks, extra joint disks, limbs or decorations. Existing circular mounting holes must remain genuinely transparent; black paper must stay opaque.\nOutput ONE isolated complete part, centered large, with about 5% transparent margin and no cropped extremities. Actual transparent alpha background. Remove all neighboring objects, external shadow, red/yellow fringe and stray pixels. No text, labels, checkerboard or opaque backdrop.",
+      "source": "Humanoid_4.png",
+      "source_bounds": [
+        145,
+        29,
+        438,
+        581
+      ]
+    },
+    {
+      "set": 4,
+      "key": "human4_rivet",
+      "label": "Decoration",
+      "group": "Attachments",
+      "file": "Attachments/01_human4_rivet.png",
+      "category": "Decorations",
+      "name": "Human4Rivet",
+      "role": "Decoration",
+      "size_axis": "height",
+      "visible_size": 0.61,
+      "joint_in": [
+        0.5,
+        0.5
+      ],
+      "joint_out": [
+        0.5,
+        0.15
+      ],
+      "tags": [],
+      "mass": 0.03,
+      "thickness": 0.08,
+      "prompt": "Use case: background-extraction / precise-object-edit.\nEdit target: the provided Humanoid_4.png paper-collage parts sheet (1448x1086). Extract ONLY ONE representative copper RIVET from the bottom row: the first round domed copper fastener near (419,1013). Only one rivet, front view, with copper flange and domed center; no row of duplicates. Target region approximately x389..449, y982..1043 in the original.\nKeep the original paper-collage colors, visible fiber/brush textures, silhouette proportions and viewing angle. Do not redesign, rotate, straighten or mirror. Reconstruct only obscured connection ends; do not add long necks, extra joint disks, limbs or decorations. Existing circular mounting holes must remain genuinely transparent; black paper must stay opaque.\nOutput ONE isolated complete part, centered large, with about 5% transparent margin and no cropped extremities. Actual transparent alpha background. Remove all neighboring objects, external shadow, red/yellow fringe and stray pixels. No text, labels, checkerboard or opaque backdrop.",
+      "source": "Humanoid_4.png",
+      "source_bounds": [
+        389,
+        982,
+        449,
+        1043
+      ]
+    },
+    {
+      "set": 5,
+      "key": "human5_head",
+      "label": "Head",
+      "group": "Base",
+      "file": "Base/01_human5_head.png",
+      "category": "Head",
+      "name": "Human5Head",
+      "role": "Head",
+      "size_axis": "height",
+      "visible_size": 2.51,
+      "joint_in": [
+        0.674992,
+        0.875406
+      ],
+      "joint_out": [
+        0.93,
+        0.55
+      ],
+      "tags": [
+        3
+      ],
+      "mass": 0.5,
+      "thickness": 0.08,
+      "prompt": "Use case: background-extraction / precise-object-edit.\nEdit target: the provided Humanoid_5.png paper-collage parts sheet (1448x1086). Extract ONLY the entire female HEAD and short NECK, facing RIGHT: black coiled bun hair and orange ribbon trailing to left, pale face with ochre-red circular cheek and gold earring, neck mounting disk/hole. No chest, arms or spear. Target region approximately x517..834, y10..261 in the original.\nKeep the original paper-collage colors, visible fiber/brush textures, silhouette proportions and viewing angle. Do not redesign, rotate, straighten or mirror. Reconstruct only obscured connection ends; do not add long necks, extra joint disks, limbs or decorations. Existing circular mounting holes must remain genuinely transparent; black paper must stay opaque.\nOutput ONE isolated complete part, centered large, with about 5% transparent margin and no cropped extremities. Actual transparent alpha background. Remove all neighboring objects, external shadow, red/yellow fringe and stray pixels. No text, labels, checkerboard or opaque backdrop.",
+      "source": "Humanoid_5.png",
+      "source_bounds": [
+        517,
+        10,
+        834,
+        261
+      ]
+    },
+    {
+      "set": 5,
+      "key": "human5_torso",
+      "label": "Torso",
+      "group": "Base",
+      "file": "Base/02_human5_torso.png",
+      "category": "Torso",
+      "name": "Human5Torso",
+      "role": "Torso",
+      "size_axis": "height",
+      "visible_size": 2.23,
+      "joint_in": [
+        0.51,
+        0.94
+      ],
+      "joint_out": [
+        0.51,
+        0.05
+      ],
+      "tags": [
+        0
+      ],
+      "mass": 2.5,
+      "thickness": 0.08,
+      "prompt": "Use case: background-extraction / precise-object-edit.\nEdit target: the provided Humanoid_5.png paper-collage parts sheet (1448x1086). Extract ONLY the UPPER TORSO ONLY: ivory and ochre crossed robe with both round shoulder holes, between neck and black waist belt. Remove head, skirt/belt, detached arms; reconstruct clean concealed waist edge. Target region approximately x542..867, y251..474 in the original.\nKeep the original paper-collage colors, visible fiber/brush textures, silhouette proportions and viewing angle. Do not redesign, rotate, straighten or mirror. Reconstruct only obscured connection ends; do not add long necks, extra joint disks, limbs or decorations. Existing circular mounting holes must remain genuinely transparent; black paper must stay opaque.\nOutput ONE isolated complete part, centered large, with about 5% transparent margin and no cropped extremities. Actual transparent alpha background. Remove all neighboring objects, external shadow, red/yellow fringe and stray pixels. No text, labels, checkerboard or opaque backdrop.",
+      "source": "Humanoid_5.png",
+      "source_bounds": [
+        542,
+        251,
+        867,
+        474
+      ]
+    },
+    {
+      "set": 5,
+      "key": "human5_pelvis",
+      "label": "Pelvis",
+      "group": "Base",
+      "file": "Base/03_human5_pelvis.png",
+      "category": "Torso",
+      "name": "Human5Pelvis",
+      "role": "Pelvis",
+      "size_axis": "height",
+      "visible_size": 2.98,
+      "joint_in": [
+        0.5,
+        0.08
+      ],
+      "joint_out": [
+        0.15,
+        0.77
+      ],
+      "tags": [
+        0
+      ],
+      "mass": 0.8,
+      "thickness": 0.08,
+      "prompt": "Use case: background-extraction / precise-object-edit.\nEdit target: the provided Humanoid_5.png paper-collage parts sheet (1448x1086). Extract ONLY the entire WAISTBELT and layered SKIRT/PELVIS as one part: charcoal waist belt with orange rope folds, ochre upper skirt over black brush-print lower skirt, side flaps and both hip hole tabs. No torso, thighs or arms; complete waist behind chest. Target region approximately x497..941, y466..764 in the original.\nKeep the original paper-collage colors, visible fiber/brush textures, silhouette proportions and viewing angle. Do not redesign, rotate, straighten or mirror. Reconstruct only obscured connection ends; do not add long necks, extra joint disks, limbs or decorations. Existing circular mounting holes must remain genuinely transparent; black paper must stay opaque.\nOutput ONE isolated complete part, centered large, with about 5% transparent margin and no cropped extremities. Actual transparent alpha background. Remove all neighboring objects, external shadow, red/yellow fringe and stray pixels. No text, labels, checkerboard or opaque backdrop.",
+      "source": "Humanoid_5.png",
+      "source_bounds": [
+        497,
+        466,
+        941,
+        764
+      ]
+    },
+    {
+      "set": 5,
+      "key": "human5_upper_arm_left",
+      "label": "UpperArm",
+      "group": "Limbs",
+      "file": "Limbs/01_human5_upper_arm_left.png",
+      "category": "Arms/Left",
+      "name": "Human5UpperArmLeft",
+      "role": "UpperArm",
+      "size_axis": "height",
+      "visible_size": 1.7,
+      "joint_in": [
+        0.816972,
+        0.247277
+      ],
+      "joint_out": [
+        0.170666,
+        0.821577
+      ],
+      "tags": [
+        2
+      ],
+      "mass": 0.25,
+      "thickness": 0.08,
+      "prompt": "Use case: background-extraction / precise-object-edit.\nEdit target: the provided Humanoid_5.png paper-collage parts sheet (1448x1086). Extract ONLY the LEFT-SIDE UPPER ARM: ochre oval paper link diagonally down-left, from shoulder hole near (443,269) to elbow hole near (331,371). Preserve exact source diagonal and paper grain. No forearm, hand, torso or spear. Target region approximately x299..481, y230..400 in the original.\nKeep the original paper-collage colors, visible fiber/brush textures, silhouette proportions and viewing angle. Do not redesign, rotate, straighten or mirror. Reconstruct only obscured connection ends; do not add long necks, extra joint disks, limbs or decorations. Existing circular mounting holes must remain genuinely transparent; black paper must stay opaque.\nOutput ONE isolated complete part, centered large, with about 5% transparent margin and no cropped extremities. Actual transparent alpha background. Remove all neighboring objects, external shadow, red/yellow fringe and stray pixels. No text, labels, checkerboard or opaque backdrop.",
+      "source": "Humanoid_5.png",
+      "source_bounds": [
+        299,
+        230,
+        481,
+        400
+      ]
+    },
+    {
+      "set": 5,
+      "key": "human5_forearm_left",
+      "label": "Forearm",
+      "group": "Limbs",
+      "file": "Limbs/02_human5_forearm_left.png",
+      "category": "Arms/Left",
+      "name": "Human5ForearmLeft",
+      "role": "Forearm",
+      "size_axis": "height",
+      "visible_size": 1.87,
+      "joint_in": [
+        0.632743,
+        0.169922
+      ],
+      "joint_out": [
+        0.196103,
+        0.880453
+      ],
+      "tags": [
+        2
+      ],
+      "mass": 0.18,
+      "thickness": 0.08,
+      "prompt": "Use case: background-extraction / precise-object-edit.\nEdit target: the provided Humanoid_5.png paper-collage parts sheet (1448x1086). Extract ONLY the LEFT-SIDE FOREARM: ochre paper link below left upper arm from elbow near (287,425) down-left to wrist near (232,552). No upper arm, hand or spear. Complete wrist mounting end hidden by hand. Target region approximately x216..334, y391..578 in the original.\nKeep the original paper-collage colors, visible fiber/brush textures, silhouette proportions and viewing angle. Do not redesign, rotate, straighten or mirror. Reconstruct only obscured connection ends; do not add long necks, extra joint disks, limbs or decorations. Existing circular mounting holes must remain genuinely transparent; black paper must stay opaque.\nOutput ONE isolated complete part, centered large, with about 5% transparent margin and no cropped extremities. Actual transparent alpha background. Remove all neighboring objects, external shadow, red/yellow fringe and stray pixels. No text, labels, checkerboard or opaque backdrop.",
+      "source": "Humanoid_5.png",
+      "source_bounds": [
+        216,
+        391,
+        334,
+        578
+      ]
+    },
+    {
+      "set": 5,
+      "key": "human5_hand_left",
+      "label": "Hand",
+      "group": "Limbs",
+      "file": "Limbs/03_human5_hand_left.png",
+      "category": "Arms/Left",
+      "name": "Human5HandLeft",
+      "role": "Hand",
+      "size_axis": "height",
+      "visible_size": 1.21,
+      "joint_in": [
+        0.5408,
+        0.118249
+      ],
+      "joint_out": [
+        0.4,
+        0.8
+      ],
+      "tags": [
+        2
+      ],
+      "mass": 0.1,
+      "thickness": 0.08,
+      "prompt": "Use case: background-extraction / precise-object-edit.\nEdit target: the provided Humanoid_5.png paper-collage parts sheet (1448x1086). Extract ONLY the LEFT-SIDE HAND below the left forearm: curled ochre paper fist pointing downward with separated finger outlines. Remove every forearm, spear and neighboring part. Complete hidden wrist, same original pose. Target region approximately x187..275, y531..652 in the original.\nKeep the original paper-collage colors, visible fiber/brush textures, silhouette proportions and viewing angle. Do not redesign, rotate, straighten or mirror. Reconstruct only obscured connection ends; do not add long necks, extra joint disks, limbs or decorations. Existing circular mounting holes must remain genuinely transparent; black paper must stay opaque.\nOutput ONE isolated complete part, centered large, with about 5% transparent margin and no cropped extremities. Actual transparent alpha background. Remove all neighboring objects, external shadow, red/yellow fringe and stray pixels. No text, labels, checkerboard or opaque backdrop.",
+      "source": "Humanoid_5.png",
+      "source_bounds": [
+        187,
+        531,
+        275,
+        652
+      ]
+    },
+    {
+      "set": 5,
+      "key": "human5_upper_arm_right",
+      "label": "UpperArm",
+      "group": "Limbs",
+      "file": "Limbs/04_human5_upper_arm_right.png",
+      "category": "Arms/Right",
+      "name": "Human5UpperArmRight",
+      "role": "UpperArm",
+      "size_axis": "height",
+      "visible_size": 1.71,
+      "joint_in": [
+        0.180001,
+        0.23667
+      ],
+      "joint_out": [
+        0.844447,
+        0.805801
+      ],
+      "tags": [
+        2
+      ],
+      "mass": 0.25,
+      "thickness": 0.08,
+      "prompt": "Use case: background-extraction / precise-object-edit.\nEdit target: the provided Humanoid_5.png paper-collage parts sheet (1448x1086). Extract ONLY the RIGHT-SIDE UPPER ARM: ochre oval link diagonal down-right from shoulder hole (941,268) to elbow hole (1059,369). No forearm, hand or shield. Preserve original orientation and holes. Target region approximately x900..1097, y228..399 in the original.\nKeep the original paper-collage colors, visible fiber/brush textures, silhouette proportions and viewing angle. Do not redesign, rotate, straighten or mirror. Reconstruct only obscured connection ends; do not add long necks, extra joint disks, limbs or decorations. Existing circular mounting holes must remain genuinely transparent; black paper must stay opaque.\nOutput ONE isolated complete part, centered large, with about 5% transparent margin and no cropped extremities. Actual transparent alpha background. Remove all neighboring objects, external shadow, red/yellow fringe and stray pixels. No text, labels, checkerboard or opaque backdrop.",
+      "source": "Humanoid_5.png",
+      "source_bounds": [
+        900,
+        228,
+        1097,
+        399
+      ]
+    },
+    {
+      "set": 5,
+      "key": "human5_forearm_right",
+      "label": "Forearm",
+      "group": "Limbs",
+      "file": "Limbs/05_human5_forearm_right.png",
+      "category": "Arms/Right",
+      "name": "Human5ForearmRight",
+      "role": "Forearm",
+      "size_axis": "height",
+      "visible_size": 1.8,
+      "joint_in": [
+        0.264638,
+        0.148458
+      ],
+      "joint_out": [
+        0.867871,
+        0.901215
+      ],
+      "tags": [
+        2
+      ],
+      "mass": 0.18,
+      "thickness": 0.08,
+      "prompt": "Use case: background-extraction / precise-object-edit.\nEdit target: the provided Humanoid_5.png paper-collage parts sheet (1448x1086). Extract ONLY the RIGHT-SIDE FOREARM immediately left of shield: ochre link from elbow hole near (1089,432) down-right to the gripping hand wrist near (1136,569). Remove upper arm, hand and ALL shield material; reconstruct concealed distal wrist. Target region approximately x1047..1169, y402..582 in the original.\nKeep the original paper-collage colors, visible fiber/brush textures, silhouette proportions and viewing angle. Do not redesign, rotate, straighten or mirror. Reconstruct only obscured connection ends; do not add long necks, extra joint disks, limbs or decorations. Existing circular mounting holes must remain genuinely transparent; black paper must stay opaque.\nOutput ONE isolated complete part, centered large, with about 5% transparent margin and no cropped extremities. Actual transparent alpha background. Remove all neighboring objects, external shadow, red/yellow fringe and stray pixels. No text, labels, checkerboard or opaque backdrop.",
+      "source": "Humanoid_5.png",
+      "source_bounds": [
+        1047,
+        402,
+        1169,
+        582
+      ]
+    },
+    {
+      "set": 5,
+      "key": "human5_hand_right",
+      "label": "Hand",
+      "group": "Limbs",
+      "file": "Limbs/06_human5_hand_right.png",
+      "category": "Arms/Right",
+      "name": "Human5HandRight",
+      "role": "Hand",
+      "size_axis": "height",
+      "visible_size": 0.85,
+      "joint_in": [
+        0.07,
+        0.62
+      ],
+      "joint_out": [
+        0.68,
+        0.5
+      ],
+      "tags": [
+        2
+      ],
+      "mass": 0.1,
+      "thickness": 0.08,
+      "prompt": "Use case: background-extraction / precise-object-edit.\nEdit target: the provided Humanoid_5.png paper-collage parts sheet (1448x1086). Extract ONLY the RIGHT-SIDE GRIPPING HAND beside the shield: ochre fist with four stacked curled fingers facing right. Remove ALL shield, handle/rod and forearm. Complete the obscured back of hand and wrist, retaining the original right-facing grip. Target region approximately x1118..1204, y536..621 in the original.\nKeep the original paper-collage colors, visible fiber/brush textures, silhouette proportions and viewing angle. Do not redesign, rotate, straighten or mirror. Reconstruct only obscured connection ends; do not add long necks, extra joint disks, limbs or decorations. Existing circular mounting holes must remain genuinely transparent; black paper must stay opaque.\nOutput ONE isolated complete part, centered large, with about 5% transparent margin and no cropped extremities. Actual transparent alpha background. Remove all neighboring objects, external shadow, red/yellow fringe and stray pixels. No text, labels, checkerboard or opaque backdrop.",
+      "source": "Humanoid_5.png",
+      "source_bounds": [
+        1118,
+        536,
+        1204,
+        621
+      ]
+    },
+    {
+      "set": 5,
+      "key": "human5_upper_leg_left",
+      "label": "UpperLeg",
+      "group": "Limbs",
+      "file": "Limbs/07_human5_upper_leg_left.png",
+      "category": "Legs/Left",
+      "name": "Human5UpperLegLeft",
+      "role": "UpperLeg",
+      "size_axis": "height",
+      "visible_size": 1.79,
+      "joint_in": [
+        0.799915,
+        0.152677
+      ],
+      "joint_out": [
+        0.166511,
+        0.838963
+      ],
+      "tags": [
+        5
+      ],
+      "mass": 0.45,
+      "thickness": 0.08,
+      "prompt": "Use case: background-extraction / precise-object-edit.\nEdit target: the provided Humanoid_5.png paper-collage parts sheet (1448x1086). Extract ONLY the LEFT-SIDE UPPER LEG/THIGH: ochre oval paper link from hip hole (443,609) diagonally down-left to knee near (374,721). Remove the separate ivory scalloped knee cap, charcoal lower leg and foot. Reconstruct the rounded knee mounting end beneath the cap. Target region approximately x329..489, y575..754 in the original.\nKeep the original paper-collage colors, visible fiber/brush textures, silhouette proportions and viewing angle. Do not redesign, rotate, straighten or mirror. Reconstruct only obscured connection ends; do not add long necks, extra joint disks, limbs or decorations. Existing circular mounting holes must remain genuinely transparent; black paper must stay opaque.\nOutput ONE isolated complete part, centered large, with about 5% transparent margin and no cropped extremities. Actual transparent alpha background. Remove all neighboring objects, external shadow, red/yellow fringe and stray pixels. No text, labels, checkerboard or opaque backdrop.",
+      "source": "Humanoid_5.png",
+      "source_bounds": [
+        329,
+        575,
+        489,
+        754
+      ]
+    },
+    {
+      "set": 5,
+      "key": "human5_lower_leg_left",
+      "label": "LowerLeg",
+      "group": "Limbs",
+      "file": "Limbs/08_human5_lower_leg_left.png",
+      "category": "Legs/Left",
+      "name": "Human5LowerLegLeft",
+      "role": "LowerLeg",
+      "size_axis": "height",
+      "visible_size": 2.59,
+      "joint_in": [
+        0.616359,
+        0.167475
+      ],
+      "joint_out": [
+        0.18618,
+        0.862048
+      ],
+      "tags": [
+        5
+      ],
+      "mass": 0.35,
+      "thickness": 0.08,
+      "prompt": "Use case: background-extraction / precise-object-edit.\nEdit target: the provided Humanoid_5.png paper-collage parts sheet (1448x1086). Extract ONLY the LEFT-SIDE LOWER LEG/SHIN including its IVORY SCALLOPED KNEE CAP, charcoal shin and diagonal ochre wraps. From knee hole near (373,722) down-left to ankle near (301,917). No ochre thigh or charcoal foot. Complete hidden ankle connector. Target region approximately x285..441, y672..931 in the original.\nKeep the original paper-collage colors, visible fiber/brush textures, silhouette proportions and viewing angle. Do not redesign, rotate, straighten or mirror. Reconstruct only obscured connection ends; do not add long necks, extra joint disks, limbs or decorations. Existing circular mounting holes must remain genuinely transparent; black paper must stay opaque.\nOutput ONE isolated complete part, centered large, with about 5% transparent margin and no cropped extremities. Actual transparent alpha background. Remove all neighboring objects, external shadow, red/yellow fringe and stray pixels. No text, labels, checkerboard or opaque backdrop.",
+      "source": "Humanoid_5.png",
+      "source_bounds": [
+        285,
+        672,
+        441,
+        931
+      ]
+    },
+    {
+      "set": 5,
+      "key": "human5_foot_left",
+      "label": "Foot",
+      "group": "Limbs",
+      "file": "Limbs/09_human5_foot_left.png",
+      "category": "Legs/Left",
+      "name": "Human5FootLeft",
+      "role": "Foot",
+      "size_axis": "height",
+      "visible_size": 0.9,
+      "joint_in": [
+        0.244618,
+        0.341328
+      ],
+      "joint_out": [
+        0.84,
+        0.84
+      ],
+      "tags": [
+        1
+      ],
+      "mass": 0.2,
+      "thickness": 0.08,
+      "prompt": "Use case: background-extraction / precise-object-edit.\nEdit target: the provided Humanoid_5.png paper-collage parts sheet (1448x1086). Extract ONLY the LEFT-SIDE FOOT: small charcoal paper shoe at bottom-left, ankle hole (302,917), toe points RIGHT in the original. Remove wrapped shin and scalloped knee cap. Preserve this original RIGHT-pointing orientation, do not mirror. Target region approximately x259..404, y889..979 in the original.\nKeep the original paper-collage colors, visible fiber/brush textures, silhouette proportions and viewing angle. Do not redesign, rotate, straighten or mirror. Reconstruct only obscured connection ends; do not add long necks, extra joint disks, limbs or decorations. Existing circular mounting holes must remain genuinely transparent; black paper must stay opaque.\nOutput ONE isolated complete part, centered large, with about 5% transparent margin and no cropped extremities. Actual transparent alpha background. Remove all neighboring objects, external shadow, red/yellow fringe and stray pixels. No text, labels, checkerboard or opaque backdrop.",
+      "source": "Humanoid_5.png",
+      "source_bounds": [
+        259,
+        889,
+        404,
+        979
+      ]
+    },
+    {
+      "set": 5,
+      "key": "human5_upper_leg_right",
+      "label": "UpperLeg",
+      "group": "Limbs",
+      "file": "Limbs/10_human5_upper_leg_right.png",
+      "category": "Legs/Right",
+      "name": "Human5UpperLegRight",
+      "role": "UpperLeg",
+      "size_axis": "height",
+      "visible_size": 1.86,
+      "joint_in": [
+        0.196849,
+        0.194351
+      ],
+      "joint_out": [
+        0.826739,
+        0.845756
+      ],
+      "tags": [
+        5
+      ],
+      "mass": 0.45,
+      "thickness": 0.08,
+      "prompt": "Use case: background-extraction / precise-object-edit.\nEdit target: the provided Humanoid_5.png paper-collage parts sheet (1448x1086). Extract ONLY the RIGHT-SIDE UPPER LEG/THIGH: ochre oval paper link from hip hole (995,609) down-right to knee near (1069,721). Remove ivory scalloped knee cap, charcoal shin, foot and shield; complete rounded knee mounting end. Target region approximately x957..1120, y575..761 in the original.\nKeep the original paper-collage colors, visible fiber/brush textures, silhouette proportions and viewing angle. Do not redesign, rotate, straighten or mirror. Reconstruct only obscured connection ends; do not add long necks, extra joint disks, limbs or decorations. Existing circular mounting holes must remain genuinely transparent; black paper must stay opaque.\nOutput ONE isolated complete part, centered large, with about 5% transparent margin and no cropped extremities. Actual transparent alpha background. Remove all neighboring objects, external shadow, red/yellow fringe and stray pixels. No text, labels, checkerboard or opaque backdrop.",
+      "source": "Humanoid_5.png",
+      "source_bounds": [
+        957,
+        575,
+        1120,
+        761
+      ]
+    },
+    {
+      "set": 5,
+      "key": "human5_lower_leg_right",
+      "label": "LowerLeg",
+      "group": "Limbs",
+      "file": "Limbs/11_human5_lower_leg_right.png",
+      "category": "Legs/Right",
+      "name": "Human5LowerLegRight",
+      "role": "LowerLeg",
+      "size_axis": "height",
+      "visible_size": 2.61,
+      "joint_in": [
+        0.395185,
+        0.150622
+      ],
+      "joint_out": [
+        0.753583,
+        0.849481
+      ],
+      "tags": [
+        5
+      ],
+      "mass": 0.35,
+      "thickness": 0.08,
+      "prompt": "Use case: background-extraction / precise-object-edit.\nEdit target: the provided Humanoid_5.png paper-collage parts sheet (1448x1086). Extract ONLY the RIGHT-SIDE LOWER LEG/SHIN including IVORY SCALLOPED KNEE CAP, charcoal shin and ochre wraps. From knee hole near (1069,721) down-right to ankle (1125,916). No thigh, foot or shield; complete concealed ankle connector. Target region approximately x1001..1151, y673..934 in the original.\nKeep the original paper-collage colors, visible fiber/brush textures, silhouette proportions and viewing angle. Do not redesign, rotate, straighten or mirror. Reconstruct only obscured connection ends; do not add long necks, extra joint disks, limbs or decorations. Existing circular mounting holes must remain genuinely transparent; black paper must stay opaque.\nOutput ONE isolated complete part, centered large, with about 5% transparent margin and no cropped extremities. Actual transparent alpha background. Remove all neighboring objects, external shadow, red/yellow fringe and stray pixels. No text, labels, checkerboard or opaque backdrop.",
+      "source": "Humanoid_5.png",
+      "source_bounds": [
+        1001,
+        673,
+        1151,
+        934
+      ]
+    },
+    {
+      "set": 5,
+      "key": "human5_foot_right",
+      "label": "Foot",
+      "group": "Limbs",
+      "file": "Limbs/12_human5_foot_right.png",
+      "category": "Legs/Right",
+      "name": "Human5FootRight",
+      "role": "Foot",
+      "size_axis": "height",
+      "visible_size": 0.82,
+      "joint_in": [
+        0.225411,
+        0.41526
+      ],
+      "joint_out": [
+        0.84,
+        0.78
+      ],
+      "tags": [
+        1
+      ],
+      "mass": 0.2,
+      "thickness": 0.08,
+      "prompt": "Use case: background-extraction / precise-object-edit.\nEdit target: the provided Humanoid_5.png paper-collage parts sheet (1448x1086). Extract ONLY the RIGHT-SIDE FOOT: charcoal paper shoe at bottom-right with ankle hole (1125,917), toe points RIGHT. No wrapped shin or neighboring parts. Complete ankle outline. Target region approximately x1083..1243, y887..969 in the original.\nKeep the original paper-collage colors, visible fiber/brush textures, silhouette proportions and viewing angle. Do not redesign, rotate, straighten or mirror. Reconstruct only obscured connection ends; do not add long necks, extra joint disks, limbs or decorations. Existing circular mounting holes must remain genuinely transparent; black paper must stay opaque.\nOutput ONE isolated complete part, centered large, with about 5% transparent margin and no cropped extremities. Actual transparent alpha background. Remove all neighboring objects, external shadow, red/yellow fringe and stray pixels. No text, labels, checkerboard or opaque backdrop.",
+      "source": "Humanoid_5.png",
+      "source_bounds": [
+        1083,
+        887,
+        1243,
+        969
+      ]
+    },
+    {
+      "set": 5,
+      "key": "human5_spear",
+      "label": "Weapon",
+      "group": "Weapons",
+      "file": "Weapons/01_human5_spear.png",
+      "category": "Weapons",
+      "name": "Human5Spear",
+      "role": "Weapon",
+      "size_axis": "height",
+      "visible_size": 9.66,
+      "joint_in": [
+        0.43,
+        0.94
+      ],
+      "joint_out": [
+        0.45,
+        0.05
+      ],
+      "tags": [],
+      "mass": 0.4,
+      "thickness": 0.08,
+      "prompt": "Use case: background-extraction / precise-object-edit.\nEdit target: the provided Humanoid_5.png paper-collage parts sheet (1448x1086). Extract ONLY ONLY the entire SPEAR at far-left: ivory leaf-shaped blade, ochre circular socket, long charcoal shaft, attached orange ribbons and small ochre butt cap. Keep the long slender vertical proportions. No arms, hands, body or other objects. Target region approximately x56..178, y15..981 in the original.\nKeep the original paper-collage colors, visible fiber/brush textures, silhouette proportions and viewing angle. Do not redesign, rotate, straighten or mirror. Reconstruct only obscured connection ends; do not add long necks, extra joint disks, limbs or decorations. Existing circular mounting holes must remain genuinely transparent; black paper must stay opaque.\nOutput ONE isolated complete part, centered large, with about 5% transparent margin and no cropped extremities. Actual transparent alpha background. Remove all neighboring objects, external shadow, red/yellow fringe and stray pixels. No text, labels, checkerboard or opaque backdrop.",
+      "source": "Humanoid_5.png",
+      "source_bounds": [
+        56,
+        15,
+        178,
+        981
+      ]
+    },
+    {
+      "set": 5,
+      "key": "human5_shield",
+      "label": "Shield",
+      "group": "Weapons",
+      "file": "Weapons/02_human5_shield.png",
+      "category": "Weapons",
+      "name": "Human5Shield",
+      "role": "Shield",
+      "size_axis": "height",
+      "visible_size": 5.4,
+      "joint_in": [
+        0.42,
+        0.47
+      ],
+      "joint_out": [
+        0.45,
+        0.09
+      ],
+      "tags": [],
+      "mass": 0.6,
+      "thickness": 0.08,
+      "prompt": "Use case: background-extraction / precise-object-edit.\nEdit target: the provided Humanoid_5.png paper-collage parts sheet (1448x1086). Extract ONLY ONLY the entire oval WOODEN SHIELD at far-right: dark thick rim, vertical orange planks and central dark boss with small circular hole. Remove the hand, arm and every neighboring object; reconstruct the small hidden left-rim section. Keep original front view and oval proportions. Target region approximately x1163..1440, y274..814 in the original.\nKeep the original paper-collage colors, visible fiber/brush textures, silhouette proportions and viewing angle. Do not redesign, rotate, straighten or mirror. Reconstruct only obscured connection ends; do not add long necks, extra joint disks, limbs or decorations. Existing circular mounting holes must remain genuinely transparent; black paper must stay opaque.\nOutput ONE isolated complete part, centered large, with about 5% transparent margin and no cropped extremities. Actual transparent alpha background. Remove all neighboring objects, external shadow, red/yellow fringe and stray pixels. No text, labels, checkerboard or opaque backdrop.",
+      "source": "Humanoid_5.png",
+      "source_bounds": [
+        1163,
+        274,
+        1440,
+        814
+      ]
+    },
+    {
+      "set": 5,
+      "key": "human5_rivet",
+      "label": "Decoration",
+      "group": "Attachments",
+      "file": "Attachments/01_human5_rivet.png",
+      "category": "Decorations",
+      "name": "Human5Rivet",
+      "role": "Decoration",
+      "size_axis": "height",
+      "visible_size": 0.61,
+      "joint_in": [
+        0.5,
+        0.5
+      ],
+      "joint_out": [
+        0.5,
+        0.15
+      ],
+      "tags": [],
+      "mass": 0.03,
+      "thickness": 0.08,
+      "prompt": "Use case: background-extraction / precise-object-edit.\nEdit target: the provided Humanoid_5.png paper-collage parts sheet (1448x1086). Extract ONLY ONE representative copper RIVET from bottom row, first fastener near (476,1035): copper outer flange and domed central copper bump, frontal orientation. Only one, no row or neighboring objects. Target region approximately x443..508, y1007..1068 in the original.\nKeep the original paper-collage colors, visible fiber/brush textures, silhouette proportions and viewing angle. Do not redesign, rotate, straighten or mirror. Reconstruct only obscured connection ends; do not add long necks, extra joint disks, limbs or decorations. Existing circular mounting holes must remain genuinely transparent; black paper must stay opaque.\nOutput ONE isolated complete part, centered large, with about 5% transparent margin and no cropped extremities. Actual transparent alpha background. Remove all neighboring objects, external shadow, red/yellow fringe and stray pixels. No text, labels, checkerboard or opaque backdrop.",
+      "source": "Humanoid_5.png",
+      "source_bounds": [
+        443,
+        1007,
+        508,
+        1068
+      ]
+    }
+  ]
+}

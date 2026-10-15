@@ -1,0 +1,59 @@
+Human 武器资源（2026-10-15）
+
+共6件：Human1Spear、Human2ClawGauntlet、Human3CurvedSword、Human4Flail、Human5Spear、Human5Shield。
+每个tscn直接继承res://Scenes/Items/_SampleWeapon.tscn，运行时类型为SampleWeapon3D，再继承SampleItem3D和RigidBody3D。
+它们不是_PhysicalSampleBodyParts的子类，不会被统计为角色的身体部件。
+
+素材与目录
+复用已经拆分、补齐遮挡并清理透明边缘的6张正式PNG，不再次重绘、缩放或覆盖原图。
+2D：res://Assets/2DResources/Human/Separated/Weapons/
+3D GLB：res://Assets/3DResources/Creatures/Human/Models/Weapons/
+3D模型场景：res://Assets/3DResources/Creatures/Human/Scenes/Weapons/
+预烘焙厚纸片网格：res://Resources/Meshes/Human/Weapons/
+可拾取武器场景：res://Scenes/Items/Weapons/Human/
+资源关系、握持像素位置、角度及初始质量：res://Assets/3DResources/Creatures/Human/Metadata/weapon_manifest.json
+三维预览：res://Assets/3DResources/Creatures/Human/Previews/HumanWeaponsPreview.tscn
+预览按格子适配显示，未改变武器实际尺寸。
+
+使用方法
+1. 将此目录中的武器tscn拖入关卡，运行后可通过现有EPressed拾取并用物品栏选中。
+2. Generate_Human_NPC的Initial Equipment / Initial Weapon Scene也可以直接引用任意一个武器tscn。
+3. 初始没有强制指定某只手：普通装备使用背包的Arm Path，NPC初始装备会寻找具有挥舞配置的可用Arm。
+4. 持握部位配置了grip状态时，装备自动切换为握紧；卸下后恢复原外观。
+5. 身体接触武器、挥舞命中、阵营过滤和同次挥舞去重，使用现有SampleWeapon3D与DamageService结算。
+
+可调设置
+Mass：沿用既有物理部件的初始质量，可在武器根节点Inspector中独立修改。
+Attachment / Attachment Local Position：武器模型局部持握点，初始按杆身、腕口、柄环或盾牌中心标定。
+Attachment / Item Rotation：仅在装备时应用的角度，初始将长武器攻击端大致朝向持握坐标的+Y。
+Attachment / Preferred Holder Name：留空自动选择；有特殊需求时填相对于角色根节点的持握部位路径。
+Visuals / Sprite Visible与Mesh Visible：可在无厚度Sprite和默认厚纸片Mesh显示间切换。
+Item Image：使用对应独立武器PNG，拾取第二件时也有独立图标，不需要等待运行时截图。
+
+碰撞与边界
+每件使用一个简化凸包，XY沿用已经验证的物理部件轮廓，Z厚度与模型同为0.08。
+凹陷和视觉孔洞在凸碰撞体内会被填平；若后续需要更精细的命中范围，可拆成多个凸碰撞体。
+装备时沿用现有刚性合并：武器形状和质量合并到实际持握部位，忽略持有角色的内部碰撞。
+绳锤目前是整体刚体，没有新增绳索摆动关节。盾牌按武器规则产生碰撞伤害，没有新增格挡、减伤或双持机制。
+Human2按爪形护手武器处理，是否属于原图角色固定护甲无法单凭图片确定。
+原有Bodyparts/Human/Weapons场景保留，已有角色的默认装备未改动。
+预先持握这6件武器的角色和NPC子场景位于res://Scenes/Creatures/Characters/Human/Armed/，使用方法见该目录的使用说明.txt。
+
+Spear1尺寸修订（2026-10-15）
+Human1Spear的木柄已采用像素脚本延长到约2倍，再将整张素材与模型的XY尺寸放大2倍。
+最终木柄约为修订前4倍，矛头、连接环和柄尾的XY尺寸为修订前2倍；Z厚度保持0.08，质量仍为0.5。
+正式PNG为3098×3336，像素到世界单位比例保持不变；3D GLB、贴图副本、纸片网格、模型场景、身体部件和可拾取武器场景均同步。
+持握点、JointOut和碰撞轮廓也已同步。Spear1角色及NPC继续引用同一武器场景，会自动使用新资源。
+伸长前的素材、模型和配置备份位于D:/GameJamWorkspace/Reports/Spear1Resize_2026-10-15/Before/。
+普通模型重建使用更新后的build_settings.json；从RawEdits强制执行prepare_assets.py --reclean属于重新拆图，会覆盖正式素材，不应用于这次已确认的像素编辑。
+
+Spear1最新尺寸（2026-10-15）
+在上述版本基础上，整体XY再统一缩小到75%，正式PNG更新为2324×2502。
+木柄与矛头的相对比例不变；3D模型、碰撞箱、持握点和连接标记同步缩小，厚度仍为0.08，质量仍为0.5。
+本轮修改前的备份位于D:/GameJamWorkspace/Reports/Spear1Scale75_2026-10-15/Before/。
+
+构建与验证
+Godot --headless --path <项目目录> --script res://Tools/BuildHumanWeapons.gd
+该工具仅创建缺失的武器场景，保留已有武器场景中的手动修改；weapon_manifest记录工具的初始标定。
+Godot --headless --path <项目目录> --script res://Tests/ValidateHumanWeapons3D.gd
+验证继承关系、6个场景、贴图图标、三表面模型、独立碰撞厚度、Sprite切换、NPC装备、持握点、握紧外观、合并形状和伤害去重。

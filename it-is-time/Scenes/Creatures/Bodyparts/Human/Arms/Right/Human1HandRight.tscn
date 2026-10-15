@@ -1,0 +1,37 @@
+[gd_scene load_steps=8 format=3]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/_PhysicalSampleBodyParts.tscn" id="1_base"]
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/Human/Models/Arms/Right/Human1HandRight.glb" id="2_model"]
+[ext_resource type="ArrayMesh" path="res://Resources/Meshes/Human/Arms/Right/Human1HandRight.res" id="3_mesh"]
+[ext_resource type="Script" path="res://Scripts/Creatures/BodyPartVisualState3D.gd" id="4_visual_state_type"]
+[ext_resource type="Resource" path="res://Resources/Creatures/VisualStates/Human/Human1HandRightOpen.tres" id="5_open_visual"]
+[ext_resource type="Resource" path="res://Resources/Creatures/VisualStates/Human/Human1HandRightGrip.tres" id="6_grip_visual"]
+[sub_resource type="ConvexPolygonShape3D" id="Shape"]
+resource_local_to_scene = true
+points = PackedVector3Array(-0.17077113, 0.03313777, -0.01000000, -0.15534845, 0.09443564, -0.01000000, -0.13992577, 0.12508458, -0.01000000, -0.12450309, 0.15573351, -0.01000000, -0.09365773, 0.18638245, -0.01000000, 0.44613608, 0.53884522, -0.01000000, 0.49240412, 0.55416969, -0.01000000, 0.53867216, 0.55416969, -0.01000000, 0.56951753, 0.53884522, -0.01000000, 0.97050722, 0.29365373, -0.01000000, 0.98592990, 0.27832926, -0.01000000, 1.01677526, 0.24768032, -0.01000000, 1.03219794, 0.07911117, -0.01000000, 1.03219794, 0.03313777, -0.01000000, 1.01677526, -0.16608032, -0.01000000, 0.95508454, -0.31932501, -0.01000000, 0.93966186, -0.33464947, -0.01000000, 0.92423918, -0.34997394, -0.01000000, 0.70832165, -0.45724522, -0.01000000, 0.67747629, -0.47256969, -0.01000000, 0.55409485, -0.47256969, -0.01000000, 0.41529072, -0.45724522, -0.01000000, 0.33817732, -0.44192075, -0.01000000, 0.29190928, -0.42659628, -0.01000000, 0.23021856, -0.39594735, -0.01000000, 0.19937320, -0.38062288, -0.01000000, -0.07823505, -0.22737820, -0.01000000, -0.13992577, -0.16608032, -0.01000000, -0.15534845, -0.13543139, -0.01000000, -0.17077113, -0.07413351, -0.01000000, -0.17077113, 0.03313777, 0.01000000, -0.15534845, 0.09443564, 0.01000000, -0.13992577, 0.12508458, 0.01000000, -0.12450309, 0.15573351, 0.01000000, -0.09365773, 0.18638245, 0.01000000, 0.44613608, 0.53884522, 0.01000000, 0.49240412, 0.55416969, 0.01000000, 0.53867216, 0.55416969, 0.01000000, 0.56951753, 0.53884522, 0.01000000, 0.97050722, 0.29365373, 0.01000000, 0.98592990, 0.27832926, 0.01000000, 1.01677526, 0.24768032, 0.01000000, 1.03219794, 0.07911117, 0.01000000, 1.03219794, 0.03313777, 0.01000000, 1.01677526, -0.16608032, 0.01000000, 0.95508454, -0.31932501, 0.01000000, 0.93966186, -0.33464947, 0.01000000, 0.92423918, -0.34997394, 0.01000000, 0.70832165, -0.45724522, 0.01000000, 0.67747629, -0.47256969, 0.01000000, 0.55409485, -0.47256969, 0.01000000, 0.41529072, -0.45724522, 0.01000000, 0.33817732, -0.44192075, 0.01000000, 0.29190928, -0.42659628, 0.01000000, 0.23021856, -0.39594735, 0.01000000, 0.19937320, -0.38062288, 0.01000000, -0.07823505, -0.22737820, 0.01000000, -0.13992577, -0.16608032, 0.01000000, -0.15534845, -0.13543139, 0.01000000, -0.17077113, -0.07413351, 0.01000000)
+[node name="Human_Human1HandRight" instance=ExtResource("1_base")]
+mass = 0.1
+geometry_mode = 1
+custom_model_path = NodePath("Model")
+paper_volume_enabled = true
+paper_volume_thickness = 0.08
+sprite_visible = false
+mesh_visible = true
+visual_states = Array[ExtResource("4_visual_state_type")]([ExtResource("5_open_visual"), ExtResource("6_grip_visual")])
+tags = Array[int]([2])
+metadata/source_png = "res://Assets/2DResources/Human/Separated/Limbs/06_human1_hand_right.png"
+metadata/pivot_is_initial_estimate = true
+metadata/anatomical_role = "Hand"
+[node name="CollisionShape3D" parent="." index="0"]
+position = Vector3(0, 0, 0)
+shape = SubResource("Shape")
+[node name="MeshInstance3D" parent="." index="2"]
+visible = false
+mesh = null
+[node name="Model" parent="." instance=ExtResource("2_model")]
+[node name="PaperVolume" type="MeshInstance3D" parent="Model"]
+scale = Vector3(1, 1, 0.08)
+mesh = ExtResource("3_mesh")
+metadata/flat_collision_depth = 0.02
+[node name="JointIn" type="Marker3D" parent="."]
+[node name="JointOut" type="Marker3D" parent="."]
+position = Vector3(0.76571271, -0.03060000, 0.00000000)

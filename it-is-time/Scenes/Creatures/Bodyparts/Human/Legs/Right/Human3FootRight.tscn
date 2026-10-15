@@ -1,0 +1,33 @@
+[gd_scene load_steps=5 format=3]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/_PhysicalSampleBodyParts.tscn" id="1_base"]
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/Human/Models/Legs/Right/Human3FootRight.glb" id="2_model"]
+[ext_resource type="ArrayMesh" path="res://Resources/Meshes/Human/Legs/Right/Human3FootRight.res" id="3_mesh"]
+[sub_resource type="ConvexPolygonShape3D" id="Shape"]
+resource_local_to_scene = true
+points = PackedVector3Array(-0.41625478, -0.75867516, -0.01000000, -0.21447134, 0.09890446, -0.01000000, -0.16402548, 0.12412739, -0.01000000, -0.08835669, 0.14935032, -0.01000000, 0.06298089, 0.14935032, -0.01000000, 0.13864968, 0.12412739, -0.01000000, 0.18909554, 0.09890446, -0.01000000, 1.50068790, -0.73345223, -0.01000000, 1.55113376, -0.78389809, -0.01000000, 1.55113376, -0.85956688, -0.01000000, 1.52591083, -0.93523567, -0.01000000, 1.47546497, -0.98568153, -0.01000000, 1.45024204, -1.01090446, -0.01000000, 1.37457325, -1.03612739, -0.01000000, 1.27368153, -1.06135032, -0.01000000, 0.87011465, -1.06135032, -0.01000000, -0.29014013, -1.01090446, -0.01000000, -0.36580892, -0.98568153, -0.01000000, -0.39103185, -0.96045860, -0.01000000, -0.41625478, -0.91001274, -0.01000000, -0.41625478, -0.75867516, 0.01000000, -0.21447134, 0.09890446, 0.01000000, -0.16402548, 0.12412739, 0.01000000, -0.08835669, 0.14935032, 0.01000000, 0.06298089, 0.14935032, 0.01000000, 0.13864968, 0.12412739, 0.01000000, 0.18909554, 0.09890446, 0.01000000, 1.50068790, -0.73345223, 0.01000000, 1.55113376, -0.78389809, 0.01000000, 1.55113376, -0.85956688, 0.01000000, 1.52591083, -0.93523567, 0.01000000, 1.47546497, -0.98568153, 0.01000000, 1.45024204, -1.01090446, 0.01000000, 1.37457325, -1.03612739, 0.01000000, 1.27368153, -1.06135032, 0.01000000, 0.87011465, -1.06135032, 0.01000000, -0.29014013, -1.01090446, 0.01000000, -0.36580892, -0.98568153, 0.01000000, -0.39103185, -0.96045860, 0.01000000, -0.41625478, -0.91001274, 0.01000000)
+[node name="Human_Human3FootRight" instance=ExtResource("1_base")]
+mass = 0.2
+geometry_mode = 1
+custom_model_path = NodePath("Model")
+paper_volume_enabled = true
+paper_volume_thickness = 0.08
+sprite_visible = false
+mesh_visible = true
+tags = Array[int]([1])
+metadata/source_png = "res://Assets/2DResources/Human/Separated/Limbs/12_human3_foot_right.png"
+metadata/pivot_is_initial_estimate = true
+metadata/anatomical_role = "Foot"
+[node name="CollisionShape3D" parent="." index="0"]
+position = Vector3(0, 0, 0)
+shape = SubResource("Shape")
+[node name="MeshInstance3D" parent="." index="2"]
+visible = false
+mesh = null
+[node name="Model" parent="." instance=ExtResource("2_model")]
+[node name="PaperVolume" type="MeshInstance3D" parent="Model"]
+scale = Vector3(1, 1, 0.08)
+mesh = ExtResource("3_mesh")
+metadata/flat_collision_depth = 0.02
+[node name="JointIn" type="Marker3D" parent="."]
+[node name="JointOut" type="Marker3D" parent="."]
+position = Vector3(1.35011465, -0.78000000, 0.00000000)

@@ -5,10 +5,12 @@ extends RigidBody3D
 signal damaged(amount: float, remaining_hp: float, source: Node)
 signal broken(source: Node)
 signal slipping_changed(value: bool)
+signal visual_state_changed(state: StringName)
 
 const OUTLINE_SHADER: Shader = preload("res://Shaders/BodyPartOutline.gdshader")
 const DEFAULT_DAMAGE_NUMBER_SCENE: PackedScene = preload("res://Scenes/VFX/DamageNumber3D.tscn")
 const MIN_SIZE: float = 0.001
+const VISUAL_SWITCHER = preload("res://Scripts/Creatures/BodyPartVisualSwitcher3D.gd")
 
 enum BodyPartTag {
 	Torso,
@@ -24,6 +26,7 @@ enum BodyPartTag {
 	Feather,
 	Tail,
 	Horn,
+	ArmLimb, # Append: existing serialized tag values remain unchanged.
 }
 
 @export_group("Classification")
@@ -119,6 +122,16 @@ enum GeometryMode { BOX_FIT, CUSTOM_MODEL }
 		mesh_visible = value
 		_sync_visual_visibility()
 
+@export_group("Visual States")
+@export var visual_states: Array[BodyPartVisualState3D] = []
+## Empty restores the authored model. Runtime calls do not change this saved default.
+@export var initial_visual_state: StringName = &"":
+	set(value):
+		initial_visual_state = value
+		if is_node_ready() and not Engine.is_editor_hint(): set_visual_state(value)
+## Empty automatically chooses the custom PaperVolume, custom mesh or box mesh.
+@export_node_path("MeshInstance3D") var visual_state_mesh_path: NodePath
+
 @export_group("Paper Model Volume")
 ## Requires a baked PaperVolume mesh under the custom model. Off for ordinary body parts.
 @export var paper_volume_enabled: bool = false:
@@ -161,6 +174,7 @@ var _paper_collision_shape: ConvexPolygonShape3D
 var _paper_original_depth: float = 0.02
 var _paper_signature: Array = []
 var _last_signature: Array = []
+var _visual_switcher := VISUAL_SWITCHER.new()
 var current_hp: float = 100.0
 var _damage_service: Node
 var _collision_logging_enabled: bool = false
@@ -230,6 +244,7 @@ func _ready() -> void:
 	if console != null and console.has_method("is_damage_tracking_enabled"):
 		damage_logging_enabled = bool(console.call("is_damage_tracking_enabled"))
 	_sync_geometry()
+	if not Engine.is_editor_hint() and not initial_visual_state.is_empty(): set_visual_state(initial_visual_state)
 	if not Engine.is_editor_hint():
 		add_to_group(&"physical_body_parts")
 		call_deferred("_sync_limb_terrain_collisions")
@@ -472,7 +487,7 @@ func _sync_geometry() -> void:
 		return
 	var edges := get_outline_edge_distances()
 	var safe_thickness := maxf(collision_thickness, MIN_SIZE)
-	var mesh_resource: Mesh = _mesh.mesh if is_instance_valid(_mesh) else null
+	var mesh_resource: Mesh = _visual_switcher.source_mesh(_mesh) if is_instance_valid(_mesh) else null
 	var mesh_bounds := mesh_resource.get_aabb() if mesh_resource != null else AABB()
 	var signature := [edges, safe_thickness, _sprite.axis, _sprite.texture, mesh_resource, mesh_bounds]
 	if signature == _last_signature:
@@ -510,7 +525,7 @@ func _sync_geometry() -> void:
 
 func _sync_visual_visibility() -> void:
 	if is_instance_valid(_sprite):
-		_sprite.visible = sprite_visible
+		_sprite.visible = sprite_visible and get_visual_state().is_empty()
 	if geometry_mode == GeometryMode.CUSTOM_MODEL:
 		if not is_instance_valid(_custom_model) and not custom_model_path.is_empty():
 			var candidate := get_node_or_null(custom_model_path) as Node3D
@@ -550,7 +565,8 @@ func _sync_paper_volume() -> void:
 	_paper_volume.visible = paper_volume_enabled
 	for visual: MeshInstance3D in _paper_source_meshes:
 		if is_instance_valid(visual): visual.visible = not paper_volume_enabled
-	_paper_volume.scale.z = paper_volume_thickness
+	if _visual_switcher.is_target(_paper_volume): _visual_switcher.update_paper_depth(paper_volume_thickness)
+	else: _paper_volume.scale.z = paper_volume_thickness
 	if _paper_side_material == null:
 		_paper_side_material = _paper_volume.mesh.surface_get_material(2).duplicate() as StandardMaterial3D
 		_paper_volume.set_surface_override_material(2,_paper_side_material)
@@ -572,10 +588,75 @@ func _sync_paper_volume() -> void:
 func _sync_mesh_geometry(size: Vector3) -> void:
 	if not is_instance_valid(_mesh) or _mesh.mesh == null:
 		return
-	var bounds := _mesh.mesh.get_aabb()
+	var source := _visual_switcher.source_mesh(_mesh)
+	if source == null: return
+	var bounds := source.get_aabb()
 	if bounds.size.x <= 0.0 or bounds.size.y <= 0.0 or bounds.size.z <= 0.0:
 		return
 	var model_scale := size / bounds.size
-	_mesh.transform = _collision.transform * Transform3D(
+	var pose := _collision.transform * Transform3D(
 		Basis.from_scale(model_scale), -bounds.get_center() * model_scale
 	)
+	if _visual_switcher.is_target(_mesh): _visual_switcher.update_base_transform(pose)
+	else: _mesh.transform = pose
+
+func get_visual_state() -> StringName:
+	return _visual_switcher.current_state
+
+func get_available_visual_states() -> Array[StringName]:
+	var result: Array[StringName] = []
+	for state: BodyPartVisualState3D in visual_states:
+		if state != null and not state.state_name.is_empty() and state.mesh != null and state.state_name not in result:
+			result.append(state.state_name)
+	return result
+
+## Swaps render resources in place; the rigid body, collider, joints and sockets are untouched.
+func set_visual_state(state_name: StringName) -> bool:
+	if state_name.is_empty():
+		var changed := not get_visual_state().is_empty()
+		_visual_switcher.restore()
+		_sync_visual_visibility()
+		if changed: visual_state_changed.emit(&"")
+		return true
+	if not is_inside_tree():
+		push_warning("[part_visual] Set Initial Visual State before entering the tree, or call set_visual_state after ready.")
+		return false
+	var selected: BodyPartVisualState3D
+	for state: BodyPartVisualState3D in visual_states:
+		if state != null and state.state_name == state_name:
+			if selected != null:
+				push_warning("[part_visual] Duplicate state '%s' on %s." % [state_name,name])
+				return false
+			selected = state
+	var target := _resolve_visual_state_mesh()
+	if target != null and not is_ancestor_of(target): target = null
+	var anchor_position: Variant = null
+	if selected != null and not selected.anchor_path.is_empty():
+		var anchor := get_node_or_null(selected.anchor_path) as Node3D
+		if anchor == null or not is_ancestor_of(anchor) or not selected.mesh_anchor.is_finite() or target == null:
+			push_warning("[part_visual] Invalid visual anchor on %s; current appearance retained." % name)
+			return false
+		var frame := target.get_parent()
+		while frame != null and not frame is Node3D: frame = frame.get_parent()
+		if frame == null: return false
+		anchor_position = (frame as Node3D).to_local(anchor.global_position)
+	if not _visual_switcher.apply(selected,target,anchor_position):
+		push_warning("[part_visual] Missing or invalid state/mesh '%s' on %s; current appearance retained." % [state_name,name])
+		return false
+	if target == _paper_volume and target.mesh.get_surface_count() > 2 and _paper_side_material != null:
+		target.set_surface_override_material(2,_paper_side_material)
+	_sync_visual_visibility()
+	visual_state_changed.emit(state_name)
+	return true
+
+func _resolve_visual_state_mesh() -> MeshInstance3D:
+	if not visual_state_mesh_path.is_empty(): return get_node_or_null(visual_state_mesh_path) as MeshInstance3D
+	if geometry_mode == GeometryMode.BOX_FIT: return _mesh
+	var model := get_node_or_null(custom_model_path) as Node3D
+	if model == null: return null
+	var paper := model.get_node_or_null("PaperVolume") as MeshInstance3D
+	if paper_volume_enabled and paper != null: return paper
+	if model is MeshInstance3D: return model as MeshInstance3D
+	for child: Node in model.find_children("*","MeshInstance3D",true,false):
+		if child != paper: return child as MeshInstance3D
+	return null

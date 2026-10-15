@@ -57,11 +57,17 @@ func _update_spider_limb_visuals() -> void:
 				if BODY_PART.BodyPartTag.Leg in other.tags: connections[upper].tip = joint
 				elif BODY_PART.BodyPartTag.Torso in other.tags: connections[upper].root = joint
 			for upper: PhysicalBodyPart3D in connections:
+				if not upper.visual_state_changed.is_connected(_on_limb_visual_state_changed):
+					upper.visual_state_changed.connect(_on_limb_visual_state_changed)
+				if upper.get_meta(&"generated_layout", {}).get("part_editor_override", false): continue
 				var pair: Dictionary = connections[upper]
 				if not pair.has("root") or not pair.has("tip"): continue
 				var row := LIMB_VISUAL_STRETCH.new()
 				if row.configure(upper, pair.root, pair.tip, spider_limb_visual_end_ratio): _spider_stretch_rows.append(row)
 	for row: RefCounted in _spider_stretch_rows: row.update()
+
+func _on_limb_visual_state_changed(_state: StringName) -> void:
+	_spider_stretch_dirty = true
 
 ## Long lower legs bend with the chain rather than behaving as upright feet.
 @export_range(0.0, 90.0, 0.5) var spider_leg_bend_limit_degrees: float = 75.0
@@ -217,6 +223,7 @@ func _instantiate_blueprint(blueprint: Dictionary, generator_transform: Transfor
 				if child is Node3D and not child.has_meta(&"generated_connection_port"):
 					child.transform = flip * child.transform
 		# Collision follows the original frame, independently of the imported visual silhouette.
+		if part.get_meta(&"generated_layout", {}).get("part_editor_override", false): continue
 		var size: Vector3 = part.get_meta(&"generated_framework_size")
 		var shape := BoxShape3D.new()
 		shape.resource_local_to_scene = true

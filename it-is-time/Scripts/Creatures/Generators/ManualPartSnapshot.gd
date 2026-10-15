@@ -3,7 +3,7 @@ extends RefCounted
 
 const VERSION := 1
 const LENGTH_PROPERTIES := [&"left_distance", &"right_distance", &"top_distance", &"bottom_distance", &"collision_thickness"]
-const PROPERTIES := [&"geometry_mode", &"custom_model_path", &"paper_volume_enabled", &"paper_volume_thickness", &"sprite_visible", &"mesh_visible", &"paper_side_color"]
+const PROPERTIES := [&"geometry_mode", &"custom_model_path", &"paper_volume_enabled", &"paper_volume_thickness", &"sprite_visible", &"mesh_visible", &"paper_side_color", &"visual_states", &"initial_visual_state", &"visual_state_mesh_path"]
 
 static func relative_transform(node: Node3D, body: Node3D) -> Transform3D:
 	var result := node.transform
@@ -54,6 +54,10 @@ static func capture(body: Node3D, multiplier: float, source_scene: String) -> Di
 		if child is MeshInstance3D and child.mesh != null:
 			var mesh_path: String = child.mesh.resource_path
 			if mesh_path.begins_with("res://") and not mesh_path.contains("::"): entry["mesh_path"] = mesh_path
+			# Small procedural meshes (e.g. feathers) have no source asset to restore from.
+			elif mesh_path.is_empty():
+				entry["mesh"] = child.mesh
+				entry["material_override"] = child.material_override
 		if child is VisualInstance3D: entry["visible"] = child.visible
 		snapshot.nodes.append(entry)
 	return snapshot
@@ -77,6 +81,9 @@ static func apply_to(body: Node3D, snapshot: Dictionary, multiplier: float, sour
 	for entry: Dictionary in snapshot.nodes:
 		var node := body.get_node(entry.path)
 		if node is MeshInstance3D and entry.has("mesh_path"): node.mesh = load(entry.mesh_path)
+		elif node is MeshInstance3D and entry.has("mesh"):
+			node.mesh = entry.mesh
+			node.material_override = entry.get("material_override")
 		if entry.has("visible"): node.visible = entry.visible
 	body.prepare_generated_geometry()
 	var targets := {}

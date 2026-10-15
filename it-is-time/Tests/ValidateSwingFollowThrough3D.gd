@@ -14,6 +14,10 @@ func _validate() -> void:
 	preset.swing_duration = 0.1
 	preset.follow_through_ratio = 2.0
 	preset.minimum_follow_through_time = 0.15
+	preset.sustained_swing_duration = 0.25
+	preset.minimum_swing_torque = 30.0
+	preset.maximum_swing_torque = 150.0
+	preset.sustained_swing_torque = 30.0
 	controller.refresh_arm_bindings()
 	assert(controller.begin_charge(0))
 	controller.add_charge_time(0, 0.5)

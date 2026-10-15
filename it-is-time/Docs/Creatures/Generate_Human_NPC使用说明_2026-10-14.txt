@@ -1,0 +1,70 @@
+Generate_Human_NPC
+
+场景：res://Scenes/Creatures/Characters/Generate_Human_NPC.tscn
+继承：Generate_Human.tscn -> _BaseGeneratedCreature.tscn -> _SampleCharacter.tscn。
+角色脚本：GeneratedHumanNPCCharacter3D -> GeneratedHumanCharacter3D -> GeneratedCreatureCharacter3D。
+继承当前 Human 已保存的体型、部件引用、手动布局、碰撞箱、关节和移动/挥舞预设。
+
+使用
+将 NPC 场景实例化到有可用 NavigationRegion3D 导航网格的关卡中。
+根节点 Faction Id 默认为 1；同阵营互相避让，不作为攻击目标，不同阵营才会被索敌。
+Initial Weapon Scene 默认使用 res://Scenes/Items/CustomWeapon_1.tscn。
+可替换为已构建且含有效碰撞箱的 SampleWeapon3D 武器场景；清空该属性则空手生成。Weapon_Test.tscn 是空模板，不能直接用作初始武器。
+装备绑定 GeneratedParts/Arm_R/ItemSocket3D，由现有物品栏、碰撞忽略和伤害系统处理；NPC 隐藏玩家物品栏 HUD。
+重新生成时保留已有物品并绑定到新手部，不重复添加初始武器；手部断裂后按现有规则掉落武器。
+
+AI 与攻击
+NPCStateMachine3D 使用 HumanNPCStateMachine3D，继承现有 NPC 的导航、同场景索敌、最近躯干目标、友军避让、命中预测和冷却逻辑。
+朝向仅取世界 +X/-X；Z 方向通过行走接近目标。小角度偏差用接地牵引修正，不抢占行走序列。大角度转身超过 Movement Turn Pause Degrees（默认 45°）时暂停接近，误差回到 Attack Facing Tolerance Degrees（15°）、角速度小于 15°/秒并持续确认 0.2 秒后恢复。攻击仍要求朝向误差不超过 15°。
+默认慢速行走；NPCStateMachine3D 的 Use Fast Movement 可以打开快速档。
+行为预设：res://Resources/AI/HumanMeleeAI.tres。
+其中 PrimaryArm 调用 LimbSwingController3D：参考攻击距离 6，配置最大距离 9，蓄力 0.6 秒，冷却 2 秒。
+开启命中预测时，还会根据手臂链、手部和实际武器碰撞箱计算攻击范围，并保留躯干安全间距；配置范围内也必须预测能够命中才发动攻击。
+挥舞动作数值仍使用 res://Resources/Combat/HumanArmSwing.tres 和各手部 ArmSwingBinding。
+物理预测是简化轨迹估计，重武器、极端体型或复杂地形的实际命中率仍需游戏中校准。
+Controller 接入此 NPC 后由玩家控制并暂停 AI，弹出后恢复 AI。
+
+控制台追踪
+tracknpcstate on GenerateHumanNPC
+tracknpcmotion on GenerateHumanNPC
+motiondetail full
+npcstates GenerateHumanNPC
+关卡实例重命名后，将以上筛选名称改为实际节点名称；也支持完整节点路径或实例 ID。
+
+验证
+Tests/ValidateHumanNPC3D.gd：自动生成、14 部位/13 关节、武器与阵营、真实寻路迈步、自动攻击、左侧转身门槛、重新生成、玩家接管和断臂掉落。
+追加用户参数 --left-target 可验证左侧目标的实际腿部转身和攻击。
+Tests/ValidateNPCHitPrediction3D.gd、ValidateNPCInitialEquipment3D.gd、SmokeHumanMovement3D.gd 用于检查原 NPC 和玩家 Human 的兼容性。
+Tests/ValidateHumanLimbPose3D.gd 验证 TestLevel 中的远距离斜向追踪、姿态受扰恢复、挥舞让权、禁用恢复原有阻尼/弹簧及重新生成。
+
+Human Limb Pose
+在 Generate_Human 或 Generate_Human_NPC 下选择 GeneratedLegStepMovementController3D，Inspector 的 Human Limb Pose 组控制新功能。
+Human Limb Pose Enabled：默认开启；关闭后恢复原来的被动腿部阻尼及手臂弹簧。该开关只控制姿态力矩，膝部防内弯的原生关节限位继续生效。
+Human Pose Frequency：默认 3 Hz，控制恢复原始相对姿态的速度。
+Human Pose Damping Ratio：默认 1.1，抑制恢复过冲。
+Human Pose Acceleration Limit：默认 80，限制姿态恢复的角加速度。
+Human Pose Torque Limit：默认 40，在惯量换算后限制每个关节的最终扭矩。
+Human Moving Pose Weight：默认 0.2，控制行走中支撑腿的姿态辅助比例。
+Human Swing Knee Weight：默认 0.35，控制迈步期间膝部随脚部轨迹变化的姿态辅助；只施加弯曲轴方向的扭矩，髋关节让出控制权。
+腿部采用两节链几何计算，明确选择朝角色中轴线外侧的弯曲解。膝关节保留原本向外的最大弯曲量（原生约 60° 的限位是相对生成姿态，不能直接当成相对伸直位置的角度），伸直位置向内留有 2° 求解缓冲；靠近伸直前 8° 开始柔性恢复。角度根据不可变关节锚点换算，不移动生成界面的模型、碰撞箱或连接点。
+静止手臂仍维持原始相对姿态。转身期间腿部姿态辅助让出控制权，膝部的原生单向限位仍生效。转身落点按两段肢体的真实长度、脚部连接点偏移和髋部侧向活动范围裁剪，小步转身使用配置的最大步频预算。
+非攻击手臂维持原始相对姿态；蓄力、挥舞与恢复期间，该攻击链的上臂、前臂、手均让出控制权。Broken 部位/断裂关节不施加姿态扭矩，起身恢复和 Planar 模式不使用该姿态辅助。
+该功能为柔性的物理姿态恢复，不会把关节固定成动画；负重时允许一定角度偏差。更大体型或更重武器可能需要提高最终扭矩上限。
+转向牵引现在计入四肢和装备对应的身体惯量，仍通过真实接地脚授权施力。普通迈步和转向步按实际水平追赶距离延长腾空时间，同步降低追踪增益，未降低躯干推进力。
+tracknpcmotion 的 stance_support.human_limb_pose 输出每个关节的 owner、误差、扭矩、限幅、淡入权重；age_frames 表示该控制结果距当前帧的距离，暂停期间旧数据不能作为正在施力的证据。
+tracknpcstate 的 human_turn_gate 输出转身暂停状态、朝向误差和稳定确认时间。
+
+Human 膝部与速度修正
+生成和缓存刷新均会恢复膝部单向限位；Generate_Human_NPC 继承同一套修正。
+落点以髋部和预计落地时的躯干位置为参考，检查两段肢体长度及膝/髋弯曲限位；非法落点由原有射线采样器逐步向后搜索。Z 方向移动保留原本左右站宽，并按髋部 X 轴活动范围限制侧向落点。
+Stepping Chain Mass Ratio 在 Human 场景中设为 1.0：脚部追踪计入完整两段 LegLimb 质量。该参数仍使用原控制器的力和加速度限制。
+Inspector 的 Human Speed Control 组：Human Speed Compensation Enabled 默认开启；Human Speed Integral Gain 默认 1.5。累计补偿的加速度不超过原接地加速度预算的一半，最终推进仍受接地、加速度和摩擦限制。
+停止输入、显著改变目标速度/方向、失去接地支撑、攻击、转身、恢复或 Planar 模式会清除补偿；发生限幅时暂停向饱和方向累积。
+tracknpcmotion 的 stance_support.human_limb_pose 膝部条目新增 outward_bend_degrees（正为向外）、inward（负角度）、extension_limit_exceeded（超过 2° 伸直缓冲）和 measured_z_limits_degrees（B 相对 A 的角度，原生限位采用相反符号）。角度在躯干 X-Y 平面内计算，避免把侧向允许的 X 轴摆动计成内弯。
+contact_drive.human_speed_control 输出 enabled、grounded、attacking、error、integral_acceleration 和 saturated。
+Tests/ValidateHumanKneeControl3D.gd 检查缓存刷新、落点可达性、连续左右/前后移动、膝部内弯、速度、停止/攻击时清除补偿和重新生成。
+
+本轮验证边界
+当前手动布局 Human4 的受控平地测试：+X 约 1.388、-X 约 1.396，对比 TargetSpeed=1.4；+Z 约 0.759、-Z 约 0.839，侧向仍未达标。最大向内弯曲约 2.46°，在 2° 伸直缓冲附近存在少量物理解算误差。
+当前 Human4 的转身、NPC 寻路/左右目标攻击、挥舞、装备重新绑定、断链取消以及参数禁用和恢复均经过回归。五套生成预设的编辑器生成和手动保存恢复通过；其他预设尚未全部通过 10 秒转身耗时检查，不代表它们已具有与当前 Human4 相同的移动性能。
+切换 Human Set 的运行测试会关闭旧预设的手动布局，以免把旧框架和新预设的连接点校准混用；当前已保存的 Human4 布局继续用于其专门测试。

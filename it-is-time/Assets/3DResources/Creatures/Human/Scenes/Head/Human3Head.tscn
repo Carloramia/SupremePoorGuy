@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3]
+[ext_resource type="ArrayMesh" path="res://Resources/Meshes/Human/Head/Human3Head.res" id="1_mesh"]
+[node name="Human3Head" type="Node3D"]
+metadata/source_png = "res://Assets/2DResources/Human/Separated/Base/01_human3_head.png"
+[node name="PaperVolume" type="MeshInstance3D" parent="."]
+scale = Vector3(1, 1, 0.08)
+mesh = ExtResource("1_mesh")
+[node name="JointIn" type="Marker3D" parent="."]
+[node name="JointOut" type="Marker3D" parent="."]
+position = Vector3(1.2852094552929083, 0.6815999999999999, 0)

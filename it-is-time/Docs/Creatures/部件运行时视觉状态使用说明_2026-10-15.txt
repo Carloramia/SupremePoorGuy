@@ -1,0 +1,71 @@
+部件运行时视觉状态
+
+适用范围
+所有继承_PhysicalSampleBodyParts.tscn、使用PhysicalBodyPart3D的部件。
+功能替换现有MeshInstance3D节点的Mesh资源、整体材质和局部显示变换；节点本身及其路径保持不变。
+它不替换RigidBody3D或整套Part场景，也不向物理结构加入新的节点。
+复合模型如果含有多个独立MeshInstance3D，当前配置只针对Visual State Mesh Path指定的那个网格。
+
+Inspector配置
+Visual States / Visual States：BodyPartVisualState3D资源数组，每个资源的State Name必须唯一。
+Visual States / Initial Visual State：开始运行时的状态名。空字符串保留原始模型；填open或grip可设置Human手部初始姿态。
+为防止在编辑器保存时把替代网格写回原始模型，Initial Visual State只在运行时应用；编辑器的默认外观保留原状。
+Visual States / Visual State Mesh Path：可选的MeshInstance3D路径。留空自动选取纸片Model/PaperVolume、自定义模型中的网格或默认MeshInstance3D。
+Sprite Visible、Mesh Visible仍控制原有的显示开关；启用网格状态期间会隐藏原Sprite3D，避免两套视觉重叠。
+
+状态资源BodyPartVisualState3D
+State Name：状态ID，例如open、grip、damaged。
+Mesh：提前生成并保存的网格，可以包含多个材质表面。
+Material Override：可选。留空使用网格自身的材质；设置后覆盖整张网格。
+Visual Transform：相对于该网格原始显示变换的调整，保留生成器和手动布局已有的缩放。
+Anchor Path：可选，指向该Part内部现有的Marker3D或Node3D。例如JointIn。
+Mesh Anchor：新网格内部对应的连接位置。启用Anchor Path后，该点对齐到指定节点，Visual Transform的平移改由这个对齐结果决定。
+连接标记本身不会移动。
+
+运行时API（在节点已进入场景树并完成初始化后调用）
+hand.set_visual_state(&"open")        # 松开
+hand.set_visual_state(&"grip")        # 握紧
+hand.set_visual_state(&"")            # 恢复原始模型
+hand.get_visual_state()              # 查询当前状态
+hand.get_available_visual_states()   # 查询已配置的有效状态名
+hand.visual_state_changed.connect(callback)  # 在成功切换/恢复时通知其他组件
+set_visual_state返回bool。名称不存在、重复、网格无效或连接标记无效时返回false，并保留当前外观。
+初始化之前请设置initial_visual_state，不直接调用set_visual_state。
+运行时调用不会改变保存的initial_visual_state。
+
+Human手部
+Human1～Human5共10个手部已挂载open和grip两个预设。
+资源目录：res://Resources/Creatures/VisualStates/Human/
+例如：Human4HandRightOpen.tres、Human4HandRightGrip.tres。
+网格目录：res://Resources/Meshes/Human/HandStates/，共20个提前烘焙的厚纸片模型。
+图源：res://Assets/2DResources/Human/Separated/HandStates/，每种姿态使用掌心和手背两张图。
+背面UV已镜像，真实朝向决定显示哪面，无需额外切换front/back状态。
+两张AI图的外轮廓可能有细小差异，实体侧面和背面的透明裁切沿用掌心轮廓，背面缺边用正面纸纹补齐。
+侧面轮廓只在工具烘焙时计算，运行时不会重新扫描图片或生成网格。
+手部模型按原资产的手腕到手指延伸方向与长度校准，各状态以现有JointIn对齐。
+默认Initial Visual State仍为空，空手时保留现有角色外观。
+InventoryController3D装备SampleWeapon3D成功后，会将实际持握部位切换为grip；玩家拾取/切换装备和NPC初始武器使用同一流程。
+切换空槽、再次选择同一槽取消装备、断肢掉落、武器被删除时，恢复装备前的视觉状态（原始模型、open或其他状态）。重新生成Human后，新持握部位会重新进入grip。
+只有配置了有效grip预设的部位参与自动切换；未配置的部位保持原行为。若其他系统已经把持握部位切换到另一个状态，卸下装备时不覆盖该状态。
+无需另加输入映射；装备系统只切换视觉，不改变原有持握点、质量合并、碰撞或攻击机制。
+
+预览与重建
+三维预览：res://Assets/3DResources/Creatures/Human/Previews/Human4HandStatesPreview.tscn。
+该预览只含视觉模型，可在3D编辑器中观察掌心、手背和厚度，不参与角色物理。
+重新烘焙：Godot --headless --path <项目目录> --script res://Tools/BakeHumanHandStates.gd。
+标定信息：res://Assets/3DResources/Creatures/Human/Metadata/hand_state_models.json。
+如果再次改变原始手部尺寸或更换整套图源，需要重新检查该标定文件的pixel_unit和rotation_z。
+
+物理与生成保证
+视觉切换不修改碰撞箱形状/变换、刚体位置/速度/质量、HP、Tag、JointIn/JointOut、Joint或ItemSocket3D。
+每个Part独立保存原始视觉资源和变换，可恢复；不会修改共享Mesh资源或其他实例。
+手动布局快照会保存视觉状态数组、初始状态和目标网格路径，重新生成可保留配置。
+Spider视觉拉伸缓存会在部件视觉切换后刷新，避免旧网格覆盖新外观。
+松开/握紧仍共用原有碰撞箱，因此视觉外轮廓与碰撞范围可能有差异；不会因切换碰撞形状向关节系统注入冲量。
+
+验证
+ValidateBodyPartVisualStates3D：全部10个手部切换/恢复、独立实例、正反面资源、UV、2倍缩放快照、初始状态、普通Box部件以及生成Human/NPC的插槽与关节。
+ValidateHumanParts3D：原有88个Human物理部件、网格、碰撞厚度和连接标记。
+ValidateManualPartSnapshot：Wolf手动布局保存/重载、重复生成和缩放。
+ValidateHumanControl3D（Human4）：站立、侧移、转向、装备再生成和断肢取消攻击。
+ValidateHumanWeaponGrip3D：玩家左右手装备切换、空槽/取消选择、恢复先前状态、删除武器、重新生成、断肢掉落和NPC初始装备。

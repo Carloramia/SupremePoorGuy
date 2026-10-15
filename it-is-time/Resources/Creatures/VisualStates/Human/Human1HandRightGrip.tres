@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="BodyPartVisualState3D" format=3]
+
+[ext_resource type="ArrayMesh" path="res://Resources/Meshes/Human/HandStates/Human1HandRightGrip.res" id="1_ksr5m"]
+[ext_resource type="Script" path="res://Scripts/Creatures/BodyPartVisualState3D.gd" id="2_emneq"]
+
+[resource]
+resource_name = "Human1HandRightGrip"
+script = ExtResource("2_emneq")
+state_name = &"grip"
+mesh = ExtResource("1_ksr5m")
+anchor_path = NodePath("JointIn")

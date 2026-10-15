@@ -1,0 +1,39 @@
+Human 模型与物理部件
+
+88 个 GLB、88 个独立模型场景、88 个继承 _PhysicalSampleBodyParts.tscn 的物理部件。
+Human4 新增 17 套，Human5 新增 18 套；Human1/2/3 的模型、物理场景与生成角色保持原样。
+Models / Textures / Scenes 按 Head、Torso、Arms/Left、Arms/Right、Legs/Left、Legs/Right、Weapons、Decorations 分类。
+物理部件位于 res://Scenes/Creatures/Bodyparts/Human/ 的相同子目录中。
+预烘焙网格位于 res://Resources/Meshes/Human/。不需要在角色运行时重新挤出侧面。
+
+每个模型使用原分件 PNG 作为正面和背面，XY 是图片平面，+Z 是厚度方向；保留透明孔洞与凹边的视觉。
+PaperVolume 包含正面、背面、灰色侧面三层表面。独立模型场景可直接预览；物理部件启用 CUSTOM_MODEL。
+物理部件默认厚度 0.08，paper_volume_thickness 只改变 Z 厚度，并同步碰撞体，不改变 XY 尺寸。
+碰撞体采用贴合外轮廓的简化凸包：凹陷和连接孔在物理上会被填平。后续需要更精确碰撞时，可单独编辑 CollisionShape3D。
+metadata/anatomical_role 标明具体部位；头部为 Head 标签，胸/腰裙为 Torso，手臂各段为 Arm，上下腿为 LegLimb，脚为 Leg。武器与装饰没有身体标签。
+Weapons 的6件模型和通用物理部件资源保留；现已另外创建 res://Scenes/Items/Weapons/Human/ 下继承 _SampleWeapon 的可拾取武器场景，接入装备和伤害逻辑。具体用法见该目录的使用说明.txt。
+
+JointIn/JointOut 是初始装配标记。关节孔和圆盘按图估算，尚未在完整 Human 角色上逐一装配校准。
+初始 XY 比例按原素材对应部分的可见高度估算，参考 0.01 世界单位/原图像素。补全区域会有小幅轮廓变化。
+可在 Metadata/build_settings.json 修改 visible_size、joint_in、joint_out、mass、thickness。joint 坐标归一化在不透明内容范围内。
+既有物理场景不会被构建脚本覆盖，避免丢失用户手调的标记或碰撞体。
+后续用生成器接入时，优先 KEEP_SIZE 保留模型比例；由生成器按 PartWidth 管理厚度。
+
+预览：
+res://Assets/3DResources/Creatures/Human/Previews/Human1PartsPreview.tscn
+res://Assets/3DResources/Creatures/Human/Previews/Human2PartsPreview.tscn
+res://Assets/3DResources/Creatures/Human/Previews/Human3PartsPreview.tscn
+res://Assets/3DResources/Creatures/Human/Previews/Human4PartsPreview.tscn
+res://Assets/3DResources/Creatures/Human/Previews/Human5PartsPreview.tscn
+res://Assets/3DResources/Creatures/Human/Previews/HumanAllPartsPreview.tscn
+
+重建流程：
+1. Python Tools/prepare_assets.py --sets=4,5：从 RawEdits 清理新分件边缘，追加最终 PNG、清单及 build_settings。默认保留已有最终图和对应元数据；--reclean 只重清理所选套数。
+2. Python Tools/build_models.py：生成 GLB 和贴图副本。--rebuild-models 可刷新 GLB/贴图，保留已有场景。
+3. Godot 编辑器导入新 GLB 和 PNG。
+4. Godot --headless --path . --script res://Tools/BakeHumanVolumes.gd：烘焙三表面网格。
+5. Python Tools/build_models.py --physical：生成继承式物理部件与预览，刷新独立模型场景。
+6. Godot --headless --path . --script res://Tests/ValidateHumanParts3D.gd：检查资源、面朝向、贴图、标签、标记和独立厚度。
+
+HumanGenerator 已增加 Human4/5 预设，选择范围为 Human1 至 Human5；Generate_Human 中通过 HumanGenerator 子节点的 Human Set 选择。两套新增角色使用同一套 14 刚体/13 关节结构，并保留统一像素尺度、实际孔位与原图姿态标定。原三套标定数据和默认 Human1 选择保持不变。
+

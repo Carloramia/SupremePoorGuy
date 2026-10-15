@@ -3,7 +3,7 @@ extends RefCounted
 
 ## Bake a unit-depth volume once. Runtime changes scale only Z and update the side material.
 ## Pixel boundary runs include concavities and interior holes, unlike a convex collision hull.
-static func build(source: Mesh, material: StandardMaterial3D) -> ArrayMesh:
+static func build(source: Mesh, material: StandardMaterial3D, outline_max_size: int = 0) -> ArrayMesh:
 	var arrays := source.surface_get_arrays(0)
 	var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
 	var uvs: PackedVector2Array = arrays[Mesh.ARRAY_TEX_UV]
@@ -12,6 +12,9 @@ static func build(source: Mesh, material: StandardMaterial3D) -> ArrayMesh:
 	var image := material.albedo_texture.get_image()
 	if image == null: return null
 	if image.is_compressed() and image.decompress() != OK: return null
+	if outline_max_size > 0 and maxi(image.get_width(),image.get_height()) > outline_max_size:
+		var ratio := float(outline_max_size)/maxi(image.get_width(),image.get_height())
+		image.resize(maxi(1,roundi(image.get_width()*ratio)),maxi(1,roundi(image.get_height()*ratio)),Image.INTERPOLATE_LANCZOS)
 	var uv_basis := Transform2D(uvs[1]-uvs[0],uvs[2]-uvs[0],uvs[0])
 	if is_zero_approx(uv_basis.determinant()): return null
 	var mapping := Transform2D(Vector2(vertices[1].x-vertices[0].x,vertices[1].y-vertices[0].y),Vector2(vertices[2].x-vertices[0].x,vertices[2].y-vertices[0].y),Vector2(vertices[0].x,vertices[0].y)) * uv_basis.affine_inverse()

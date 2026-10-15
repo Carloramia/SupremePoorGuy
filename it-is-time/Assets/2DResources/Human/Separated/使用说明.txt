@@ -1,0 +1,32 @@
+Human 五张原图分件资源
+
+原图：Humanoid_1.png 至 Humanoid_5.png。Unprocessed 下的原图未修改，Human 根目录保留同内容副本。
+共 88 张最终透明 PNG：Human1 17 张、Human2 19 张、Human3 17 张、Human4 17 张、Human5 18 张。
+Base：头部、上躯干、腰裙（共 15 张）。
+Limbs：左右上臂、前臂、手、大腿、小腿、脚（共 60 张）。
+Weapons：第一套长矛、第二套爪形护手、第三套弯刀、第四套流星锤、第五套长矛和盾牌（共 6 张）。
+Attachments：五套代表性铆钉、第二套左右叶枝（共 7 张）。同款铆钉可重复使用。
+
+Left/Right 表示原图画面左右，不代表角色解剖学上的左右。
+头部包含头发、头饰与短颈。腰带和裙甲暂作为 Pelvis 整体。第一套耳状头饰、三套头发、腰带/裙片以后仍可进一步拆分。
+手部与武器已分离；第二套被护手遮挡的手按同风格补全。
+AI 拆分和补全保持原有纸片风格，但并非原图逐像素复制。最终图片只进行了透明边缘/杂色清理、等比例缩小和裁边，不进行非等比拉伸。
+RawEdits 保留原始 AI 输出，Superseded 保存被替换的初稿；.gdignore 阻止这些制作档案重复导入 Godot。
+SourceCrops 为修正分件时使用的原图局部参考，同样不导入运行时资源。
+ContactSheet.jpg 为总览；Human1 至 Human5ContactSheet.jpg 分套显示。Preview.html 可查看全部图片。
+
+对应模型：res://Assets/3DResources/Creatures/Human/
+对应物理部件：res://Scenes/Creatures/Bodyparts/Human/
+资源清单：asset_manifest.json；原始拆分描述：generation_jobs.json、extra_specs.json；局部修正描述：imagegen_refinements.json。
+
+Human4/5 补充制作记录：generation_jobs_4_5.json、imagegen_paths_4_5.json。后者保存最终输出路径和针对误合并分件的修正提示词。
+第四套左上臂与黑色前臂、第五套前臂与手/上臂、第五套左小腿与脚已分别拆开，旧初稿保留在 RawEdits/Superseded/Human4_5。
+新增部件按原图裁切高度的 0.01 世界单位/像素设置基础可见高度，模型 XY 等比缩放，默认厚度为 0.08。
+JointIn/JointOut 按可见连接孔校准；不可见或没有孔的末端为初始估计，后续装配时可继续调整。
+GLB 是贴图与连接点的源模型；3DResources/Human/Scenes 下的 tscn 包含带侧面的薄片体块，Bodyparts/Human 下的 tscn 继承 _PhysicalSampleBodyParts 并包含独立凸碰撞体。
+武器和盾牌在本批中也是物理部件资源，未自动加入装备或攻击逻辑。
+HumanGenerator 已接入 Human1 至 Human5 五套生成预设；Generate_Human 使用其 HumanGenerator 子节点的 Human Set 进行选择，默认仍为 Human1。手动布局开启时会优先恢复手动快照。
+
+追加打包：python Assets/3DResources/Creatures/Human/Tools/prepare_assets.py --sets=4,5
+默认保留已生成的最终图和旧元数据；仅在需要重新清理指定套数时使用 --reclean，避免覆盖其他套数的校准。
+

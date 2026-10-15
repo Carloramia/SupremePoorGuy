@@ -1,0 +1,34 @@
+[gd_scene format=3]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Characters/Generate_Human.tscn" id="1"]
+[ext_resource type="PackedScene" path="res://Scenes/Player/Controller.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://Scenes/Camera/DragCamera3D.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://Scenes/Input/TerrainCursor3D.tscn" id="4"]
+[sub_resource type="BoxShape3D" id="FloorShape"]
+size = Vector3(100, 1, 100)
+[sub_resource type="BoxMesh" id="FloorMesh"]
+size = Vector3(100, 1, 100)
+[sub_resource type="StandardMaterial3D" id="FloorMaterial"]
+albedo_color = Color(0.18, 0.22, 0.25, 1)
+roughness = 1.0
+[node name="HumanTestLevel" type="Node3D"]
+[node name="Floor" type="StaticBody3D" parent="."]
+position = Vector3(0, -0.5, 0)
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor"]
+shape = SubResource("FloorShape")
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Floor"]
+mesh = SubResource("FloorMesh")
+material_override = SubResource("FloorMaterial")
+[node name="Sun" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-45, -30, 0)
+light_energy = 1.6
+[node name="GenerateHuman" parent="." instance=ExtResource("1")]
+position = Vector3(0, 0.03, 0)
+[node name="DragCamera3D" parent="." instance=ExtResource("3")]
+[node name="Camera3D" parent="DragCamera3D/PitchPivot" index="0"]
+position = Vector3(0, 0, 20)
+[node name="TerrainCursor3D" parent="." instance=ExtResource("4")]
+[node name="Controller" parent="." node_paths=PackedStringArray("initial_character", "camera_rig", "terrain_cursor") instance=ExtResource("2")]
+initial_character = NodePath("../GenerateHuman")
+camera_rig = NodePath("../DragCamera3D")
+terrain_cursor = NodePath("../TerrainCursor3D")
+[editable path="DragCamera3D"]

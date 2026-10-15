@@ -1,0 +1,96 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/Human/Scenes/Weapons/Human1Spear.tscn" id="1_nk1he"]
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/Human/Scenes/Weapons/Human2ClawGauntlet.tscn" id="2_xxq4u"]
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/Human/Scenes/Weapons/Human3CurvedSword.tscn" id="3_oshpf"]
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/Human/Scenes/Weapons/Human4Flail.tscn" id="4_518av"]
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/Human/Scenes/Weapons/Human5Spear.tscn" id="5_onugm"]
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/Human/Scenes/Weapons/Human5Shield.tscn" id="6_yguct"]
+
+[sub_resource type="Environment" id="Environment_cbxw0"]
+background_mode = 1
+background_color = Color(0.13, 0.14, 0.16, 1)
+ambient_light_source = 2
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_energy = 0.8
+
+[node name="HumanWeaponsPreview" type="Node3D" unique_id=1151939858]
+
+[node name="@WorldEnvironment@4" type="WorldEnvironment" parent="." unique_id=441887106]
+environment = SubResource("Environment_cbxw0")
+
+[node name="@DirectionalLight3D@5" type="DirectionalLight3D" parent="." unique_id=1815531431]
+transform = Transform3D(0.9396926, 0.10569003, -0.3252805, 0, 0.95105654, 0.309017, 0.34202012, -0.29038098, 0.89370084, 0, 0, 0)
+light_energy = 0.7
+
+[node name="Human1Spear" type="Node3D" parent="." unique_id=1330420044 instance=ExtResource("1_nk1he")]
+transform = Transform3D(0.21207011, 0, -0.029804511, 0, 0.21415424, 0, 0.029804511, 0, 0.21207011, -4.404081, 1.6263597, 0.11185904)
+metadata/source_png = "res://Assets/2DResources/Human/Separated/Weapons/01_human1_spear.png"
+
+[node name="@Label3D@6" type="Label3D" parent="." unique_id=1649793000]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.2, 4.95, 0)
+pixel_size = 0.006
+text = "Human1Spear"
+font_size = 38
+outline_size = 0
+
+[node name="Human2ClawGauntlet" type="Node3D" parent="." unique_id=1536201494 instance=ExtResource("2_xxq4u")]
+transform = Transform3D(0.7887677, 0, -0.11085408, 0, 0.7965194, 0, 0.11085408, 0, 0.7887677, -1.0562859, 1.5479999, -0.14845163)
+metadata/source_png = "res://Assets/2DResources/Human/Separated/Weapons/01_human2_claw_gauntlet.png"
+
+[node name="@Label3D@7" type="Label3D" parent="." unique_id=2081837073]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.95, 0)
+pixel_size = 0.006
+text = "Human2ClawGauntlet"
+font_size = 38
+outline_size = 0
+
+[node name="Human3CurvedSword" type="Node3D" parent="." unique_id=1999725174 instance=ExtResource("3_oshpf")]
+transform = Transform3D(0.5696457, 0, -0.080058485, 0, 0.57524395, 0, 0.080058485, 0, 0.5696457, 4.8687663, 4.3734546, -0.04655205)
+metadata/source_png = "res://Assets/2DResources/Human/Separated/Weapons/01_human3_curved_sword.png"
+
+[node name="@Label3D@8" type="Label3D" parent="." unique_id=1041980299]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.2, 4.95, 0)
+pixel_size = 0.006
+text = "Human3CurvedSword"
+font_size = 38
+outline_size = 0
+
+[node name="Human4Flail" type="Node3D" parent="." unique_id=1603650044 instance=ExtResource("4_518av")]
+transform = Transform3D(0.73063254, 0, -0.10268371, 0, 0.7378129, 0, 0.10268371, 0, 0.73063254, -5.371564, -0.8265457, -0.02411203)
+metadata/source_png = "res://Assets/2DResources/Human/Separated/Weapons/01_human4_flail.png"
+
+[node name="@Label3D@9" type="Label3D" parent="." unique_id=1781365609]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.2, -0.25, 0)
+pixel_size = 0.006
+text = "Human4Flail"
+font_size = 38
+outline_size = 0
+
+[node name="Human5Spear" type="Node3D" parent="." unique_id=1449940909 instance=ExtResource("5_onugm")]
+transform = Transform3D(0.4175043, 0, -0.058676407, 0, 0.42160738, 0, 0.058676407, 0, 0.4175043, -0.034186713, -4.492, -0.0048048007)
+metadata/source_png = "res://Assets/2DResources/Human/Separated/Weapons/01_human5_spear.png"
+
+[node name="@Label3D@10" type="Label3D" parent="." unique_id=1096189782]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0)
+pixel_size = 0.006
+text = "Human5Spear"
+font_size = 38
+outline_size = 0
+
+[node name="Human5Shield" type="Node3D" parent="." unique_id=1855845069 instance=ExtResource("6_yguct")]
+transform = Transform3D(0.74686885, 0, -0.104965575, 0, 0.75420874, 0, 0.104965575, 0, 0.74686885, 5.0172505, -2.5778184, -0.025684057)
+metadata/source_png = "res://Assets/2DResources/Human/Separated/Weapons/02_human5_shield.png"
+
+[node name="@Label3D@11" type="Label3D" parent="." unique_id=104315281]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.2, -0.25, 0)
+pixel_size = 0.006
+text = "Human5Shield"
+font_size = 38
+outline_size = 0
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=845675435]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 18)
+projection = 1
+current = true
+size = 10.5

@@ -1,0 +1,33 @@
+[gd_scene load_steps=5 format=3]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/_PhysicalSampleBodyParts.tscn" id="1_base"]
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/Human/Models/Decorations/Human2LeafBranchLeft.glb" id="2_model"]
+[ext_resource type="ArrayMesh" path="res://Resources/Meshes/Human/Decorations/Human2LeafBranchLeft.res" id="3_mesh"]
+[sub_resource type="ConvexPolygonShape3D" id="Shape"]
+resource_local_to_scene = true
+points = PackedVector3Array(-0.80574802, 1.19794141, -0.01000000, -0.71222356, 2.42126172, -0.01000000, -0.66546133, 2.51536328, -0.01000000, -0.24460126, 2.98587109, -0.01000000, -0.19783903, 3.03292187, -0.01000000, 0.26978327, 3.45637891, -0.01000000, 0.41006996, 3.55048047, -0.01000000, 0.45683219, 3.55048047, -0.01000000, 1.06474119, 2.98587109, -0.01000000, 1.06474119, 2.89176953, -0.01000000, 0.03597212, -0.11948047, -0.01000000, -0.01079011, -0.11948047, -0.01000000, -0.05755234, -0.07242969, -0.01000000, -0.71222356, 0.77448437, -0.01000000, -0.80574802, 0.96268750, -0.01000000, -0.80574802, 1.19794141, 0.01000000, -0.71222356, 2.42126172, 0.01000000, -0.66546133, 2.51536328, 0.01000000, -0.24460126, 2.98587109, 0.01000000, -0.19783903, 3.03292187, 0.01000000, 0.26978327, 3.45637891, 0.01000000, 0.41006996, 3.55048047, 0.01000000, 0.45683219, 3.55048047, 0.01000000, 1.06474119, 2.98587109, 0.01000000, 1.06474119, 2.89176953, 0.01000000, 0.03597212, -0.11948047, 0.01000000, -0.01079011, -0.11948047, 0.01000000, -0.05755234, -0.07242969, 0.01000000, -0.71222356, 0.77448437, 0.01000000, -0.80574802, 0.96268750, 0.01000000)
+[node name="Human_Human2LeafBranchLeft" instance=ExtResource("1_base")]
+mass = 0.03
+geometry_mode = 1
+custom_model_path = NodePath("Model")
+paper_volume_enabled = true
+paper_volume_thickness = 0.08
+sprite_visible = false
+mesh_visible = true
+tags = Array[int]([])
+metadata/source_png = "res://Assets/2DResources/Human/Separated/Attachments/02_human2_leaf_branch_left.png"
+metadata/pivot_is_initial_estimate = true
+metadata/anatomical_role = "Decoration"
+[node name="CollisionShape3D" parent="." index="0"]
+position = Vector3(0, 0, 0)
+shape = SubResource("Shape")
+[node name="MeshInstance3D" parent="." index="2"]
+visible = false
+mesh = null
+[node name="Model" parent="." instance=ExtResource("2_model")]
+[node name="PaperVolume" type="MeshInstance3D" parent="Model"]
+scale = Vector3(1, 1, 0.08)
+mesh = ExtResource("3_mesh")
+metadata/flat_collision_depth = 0.02
+[node name="JointIn" type="Marker3D" parent="."]
+[node name="JointOut" type="Marker3D" parent="."]
+position = Vector3(0.36999023, 3.32150000, 0.00000000)

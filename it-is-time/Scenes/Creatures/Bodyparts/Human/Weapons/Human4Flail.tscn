@@ -1,0 +1,33 @@
+[gd_scene load_steps=5 format=3]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/_PhysicalSampleBodyParts.tscn" id="1_base"]
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/Human/Models/Weapons/Human4Flail.glb" id="2_model"]
+[ext_resource type="ArrayMesh" path="res://Resources/Meshes/Human/Weapons/Human4Flail.res" id="3_mesh"]
+[sub_resource type="ConvexPolygonShape3D" id="Shape"]
+resource_local_to_scene = true
+points = PackedVector3Array(-0.43336518, -4.53157500, -0.01000000, -0.22236071, 0.09358125, -0.01000000, -0.15202589, 0.16473750, -0.01000000, -0.08169107, 0.23589375, -0.01000000, 0.05897857, 0.23589375, -0.01000000, 0.19964821, 0.16473750, -0.01000000, 0.90299643, -4.53157500, -0.01000000, 0.90299643, -4.81620000, -0.01000000, 0.83266161, -4.95851250, -0.01000000, 0.76232679, -5.02966875, -0.01000000, 0.69199196, -5.10082500, -0.01000000, 0.62165714, -5.17198125, -0.01000000, 0.34031786, -5.31429375, -0.01000000, 0.05897857, -5.31429375, -0.01000000, -0.15202589, -5.24313750, -0.01000000, -0.22236071, -5.17198125, -0.01000000, -0.29269554, -5.10082500, -0.01000000, -0.36303036, -5.02966875, -0.01000000, -0.43336518, -4.81620000, -0.01000000, -0.43336518, -4.53157500, 0.01000000, -0.22236071, 0.09358125, 0.01000000, -0.15202589, 0.16473750, 0.01000000, -0.08169107, 0.23589375, 0.01000000, 0.05897857, 0.23589375, 0.01000000, 0.19964821, 0.16473750, 0.01000000, 0.90299643, -4.53157500, 0.01000000, 0.90299643, -4.81620000, 0.01000000, 0.83266161, -4.95851250, 0.01000000, 0.76232679, -5.02966875, 0.01000000, 0.69199196, -5.10082500, 0.01000000, 0.62165714, -5.17198125, 0.01000000, 0.34031786, -5.31429375, 0.01000000, 0.05897857, -5.31429375, 0.01000000, -0.15202589, -5.24313750, 0.01000000, -0.22236071, -5.17198125, 0.01000000, -0.29269554, -5.10082500, 0.01000000, -0.36303036, -5.02966875, 0.01000000, -0.43336518, -4.81620000, 0.01000000)
+[node name="Human_Human4Flail" instance=ExtResource("1_base")]
+mass = 0.4
+geometry_mode = 1
+custom_model_path = NodePath("Model")
+paper_volume_enabled = true
+paper_volume_thickness = 0.08
+sprite_visible = false
+mesh_visible = true
+tags = Array[int]([])
+metadata/source_png = "res://Assets/2DResources/Human/Separated/Weapons/01_human4_flail.png"
+metadata/pivot_is_initial_estimate = true
+metadata/anatomical_role = "Weapon"
+[node name="CollisionShape3D" parent="." index="0"]
+position = Vector3(0, 0, 0)
+shape = SubResource("Shape")
+[node name="MeshInstance3D" parent="." index="2"]
+visible = false
+mesh = null
+[node name="Model" parent="." instance=ExtResource("2_model")]
+[node name="PaperVolume" type="MeshInstance3D" parent="Model"]
+scale = Vector3(1, 1, 0.08)
+mesh = ExtResource("3_mesh")
+metadata/flat_collision_depth = 0.02
+[node name="JointIn" type="Marker3D" parent="."]
+[node name="JointOut" type="Marker3D" parent="."]
+position = Vector3(0.30004219, -4.80240000, 0.00000000)

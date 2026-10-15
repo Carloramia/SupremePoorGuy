@@ -45,6 +45,8 @@ static func _nearest_hole(body: PhysicalBodyPart3D, point: Vector3) -> Node3D:
 
 static func _align_pair(upper: PhysicalBodyPart3D, foot: PhysicalBodyPart3D, root_joint: Generic6DOFJoint3D, knee: Generic6DOFJoint3D) -> bool:
 	if upper.is_broken or foot.is_broken: return false
+	# Explicit Inspector geometry takes priority over the procedural model-to-hole fit.
+	if upper.get_meta(&"generated_layout", {}).get("part_editor_override", false) or foot.get_meta(&"generated_layout", {}).get("part_editor_override", false): return false
 	var model := upper.get_node_or_null("Model") as Node3D
 	var root_hole := _nearest_hole(upper, root_joint.position)
 	var knee_hole := _nearest_hole(upper, knee.position)

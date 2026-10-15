@@ -1,0 +1,980 @@
+[gd_scene format=3]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Head/Human1Head.tscn" id="1"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Torso/Human1Torso.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Torso/Human1Pelvis.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Arms/Left/Human1UpperArmLeft.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Arms/Left/Human1ForearmLeft.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Arms/Left/Human1HandLeft.tscn" id="6"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Arms/Right/Human1UpperArmRight.tscn" id="7"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Arms/Right/Human1ForearmRight.tscn" id="8"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Arms/Right/Human1HandRight.tscn" id="9"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Legs/Left/Human1UpperLegLeft.tscn" id="10"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Legs/Left/Human1LowerLegLeft.tscn" id="11"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Legs/Left/Human1FootLeft.tscn" id="12"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Legs/Right/Human1UpperLegRight.tscn" id="13"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Legs/Right/Human1LowerLegRight.tscn" id="14"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Legs/Right/Human1FootRight.tscn" id="15"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Weapons/Human1Spear.tscn" id="16"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Decorations/Human1Rivet.tscn" id="17"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Head/Human2Head.tscn" id="18"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Torso/Human2Torso.tscn" id="19"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Torso/Human2Pelvis.tscn" id="20"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Arms/Left/Human2UpperArmLeft.tscn" id="21"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Arms/Left/Human2ForearmLeft.tscn" id="22"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Arms/Left/Human2HandLeft.tscn" id="23"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Arms/Right/Human2UpperArmRight.tscn" id="24"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Arms/Right/Human2ForearmRight.tscn" id="25"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Arms/Right/Human2HandRight.tscn" id="26"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Legs/Left/Human2UpperLegLeft.tscn" id="27"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Legs/Left/Human2LowerLegLeft.tscn" id="28"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Legs/Left/Human2FootLeft.tscn" id="29"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Legs/Right/Human2UpperLegRight.tscn" id="30"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Legs/Right/Human2LowerLegRight.tscn" id="31"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Legs/Right/Human2FootRight.tscn" id="32"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Weapons/Human2ClawGauntlet.tscn" id="33"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Decorations/Human2Rivet.tscn" id="34"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Head/Human3Head.tscn" id="35"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Torso/Human3Torso.tscn" id="36"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Torso/Human3Pelvis.tscn" id="37"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Arms/Left/Human3UpperArmLeft.tscn" id="38"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Arms/Left/Human3ForearmLeft.tscn" id="39"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Arms/Left/Human3HandLeft.tscn" id="40"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Arms/Right/Human3UpperArmRight.tscn" id="41"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Arms/Right/Human3ForearmRight.tscn" id="42"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Arms/Right/Human3HandRight.tscn" id="43"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Legs/Left/Human3UpperLegLeft.tscn" id="44"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Legs/Left/Human3LowerLegLeft.tscn" id="45"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Legs/Left/Human3FootLeft.tscn" id="46"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Legs/Right/Human3UpperLegRight.tscn" id="47"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Legs/Right/Human3LowerLegRight.tscn" id="48"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Legs/Right/Human3FootRight.tscn" id="49"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Weapons/Human3CurvedSword.tscn" id="50"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Decorations/Human3Rivet.tscn" id="51"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Decorations/Human2LeafBranchLeft.tscn" id="52"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Decorations/Human2LeafBranchRight.tscn" id="53"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Head/Human4Head.tscn" id="54"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Torso/Human4Torso.tscn" id="55"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Torso/Human4Pelvis.tscn" id="56"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Arms/Left/Human4UpperArmLeft.tscn" id="57"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Arms/Left/Human4ForearmLeft.tscn" id="58"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Arms/Left/Human4HandLeft.tscn" id="59"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Arms/Right/Human4UpperArmRight.tscn" id="60"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Arms/Right/Human4ForearmRight.tscn" id="61"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Arms/Right/Human4HandRight.tscn" id="62"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Legs/Left/Human4UpperLegLeft.tscn" id="63"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Legs/Left/Human4LowerLegLeft.tscn" id="64"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Legs/Left/Human4FootLeft.tscn" id="65"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Legs/Right/Human4UpperLegRight.tscn" id="66"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Legs/Right/Human4LowerLegRight.tscn" id="67"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Legs/Right/Human4FootRight.tscn" id="68"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Weapons/Human4Flail.tscn" id="69"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Decorations/Human4Rivet.tscn" id="70"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Head/Human5Head.tscn" id="71"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Torso/Human5Torso.tscn" id="72"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Torso/Human5Pelvis.tscn" id="73"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Arms/Left/Human5UpperArmLeft.tscn" id="74"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Arms/Left/Human5ForearmLeft.tscn" id="75"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Arms/Left/Human5HandLeft.tscn" id="76"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Arms/Right/Human5UpperArmRight.tscn" id="77"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Arms/Right/Human5ForearmRight.tscn" id="78"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Arms/Right/Human5HandRight.tscn" id="79"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Legs/Left/Human5UpperLegLeft.tscn" id="80"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Legs/Left/Human5LowerLegLeft.tscn" id="81"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Legs/Left/Human5FootLeft.tscn" id="82"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Legs/Right/Human5UpperLegRight.tscn" id="83"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Legs/Right/Human5LowerLegRight.tscn" id="84"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Legs/Right/Human5FootRight.tscn" id="85"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Weapons/Human5Spear.tscn" id="86"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Weapons/Human5Shield.tscn" id="87"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Human/Decorations/Human5Rivet.tscn" id="88"]
+[sub_resource type="Environment" id="Env"]
+background_mode = 1
+background_color = Color(0.16, 0.18, 0.22, 1)
+[node name="HumanPartsPreview" type="Node3D"]
+[node name="Camera3D" type="Camera3D" parent="."]
+position = Vector3(0, 0, 80)
+projection = 1
+size = 164.0
+current = true
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Env")
+[node name="Human1Head" parent="." instance=ExtResource("1")]
+position = Vector3(-15.519485057471265, 75.25608, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label0" type="Label3D" parent="."]
+position = Vector3(-16, 72.5, 1)
+text = "Human1Head"
+font_size = 40
+pixel_size = 0.009
+[node name="Human1Torso" parent="." instance=ExtResource("2")]
+position = Vector3(-8.0, 75.334, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label1" type="Label3D" parent="."]
+position = Vector3(-8, 72.5, 1)
+text = "Human1Torso"
+font_size = 40
+pixel_size = 0.009
+[node name="Human1Pelvis" parent="." instance=ExtResource("3")]
+position = Vector3(0.0, 77.823, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label2" type="Label3D" parent="."]
+position = Vector3(0, 72.5, 1)
+text = "Human1Pelvis"
+font_size = 40
+pixel_size = 0.009
+[node name="Human1UpperArmLeft" parent="." instance=ExtResource("4")]
+position = Vector3(8.770583941605839, 77.351, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label3" type="Label3D" parent="."]
+position = Vector3(8, 72.5, 1)
+text = "Human1UpperArmLeft"
+font_size = 40
+pixel_size = 0.009
+[node name="Human1ForearmLeft" parent="." instance=ExtResource("5")]
+position = Vector3(16.035419921875, 76.8875, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label4" type="Label3D" parent="."]
+position = Vector3(16, 72.5, 1)
+text = "Human1ForearmLeft"
+font_size = 40
+pixel_size = 0.009
+[node name="Human1HandLeft" parent="." instance=ExtResource("6")]
+position = Vector3(-15.983252734375, 67.996, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label5" type="Label3D" parent="."]
+position = Vector3(-16, 63.5, 1)
+text = "Human1HandLeft"
+font_size = 40
+pixel_size = 0.009
+[node name="Human1UpperArmRight" parent="." instance=ExtResource("7")]
+position = Vector3(-8.49170849609375, 68.4139, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label6" type="Label3D" parent="."]
+position = Vector3(-8, 63.5, 1)
+text = "Human1UpperArmRight"
+font_size = 40
+pixel_size = 0.009
+[node name="Human1ForearmRight" parent="." instance=ExtResource("8")]
+position = Vector3(-0.5008856729377714, 67.76, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label7" type="Label3D" parent="."]
+position = Vector3(0, 63.5, 1)
+text = "Human1ForearmRight"
+font_size = 40
+pixel_size = 0.009
+[node name="Human1HandRight" parent="." instance=ExtResource("9")]
+position = Vector3(7.569286597938144, 67.4592, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label8" type="Label3D" parent="."]
+position = Vector3(8, 63.5, 1)
+text = "Human1HandRight"
+font_size = 40
+pixel_size = 0.009
+[node name="Human1UpperLegLeft" parent="." instance=ExtResource("10")]
+position = Vector3(16.668638926174495, 68.2455, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label9" type="Label3D" parent="."]
+position = Vector3(16, 63.5, 1)
+text = "Human1UpperLegLeft"
+font_size = 40
+pixel_size = 0.009
+[node name="Human1LowerLegLeft" parent="." instance=ExtResource("11")]
+position = Vector3(-15.6234765625, 59.452, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label10" type="Label3D" parent="."]
+position = Vector3(-16, 54.5, 1)
+text = "Human1LowerLegLeft"
+font_size = 40
+pixel_size = 0.009
+[node name="Human1FootLeft" parent="." instance=ExtResource("12")]
+position = Vector3(-7.7027127683615815, 58.656, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label11" type="Label3D" parent="."]
+position = Vector3(-8, 54.5, 1)
+text = "Human1FootLeft"
+font_size = 40
+pixel_size = 0.009
+[node name="Human1UpperLegRight" parent="." instance=ExtResource("13")]
+position = Vector3(-0.6534860646599777, 59.238, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label12" type="Label3D" parent="."]
+position = Vector3(0, 54.5, 1)
+text = "Human1UpperLegRight"
+font_size = 40
+pixel_size = 0.009
+[node name="Human1LowerLegRight" parent="." instance=ExtResource("14")]
+position = Vector3(7.71634375, 59.428, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label13" type="Label3D" parent="."]
+position = Vector3(8, 54.5, 1)
+text = "Human1LowerLegRight"
+font_size = 40
+pixel_size = 0.009
+[node name="Human1FootRight" parent="." instance=ExtResource("15")]
+position = Vector3(15.660963855421686, 58.6428, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label14" type="Label3D" parent="."]
+position = Vector3(16, 54.5, 1)
+text = "Human1FootRight"
+font_size = 40
+pixel_size = 0.009
+[node name="Human1Spear" parent="." instance=ExtResource("16")]
+position = Vector3(-15.77542578125, 49.2592, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label15" type="Label3D" parent="."]
+position = Vector3(-16, 45.5, 1)
+text = "Human1Spear"
+font_size = 40
+pixel_size = 0.009
+[node name="Human1Rivet" parent="." instance=ExtResource("17")]
+position = Vector3(-8.0, 49.5, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label16" type="Label3D" parent="."]
+position = Vector3(-8, 45.5, 1)
+text = "Human1Rivet"
+font_size = 40
+pixel_size = 0.009
+[node name="Human2Head" parent="." instance=ExtResource("18")]
+position = Vector3(0.3407198973042361, 48.348, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label17" type="Label3D" parent="."]
+position = Vector3(0, 45.5, 1)
+text = "Human2Head"
+font_size = 40
+pixel_size = 0.009
+[node name="Human2Torso" parent="." instance=ExtResource("19")]
+position = Vector3(8.0, 48.092, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label18" type="Label3D" parent="."]
+position = Vector3(8, 45.5, 1)
+text = "Human2Torso"
+font_size = 40
+pixel_size = 0.009
+[node name="Human2Pelvis" parent="." instance=ExtResource("20")]
+position = Vector3(16.0, 50.802, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label19" type="Label3D" parent="."]
+position = Vector3(16, 45.5, 1)
+text = "Human2Pelvis"
+font_size = 40
+pixel_size = 0.009
+[node name="Human2UpperArmLeft" parent="." instance=ExtResource("21")]
+position = Vector3(-15.140476683937823, 40.734, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label20" type="Label3D" parent="."]
+position = Vector3(-16, 36.5, 1)
+text = "Human2UpperArmLeft"
+font_size = 40
+pixel_size = 0.009
+[node name="Human2ForearmLeft" parent="." instance=ExtResource("22")]
+position = Vector3(-7.3845625, 41.3702, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label21" type="Label3D" parent="."]
+position = Vector3(-8, 36.5, 1)
+text = "Human2ForearmLeft"
+font_size = 40
+pixel_size = 0.009
+[node name="Human2HandLeft" parent="." instance=ExtResource("23")]
+position = Vector3(-0.05947265625000003, 41.19, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label22" type="Label3D" parent="."]
+position = Vector3(0, 36.5, 1)
+text = "Human2HandLeft"
+font_size = 40
+pixel_size = 0.009
+[node name="Human2UpperArmRight" parent="." instance=ExtResource("24")]
+position = Vector3(7.149716523867809, 41.242, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label23" type="Label3D" parent="."]
+position = Vector3(8, 36.5, 1)
+text = "Human2UpperArmRight"
+font_size = 40
+pixel_size = 0.009
+[node name="Human2ForearmRight" parent="." instance=ExtResource("25")]
+position = Vector3(15.331478260869565, 41.3512, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label24" type="Label3D" parent="."]
+position = Vector3(16, 36.5, 1)
+text = "Human2ForearmRight"
+font_size = 40
+pixel_size = 0.009
+[node name="Human2HandRight" parent="." instance=ExtResource("26")]
+position = Vector3(-16.379326171875, 32.088, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label25" type="Label3D" parent="."]
+position = Vector3(-16, 27.5, 1)
+text = "Human2HandRight"
+font_size = 40
+pixel_size = 0.009
+[node name="Human2UpperLegLeft" parent="." instance=ExtResource("27")]
+position = Vector3(-8.770694736842104, 32.124, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label26" type="Label3D" parent="."]
+position = Vector3(-8, 27.5, 1)
+text = "Human2UpperLegLeft"
+font_size = 40
+pixel_size = 0.009
+[node name="Human2LowerLegLeft" parent="." instance=ExtResource("28")]
+position = Vector3(0.0, 32.372, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label27" type="Label3D" parent="."]
+position = Vector3(0, 27.5, 1)
+text = "Human2LowerLegLeft"
+font_size = 40
+pixel_size = 0.009
+[node name="Human2FootLeft" parent="." instance=ExtResource("29")]
+position = Vector3(8.537307984790875, 31.8404, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label28" type="Label3D" parent="."]
+position = Vector3(8, 27.5, 1)
+text = "Human2FootLeft"
+font_size = 40
+pixel_size = 0.009
+[node name="Human2UpperLegRight" parent="." instance=ExtResource("30")]
+position = Vector3(16.719704069050554, 31.994, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label29" type="Label3D" parent="."]
+position = Vector3(16, 27.5, 1)
+text = "Human2UpperLegRight"
+font_size = 40
+pixel_size = 0.009
+[node name="Human2LowerLegRight" parent="." instance=ExtResource("31")]
+position = Vector3(-16.01937890625, 23.358, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label30" type="Label3D" parent="."]
+position = Vector3(-16, 18.5, 1)
+text = "Human2LowerLegRight"
+font_size = 40
+pixel_size = 0.009
+[node name="Human2FootRight" parent="." instance=ExtResource("32")]
+position = Vector3(-8.55463346303502, 22.8648, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label31" type="Label3D" parent="."]
+position = Vector3(-8, 18.5, 1)
+text = "Human2FootRight"
+font_size = 40
+pixel_size = 0.009
+[node name="Human2ClawGauntlet" parent="." instance=ExtResource("33")]
+position = Vector3(-1.3391596638655463, 21.3048, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label32" type="Label3D" parent="."]
+position = Vector3(0, 18.5, 1)
+text = "Human2ClawGauntlet"
+font_size = 40
+pixel_size = 0.009
+[node name="Human2Rivet" parent="." instance=ExtResource("34")]
+position = Vector3(8.0, 22.5, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label33" type="Label3D" parent="."]
+position = Vector3(8, 18.5, 1)
+text = "Human2Rivet"
+font_size = 40
+pixel_size = 0.009
+[node name="Human3Head" parent="." instance=ExtResource("35")]
+position = Vector3(16.089665775950667, 21.4208, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label34" type="Label3D" parent="."]
+position = Vector3(16, 18.5, 1)
+text = "Human3Head"
+font_size = 40
+pixel_size = 0.009
+[node name="Human3Torso" parent="." instance=ExtResource("36")]
+position = Vector3(-16.0, 12.026, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label35" type="Label3D" parent="."]
+position = Vector3(-16, 9.5, 1)
+text = "Human3Torso"
+font_size = 40
+pixel_size = 0.009
+[node name="Human3Pelvis" parent="." instance=ExtResource("37")]
+position = Vector3(-8.0, 14.781, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label36" type="Label3D" parent="."]
+position = Vector3(-8, 9.5, 1)
+text = "Human3Pelvis"
+font_size = 40
+pixel_size = 0.009
+[node name="Human3UpperArmLeft" parent="." instance=ExtResource("38")]
+position = Vector3(1.0256436597110754, 13.9485, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label37" type="Label3D" parent="."]
+position = Vector3(0, 9.5, 1)
+text = "Human3UpperArmLeft"
+font_size = 40
+pixel_size = 0.009
+[node name="Human3ForearmLeft" parent="." instance=ExtResource("39")]
+position = Vector3(8.124224609375, 14.2831, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label38" type="Label3D" parent="."]
+position = Vector3(8, 9.5, 1)
+text = "Human3ForearmLeft"
+font_size = 40
+pixel_size = 0.009
+[node name="Human3HandLeft" parent="." instance=ExtResource("40")]
+position = Vector3(15.9245001953125, 14.056, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label39" type="Label3D" parent="."]
+position = Vector3(16, 9.5, 1)
+text = "Human3HandLeft"
+font_size = 40
+pixel_size = 0.009
+[node name="Human3UpperArmRight" parent="." instance=ExtResource("41")]
+position = Vector3(-16.652106145251395, 5.2379999999999995, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label40" type="Label3D" parent="."]
+position = Vector3(-16, 0.5, 1)
+text = "Human3UpperArmRight"
+font_size = 40
+pixel_size = 0.009
+[node name="Human3ForearmRight" parent="." instance=ExtResource("42")]
+position = Vector3(-8.42333984375, 5.112, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label41" type="Label3D" parent="."]
+position = Vector3(-8, 0.5, 1)
+text = "Human3ForearmRight"
+font_size = 40
+pixel_size = 0.009
+[node name="Human3HandRight" parent="." instance=ExtResource("43")]
+position = Vector3(-0.18937500000000007, 5.092, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label42" type="Label3D" parent="."]
+position = Vector3(0, 0.5, 1)
+text = "Human3HandRight"
+font_size = 40
+pixel_size = 0.009
+[node name="Human3UpperLegLeft" parent="." instance=ExtResource("44")]
+position = Vector3(8.4631484375, 5.388, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label43" type="Label3D" parent="."]
+position = Vector3(8, 0.5, 1)
+text = "Human3UpperLegLeft"
+font_size = 40
+pixel_size = 0.009
+[node name="Human3LowerLegLeft" parent="." instance=ExtResource("45")]
+position = Vector3(15.80865859375, 5.2913, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label44" type="Label3D" parent="."]
+position = Vector3(16, 0.5, 1)
+text = "Human3LowerLegLeft"
+font_size = 40
+pixel_size = 0.009
+[node name="Human3FootLeft" parent="." instance=ExtResource("46")]
+position = Vector3(-15.485618604651163, -4.0338, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label45" type="Label3D" parent="."]
+position = Vector3(-16, -8.5, 1)
+text = "Human3FootLeft"
+font_size = 40
+pixel_size = 0.009
+[node name="Human3UpperLegRight" parent="." instance=ExtResource("47")]
+position = Vector3(-8.652568783638321, -3.5676, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label46" type="Label3D" parent="."]
+position = Vector3(-8, -8.5, 1)
+text = "Human3UpperLegRight"
+font_size = 40
+pixel_size = 0.009
+[node name="Human3LowerLegRight" parent="." instance=ExtResource("48")]
+position = Vector3(-0.2539387539598733, -3.834, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label47" type="Label3D" parent="."]
+position = Vector3(0, -8.5, 1)
+text = "Human3LowerLegRight"
+font_size = 40
+pixel_size = 0.009
+[node name="Human3FootRight" parent="." instance=ExtResource("49")]
+position = Vector3(7.43256050955414, -4.0440000000000005, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label48" type="Label3D" parent="."]
+position = Vector3(8, -8.5, 1)
+text = "Human3FootRight"
+font_size = 40
+pixel_size = 0.009
+[node name="Human3CurvedSword" parent="." instance=ExtResource("50")]
+position = Vector3(15.41852734375, -1.2431999999999999, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label49" type="Label3D" parent="."]
+position = Vector3(16, -8.5, 1)
+text = "Human3CurvedSword"
+font_size = 40
+pixel_size = 0.009
+[node name="Human3Rivet" parent="." instance=ExtResource("51")]
+position = Vector3(-16.0, -13.5, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label50" type="Label3D" parent="."]
+position = Vector3(-16, -17.5, 1)
+text = "Human3Rivet"
+font_size = 40
+pixel_size = 0.009
+[node name="Human2LeafBranchLeft" parent="." instance=ExtResource("52")]
+position = Vector3(-8.12949658203125, -15.2155, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label51" type="Label3D" parent="."]
+position = Vector3(-8, -17.5, 1)
+text = "Human2LeafBranchLeft"
+font_size = 40
+pixel_size = 0.009
+[node name="Human2LeafBranchRight" parent="." instance=ExtResource("53")]
+position = Vector3(0.45451757812499993, -14.673, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label52" type="Label3D" parent="."]
+position = Vector3(0, -17.5, 1)
+text = "Human2LeafBranchRight"
+font_size = 40
+pixel_size = 0.009
+[node name="Human4Head" parent="." instance=ExtResource("54")]
+position = Vector3(8.283394494663574, -14.47809984, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label53" type="Label3D" parent="."]
+position = Vector3(8, -17.5, 1)
+text = "Human4Head"
+font_size = 40
+pixel_size = 0.009
+[node name="Human4Torso" parent="." instance=ExtResource("55")]
+position = Vector3(16.097054945054946, -14.983500000000001, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label54" type="Label3D" parent="."]
+position = Vector3(16, -17.5, 1)
+text = "Human4Torso"
+font_size = 40
+pixel_size = 0.009
+[node name="Human4Pelvis" parent="." instance=ExtResource("56")]
+position = Vector3(-16.49394640338505, -21.4056, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label55" type="Label3D" parent="."]
+position = Vector3(-16, -26.5, 1)
+text = "Human4Pelvis"
+font_size = 40
+pixel_size = 0.009
+[node name="Human4UpperArmLeft" parent="." instance=ExtResource("57")]
+position = Vector3(-7.023916254608696, -22.47005594, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label56" type="Label3D" parent="."]
+position = Vector3(-8, -26.5, 1)
+text = "Human4UpperArmLeft"
+font_size = 40
+pixel_size = 0.009
+[node name="Human4ForearmLeft" parent="." instance=ExtResource("58")]
+position = Vector3(0.43368370312499993, -23.1536412, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label57" type="Label3D" parent="."]
+position = Vector3(0, -26.5, 1)
+text = "Human4ForearmLeft"
+font_size = 40
+pixel_size = 0.009
+[node name="Human4HandLeft" parent="." instance=ExtResource("59")]
+position = Vector3(8.348029179331308, -22.9446, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label58" type="Label3D" parent="."]
+position = Vector3(8, -26.5, 1)
+text = "Human4HandLeft"
+font_size = 40
+pixel_size = 0.009
+[node name="Human4UpperArmRight" parent="." instance=ExtResource("60")]
+position = Vector3(15.084008390348526, -22.066163500000002, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label59" type="Label3D" parent="."]
+position = Vector3(16, -26.5, 1)
+text = "Human4UpperArmRight"
+font_size = 40
+pixel_size = 0.009
+[node name="Human4ForearmRight" parent="." instance=ExtResource("61")]
+position = Vector3(-16.5072690390625, -30.79901595, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label60" type="Label3D" parent="."]
+position = Vector3(-16, -35.5, 1)
+text = "Human4ForearmRight"
+font_size = 40
+pixel_size = 0.009
+[node name="Human4HandRight" parent="." instance=ExtResource("62")]
+position = Vector3(-8.43437884952381, -31.1209024, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label61" type="Label3D" parent="."]
+position = Vector3(-8, -35.5, 1)
+text = "Human4HandRight"
+font_size = 40
+pixel_size = 0.009
+[node name="Human4UpperLegLeft" parent="." instance=ExtResource("63")]
+position = Vector3(0.8947374143554686, -30.4279488, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label62" type="Label3D" parent="."]
+position = Vector3(0, -35.5, 1)
+text = "Human4UpperLegLeft"
+font_size = 40
+pixel_size = 0.009
+[node name="Human4LowerLegLeft" parent="." instance=ExtResource("64")]
+position = Vector3(8.38153294560547, -30.33547005, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label63" type="Label3D" parent="."]
+position = Vector3(8, -35.5, 1)
+text = "Human4LowerLegLeft"
+font_size = 40
+pixel_size = 0.009
+[node name="Human4FootLeft" parent="." instance=ExtResource("65")]
+position = Vector3(16.555263727659575, -31.2403938, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label64" type="Label3D" parent="."]
+position = Vector3(16, -35.5, 1)
+text = "Human4FootLeft"
+font_size = 40
+pixel_size = 0.009
+[node name="Human4UpperLegRight" parent="." instance=ExtResource("66")]
+position = Vector3(-16.692399202011718, -39.3798411, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label65" type="Label3D" parent="."]
+position = Vector3(-16, -44.5, 1)
+text = "Human4UpperLegRight"
+font_size = 40
+pixel_size = 0.009
+[node name="Human4LowerLegRight" parent="." instance=ExtResource("67")]
+position = Vector3(-8.45750144966797, -39.39933974, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label66" type="Label3D" parent="."]
+position = Vector3(-8, -44.5, 1)
+text = "Human4LowerLegRight"
+font_size = 40
+pixel_size = 0.009
+[node name="Human4FootRight" parent="." instance=ExtResource("68")]
+position = Vector3(-0.2932898804494382, -40.29580656, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label67" type="Label3D" parent="."]
+position = Vector3(0, -44.5, 1)
+text = "Human4FootRight"
+font_size = 40
+pixel_size = 0.009
+[node name="Human4Flail" parent="." instance=ExtResource("69")]
+position = Vector3(7.765184375, -37.9608, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label68" type="Label3D" parent="."]
+position = Vector3(8, -44.5, 1)
+text = "Human4Flail"
+font_size = 40
+pixel_size = 0.009
+[node name="Human4Rivet" parent="." instance=ExtResource("70")]
+position = Vector3(16.0, -40.5, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label69" type="Label3D" parent="."]
+position = Vector3(16, -44.5, 1)
+text = "Human4Rivet"
+font_size = 40
+pixel_size = 0.009
+[node name="Human5Head" parent="." instance=ExtResource("71")]
+position = Vector3(-15.45940932923077, -50.44226906, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label70" type="Label3D" parent="."]
+position = Vector3(-16, -53.5, 1)
+text = "Human5Head"
+font_size = 40
+pixel_size = 0.009
+[node name="Human5Torso" parent="." instance=ExtResource("72")]
+position = Vector3(-7.970648843187661, -50.4812, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label71" type="Label3D" parent="."]
+position = Vector3(-8, -53.5, 1)
+text = "Human5Torso"
+font_size = 40
+pixel_size = 0.009
+[node name="Human5Pelvis" parent="." instance=ExtResource("73")]
+position = Vector3(0.0, -48.2484, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label72" type="Label3D" parent="."]
+position = Vector3(0, -53.5, 1)
+text = "Human5Pelvis"
+font_size = 40
+pixel_size = 0.009
+[node name="Human5UpperArmLeft" parent="." instance=ExtResource("74")]
+position = Vector3(8.592679761117079, -49.0703709, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label73" type="Label3D" parent="."]
+position = Vector3(8, -53.5, 1)
+text = "Human5UpperArmLeft"
+font_size = 40
+pixel_size = 0.009
+[node name="Human5ForearmLeft" parent="." instance=ExtResource("75")]
+position = Vector3(16.15271926591797, -48.88275414, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label74" type="Label3D" parent="."]
+position = Vector3(16, -53.5, 1)
+text = "Human5ForearmLeft"
+font_size = 40
+pixel_size = 0.009
+[node name="Human5HandLeft" parent="." instance=ExtResource("76")]
+position = Vector3(-15.969434265625, -58.03808129, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label75" type="Label3D" parent="."]
+position = Vector3(-16, -62.5, 1)
+text = "Human5HandLeft"
+font_size = 40
+pixel_size = 0.009
+[node name="Human5UpperArmRight" parent="." instance=ExtResource("77")]
+position = Vector3(-8.619835231150443, -58.0497057, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label76" type="Label3D" parent="."]
+position = Vector3(-8, -62.5, 1)
+text = "Human5UpperArmRight"
+font_size = 40
+pixel_size = 0.009
+[node name="Human5ForearmRight" parent="." instance=ExtResource("78")]
+position = Vector3(-0.29581141992187504, -57.8672244, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label77" type="Label3D" parent="."]
+position = Vector3(0, -62.5, 1)
+text = "Human5ForearmRight"
+font_size = 40
+pixel_size = 0.009
+[node name="Human5HandRight" parent="." instance=ExtResource("79")]
+position = Vector3(7.548842944785276, -58.602, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label78" type="Label3D" parent="."]
+position = Vector3(8, -62.5, 1)
+text = "Human5HandRight"
+font_size = 40
+pixel_size = 0.009
+[node name="Human5UpperLegLeft" parent="." instance=ExtResource("80")]
+position = Vector3(16.460829355615235, -57.87829183, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label79" type="Label3D" parent="."]
+position = Vector3(16, -62.5, 1)
+text = "Human5UpperLegLeft"
+font_size = 40
+pixel_size = 0.009
+[node name="Human5LowerLegLeft" parent="." instance=ExtResource("81")]
+position = Vector3(-15.818707223671876, -66.63876025, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label80" type="Label3D" parent="."]
+position = Vector3(-16, -71.5, 1)
+text = "Human5LowerLegLeft"
+font_size = 40
+pixel_size = 0.009
+[node name="Human5FootLeft" parent="." instance=ExtResource("82")]
+position = Vector3(-8.394899414765101, -67.3571952, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label81" type="Label3D" parent="."]
+position = Vector3(-8, -71.5, 1)
+text = "Human5FootLeft"
+font_size = 40
+pixel_size = 0.009
+[node name="Human5UpperLegRight" parent="." instance=ExtResource("83")]
+position = Vector3(-0.5352273007031251, -66.93149286, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label82" type="Label3D" parent="."]
+position = Vector3(0, -71.5, 1)
+text = "Human5UpperLegRight"
+font_size = 40
+pixel_size = 0.009
+[node name="Human5LowerLegRight" parent="." instance=ExtResource("84")]
+position = Vector3(7.838103815527344, -66.58812342, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label83" type="Label3D" parent="."]
+position = Vector3(8, -71.5, 1)
+text = "Human5LowerLegRight"
+font_size = 40
+pixel_size = 0.009
+[node name="Human5FootRight" parent="." instance=ExtResource("85")]
+position = Vector3(15.521645453278008, -67.4305132, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label84" type="Label3D" parent="."]
+position = Vector3(16, -71.5, 1)
+text = "Human5FootRight"
+font_size = 40
+pixel_size = 0.009
+[node name="Human5Spear" parent="." instance=ExtResource("86")]
+position = Vector3(-16.08188359375, -80.7504, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label85" type="Label3D" parent="."]
+position = Vector3(-16, -80.5, 1)
+text = "Human5Spear"
+font_size = 40
+pixel_size = 0.009
+[node name="Human5Shield" parent="." instance=ExtResource("87")]
+position = Vector3(-8.2446875, -76.338, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label86" type="Label3D" parent="."]
+position = Vector3(-8, -80.5, 1)
+text = "Human5Shield"
+font_size = 40
+pixel_size = 0.009
+[node name="Human5Rivet" parent="." instance=ExtResource("88")]
+position = Vector3(0.0, -76.5, 0)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label87" type="Label3D" parent="."]
+position = Vector3(0, -80.5, 1)
+text = "Human5Rivet"
+font_size = 40
+pixel_size = 0.009

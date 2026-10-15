@@ -1,0 +1,1300 @@
+[gd_resource type="Resource" format=3 uid="uid://b0v3jj72ou8rf"]
+
+[resource]
+metadata/calibration = {
+"policy": "One source pixel unit for all sets and axes. Preserve uniform XY texture scale; fit original joint spans or measured body outlines, excluding added connector tabs. One outline scale minimizes maximum relative width/height error without warping the image.",
+"sets": {
+"1": {
+"parts": {
+"Arm_L": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Arms/Left/Human1HandLeft.tscn",
+"fit": "outline",
+"pivot": [260.33000000000004, 118.4],
+"pixel_unit": 0.0012109375,
+"ports": {
+"in": [217.8447610566934, 117.4704660136539],
+"out": [246.5, 960.96]
+},
+"scale": 1.4338700573776386,
+"source_bounds": [204, 565, 279, 686],
+"source_image": "Assets/2DResources/Human/Humanoid_1.png",
+"source_joints": [],
+"source_search_bounds": [202, 565, 280, 690],
+"target": 0.9526279441628824,
+"target_size": [0.75, 1.21],
+"visual_bounds": [16, 390, 477, 1040]
+},
+"Arm_L_Limb_1": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Arms/Left/Human1ForearmLeft.tscn",
+"fit": "joint_span",
+"pivot": [156.4, 272.0],
+"pixel_unit": 0.001513671875,
+"ports": {
+"in": [133.22409539473685, 100.9498355263158],
+"out": [134.03813833225598, 955.6874595992244]
+},
+"scale": 1.0052731393583705,
+"source_bounds": [205, 435, 290, 590],
+"source_image": "Assets/2DResources/Human/Humanoid_1.png",
+"source_joints": [[239, 447], [243, 577]],
+"target": 1.3006152390311283
+},
+"Arm_L_Limb_2": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Arms/Left/Human1UpperArmLeft.tscn",
+"fit": "joint_span",
+"pivot": [796.3, 140.67000000000002],
+"pixel_unit": 0.00239833159541188,
+"ports": {
+"in": [806.4051871788598, 127.77587472473697],
+"out": [154.1638046522957, 822.4621848739496]
+},
+"scale": 0.9777279821029726,
+"source_bounds": [206, 256, 432, 484],
+"source_image": "Assets/2DResources/Human/Humanoid_1.png",
+"source_joints": [[397, 289], [239, 447]],
+"target": 2.2344574285494905
+},
+"Arm_R": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Arms/Right/Human1HandRight.tscn",
+"fit": "outline",
+"pivot": [159.36, 487.42],
+"pixel_unit": 0.00116838487972508,
+"ports": {
+"in": [147.84, 488.7000000000001],
+"out": [897.6, 488.7000000000001]
+},
+"scale": 0.985416699388448,
+"source_bounds": [1123, 530, 1244, 628],
+"source_image": "Assets/2DResources/Human/Humanoid_1.png",
+"source_joints": [],
+"source_search_bounds": [1123, 530, 1244, 628],
+"target": 1.0889444430272832,
+"target_size": [1.21, 0.98],
+"visual_bounds": [16, 16, 1040, 889]
+},
+"Arm_R_Limb_1": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Arms/Right/Human1ForearmRight.tscn",
+"fit": "joint_span",
+"pivot": [261.76, 223.3],
+"pixel_unit": 0.00188133140376266,
+"ports": {
+"in": [100.29858112276372, 97.72794571252314],
+"out": [963.3439313651274, 592.7340398687862]
+},
+"scale": 0.831508551344197,
+"source_bounds": [979, 485, 1174, 609],
+"source_image": "Assets/2DResources/Human/Humanoid_1.png",
+"source_joints": [[1008, 510], [1148, 578]],
+"target": 1.5564061166674976
+},
+"Arm_R_Limb_2": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Arms/Right/Human1UpperArmRight.tscn",
+"fit": "joint_span",
+"pivot": [189.65, 149.12],
+"pixel_unit": 0.002412109375,
+"ports": {
+"in": [120.0967599735508, 133.8719418117699],
+"out": [647.6531059683313, 903.7415347137636]
+},
+"scale": 0.972864684466474,
+"source_bounds": [859, 290, 1029, 537],
+"source_image": "Assets/2DResources/Human/Humanoid_1.png",
+"source_joints": [[894, 323], [1008, 510]],
+"target": 2.190091322296858
+},
+"Head": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Head/Human1Head.tscn",
+"fit": "outline",
+"pivot": [645.76, 668.848],
+"pixel_unit": 0.00408045977011494,
+"ports": {
+"in": [649.4399999999999, 669.032],
+"out": [850.08, 546.0]
+},
+"scale": 0.9740492972662506,
+"source_bounds": [415, 17, 820, 295],
+"source_image": "Assets/2DResources/Human/Humanoid_1.png",
+"source_joints": [],
+"source_search_bounds": [410, 10, 835, 306],
+"target": 3.355443338815305,
+"target_size": [4.05, 2.78],
+"visual_bounds": [16, 16, 1040, 712]
+},
+"Leg_L": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Legs/Left/Human1FootLeft.tscn",
+"fit": "outline",
+"pivot": [755.48, 325.75],
+"pixel_unit": 0.00117514124293785,
+"ports": {
+"in": [734.8304726075711, 123.67952033858452],
+"out": [120.6, 770.28]
+},
+"scale": 1.2554686652812417,
+"source_bounds": [54, 980, 206, 1064],
+"source_image": "Assets/2DResources/Human/Humanoid_1.png",
+"source_joints": [],
+"source_search_bounds": [49, 966, 213, 1070],
+"target": 1.1299557513460428,
+"target_size": [1.52, 0.84],
+"visual_bounds": [16, 300, 989, 901]
+},
+"Leg_L_Limb_1": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Legs/Left/Human1LowerLegLeft.tscn",
+"fit": "joint_span",
+"pivot": [448.0, 118.4],
+"pixel_unit": 0.00232421875,
+"ports": {
+"in": [447.44347826086954, 88.85953177257525],
+"out": [78.45103857566765, 976.84371909001]
+},
+"scale": 1.0319352828868609,
+"source_bounds": [140, 779, 310, 1017],
+"source_image": "Assets/2DResources/Human/Humanoid_1.png",
+"source_joints": [[260, 786], [174, 1000]],
+"target": 2.3063390904201406
+},
+"Leg_L_Limb_2": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Legs/Left/Human1UpperLegLeft.tscn",
+"fit": "joint_span",
+"pivot": [735.14, 150.1],
+"pixel_unit": 0.00238255033557046,
+"ports": {
+"in": [773.8398342272062, 125.77961969770844],
+"out": [211.79700000000005, 719.5020000000001]
+},
+"scale": 0.9148279625652628,
+"source_bounds": [207, 626, 433, 839],
+"source_image": "Assets/2DResources/Human/Humanoid_1.png",
+"source_joints": [[385, 659], [260, 786]],
+"target": 1.7819652072922187
+},
+"Leg_R": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Legs/Right/Human1FootRight.tscn",
+"fit": "outline",
+"pivot": [217.0, 262.51],
+"pixel_unit": 0.00112449799196787,
+"ports": {
+"in": [161.7994767333209, 130.65034572977012],
+"out": [912.56, 576.46]
+},
+"scale": 1.2357629837577702,
+"source_bounds": [1100, 950, 1265, 1013],
+"source_image": "Assets/2DResources/Human/Humanoid_1.png",
+"source_joints": [],
+"source_search_bounds": [1090, 945, 1272, 1020],
+"target": 1.0195587280779856,
+"target_size": [1.65, 0.63],
+"visual_bounds": [16, 240, 1021, 763]
+},
+"Leg_R_Limb_1": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Legs/Right/Human1LowerLegRight.tscn",
+"fit": "joint_span",
+"pivot": [203.8, 118.4],
+"pixel_unit": 0.002265625,
+"ports": {
+"in": [104.35977766548764, 94.97827185447196],
+"out": [566.0304668304668, 964.7552825552824]
+},
+"scale": 0.9468655149446172,
+"source_bounds": [1005, 771, 1166, 1003],
+"source_image": "Assets/2DResources/Human/Humanoid_1.png",
+"source_joints": [[1064, 779], [1132, 979]],
+"target": 2.1124393482417427
+},
+"Leg_R_Limb_2": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Legs/Right/Human1UpperLegRight.tscn",
+"fit": "joint_span",
+"pivot": [150.56, 141.58],
+"pixel_unit": 0.00228539576365663,
+"ports": {
+"in": [110.45802583025832, 110.05581180811808],
+"out": [777.1495867768595, 829.3128099173554]
+},
+"scale": 0.8049022460516925,
+"source_bounds": [885, 629, 1107, 834],
+"source_image": "Assets/2DResources/Human/Humanoid_1.png",
+"source_joints": [[925, 664], [1064, 779]],
+"target": 1.8040509970618903
+},
+"Torso": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Torso/Human1Torso.tscn",
+"fit": "outline",
+"pivot": [528.0, 856.3599999999999],
+"pixel_unit": 0.0029642058165548,
+"ports": {
+"head": [550.6262312078798, 81.9113530326594],
+"in": [528.0, 856.3599999999999],
+"out": [568.96, 60.700000000000045],
+"shoulder_L": [94.11661267931512, 385.9342896807034],
+"shoulder_R": [968.396668401874, 426.1494013534617],
+"waist": [508.7498746867168, 855.2210526315789]
+},
+"scale": 1.126560392968568,
+"source_bounds": [487, 300, 804, 553],
+"source_image": "Assets/2DResources/Human/Humanoid_1.png",
+"source_joints": [],
+"source_search_bounds": [480, 297, 807, 553],
+"target": 2.8319781072600123,
+"target_size": [3.17, 2.53],
+"visual_bounds": [16, 156, 1040, 854]
+},
+"WaistVisual": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Torso/Human1Pelvis.tscn",
+"fit": "outline",
+"pivot": [528.0, 80.56],
+"pixel_unit": 0.00390334572490706,
+"ports": {
+"hip_L": [142.96928571428572, 586.49],
+"hip_R": [929.2974254742549, 571.1714092140921],
+"in": [528.0, 151.02],
+"out": [528.0, 540.5500000000001]
+},
+"scale": 1.0396041333489947,
+"source_bounds": [465, 535, 866, 839],
+"source_image": "Assets/2DResources/Human/Humanoid_1.png",
+"source_joints": [],
+"source_search_bounds": [460, 535, 868, 849],
+"target": 3.491475332864318,
+"target_size": [4.01, 3.04],
+"visual_bounds": [16, 101, 1040, 823]
+}
+},
+"source_units_x": 0.01,
+"source_units_y": 0.01
+},
+"2": {
+"parts": {
+"Arm_L": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Arms/Left/Human2HandLeft.tscn",
+"fit": "outline",
+"pivot": [265.4, 56.96],
+"pixel_unit": 0.0014648438,
+"ports": {
+"in": [299.88, 63.36],
+"out": [293.76, 971.52]
+},
+"scale": 1.037843951577273,
+"source_bounds": [128, 519, 221, 667],
+"source_image": "Assets/2DResources/Human/Humanoid_2.png",
+"source_joints": [],
+"source_search_bounds": [124, 519, 223, 672],
+"target": 1.1732007500849972,
+"target_size": [0.93, 1.48],
+"visual_bounds": [16, 16, 596, 1040]
+},
+"Arm_L_Limb_1": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Arms/Left/Human2ForearmLeft.tscn",
+"fit": "joint_span",
+"pivot": [721.1999999999999, 138.88],
+"pixel_unit": 0.002236328125,
+"ports": {
+"in": [749.28, 190.08],
+"out": [115.96, 918.72]
+},
+"scale": 0.9300902910118092,
+"source_bounds": [125, 326, 300, 555],
+"source_image": "Assets/2DResources/Human/Humanoid_2.png",
+"source_joints": [[264, 357], [173, 536]],
+"target": 2.008033864256278
+},
+"Arm_L_Limb_2": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Arms/Left/Human2UpperArmLeft.tscn",
+"fit": "joint_span",
+"pivot": [896.64, 301.64],
+"pixel_unit": 0.00233160621761658,
+"ports": {
+"in": [897.6, 160.8],
+"out": [126.72, 667.3199999999999]
+},
+"scale": 0.8636086849327117,
+"source_bounds": [163, 254, 447, 425],
+"source_image": "Assets/2DResources/Human/Humanoid_2.png",
+"source_joints": [[395, 295], [236, 391]],
+"target": 1.8573368030596928
+},
+"Arm_R": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Arms/Right/Human2HandRight.tscn",
+"fit": "outline",
+"pivot": [186.05, 97.92],
+"pixel_unit": 0.0013671875,
+"ports": {
+"in": [185.4, 158.4],
+"out": [602.5500000000001, 887.04]
+},
+"scale": 0.9909923323159384,
+"source_bounds": [1090, 550, 1220, 680],
+"source_image": "Assets/2DResources/Human/Humanoid_2.png",
+"source_joints": [],
+"source_search_bounds": [1090, 550, 1220, 680],
+"target": 1.3,
+"target_size": [1.3, 1.3],
+"visual_bounds": [16, 16, 911, 1040]
+},
+"Arm_R_Limb_1": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Arms/Right/Human2ForearmRight.tscn",
+"fit": "joint_span",
+"pivot": [208.2, 131.92000000000002],
+"pixel_unit": 0.00231884057971014,
+"ports": {
+"in": [158.88, 159.68],
+"out": [824.1899999999999, 868.26]
+},
+"scale": 0.8578780448654558,
+"source_bounds": [983, 399, 1160, 626],
+"source_image": "Assets/2DResources/Human/Humanoid_2.png",
+"source_joints": [[1016, 425], [1120, 588]],
+"target": 1.9335201059208047
+},
+"Arm_R_Limb_2": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Arms/Right/Human2UpperArmRight.tscn",
+"fit": "joint_span",
+"pivot": [200.32, 138.55],
+"pixel_unit": 0.00259485924112607,
+"ports": {
+"in": [158.4, 195.27],
+"out": [897.6, 713.16]
+},
+"scale": 0.7013907622318021,
+"source_bounds": [844, 264, 1060, 475],
+"source_image": "Assets/2DResources/Human/Humanoid_2.png",
+"source_joints": [[890, 310], [1012, 420]],
+"target": 1.6426807358704856
+},
+"Head": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Head/Human2Head.tscn",
+"fit": "outline",
+"pivot": [620.16, 717.1],
+"pixel_unit": 0.00369704749679075,
+"ports": {
+"in": [696.96, 762.3399999999999],
+"out": [897.6, 583.92]
+},
+"scale": 0.9192985495387408,
+"source_bounds": [810, 28, 1149, 300],
+"source_image": "Assets/2DResources/Human/Humanoid_2.png",
+"source_joints": [],
+"source_search_bounds": [805, 20, 1163, 308],
+"target": 3.0365770202647586,
+"target_size": [3.39, 2.72],
+"visual_bounds": [16, 16, 1040, 795]
+},
+"Leg_L": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Legs/Left/Human2FootLeft.tscn",
+"fit": "outline",
+"pivot": [835.2, 84.38],
+"pixel_unit": 0.00174904942965779,
+"ports": {
+"in": [887.04, 100.44],
+"out": [116.16, 479.88]
+},
+"scale": 1.0995597076691934,
+"source_bounds": [194, 994, 406, 1059],
+"source_image": "Assets/2DResources/Human/Humanoid_2.png",
+"source_joints": [],
+"source_search_bounds": [190, 978, 413, 1068],
+"target": 1.1738824472663352,
+"target_size": [2.12, 0.65],
+"visual_bounds": [16, 180, 1040, 542]
+},
+"Leg_L_Limb_1": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Legs/Left/Human2LowerLegLeft.tscn",
+"fit": "joint_span",
+"pivot": [248.0, 118.4],
+"pixel_unit": 0.00212890625,
+"ports": {
+"in": [213.28, 126.72],
+"out": [297.59999999999997, 992.64]
+},
+"scale": 0.966849962562324,
+"source_bounds": [274, 813, 414, 1041],
+"source_image": "Assets/2DResources/Human/Humanoid_2.png",
+"source_joints": [[317, 853], [355, 1028]],
+"target": 1.79078195210919
+},
+"Leg_L_Limb_2": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Legs/Left/Human2UpperLegLeft.tscn",
+"fit": "joint_span",
+"pivot": [190.08, 169.9],
+"pixel_unit": 0.00228070175438596,
+"ports": {
+"in": [73.92, 150.79000000000002],
+"out": [960.96, 789.4300000000001]
+},
+"scale": 0.8954084389700433,
+"source_bounds": [193, 627, 440, 820],
+"source_image": "Assets/2DResources/Human/Humanoid_2.png",
+"source_joints": [[224, 657], [404, 789]],
+"target": 2.232129028528593
+},
+"Leg_R": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Legs/Right/Human2FootRight.tscn",
+"fit": "outline",
+"pivot": [231.04, 77.68],
+"pixel_unit": 0.00186770428015564,
+"ports": {
+"in": [95.04, 92.82],
+"out": [950.4, 469.56]
+},
+"scale": 1.0603364587772883,
+"source_bounds": [814, 990, 1019, 1058],
+"source_image": "Assets/2DResources/Human/Humanoid_2.png",
+"source_joints": [],
+"source_search_bounds": [806, 974, 1035, 1068],
+"target": 1.1806777714516352,
+"target_size": [2.05, 0.68],
+"visual_bounds": [55, 170, 1040, 530]
+},
+"Leg_R_Limb_1": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Legs/Right/Human2LowerLegRight.tscn",
+"fit": "joint_span",
+"pivot": [232.48, 128.64],
+"pixel_unit": 0.0021484375,
+"ports": {
+"in": [309.12, 116.16],
+"out": [106.26, 960.96]
+},
+"scale": 0.9350993738999296,
+"source_bounds": [815, 813, 942, 1047],
+"source_image": "Assets/2DResources/Human/Humanoid_2.png",
+"source_joints": [[881, 853], [846, 1024]],
+"target": 1.7454512310574593
+},
+"Leg_R_Limb_2": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Legs/Right/Human2UpperLegRight.tscn",
+"fit": "joint_span",
+"pivot": [835.2, 210.64],
+"pixel_unit": 0.00234278668310727,
+"ports": {
+"in": [781.4399999999999, 219.18],
+"out": [137.28, 716.55]
+},
+"scale": 0.9640412131825477,
+"source_bounds": [790, 637, 1038, 822],
+"source_image": "Assets/2DResources/Human/Humanoid_2.png",
+"source_joints": [[970, 683], [822, 792]],
+"target": 1.8380696395947569
+},
+"Torso": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Torso/Human2Torso.tscn",
+"fit": "outline",
+"pivot": [465.5, 978.56],
+"pixel_unit": 0.003125,
+"ports": {
+"head": [558.6, 68.64],
+"in": [465.5, 978.56],
+"out": [582.37, 77.44000000000005],
+"shoulder_L": [139.65, 232.32],
+"shoulder_R": [819.28, 253.44],
+"waist": [465.5, 971.52]
+},
+"scale": 1.0607730183866009,
+"source_bounds": [470, 193, 784, 516],
+"source_image": "Assets/2DResources/Human/Humanoid_2.png",
+"source_joints": [],
+"source_search_bounds": [470, 187, 789, 516],
+"target": 3.1846820877443953,
+"target_size": [3.14, 3.23],
+"visual_bounds": [16, 16, 915, 1040]
+},
+"WaistVisual": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Torso/Human2Pelvis.tscn",
+"fit": "outline",
+"pivot": [528.0, 74.88],
+"pixel_unit": 0.00421195652173913,
+"ports": {
+"hip_L": [264.0, 437.76],
+"hip_R": [844.8000000000001, 460.7999999999999],
+"in": [528.0, 122.88],
+"out": [528.0, 531.1999999999999]
+},
+"scale": 1.0090781410628704,
+"source_bounds": [365, 474, 818, 775],
+"source_image": "Assets/2DResources/Human/Humanoid_2.png",
+"source_joints": [],
+"source_search_bounds": [358, 474, 821, 781],
+"target": 3.6926007095270945,
+"target_size": [4.53, 3.01],
+"visual_bounds": [16, 16, 1040, 752]
+}
+},
+"source_units_x": 0.01,
+"source_units_y": 0.01
+},
+"3": {
+"parts": {
+"Arm_L": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Arms/Left/Human3HandLeft.tscn",
+"fit": "outline",
+"pivot": [269.38, 118.4],
+"pixel_unit": 0.001357421875,
+"ports": {
+"in": [285.8946930627184, 146.47296622858093],
+"out": [331.5, 971.52]
+},
+"scale": 1.0008040739300426,
+"source_bounds": [156, 504, 244, 637],
+"source_image": "Assets/2DResources/Human/Humanoid_3.png",
+"source_joints": [],
+"source_search_bounds": [148, 504, 249, 641],
+"target": 1.0818502669038816,
+"target_size": [0.88, 1.33],
+"visual_bounds": [16, 16, 634, 1040]
+},
+"Arm_L_Limb_1": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Arms/Left/Human3ForearmLeft.tscn",
+"fit": "joint_span",
+"pivot": [267.6, 108.16],
+"pixel_unit": 0.001865234375,
+"ports": {
+"in": [273.94192319898445, 111.59949222469058],
+"out": [200.01836477987425, 954.7539622641508]
+},
+"scale": 0.9061550392078288,
+"source_bounds": [153, 331, 244, 521],
+"source_image": "Assets/2DResources/Human/Humanoid_3.png",
+"source_joints": [[182, 348], [186, 491]],
+"target": 1.4305593311708538
+},
+"Arm_L_Limb_2": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Arms/Left/Human3UpperArmLeft.tscn",
+"fit": "joint_span",
+"pivot": [855.68, 184.21],
+"pixel_unit": 0.00313001605136436,
+"ports": {
+"in": [909.5672268907564, 175.4545318127251],
+"out": [87.64800000000001, 307.84999999999997]
+},
+"scale": 0.71294032206993,
+"source_bounds": [171, 266, 415, 445],
+"source_image": "Assets/2DResources/Human/Humanoid_3.png",
+"source_joints": [[365, 316], [182, 348]],
+"target": 1.85776747737708
+},
+"Arm_R": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Arms/Right/Human3HandRight.tscn",
+"fit": "outline",
+"pivot": [298.79999999999995, 149.12],
+"pixel_unit": 0.0015625,
+"ports": {
+"in": [173.97489867956597, 178.1737482023794],
+"out": [512.4, 950.4]
+},
+"scale": 0.9046137046137048,
+"source_bounds": [1113, 576, 1222, 728],
+"source_image": "Assets/2DResources/Human/Humanoid_3.png",
+"source_joints": [],
+"source_search_bounds": [1113, 576, 1230, 736],
+"target": 1.287167432776327,
+"target_size": [1.09, 1.52],
+"visual_bounds": [16, 16, 824, 1040]
+},
+"Arm_R_Limb_1": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Arms/Right/Human3ForearmRight.tscn",
+"fit": "joint_span",
+"pivot": [186.0, 159.36],
+"pixel_unit": 0.00166015625,
+"ports": {
+"in": [171.60391098019963, 169.03280968744886],
+"out": [736.4835253689105, 907.296846573681]
+},
+"scale": 0.9616375441443248,
+"source_bounds": [1026, 451, 1167, 617],
+"source_image": "Assets/2DResources/Human/Humanoid_3.png",
+"source_joints": [[1062, 479], [1152, 597]],
+"target": 1.484048516727132
+},
+"Arm_R_Limb_2": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Arms/Right/Human3UpperArmRight.tscn",
+"fit": "joint_span",
+"pivot": [205.8, 141.3],
+"pixel_unit": 0.00229050279329608,
+"ports": {
+"in": [157.84505803728456, 163.84277172001407],
+"out": [799.7690972222222, 750.308063271605]
+},
+"scale": 0.9480465270732248,
+"source_bounds": [891, 306, 1086, 509],
+"source_image": "Assets/2DResources/Human/Humanoid_3.png",
+"source_joints": [[930, 344], [1062, 479]],
+"target": 1.8880942773071476
+},
+"Head": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Head/Human3Head.tscn",
+"fit": "outline",
+"pivot": [558.72, 872.24],
+"pixel_unit": 0.00291880781089414,
+"ports": {
+"in": [295.68, 914.55],
+"out": [844.8000000000001, 623.1]
+},
+"scale": 0.9437317951657624,
+"source_bounds": [800, 22, 1079, 293],
+"source_image": "Assets/2DResources/Human/Humanoid_3.png",
+"source_joints": [],
+"source_search_bounds": [790, 18, 1089, 302],
+"target": 2.749709075520536,
+"target_size": [2.79, 2.71],
+"visual_bounds": [16, 16, 1040, 989]
+},
+"Leg_L": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Legs/Left/Human3FootLeft.tscn",
+"fit": "outline",
+"pivot": [773.76, 94.26],
+"pixel_unit": 0.00209302325581395,
+"ports": {
+"in": [870.5716590481312, 112.08039795643992],
+"out": [116.16, 532.56]
+},
+"scale": 0.9004074475217906,
+"source_bounds": [58, 944, 226, 1031],
+"source_image": "Assets/2DResources/Human/Humanoid_3.png",
+"source_joints": [],
+"source_search_bounds": [55, 918, 242, 1042],
+"target": 1.208966500776593,
+"target_size": [1.68, 0.87],
+"visual_bounds": [16, 225, 1040, 618]
+},
+"Leg_L_Limb_1": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Legs/Left/Human3LowerLegLeft.tscn",
+"fit": "joint_span",
+"pivot": [102.48, 108.16],
+"pixel_unit": 0.001884765625,
+"ports": {
+"in": [98.42248863166596, 106.73832162050434],
+"out": [145.77511961722487, 952.6044657097289]
+},
+"scale": 0.8113519553081937,
+"source_bounds": [143, 773, 276, 960],
+"source_image": "Assets/2DResources/Human/Humanoid_3.png",
+"source_joints": [[202, 793], [182, 921]],
+"target": 1.2955307792561317
+},
+"Leg_L_Limb_2": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Legs/Left/Human3UpperLegLeft.tscn",
+"fit": "joint_span",
+"pivot": [684.11, 149.12],
+"pixel_unit": 0.00234375,
+"ports": {
+"in": [682.629263913824, 147.20215439856372],
+"out": [133.03336339044185, 938.0085662759244]
+},
+"scale": 0.9632132948626084,
+"source_bounds": [156, 590, 400, 829],
+"source_image": "Assets/2DResources/Human/Humanoid_3.png",
+"source_joints": [[326, 624], [197, 799]],
+"target": 2.1740745157422734
+},
+"Leg_R": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Legs/Right/Human3FootRight.tscn",
+"fit": "outline",
+"pivot": [231.04, 91.36],
+"pixel_unit": 0.0019108280254777,
+"ports": {
+"in": [227.1793289625916, 137.42402622445044],
+"out": [929.28, 554.4]
+},
+"scale": 0.9599871946217412,
+"source_bounds": [1061, 968, 1252, 1040],
+"source_image": "Assets/2DResources/Human/Humanoid_3.png",
+"source_joints": [],
+"source_search_bounds": [1055, 935, 1268, 1054],
+"target": 1.1726892171415235,
+"target_size": [1.91, 0.72],
+"visual_bounds": [16, 245, 1040, 644]
+},
+"Leg_R_Limb_1": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Legs/Right/Human3LowerLegRight.tscn",
+"fit": "joint_span",
+"pivot": [216.4, 139.11],
+"pixel_unit": 0.00190073917634635,
+"ports": {
+"in": [113.8283816847256, 115.2044739601538],
+"out": [587.1312869822485, 859.135724852071]
+},
+"scale": 0.7493739194497095,
+"source_bounds": [1011, 805, 1165, 978],
+"source_image": "Assets/2DResources/Human/Humanoid_3.png",
+"source_joints": [[1057, 827], [1100, 945]],
+"target": 1.2559060474414476
+},
+"Leg_R_Limb_2": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Legs/Right/Human3UpperLegRight.tscn",
+"fit": "joint_span",
+"pivot": [220.93, 136.77],
+"pixel_unit": 0.00271259418729817,
+"ports": {
+"in": [201.13880506940257, 142.4674109837055],
+"out": [660.7471513836136, 719.3697775366251]
+},
+"scale": 0.8633181658840093,
+"source_bounds": [884, 608, 1130, 860],
+"source_image": "Assets/2DResources/Human/Humanoid_3.png",
+"source_joints": [[946, 646], [1055, 780]],
+"target": 1.7273389939441537
+},
+"Torso": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Torso/Human3Torso.tscn",
+"fit": "outline",
+"pivot": [520.5, 904.3],
+"pixel_unit": 0.00354497354497354,
+"ports": {
+"head": [593.37, 117.24],
+"in": [520.5, 904.3],
+"out": [601.2199999999999, 72.70000000000005],
+"shoulder_L": [80.917868338558, 310.36112852664576],
+"shoulder_R": [960.50875, 295.38375],
+"waist": [343.53000000000003, 840.22]
+},
+"scale": 1.061808669506232,
+"source_bounds": [459, 211, 868, 543],
+"source_image": "Assets/2DResources/Human/Humanoid_3.png",
+"source_joints": [],
+"source_search_bounds": [456, 211, 877, 543],
+"target": 3.684942333334404,
+"target_size": [4.09, 3.3200000000000003],
+"visual_bounds": [16, 16, 1025, 961]
+},
+"WaistVisual": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Torso/Human3Pelvis.tscn",
+"fit": "outline",
+"pivot": [528.0, 83.52],
+"pixel_unit": 0.00361374407582938,
+"ports": {
+"hip_L": [313.9493670886076, 764.7958860759494],
+"hip_R": [661.3400974025974, 768.4318181818181],
+"in": [348.48, 350.40000000000003],
+"out": [528.0, 623.68]
+},
+"scale": 1.3528098957993129,
+"source_bounds": [414, 494, 890, 793],
+"source_image": "Assets/2DResources/Human/Humanoid_3.png",
+"source_joints": [],
+"source_search_bounds": [392, 494, 898, 795],
+"target": 3.7725853204400823,
+"target_size": [4.76, 2.99],
+"visual_bounds": [16, 280, 1040, 860]
+}
+},
+"source_units_x": 0.01,
+"source_units_y": 0.01
+},
+"4": {
+"parts": {
+"Arm_L": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Arms/Left/Human4HandLeft.tscn",
+"fit": "outline",
+"pivot": [803.32, 894.4300000000001],
+"pixel_unit": 0.00115501519756838,
+"ports": {
+"in": [803.32, 894.4300000000001],
+"out": [512.941804, 470.982325]
+},
+"scale": 0.9363966322319968,
+"source_bounds": [149, 31, 252, 140],
+"source_image": "Assets/2DResources/Human/Humanoid_4.png",
+"source_joints": [],
+"source_search_bounds": [143, 26, 252, 140],
+"target": 1.0595753866525968,
+"target_size": [1.03, 1.09],
+"visual_bounds": [16, 16, 988, 1003]
+},
+"Arm_L_Limb_1": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Arms/Left/Human4ForearmLeft.tscn",
+"fit": "joint_span",
+"pivot": [654.7592, 887.85408],
+"pixel_unit": 0.00181640625,
+"ports": {
+"in": [654.7592, 887.85408],
+"out": [126.1952, 131.649536]
+},
+"scale": 0.9821669276615268,
+"source_bounds": [205, 121, 341, 307],
+"source_image": "Assets/2DResources/Human/Humanoid_4.png",
+"source_joints": [[300, 270], [224, 124]],
+"target": 1.6459647626847909
+},
+"Arm_L_Limb_2": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Arms/Left/Human4UpperArmLeft.tscn",
+"fit": "joint_span",
+"pivot": [881.542144, 235.15412],
+"pixel_unit": 0.00276086956521739,
+"ports": {
+"in": [881.542144, 235.15412],
+"out": [113.548288, 175.38494]
+},
+"scale": 0.8439189002569704,
+"source_bounds": [291, 230, 532, 357],
+"source_image": "Assets/2DResources/Human/Humanoid_4.png",
+"source_joints": [[478, 293], [300, 270]],
+"target": 1.7947980387776223
+},
+"Arm_R": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Arms/Right/Human4HandRight.tscn",
+"fit": "outline",
+"pivot": [198.432768, 204.33892],
+"pixel_unit": 0.00138528138528138,
+"ports": {
+"in": [198.432768, 204.33892],
+"out": [779.84, 745.96]
+},
+"scale": 0.8117837932647334,
+"source_bounds": [1290, 572, 1389, 691],
+"source_image": "Assets/2DResources/Human/Humanoid_4.png",
+"source_joints": [],
+"source_search_bounds": [1290, 572, 1398, 700],
+"target": 1.0854031509075326,
+"target_size": [0.99, 1.19],
+"visual_bounds": [16, 16, 1008, 940]
+},
+"Arm_R_Limb_1": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Arms/Right/Human4ForearmRight.tscn",
+"fit": "joint_span",
+"pivot": [151.61872, 159.893504],
+"pixel_unit": 0.001904296875,
+"ports": {
+"in": [151.61872, 159.893504],
+"out": [651.593356, 822.878208]
+},
+"scale": 1.0761929279411375,
+"source_bounds": [1194, 417, 1325, 612],
+"source_image": "Assets/2DResources/Human/Humanoid_4.png",
+"source_joints": [[1234, 451], [1318, 599]],
+"target": 1.701763790894612
+},
+"Arm_R_Limb_2": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Arms/Right/Human4UpperArmRight.tscn",
+"fit": "joint_span",
+"pivot": [168.352768, 218.66209],
+"pixel_unit": 0.00254691689008042,
+"ports": {
+"in": [168.352768, 218.66209],
+"out": [931.124224, 625.404416]
+},
+"scale": 0.804182077635849,
+"source_bounds": [1043, 244, 1264, 434],
+"source_image": "Assets/2DResources/Human/Humanoid_4.png",
+"source_joints": [[1088, 297], [1220, 415]],
+"target": 1.7705366418123063
+},
+"Head": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Head/Human4Head.tscn",
+"fit": "outline",
+"pivot": [616.50944, 752.479008],
+"pixel_unit": 0.00320185614849187,
+"ports": {
+"in": [616.50944, 752.479008],
+"out": [937.6, 507.34]
+},
+"scale": 0.9828718421932504,
+"source_bounds": [757, 19, 1082, 288],
+"source_image": "Assets/2DResources/Human/Humanoid_4.png",
+"source_joints": [],
+"source_search_bounds": [756, 17, 1087, 293],
+"target": 2.9567718883945036,
+"target_size": [3.25, 2.69],
+"visual_bounds": [16, 16, 1040, 878]
+},
+"Leg_L": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Legs/Left/Human4FootLeft.tscn",
+"fit": "outline",
+"pivot": [805.14048, 168.42664],
+"pixel_unit": 0.00200354609929077,
+"ports": {
+"in": [805.14048, 168.42664],
+"out": [200.32, 444.64]
+},
+"scale": 0.932102360411995,
+"source_bounds": [103, 882, 288, 991],
+"source_image": "Assets/2DResources/Human/Humanoid_4.png",
+"source_joints": [],
+"source_search_bounds": [100, 882, 291, 995],
+"target": 1.4200352108310554,
+"target_size": [1.85, 1.09],
+"visual_bounds": [16, 16, 1040, 580]
+},
+"Leg_L_Limb_1": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Legs/Left/Human4LowerLegLeft.tscn",
+"fit": "joint_span",
+"pivot": [390.084118, 109.586432],
+"pixel_unit": 0.002783203125,
+"ports": {
+"in": [390.084118, 109.586432],
+"out": [134.5, 978.56]
+},
+"scale": 1.1922698988819351,
+"source_bounds": [208, 639, 346, 924],
+"source_image": "Assets/2DResources/Human/Humanoid_4.png",
+"source_joints": [[322, 620], [243, 910]],
+"target": 3.0056779601281307
+},
+"Leg_L_Limb_2": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Legs/Left/Human4UpperLegLeft.tscn",
+"fit": "joint_span",
+"pivot": [781.9885899999999, 158.37696],
+"pixel_unit": 0.002900390625,
+"ports": {
+"in": [781.9885899999999, 158.37696],
+"out": [207.153565, 815.351808]
+},
+"scale": 1.011440716980918,
+"source_bounds": [267, 383, 536, 680],
+"source_image": "Assets/2DResources/Human/Humanoid_4.png",
+"source_joints": [[488, 425], [322, 620]],
+"target": 2.5608787554275194
+},
+"Leg_R": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Legs/Right/Human4FootRight.tscn",
+"fit": "outline",
+"pivot": [369.801216, 172.859296],
+"pixel_unit": 0.00185393258426966,
+"ports": {
+"in": [369.801216, 172.859296],
+"out": [876.16, 453.88]
+},
+"scale": 0.9435449353543796,
+"source_bounds": [1201, 911, 1385, 1002],
+"source_image": "Assets/2DResources/Human/Humanoid_4.png",
+"source_joints": [],
+"source_search_bounds": [1198, 911, 1390, 1010],
+"target": 1.293986089569745,
+"target_size": [1.84, 0.91],
+"visual_bounds": [16, 16, 1040, 550]
+},
+"Leg_R_Limb_1": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Legs/Right/Human4LowerLegRight.tscn",
+"fit": "joint_span",
+"pivot": [118.370158, 99.453952],
+"pixel_unit": 0.002568359375,
+"ports": {
+"in": [118.370158, 99.453952],
+"out": [492.85, 947.84]
+},
+"scale": 1.2009829474243512,
+"source_bounds": [1117, 693, 1294, 956],
+"source_image": "Assets/2DResources/Human/Humanoid_4.png",
+"source_joints": [[1168, 664], [1268, 932]],
+"target": 2.86048946860498
+},
+"Leg_R_Limb_2": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Legs/Right/Human4UpperLegRight.tscn",
+"fit": "joint_span",
+"pivot": [162.79516900000002, 153.14944],
+"pixel_unit": 0.00298828125,
+"ports": {
+"in": [162.79516900000002, 153.14944],
+"out": [615.902061, 800.08192]
+},
+"scale": 1.0018051369484784,
+"source_bounds": [981, 427, 1220, 733],
+"source_image": "Assets/2DResources/Human/Humanoid_4.png",
+"source_joints": [[1030, 472], [1168, 664]],
+"target": 2.364487259428564
+},
+"Torso": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Torso/Human4Torso.tscn",
+"fit": "outline",
+"pivot": [548.48, 693.0400000000001],
+"pixel_unit": 0.00473901098901098,
+"ports": {
+"head": [558.72, 88.8],
+"in": [548.48, 693.0400000000001],
+"out": [558.72, 88.8],
+"shoulder_L": [304.231020032, 422.3581741856],
+"shoulder_R": [893.6557674496, 492.7833787808],
+"waist": [548.48, 693.0400000000001]
+},
+"scale": 0.9557852595351416,
+"source_bounds": [542, 215, 991, 556],
+"source_image": "Assets/2DResources/Human/Humanoid_4.png",
+"source_joints": [],
+"source_search_bounds": [535, 211, 996, 556],
+"target": 3.9129145147830666,
+"target_size": [4.49, 3.41],
+"visual_bounds": [16, 16, 1040, 744]
+},
+"WaistVisual": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Torso/Human4Pelvis.tscn",
+"fit": "outline",
+"pivot": [425.6, 143.62],
+"pixel_unit": 0.00482369534555712,
+"ports": {
+"hip_L": [145.9133978624, 591.5761589685],
+"hip_R": [942.8552561664, 564.846804021],
+"in": [528.0, 129.44],
+"out": [159.36, 604.47]
+},
+"scale": 1.0070824378578298,
+"source_bounds": [496, 503, 1000, 843],
+"source_image": "Assets/2DResources/Human/Humanoid_4.png",
+"source_joints": [],
+"source_search_bounds": [492, 503, 1004, 845],
+"target": 4.1395651945584815,
+"target_size": [5.04, 3.4],
+"visual_bounds": [16, 16, 1040, 725]
+}
+},
+"source_units_x": 0.01,
+"source_units_y": 0.01
+},
+"5": {
+"parts": {
+"Arm_L": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Arms/Left/Human5HandLeft.tscn",
+"fit": "outline",
+"pivot": [358.86719999999997, 137.086976],
+"pixel_unit": 0.001181640625,
+"ports": {
+"in": [358.86719999999997, 137.086976],
+"out": [269.6, 835.2]
+},
+"scale": 1.215162938676133,
+"source_bounds": [187, 531, 275, 647],
+"source_image": "Assets/2DResources/Human/Humanoid_5.png",
+"source_joints": [],
+"source_search_bounds": [187, 531, 275, 652],
+"target": 1.0103464752252072,
+"target_size": [0.88, 1.16],
+"visual_bounds": [16, 260, 650, 1040]
+},
+"Arm_L_Limb_1": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Arms/Left/Human5ForearmLeft.tscn",
+"fit": "joint_span",
+"pivot": [414.62809, 190.000128],
+"pixel_unit": 0.001826171875,
+"ports": {
+"in": [414.62809, 190.000128],
+"out": [139.54489, 917.583872]
+},
+"scale": 0.9743003622728266,
+"source_bounds": [216, 391, 334, 578],
+"source_image": "Assets/2DResources/Human/Humanoid_5.png",
+"source_joints": [[287, 425], [232, 552]],
+"target": 1.383979768638256
+},
+"Arm_L_Limb_2": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Arms/Left/Human5UpperArmLeft.tscn",
+"fit": "joint_span",
+"pivot": [852.579328, 246.214887],
+"pixel_unit": 0.00182599355531686,
+"ports": {
+"in": [852.579328, 246.214887],
+"out": [190.761984, 780.888187]
+},
+"scale": 0.9750807235744956,
+"source_bounds": [299, 230, 481, 400],
+"source_image": "Assets/2DResources/Human/Humanoid_5.png",
+"source_joints": [[443, 269], [331, 371]],
+"target": 1.514859729479928
+},
+"Arm_R": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Arms/Right/Human5HandRight.tscn",
+"fit": "outline",
+"pivot": [86.42, 521.3],
+"pixel_unit": 0.00104294478527607,
+"ports": {
+"in": [86.42, 521.3],
+"out": [700.08, 423.5]
+},
+"scale": 0.9008997429305912,
+"source_bounds": [1118, 536, 1204, 621],
+"source_image": "Assets/2DResources/Human/Humanoid_5.png",
+"source_joints": [],
+"source_search_bounds": [1118, 536, 1204, 621],
+"target": 0.8549853799919622,
+"target_size": [0.86, 0.85],
+"visual_bounds": [16, 16, 1022, 831]
+},
+"Arm_R_Limb_1": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Arms/Right/Human5ForearmRight.tscn",
+"fit": "joint_span",
+"pivot": [205.21617, 168.020992],
+"pixel_unit": 0.0017578125,
+"ports": {
+"in": [205.21617, 168.020992],
+"out": [636.5277649999999, 938.84416]
+},
+"scale": 0.9328397895209352,
+"source_bounds": [1047, 402, 1169, 582],
+"source_image": "Assets/2DResources/Human/Humanoid_5.png",
+"source_joints": [[1089, 432], [1136, 569]],
+"target": 1.4483784035948617
+},
+"Arm_R_Limb_2": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Arms/Right/Human5UpperArmRight.tscn",
+"fit": "joint_span",
+"pivot": [200.321024, 229.94968],
+"pixel_unit": 0.00189159292035398,
+"ports": {
+"in": [200.321024, 229.94968],
+"out": [880.713728, 744.444104]
+},
+"scale": 0.9626049116736224,
+"source_bounds": [900, 228, 1097, 399],
+"source_image": "Assets/2DResources/Human/Humanoid_5.png",
+"source_joints": [[941, 268], [1059, 369]],
+"target": 1.5532224567009068
+},
+"Head": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Head/Human5Head.tscn",
+"fit": "outline",
+"pivot": [707.191808, 744.337792],
+"pixel_unit": 0.00301682692307692,
+"ports": {
+"in": [707.191808, 744.337792],
+"out": [968.32, 473.6]
+},
+"scale": 1.0040848260812445,
+"source_bounds": [517, 11, 831, 260],
+"source_image": "Assets/2DResources/Human/Humanoid_5.png",
+"source_joints": [],
+"source_search_bounds": [517, 10, 834, 261],
+"target": 2.7961759601284037,
+"target_size": [3.14, 2.49],
+"visual_bounds": [16, 16, 1040, 848]
+},
+"Leg_L": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Legs/Left/Human5FootLeft.tscn",
+"fit": "outline",
+"pivot": [266.488832, 219.431488],
+"pixel_unit": 0.00151006711409395,
+"ports": {
+"in": [266.488832, 219.431488],
+"out": [876.16, 516.64]
+},
+"scale": 0.9224660692023616,
+"source_bounds": [260, 889, 401, 973],
+"source_image": "Assets/2DResources/Human/Humanoid_5.png",
+"source_joints": [],
+"source_search_bounds": [259, 889, 404, 979],
+"target": 1.0883014288330233,
+"target_size": [1.41, 0.84],
+"visual_bounds": [16, 16, 1040, 612]
+},
+"Leg_L_Limb_1": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Legs/Left/Human5LowerLegLeft.tscn",
+"fit": "joint_span",
+"pivot": [395.677144, 187.4944],
+"pixel_unit": 0.002529296875,
+"ports": {
+"in": [395.677144, 187.4944],
+"out": [130.68688, 898.737152]
+},
+"scale": 1.0894836261633931,
+"source_bounds": [285, 672, 441, 931],
+"source_image": "Assets/2DResources/Human/Humanoid_5.png",
+"source_joints": [[374, 721], [301, 917]],
+"target": 2.0915305400591215
+},
+"Leg_L_Limb_2": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Legs/Left/Human5UpperLegLeft.tscn",
+"fit": "joint_span",
+"pivot": [719.1252850000001, 172.341248],
+"pixel_unit": 0.001748046875,
+"ports": {
+"in": [719.1252850000001, 172.341248],
+"out": [162.363169, 875.098112]
+},
+"scale": 0.839353446525111,
+"source_bounds": [329, 575, 489, 754],
+"source_image": "Assets/2DResources/Human/Humanoid_5.png",
+"source_joints": [[443, 609], [374, 721]],
+"target": 1.315484701545404
+},
+"Leg_R": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Legs/Right/Human5FootRight.tscn",
+"fit": "outline",
+"pivot": [246.820864, 216.15532],
+"pixel_unit": 0.001701244813278,
+"ports": {
+"in": [246.820864, 216.15532],
+"out": [876.16, 391.96]
+},
+"scale": 0.8901869730565792,
+"source_bounds": [1087, 887, 1240, 961],
+"source_image": "Assets/2DResources/Human/Humanoid_5.png",
+"source_joints": [],
+"source_search_bounds": [1083, 887, 1243, 969],
+"target": 1.064048871058092,
+"target_size": [1.53, 0.74],
+"visual_bounds": [16, 16, 1040, 498]
+},
+"Leg_R_Limb_1": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Legs/Right/Human5LowerLegRight.tscn",
+"fit": "joint_span",
+"pivot": [255.48211, 170.236928],
+"pixel_unit": 0.002548828125,
+"ports": {
+"in": [255.48211, 170.236928],
+"out": [472.671298, 885.868544]
+},
+"scale": 1.0643392893385333,
+"source_bounds": [1001, 673, 1151, 934],
+"source_image": "Assets/2DResources/Human/Humanoid_5.png",
+"source_joints": [[1069, 721], [1125, 916]],
+"target": 2.02881738951538
+},
+"Leg_R_Limb_2": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Legs/Right/Human5UpperLegRight.tscn",
+"fit": "joint_span",
+"pivot": [207.337228, 215.015424],
+"pixel_unit": 0.00181640625,
+"ports": {
+"in": [207.337228, 215.015424],
+"out": [819.590308, 882.054144]
+},
+"scale": 0.8162287893425542,
+"source_bounds": [957, 575, 1120, 761],
+"source_image": "Assets/2DResources/Human/Humanoid_5.png",
+"source_joints": [[995, 609], [1069, 721]],
+"target": 1.3423859355639869
+},
+"Torso": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Torso/Human5Torso.tscn",
+"fit": "outline",
+"pivot": [538.24, 747.3199999999999],
+"pixel_unit": 0.00286632390745501,
+"ports": {
+"head": [548.48, 62.68],
+"in": [538.24, 747.3199999999999],
+"out": [538.24, 54.900000000000006],
+"shoulder_L": [111.32043399638336, 322.30705244122964],
+"shoulder_R": [943.760814249364, 322.31515812431843],
+"waist": [538.24, 747.3199999999999]
+},
+"scale": 1.0329045905788532,
+"source_bounds": [548, 252, 863, 474],
+"source_image": "Assets/2DResources/Human/Humanoid_5.png",
+"source_joints": [],
+"source_search_bounds": [542, 251, 867, 474],
+"target": 2.644428104524682,
+"target_size": [3.15, 2.22],
+"visual_bounds": [16, 16, 1040, 794]
+},
+"WaistVisual": {
+"asset": "res://Scenes/Creatures/Bodyparts/Human/Torso/Human5Pelvis.tscn",
+"fit": "outline",
+"pivot": [528.0, 76.08],
+"pixel_unit": 0.00396804260985352,
+"ports": {
+"hip_L": [147.07402031930334, 598.6066763425254],
+"hip_R": [968.2203513909224, 603.6603221083456],
+"in": [528.0, 76.08],
+"out": [169.6, 594.27]
+},
+"scale": 1.025897697919708,
+"source_bounds": [504, 466, 935, 762],
+"source_image": "Assets/2DResources/Human/Humanoid_5.png",
+"source_joints": [],
+"source_search_bounds": [497, 466, 941, 764],
+"target": 3.5717782685939508,
+"target_size": [4.3100000000000005, 2.96],
+"visual_bounds": [16, 16, 1040, 767]
+}
+},
+"source_units_x": 0.01,
+"source_units_y": 0.01
+}
+},
+"source_pixel_unit": 0.01,
+"version": 2
+}

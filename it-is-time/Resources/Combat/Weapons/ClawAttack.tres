@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="WeaponArmAttackPreset" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Combat/WeaponArmAttackPreset.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+resource_name = "Claw forward rake"
+minimum_charge_time = 0.15
+maximum_charge_time = 0.8
+swing_duration = 0.2
+follow_through_ratio = 0.5
+minimum_follow_through_time = 0.1
+cooldown_duration = 0.2
+recovery_duration = 0.25
+sustained_swing_enabled = false
+charge_angle_drag_enabled = false
+preparation_reach = 0.45
+strike_reach = 0.95
+preparation_height = 0.35
+strike_height = -0.08
+pose_frequency = 4.0
+npc_preferred_reach_ratio = 0.75

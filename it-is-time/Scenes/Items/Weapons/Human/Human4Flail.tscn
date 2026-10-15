@@ -1,0 +1,38 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="PackedScene" path="res://Scenes/Items/_SampleWeapon.tscn" id="1_base"]
+[ext_resource type="Texture2D" path="res://Assets/2DResources/Human/Separated/Weapons/01_human4_flail.png" id="2_texture"]
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/Human/Scenes/Weapons/Human4Flail.tscn" id="3_model"]
+
+[sub_resource type="ConvexPolygonShape3D" id="Shape"]
+resource_local_to_scene = true
+points = PackedVector3Array(-0.433365179, -4.531575000, -0.040000000, -0.222360714, 0.093581250, -0.040000000, -0.152025893, 0.164737500, -0.040000000, -0.081691071, 0.235893750, -0.040000000, 0.058978571, 0.235893750, -0.040000000, 0.199648214, 0.164737500, -0.040000000, 0.902996429, -4.531575000, -0.040000000, 0.902996429, -4.816200000, -0.040000000, 0.832661607, -4.958512500, -0.040000000, 0.762326786, -5.029668750, -0.040000000, 0.691991964, -5.100825000, -0.040000000, 0.621657143, -5.171981250, -0.040000000, 0.340317857, -5.314293750, -0.040000000, 0.058978571, -5.314293750, -0.040000000, -0.152025893, -5.243137500, -0.040000000, -0.222360714, -5.171981250, -0.040000000, -0.292695536, -5.100825000, -0.040000000, -0.363030357, -5.029668750, -0.040000000, -0.433365179, -4.816200000, -0.040000000, -0.433365179, -4.531575000, 0.040000000, -0.222360714, 0.093581250, 0.040000000, -0.152025893, 0.164737500, 0.040000000, -0.081691071, 0.235893750, 0.040000000, 0.058978571, 0.235893750, 0.040000000, 0.199648214, 0.164737500, 0.040000000, 0.902996429, -4.531575000, 0.040000000, 0.902996429, -4.816200000, 0.040000000, 0.832661607, -4.958512500, 0.040000000, 0.762326786, -5.029668750, 0.040000000, 0.691991964, -5.100825000, 0.040000000, 0.621657143, -5.171981250, 0.040000000, 0.340317857, -5.314293750, 0.040000000, 0.058978571, -5.314293750, 0.040000000, -0.152025893, -5.243137500, 0.040000000, -0.222360714, -5.171981250, 0.040000000, -0.292695536, -5.100825000, 0.040000000, -0.363030357, -5.029668750, 0.040000000, -0.433365179, -4.816200000, 0.040000000)
+
+[node name="Human4Flail" instance=ExtResource("1_base")]
+mass = 0.400000000
+can_be_picked_up = true
+weapon_tags = Array[int]([3])
+primary_attack_tag = 3
+attack_forward_local = Vector3(0.066793554, -0.997766817, 0.000000000)
+display_name = "Human4 绳锤"
+item_image = ExtResource("2_texture")
+sprite_visible = false
+mesh_visible = true
+attachment_local_position = Vector3(-0.018543763, -0.043340631, 0.000000000)
+item_rotation = 3.141592654
+preferred_holder_name = &""
+has_attachment_point = true
+metadata/source_png = "res://Assets/2DResources/Human/Separated/Weapons/01_human4_flail.png"
+metadata/source_model_scene = "res://Assets/3DResources/Creatures/Human/Scenes/Weapons/Human4Flail.tscn"
+metadata/source_physical_scene = "res://Scenes/Creatures/Bodyparts/Human/Weapons/Human4Flail.tscn"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("Shape")
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+visible = false
+position = Vector3(0.234815612, -2.539200068, 0.000000000)
+pixel_size = 0.005390625
+texture = ExtResource("2_texture")
+
+[node name="Model" parent="." instance=ExtResource("3_model")]

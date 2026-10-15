@@ -1,0 +1,33 @@
+Human 持武器继承场景（2026-10-15）
+
+普通角色6个，直接继承res://Scenes/Creatures/Characters/Generate_Human.tscn。
+对应NPC6个，直接继承res://Scenes/Creatures/Characters/Generate_Human_NPC.tscn。
+所有子场景沿用父场景当前的身体外观、手动布局、物理结构、移动/转向/挥舞设置；武器编号表示武器来自哪套原图，不会切换Human Set。
+
+文件对应关系
+Human1长矛：Generate_Human_Spear1.tscn / Generate_Human_Spear1_NPC.tscn
+Human2爪形护手：Generate_Human_ClawGauntlet.tscn / Generate_Human_ClawGauntlet_NPC.tscn
+Human3弯刀：Generate_Human_CurvedSword.tscn / Generate_Human_CurvedSword_NPC.tscn
+Human4绳锤：Generate_Human_Flail.tscn / Generate_Human_Flail_NPC.tscn
+Human5长矛：Generate_Human_Spear5.tscn / Generate_Human_Spear5_NPC.tscn
+Human5盾牌：Generate_Human_Shield.tscn / Generate_Human_Shield_NPC.tscn
+
+使用方法
+将需要的tscn拖入关卡。启动后会先按父场景配置生成物理角色，再把指定武器放入第一个空物品栏槽位并选中，绑定到可用的持握手。
+普通角色可以被现有Controller接入并使用现有MouseLeft挥舞；NPC使用HumanNPCStateMachine3D和HumanMeleeAI.tres寻路、索敌、转向及预测挥舞，库存HUD沿用NPC隐藏设置。
+NPC默认阵营沿用父场景的1；需要互相敌对时，在各实例根节点修改Faction Id。寻路仍需要关卡提供可用导航网格。
+初始武器在根节点Inspector的Initial Equipment / Initial Weapon Scene中配置，可以替换或清空。
+编辑器中保存的是初始武器引用；武器装备和grip外观在运行时应用。
+
+装备生命周期
+初始装备由GeneratedHumanCharacter3D统一处理，NPC脚本沿用这个实现。
+重新生成会保留物品栏中的同一件武器并绑定到新手部，不会重复创建。
+取消选择、切换空槽会正常卸下；只要物品栏已有物品，初始装备不会强制重新选中。
+手部断裂时继续使用现有掉落规则。未指定Initial Weapon Scene的原Generate_Human仍保持空手。
+
+当前武器都使用同一套Human挥舞预设；绳锤是整体刚体，盾牌按碰撞武器使用，没有新增格挡或双持。
+本次没有修改TestLevel或生成器默认值。需要测试时将指定子场景放入关卡即可。
+
+验证
+Tests/ValidateHumanArmedVariants3D.gd：12个继承场景的自动生成、初始装备、握紧模型、持握点、阵营归属、再生成不重复和取消选择。
+Tests/ValidateHumanNPC3D.gd：现有NPC实际寻路、移动、预测攻击、Controller接管、再生成和断肢掉落回归。

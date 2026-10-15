@@ -1,0 +1,38 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="PackedScene" path="res://Scenes/Items/_SampleWeapon.tscn" id="1_base"]
+[ext_resource type="Texture2D" path="res://Assets/2DResources/Human/Separated/Weapons/01_human5_spear.png" id="2_texture"]
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/Human/Scenes/Weapons/Human5Spear.tscn" id="3_model"]
+
+[sub_resource type="ConvexPolygonShape3D" id="Shape"]
+resource_local_to_scene = true
+points = PackedVector3Array(-0.531300000, 5.869204687, -0.040000000, -0.408663281, 7.737056250, -0.040000000, -0.286026562, 8.235150000, -0.040000000, -0.040753125, 8.982290625, -0.040000000, 0.081883594, 8.982290625, -0.040000000, 0.204520313, 8.857767187, -0.040000000, 0.449793750, 8.110626563, -0.040000000, 0.695067188, 4.748493750, -0.040000000, 0.695067188, 4.623970313, -0.040000000, 0.204520313, -0.481490625, -0.040000000, 0.081883594, -0.606014063, -0.040000000, -0.040753125, -0.606014063, -0.040000000, -0.163389844, -0.356967188, -0.040000000, -0.531300000, 5.620157812, -0.040000000, -0.531300000, 5.869204687, 0.040000000, -0.408663281, 7.737056250, 0.040000000, -0.286026562, 8.235150000, 0.040000000, -0.040753125, 8.982290625, 0.040000000, 0.081883594, 8.982290625, 0.040000000, 0.204520313, 8.857767187, 0.040000000, 0.449793750, 8.110626563, 0.040000000, 0.695067188, 4.748493750, 0.040000000, 0.695067188, 4.623970313, 0.040000000, 0.204520313, -0.481490625, 0.040000000, 0.081883594, -0.606014063, 0.040000000, -0.040753125, -0.606014063, 0.040000000, -0.163389844, -0.356967188, 0.040000000, -0.531300000, 5.620157812, 0.040000000)
+
+[node name="Human5Spear" instance=ExtResource("1_base")]
+mass = 0.400000000
+can_be_picked_up = true
+weapon_tags = Array[int]([0])
+primary_attack_tag = 0
+attack_forward_local = Vector3(-0.005490652, 0.999984926, 0.000000000)
+display_name = "Human5 长矛"
+item_image = ExtResource("2_texture")
+sprite_visible = false
+mesh_visible = true
+attachment_local_position = Vector3(0.053582814, 3.099501610, 0.000000000)
+item_rotation = 0.000000000
+preferred_holder_name = &""
+has_attachment_point = true
+metadata/source_png = "res://Assets/2DResources/Human/Separated/Weapons/01_human5_spear.png"
+metadata/source_model_scene = "res://Assets/3DResources/Creatures/Human/Scenes/Weapons/Human5Spear.tscn"
+metadata/source_physical_scene = "res://Scenes/Creatures/Bodyparts/Human/Weapons/Human5Spear.tscn"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("Shape")
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+visible = false
+position = Vector3(0.081883594, 4.250400066, 0.000000000)
+pixel_size = 0.009433594
+texture = ExtResource("2_texture")
+
+[node name="Model" parent="." instance=ExtResource("3_model")]

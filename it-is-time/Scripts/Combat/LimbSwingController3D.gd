@@ -2,6 +2,7 @@ class_name LimbSwingController3D
 extends Node3D
 
 const PLAYER_CONTEXT = preload("res://Scripts/Player/PlayerControlContext.gd")
+const WEAPON_POSE = preload("res://Scripts/Combat/WeaponArmPose3D.gd")
 
 enum SwingState { IDLE, CHARGING, SWINGING, COOLDOWN, FOLLOW_THROUGH, RECOVERING }
 
@@ -37,6 +38,7 @@ var _npc_reach_cache: Dictionary = {}
 ## Conservative broad-phase reach. Only the existing trajectory prediction
 ## can authorize an attack inside this envelope.
 func get_npc_attack_maximum_range(action_id: StringName, target: Node3D) -> float:
+	refresh_weapon_presets()
 	if not npc_geometry_attack_range_enabled: return 0.0
 	if _npc_reach_frame != Engine.get_physics_frames():
 		_npc_reach_frame = Engine.get_physics_frames()
@@ -44,15 +46,22 @@ func get_npc_attack_maximum_range(action_id: StringName, target: Node3D) -> floa
 	if not _npc_reach_cache.has(action_id):
 		var reach := 0.0
 		var origin := get_parent().get_node_or_null("Torso") as Node3D
+		if origin == null and get_parent().has_method("get_combat_anchor"): origin = get_parent().get_combat_anchor()
 		for index: int in control_groups.size():
 			if control_groups[index] == null or control_groups[index].group_name != action_id or index >= _states.size(): continue
 			for member: Dictionary in _states[index].members:
 				var body := member.body as RigidBody3D
 				var anchor := member.anchor_body as RigidBody3D
-				if not is_instance_valid(body) or body.is_broken or not is_instance_valid(anchor): continue
+				if not is_instance_valid(body) or body.is_broken or not is_instance_valid(anchor) or not _chain_is_available(member): continue
 				var pivot := anchor.to_global(member.anchor_local_position)
 				var offset := (pivot - (origin.global_position if is_instance_valid(origin) else anchor.global_position)).slide(Vector3.UP).length()
-				for shape: CollisionShape3D in HIT_PREDICTION.shapes(body):
+				if _uses_weapon_pose(member):
+					var hand: RigidBody3D = member.effector
+					for shape: CollisionShape3D in HIT_PREDICTION.shapes(hand):
+						var bounds := shape.shape.get_debug_mesh().get_aabb()
+						for corner: int in 8:
+							reach = maxf(reach,offset+WEAPON_POSE.reach(member.pose_chain)+hand.global_position.distance_to(shape.global_transform*bounds.get_endpoint(corner)))
+				for shape: CollisionShape3D in _npc_member_shapes(member):
 					var bounds := shape.shape.get_debug_mesh().get_aabb()
 					var local_pose := body.global_transform.affine_inverse() * shape.global_transform
 					for corner: int in range(8):
@@ -66,9 +75,44 @@ func get_npc_attack_maximum_range(action_id: StringName, target: Node3D) -> floa
 		for corner: int in range(8):
 			target_radius = maxf(target_radius, ((shape.global_transform * bounds.get_endpoint(corner)) - target.global_position).slide(Vector3.UP).length())
 	return float(_npc_reach_cache[action_id]) + target_radius
+
+func get_npc_attack_preferred_distance(action_id: StringName, target: Node3D) -> float:
+	refresh_weapon_presets()
+	for index: int in control_groups.size():
+		if control_groups[index] == null or control_groups[index].group_name != action_id or index >= _states.size(): continue
+		for member: Dictionary in _states[index].members:
+			if member.preset is WeaponArmAttackPreset:
+				if _uses_weapon_pose(member) and is_instance_valid(target) and _chain_is_available(member):
+					var direction := _weapon_pose_direction(member,target.global_position)
+					var poses := WEAPON_POSE.poses(member,member.preset,direction,-_get_gravity_direction(member.body),1.0)
+					var hand: RigidBody3D = member.effector
+					var origin: Node3D = get_parent().get_combat_anchor() if get_parent().has_method("get_combat_anchor") else member.anchor_body
+					if not is_instance_valid(origin): origin = member.anchor_body
+					var reach := 0.0
+					for shape: CollisionShape3D in HIT_PREDICTION.shapes(hand):
+						if not shape.has_meta(&"equipped_item") or shape.get_meta(&"equipped_item") != member.weapon: continue
+						var pose: Transform3D = poses[-1]*(hand.global_transform.affine_inverse()*shape.global_transform)
+						var bounds := shape.shape.get_debug_mesh().get_aabb()
+						for corner: int in 8: reach = maxf(reach,(pose*bounds.get_endpoint(corner)-origin.global_position).dot(direction))
+					return reach*member.preset.npc_preferred_reach_ratio
+				if npc_geometry_attack_range_enabled: return get_npc_attack_maximum_range(action_id,target)*member.preset.npc_preferred_reach_ratio
+	# Preserve authored AI distances for unarmed and untagged weapons.
+	var ai := get_parent().get_node_or_null("NPCStateMachine3D")
+	if ai != null and ai.behavior != null:
+		for attack: NPCAttackData in ai.behavior.attacks:
+			if attack.action_id == action_id and attack.preferred_distance >= 0.0: return attack.preferred_distance
+		return ai.behavior.preferred_distance
+	return 6.0
 const HIT_PREDICTION = preload("res://Scripts/Creatures/NPCAttackPrediction3D.gd")
 
+func _npc_member_shapes(member: Dictionary) -> Array[CollisionShape3D]:
+	var result := HIT_PREDICTION.shapes(member.body)
+	for link: Dictionary in member.get("followers", []):
+		if is_instance_valid(link.body) and not link.body.is_broken: result.append_array(HIT_PREDICTION.shapes(link.body))
+	return result
+
 func predict_npc_attack(action_id: StringName, target: Node3D, charge: float, samples: int = 24, margin: float = 0.1) -> Dictionary:
+	refresh_weapon_presets()
 	samples = clampi(samples,8,48)
 	var reason := &"trajectory_misses"
 	if not has_npc_attack(action_id): return {"hit":false,"reason":&"unavailable_arm"}
@@ -81,9 +125,14 @@ func predict_npc_attack(action_id: StringName, target: Node3D, charge: float, sa
 		for member: Dictionary in _states[index].members:
 			var body := member.body as RigidBody3D
 			var anchor := member.anchor_body as RigidBody3D
-			if not is_instance_valid(body) or body.is_broken or not is_instance_valid(anchor) or int(member.mode) != SwingState.IDLE: continue
+			if not is_instance_valid(body) or body.is_broken or not is_instance_valid(anchor) or not _chain_is_available(member) or int(member.mode) != SwingState.IDLE: continue
 			var preset := member.preset as LimbSwingPresetBase
 			if charge < preset.minimum_charge_time: reason = &"charge_too_short"; continue
+			if _uses_weapon_pose(member):
+				var prediction := _predict_weapon_pose(member,target,charge,samples,margin,space,excluded)
+				if prediction.hit: return prediction
+				reason = prediction.reason
+				continue
 			var pivot := anchor.to_global(member.anchor_local_position)
 			var axis: Vector3 = (anchor.global_basis*Vector3(member.axis_local)).normalized()
 			var lever: Vector3 = anchor.global_basis*Vector3(member.rest_lever_local)
@@ -106,8 +155,8 @@ func predict_npc_attack(action_id: StringName, target: Node3D, charge: float, sa
 			var lift := deg_to_rad(preset.lift_angle_degrees)*(1.0-exp(-sqrt(maxf(preset.lift_spring_stiffness,0.0)/inertia)*charge))
 			var torque := lerpf(preset.minimum_swing_torque,preset.maximum_swing_torque,clampf(charge/maxf(preset.maximum_charge_time,0.001),0.0,1.0))
 			var duration := minf(preset.swing_duration+maxf(preset.minimum_follow_through_time,preset.swing_duration*preset.follow_through_ratio),2.0)
-			var collisions := HIT_PREDICTION.shapes(body)
-			# Equipped weapon cells are merged onto Arm by the rigid attachment system.
+			# Followers include the hand, whose merged weapon cells move with the driven chain.
+			var collisions := _npc_member_shapes(member)
 			for sample: int in range(samples+1):
 				var time := duration*float(sample)/samples
 				var drive_time := minf(time,preset.swing_duration)
@@ -119,6 +168,7 @@ func predict_npc_attack(action_id: StringName, target: Node3D, charge: float, sa
 				var pose := Transform3D(rotation*rest.basis,pivot+rotation*lever+anchor.linear_velocity*(charge+time))
 				var blocked := false
 				for collision: CollisionShape3D in collisions:
+					if preset is WeaponArmAttackPreset and (not collision.has_meta(&"equipped_item") or collision.get_meta(&"equipped_item") != member.weapon): continue
 					var shape_pose := pose*(body.global_transform.affine_inverse()*collision.global_transform)
 					if HIT_PREDICTION.terrain_blocked(space,collision.shape,shape_pose,excluded): blocked = true; reason = &"terrain_blocks_swing"; break
 					if HIT_PREDICTION.target_hit(space,collision.shape,shape_pose,target,charge+time,margin):
@@ -127,6 +177,7 @@ func predict_npc_attack(action_id: StringName, target: Node3D, charge: float, sa
 	return {"hit":false,"reason":reason}
 
 func has_npc_attack(action_id: StringName) -> bool:
+	refresh_weapon_presets()
 	for index: int in range(control_groups.size()):
 		var group := control_groups[index]
 		if group == null or not group.enabled or group.group_name != action_id or index >= _states.size(): continue
@@ -151,6 +202,15 @@ func try_start_npc_attack(action_id: StringName, target: Node3D, charge: float) 
 
 func is_npc_attack_active() -> bool:
 	return _npc_group >= 0 and get_group_state(_npc_group) != SwingState.IDLE
+
+func is_body_driven(body: RigidBody3D) -> bool:
+	for group: Dictionary in _states:
+		for member: Dictionary in group.members:
+			if int(member.mode) in [SwingState.IDLE, SwingState.COOLDOWN]: continue
+			if member.body == body: return true
+			for link: Dictionary in member.get("followers", []):
+				if link.body == body: return true
+	return false
 
 func cancel_npc_attack() -> void:
 	if _npc_group >= 0: _cancel_group(_npc_group)
@@ -205,12 +265,16 @@ func _ready() -> void:
 		character.child_entered_tree.connect(_on_character_child_changed)
 		character.child_exiting_tree.connect(_on_character_child_changed)
 
+func _exit_tree() -> void:
+	_cancel_all_members()
+
 func _physics_process(delta: float) -> void:
 	var npc_control := get_parent().has_node("NPCStateMachine3D") and PLAYER_CONTEXT.controlled_character(self) != get_parent()
 	if not npc_control and not PLAYER_CONTEXT.input_allowed(self):
 		_cancel_all_members()
 		return
 	_ensure_runtime_states()
+	refresh_weapon_presets()
 	if npc_control: _npc_charge_remaining = maxf(_npc_charge_remaining-delta,0.0)
 	var npc_pressed := _npc_should_hold_charge(delta) if npc_control else false
 	for group_index: int in range(control_groups.size()):
@@ -221,6 +285,7 @@ func _physics_process(delta: float) -> void:
 		var pressed := group_index == _npc_group and npc_pressed if npc_control else PLAYER_CONTEXT.action_pressed(self, group.input_action)
 		for member_state: Dictionary in _states[group_index].members:
 			_process_member(group_index, member_state, pressed, delta)
+			_apply_chain_followers(member_state)
 
 ## Re-scan after changing BodyParts or their bindings at runtime.
 func refresh_arm_bindings(reset_rest_pose: bool = false) -> void:
@@ -251,6 +316,7 @@ func refresh_arm_bindings(reset_rest_pose: bool = false) -> void:
 
 func begin_charge(group_index: int) -> bool:
 	_ensure_runtime_states()
+	refresh_weapon_presets()
 	if not _is_valid_group_index(group_index):
 		return false
 	var started := false
@@ -338,14 +404,139 @@ func _register_binding(part: PhysicalBodyPart3D, binding: ArmSwingBinding, group
 		return
 	var group_index := int(group_indices[binding.control_group_name])
 	for existing: Dictionary in _states[group_index].members:
-		if existing.body == part:
+		if existing.get("effector", existing.body) == part:
 			push_warning("Arm '%s' has duplicate bindings for group '%s'." % [part.name, binding.control_group_name])
 			return
-	var joint := _resolve_binding_joint(part, binding)
+	var drive := part if binding.drive_body_path.is_empty() else part.get_node_or_null(binding.drive_body_path) as PhysicalBodyPart3D
+	if drive == null or drive.is_broken: return
+	var joint := _resolve_binding_joint(drive, binding)
 	if joint == null:
 		push_warning("Arm '%s' cannot resolve a joint for group '%s'." % [part.name, binding.control_group_name])
 		return
-	_states[group_index].members.append(_new_member_state(part, joint, binding))
+	var state := _new_member_state(drive, joint, binding)
+	state["effector"] = part
+	state["followers"] = []
+	var parent_body := drive
+	for path: NodePath in binding.follower_paths:
+		var child := part.get_node_or_null(path) as PhysicalBodyPart3D
+		if child == null or child.is_broken: return
+		var link: Generic6DOFJoint3D
+		for candidate: Node in get_parent().find_children("*", "Generic6DOFJoint3D", true, false):
+			if _get_other_joint_body(candidate, child) == parent_body:
+				link = candidate
+				break
+		if link == null: return
+		state.followers.append({"body":child, "parent":parent_body, "joint":link,
+			"rest":parent_body.global_basis.inverse() * child.global_basis})
+		parent_body = child
+	_states[group_index].members.append(state)
+	state["pose_chain"] = WEAPON_POSE.capture(state)
+	state["pose_anchor_local"] = WEAPON_POSE.local_anchor(joint,state.anchor_body) if joint.has_meta(&"generated_joint_frame_a") else state.anchor_local_position
+	state["pose_snapshot"] = []
+	state["weapon"] = null
+	state["weapon_forward_local"] = Vector3.UP
+	state["pose_direction"] = Vector3.RIGHT
+	state["pose_elapsed"] = 0.0
+
+func _equipped_weapon_for(hand: Node) -> SampleWeapon3D:
+	if not is_instance_valid(hand): return null
+	for child: Node in hand.get_children():
+		if child is SampleWeapon3D and child.rigid_attachment_holder == hand: return child
+	return null
+
+func cancel_attacks_for_holder(holder: RigidBody3D) -> void:
+	for index: int in _states.size():
+		for state: Dictionary in _states[index].members:
+			if state.get("effector",state.body) != holder: continue
+			_cancel_member(index,state)
+			if _npc_group == index:
+				_npc_group = -1
+				_npc_target = null
+
+func refresh_weapon_presets() -> void:
+	for index: int in _states.size():
+		for state: Dictionary in _states[index].members:
+			var weapon := _equipped_weapon_for(state.get("effector",state.body))
+			var preset: LimbSwingPresetBase = weapon.get_arm_attack_preset() if weapon != null else null
+			if preset == null: preset = state.binding.swing_preset
+			if state.get("weapon") == weapon and state.preset == preset: continue
+			_cancel_member(index,state)
+			if _npc_group == index:
+				_npc_group = -1
+				_npc_target = null
+			state.weapon = weapon
+			state.preset = preset
+			state.axis_local = Basis(state.joint_basis_local)[clampi(preset.joint_axis,0,2)]
+			if weapon != null:
+				state.weapon_forward_local = state.effector.global_basis.inverse()*weapon.global_basis*weapon.attack_forward_local.normalized()
+			_npc_reach_frame = -1
+			_log_member(index,state,"weapon_preset_changed")
+
+func _uses_weapon_pose(state: Dictionary) -> bool:
+	return state.preset is WeaponArmAttackPreset and state.preset.motion == WeaponArmAttackPreset.Motion.THRUST
+
+func _weapon_pose_direction(state: Dictionary, target_position: Variant = null) -> Vector3:
+	var anchor: RigidBody3D = state.anchor_body
+	var direction: Vector3 = anchor.global_basis.x
+	var target := _get_selected_aim_target()
+	if not state.preset.target_aim_enabled:
+		target = null
+		target_position = null
+	if target_position is Vector3:
+		direction = target_position-anchor.to_global(state.pose_anchor_local)
+	elif is_instance_valid(target):
+		direction = target.global_position-anchor.to_global(state.pose_anchor_local)
+	var up := -_get_gravity_direction(state.body)
+	# Keep charge/release on the horizontal aiming plane, like the existing swing.
+	direction = direction.slide(up).normalized()
+	return anchor.global_basis.x.normalized() if direction.is_zero_approx() else direction
+
+func _apply_weapon_pose(state: Dictionary, progress: float, delta: float, power: float = 1.0) -> void:
+	var targets := WEAPON_POSE.poses(state,state.preset,state.pose_direction,-_get_gravity_direction(state.body),progress)
+	WEAPON_POSE.apply(state,state.preset,targets,delta,power)
+
+func _predict_weapon_pose(state: Dictionary, target: Node3D, charge: float, samples: int, margin: float, space: PhysicsDirectSpaceState3D, excluded: Array[RID]) -> Dictionary:
+	var preset := state.preset as WeaponArmAttackPreset
+	var direction := _weapon_pose_direction(state,target.global_position+HIT_PREDICTION.velocity(target)*charge)
+	var reason := &"trajectory_misses"
+	for sample: int in samples+1:
+		var progress := float(sample)/samples
+		var time := charge+preset.swing_duration*progress
+		var poses := WEAPON_POSE.poses(state,preset,direction,-_get_gravity_direction(state.body),progress)
+		for index: int in state.pose_chain.size():
+			var body: RigidBody3D = state.pose_chain[index].body
+			for collision: CollisionShape3D in HIT_PREDICTION.shapes(body):
+				if not collision.has_meta(&"equipped_item") or collision.get_meta(&"equipped_item") != state.weapon: continue
+				var pose: Transform3D = poses[index]*(body.global_transform.affine_inverse()*collision.global_transform)
+				if not state.anchor_body.freeze: pose.origin += state.anchor_body.linear_velocity*time
+				if HIT_PREDICTION.terrain_blocked(space,collision.shape,pose,excluded):
+					return {"hit":false,"reason":&"terrain_blocks_thrust"}
+				if HIT_PREDICTION.target_hit(space,collision.shape,pose,target,time,margin):
+					return {"hit":true,"reason":&"predicted_weapon_pose_contact","time":time,"arm":state.effector.name,"confidence":0.7}
+	return {"hit":false,"reason":reason}
+
+func _chain_is_available(state: Dictionary) -> bool:
+	var hand: Variant = state.get("effector", state.body)
+	if not is_instance_valid(hand) or hand.is_broken: return false
+	for link: Dictionary in state.get("followers", []):
+		if not is_instance_valid(link.body) or link.body.is_broken or not is_instance_valid(link.parent) or link.parent.is_broken or not is_instance_valid(link.joint) or link.joint.is_queued_for_deletion(): return false
+	return true
+
+func _apply_chain_followers(state: Dictionary) -> void:
+	if not _chain_is_available(state) or int(state.mode) in [SwingState.IDLE, SwingState.COOLDOWN]: return
+	if _uses_weapon_pose(state): return
+	var binding := state.binding as ArmSwingBinding
+	for link: Dictionary in state.get("followers", []):
+		var body := link.body as PhysicalBodyPart3D
+		var parent_body := link.parent as PhysicalBodyPart3D
+		var target: Basis = parent_body.global_basis * Basis(link.rest)
+		var rotation := (target.get_rotation_quaternion() * body.global_basis.get_rotation_quaternion().inverse()).normalized()
+		if rotation.w < 0.0: rotation = -rotation
+		var torque := rotation.get_axis() * rotation.get_angle() * binding.chain_stiffness
+		torque -= (body.angular_velocity - parent_body.angular_velocity) * binding.chain_damping
+		torque = torque.limit_length(binding.chain_maximum_torque)
+		body.apply_torque(torque)
+		parent_body.apply_torque(-torque)
 
 func _new_member_state(body: PhysicalBodyPart3D, joint: Generic6DOFJoint3D, binding: ArmSwingBinding) -> Dictionary:
 	var rest_geometry := _get_or_create_rest_geometry(body, joint, binding)
@@ -436,7 +627,7 @@ func _process_member(group_index: int, member_state: Dictionary, pressed: bool, 
 		return
 	var body := body_value as PhysicalBodyPart3D
 	var joint := joint_value as Generic6DOFJoint3D
-	if body.is_broken:
+	if body.is_broken or not _chain_is_available(member_state):
 		_cancel_member(group_index, member_state)
 		return
 	var preset := member_state.preset as LimbSwingPresetBase
@@ -451,6 +642,9 @@ func _process_member(group_index: int, member_state: Dictionary, pressed: bool, 
 				member_state.charge_time = minf(float(member_state.charge_time), _npc_requested_charge)
 			if not pressed:
 				_release_member(group_index, member_state)
+			elif _uses_weapon_pose(member_state):
+				member_state.pose_direction = _weapon_pose_direction(member_state)
+				_apply_weapon_pose(member_state,0.0,delta)
 			else:
 				_apply_charge_target_aim(group_index, member_state, delta)
 		SwingState.SWINGING, SwingState.FOLLOW_THROUGH, SwingState.RECOVERING:
@@ -464,15 +658,20 @@ func _process_member(group_index: int, member_state: Dictionary, pressed: bool, 
 ## Carry time across phases so long physics frames do not lengthen the attack.
 func _advance_released_member(group_index: int, state: Dictionary, delta: float) -> void:
 	var remaining := maxf(delta, 0.0)
+	if _uses_weapon_pose(state) and int(state.mode) in [SwingState.SWINGING,SwingState.FOLLOW_THROUGH]:
+		state.pose_elapsed = float(state.pose_elapsed)+remaining
+		_apply_weapon_pose(state,clampf(state.pose_elapsed/maxf(state.preset.swing_duration,0.001),0.0,1.0),delta,state.pose_power)
 	while remaining > 0.0:
 		var mode := int(state.mode)
-		if mode == SwingState.SWINGING:
+		if _uses_weapon_pose(state) and mode in [SwingState.SWINGING,SwingState.FOLLOW_THROUGH]:
+			pass
+		elif mode == SwingState.SWINGING:
 			_apply_member_torque(state)
 			_apply_release_direction_hold(state)
 		elif mode == SwingState.FOLLOW_THROUGH:
 			_apply_release_direction_hold(state)
 		elif mode == SwingState.RECOVERING:
-			_apply_recovery_torque(state)
+			_apply_recovery_torque(state,delta)
 		else:
 			return
 		var used := minf(remaining, maxf(float(state.time_remaining), 0.0))
@@ -492,7 +691,7 @@ func _advance_released_member(group_index: int, state: Dictionary, delta: float)
 			state.time_remaining = state.attack_tuning.follow_time
 			_log_member(group_index, state, "follow_through_started")
 		elif mode == SwingState.FOLLOW_THROUGH:
-			_end_damage_swing()
+			_end_damage_swing(state)
 			state.mode = SwingState.RECOVERING
 			state.recovery_elapsed = 0.0
 			state.time_remaining = state.attack_tuning.recovery_time
@@ -533,9 +732,15 @@ func _recovery_error(state: Dictionary) -> Vector3:
 		rotation = -rotation
 	return rotation.get_axis() * rotation.get_angle()
 
-func _apply_recovery_torque(state: Dictionary) -> void:
+func _apply_recovery_torque(state: Dictionary, delta: float = 1.0/60.0) -> void:
 	var body := state.body as PhysicalBodyPart3D
 	var anchor := state.anchor_body as PhysicalBodyPart3D
+	if _uses_weapon_pose(state) and is_instance_valid(anchor):
+		var targets: Array[Transform3D] = []
+		for link: Dictionary in state.pose_chain:
+			targets.append(Transform3D(anchor.global_basis*Basis(link.rest_basis),link.body.global_position))
+		WEAPON_POSE.apply(state,state.preset,targets,delta,0.5)
+		return
 	var relative_speed := body.angular_velocity
 	if is_instance_valid(anchor):
 		relative_speed -= anchor.angular_velocity
@@ -544,6 +749,11 @@ func _apply_recovery_torque(state: Dictionary) -> void:
 	body.apply_torque(torque.limit_length(float(tuning.recovery_max_torque)))
 
 func _is_recovery_ready(state: Dictionary) -> bool:
+	if _uses_weapon_pose(state):
+		for link: Dictionary in state.pose_chain:
+			var desired: Basis = state.anchor_body.global_basis*Basis(link.rest_basis)
+			var error := desired.get_rotation_quaternion().angle_to(link.body.global_basis.get_rotation_quaternion())
+			if error > deg_to_rad(10.0): return false
 	return _recovery_error(state).length() <= deg_to_rad(10.0)
 
 ## Returns true only if at least one charging Arm accepts the cursor drag.
@@ -636,6 +846,8 @@ func _calculate_target_aim(member_state: Dictionary, target_position: Vector3) -
 	var up := -_get_gravity_direction(body)
 	var pivot := anchor.to_global(member_state.anchor_local_position)
 	var current := (body.global_position - pivot).slide(up)
+	if _uses_weapon_pose(member_state):
+		current = (member_state.effector.global_basis*Vector3(member_state.weapon_forward_local)).slide(up)
 	var desired := (target_position - pivot).slide(up)
 	# A vertical Arm has no reliable horizontal heading; wait instead of choosing a random yaw.
 	if current.length_squared() < 0.0025 or desired.length_squared() < 0.0025:
@@ -730,7 +942,7 @@ func _restore_target_aim_joint(member_state: Dictionary) -> void:
 func _begin_member(group_index: int, member_state: Dictionary) -> bool:
 	var body := member_state.body as PhysicalBodyPart3D
 	var joint := member_state.joint as Generic6DOFJoint3D
-	if not is_instance_valid(body) or not is_instance_valid(joint) or body.is_broken:
+	if not is_instance_valid(body) or not is_instance_valid(joint) or body.is_broken or not _chain_is_available(member_state):
 		return false
 	if _body_owner_group.has(body) and int(_body_owner_group[body]) != group_index:
 		return false
@@ -800,7 +1012,12 @@ func _begin_member(group_index: int, member_state: Dictionary) -> bool:
 	snapshot.joint_target_degrees = rad_to_deg(-lift_angle)
 	member_state.snapshot = snapshot
 	member_state.lift_angle = lift_angle
-	_configure_lift_joint(joint, preset, -lift_angle)
+	if _uses_weapon_pose(member_state):
+		member_state.pose_direction = _weapon_pose_direction(member_state)
+		member_state.pose_elapsed = 0.0
+		WEAPON_POSE.unlock(member_state)
+	else:
+		_configure_lift_joint(joint, preset, -lift_angle)
 	_log_direction_diagnostics(group_index, member_state)
 	_log_member(group_index, member_state, "charge_started")
 	return true
@@ -816,6 +1033,8 @@ func _release_member(group_index: int, member_state: Dictionary) -> void:
 		return
 	var ratio := clampf((float(member_state.charge_time) - preset.minimum_charge_time) / maxf(preset.maximum_charge_time - preset.minimum_charge_time, 0.001), 0.0, 1.0)
 	member_state.swing_torque = lerpf(preset.minimum_swing_torque, preset.maximum_swing_torque, ratio)
+	member_state["pose_power"] = lerpf(0.55,1.0,ratio)
+	member_state.pose_elapsed = 0.0
 	var body := member_state.body as PhysicalBodyPart3D
 	member_state.release_axis_world = _get_member_axis_world(member_state)
 	member_state.release_axis_body_local = body.global_basis.inverse() * (member_state.release_axis_world as Vector3)
@@ -832,13 +1051,13 @@ func _release_member(group_index: int, member_state: Dictionary) -> void:
 		"recovery_stiffness": preset.recovery_stiffness, "recovery_damping": preset.recovery_damping,
 		"recovery_max_torque": preset.maximum_recovery_torque, "cooldown_time": preset.cooldown_duration,
 	}
-	_prepare_release_joint(member_state)
+	if not _uses_weapon_pose(member_state): _prepare_release_joint(member_state)
 	member_state.mode = SwingState.SWINGING
 	member_state.time_remaining = member_state.attack_tuning.swing_time
 	var joint := member_state.joint as Generic6DOFJoint3D
 	if is_instance_valid(joint):
 		joint.set(_axis_property(preset.joint_axis, "angular_spring", "enabled"), false)
-	_begin_damage_swing()
+	_begin_damage_swing(member_state)
 	_apply_member_torque(member_state)
 	_log_member(group_index, member_state, "swing_started")
 	if diagnostic_logging:
@@ -849,6 +1068,7 @@ func _release_member(group_index: int, member_state: Dictionary) -> void:
 			member_state.attack_tuning.sustained_time, member_state.release_axis_world])
 
 func _apply_member_torque(member_state: Dictionary) -> void:
+	if _uses_weapon_pose(member_state): return
 	var body := member_state.body as PhysicalBodyPart3D
 	var joint := member_state.joint as Generic6DOFJoint3D
 	var snapshot := member_state.snapshot as Dictionary
@@ -858,6 +1078,7 @@ func _apply_member_torque(member_state: Dictionary) -> void:
 	body.apply_torque(axis_world * -float(snapshot.world_lift_sign) * float(member_state.swing_torque))
 
 func _get_sustained_swing_torque(state: Dictionary) -> Vector3:
+	if _uses_weapon_pose(state): return Vector3.ZERO
 	if int(state.mode) not in [SwingState.SWINGING, SwingState.FOLLOW_THROUGH] or state.snapshot.is_empty():
 		return Vector3.ZERO
 	if float(state.sustained_elapsed) >= float(state.attack_tuning.sustained_time):
@@ -887,7 +1108,7 @@ func _finish_member(group_index: int, member_state: Dictionary) -> void:
 
 func _cancel_member(group_index: int, member_state: Dictionary) -> void:
 	if int(member_state.mode) in [SwingState.SWINGING, SwingState.FOLLOW_THROUGH]:
-		_end_damage_swing()
+		_end_damage_swing(member_state)
 	_restore_member_joint(member_state)
 	member_state.mode = SwingState.IDLE
 	member_state.charge_time = 0.0
@@ -898,7 +1119,7 @@ func _cancel_member(group_index: int, member_state: Dictionary) -> void:
 
 func _invalidate_member_state(group_index: int, member_state: Dictionary, body_value: Variant) -> void:
 	if int(member_state.mode) in [SwingState.SWINGING, SwingState.FOLLOW_THROUGH]:
-		_end_damage_swing()
+		_end_damage_swing(member_state)
 	_restore_member_joint(member_state)
 	member_state.mode = SwingState.IDLE
 	member_state.charge_time = 0.0
@@ -922,19 +1143,17 @@ func _release_body_owner(body: PhysicalBodyPart3D, group_index: int) -> void:
 	if is_instance_valid(body) and _body_owner_group.get(body, -1) == group_index:
 		_body_owner_group.erase(body)
 
-func _begin_damage_swing() -> void:
+func _begin_damage_swing(state: Dictionary) -> void:
 	_active_damage_swings += 1
-	if _active_damage_swings == 1:
-		var inventory := get_parent().get_node_or_null("InventoryController3D")
-		if inventory != null and inventory.has_method("notify_weapon_swing_started"):
-			inventory.call("notify_weapon_swing_started")
+	var weapon := _equipped_weapon_for(state.get("effector",state.body))
+	state["damage_weapon"] = weapon
+	if weapon != null: weapon.begin_damage_swing()
 
-func _end_damage_swing() -> void:
+func _end_damage_swing(state: Dictionary) -> void:
 	_active_damage_swings = maxi(_active_damage_swings - 1, 0)
-	if _active_damage_swings == 0:
-		var inventory := get_parent().get_node_or_null("InventoryController3D")
-		if inventory != null and inventory.has_method("notify_weapon_swing_finished"):
-			inventory.call("notify_weapon_swing_finished")
+	var weapon: Variant = state.get("damage_weapon")
+	if is_instance_valid(weapon): weapon.end_damage_swing()
+	state["damage_weapon"] = null
 
 func _prepare_release_joint(state: Dictionary) -> void:
 	if not (state.release_joint_snapshot as Array).is_empty():
@@ -987,6 +1206,7 @@ func _configure_lift_joint(joint: Generic6DOFJoint3D, preset: LimbSwingPresetBas
 	joint.set(_axis_property(preset.joint_axis, "angular_spring", "equilibrium_point"), target_angle)
 
 func _restore_member_joint(member_state: Dictionary) -> void:
+	WEAPON_POSE.restore(member_state)
 	_restore_release_joint(member_state)
 	_restore_target_aim_joint(member_state)
 	var snapshot := member_state.snapshot as Dictionary
@@ -1150,11 +1370,12 @@ func _log_member(group_index: int, member_state: Dictionary, event_name: String)
 	var snapshot := member_state.snapshot as Dictionary
 	print(
 		("[limb_swing] character=%s group=%s arm=%s event=%s state=%d charge=%.3f "
-		+ "lift_angle_deg=%.3f torque=%.3f gravity=%s")
+		+ "lift_angle_deg=%.3f torque=%.3f gravity=%s preset=%s weapon=%s")
 		% [get_parent().name, control_groups[group_index].group_name, (member_state.body as Node).name,
 		event_name, int(member_state.mode), float(member_state.charge_time),
 		rad_to_deg(float(member_state.lift_angle)), float(member_state.swing_torque),
-		snapshot.get(&"gravity_direction", Vector3.ZERO)]
+		snapshot.get(&"gravity_direction", Vector3.ZERO),member_state.preset.resource_path,
+		member_state.weapon.name if is_instance_valid(member_state.get("weapon")) else &"unarmed"]
 	)
 
 func _log_direction_diagnostics(group_index: int, member_state: Dictionary) -> void:

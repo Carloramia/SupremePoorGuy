@@ -1,0 +1,53 @@
+武器标签与 Arm 攻击预设
+
+一、武器设置
+打开继承 Scenes/Items/_SampleWeapon.tscn 的武器场景，选中根节点，在 Weapon Tags 中调整：
+Weapon Tags：可包含 Spear、Sword、Claw、Blunt、Shield 多个标签。
+Primary Attack Tag：唯一的主攻击标签，必须也包含在 Weapon Tags 数组中。
+Arm Attack Preset Override：可选。为空时使用主标签的共享预设；指定独立资源时覆盖该武器的动作。
+Attack Forward Local：从持握点指向攻击端的武器局部向量。Human 六件武器已依据模型连接端标定。
+标签为空、主标签未包含在数组中时，使用 ArmSwingBinding 原有的 Swing Preset。
+
+二、已接入的素材
+Human1Spear、Human5Spear：Spear，收臂后前伸突刺。
+Human3CurvedSword：Sword，抬手蓄力后向前下方劈砍。
+Human2ClawGauntlet：Claw，收臂抬起后向前下方抓击。
+Human4Flail：Blunt，较大幅度抬起后重砸。绳锤仍是原来的整体刚体。
+Human5Shield：Shield，小幅收回后短距离前推。没有新增格挡逻辑。
+所有 Human 持武器子场景及 NPC 通过原武器引用自动使用这些设置。
+原有未标记的自定义武器、临时攻击碰撞体和其他生物攻击模组不改变动作选择。
+
+三、预设位置
+资源基类：Scripts/Combat/WeaponArmAttackPreset.gd，继承 LimbSwingPresetBase。
+共享资源：Resources/Combat/Weapons/ 下的 SpearAttack.tres、SwordAttack.tres、ClawAttack.tres、BluntAttack.tres、ShieldAttack.tres。
+修改共享资源会影响所有使用该资源的武器；需要单独调整时另存为新资源，并挂到对应武器的 Arm Attack Preset Override。
+
+Motion=SWEEP 使用原有抬手弹簧与挥舞扭矩，调整 Lift Angle Degrees、Swing Torque、Swing Duration、Sustained Swing 和 Recovery。
+Motion=THRUST 使用现有 Arm/Limb 链的物理扭矩进行姿态追踪，不直接传送或缩放物理部件。
+Preparation/Strike Reach：蓄力/攻击时的伸展比例，以实际关节链长度为基准。
+Preparation/Strike Height：相对肩关节的高度比例，同样以关节链长度为基准。
+Pose Frequency、Pose Damping Ratio：姿态追踪响应速度与阻尼。
+Maximum Pose Acceleration：蓄力程度会在 55%~100% 范围影响攻击阶段的加速度上限。
+Maximum Pose Torque：惯量换算后的最终关节扭矩上限，长或重的武器可能需要更高数值。
+NPC Preferred Reach Ratio：NPC 根据攻击姿态推算的攻击距离比例。
+只有一个刚体的 Arm 没有肘关节，突刺会自动采用小幅前挥弧线，保持肩关节连接，不强行拉长物理结构。
+
+四、输入与多 Arm
+控制组仍由 LimbSwingController3D 指定，默认 PrimaryArm / MouseLeft。
+按住蓄力，松开攻击；不足 Minimum Charge Time 时复位，不开启挥舞伤害窗口。
+仅实际持握武器的 Arm 及它的 Drive Body / Follower Paths 使用武器预设。
+同一控制组中的其他 Arm 保留各自原有的 Swing Preset；不同 Arm 不会互相开启对方武器的伤害窗口。
+换装备、取消选择、持握部位 Broken 时，先结束旧动作并恢复临时关节设置，再处理装备。
+武器标签切换及预设引用变化在下一次物理更新/攻击查询时生效，不修改 BodyPart 上原有的预设资源。
+
+五、NPC 与伤害
+NPC 继续使用原状态机、PrimaryArm 攻击选项和蓄力时间。
+突刺的命中预测与实际动作共用同一套关节链目标姿态，攻击距离根据当前武器与实际手臂长度计算。
+挥舞的预测继续使用原有扭矩轨迹，但已标记的武器只以该武器的合并碰撞形状判定命中。
+全局冲量伤害、护甲、阵营和一次攻击对同一部位只结算一次的规则保持不变。
+
+六、日志与验证
+控制台输入 trackswing，开关 Arm 攻击诊断。
+[limb_swing] 新增 preset、weapon 字段和 weapon_preset_changed 事件，显示实际使用的资源与武器。
+测试入口：Tests/ValidateWeaponTaggedAttacks3D.gd。
+其他验证覆盖 Human 武器、12 个持武器角色/NPC 子场景、物品栏、旧控制器、挥舞方向保持和持续扭矩。

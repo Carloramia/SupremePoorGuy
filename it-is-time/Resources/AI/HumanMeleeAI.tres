@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="NPCBehaviorData" format=3 uid="uid://6ls8r55orucf"]
+
+[ext_resource type="Script" uid="uid://d4d3pxjthc0yt" path="res://Scripts/Creatures/NPCBehaviorData.gd" id="1_behavior"]
+[ext_resource type="Script" uid="uid://bqypvnhjbnrap" path="res://Scripts/Creatures/NPCAttackData.gd" id="2_attack"]
+
+[sub_resource type="Resource" id="Attack_arm"]
+script = ExtResource("2_attack")
+action_id = &"PrimaryArm"
+receiver_path = NodePath("LimbSwingController3D")
+maximum_range = 9.0
+preferred_distance = 6.0
+
+[resource]
+script = ExtResource("1_behavior")
+preferred_distance = 6.0
+attacks = Array[ExtResource("2_attack")]([SubResource("Attack_arm")])

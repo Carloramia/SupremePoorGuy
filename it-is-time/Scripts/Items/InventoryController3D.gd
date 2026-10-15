@@ -34,13 +34,22 @@ var _item_socket: Marker3D
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_items.resize(capacity)
-	_torso = get_node_or_null(torso_path) as RigidBody3D
-	_arm = get_node_or_null(arm_path) as RigidBody3D
-	_item_socket = get_node_or_null(item_socket_path) as Marker3D
+	refresh_physics_query_cache()
 	_configure_pickup_radius()
 	if _inventory_ui.has_method("bind_inventory"):
 		_inventory_ui.call("bind_inventory", self)
 	inventory_changed.emit(_items.duplicate(), _selected_slot)
+
+func refresh_physics_query_cache() -> void:
+	var next_arm := get_node_or_null(arm_path) as RigidBody3D
+	var holder_changed := _arm != next_arm
+	# Restore merged weapon geometry before a generated holder is replaced.
+	if is_instance_valid(_equipped_item) and _equipped_holder != next_arm:
+		_unequip_item(_equipped_item)
+	_torso = get_node_or_null(torso_path) as RigidBody3D
+	_arm = next_arm
+	_item_socket = get_node_or_null(item_socket_path) as Marker3D
+	if holder_changed and is_instance_valid(_arm): _equip_selected_item()
 
 func _physics_process(_delta: float) -> void:
 	if not _rigid_attachment_snapshot.is_empty() and not is_instance_valid(_equipped_item):
@@ -204,6 +213,8 @@ func _equip_selected_item() -> void:
 		(item as SampleWeapon3D).set_wielder(get_parent(), team_id)
 	_add_character_collision_exceptions(item)
 	_create_rigid_attachment(item, holder)
+	var swing := get_parent().get_node_or_null("LimbSwingController3D")
+	if swing != null: swing.refresh_weapon_presets()
 	_log_attachment_state("equipped", item, holder, socket)
 	_log_attachment_after_physics(item, holder, socket)
 
@@ -216,8 +227,10 @@ func _unequip_current_item() -> void:
 	_equipped_holder = null
 
 func _unequip_item(item: SampleItem3D) -> void:
+	var swing := get_parent().get_node_or_null("LimbSwingController3D")
+	if swing != null and is_instance_valid(_equipped_holder): swing.cancel_attacks_for_holder(_equipped_holder)
 	_remove_rigid_attachment(item)
-	_remove_character_collision_exceptions(item)
+	if swing != null: swing.refresh_weapon_presets()
 	if not is_instance_valid(item):
 		return
 	item.freeze = true
@@ -302,11 +315,15 @@ func _add_character_collision_exceptions(item: SampleItem3D) -> void:
 func _remove_character_collision_exceptions(item: SampleItem3D) -> void:
 	for record: Dictionary in _equipped_collision_exceptions:
 		var body := record.get(&"body") as PhysicsBody3D
-		if not is_instance_valid(body) or not is_instance_valid(item):
+		if not is_instance_valid(body):
 			continue
 		if not bool(record.get(&"body_had_exception", false)):
-			body.remove_collision_exception_with(item)
-		if not bool(record.get(&"item_had_exception", false)):
+			if is_instance_valid(item):
+				body.remove_collision_exception_with(item)
+			elif _rigid_attachment_snapshot.has("item_rid"):
+				# A deleted weapon's RID can still remain in Jolt's collision exception set.
+				PhysicsServer3D.body_remove_collision_exception(body.get_rid(), _rigid_attachment_snapshot.item_rid)
+		if is_instance_valid(item) and not bool(record.get(&"item_had_exception", false)):
 			item.remove_collision_exception_with(body)
 	_equipped_collision_exceptions.clear()
 
@@ -315,7 +332,7 @@ func _create_rigid_attachment(item: SampleItem3D, holder: RigidBody3D) -> void:
 	var holder_center := _get_body_center_of_mass(holder)
 	var item_center := holder.to_local(item.to_global(_get_body_center_of_mass(item)))
 	_rigid_attachment_snapshot = {
-		"holder": holder, "mass": holder.mass, "inertia": holder.inertia,
+		"holder": holder, "item_rid": item.get_rid(), "mass": holder.mass, "inertia": holder.inertia,
 		"center_mode": holder.center_of_mass_mode, "center": holder.center_of_mass,
 		"resolved_center": holder_center,
 	}
@@ -345,6 +362,10 @@ func _create_rigid_attachment(item: SampleItem3D, holder: RigidBody3D) -> void:
 	item.collision_mask = 0
 	item.rigid_attachment_holder = holder
 	item.reparent(holder, true)
+	if item is SampleWeapon3D and holder is PhysicalBodyPart3D and &"grip" in holder.get_available_visual_states():
+		var previous_state: StringName = holder.get_visual_state()
+		if holder.set_visual_state(&"grip"):
+			_rigid_attachment_snapshot["holder_visual_state"] = previous_state
 	if attachment_debug_logging:
 		print("[item_rigid_attachment] item=%s holder=%s shapes=%d combined_mass=%.3f center=%s" % [
 			item.name, holder.name, _rigid_attachment_shapes.size(), total_mass, holder.center_of_mass])
@@ -356,6 +377,7 @@ func _get_body_center_of_mass(body: RigidBody3D) -> Vector3:
 	return state.center_of_mass_local if state != null else Vector3.ZERO
 
 func _remove_rigid_attachment(item: SampleItem3D) -> void:
+	_remove_character_collision_exceptions(item)
 	if _rigid_attachment_snapshot.is_empty():
 		return
 	for collision: CollisionShape3D in _rigid_attachment_shapes:
@@ -373,6 +395,9 @@ func _remove_rigid_attachment(item: SampleItem3D) -> void:
 		holder.inertia = _rigid_attachment_snapshot.inertia
 		holder.center_of_mass_mode = _rigid_attachment_snapshot.center_mode
 		holder.center_of_mass = _rigid_attachment_snapshot.center
+		# Restore only the appearance owned by equipment, preserving other visual overrides.
+		if holder is PhysicalBodyPart3D and _rigid_attachment_snapshot.has("holder_visual_state") and holder.get_visual_state() == &"grip":
+			holder.set_visual_state(_rigid_attachment_snapshot.holder_visual_state)
 	if is_instance_valid(item):
 		item.rigid_attachment_holder = null
 		item.reparent(_inventory_items, true)

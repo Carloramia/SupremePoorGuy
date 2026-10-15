@@ -1,0 +1,38 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="PackedScene" path="res://Scenes/Items/_SampleWeapon.tscn" id="1_base"]
+[ext_resource type="Texture2D" path="res://Assets/2DResources/Human/Separated/Weapons/01_human1_spear.png" id="2_texture"]
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/Human/Scenes/Weapons/Human1Spear.tscn" id="3_model"]
+
+[sub_resource type="ConvexPolygonShape3D" id="Shape"]
+resource_local_to_scene = true
+points = PackedVector3Array(-9.460010214, 10.230266895, -0.040000000, -9.090751346, 10.230266895, -0.040000000, -8.906121912, 10.046404102, -0.040000000, -7.982974741, 9.127090137, -0.040000000, 2.540903004, -1.904677441, -0.040000000, 3.464050174, -3.191716992, -0.040000000, 3.833309042, -3.927168164, -0.040000000, 3.833309042, -4.111030957, -0.040000000, 3.464050174, -4.111030957, -0.040000000, 2.910161872, -3.743305371, -0.040000000, 2.356273569, -3.375579785, -0.040000000, 1.617755833, -2.823991406, -0.040000000, -9.460010214, 9.862541309, -0.040000000, -9.460010214, 10.230266895, 0.040000000, -9.090751346, 10.230266895, 0.040000000, -8.906121912, 10.046404102, 0.040000000, -7.982974741, 9.127090137, 0.040000000, 2.540903004, -1.904677441, 0.040000000, 3.464050174, -3.191716992, 0.040000000, 3.833309042, -3.927168164, 0.040000000, 3.833309042, -4.111030957, 0.040000000, 3.464050174, -4.111030957, 0.040000000, 2.910161872, -3.743305371, 0.040000000, 2.356273569, -3.375579785, 0.040000000, 1.617755833, -2.823991406, 0.040000000, -9.460010214, 9.862541309, 0.040000000)
+
+[node name="Human1Spear" instance=ExtResource("1_base")]
+mass = 0.500000000
+can_be_picked_up = true
+weapon_tags = Array[int]([0])
+primary_attack_tag = 0
+attack_forward_local = Vector3(0.700930318, -0.713229759, 0.000000000)
+display_name = "Human1 长矛"
+item_image = ExtResource("2_texture")
+sprite_visible = false
+mesh_visible = true
+attachment_local_position = Vector3(0.117284180, -0.141446484, 0.000000000)
+item_rotation = 2.356194490
+preferred_holder_name = &""
+has_attachment_point = true
+metadata/source_png = "res://Assets/2DResources/Human/Separated/Weapons/01_human1_spear.png"
+metadata/source_model_scene = "res://Assets/3DResources/Creatures/Human/Scenes/Weapons/Human1Spear.tscn"
+metadata/source_physical_scene = "res://Scenes/Creatures/Bodyparts/Human/Weapons/Human1Spear.tscn"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("Shape")
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+visible = false
+position = Vector3(-2.813350586, 3.059617969, 0.000000000)
+pixel_size = 0.005878906
+texture = ExtResource("2_texture")
+
+[node name="Model" parent="." instance=ExtResource("3_model")]

@@ -104,11 +104,22 @@ func capture_manual_layout() -> bool:
 
 ## Kept separate so the capture/round-trip can be validated without the editor UI.
 func _capture_manual_layout() -> bool:
+	var captured := build_manual_layout()
+	if captured == null: return false
+	var generator := get_node(generator_path)
+	generator.manual_layout = captured
+	generator.use_manual_layout = true
+	if Engine.is_editor_hint(): EditorInterface.mark_scene_as_unsaved()
+	print("[manual_layout] Captured %d parts and %d connections for %s; save the scene to persist." % [captured.blueprint.parts.size(), captured.blueprint.connections.size(), name])
+	return true
+
+## Editor part transactions use live joint anchors after bodies have been manually moved.
+func build_manual_layout(use_live_joint_anchors: bool = false) -> Resource:
 	var generator := get_node_or_null(generator_path) as Node3D
 	var container := get_node_or_null("GeneratedParts") as Node3D
-	if generator == null or container == null or not _valid_settings(generator): return false
+	if generator == null or container == null or not _valid_settings(generator): return null
 	var multiplier: float = generator.overall_scale
-	if not is_finite(multiplier) or multiplier < 0.1: return false
+	if not is_finite(multiplier) or multiplier < 0.1: return null
 	var parts: Array[Dictionary] = []
 	var indices: Dictionary = {}
 	var keys: Dictionary = {}
@@ -116,14 +127,15 @@ func _capture_manual_layout() -> bool:
 	for child: Node in container.get_children():
 		var body := child as PhysicalBodyPart3D
 		if body == null: continue
-		var key := str(body.get_meta(&"generated_part_key", ""))
+		# Older saved assemblies have generated roles but predate stable keys.
+		var key := str(body.get_meta(&"generated_part_key", str(body.name) if body.has_meta(&"generated_role") else ""))
 		if key.is_empty() or keys.has(key) or body.is_broken:
 			push_warning("[manual_layout] Missing/duplicate PartKey or broken part: " + str(body.name))
-			return false
+			return null
 		var pose := to_generator * body.global_transform
 		if not pose.basis.get_scale().is_equal_approx(Vector3.ONE) or not pose.origin.is_finite():
 			push_warning("[manual_layout] Part roots must retain unit scale: " + str(body.name))
-			return false
+			return null
 		pose.origin /= multiplier
 		var layout: Dictionary = body.get_meta(&"generated_layout", {}).duplicate(true)
 		layout.merge({"name": str(body.name), "part_key": key, "role": str(body.get_meta(&"generated_role", "")), "size": body.get_meta(&"generated_framework_size", body.get_meta(&"generated_size", Vector3.ONE)), "transform": pose}, true)
@@ -133,9 +145,9 @@ func _capture_manual_layout() -> bool:
 		var source_scene: PackedScene = PART_SCENE if rule == null else rule.part_scene
 		if source_scene == null:
 			push_warning("[manual_layout] Missing source Part scene for %s; previous layout retained." % body.name)
-			return false
+			return null
 		var snapshot := PART_SNAPSHOT.capture(body, multiplier, source_scene.resource_path)
-		if snapshot.is_empty(): return false
+		if snapshot.is_empty(): return null
 		layout["internal_snapshot"] = snapshot
 		var current_bounds := PART_GEOMETRY.bounds(body)
 		if current_bounds.size != Vector3.ZERO: layout.size = current_bounds.size / multiplier
@@ -148,10 +160,10 @@ func _capture_manual_layout() -> bool:
 		indices[body] = parts.size()
 		keys[key] = true
 		parts.append(layout)
-	if parts.is_empty(): return false
+	if parts.is_empty(): return null
 	var connections: Array[Dictionary] = []
 	var joints := container.get_node_or_null("Joints")
-	if joints == null: return false
+	if joints == null: return null
 	for joint: Node in joints.get_children():
 		if joint.has_meta(&"segment_rotation_constraint"): continue
 		if not joint is Joint3D and not joint is SEGMENT_SPRING: continue
@@ -159,16 +171,17 @@ func _capture_manual_layout() -> bool:
 		var b := joint.get_node_or_null(joint.node_b) as PhysicalBodyPart3D
 		if not indices.has(a) or not indices.has(b):
 			push_warning("[manual_layout] Missing endpoint for " + str(joint.name))
-			return false
+			return null
 		if joint is SEGMENT_SPRING:
 			connections.append({"a": indices[a], "b": indices[b], "anchor": Vector3.ZERO, "basis": Basis.IDENTITY, "kind": "Segment"})
 			continue
-		var anchor_a := _capture_joint_anchor(a, joint, &"generated_joint_frame_a")
-		var anchor_b := _capture_joint_anchor(b, joint, &"generated_joint_frame_b")
+		var anchor_a: Vector3 = joint.global_position if use_live_joint_anchors else _capture_joint_anchor(a, joint, &"generated_joint_frame_a")
+		var anchor_b: Vector3 = joint.global_position if use_live_joint_anchors else _capture_joint_anchor(b, joint, &"generated_joint_frame_b")
+		if not anchor_a.is_finite() or not anchor_b.is_finite() or not joint.global_basis.is_finite(): return null
 		var gap := anchor_a.distance_to(anchor_b)
 		if gap > manual_layout_connection_tolerance:
 			push_warning("[manual_layout] %s -> %s gap=%.6f exceeds tolerance=%.6f; previous layout retained." % [a.name, b.name, gap, manual_layout_connection_tolerance])
-			return false
+			return null
 		var kind := str(joint.get_meta(&"generated_connection_kind", str(joint.name).get_slice("_", 2)))
 		connections.append({"a": indices[a], "b": indices[b], "anchor": (to_generator * ((anchor_a + anchor_b) * 0.5)) / multiplier, "basis": (to_generator.basis * joint.global_basis).orthonormalized(), "kind": kind})
 		if kind == "Wing":
@@ -178,17 +191,76 @@ func _capture_manual_layout() -> bool:
 	var captured := preload("res://Scripts/Creatures/Generators/CreatureManualLayout.gd").new()
 	captured.resource_local_to_scene = true
 	captured.blueprint = {"parts": parts, "connections": connections}
-	generator.manual_layout = captured
-	generator.use_manual_layout = true
-	if Engine.is_editor_hint(): EditorInterface.mark_scene_as_unsaved()
-	print("[manual_layout] Captured %d parts and %d connections for %s; save the scene to persist." % [parts.size(), connections.size(), name])
-	return true
+	return captured
 
 func _capture_joint_anchor(body: PhysicalBodyPart3D, joint: Joint3D, frame_key: StringName) -> Vector3:
 	for child: Node in body.get_children():
 		if child is Marker3D and child.get_meta(&"joint_name", "") == str(joint.name): return child.global_position
 	var frame: Transform3D = joint.get_meta(frame_key, body.global_transform.affine_inverse() * joint.global_transform)
 	return body.global_transform * frame.origin
+
+## Used by the Inspector's scene undo history; incoming/outgoing nodes are retained there.
+func restore_generated_part_edit(state: Dictionary) -> void:
+	if not Engine.is_editor_hint() or not is_inside_tree(): return
+	var container := get_node_or_null("GeneratedParts")
+	if not is_instance_valid(state.part) or not is_instance_valid(state.other):
+		push_warning("[part_editor] Parts were regenerated after this edit; the old edit cannot be restored.")
+		return
+	var incoming: Node = state.part
+	var outgoing: Node = state.other
+	if container == null or outgoing.get_parent() != container:
+		push_warning("[part_editor] Layout changed since this edit; reopen the scene to clear stale undo history.")
+		return
+	var selected: bool = outgoing in EditorInterface.get_selection().get_selected_nodes()
+	for body: Node in container.get_children():
+		if body is PhysicalBodyPart3D and body != outgoing:
+			body.remove_collision_exception_with(outgoing)
+			outgoing.remove_collision_exception_with(body)
+	container.remove_child(outgoing)
+	incoming.name = state.name
+	container.add_child(incoming)
+	container.move_child(incoming, mini(int(state.index), container.get_child_count()-1))
+	for entry: Dictionary in state.owners:
+		var node := incoming.get_node_or_null(entry.path)
+		if node != null and is_instance_valid(entry.owner): node.owner = entry.owner
+	_scene_owner().set_editable_instance(incoming, true)
+	var generator := get_node(generator_path)
+	generator.part_scene_rules = state.rules
+	generator.manual_layout = state.layout
+	generator.use_manual_layout = state.use_manual
+	# Rebind the existing joints without changing their anchors, limits or rest frames.
+	for joint: Node in container.get_node("Joints").get_children():
+		if not joint is Joint3D: continue
+		var a: NodePath = joint.node_a
+		var b: NodePath = joint.node_b
+		joint.node_a = NodePath()
+		joint.node_b = NodePath()
+		joint.node_a = a
+		joint.node_b = b
+	for entry: Dictionary in state.get("joint_anchors", []):
+		var joint := container.get_node_or_null(entry.path) as Joint3D
+		if joint == null: continue
+		for key: StringName in [&"generated_joint_frame_a", &"generated_joint_frame_b"]:
+			if entry.frames.has(key): joint.set_meta(key, entry.frames[key])
+			elif joint.has_meta(key): joint.remove_meta(key)
+		for port: Dictionary in entry.ports:
+			var marker := container.get_node_or_null(port.path) as Marker3D
+			if marker != null: marker.position = port.position
+	_invalidate_body_parts_cache()
+	_invalidate_body_connections()
+	_configure_body_part_collision_exceptions()
+	EditorInterface.mark_scene_as_unsaved()
+	incoming.notify_property_list_changed()
+	if selected: _select_edited_part.call_deferred(str(incoming.name))
+
+func _select_edited_part(part_name: String) -> void:
+	if not is_inside_tree(): return
+	var part := get_node_or_null("GeneratedParts/" + part_name)
+	if part == null: return
+	var selection := EditorInterface.get_selection()
+	selection.clear()
+	selection.add_node(part)
+	EditorInterface.edit_node(part)
 
 @export var generate_on_ready: bool = true
 @export var show_framework: bool = false:
@@ -451,6 +523,7 @@ func _perf_impl__on_framework_generated(plan: Dictionary) -> void:
 	if not Engine.is_editor_hint():
 		cancel_character_actions(&"regenerated")
 	if previous != null:
+		_before_replacing_generated_parts(previous)
 		remove_child(previous)
 		previous.queue_free()
 	staging.name = "GeneratedParts"
@@ -493,6 +566,9 @@ func _perf_impl__on_framework_generated(plan: Dictionary) -> void:
 		if connection.kind == "Segment": springs += 1
 	print("[generated_creature] character=%s parts=%d physical_joints=%d segment_springs=%d connected=true internal_collisions_ignored=%s" % [name, blueprint.parts.size(), blueprint.connections.size() - springs, springs, body_parts_ignore_each_other])
 	creature_generation_finished.emit(true)
+
+func _before_replacing_generated_parts(_previous: Node) -> void:
+	pass
 
 func _scene_owner() -> Node:
 	if Engine.is_editor_hint():
@@ -974,6 +1050,10 @@ func _get_generated_part_type(layout: Dictionary) -> String:
 		if section in ["Root", "Middle", "Tip"]: return "Wing" + section
 	return role
 
+## Species may add visual attachments/sockets before an internal snapshot is restored.
+func _prepare_generated_part(_part: PhysicalBodyPart3D, _layout: Dictionary, _blueprint: Dictionary) -> void:
+	pass
+
 func _instantiate_blueprint(blueprint: Dictionary, generator_transform: Transform3D) -> Node3D:
 	var container := Node3D.new()
 	var bodies: Array[RigidBody3D] = []
@@ -1024,6 +1104,7 @@ func _instantiate_blueprint(blueprint: Dictionary, generator_transform: Transfor
 			material.albedo_color = layout.get("feather_color",Color.WHITE)
 			material.roughness = 0.9
 			mesh.material_override = material
+		_prepare_generated_part(part, layout, blueprint)
 		if blueprint.get("manual_layout", false) and layout.has("internal_snapshot"):
 			if PART_SNAPSHOT.apply_to(part, layout.internal_snapshot, float(blueprint.get("overall_scale",1.0)), scene.resource_path):
 				var restored_bounds := PART_GEOMETRY.bounds(part)

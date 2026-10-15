@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3]
+[ext_resource type="ArrayMesh" path="res://Resources/Meshes/Human/Legs/Right/Human2UpperLegRight.res" id="1_mesh"]
+[node name="Human2UpperLegRight" type="Node3D"]
+metadata/source_png = "res://Assets/2DResources/Human/Separated/Limbs/10_human2_upper_leg_right.png"
+[node name="PaperVolume" type="MeshInstance3D" parent="."]
+scale = Vector3(1, 1, 0.08)
+mesh = ExtResource("1_mesh")
+[node name="JointIn" type="Marker3D" parent="."]
+[node name="JointOut" type="Marker3D" parent="."]
+position = Vector3(-1.6793094944512947, -1.1209999999999998, 0)

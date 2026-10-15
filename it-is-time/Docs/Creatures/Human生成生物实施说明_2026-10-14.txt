@@ -1,0 +1,79 @@
+Human 生成生物实施说明（2026-10-14）
+
+使用入口
+Scenes/Creatures/Generators/HumanGenerator.tscn：独立人形框架生成器。
+Scenes/Creatures/Characters/Generate_Human.tscn：可直接实例化的物理人形，已保存默认装配。
+Scenes/Levels/HumanTestLevel.tscn：独立测试关卡，F6 运行，Controller 初始接入 GenerateHuman，摄像机跟随 Controller。
+项目主场景和原 TestLevel 未改动。
+
+装配结构
+Torso -> Head
+Torso -> Arm_R_Limb_2 -> Arm_R_Limb_1 -> Arm_R
+Torso -> Arm_L_Limb_2 -> Arm_L_Limb_1 -> Arm_L
+Torso -> Leg_R_Limb_2 -> Leg_R_Limb_1 -> Leg_R
+Torso -> Leg_L_Limb_2 -> Leg_L_Limb_1 -> Leg_L
+共 14 个刚体、13 个装配连接关节。WaistVisual 是 Torso 的网格附件，没有独立刚体或地面碰撞。
+ArmLimb 是新追加的物理标签；旧标签编号未改变。Human 装配中的上臂、前臂使用 ArmLimb，手部使用 Arm；原始共享 Human Part 资源的标签未改动。
+
+生成器参数
+Human Set：选择 Human1、Human2、Human3、Human4 或 Human5，默认仍为 Human1。
+在 HumanGenerator.tscn 根节点或 Generate_Human.tscn 的 HumanGenerator 子节点中选择 Human Assets -> Human Set；在角色根节点点击“生成框架与物理角色”后保存场景。
+若 Use Manual Layout 已开启，先关闭它再切换程序预设，否则会优先恢复手动布局。
+Overall Scale：整体尺寸缩放；Part Width：基础厚度，最终厚度为二者乘积。
+所有部件保留独立贴图的 XY 宽高比；五套素材分别参照 Humanoid_1 至 Humanoid_5 原图做相对比例标定。
+尺寸标定采用版本 2：五套素材的 X/Y 均使用 0.01 世界单位/原图像素，取消横纵两个不同的换算比例。
+上、下肢按原图关节间距等比缩放；Torso、头、手、脚和腰裙按原始主体轮廓的宽高共同确定一个等比倍率。
+原图定位区间会去除透明边界、杂色碎片和不相连的邻接部件；脚部和部分手/躯干/腰裙的新增连接片、重复胸部不计入主体尺寸，但仍保留在显示和物理结构中。
+一个等比倍率无法消除 AI 分件自身的宽高比变化，采用 s=2/(当前主体宽/目标宽+当前主体高/目标高)，使最大相对宽高误差最小，不对贴图做非等比拉伸。
+参考尺寸、原图定位区间、主体测量框和贴图孔位记录在 Resources/Generators/HumanReferenceCalibration.tres，不修改原始图片或共享 PhysicalPart 资源。
+可复现标定脚本：Assets/3DResources/Creatures/Human/Tools/calibrate_reference.py；--sets=4,5 可只计算新两套，保留其他套数已有数据。重复运行不会继续累积缩放。原图被遮挡的连接位置与主体边界仍含人工估计。
+Limb Size：在标定结果之上统一等比缩放四肢，不拉伸纹理。
+Use Reference Pose：默认开启，分别读取五套素材原图的关节方向。左右上臂/前臂按原图朝向装配，手部保留独立贴图的朝向；Human4 保留左臂抬起的初始参考方向。
+腿部保留原图有向弯曲的分支，在两脚不交叉、脚底接地和共用一个 Torso 高度的条件下求解 IK；原图是分件展示，腿部角度不会逐项原样复制。
+Standing Extension Ratio：踝到髋的最大距离相对于两段肢体总长的比例，默认 0.98，防止膝盖完全伸直；降低会增加初始弯曲。
+Feet Face Forward：默认关闭，保留各套原图脚尖方向。Human1 至 Human4 为左脚朝 -X、右脚朝 +X，Human5 两脚原本均朝 +X。开启后只将脚尖原本朝 -X 的脚绕 Y 轴旋转 180°。
+Arm Bend Degrees：只在关闭 Use Reference Pose 后生效，控制从近端到远端的统一手臂初始角度。
+Paper Layer Ratio：很小的 Z 层次差，避免连接处的薄片表面共面闪烁。左右肢体主体仍沿 X 分开。
+Waist Visual Enabled / Scale / Offset：腰裙视觉附件开关、标定之上的等比大小和位置；默认 Scale 为 1.0，Z 偏移为 -0.06，腰裙上端遮于胸部之后。
+肩部、颈部与髋部按实际贴图连接孔定位；髋部采用腰裙图中的安装孔，物理上仍直接连接唯一的 Torso，不新增骨盆刚体。
+Head Offset：头部相对于躯干颈部安装孔的偏移。
+Part Scene Rules：按 PartKey/PartName/类型覆盖默认部件；显式规则优先于 Human Set 自动匹配。
+HumanGeneratorDefaults.tres 单独保存本物种默认值，不写父类脚本或其他物种资源。
+
+手动编辑与保存
+在 Generate_Human 中手动编辑部件后，使用“将当前部件姿态写入生成器”，再保存场景。
+手动布局启用后，重新生成优先恢复该布局；要重新使用程序化参数，先清除手动布局。
+保存内容包含物理部件姿态、内部模型和碰撞形状的调整、连接关节局部锚点及持握点。
+生成时，默认 Human 部件的 JointIn/JointOut 按标定孔位重新定位；其他显式替换 Part 保留其自身标记。
+可识别的透明圆孔按孔中心定位；原图或独立素材中被遮挡、实心的连接位置采用解剖结构估计，不保证 AI 重绘后的装饰圆盘也完全重合。
+
+移动与战斗
+HumanLegStepMovementController3D -> GeneratedLegStepMovementController3D -> LegStepMovementControllerBase3D。
+HumanWalk.tres 和 HumanFastWalk.tres 分别配置普通和 Shift 移动；默认目标速度 1.4 / 2.2。
+这是目标设置，不代表所有物理姿态下都已达到目标实际速度。
+接地脚授权对 Torso 的移动和高度修正；Torso 对悬挂的头、手臂提供接地时的重力补偿。
+四格物品栏与既有输入一致；装备的刚性持握点位于 Arm_R/ItemSocket3D。
+默认 PrimaryArm 控制组响应 MouseLeft；HumanArmSwing.tres 配置抬手、蓄力、爆发扭矩、持续扭矩和恢复。
+绑定仍设在手部，Drive Body Path 指向上臂；Follower Paths 按顺序指定前臂和手部。
+挥舞驱动肩关节，前臂与手部保持相对链姿态。链中部件 Broken 或连接被移除时取消挥舞。
+关节参考框架、generated_rest_b_relative_a 和挥舞绑定的恢复姿态随新装配重新捕获，保持本次参考姿态。
+Human 专用控制器会按腿链的当前地面可达范围收缩转向落点，避免宽站姿下整个转向步因超出伸展范围而一直被拒绝；通用控制器与其他物种未改动。
+重新生成会先卸下已装备物品，再将其绑定到新生成的手部，物品栏内容保留。
+本轮没有创建 Human NPC 派生场景；现有其他物种的 NPC 与单部件手臂行为未改写。
+
+验证
+ValidateHumanCreature3D：已保存默认装配与再次生成一致；五套素材、1.0/1.5 缩放、统一原图像素尺度、主体宽高最小最大误差的等比倍率、原图关节间距、手臂原图轴向、膝盖弯曲符号、双脚接地且不交叉、关节自然姿态、14/13 结构、视觉孔位与关节锚点、内部碰撞例外、标签、物品栏刷新、手动模型偏移及 PackedScene 还原；另验证关闭参考姿态及 Human1/Human5 的统一脚尖朝向开关。
+ValidateHumanControl3D：五套角色站立、Z 向移动、接近 180 度转身、装备再生成及断链取消攻击。--human-set=5 可只测试第五套的移动与转身。
+SmokeHumanMovement3D：站立、Right 移动、Shift 参数切换、MouseLeft 抬手、释放并返回 Idle。
+Human4 和 Human5 的独立运行检查均通过；最终 Human5 标定后的 Z 向 3 秒位移约 2.96，转身约 -171.10 度；Right 行走和挥舞后可回到 Idle。校准脚本连续两次只计算 --sets=4,5，结果不变且旧三套数据保持一致。
+本次尺寸修正后的默认装配单次测试：3 秒 Right 输入水平位移约 3.55 个世界单位；肩部蓄力实际旋转约 65.9 度，手部抬高约 3.79 个世界单位。
+ValidateHumanParts3D：88 个原始 Human 物理部件资源通过校验。
+旧 Character_Test_2 的物品栏、挥舞，以及 Ratkin 装配测试通过。
+ValidateHumanEditor3D：标定资源变更后能读到新值，五套角色在编辑器工具模式下生成、捕获和恢复通过，无 placeholder 方法调用错误。
+测试日志位于 D:/GameJamWorkspace/Reports/Human_*.log 及 Human45_*.log。
+环境仍有原有证书读取错误；无头编辑器退出时另有编辑器设置保存权限与退出清理提示，未修改系统设置。
+
+验证边界
+未做大量角色同场压力测试或各种重型武器、极端 Overall Scale 的手感校准。
+已检查五套装配的 XY 投影，项目内预览位于 Assets/3DResources/Creatures/Human/Previews/HumanPresetsPreview.jpg；该图是依据模型变换生成的离线投影，不是游戏运行截图。
+AI 分件与原图的轮廓存在差异，本次按关节间距与主要轮廓等比恢复整体比例，没有做非等比拉伸或重绘；主体长宽误差不能全部归零，Human1 右脚和 Human3 左脚仍约有 15% 的均衡误差。补全连接片保留，所以完整包围盒不应被当成原始主体范围。各种重型武器下的遮挡与手感仍需实际游玩确认。

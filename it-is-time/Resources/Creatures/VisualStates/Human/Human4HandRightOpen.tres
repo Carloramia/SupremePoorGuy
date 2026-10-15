@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="BodyPartVisualState3D" format=3]
+
+[ext_resource type="ArrayMesh" path="res://Resources/Meshes/Human/HandStates/Human4HandRightOpen.res" id="1_vg1qv"]
+[ext_resource type="Script" path="res://Scripts/Creatures/BodyPartVisualState3D.gd" id="2_tytp1"]
+
+[resource]
+resource_name = "Human4HandRightOpen"
+script = ExtResource("2_tytp1")
+state_name = &"open"
+mesh = ExtResource("1_vg1qv")
+anchor_path = NodePath("JointIn")

@@ -1,0 +1,33 @@
+[gd_scene load_steps=5 format=3]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/_PhysicalSampleBodyParts.tscn" id="1_base"]
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/Human/Models/Head/Human4Head.glb" id="2_model"]
+[ext_resource type="ArrayMesh" path="res://Resources/Meshes/Human/Head/Human4Head.res" id="3_mesh"]
+[sub_resource type="ConvexPolygonShape3D" id="Shape"]
+resource_local_to_scene = true
+points = PackedVector3Array(-1.88944554, 1.52533472, -0.01000000, -1.17094902, 2.19885458, -0.01000000, -1.04415552, 2.28304456, -0.01000000, -0.95962651, 2.32513956, -0.01000000, -0.41018800, 2.36723455, -0.01000000, -0.36792350, 2.36723455, -0.01000000, 0.60416003, 2.07256961, -0.01000000, 0.73095353, 2.03047462, -0.01000000, 0.85774704, 1.94628464, -0.01000000, 0.90001154, 1.90418964, -0.01000000, 1.02680504, 1.73580968, -0.01000000, 1.11133404, 1.56742972, -0.01000000, 1.15359854, 1.48323973, -0.01000000, 1.32265655, 1.06228982, -0.01000000, 1.36492105, 0.93600485, -0.01000000, 1.36492105, 0.89390986, -0.01000000, 1.23812755, 0.38876996, -0.01000000, 1.19586305, 0.34667497, -0.01000000, 0.22377952, -0.41103487, -0.01000000, 0.13925052, -0.41103487, -0.01000000, -0.02980749, -0.36893988, -0.01000000, -0.15660099, -0.32684488, -0.01000000, -0.24112999, -0.28474989, -0.01000000, -0.36792350, -0.20055991, -0.01000000, -0.41018800, -0.15846492, -0.01000000, -0.45245250, -0.11636993, -0.01000000, -0.53698150, -0.03217995, -0.01000000, -1.88944554, 1.48323973, -0.01000000, -1.88944554, 1.52533472, 0.01000000, -1.17094902, 2.19885458, 0.01000000, -1.04415552, 2.28304456, 0.01000000, -0.95962651, 2.32513956, 0.01000000, -0.41018800, 2.36723455, 0.01000000, -0.36792350, 2.36723455, 0.01000000, 0.60416003, 2.07256961, 0.01000000, 0.73095353, 2.03047462, 0.01000000, 0.85774704, 1.94628464, 0.01000000, 0.90001154, 1.90418964, 0.01000000, 1.02680504, 1.73580968, 0.01000000, 1.11133404, 1.56742972, 0.01000000, 1.15359854, 1.48323973, 0.01000000, 1.32265655, 1.06228982, 0.01000000, 1.36492105, 0.93600485, 0.01000000, 1.36492105, 0.89390986, 0.01000000, 1.23812755, 0.38876996, 0.01000000, 1.19586305, 0.34667497, 0.01000000, 0.22377952, -0.41103487, 0.01000000, 0.13925052, -0.41103487, 0.01000000, -0.02980749, -0.36893988, 0.01000000, -0.15660099, -0.32684488, 0.01000000, -0.24112999, -0.28474989, 0.01000000, -0.36792350, -0.20055991, 0.01000000, -0.41018800, -0.15846492, 0.01000000, -0.45245250, -0.11636993, 0.01000000, -0.53698150, -0.03217995, 0.01000000, -1.88944554, 1.48323973, 0.01000000)
+[node name="Human_Human4Head" instance=ExtResource("1_base")]
+mass = 0.5
+geometry_mode = 1
+custom_model_path = NodePath("Model")
+paper_volume_enabled = true
+paper_volume_thickness = 0.08
+sprite_visible = false
+mesh_visible = true
+tags = Array[int]([3])
+metadata/source_png = "res://Assets/2DResources/Human/Separated/Base/01_human4_head.png"
+metadata/pivot_is_initial_estimate = true
+metadata/anatomical_role = "Head"
+[node name="CollisionShape3D" parent="." index="0"]
+position = Vector3(0, 0, 0)
+shape = SubResource("Shape")
+[node name="MeshInstance3D" parent="." index="2"]
+visible = false
+mesh = null
+[node name="Model" parent="." instance=ExtResource("2_model")]
+[node name="PaperVolume" type="MeshInstance3D" parent="Model"]
+scale = Vector3(1, 1, 0.08)
+mesh = ExtResource("3_mesh")
+metadata/flat_collision_depth = 0.02
+[node name="JointIn" type="Marker3D" parent="."]
+[node name="JointOut" type="Marker3D" parent="."]
+position = Vector3(1.02808578, 0.78489984, 0.00000000)

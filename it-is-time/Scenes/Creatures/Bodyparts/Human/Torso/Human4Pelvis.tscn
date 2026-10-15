@@ -1,0 +1,33 @@
+[gd_scene load_steps=5 format=3]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/_PhysicalSampleBodyParts.tscn" id="1_base"]
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/Human/Models/Torso/Human4Pelvis.glb" id="2_model"]
+[ext_resource type="ArrayMesh" path="res://Resources/Meshes/Human/Torso/Human4Pelvis.res" id="3_mesh"]
+[sub_resource type="ConvexPolygonShape3D" id="Shape"]
+resource_local_to_scene = true
+points = PackedVector3Array(-1.98929196, 0.24598434, -0.01000000, -1.60725529, 0.62895130, -0.01000000, -1.41623695, 0.62895130, -0.01000000, 1.51271086, 0.43746782, -0.01000000, 2.72249365, -1.15822783, -0.01000000, 2.97718477, -1.92416174, -0.01000000, 2.97718477, -1.98798956, -0.01000000, 2.91351199, -2.11564521, -0.01000000, 2.78616643, -2.24330087, -0.01000000, 2.72249365, -2.30712869, -0.01000000, 2.53147532, -2.43478434, -0.01000000, 2.34045698, -2.49861217, -0.01000000, -0.01543583, -2.81775130, -0.01000000, -0.14278138, -2.81775130, -0.01000000, -1.28889140, -2.62626782, -0.01000000, -1.47990973, -2.56244000, -0.01000000, -1.60725529, -2.49861217, -0.01000000, -1.79827362, -2.30712869, -0.01000000, -1.86194640, -1.66885043, -0.01000000, -1.98929196, 0.11832869, -0.01000000, -1.98929196, 0.24598434, 0.01000000, -1.60725529, 0.62895130, 0.01000000, -1.41623695, 0.62895130, 0.01000000, 1.51271086, 0.43746782, 0.01000000, 2.72249365, -1.15822783, 0.01000000, 2.97718477, -1.92416174, 0.01000000, 2.97718477, -1.98798956, 0.01000000, 2.91351199, -2.11564521, 0.01000000, 2.78616643, -2.24330087, 0.01000000, 2.72249365, -2.30712869, 0.01000000, 2.53147532, -2.43478434, 0.01000000, 2.34045698, -2.49861217, 0.01000000, -0.01543583, -2.81775130, 0.01000000, -0.14278138, -2.81775130, 0.01000000, -1.28889140, -2.62626782, 0.01000000, -1.47990973, -2.56244000, 0.01000000, -1.60725529, -2.49861217, 0.01000000, -1.79827362, -2.30712869, 0.01000000, -1.86194640, -1.66885043, 0.01000000, -1.98929196, 0.11832869, 0.01000000)
+[node name="Human_Human4Pelvis" instance=ExtResource("1_base")]
+mass = 0.8
+geometry_mode = 1
+custom_model_path = NodePath("Model")
+paper_volume_enabled = true
+paper_volume_thickness = 0.08
+sprite_visible = false
+mesh_visible = true
+tags = Array[int]([0])
+metadata/source_png = "res://Assets/2DResources/Human/Separated/Base/03_human4_pelvis.png"
+metadata/pivot_is_initial_estimate = true
+metadata/anatomical_role = "Pelvis"
+[node name="CollisionShape3D" parent="." index="0"]
+position = Vector3(0, 0, 0)
+shape = SubResource("Shape")
+[node name="MeshInstance3D" parent="." index="2"]
+visible = false
+mesh = null
+[node name="Model" parent="." instance=ExtResource("2_model")]
+[node name="PaperVolume" type="MeshInstance3D" parent="Model"]
+scale = Vector3(1, 1, 0.08)
+mesh = ExtResource("3_mesh")
+metadata/flat_collision_depth = 0.02
+[node name="JointIn" type="Marker3D" parent="."]
+[node name="JointOut" type="Marker3D" parent="."]
+position = Vector3(-1.28426065, -2.22300000, 0.00000000)
