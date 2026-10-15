@@ -1,0 +1,62 @@
+[gd_resource type="Resource" script_class="LocationDefinition" format=3]
+
+[ext_resource type="Texture2D" path="res://editor/assets/house.svg" id="1_b1peo"]
+[ext_resource type="PackedScene" path="res://world_map/ui/EventPanel.tscn" id="2_m17fp"]
+[ext_resource type="Script" path="res://world_map/data/location_definition.gd" id="3_cp8io"]
+
+[resource]
+script = ExtResource("3_cp8io")
+type_id = &"event"
+display_name = "Ancient Monument"
+short_description = "Faded runes await a choice. Hidden for this session afterward."
+icon = ExtResource("1_b1peo")
+marker_color = Color(0.65, 0.58, 0.84, 1)
+marker_glyph = "?"
+completion_behavior = 1
+interaction_ui_scene = ExtResource("2_m17fp")
+encounter_data = {
+"editor_object": {
+"click_area": {
+"depth": 0.0,
+"enabled": true,
+"height": 2.0,
+"offset": [0.0, 0.0],
+"points": [],
+"rotation": 0.0,
+"shape": "circle",
+"size": [78.0, 78.0]
+},
+"completion_behavior": "HIDE_SESSION",
+"condition_ref": "",
+"discovery": {
+"allow_hidden_interaction": false,
+"condition_ref": "",
+"initially_visible": false,
+"marker_layer": "above",
+"radius": 240.0
+},
+"event_id": "",
+"height": 0.0,
+"id": "monument",
+"interaction_offset": [0.0, 35.0],
+"interaction_radius": 42.0,
+"layer": "landmarks",
+"name": "Ancient Monument",
+"native_definition_path": "res://world_map/demo/data/event.tres",
+"native_type_id": "event",
+"position": [330.0, 860.0],
+"repeatable": false,
+"rotation": 0.0,
+"scale": [1.0, 1.0],
+"target_scene": "",
+"type": "house",
+"visual": {
+"asset": "house",
+"opacity": 1.0,
+"size": [78.0, 78.0],
+"tint": "#9fba8d",
+"visible": true,
+"z_index": 0.0
+}
+}
+}

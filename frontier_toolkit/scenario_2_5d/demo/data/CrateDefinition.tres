@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="InteractableDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scenario_2_5d/data/interactable_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+object_id = &"outpost_supply_crate"
+display_name = "Supply crate"
+interaction_type = &"inspect"
+description = "Paper supply crate. Interact emits a request to an external system; no inventory logic runs here."
+tags = PackedStringArray("demo", "supply")

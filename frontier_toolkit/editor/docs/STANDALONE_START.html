@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Frontier Studio · 地编独立版使用说明</title>
+<style>body{font:17px/1.8 system-ui,"Microsoft YaHei",sans-serif;background:#15221c;color:#e1e7d8;margin:0}main{max-width:840px;margin:auto;padding:40px 28px 80px}h1,h2{color:#e7c78b}a{color:#ead197}code{background:#24362b;padding:3px 6px;border-radius:4px}li{margin-bottom:8px}.start{display:inline-block;background:#e3c487;color:#17231c;padding:12px 26px;border-radius:6px;text-decoration:none;font-weight:bold}.note{border-left:3px solid #d4b573;padding:12px 20px;background:#203127}table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid #3b4c3f;text-align:left;padding:10px}</style>
+<main><h1>Frontier Studio · 地编独立版</h1><p>完整解压后即可离线编辑地图。无需安装 Godot 或 Node.js，推荐 Edge / Chrome。</p><a class="start" href="editor/index.html">打开地图编辑器 →</a>
+<h2>第一次使用</h2><ol><li>Windows 可双击 <code>启动编辑器.cmd</code>；其他系统打开 <code>editor/index.html</code>。</li><li>左侧选择探索地图或营地战场；从素材与要素库选择类型，再点击画布摆放。</li><li>右侧修改位置、尺寸、视觉、碰撞、效果与关联 ID，点击“应用参数”。</li><li>中键或空格拖动画布，滚轮缩放；Ctrl+Z 撤销，Ctrl+Shift+Z 重做。</li><li>用“场景预览”或“迷雾模拟”检查布局；制作时回到“布局编辑”。</li></ol>
+<div class="note"><strong>保存最重要：</strong>浏览器不自动保存。刷新、关闭或换电脑前，点击“保存工作集”，保留下载的 <code>*.mapproject.json</code>。下次点击“打开”载入自己的文件。</div>
+<h2>保存与交付</h2><ol><li>经常保存工作集。文件可能位于浏览器“下载”目录。</li><li>点击“检查配置”，点击错误定位对象并修复。</li><li>检查通过后“导出配置”，得到 <code>*.level.json</code>。</li><li>将工作集、导出配置和修改说明一起发送给开发成员。导入的图片会嵌入工作集。</li></ol>
+<h2>操作提示</h2><table><tr><th>功能</th><th>提示</th></tr><tr><td>道路</td><td>参数面板支持中心线节点增删、调序和画布编辑。</td></tr><tr><td>营地</td><td>绑定战场、部署区、敌方配置、战后事件及关联障碍。</td></tr><tr><td>六边形战场</td><td>修改尺寸不会自动缩放物件；越界需处理。吸附步长可调至 0.5 或 1。</td></tr><tr><td>区域</td><td>视觉、点击范围、碰撞、效果区和部署区分别配置，不根据图片自动推导。</td></tr><tr><td>迷雾</td><td>区域揭示与地标发现独立。全揭示、破障和胜利模拟不写入源配置。</td></tr></table>
+<h2>完整操作手册</h2><p>包内 <a href="editor/README.md">editor/README.md</a> 提供详细步骤、快捷键和常见问题（Markdown 文本，可用记事本打开）。示例位于 <code>editor/examples/</code>。</p>
+<h2>范围说明</h2><p>独立包用于关卡制作、参数配置和预览。正式战斗、数值效果、真实 Godot 场景运行和转换由开发侧游戏工程执行。直接打开编辑器会载入示例，不会自动载入上次编辑的文件。</p></main></html>

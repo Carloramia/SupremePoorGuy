@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="LocationDefinition" load_steps=3 format=3]
+[ext_resource type="Script" path="res://world_map/data/location_definition.gd" id="1"]
+[ext_resource type="PackedScene" path="res://world_map/ui/EventPanel.tscn" id="2"]
+[resource]
+script = ExtResource("1")
+type_id = &"event"
+display_name = "Ancient Monument"
+short_description = "Faded runes await a choice. Hidden for this session afterward."
+marker_color = Color(0.65, 0.58, 0.84, 1)
+marker_glyph = "?"
+completion_behavior = 1
+interaction_ui_scene = ExtResource("2")

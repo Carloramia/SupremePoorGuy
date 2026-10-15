@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Frontier Studio · 地图编辑器</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">F</span><div>FRONTIER <b>STUDIO</b><small>地编工作台 / MAP AUTHORING</small></div></div>
+    <div class="project-name"><span class="status-dot"></span><span id="project-name"></span><span id="dirty" class="muted"></span></div>
+    <nav class="file-actions">
+      <button id="new-project" title="建立空工作集">新建</button><button id="open-project">打开</button><button id="save-project" class="secondary">保存工作集 <kbd>Ctrl S</kbd></button><button id="export-project" class="primary">导出配置 ↗</button>
+    </nav>
+  </header>
+  <div class="workspace">
+    <aside class="library">
+      <div class="panel-title"><span>场景工作集</span><button id="add-map" class="icon" title="新增地图">＋</button></div>
+      <div id="map-list"></div>
+      <div class="panel-title"><span>素材与要素</span><span class="badge" id="type-count"></span></div>
+      <input id="library-search" class="search" placeholder="搜索道路、树木、营地…" aria-label="搜索素材">
+      <div class="library-tabs"><button data-library="elements" class="active">要素</button><button data-library="assets">素材库</button></div>
+      <div id="asset-library" class="asset-library"></div>
+      <button id="import-assets" class="full subtle">＋ 导入图片素材</button>
+      <details class="layer-panel" open><summary>图层与辅助范围 <span>◉</span></summary><div id="layers"></div></details>
+      <div class="library-footer"><button id="catalogs">条件 / 事件引用表</button><a href="README.md" target="_blank">使用说明 ↗</a></div>
+    </aside>
+    <main class="stage">
+      <div class="stage-toolbar">
+        <div class="mode-switch"><button data-mode="edit" class="active">布局编辑</button><button data-mode="preview">场景预览</button><button data-mode="fog">迷雾模拟</button></div>
+        <div class="tools"><button id="undo" title="撤销 Ctrl+Z">↶</button><button id="redo" title="重做 Ctrl+Shift+Z">↷</button><span class="divider"></span><button id="fit">适配画布</button><label class="snap"><input type="checkbox" id="snap" checked>吸附</label><input id="snap-size" type="number" value="10" min="0.1" step="1" title="吸附步长（世界单位）"><button id="check" class="check-button">检查配置 <span id="issue-count">0</span></button></div>
+      </div>
+      <div class="canvas-shell" id="canvas-shell">
+        <canvas id="map-canvas" tabindex="0" aria-label="地图编辑画布"></canvas>
+        <div class="canvas-heading"><span id="map-kind" class="eyebrow"></span><h1 id="map-title"></h1><p id="canvas-hint">选择要素后点击画布放置 · 拖动移动 · 滚轮缩放 · 中键 / 空格拖动画布</p></div>
+        <div id="placement-banner" class="placement-banner" hidden></div>
+        <div id="simulation" class="simulation" hidden>
+          <span>临时模拟 · 不写入源配置或游戏存档</span>
+          <label>持有怪兽 <input id="sim-monsters" type="number" min="0" value="0"></label>
+          <button id="sim-conditions">条件开关</button><button id="reveal-all">临时全揭示</button><button id="load-save">读取游戏存档</button><button id="reset-preview">重置预览</button><button id="sim-victory">模拟胜利</button>
+        </div>
+        <div class="canvas-bottom"><span id="coordinate">X 0 · Y 0</span><span id="selection-hint">未选中对象</span><div><button id="zoom-out" title="缩小">−</button><span id="zoom-label">100%</span><button id="zoom-in" title="放大">＋</button></div></div>
+        <div id="toast" role="status"></div>
+      </div>
+      <section class="bottom-panel">
+        <div class="bottom-tabs"><button data-bottom="objects" class="active">对象列表 <span id="object-count"></span></button><button data-bottom="issues">配置检查 <span id="error-count"></span></button><span class="muted">初始配置与运行状态分离</span></div>
+        <div id="object-list" class="object-list"></div><div id="issues" class="issues" hidden></div>
+      </section>
+    </main>
+    <aside class="inspector">
+      <div class="panel-title"><span id="inspector-title">地图设置</span><span class="eyebrow">PROPERTIES</span></div>
+      <div class="inspector-actions"><button id="map-settings">地图设置</button><button id="apply-fields" class="secondary">应用参数</button><button id="duplicate" title="复制 Ctrl+D">复制</button><button id="delete" class="danger" title="Delete 删除">删除</button></div>
+      <div id="inspector-fields"></div>
+      <details class="advanced"><summary>高级配置 JSON</summary><p>保留扩展数据；提交前校验结构。对象类型请通过素材库创建。</p><textarea id="advanced-json" spellcheck="false" aria-label="高级配置 JSON"></textarea><button id="apply-json">应用 JSON 修改</button></details>
+    </aside>
+  </div>
+  <input type="file" id="file-open" accept=".json" hidden><input type="file" id="asset-open" accept="image/png,image/jpeg,image/webp,image/svg+xml" multiple hidden>
+  <input type="file" id="save-open" accept=".json" hidden>
+  <dialog id="dialog"><form method="dialog"><div class="dialog-heading"><h2 id="dialog-title"></h2><button value="cancel" aria-label="关闭">×</button></div><div id="dialog-body"></div><div class="dialog-actions" id="dialog-actions"></div></form></dialog>
+  <script src="model.js"></script><script src="renderer.js"></script><script src="app.js"></script>
+</body>
+</html>

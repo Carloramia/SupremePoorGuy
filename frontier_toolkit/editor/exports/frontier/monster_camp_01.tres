@@ -1,0 +1,66 @@
+[gd_resource type="Resource" script_class="LocationDefinition" format=3]
+
+[ext_resource type="Texture2D" path="res://editor/assets/camp.svg" id="1_kcrv8"]
+[ext_resource type="PackedScene" path="res://world_map/ui/BattlePanel.tscn" id="2_dumrg"]
+[ext_resource type="Script" path="res://world_map/data/location_definition.gd" id="3_k5ku8"]
+
+[resource]
+script = ExtResource("3_k5ku8")
+type_id = &"battle"
+display_name = "林地怪兽营地"
+icon = ExtResource("1_kcrv8")
+interaction_ui_scene = ExtResource("2_dumrg")
+encounter_data = {
+"editor_object": {
+"battle_map_id": "camp_battle_01",
+"blocking_obstacle_ids": ["camp_barrier_01"],
+"click_area": {
+"depth": 0.0,
+"enabled": true,
+"height": 2.0,
+"offset": [0.0, 0.0],
+"points": [],
+"rotation": 0.0,
+"shape": "circle",
+"size": [78.0, 78.0]
+},
+"completion_behavior": "KEEP",
+"condition_ref": "",
+"deployment_id": "player_deploy_01",
+"discovery": {
+"allow_hidden_interaction": false,
+"condition_ref": "",
+"initially_visible": true,
+"marker_layer": "above",
+"radius": 240.0
+},
+"enemy_config_id": "camp_guards",
+"event_id": "",
+"height": 0.0,
+"id": "monster_camp_01",
+"interaction_offset": [0.0, 35.0],
+"interaction_radius": 42.0,
+"layer": "landmarks",
+"name": "林地怪兽营地",
+"position": [900.0, 420.0],
+"post_event_id": "camp_reward",
+"repeatable": false,
+"rotation": 0.0,
+"scale": [1.0, 1.0],
+"target_scene": "",
+"transition": {
+"duration": 1.2,
+"fade": 0.3,
+"zoom": 3.0
+},
+"type": "camp",
+"visual": {
+"asset": "camp",
+"opacity": 1.0,
+"size": [78.0, 78.0],
+"tint": "#9fba8d",
+"visible": true,
+"z_index": 0.0
+}
+}
+}

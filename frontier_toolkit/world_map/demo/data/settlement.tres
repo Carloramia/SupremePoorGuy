@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="LocationDefinition" load_steps=4 format=3]
+[ext_resource type="Script" path="res://world_map/data/location_definition.gd" id="1"]
+[ext_resource type="PackedScene" path="res://world_map/ui/SettlementPanel.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenario_2_5d/demo/Scenario25DDemo.tscn" id="3"]
+[resource]
+script = ExtResource("1")
+type_id = &"settlement"
+display_name = "Test Town"
+short_description = "A quiet frontier town. Rest and return whenever you need."
+marker_color = Color(0.91, 0.74, 0.45, 1)
+marker_glyph = "S"
+repeatable = true
+interaction_ui_scene = ExtResource("2")
+scenario_scene = ExtResource("3")

@@ -1,0 +1,17 @@
+name: Editor checks
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  editor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node tools/Verify-Package.cjs
+      - run: node --check editor/app.js
+      - run: node --check editor/renderer.js
+      - run: node editor/tests/model.test.cjs
+      - run: node editor/tools/Validate-Level.cjs editor/examples/Frontier.mapproject.json
