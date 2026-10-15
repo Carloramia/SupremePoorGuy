@@ -11,6 +11,10 @@ foreach ($taskFile in $taskFiles) {
     $taskText = Get-Content -LiteralPath $taskFile.FullName -Raw
     $taskIsModel = $taskFile.Name -eq 'PrototypeState.gd'
     $taskIsTest = $taskFile.FullName.StartsWith((Join-Path $taskRoot 'Tests') + [System.IO.Path]::DirectorySeparatorChar)
+    $taskIsVisual = $taskFile.FullName.StartsWith((Join-Path $taskRoot 'Scripts\UI') + [System.IO.Path]::DirectorySeparatorChar)
+    if ($taskIsVisual -and $taskText -match 'PrototypeState|GameDemo|FileAccess|DirAccess|state\.data|state\.save|state\.summon|state\.recycle') {
+        throw "Visual component must not depend on controller, model, or persistence: $($taskFile.Name)"
+    }
     if ($taskFile.Extension -eq '.gd' -and $taskText -match 'HTTPRequest|OS\.execute|OS\.shell_open|change_scene_to|\.paused\s*=') {
         throw "Unexpected business IO/global mutation: $($taskFile.Name)"
     }

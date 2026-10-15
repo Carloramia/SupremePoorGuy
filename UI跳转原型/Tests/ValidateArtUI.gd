@@ -15,14 +15,14 @@ func check(value: bool, label: String) -> void:
 		push_error("ART UI FAILED: "+label)
 
 func settled() -> void:
-	await create_timer(0.4).timeout
+	await create_timer(0.6).timeout
 	for i in 3:
 		await process_frame
 
 func _run() -> void:
 	root.size = Vector2i(1280,720)
 	app = Scene.instantiate()
-	app.state.save_path = "user://native_art_test_%d.json" % Time.get_ticks_usec()
+	app.state.save_path = ProjectSettings.globalize_path("res://Tests/.runtime") + "/native_art_test_%d.json" % Time.get_ticks_usec()
 	root.add_child(app)
 	app._show("world")
 	app._open_ritual()
@@ -50,7 +50,12 @@ func _run() -> void:
 	check(surface.get_node("Clip").texture != surface.get_node("LeftRivet").texture,"clip and rivet are separate assets")
 	check(surface.get_node("WoodFrame").draw_center==false,"frame has open center")
 	for part in surface.get_children():
-		check(part.mouse_filter==Control.MOUSE_FILTER_IGNORE,"decor does not intercept "+part.name)
+		if part is Control:
+			check(part.mouse_filter==Control.MOUSE_FILTER_IGNORE,"decor does not intercept "+part.name)
+		else:
+			for layer in part.get_children():
+				if layer is Control:
+					check(layer.mouse_filter==Control.MOUSE_FILTER_IGNORE,"skin layer does not intercept "+layer.name)
 	var btn_style: StyleBoxTexture = app.close_button.get_theme_stylebox("normal")
 	check(btn_style.texture.resource_path.ends_with("button_paper_v1.png"),"button art is separate from text")
 	for style_name in ["hover", "pressed", "disabled"]:

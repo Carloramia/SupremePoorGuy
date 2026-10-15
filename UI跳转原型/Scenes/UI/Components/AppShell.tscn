@@ -1,8 +1,10 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=7 format=3]
 [ext_resource type="Theme" path="res://Assets/UI/PaperRelief/PaperReliefTheme.tres" id="Theme"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/Components/ActionButton.tscn" id="Button"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/Components/WorldView.tscn" id="World"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/Components/PartySidebar.tscn" id="Party"]
+[ext_resource type="Script" path="res://Scripts/UI/BookmarkSlot.gd" id="Slot"]
+[ext_resource type="Script" path="res://Scripts/UI/NavigationPanel.gd" id="Navigation"]
 [node name="AppShell" type="MarginContainer"]
 anchors_preset = 15
 anchor_right = 1.0
@@ -29,27 +31,75 @@ theme_override_font_sizes/font_size = 22
 text = "涌现　/　魔力 300　 ·　出战 0 / 6"
 clip_text = true
 text_overrun_behavior = 3
-[node name="Warehouse" parent="Layout/TopBar/Row" instance=ExtResource("Button")]
+[node name="Settings" parent="Layout/TopBar/Row" instance=ExtResource("Button")]
 unique_name_in_owner = true
 layout_mode = 2
-text = "妖兽仓库"
-[node name="Party" parent="Layout/TopBar/Row" instance=ExtResource("Button")]
-unique_name_in_owner = true
-layout_mode = 2
-text = "出战队列"
-[node name="Dictionary" parent="Layout/TopBar/Row" instance=ExtResource("Button")]
-unique_name_in_owner = true
-layout_mode = 2
-text = "符文辞典"
-[node name="Help" parent="Layout/TopBar/Row" instance=ExtResource("Button")]
-unique_name_in_owner = true
-layout_mode = 2
-text = "帮助"
+text = "设置 / 保存 / 退出"
 [node name="MainContent" type="HBoxContainer" parent="Layout"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
+[node name="Navigation" type="VBoxContainer" parent="Layout/MainContent"]
+script = ExtResource("Navigation")
+unique_name_in_owner = true
+custom_minimum_size = Vector2(138, 0)
+layout_mode = 2
+[node name="Tasks" parent="Layout/MainContent/Navigation" instance=ExtResource("Button")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 130)
+layout_mode = 2
+text = "待办事项"
+theme_type_variation = &"BookmarkButton"
+[node name="Summon" parent="Layout/MainContent/Navigation" instance=ExtResource("Button")]
+unique_name_in_owner = true
+layout_mode = 2
+text = "召唤 C"
+theme_type_variation = &"BookmarkButton"
+[node name="Warehouse" parent="Layout/MainContent/Navigation" instance=ExtResource("Button")]
+unique_name_in_owner = true
+layout_mode = 2
+text = "仓库 D"
+theme_type_variation = &"BookmarkButton"
+[node name="PartySlot" type="Control" parent="Layout/MainContent/Navigation"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(138, 54)
+layout_mode = 2
+script = ExtResource("Slot")
+clip_contents = true
+[node name="Party" parent="Layout/MainContent/Navigation/PartySlot" instance=ExtResource("Button")]
+unique_name_in_owner = true
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+text = "管理出战队列"
+theme_type_variation = &"BookmarkButton"
+[node name="ReturnMapSlot" type="Control" parent="Layout/MainContent/Navigation"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(138, 54)
+layout_mode = 2
+script = ExtResource("Slot")
+clip_contents = true
+[node name="ReturnMap" parent="Layout/MainContent/Navigation/ReturnMapSlot" instance=ExtResource("Button")]
+unique_name_in_owner = true
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+text = "返回大地图"
+theme_type_variation = &"BookmarkButton"
+[node name="Dictionary" parent="Layout/MainContent/Navigation" instance=ExtResource("Button")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+text = "符文辞典"
+[node name="Help" parent="Layout/MainContent/Navigation" instance=ExtResource("Button")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+text = "帮助"
 [node name="PartySidebar" parent="Layout/MainContent" instance=ExtResource("Party")]
+visible = false
 unique_name_in_owner = true
 layout_mode = 2
 [node name="Center" type="VBoxContainer" parent="Layout/MainContent"]

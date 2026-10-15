@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=6 format=3]
 [ext_resource type="Texture2D" path="res://Assets/UI/PaperRelief/Textures/paper_v1.png" id="Paper"]
 [ext_resource type="Texture2D" path="res://Assets/UI/PaperRelief/Textures/layered_frame_v1.png" id="Frame"]
 [ext_resource type="Texture2D" path="res://Assets/UI/PaperRelief/Icons/copper_clip.svg" id="Clip"]
 [ext_resource type="Texture2D" path="res://Assets/UI/PaperRelief/Icons/copper_rivet.svg" id="Rivet"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/Components/UISkinSlots.tscn" id="SkinSlots"]
 [node name="BoardSurface" type="Control"]
 layout_mode = 3
 anchors_preset = 15
@@ -69,3 +70,8 @@ offset_right = -8.0
 offset_bottom = 28.0
 mouse_filter = 2
 texture = ExtResource("Rivet")
+
+[node name="VisualSkin" parent="." instance=ExtResource("SkinSlots")]
+surface_target = NodePath("Paper")
+legacy_outline_targets = Array[NodePath]([NodePath("WoodFrame")])
+decoration_targets = Array[NodePath]([NodePath("Clip"), NodePath("LeftRivet"), NodePath("RightRivet")])

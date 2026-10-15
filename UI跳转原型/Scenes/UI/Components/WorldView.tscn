@@ -1,8 +1,10 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 [ext_resource type="Script" path="res://Scripts/UI/WorldView.gd" id="Script"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/Components/SummonBookButton.tscn" id="Book"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/Components/ActionButton.tscn" id="Button"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/Components/LocationHint.tscn" id="Hint"]
 [node name="WorldView" type="Control"]
+clip_contents = true
 custom_minimum_size = Vector2(500, 350)
 layout_mode = 3
 anchors_preset = 15
@@ -85,3 +87,5 @@ offset_right = -22.0
 offset_bottom = -22.0
 grow_horizontal = 0
 grow_vertical = 0
+
+[node name="LocationHint" parent="." instance=ExtResource("Hint")]

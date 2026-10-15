@@ -5,14 +5,15 @@
 [ext_resource type="PackedScene" path="res://Scenes/UI/Components/BoardSurface.tscn" id="Surface"]
 [sub_resource type="StyleBoxEmpty" id="BoardContent"]
 content_margin_left = 32.0
-content_margin_top = 30.0
+content_margin_top = 12.0
 content_margin_right = 32.0
-content_margin_bottom = 26.0
+content_margin_bottom = 10.0
 [node name="ModalHost" type="ColorRect"]
 visible = false
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = 70.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("Theme")
@@ -29,7 +30,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/margin_left = 26
 theme_override_constants/margin_right = 26
-theme_override_constants/margin_top = 22
+theme_override_constants/margin_top = 82
 theme_override_constants/margin_bottom = 22
 [node name="BoardSurface" parent="BoardMotion/MotionRoot/Margin" instance=ExtResource("Surface")]
 layout_mode = 2
@@ -57,6 +58,8 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
+vertical_scroll_mode = 4
+
 [node name="Body" type="VBoxContainer" parent="BoardMotion/MotionRoot/Margin/Panel/Layout/Scroll"]
 unique_name_in_owner = true
 layout_mode = 2

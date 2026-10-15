@@ -25,6 +25,8 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 horizontal_scroll_mode = 0
+vertical_scroll_mode = 4
+
 [node name="Margin" type="MarginContainer" parent="Scroll"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -54,8 +56,8 @@ layout_mode = 2
 [node name="Ritual" parent="Scroll/Margin/Examples/PaperPanel" instance=ExtResource("Ritual")]
 custom_minimum_size = Vector2(0, 540)
 layout_mode = 2
-[node name="SampleRelic" parent="Scroll/Margin/Examples/PaperPanel/Ritual/Columns/LeftScroll/Left/Relics" instance=ExtResource("Relic")]
+[node name="SampleRelic" parent="Scroll/Margin/Examples/PaperPanel/Ritual/Columns/C3/RightScroll/Right/Relics" instance=ExtResource("Relic")]
 layout_mode = 2
 text = "奇物示例 · 可换贴图"
-[node name="SampleReference" parent="Scroll/Margin/Examples/PaperPanel/Ritual/Columns/RightScroll/Right/References" instance=ExtResource("Reference")]
+[node name="SampleReference" parent="Scroll/Margin/Examples/PaperPanel/Ritual/Columns/C3/RightScroll/Right/References" instance=ExtResource("Reference")]
 layout_mode = 2

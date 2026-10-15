@@ -3,13 +3,24 @@
 [ext_resource type="Theme" path="res://Assets/UI/PaperRelief/PaperReliefTheme.tres" id="Theme"]
 [node name="ResultsPanel" type="VBoxContainer"]
 size_flags_horizontal = 3
+size_flags_vertical = 3
 theme = ExtResource("Theme")
 [node name="Hint" type="Label" parent="."]
+unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 19
-text = "3 只妖兽已显形。选择出战或入库；直接关闭会将未安置者全部入库。"
+text = "选择出战或入库；直接关闭会将未安置者全部入库。"
 autowrap_mode = 3
-[node name="Cards" type="HBoxContainer" parent="."]
+[node name="ResultScroll" type="ScrollContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 4
+
+[node name="Cards" type="HFlowContainer" parent="ResultScroll"]
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
 unique_name_in_owner = true
 layout_mode = 2
 [node name="Empty" type="Label" parent="."]

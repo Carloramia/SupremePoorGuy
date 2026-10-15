@@ -1,12 +1,13 @@
 [gd_scene load_steps=2 format=3]
 [ext_resource type="PackedScene" path="res://Scenes/UI/Components/MonsterCard.tscn" id="Card"]
 [node name="MonsterResultCard" instance=ExtResource("Card")]
+custom_minimum_size = Vector2(460, 0)
 [node name="Row" parent="." index="0"]
-vertical = true
+vertical = false
 theme_override_constants/separation = 8
 [node name="Portrait" parent="Row" index="0"]
-custom_minimum_size = Vector2(150, 144)
+custom_minimum_size = Vector2(144, 110)
 [node name="Commands" parent="Row" index="2"]
-vertical = false
+vertical = true
 [node name="Store" parent="Row/Commands" index="2"]
 visible = true

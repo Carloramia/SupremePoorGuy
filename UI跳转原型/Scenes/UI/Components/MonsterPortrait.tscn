@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=6 format=3]
 [ext_resource type="Script" path="res://Scripts/UI/MonsterPortrait.gd" id="Script"]
 [ext_resource type="Texture2D" path="res://Assets/UI/PaperRelief/ExampleArt/bandit_reference.png" id="Human"]
 [ext_resource type="Texture2D" path="res://Assets/UI/PaperRelief/ExampleArt/wolf_reference.png" id="Beast"]
 [ext_resource type="Texture2D" path="res://Assets/UI/PaperRelief/ExampleArt/sandworm_reference.png" id="Snake"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/Components/UISkinSlots.tscn" id="SkinSlots"]
 [node name="MonsterPortrait" type="Control"]
 custom_minimum_size = Vector2(150, 120)
 mouse_filter = 2
@@ -42,3 +43,7 @@ grow_vertical = 2
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 5
+
+[node name="VisualSkin" parent="." instance=ExtResource("SkinSlots")]
+surface_target = NodePath("__none__")
+illustration_targets = Array[NodePath]([NodePath("Artwork"), NodePath("ReferenceArt")])
