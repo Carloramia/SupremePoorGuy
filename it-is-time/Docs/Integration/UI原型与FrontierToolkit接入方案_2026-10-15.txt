@@ -1,0 +1,331 @@
+ItIsTime：UI原型与 Frontier Toolkit 接入方案
+日期：2026-10-15
+目标工程：D:\GameJamWorkspace\ItIsTime\it-is-time
+性质：静态调查与实施方案。本次仅新增此文档，没有迁移模块或修改运行逻辑。
+
+一、结论与接入定位
+
+这两套系统可以接入，但不能直接合并三个 project.godot，也不能只连接演示信号。
+推荐采用“正式工程保留物理玩法，UI原型提供表现和交互，Frontier提供地图与场景基础设施，宿主统一状态和流程”的结构。
+
+1. UI跳转原型：玩家界面与交互层。
+   已有主菜单、顶栏与导航书签、纸页/弹窗栈、转场、法阵输入、召唤确认和结果、仓库与队列管理、事件/待办展示、视觉资源插槽。
+   当前交互版本为0.7.12。GameDemo仍组织演示流程；PrototypeState仍保存原型经济、怪物和进度，不能作为第二份正式库存保留。
+   召唤采用2.0：盘面7→19→37→61格、14枚符文、布局version=3；普通产出5只，结构/配方可能改变数量与队位。
+   等段、概率、属性与结构效果仍含试验配置；展示或生成了字段不代表正式物理战斗已经实现其效果。
+
+2. Frontier Toolkit：地图运行层与内容制作工具。
+   world_map：连续2D旅行、Hex逻辑元数据、寻路、道路吸附与速度带、迷雾、地点生命周期、会话导出/恢复。
+   scenario_2_5d：3D空间、正交相机、纸绘表现、拾取、遮挡淡化、出生点和场景退出接口。
+   editor：独立浏览器地编工具，制作工作集、验证和导出初始配置；不是玩家游戏内UI，也不是Godot编辑器插件。
+   integration：当前通过SubViewport城镇窗口连接大地图和2.5D场景。
+   Toolkit没有正式战斗模拟；2.5D的NavigationRoot只是接口，没有烘焙或Agent。浏览器中的陷阱、破障、部署、奖励等模拟不自动成为游戏玩法。
+
+3. it-is-time：正式物理角色和战斗执行层。
+   继续负责各物种生成器、PhysicalPart、Joint、移动/转向/飞行、NPC状态机、攻击模组、DamageService、武器持握、Controller、地形光标、RuntimeConsole和武器Workshop。
+   不用Toolkit的Billboard角色替换现有分部位物理角色，也不把UI原型的hp/attack演示数值直接覆盖真实部位数据。
+
+二、已经核对的接入风险
+
+1. 工程设置不同。
+   主工程为Godot4.7、C#项目特征、Forward Plus、Jolt、canvas_items/expand。
+   两个来源工程采用Godot4.7.2和GL Compatibility；UI原型采用disabled缩放，GameDemo._ready还主动修改宿主Window的缩放。
+   保留主工程设置，去掉移植宿主中的窗口改写，按真实渲染器验证布局、字体、透明材质、模糊与遮挡。
+
+2. 监听信号不会替换测试流程。
+   GameDemo._location_clicked在scene_requested("battle",id)后仍调用_show("battle")。
+   _perform_summon先调用PrototypeState.summon，再发通知并播放演出。
+   正式接入必须替换调用点；只监听前者会双跳转，只监听后者再扣费/生成会重复消费。
+
+3. 地图保存并不是统一事务。
+   LocationInteractionController.request_battle设置pending_battle后调用save_world_map，但未根据保存返回值阻止请求。
+   resolve先修改地点/visits、清pending并恢复地图，再调用保存，也没有失败回滚。
+   只改save_path或只监听save_completed不能解决问题，需在移植副本中补保存失败语义和宿主事务适配。
+
+4. 输入与暂停存在现成耦合。
+   PlayerController3D和TerrainCursor3D会将可见的ui_interface_2d CanvasLayer视为阻塞界面。
+   常驻AppShell/HUD不能直接整体加入这个组，否则角色会永久失去操作。
+   WorkshopUIController自行设置SceneTree.paused并保存旧bool；多个界面叠加后可能过早恢复暂停。
+   DragCamera和Toolkit相机都处理拖动/滚轮；每个活动内容视口只能有一个实际相机输入拥有者。
+
+5. 视口隔离不能只做画面。
+   Toolkit的ScenarioOverlay要求目标根节点为ScenarioController，不能直接传入现有普通Node3D的TestLevel。
+   PlayerControlContext仍通过全树get_first_node_in_group找Controller；Workshop生成物品时放到current_scene；轮盘、库存UI、光标涉及各自Viewport坐标。
+   NPC索敌已经检查同World3D，但其他全局组查询仍需核对上下文。新增SubViewport不会自动隔离这些引用和输入。
+
+6. 编辑器导出只实现部分运行能力。
+   新迷雾规则、连续外轮廓、破障/跨越、营地战斗流程和效果字段会保存在editor_data；现有world_map核心仍由Hex/旧迷雾逻辑解释。
+   地编转换脚本当前固定以frontier_toolkit为项目根、输出限制在editor目录；不能原封不动把-Output指向主工程任意目录。
+
+7. 事件依赖缺失仍存在。
+   本地“事件配表工具/Godot事件表现”没有文档中所列core目录；event_window.gd仍引用缺失定义。
+   EventPanel可复用，但完整事件Session/JSON运行时不能按现成模块纳入首轮验收。
+
+8. 当前没有发现class_name名称冲突。
+   静态扫描主工程33个、UI原型0个、Toolkit43个全局脚本类，来源与主工程没有同名交集。
+   这不代表路径、UID、输入、物理层、资源导入和渲染已兼容，迁移后仍要重新检查。
+
+三、建议的宿主结构与目录
+
+以下GameRoot、GameSession、GameFlowController、GameUIController、SummonAdapter、CreatureFactory等名称均为建议新增，不是目前已经存在的API。
+
+建议目录：
+  res://Modules/PaperUI/              UI原型的场景、脚本、主题和必要素材
+  res://Modules/Frontier/world_map/   大地图运行模块
+  res://Modules/Frontier/scenario_2_5d/  场景运行模块
+  res://Scripts/Application/         宿主流程、统一状态、输入/暂停适配
+  res://Scripts/Integration/         UI、地图、召唤、部署与结算适配
+  res://Resources/Gameplay/          物种定义、规则ID映射、地点/战场目录
+  res://Content/Maps/                已验证的地图转换产物
+  res://Scenes/Application/GameRoot.tscn  正式候选入口
+  res://Tests/Integration/           接入专项
+
+源目录UI跳转原型和frontier_toolkit继续保留，用于独立维护与对照。
+浏览器editor保留在frontier_toolkit/editor作为开发工具，不作为运行时UI或自动加载模块导入游戏。
+不复制.godot、个人存档、导出模板、编辑器缓存和Tests/.runtime。
+迁移时批量重写内部res://、shader include和导入源引用；保留可用.uid并检查重复；.import需要核对重映射，导入缓存由目标工程重建。
+
+GameRoot建议长期存活：
+  GameSession：唯一可持久化状态与提交入口，先作为GameRoot子节点，不必再增加一批Autoload。
+  GameFlowController：唯一旅行/加载/战斗/结算/返回流程负责人。
+  GameUIController：复用原型的表现、弹窗栈、按钮绑定和动效，改为读取快照/提交动作请求。
+  ContentHost：活动地图或关卡的承载与生命周期。
+  GameUI：AppShell、ModalHost、现有Workshop/轮盘/HUD的统一叠放归属。
+
+现有DamageService、WorkshopUIController和RuntimeConsole保留；通过适配接入宿主，不重复注册同名全局服务。
+GameDemo只保留为来源演示；迁移其必要表现编排，替换其测试路由、写盘、随机生成、固定地点和测试奖励。
+PrototypeState的校验/回滚/队位规则可迁入GameSession或纯规则代码，不允许继续独立写prototype_session.json。
+
+四、视口、UI与输入方案
+
+推荐最终将地图/场景画面放入原WorldView所在的内容矩形，由宿主提供SubViewportContainer；保留导航、纸页、留白和文字布局。
+大地图视口提供2D空间；战场/探索视口使用独立World3D。切换内容时保留大地图节点和状态，但停止其动态更新。
+不同时渲染一个后台大地图和它的实时转场副本；转场使用被冻结的地图纹理或同一视口画面。
+GameDemo._curtain当前重新实例化占位WorldView，正式接入改用真实地图画面，不能让已结束地点在转场副本里重新出现。
+
+实施顺序：先在新IntegrationTest场景中用主视口验证现有物理关卡的宿主生命周期，再完成下列视口适配，之后才把战斗放入正式UI内容区。
+这一步是验证顺序，不是交付两个长期并行的战斗框架。
+
+视口适配必须包含：
+  1. 明确active_level、active_viewport、active_camera、active_controller引用，不依赖全树第一个节点。
+  2. 将外层屏幕坐标、内容矩形坐标、SubViewport像素坐标显式换算，覆盖缩放、偏移、窗口变化。
+  3. 光标投射、目标屏幕投影、轮盘位置、库存拖拽都使用同一上下文；不能对子视口事件重复转发。
+  4. Workshop物品生成到active_level的物品容器，不能继续无条件放进current_scene根节点。
+  5. Controller的脱离/接入重挂载必须留在当前关卡容器，不能被新GameRoot层级扫描提升到应用根下。
+  6. 前台只启用一个玩家Controller；工具预览不进入活动玩家上下文。
+  7. 现有战斗使用DragCamera；Toolkit固定相机先用于独立探索场景。复用战场几何时去除Demo相机/UI，不启用两套镜头。
+  8. 不能直接把TestLevel交给现成ScenarioOverlay；使用宿主BattleHost包裹原关卡，探索场景再通过ScenarioController接口接入。
+
+输入优先级：控制台 → 顶层确认/弹窗/Workshop → 角色轮盘 → 当前地图/战斗 → 装饰层。
+常驻HUD不阻塞玩法，真正打开的纸页/弹窗才登记阻塞。原型根节点为Control，需要桥接到现有CanvasLayer判定或统一阻塞查询。
+打开UI时取消旧攻击/拖拽状态，释放后不要把仍按住的MouseLeft/Q/Space直接补发给角色。
+用户正在输入文本时，字母/数字键不触发移动、武器栏或Workshop。
+
+暂停按reason维护，而非各界面保存一个旧bool：
+  大地图纸页：阻塞并暂停地图模块，关闭时只有所有阻塞原因清空才恢复。
+  真实地点交互：继续由地图交互生命周期管理，外部纸页关闭不能擅自解除仍在进行的地点暂停。
+  战斗纸页/Workshop：统一暂停真实物理，UI和过渡继续处理；同一SceneTree的全局暂停会影响各视口，须由一个拥有者设置。
+  控制台：首版沿用现有输入阻塞政策，是否冻结物理由宿主明确配置，不让它自行覆盖其他暂停原因。
+  地图→战斗：只暂停后台地图，不设置全树暂停来冻结地图，否则战斗也无法运行。
+
+五、统一状态、怪物记录与存档
+
+GameSession是唯一权威；UI、地图模块、战斗关卡都是投影或运行实例。
+建议一个正式槽文件user://saves/slot_01.json，带schema_version、.tmp、.bak、校验和失败回滚；所有接入测试使用独立测试槽。
+地图原生save_version=1、法阵layout.version=3、正式槽schema_version分别管理，不混成一个版本号。
+
+状态建议包含：
+  economy：魔力与解锁；roster：实例记录；party_ids与队位政策；pending_summon；
+  worlds[map_id]：地图session；pending_battle与已处理结果ID；events/tasks；奖励去重账本。
+
+怪物记录的最小信息：
+  creature_instance_id：持久唯一ID，改名、入队、战斗、重读档都不改变。
+  definition_id/revision：物种、NPC/玩家场景、部件资源、密度、移动与攻击预设的目录引用。
+  generator_seed和参数快照；必要时保存解析完成的blueprint/manual_layout，而非只保存随机种子。
+  display_name、form、traits、portrait_asset_id等展示信息。
+  position=pending/warehouse/team、party_slots、结构/组ID。
+  部位状态：以稳定part_key记录HP、Broken和需要保留的装备/视觉状态。
+
+蓝图中的Vector/Transform/Color及Resource引用必须明确序列化为数值数组和资产ID；不能直接把Dictionary中的Godot对象交给JSON.stringify后当成可靠存档。
+只有seed不足以抵御之后生成算法/资源更改，已生成实例应保存版本及解析蓝图，避免再次打开仓库或出战时重新随机。
+资源引用通过受控目录解析；不靠名称猜物种，不反序列化任意脚本或Node。
+
+两个“物品栏”必须分清：
+  CreatureRoster/party：仓库里的生物与6队位试验政策。
+  InventoryController3D：单个角色的4格武器/物品栏。
+前者不替换后者；队位和武器槽容量不得共用一个字段。
+
+地图通过export_session/import_session接入GameSession；补充可注入保存服务/提交回调，使模块内的自动保存也走同一入口。
+request_battle保存失败时不发战斗请求；resolve保存失败时恢复地点/pending/暂停状态，保留可重试结果。
+奖励、队伍战损、地图地点状态、结果去重ID应在一次根状态提交中完成；不能先发奖再单独保存账本。
+原型试玩档默认不自动混入正式槽；如需迁移，使用显式导入工具，保留原文件并核对布局v1/v2/v3与legacy_summon_layout。
+
+六、召唤→生成器→仓库接入
+
+保留RuneRules/RuneBoard的2.0识别、旋转、镜像、盘面校验和preview口径。
+新增SummonAdapter把有效符文、奇物、地点环境和确定性seed转为正式生成请求；由CreatureFactory映射到已有物种场景和设置。
+不是在scene_requested("summon")里再次生成，而是直接替换GameDemo._perform_summon/PrototypeState.summon中的测试调用。
+
+建议流程：
+  1. 冻结本次layout v3与地点环境快照，分配request_id，忙碌期间拒绝重复确认。
+  2. 校验解锁、有效布局、魔力、队位/整组规则和所有效果的可兑现能力。
+  3. 用确定性seed生成候选定义/蓝图，校验部件引用、连接、参数和可保存性。
+  4. 一次提交：扣费、实例、pending、批次报告、请求账本。
+  5. 保存成功才播放喷涌和结果；恢复pending只重放已有记录，不重抽、不再扣费。
+  6. 结果/仓库/队列都移动同一实例ID，关闭结果时按既有规则将剩余pending入库。
+
+生物生成失败/资源缺失/保存失败属于技术失败，整笔回滚；按召唤2.0概率算出的失败属于玩法结果，按现有“全失败也扣费并保存报告”政策处理，二者不能混淆。
+异步时持久记录请求及seed；提交前重启按同一请求恢复或取消，不产生新批次。不要在物理帧中突然一次组装几十个活体。
+
+已有生成入口：BaseCreatureGenerator.generate_framework()/generate_torso()、framework_generated(plan)，角色generate_creature()/creature_generation_finished(bool)。
+这些入口依赖Node3D与实际场景树，不是已实现的纯函数。首版优先使用已有物种场景/手工蓝图快照；需要运行生成时在隔离构建容器中分帧准备，成功后再部署。
+巨化等体型改变通过生成器overall_scale及统一PartWidth流程处理，角色根/生成器节点仍保持单位scale；不能直接把物理角色根scale设为2。
+
+先建立资源ID映射表：人形→Human、兽形→Beast/StumpBeast/HornedBeast/Wolf等、蛇形→Snake；Bird/Spider/Ratkin等保留独立definition_id与子类型。
+UI现有form只有人形/兽形/蛇形，首版可将Bird/Spider作为兽形下的子类型，避免为了接入改变已确认筛选布局；如需独立分类另行设计展示。
+定向配方trial-iron-wolf与真实Wolf场景是需要定义的映射，不能仅因名称相似就默认规则和攻击能力相同。
+
+召唤中的HP/攻击/护甲/移速需映射到真实部位HP、Armor、移动tres和伤害参数；UI展示采用这些真实配置的汇总。
+灼烧、回血、护盾、分身、缩小整组等逐项登记“已兑现/仅展示/尚不支持”。首轮只开放已兑现组合；不支持时在扣费前给出原因，不能消费后生成缺失能力的生物。
+保留现有2.0试验数值用于对照，但不把试验BASES直接当作正式物理伤害平衡。
+仓库只保存数据和缓存头像，不为每一张卡实例化完整物理生物。
+
+七、大地图→战斗→结算闭环
+
+地图点击：UI/地点标记调用WorldMapController.select_location(id)；真实到达后由interaction_started/battle_requested驱动宿主。
+不继续使用原型WorldView的grassland/forest/desert点击即切场逻辑，也不绕过地图发现、可达和交互距离校验。
+地图2D旅行坐标与战场3D XZ坐标分别管理，通过map_id/location_id关联；不把2D旅行速度165直接当作物理角色移动速度。
+
+宿主流程建议：WORLD → LOADING_BATTLE → BATTLE → SETTLEMENT → RETURNING → WORLD。
+每次进入有request_id和battle_id；状态不允许时拒绝第二次请求。
+
+进入：
+  1. 持久化地图session和pending_battle，记录地点、队伍ID、战场ID、seed与返回上下文。
+  2. 解析地编battle_map_id、enemy_config_id、部署规则；未配置则提示并保留可恢复的地图交互。
+  3. 创建战场，配置真实地面碰撞与NavigationRegion3D，等待导航同步再启用NPC。
+  4. 根据party_ids从同一实例蓝图部署己方；敌方配置生成其独立实例，设置阵营。
+  5. 所有角色装配完成后连接控制/AI并开始战斗。玩家Controller保留接入/弹出能力，后台无第二个活跃Controller。
+
+退出/结算：
+  1. 战斗宿主根据存活阵营/明确结束条件产生回执，而非调用测试_skip_battle。
+  2. 回执含battle_id、退出原因、胜负、部位/装备战损、奖励、地点结果。
+  3. 一次提交战损、奖励、地点状态和已处理battle_id；提交失败保留结束态与重试入口，不播放假成功。
+  4. 展示结算。确认后播放真实大地图下拉动画；动画只决定何时恢复可操作，不负责发奖。
+  5. 释放战斗关卡和物理体/临时约束/特效，恢复原地图位置、迷雾、地点与镜头；不恢复旧寻路路线。
+
+地图结果resolve只能作用于对应active_location，宿主按同一battle_id去重；不会重复增加visits或再次发奖。
+加载失败建议取消本次pending并回退到原交互，保留地点可用；胜利才按地点配置完成。败退/手动退出首版不消耗地点。
+首版中途重启从保存的战斗请求和初始部署重开，明确不是逐帧刚体快照续战；结束已提交则恢复结算，不重复战斗或发奖。
+队伍伤亡/装备掉落首版作为本次运行实例结果展示，正式永久保留政策需要在开启生产存档前明确；未确定时不要将现有测试断肢直接永久删除库存实例。
+
+八、地编产物和2.5D场景接入
+
+开发流程：浏览器工作集 → Validate-Level → Toolkit隔离转换目录 → 主工程内容导入/资源映射 → 集成关卡检查。
+保留.mapproject.json为编辑源，.level.json为交付配置，initial_configuration.json及.tres/.tscn为生成产物。
+首版沿用现有转换器在Toolkit内转换，再用新增导入步骤迁移资源和路径；后续确有需要才扩展转换器的项目根与输出限制。
+将输出放到Content/Maps/<map_id>/<revision>，不覆盖手工修改过的TestLevel或既有生成生物场景。
+
+接入表：
+  地面/障碍/空气墙 → 主工程真实StaticBody3D碰撞、物理层与导航几何。
+  部署区域/Marker → BattleHost布置己方/敌方，检查整个生物碰撞包围范围与脚部落地空间。
+  enemy_config_id/monster_config_id → 受控CreatureDefinition目录，不直接把配置字符串当任意load路径。
+  Area3D/editor_object → 后续效果适配器，按物理步长/规定触发间隔结算，使用现有阵营与DamageService。
+  event/condition/deployment_rule → 正式规则服务或明确“不支持”反馈。
+  camera_bounds/metadata → 场景/相机适配，不能改动角色局部XY姿态和物理连接。
+
+导航需要依据真实部署物种尺寸选择agent/路径余量；2.5D默认占位地面和NavigationRoot不等于满足现有NPC导航。
+统一核对Terrain、Part、武器、查询、遮挡等碰撞位掩码；Toolkit默认层1拾取、层2遮挡不能不加检查地覆盖主工程配置。
+大型Wolf、Spider、Bird等的生成、转身、俯冲/冲锋路径需要足够空间；视觉上空白不代表导航合法。
+未实现的连续外轮廓、新迷雾、破障/跨越和区域效果单独登记，不宣称完整JSON导入就意味着玩法完成。
+
+九、分阶段实施与验收
+
+阶段0：保留基线。
+  记录三个工程当前版本、资源依赖、关键场景截图及现有8NPC运行性能。
+  保留现有TestLevel和主入口不变；新建候选GameRoot供F6验证。
+  完成资源/class_name/UID/路径清单，所有新名称标为新增接口。
+  验收：现有生成、生物移动/攻击、Spear持握等回归基线可重跑。
+
+阶段1：UI宿主与输入/视口隔离。
+  迁移PaperUI必要资源，用只读正式样本展示，移除测试窗口改写/自动写盘。
+  完成UI阻塞、暂停原因、坐标换算、相机归属、Controller重挂载和Workshop生成容器适配。
+  接入Toolkit地图到原WorldView矩形，去掉重复HUD；WorldMapUI由窄展示适配替换，保留核心所需notify/tooltip/interaction接口。
+  验收：1120×680、1280×720、1920×1080及宽屏/拉伸下布局、点击、滚轮、文本输入、Q轮盘和B开关不串扰；关闭最后一个阻塞才恢复玩法。
+
+阶段2：统一状态与仓库。
+  GameSession、正式槽、实例ID、展示快照、队位与整组规则、地图保存桥接。
+  用已有Human/Wolf/Snake固定实例证明仓库→队列→重载仍为同一个ID，不要求先完成随机召唤。
+  验收：改名、满队、回收、批次移动、写盘失败、备份恢复、重复请求和库存/武器槽隔离。
+
+阶段3：真实召唤与生成桥梁。
+  接入RuneRules v3、资源目录、确定性生成、实例蓝图、pending事务和演出。
+  首轮普通召唤与已兑现数值组合，逐步扩展结构/配方/特殊能力。
+  验收：一次扣费一次生成；部分失败/全失败/技术失败区别正确；保存失败不丢魔力；重启pending不重抽；不同生成器资产不被写默认值操作污染。
+
+阶段4：真实地图战斗闭环。
+  首先一个地点、一个战场、少量敌人，使用已有物理NPC/攻击；完成部署、结束、结算和返回。
+  再接地编配置、探索场景、多个地点/队伍和不同物种。
+  验收：未抵达不能进入；连点不重复加载；导航就绪；阵营/武器/攻击正常；加载失败、败退、重复结束回执、提交失败和重启恢复均可处理。
+  结算奖励只提交一次，返回保留地图位置、迷雾、地点状态，后台不保留活动物理战场。
+
+阶段5：地编高级规则与事件任务。
+  按需补连续外轮廓/新迷雾/破障/跨越/效果区；补齐事件核心依赖后消费events/conditions。
+  验收：配置字段都有明确消费者；事件离开不算完成、奖励失败可重试、有后续不误删地点、预览不推进正式进度。
+
+阶段6：视觉、性能与正式入口。
+  在主工程Forward Plus/Jolt环境验证纸页、字体、TA材质、地图转场、透明模型和遮挡。
+  对比8NPC基线的CPU物理帧、AI、导航、绘制和UI开销；不因接口整合降低物理移动/攻击性能。
+  所有必要验收通过后才将run/main_scene指向GameRoot，保留TestLevel/HumanTestLevel作为开发入口。
+  不以来源工程历史通过的测试数代替宿主联调证据。
+
+十、日志与性能控制
+
+保留RuntimeConsole现有trackmotion/tracknpcstate/trackgrip等命令，确保活动关卡对象可追踪。
+建议新增一个按需启用的trackintegration开关；事件型日志记录route、request_id、battle_id、creature_id、map/location、结果和失败原因。
+关键事件：ui_open/close、block_acquire/release、summon_prepare/commit/rollback、battle_load/start/finish/commit、map_restore、save_failure。
+不把此建议写成已经存在的控制台命令，也不在每帧输出整个存档或蓝图。
+
+后台地图停止逻辑与视口更新；战斗结束释放物理世界；不可见仓库不持续刷新。
+卡片使用数据和缓存头像；生成/肖像分帧并记录耗时，避免开仓库同时构建所有生物。
+导航在关卡加载阶段烘焙/同步，不随UI开关反复烘焙。
+地图迷雾轨迹长度和读档重建耗时也纳入检查；固定纹理分辨率不意味着长期存档数据不会增长。
+
+十一、回退与默认决策
+
+迁移只操作主工程中的模块副本和新增宿主；来源项目保留独立可运行。
+新内容按版本目录导入，正式存档新增版本/备份，不覆盖来源试玩档；回退代码时同时使用对应版本的存档副本。
+GameRoot验收前不改当前主入口，也不调整现有生物物理参数来掩盖集成错误。
+文档中的布局基线用于本方案的保守设计：优先只换数据源、画面提供者和业务路由，保留当前UI外观；本次没有实施任何布局改动。
+
+本方案采用的默认决策：
+  主工程仍为唯一发布工程；浏览器地编仍为开发工具。
+  保留召唤2.0规则口径，但未兑现能力不能按已完成售卖/扣费。
+  先跑通一张地图、一场真实战斗、三类已有生物、同一批实例往返。
+  首版不做逐帧刚体续战；已有待处理结算/召唤结果可恢复。
+  常驻HUD不暂停；纸页/Workshop暂停战斗；后台地图采用模块暂停。
+  新增建议接口在实现时再定最终名称，不假设文档中的建议API已经存在。
+
+十二、主要依据
+
+UI来源：
+  D:\GameJamWorkspace\ItIsTime\UI跳转原型\交接文档.md
+  D:\GameJamWorkspace\ItIsTime\UI跳转原型\docs\00_团队接入速读.md
+  D:\GameJamWorkspace\ItIsTime\UI跳转原型\docs\07_系统接入适配与联调协议.md
+  D:\GameJamWorkspace\ItIsTime\UI跳转原型\docs\08_召唤2.0接入与边界.md
+  D:\GameJamWorkspace\ItIsTime\UI跳转原型\docs\06_组件隔离与TA材质接口.md
+  上述目录中的召唤/仓库/地图战斗/事件任务/集成存档说明，以及GameDemo、PrototypeState、AppShell、WorldView实际代码。
+
+Toolkit来源：
+  D:\GameJamWorkspace\ItIsTime\frontier_toolkit\README.md
+  D:\GameJamWorkspace\ItIsTime\frontier_toolkit\docs\ARCHITECTURE.md
+  D:\GameJamWorkspace\ItIsTime\frontier_toolkit\world_map\README.md
+  D:\GameJamWorkspace\ItIsTime\frontier_toolkit\scenario_2_5d\README.md
+  D:\GameJamWorkspace\ItIsTime\frontier_toolkit\integration\README.md
+  D:\GameJamWorkspace\ItIsTime\frontier_toolkit\editor\README.md
+  D:\GameJamWorkspace\ItIsTime\frontier_toolkit\editor\docs\DATA_CONTRACT.md
+  另核对模块架构、独立编辑器指南、Build/转换入口和实际Controller/Interaction/Overlay代码。
+
+主工程依据：
+  project.godot、PlayerControlContext、PlayerController3D、TerrainCursor3D、DragCamera3D、WorkshopUIController、RuntimeConsole、NPCStateMachine3D、GeneratedCreatureCharacter3D、BaseCreatureGenerator与CreatureManualLayout。
+
+边界：本轮没有运行三个工程的联合场景，没有执行地图转换、存档迁移、正式资源复制或性能实测。兼容性结论为基于文档和源代码的接入可行性，不是联调已经通过。
