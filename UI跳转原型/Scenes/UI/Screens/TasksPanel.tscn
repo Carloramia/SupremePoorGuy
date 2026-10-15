@@ -10,12 +10,14 @@ script = ExtResource("Script")
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
-text = "待办 0 · 已完成 0"
+text = "待办 0"
 [node name="ListScroll" type="ScrollContainer" parent="."]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
+vertical_scroll_mode = 4
+
 [node name="Lists" type="VBoxContainer" parent="ListScroll"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -30,14 +32,3 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 text = "当前事项均已完成"
-[node name="DoneTitle" type="Label" parent="ListScroll/Lists"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 20
-text = "完成记录"
-[node name="DoneRows" type="VBoxContainer" parent="ListScroll/Lists"]
-unique_name_in_owner = true
-layout_mode = 2
-[node name="DoneEmpty" type="Label" parent="ListScroll/Lists"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "暂时没有完成记录"

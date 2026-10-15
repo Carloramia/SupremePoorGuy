@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=18 format=3]
+[gd_resource type="Theme" load_steps=26 format=3]
 [ext_resource type="StyleBox" path="res://Assets/UI/PaperRelief/Styles/PaperPanel.tres" id="Paper"]
 [ext_resource type="StyleBox" path="res://Assets/UI/PaperRelief/Styles/ButtonNormal.tres" id="Normal"]
 [ext_resource type="StyleBox" path="res://Assets/UI/PaperRelief/Styles/ButtonHover.tres" id="Hover"]
@@ -57,6 +57,116 @@ border_color = Color(0.74, 0.49, 0.20, 1)
 shadow_color = Color(0.74, 0.49, 0.20, 1)
 shadow_size = 2
 shadow_offset = Vector2(2, 2)
+[sub_resource type="StyleBoxFlat" id="ScrollVTrack"]
+content_margin_left = 5.0
+content_margin_top = 0.0
+content_margin_right = 5.0
+content_margin_bottom = 0.0
+bg_color = Color(0.67, 0.53, 0.33, 0.20)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_left = 4
+corner_radius_bottom_right = 4
+[sub_resource type="StyleBoxFlat" id="ScrollVGrip"]
+content_margin_left = 5.0
+content_margin_top = 16.0
+content_margin_right = 5.0
+content_margin_bottom = 16.0
+bg_color = Color(0.64, 0.43, 0.23, 0.86)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.39, 0.27, 0.16, 0.72)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_left = 4
+corner_radius_bottom_right = 4
+[sub_resource type="StyleBoxFlat" id="ScrollVGripHover"]
+content_margin_left = 5.0
+content_margin_top = 16.0
+content_margin_right = 5.0
+content_margin_bottom = 16.0
+bg_color = Color(0.77, 0.55, 0.28, 0.96)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.39, 0.27, 0.16, 0.72)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_left = 4
+corner_radius_bottom_right = 4
+[sub_resource type="StyleBoxFlat" id="ScrollVGripPressed"]
+content_margin_left = 5.0
+content_margin_top = 16.0
+content_margin_right = 5.0
+content_margin_bottom = 16.0
+bg_color = Color(0.48, 0.31, 0.17, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.39, 0.27, 0.16, 0.72)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_left = 4
+corner_radius_bottom_right = 4
+[sub_resource type="StyleBoxFlat" id="ScrollHTrack"]
+content_margin_left = 0.0
+content_margin_top = 5.0
+content_margin_right = 0.0
+content_margin_bottom = 5.0
+bg_color = Color(0.67, 0.53, 0.33, 0.20)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_left = 4
+corner_radius_bottom_right = 4
+[sub_resource type="StyleBoxFlat" id="ScrollHGrip"]
+content_margin_left = 16.0
+content_margin_top = 5.0
+content_margin_right = 16.0
+content_margin_bottom = 5.0
+bg_color = Color(0.64, 0.43, 0.23, 0.86)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.39, 0.27, 0.16, 0.72)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_left = 4
+corner_radius_bottom_right = 4
+[sub_resource type="StyleBoxFlat" id="ScrollHGripHover"]
+content_margin_left = 16.0
+content_margin_top = 5.0
+content_margin_right = 16.0
+content_margin_bottom = 5.0
+bg_color = Color(0.77, 0.55, 0.28, 0.96)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.39, 0.27, 0.16, 0.72)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_left = 4
+corner_radius_bottom_right = 4
+[sub_resource type="StyleBoxFlat" id="ScrollHGripPressed"]
+content_margin_left = 16.0
+content_margin_top = 5.0
+content_margin_right = 16.0
+content_margin_bottom = 5.0
+bg_color = Color(0.48, 0.31, 0.17, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.39, 0.27, 0.16, 0.72)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_left = 4
+corner_radius_bottom_right = 4
 [resource]
 default_font = ExtResource("Font")
 default_font_size = 18
@@ -118,3 +228,16 @@ BookmarkButton/styles/pressed = ExtResource("Bookmark")
 BookmarkButton/styles/hover_pressed = ExtResource("Bookmark")
 BookmarkButton/styles/disabled = ExtResource("Bookmark")
 BookmarkButton/colors/font_disabled_color = Color(0.153, 0.137, 0.122, 1)
+
+VScrollBar/styles/scroll = SubResource("ScrollVTrack")
+VScrollBar/styles/scroll_focus = SubResource("ScrollVTrack")
+VScrollBar/styles/grabber = SubResource("ScrollVGrip")
+VScrollBar/styles/grabber_highlight = SubResource("ScrollVGripHover")
+VScrollBar/styles/grabber_pressed = SubResource("ScrollVGripPressed")
+HScrollBar/styles/scroll = SubResource("ScrollHTrack")
+HScrollBar/styles/scroll_focus = SubResource("ScrollHTrack")
+HScrollBar/styles/grabber = SubResource("ScrollHGrip")
+HScrollBar/styles/grabber_highlight = SubResource("ScrollHGripHover")
+HScrollBar/styles/grabber_pressed = SubResource("ScrollHGripPressed")
+ScrollContainer/constants/scrollbar_h_separation = 6
+ScrollContainer/constants/scrollbar_v_separation = 6

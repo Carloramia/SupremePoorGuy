@@ -8,10 +8,12 @@ const MapCurtain = preload("res://Scenes/UI/Components/WorldView.tscn")
 const LeafContent = preload("res://Assets/UI/PaperRelief/Styles/LeafContent.tres")
 const PaperTear = preload("res://Scripts/UI/PaperTear.gd")
 const State = preload("res://Scripts/PrototypeState.gd")
+const Experiment = preload("res://Scripts/SummonExperiment.gd")
 const Rules = preload("res://Scripts/Ritual/RuneRules.gd")
 const ActionButton = preload("res://Scenes/UI/Components/ActionButton.tscn")
 const StatButton = preload("res://Scenes/UI/Components/StatButton.tscn")
 const RelicButton = preload("res://Scenes/UI/Components/RelicButton.tscn")
+const RelicReference = preload("res://Scenes/UI/Components/RelicReferenceRow.tscn")
 const RuneReference = preload("res://Scenes/UI/Components/RuneReferenceRow.tscn")
 const ActiveRune = preload("res://Scenes/UI/Components/ActiveRuneRow.tscn")
 const RitualPanel = preload("res://Scenes/UI/Screens/RitualPanel.tscn")
@@ -41,6 +43,7 @@ var actions: HFlowContainer
 var overlay: ColorRect
 var board_motion
 var modal_stack: Array[Dictionary] = []
+var modal_backdrop: TextureRect
 var modal_box: VBoxContainer
 var modal_title: Label
 var close_button: Button
@@ -51,6 +54,7 @@ var ritual_columns: HBoxContainer
 var ritual_left_scroll: ScrollContainer
 var ritual_right_scroll: ScrollContainer
 var board
+var ritual_page: Control
 var ritual_summary: Label
 var active_list: VBoxContainer
 var summon_button: Button
@@ -120,6 +124,7 @@ func _build() -> void:
 	modal_feedback = overlay.get_node("%Feedback")
 	close_button = overlay.get_node("%Close")
 	close_button.pressed.connect(_close_modal)
+	modal_backdrop = %ModalBackdrop
 	overlay.hide()
 
 func _navigation_requested(action: String) -> void:
@@ -158,7 +163,8 @@ func _show(next: String) -> void:
 			_btn(actions,"跳过召唤演出",func(): view.skip_eruption())
 			status.text = "法阵喷涌 · 妖兽正在显形"
 	actions.visible = actions.get_child_count() > 0
-	status.visible = next != "main"
+	main_content.visible = not _has_page_root()
+	status.visible = next != "main" and not _has_page_root()
 	_update_header()
 	if previous != next and next == "battle":
 		_curtain(true)
@@ -173,7 +179,7 @@ func _update_header() -> void:
 
 func _refresh_sidebar() -> void:
 	_clear(sidebar)
-	party_panel.get_node("%Count").text = "%d / 6 只妖兽" % state.monsters("team").size()
+	party_panel.get_node("%Count").text = "%d / 6 队位 · %d 只妖兽" % [state.occupied_slots(),state.monsters("team").size()] if state.monsters("team").any(func(m): return m.has("mode")) else "%d / 6 只妖兽" % state.monsters("team").size()
 	party_panel.get_node("%Empty").visible = state.monsters("team").is_empty()
 	party_panel.get_node("%StorageCount").text = "仓库 %d 只" % state.monsters("warehouse").size()
 	for monster in state.monsters("team"):
@@ -243,6 +249,11 @@ func _open_ritual() -> void:
 func _build_ritual(body: VBoxContainer) -> void:
 	var page := RitualPanel.instantiate()
 	body.add_child(page)
+	ritual_page = page
+	page.get_node("%Upgrade").pressed.connect(_upgrade_stage)
+	page.get_node("%Upgrade").disabled = rules.stage >= 4
+	page.get_node("%Examples").item_selected.connect(_load_example)
+	page.get_node("%TrialInfo").pressed.connect(func(): _term("召唤规则与配方",Experiment.trial_notes()+"\n\n定向配方：甲片(-2,0)→(-1,0)，血脉(-1,1)→(0,1)→(1,1)，锐牙(0,-1)→(0,0)→(1,-1)，骨骰(1,0)(2,0)。允许整体平移、旋转和镜像；不能有额外笔画。"))
 	close_button = page.get_node("%PageBack")
 	close_button.pressed.connect(_close_modal)
 	page.get_node("%PageTitle").tooltip_text = "六相召唤阵 · "+LOCATION_TAGS[location]
@@ -252,6 +263,8 @@ func _build_ritual(body: VBoxContainer) -> void:
 	active_list = page.get_node("%ActiveList")
 	page.get_node("%RuneTab").pressed.connect(func(): _fold(page.get_node("%References"),true))
 	page.get_node("%RelicTab").pressed.connect(func(): _fold(page.get_node("%Relics"),false))
+	# Keep exactly one reference page open, including after nested explanations.
+	rune_fold_open = not relic_fold_open
 	page.get_node("%References").visible = rune_fold_open
 	page.get_node("%Relics").visible = relic_fold_open
 	var context: RichTextLabel = page.get_node("%Context")
@@ -266,15 +279,17 @@ func _build_ritual(body: VBoxContainer) -> void:
 	for relic in Rules.RELICS:
 		if relic.id not in state.known_references(true):
 			continue
-		var tile := RelicButton.instantiate()
+		var row := RelicReference.instantiate()
+		row.get_node("%Preview").preview_path = relic.cells
+		var tile: Button = row.get_node("%Open")
 		tile.relic_id = relic.id
-		tile.text = relic.name+" · %d 格" % relic.cells.size()
+		tile.text = relic.name+" · %d 格\n" % relic.cells.size()+{"tide-pump":"刻入回血 3%","prism-heart":"相邻符文 +12%","bone-die":"随机强化一种属性"}.get(relic.id,relic.effect)
 		tile.tooltip_text = relic.effect
 		tile.pressed.connect(func():
 			board.selected_relic = relic.id
 			board.queue_redraw()
 			_notice("已选择 "+relic.name+"，点击空闲蜂窝放置"))
-		page.get_node("%Relics").add_child(tile)
+		page.get_node("%Relics").add_child(row)
 	for rune in Rules.RUNES:
 		if rune.id not in state.known_references():
 			continue
@@ -285,6 +300,11 @@ func _build_ritual(body: VBoxContainer) -> void:
 		row.get_node("%Effect").text = rune.effect
 		row.get_node("%Open").pressed.connect(func(): _term(rune.name,rune.effect+"\n"+rune.detail))
 		page.get_node("%References").add_child(row)
+	# Both tabs share one width budget, including the permanently reserved gutter.
+	# Hidden reference pages still supply their own content minimum sizes.
+	var reference_width := maxf(page.get_node("%References").get_combined_minimum_size().x,page.get_node("%Relics").get_combined_minimum_size().x)
+	var gutter: float = ritual_right_scroll.get_v_scroll_bar().get_combined_minimum_size().x+ritual_right_scroll.get_theme_constant("scrollbar_v_separation")
+	ritual_right_scroll.custom_minimum_size.x = maxf(235.0,reference_width+gutter)
 	ritual_summary = page.get_node("%Summary")
 	summon_button = page.get_node("%Summon")
 	summon_button.pressed.connect(_summon)
@@ -295,7 +315,7 @@ func _build_ritual(body: VBoxContainer) -> void:
 	page.get_node("%Save").pressed.connect(func():
 		_notice("法阵已保存" if state.save_layout(rules.export_layout()) else state.last_error))
 	page.get_node("%Clear").pressed.connect(func(): _confirm("清空当前法阵？","删除所有符文、奇物和草稿；已保存的布局不会改变，直到再次保存。",func():
-		rules.import_layout({"version":2,"placed":[],"placedRelics":[]})
+		rules.import_layout({"version":3,"stage":state.data.array_stage,"placed":[],"placedRelics":[]})
 		_close_modal()))
 	_refresh_ritual()
 
@@ -341,20 +361,29 @@ func _refresh_ritual() -> void:
 		_btn(active_list,"回收 · "+d.name,func():
 			rules.remove(item.uid)
 			_refresh_ritual())
-	ritual_summary.text = "魔力 %d　消耗 %d\n启用 %d 枚　草稿 %d 格" % [state.data.magic,cost,count,rules.draft.size()]
-	ritual_summary.tooltip_text = "停用符文仍占格并计费；奇物不消耗魔力。数值为原型测试规则。"
-	summon_button.disabled = count == 0 or not rules.draft.is_empty() or cost > state.data.magic
-	summon_button.tooltip_text = "至少启用一枚符文、处理完草稿且魔力足够，才能召唤"
+	var preview := Experiment.preview(rules)
+	ritual_summary.text = "法阵 %d 阶 · %d 格\n魔力 %d · 消耗 %d\n预计 %d 段 · %d 只\n合计 %d 队位\n草稿 %d 格" % [rules.stage,Rules.cells(rules.stage).size(),state.data.magic,preview.cost,preview.tier,preview.count,preview.total_slots,rules.draft.size()]
+	summon_button.text = "确认召唤 · %d只%s" % [preview.count,"超巨化" if preview.mode=="ultra" else "定向" if preview.mode=="special" else ""]
+	summon_button.disabled = count == 0 or not rules.draft.is_empty() or preview.cost > state.data.magic or not preview.error.is_empty()
+	summon_button.tooltip_text = preview.error if not preview.error.is_empty() else "召唤确认时一次扣费。畸变失败不返费（试验口径）。"
+	var risk: Label = ritual_page.get_node("%Risk")
+	risk.visible = not preview.sources.is_empty()
+	var sources: Array[String] = []
+	for source in preview.sources:
+		sources.append("%s ×%d / 门槛%d；独立风险%.0f%%" % [source.name,source.count,source.threshold,source.chance*100])
+	risk.text = "畸变风险：%.0f%%\n每只失败：%.0f%%\n失败不返费" % [preview.mutation_chance*100,preview.failure_chance*100]
+	risk.tooltip_text = "\n".join(sources)+"\n"+Experiment.trial_notes()
+
+	ritual_summary.tooltip_text = "符文与奇物每格同价；停用仍收费，但不计等段或畸变。\n"+Experiment.trial_notes()
 	board.queue_redraw()
 
+
 func _summon() -> void:
-	if state.summon(rules,location,route):
-		return_route = route
-		_close_all()
-		scene_requested.emit("summon",location)
-		_show("eruption")
+	var preview := Experiment.preview(rules)
+	if not preview.sources.is_empty():
+		_confirm("确认风险召唤","本次消耗 %d 魔力，尝试 %d 只；每只失败概率 %.0f%%（试验参数）。\n失败不返费；成功可能出现强化对应符文的畸变体。" % [preview.cost,preview.count,preview.failure_chance*100],_perform_summon)
 	else:
-		_notice(state.last_error)
+		_perform_summon()
 
 func _resume_pending() -> void:
 	location = state.data.pending_location
@@ -371,6 +400,9 @@ func _results() -> void:
 	_modal("召唤完成　·　安置你的妖兽",func(body):
 		var page := ResultsPanel.instantiate()
 		body.add_child(page)
+		var report: Dictionary = state.data.last_summon
+		page.get_node("Hint").text = "尝试 %d 只 · 成功 %d 只 · 失败 %d 只 · 消耗 %d 魔力\n选择出战或入库；关闭后将未安置者入库。" % [report.get("attempted",state.data.pending.size()),report.get("succeeded",state.data.pending.size()),report.get("failed",0),report.get("cost",0)]
+		page.get_node("%Empty").text = "本次召唤全部失败，未生成妖兽；消耗不返还。" if report.get("succeeded",-1)==0 else "所有妖兽均已安置。可返回继续旅途。"
 		var index := 0
 		for id in state.data.pending.duplicate():
 			_monster_card(page.get_node("%Cards"),state.monster_by_id(id),true)
@@ -455,7 +487,7 @@ func _select_monster(id: String) -> void:
 			_render_modal()
 		else:
 			_notice(state.last_error))
-	move.disabled = monster.position != "team" and state.monsters("team").size() >= State.TEAM_LIMIT
+	move.disabled = monster.position != "team" and not state.can_join(monster.id)
 	_btn(warehouse_page.get_node("%DetailCommands"),"回收怪物",func(): _confirm("回收怪物？","永久移除这只怪物，不返还魔力。",func(): _recycle_monster(id)))
 
 func _notify_party() -> void:
@@ -525,9 +557,10 @@ func _monster_card(parent: Node, monster: Dictionary, result_card: bool) -> void
 				_render_modal()
 		else:
 			_notice(state.last_error))
-	move.disabled = to_team and state.monsters("team").size() >= State.TEAM_LIMIT
+	move.disabled = to_team and not state.can_join(monster.id)
 	move.tooltip_text = "出战队列已满，请先撤回一只" if move.disabled else ""
 	if result_card:
+		card.get_node("%State").text = "%s · %d 段 · %s\n%s" % [monster.form,int(monster.get("tier",1)),"畸变" if not monster.get("mutation_sources",[]).is_empty() else "普通","同批整组占 1 队位" if monster.get("mode", "normal")=="tiny" else "%d 队位" % int(monster.get("slots",1))]
 		card.get_node("%Store").pressed.connect(func():
 			if state.move_monster(monster.id,"warehouse"):
 				_close_modal(false)
@@ -547,6 +580,11 @@ func _fill_detail(body: VBoxContainer, id: String) -> void:
 	page.get_node("%Name").text = monster.name
 	page.get_node("%Stats").text = "生命 %d　　攻击 %d\n护甲 %d　　移速 %.1f" % [monster.hp,monster.attack,monster.armor,monster.speed]
 	page.get_node("%Stats").tooltip_text = "来源："+LOCATION_NAMES.get(monster.get("source_location","grassland"),"未知地点")
+	if monster.has("mode") and not modal_stack.is_empty() and modal_stack[0].title.begins_with("召唤完成"):
+		var sources: Array[String] = []
+		for source in monster.mutation_sources:
+			sources.append(Rules.definition(source).name)
+		page.get_node("%Stats").text += "\n%d 段 · 攻击周期 %.2f 秒\n%s · %s\n畸变来源：%s\n分身 %d · 召唤消耗 %d\n部位耐久：头 %d / 核心 %d / 肢体 %d" % [monster.tier,monster.interval,{"normal":"普通","giant":"巨化","ultra":"超巨化","multiply":"增殖","tiny":"缩小","special":"定向"}.get(monster.mode,monster.mode),"同批整组占 1 队位" if monster.mode=="tiny" else "%d 队位" % monster.slots,"、".join(sources) if not sources.is_empty() else "无",monster.clone_count,monster.source_cost,monster.part_hp["头部"],monster.part_hp["核心"],monster.part_hp["肢体"]]
 	var name_input: LineEdit = page.get_node("%NameInput")
 	name_input.text = monster.name
 	page.get_node("%Save").pressed.connect(func():
@@ -562,13 +600,13 @@ func _fill_detail(body: VBoxContainer, id: String) -> void:
 func _book() -> void:
 	_modal("符文辞典",func(body):
 		var page := _text_screen(body,"验证版：七枚符文全部开放。未收录符文隐藏机制不在本轮范围。")
-		for rune in Rules.RUNES:
+		for rune in Rules.LEGACY_RUNES:
 			_btn(page.get_node("%Commands"),rune.name+" / "+rune.effect,func(): _term(rune.name,rune.detail))
 		for term in TERMS:
 			_btn(page.get_node("%Terms"),term,func(): _term(term,TERMS[term])))
 
 func _trait(name_text: String) -> void:
-	for rune in Rules.RUNES:
+	for rune in Rules.RUNES + Rules.LEGACY_RUNES:
 		if rune.name == name_text:
 			_term(name_text,rune.effect+"\n"+rune.detail+"\n\n当前为召唤结果标签，真实战斗效果由战斗组接入。")
 			return
@@ -593,12 +631,25 @@ func _modal(title: String, builder: Callable, kind := "dialog") -> void:
 	var first := modal_stack.is_empty()
 	if first and (title.begins_with("六相召唤阵") or title.begins_with("妖兽仓库")):
 		_capture_outgoing()
-	modal_stack.append({"title":title,"build":builder,"kind":kind})
+	# Keep the already rendered parent page behind nested explanations. Rebuilding
+	# this shared modal host otherwise removes the book and exposes an empty base.
+	var backdrop: Texture2D = _capture_modal_backdrop() if not first else null
+	modal_stack.append({"title":title,"build":builder,"kind":kind,"backdrop":backdrop})
 	_render_modal()
 	if first:
 		board_motion.reveal()
 		if title.begins_with("六相召唤阵") or title.begins_with("妖兽仓库"):
 			_slide_outgoing()
+
+func _has_page_root() -> bool:
+	return not modal_stack.is_empty() and (modal_stack[0].title.begins_with("六相召唤阵") or modal_stack[0].title.begins_with("妖兽仓库") or modal_stack[0].title.begins_with("召唤完成"))
+
+func _capture_modal_backdrop() -> Texture2D:
+	if DisplayServer.get_name() == "headless":
+		return null
+	var frame := get_viewport().get_texture().get_image()
+	var region := Rect2i(overlay.get_global_rect()).intersection(Rect2i(Vector2i.ZERO,frame.get_size()))
+	return ImageTexture.create_from_image(frame.get_region(region)) if region.has_area() else null
 
 func _resize_event() -> void:
 	if modal_stack.is_empty() or modal_stack.back().get("kind", "dialog") not in ["event","tasks"]:
@@ -613,7 +664,9 @@ func _render_modal() -> void:
 	close_button = overlay.get_node("%Close")
 	_clear(modal_box)
 	overlay.visible = not modal_stack.is_empty()
-	var page_root: bool = not modal_stack.is_empty() and (modal_stack[0].title.begins_with("六相召唤阵") or modal_stack[0].title.begins_with("妖兽仓库") or modal_stack[0].title.begins_with("召唤完成"))
+	var page_root := _has_page_root()
+	modal_backdrop.texture = null if modal_stack.is_empty() else modal_stack.back().get("backdrop")
+	modal_backdrop.visible = modal_backdrop.texture != null
 	main_content.visible = not page_root
 	status.visible = not page_root and route != "main"
 	_block_base(base,overlay.visible)
@@ -631,7 +684,11 @@ func _render_modal() -> void:
 	board_motion.horizontal = content_page
 	var separate_leaves := ritual or warehouse
 	modal_title.get_parent().visible = not separate_leaves
-	overlay.get_node("BoardMotion/MotionRoot/Margin/Panel").add_theme_stylebox_override("panel",LeafContent if separate_leaves else modal_dialog_style)
+	var dialog_style := modal_dialog_style
+	if not separate_leaves:
+		dialog_style = modal_dialog_style.duplicate()
+		dialog_style.content_margin_top = 32.0
+	overlay.get_node("BoardMotion/MotionRoot/Margin/Panel").add_theme_stylebox_override("panel",LeafContent if separate_leaves else dialog_style)
 	overlay.get_node("BoardMotion/MotionRoot/Margin/BoardSurface").visible = not separate_leaves
 	modal_title.add_theme_color_override("font_color",Color("eee3cf") if separate_leaves else Color("27231f"))
 	var margin: MarginContainer = overlay.get_node("BoardMotion/MotionRoot/Margin")
@@ -643,7 +700,7 @@ func _render_modal() -> void:
 	modal_feedback.custom_minimum_size.y = 24 if reading or separate_leaves else 50
 	modal_feedback.max_lines_visible = 1 if reading or separate_leaves else 2
 	overlay.color.a = 0.0 if content_page else 0.65
-	modal_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED if fixed_content else ScrollContainer.SCROLL_MODE_AUTO
+	modal_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED if fixed_content else ScrollContainer.SCROLL_MODE_RESERVE
 	modal_box.size_flags_vertical = Control.SIZE_EXPAND_FILL if fixed_content else Control.SIZE_FILL
 	modal_scroll.scroll_vertical = 0
 	modal_feedback.text = ""
@@ -799,25 +856,23 @@ func _settings() -> void:
 				_notice(state.last_error))))
 
 func _fold(content: Control, rune_tab: bool) -> void:
-	var opened := not content.visible
-	content.visible = opened
-	if rune_tab:
-		rune_fold_open = opened
-		if opened:
-			relic_fold_open = false
-			content.get_parent().get_node("Relics").hide()
-	else:
-		relic_fold_open = opened
-		if opened:
-			rune_fold_open = false
-			content.get_parent().get_node("References").hide()
-	if opened and animate_panels:
-		content.modulate.a = 0
-		content.create_tween().tween_property(content,"modulate:a",1.0,0.2)
-		# Pull paper content from the tab edge without scaling its text.
-		var resting := content.position.x
-		content.position.x += 30
-		content.create_tween().tween_property(content,"position:x",resting,0.2)
+	var other: Control = content.get_parent().get_node("Relics" if rune_tab else "References")
+	var already_open := content.visible and not other.visible
+	other.hide()
+	other.modulate.a = 1.0
+	content.show()
+	rune_fold_open = rune_tab
+	relic_fold_open = not rune_tab
+	# Switching tabs does not move container-managed content or restart its layout.
+	var old_tween: Tween = content.get_parent().get_meta("reference_fade") if content.get_parent().has_meta("reference_fade") else null
+	if old_tween and old_tween.is_valid():
+		old_tween.kill()
+	content.modulate.a = 1.0
+	if not already_open and animate_panels:
+		content.modulate.a = 0.0
+		var fade := content.create_tween()
+		content.get_parent().set_meta("reference_fade",fade)
+		fade.tween_property(content,"modulate:a",1.0,0.2)
 
 func _capture_outgoing() -> void:
 	if not animate_panels:
@@ -886,7 +941,7 @@ func _curtain(raising: bool) -> void:
 		_block_base(base,not modal_stack.is_empty()))
 
 func _update_motion_status() -> void:
-	get_window().title = "涌现 · UI跳转原型 0.7.8 · " + ("动效开启" if animate_panels else "简化动效")
+	get_window().title = "涌现 · UI跳转原型 0.7.12 · " + ("动效开启" if animate_panels else "简化动效")
 
 func _ignore_visual_input(node: Node) -> void:
 	if node is Control:
@@ -905,3 +960,69 @@ func _start_new() -> void:
 	rules.import_layout(state.data.layout)
 	_close_all()
 	_show("world")
+
+func _perform_summon() -> void:
+	if state.summon(rules,location,route):
+		return_route = route
+		_close_all()
+		if state.data.pending.is_empty():
+			_results()
+		else:
+			scene_requested.emit("summon",location)
+			_show("eruption")
+	else:
+		_notice(state.last_error)
+
+
+func _upgrade_stage() -> void:
+	if state.unlock_next_stage(rules.export_layout()):
+		rules.stage = state.data.array_stage
+		_render_modal()
+		_notice("已模拟剧情/Boss事件，法阵扩至%d格；没有额外消耗魔力。" % Rules.cells(rules.stage).size())
+	else:
+		_notice(state.last_error)
+
+
+func _load_example(index: int) -> void:
+	if index == 0:
+		return
+	var minimum_stage: int = [1,1,2,1,3,2,2,2][index]
+	if rules.stage < minimum_stage:
+		_notice("该测试构筑需要%d格，请先使用模拟剧情解锁按钮。" % Rules.cells(minimum_stage).size())
+		return
+	_confirm("载入测试构筑？","将替换当前未保存的符文、奇物与草稿，不扣费。召唤和保存仍需自己确认。",func():
+		var sample = Rules.new()
+		sample.stage = rules.stage
+		if index == 7:
+			for item in Experiment.RECIPE.runes:
+				for c in item.cells:
+					sample.extend(c)
+				sample.commit()
+			sample.place_relic("bone-die",[1,0])
+		else:
+			var id: String = ["","health","armor","giant","giant","multiply","tiny"][index]
+			var copies: int = 4 if index==2 else 2 if index==4 else 1
+			for i in copies:
+				if not _place_sample_rune(sample,id):
+					_notice("测试图形无法放入当前法阵")
+					return
+		rules.import_layout(sample.export_layout())
+		_close_modal()
+		_notice("测试构筑已载入，可继续修改或确认召唤。"))
+
+
+func _place_sample_rune(sample, id: String) -> bool:
+	var definition := Rules.definition(id)
+	for anchor in Rules.cells(sample.stage):
+		for turn in 6:
+			var shape := Rules.transformed(definition.cells,turn,false)
+			var offset := [int(anchor[0])-int(shape[0][0]),int(anchor[1])-int(shape[0][1])]
+			var path := Experiment._shift(shape,offset)
+			var valid := true
+			for c in path:
+				valid = valid and sample.can_use(c)
+			if valid:
+				for c in path:
+					sample.extend(c)
+				return sample.commit()
+	return false

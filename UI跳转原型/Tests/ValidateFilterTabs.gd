@@ -36,6 +36,9 @@ func run() -> void:
 		app.rules.extend(cell)
 	app.rules.commit()
 	app.state.summon(app.rules,"forest","world")
+	# This fixture tests three form filters, independently of the summon batch size.
+	app.state.data.monsters.resize(3)
+	app.state.data.pending.resize(3)
 	app.state.store_pending()
 	for i in 3:
 		app.state.data.monsters[i].form = ["人形","兽形","蛇形"][i]

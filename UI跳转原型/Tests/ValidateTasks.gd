@@ -33,7 +33,7 @@ func run() -> void:
 		root.size = resolution
 		await settle()
 		var page = app.modal_box.get_child(0)
-		check(page.get_node("%PendingRows").get_child_count()==3 and page.get_node("%DoneRows").get_child_count()==0, "three objectives grouped")
+		check(page.get_node("%PendingRows").get_child_count()==3, "three objectives grouped")
 		check(page.get_node("%ListScroll").get_v_scroll_bar().max_value <= page.get_node("%ListScroll").size.y+1, "three short tasks need no scrolling")
 		for row in page.get_node("%PendingRows").get_children():
 			check(app.modal_scroll.get_global_rect().encloses(row.get_node("%Go").get_global_rect()), "task shortcut inside window "+str(resolution))
@@ -48,8 +48,8 @@ func run() -> void:
 	app._tasks()
 	await settle()
 	page = app.modal_box.get_child(0)
-	check(page.get_node("%DoneRows").get_child_count()==1 and page.get_node("%PendingRows").get_child_count()==2, "event progress updates task groups")
-	check(not page.get_node("%DoneRows").get_child(0).get_node("%Go").visible, "completed event has no replay shortcut")
+	check(page.get_node("%PendingRows").get_child_count()==2, "event progress updates task groups")
+	check(page.get_node("%Summary").text == "待办 2", "summary shows only outstanding count")
 	page.get_node("%PendingRows").get_child(0).get_node("%Go").pressed.emit()
 	check(app.modal_stack.size()==1 and app.modal_stack.back().title.begins_with("六相召唤阵"), "summon shortcut uses book flow")
 	app._close_all()
@@ -63,7 +63,7 @@ func run() -> void:
 	root.size = Vector2i(1280,720)
 	await settle()
 	page=app.modal_box.get_child(0)
-	check(page.get_node("%PendingRows").get_child_count()==0 and page.get_node("%DoneRows").get_child_count()==3, "summon and party completion derives from state")
+	check(page.get_node("%PendingRows").get_child_count()==0, "summon and party completion derives from state")
 	check(page.get_node("%PendingEmpty").visible, "all complete message")
 	await capture("15_tasks_complete")
 	var many: Array = []

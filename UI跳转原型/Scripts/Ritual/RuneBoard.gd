@@ -10,12 +10,17 @@ var drawing := false
 var freehand := false
 @export var read_only := false
 @export var preview_path: Array = []
+@export var preview_outline_only := false
 var last_pointer := Vector2.ZERO
 @export_group("Artwork")
 @export var board_texture: Texture2D
-@export var board_color := Color("27231f")
-@export var rim_color := Color("bd7d32")
-@export var empty_cell_color := Color("e6d6b8")
+@export var board_color := Color(0.64, 0.49, 0.29, 0.10)
+@export var rim_color := Color(0.48, 0.32, 0.17, 0.60)
+@export var empty_cell_color := Color(0.93, 0.87, 0.74, 0.58)
+@export_group("Array Proportions")
+## Grid radius relative to the shorter board side, from 7 to 61 cells.
+@export var stage_radius_ratios := PackedFloat32Array([0.22, 0.29, 0.35, 0.40])
+@export_range(1.05, 1.20, 0.01) var backdrop_padding_ratio := 1.12
 
 func _ready() -> void:
 	mouse_default_cursor_shape = Control.CURSOR_CROSS
@@ -29,7 +34,15 @@ func _process(_delta: float) -> void:
 		drawing = false
 
 func scale_unit() -> float:
-	return minf(size.x/16.8,size.y/15.5)
+	return grid_radius()/(sqrt(3.0)*rules.stage+0.91)
+
+func grid_radius() -> float:
+	var index := clampi(rules.stage-1,0,3)
+	var ratio: float = stage_radius_ratios[index] if stage_radius_ratios.size()==4 else [0.22,0.29,0.35,0.40][index]
+	return minf(size.x,size.y)*clampf(ratio,0.12,0.40)
+
+func backdrop_radius() -> float:
+	return grid_radius()*backdrop_padding_ratio
 
 func point(cell: Array) -> Vector2:
 	return size*0.5 + scale_unit()*Vector2(sqrt(3.0)*(float(cell[0])+float(cell[1])/2.0),1.5*float(cell[1]))
@@ -37,7 +50,7 @@ func point(cell: Array) -> Vector2:
 func cell_at(p: Vector2) -> Array:
 	var best: Array = []
 	var minimum := scale_unit()*0.92
-	for cell in Rules.cells():
+	for cell in Rules.cells(rules.stage):
 		var d := p.distance_to(point(cell))
 		if d < minimum:
 			minimum = d
@@ -54,13 +67,8 @@ func _draw() -> void:
 	if read_only:
 		_draw_preview()
 		return
-	var radius := scale_unit()*7.3
-	if board_texture != null:
-		draw_texture_rect(board_texture,Rect2(Vector2.ZERO,size),false)
-	else:
-		draw_circle(size*0.5,radius,board_color)
-		draw_arc(size*0.5,radius,0,TAU,96,rim_color,3,true)
-	for cell in Rules.cells():
+	_draw_backdrop()
+	for cell in Rules.cells(rules.stage):
 		var color := empty_cell_color
 		var owner := rules.owner_at(cell)
 		if not owner.is_empty():
@@ -75,7 +83,7 @@ func _draw() -> void:
 		var poly := polygon(cell)
 		draw_colored_polygon(poly,color)
 		poly.append(poly[0])
-		draw_polyline(poly,Color("75624c"),1,true)
+		draw_polyline(poly,Color(0.43,0.33,0.22,0.62),1.1,true)
 	for item in rules.placed:
 		_stroke(item.cells,Color("27231f"),3)
 	_stroke(rules.draft,Color("fff3d2"),4)
@@ -84,6 +92,36 @@ func _draw() -> void:
 		var preview := rules.preview_relic(selected_relic,hovered)
 		for cell in preview.cells:
 			draw_colored_polygon(polygon(cell),Color(0.2,0.85,0.7,0.65) if preview.valid else Color(0.9,0.25,0.2,0.65))
+
+func _draw_backdrop() -> void:
+	var center := size*0.5
+	var radius := backdrop_radius()
+	if board_texture != null:
+		# Keep the replacement illustration slightly outside the drawable grid.
+		draw_texture_rect(board_texture,Rect2(center-Vector2.ONE*radius,Vector2.ONE*radius*2.0),false)
+		return
+	draw_colored_polygon(_ink_ring(radius,0.0),board_color)
+	draw_polyline(_ink_ring(radius,0.0),rim_color,1.5,true)
+	var faint := Color(rim_color,rim_color.a*0.38)
+	draw_polyline(_ink_ring(radius*0.96,1.2),faint,0.9,true)
+	# Six small compass marks and diamonds: stable ink, no animated noise.
+	for i in 6:
+		var angle := i*TAU/6.0-PI/2.0
+		var direction := Vector2.from_angle(angle)
+		var tangent := Vector2(-direction.y,direction.x)
+		var at := center+direction*radius*1.025
+		var length := clampf(radius*0.028,2.5,5.0)
+		draw_line(at-direction*length,at+direction*length,rim_color,1.1,true)
+		var diamond := PackedVector2Array([at-direction*length,at+tangent*length*0.65,at+direction*length,at-tangent*length*0.65,at-direction*length])
+		draw_polyline(diamond,faint,0.9,true)
+
+func _ink_ring(radius: float, phase: float) -> PackedVector2Array:
+	var result := PackedVector2Array()
+	for i in 97:
+		var angle := float(i%96)*TAU/96.0
+		var uneven := 1.0+0.0035*sin(angle*3.0+phase)+0.0025*sin(angle*7.0+0.8+phase)
+		result.append(size*0.5+Vector2.from_angle(angle)*radius*uneven)
+	return result
 
 func _draw_preview() -> void:
 	if preview_path.is_empty():
@@ -95,6 +133,9 @@ func _draw_preview() -> void:
 	for p in points:
 		bounds = bounds.expand(p)
 	var unit := minf(size.x/(bounds.size.x+2.2),size.y/(bounds.size.y+2.2))
+	if preview_outline_only:
+		_draw_footprint_outline(points,bounds,unit)
+		return
 	var shifted := PackedVector2Array()
 	for p in points:
 		var at := size*0.5+(p-bounds.get_center())*unit
@@ -107,6 +148,32 @@ func _draw_preview() -> void:
 		draw_polyline(poly,Color("bd7d32"),1,true)
 	if shifted.size()>1:
 		draw_polyline(shifted,Color("fff3d2"),2,true)
+
+func footprint_edges() -> Array:
+	# Shared hex edges cancel out, leaving only the combined object silhouette.
+	var edges := {}
+	for cell in preview_path:
+		var at := Vector2(sqrt(3.0)*(float(cell[0])+float(cell[1])*0.5),float(cell[1])*1.5)
+		var corners: Array[Vector2] = []
+		for i in 6:
+			corners.append(at+Vector2.from_angle(deg_to_rad(i*60-30)))
+		for i in 6:
+			var a := corners[i]
+			var b := corners[(i+1)%6]
+			var a_key := "%d,%d" % [roundi(a.x*1000),roundi(a.y*1000)]
+			var b_key := "%d,%d" % [roundi(b.x*1000),roundi(b.y*1000)]
+			var key := a_key+":"+b_key if a_key < b_key else b_key+":"+a_key
+			if edges.has(key):
+				edges.erase(key)
+			else:
+				edges[key] = [a,b]
+	return edges.values()
+
+func _draw_footprint_outline(_points: PackedVector2Array, bounds: Rect2, unit: float) -> void:
+	for edge in footprint_edges():
+		var a: Vector2 = size*0.5+(edge[0]-bounds.get_center())*unit
+		var b: Vector2 = size*0.5+(edge[1]-bounds.get_center())*unit
+		draw_line(a,b,Color("94513f"),1.8,true)
 
 func _stroke(path: Array, color: Color, width: float) -> void:
 	if path.size() < 2:
