@@ -356,7 +356,7 @@ func diagnostics() -> Dictionary:
 		if alive(row.body): torso_targets.append({"part":row.body.name,"position":row.body.global_position,"target":_body_target(row,_phase_time)})
 	result["torso_targets"] = torso_targets
 	result["advance_limit"] = _advance
-	result["torso_advance"] = (controller.torso.global_position-_origin).dot(_forward) if controller != null and is_instance_valid(controller.torso) else 0.0
+	result["torso_advance"] = (controller.torso.global_position-_origin).dot(_forward) if controller != null and is_instance_valid(controller.torso) and controller.torso.is_inside_tree() else 0.0
 	result["pinned_feet"] = _support_count
 	var foot_status: Array[Dictionary] = []
 	for row: Dictionary in _foot_plans:
@@ -367,5 +367,5 @@ func diagnostics() -> Dictionary:
 	result["burst_duration"] = data.bite_lunge_acceleration_time if data != null else 0.0
 	result["close_reason"] = _close_reason
 	result["spacing_retreat_distance"] = _spacing_distance
-	result["spacing_retreat_traveled"] = (_spacing_origin-controller.torso.global_position).dot(_forward) if controller != null and is_instance_valid(controller.torso) else 0.0
+	result["spacing_retreat_traveled"] = (_spacing_origin-controller.torso.global_position).dot(_forward) if controller != null and is_instance_valid(controller.torso) and controller.torso.is_inside_tree() else 0.0
 	return result

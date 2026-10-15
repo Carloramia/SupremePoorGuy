@@ -10,6 +10,7 @@ const SNAKE_PATH_DISPLAY = preload("res://Scripts/Debug/SnakePathDisplay3D.gd")
 var _snake_path_display: Node3D
 
 const COMMAND_HELP: Array[Dictionary] = [
+	{&"name":"trackintegration [on|off|status]",&"description":"Track application routes, transactions, save failures and battle lifecycle."},
 	{&"name": "perfmode [on|off|status]", &"description": "Switch shared NPC performance optimizations; independent of diagnostic tracking."},
 	{&"name": "trackjoints [on|off] [filter]", &"description": "Track joint reference rotations, limits and anchor gaps; filter by character name, path or ID."},
 	{&"name": "jointstates [filter]", &"description": "Print joint snapshots reconstructed from activation frames (not private solver angles)."},
@@ -172,6 +173,13 @@ func is_console_open() -> bool:
 
 func execute_command(command: String) -> String:
 	var args := command.strip_edges().split(" ",false)
+	if not args.is_empty() and args[0].to_lower()=="trackintegration":
+		var host := MOTION_PLAYER_CONTEXT.application(self)
+		if host == null: return "Application host is not active (open GameRoot)."
+		if args.size()>2 or (args.size()==2 and args[1] not in ["on","off","status"]): return "Usage: trackintegration [on|off|status]"
+		if args.size()==1: host.session.integration_logging = not host.session.integration_logging
+		elif args[1]!="status": host.session.integration_logging = args[1]=="on"
+		return "Integration tracking: %s; phase=%s" % [host.session.integration_logging,host.phase]
 	if not args.is_empty() and args[0].to_lower() == "gripstates":
 		return "Weapon grip snapshots: %d" % _emit_weapon_grip_snapshot(" ".join(args.slice(1)))
 	if not args.is_empty() and args[0].to_lower() == "trackgrip":
@@ -229,7 +237,7 @@ func execute_command(command: String) -> String:
 		if not is_instance_valid(_snake_path_display):
 			_snake_path_display = SNAKE_PATH_DISPLAY.new()
 			_snake_path_display.name = "SnakePathDisplay3D"
-			add_child(_snake_path_display)
+			MOTION_PLAYER_CONTEXT.level(self).add_child(_snake_path_display)
 		var value: bool = not _snake_path_display.enabled if args.size() == 1 else args[1].to_lower() == "on"
 		var actor_filter := " ".join(args.slice(2))
 		_snake_path_display.set_enabled(value,actor_filter)
@@ -242,7 +250,7 @@ func execute_command(command: String) -> String:
 		if not is_instance_valid(_step_target_display):
 			_step_target_display = STEP_TARGET_DISPLAY.new()
 			_step_target_display.name = "StepTargetDisplay3D"
-			add_child(_step_target_display)
+			MOTION_PLAYER_CONTEXT.level(self).add_child(_step_target_display)
 		var value: bool = not _step_target_display.enabled if args.size() == 1 else args[1].to_lower() == "on"
 		_step_target_display.set_enabled(value)
 		return "Step target rings %s." % ("enabled" if value else "disabled")

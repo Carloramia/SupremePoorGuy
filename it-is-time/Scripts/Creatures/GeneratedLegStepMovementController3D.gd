@@ -522,7 +522,7 @@ func _resolve_generated_gait_data() -> LegMovementData:
 func get_input_movement_direction() -> Vector3:
 	var source := get_player_command_source()
 	if source != null: return source.get_movement_direction()
-	if PLAYER_CONTEXT.controller(self) != null: return Vector3.ZERO
+	if PLAYER_CONTEXT.controller(self) != null or not PLAYER_CONTEXT.input_allowed(self): return Vector3.ZERO
 	var direction := Vector3(
 		Input.get_action_strength(right_action) - Input.get_action_strength(left_action),
 		0.0,
@@ -537,7 +537,7 @@ func is_burst_requested() -> bool:
 	if wings != null and wings.claims_input_action(burst_action): return false
 	var source := get_player_command_source()
 	if source != null: return source.is_jump_requested()
-	return PLAYER_CONTEXT.controller(self) == null and Input.is_action_just_pressed(burst_action)
+	return PLAYER_CONTEXT.controller(self) == null and PLAYER_CONTEXT.input_allowed(self) and Input.is_action_just_pressed(burst_action)
 
 func is_fast_speed_active() -> bool:
 	return false

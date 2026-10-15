@@ -29,6 +29,7 @@ func _ready() -> void:
 	global_position = contact
 	var service := get_tree().root.get_node_or_null("DamageService")
 	if service != null: raw_impact_damage = service.calculate_raw_damage(impact_impulse*data.impulse_scale)
+	if is_instance_valid(source_character): raw_impact_damage *= float(source_character.get_meta(&"summon_damage_multiplier",1.0))
 	var tangent := normal.cross(Vector3.FORWARD).normalized()
 	if tangent.is_zero_approx(): tangent = normal.cross(Vector3.RIGHT).normalized()
 	global_basis = Basis(tangent,normal,tangent.cross(normal))
@@ -56,6 +57,7 @@ func _physics_process(delta: float) -> void:
 	_material.set_shader_parameter(&"progress",progress)
 	_material.set_shader_parameter(&"opacity",1.0-smoothstep(0.35,1.0,progress))
 	for actor: Node in get_tree().get_nodes_in_group(&"physical_characters_3d"):
+		if not actor is Node3D or actor.get_world_3d() != get_world_3d(): continue
 		if actor == source_character or actor.is_queued_for_deletion() or _hit.has(actor.get_instance_id()): continue
 		if not actor.is_combat_alive() or actor.get_faction_id() == source_faction: continue
 		var parts: Array = _parts(actor)

@@ -1,6 +1,5 @@
 [gd_scene format=3]
 [ext_resource type="PackedScene" path="res://Scenes/Creatures/Characters/Generate_Human.tscn" id="1"]
-[ext_resource type="PackedScene" path="res://Scenes/Player/Controller.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://Scenes/Camera/DragCamera3D.tscn" id="3"]
 [ext_resource type="PackedScene" path="res://Scenes/Input/TerrainCursor3D.tscn" id="4"]
 [sub_resource type="BoxShape3D" id="FloorShape"]
@@ -26,9 +25,7 @@ position = Vector3(0, 0.03, 0)
 [node name="DragCamera3D" parent="." instance=ExtResource("3")]
 [node name="Camera3D" parent="DragCamera3D/PitchPivot" index="0"]
 position = Vector3(0, 0, 20)
-[node name="TerrainCursor3D" parent="." instance=ExtResource("4")]
-[node name="Controller" parent="." node_paths=PackedStringArray("initial_character", "camera_rig", "terrain_cursor") instance=ExtResource("2")]
-initial_character = NodePath("../GenerateHuman")
-camera_rig = NodePath("../DragCamera3D")
-terrain_cursor = NodePath("../TerrainCursor3D")
+[node name="TerrainCursor3D" parent="." node_paths=PackedStringArray("free_camera_rig") instance=ExtResource("4")]
+free_cursor_mode = true
+free_camera_rig = NodePath("../DragCamera3D")
 [editable path="DragCamera3D"]

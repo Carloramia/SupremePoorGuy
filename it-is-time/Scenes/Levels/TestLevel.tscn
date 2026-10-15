@@ -6,7 +6,6 @@
 [ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/NavigationNPCSpawner3D.tscn" id="5_npc_spawner"]
 [ext_resource type="PackedScene" path="res://Scenes/Input/TerrainCursor3D.tscn" id="6_terrain_cursor"]
 [ext_resource type="PackedScene" path="res://Scenes/VFX/TerrainArcIndicator3D.tscn" id="7_terrain_arc"]
-[ext_resource type="PackedScene" path="res://Scenes/Player/Controller.tscn" id="8_player_controller"]
 [ext_resource type="PackedScene" uid="uid://dstgtopkigikh" path="res://Scenes/Creatures/Characters/Character_Test_NPC.tscn" id="9_a7u0l"]
 [ext_resource type="PackedScene" path="res://Scenes/Creatures/Characters/Human/Armed/Generate_Human_Spear1_NPC.tscn" id="9_qhub5"]
 
@@ -33,12 +32,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -50, 0)
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Flat/StaticBody3D" unique_id=675973055]
 shape = SubResource("BoxShape3D_flat_ground")
 
-[node name="DragCamera3D" parent="." unique_id=488829809 node_paths=PackedStringArray("follow_target") instance=ExtResource("3_iuug4")]
+[node name="DragCamera3D" parent="." unique_id=488829809 instance=ExtResource("3_iuug4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0036373, 1.4082642, 0)
-follow_target = NodePath("../Controller")
 maximum_distance = 100.0
 
-[node name="TerrainCursor3D" parent="." unique_id=338512563 instance=ExtResource("6_terrain_cursor")]
+[node name="TerrainCursor3D" parent="." unique_id=338512563 node_paths=PackedStringArray("free_camera_rig") instance=ExtResource("6_terrain_cursor")]
+free_cursor_mode = true
+free_camera_rig = NodePath("../DragCamera3D")
 
 [node name="TerrainArcIndicator3D" parent="." unique_id=188665134 node_paths=PackedStringArray("terrain_cursor") instance=ExtResource("7_terrain_arc")]
 terrain_cursor = NodePath("../TerrainCursor3D")
@@ -48,11 +48,6 @@ radius = 5.0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 43.19173, 0)
 light_energy = 5.0
 omni_range = 500.0
-
-[node name="Controller" parent="." unique_id=1212807446 node_paths=PackedStringArray("camera_rig", "terrain_cursor") instance=ExtResource("8_player_controller")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.69153404, 11.563919, -0.6274376)
-camera_rig = NodePath("../DragCamera3D")
-terrain_cursor = NodePath("../TerrainCursor3D")
 
 [node name="CharacterTestNPC" parent="." unique_id=418755916 instance=ExtResource("9_a7u0l")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58.451416, 1.3799922, 13.03067)

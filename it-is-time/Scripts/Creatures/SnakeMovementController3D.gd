@@ -43,6 +43,10 @@ var _attack_ground_poses: Dictionary = {}
 var _idle_ground_poses: Dictionary = {}
 var _held_heading := Vector3.RIGHT
 var _connection_diagnostics: Dictionary = {}
+var _connection_recovery_active := false
+var _connection_recovery_resume_path := false
+var _connection_recovery_reference := Transform3D.IDENTITY
+var _connection_settle_time := 0.0
 var _sway_chain: Array[Dictionary] = []
 var _sway_time := 0.0
 var _sway_amplitude := 0.0
@@ -242,6 +246,7 @@ func _update_anchor() -> Dictionary:
 
 ## World frame for authored local poses, following the living belly rather than the scene root.
 func get_pose_reference(use_attack_facing: bool = true) -> Transform3D:
+	if _connection_recovery_active: return _connection_recovery_reference
 	if is_attack_support_locked(): return _attack_support_reference
 	var frame := _update_anchor()
 	if frame.is_empty(): return global_transform
@@ -252,7 +257,7 @@ func get_pose_reference(use_attack_facing: bool = true) -> Transform3D:
 	return Transform3D(basis, frame.center - basis * _rest_center)
 
 func set_attack_control(owner_node: Node, poses: Dictionary, velocity: Vector3, facing: Vector3, acceleration: float, pose_acceleration: float, angular_acceleration: float = 60.0, response_time: float = 0.1, delta: float = 0.0, pose_speed_multiplier: float = 1.0, lock_ground: bool = false) -> bool:
-	if not locomotion_enabled: return false
+	if not locomotion_enabled or _connection_recovery_active: return false
 	if not is_instance_valid(owner_node) or (is_instance_valid(_attack_owner) and _attack_owner != owner_node): return false
 	if _attack_owner != owner_node:
 		_attack_support_locked = false
@@ -317,7 +322,8 @@ func is_attack_support_locked() -> bool:
 
 func end_attack_control(owner_node: Node) -> void:
 	if is_instance_valid(_attack_owner) and _attack_owner != owner_node: return
-	if is_instance_valid(_attack_owner):
+	var was_attacking := is_instance_valid(_attack_owner)
+	if was_attacking:
 		_idle_ground_poses = _attack_ground_poses.duplicate()
 		_held_heading = _attack_facing
 		_attack_slide_release_pending = true
@@ -330,6 +336,90 @@ func end_attack_control(owner_node: Node) -> void:
 	_attack_velocity = Vector3.ZERO
 	_attack_pose_speed_multiplier = 1.0
 	_attack_support_locked = false
+	if was_attacking: _begin_connection_recovery()
+
+func is_connection_recovering() -> bool:
+	return _connection_recovery_active
+
+func _begin_connection_recovery() -> void:
+	if _connection_recovery_active or not is_inside_tree() or not _belly.any(_live): return
+	_connection_recovery_resume_path = _path_ready and _uses_ground_path()
+	var reference := get_pose_reference()
+	if _idle_ground_poses.is_empty():
+		var inverse := reference.affine_inverse()
+		for row: Dictionary in _belly:
+			if not _live(row): continue
+			var position: Vector3 = inverse*row.body.global_position
+			position.y = row.rest.origin.y
+			_idle_ground_poses[row.body] = Transform3D(row.rest.basis,position)
+	_idle_ground_poses = _constrain_connection_poses(_idle_ground_poses,true)
+	_connection_recovery_reference = reference
+	_held_heading = reference.basis.x.slide(Vector3.UP).normalized()
+	_connection_recovery_active = true
+	_connection_settle_time = 0.0
+	_attack_slide_release_pending = true
+	_path_ready = false
+	_path_blend = 0.0
+	_path_speed = 0.0
+	_sway_strength = 0.0
+	for row: Dictionary in _parts:
+		row.sway_offset = 0.0
+		row.sway_velocity = 0.0
+		row.trajectory_offset = Vector3.ZERO
+		row.trajectory_velocity = Vector3.ZERO
+
+func _joint_slide_bounds(row: Dictionary, expanded: bool) -> Dictionary:
+	var joint: Generic6DOFJoint3D = row.incoming_joint
+	var x := maxf(absf(row.base_x_lower),absf(row.base_x_upper))
+	var z := maxf(absf(row.base_slide_lower),absf(row.base_slide_upper))
+	if expanded:
+		# Rest geometry bounds the extra travel; an already stretched body never enlarges it.
+		var yaw := maxf(absf(joint.get_param_y(Generic6DOFJoint3D.PARAM_ANGULAR_LOWER_LIMIT)),absf(joint.get_param_y(Generic6DOFJoint3D.PARAM_ANGULAR_UPPER_LIMIT)))
+		yaw = minf(yaw,PI*0.5)
+		x = maxf(x,float(row.rest_gap)*(1.0-cos(yaw)))
+		z = maxf(z*motion_data.path_joint_slide_widths,float(row.rest_gap)*sin(yaw))
+		if row.ground_pair:
+			# Ground pieces may reverse order on the route while retaining their authored facing.
+			# Their center-distance envelope, below, prevents this anchor travel becoming a gap.
+			x = maxf(x,float(row.rest_gap)*2.2)
+			z = maxf(z,float(row.rest_gap)*2.2)
+	return {"lower":Vector3(-x,joint.get_param_y(Generic6DOFJoint3D.PARAM_LINEAR_LOWER_LIMIT),-z),
+		"upper":Vector3(x,joint.get_param_y(Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT),z),
+		"maximum_center_distance":float(row.rest_gap)*1.15 if row.ground_pair else -1.0}
+
+func _constrain_connection_poses(poses: Dictionary, ground_only: bool) -> Dictionary:
+	var result := poses.duplicate()
+	if _belly.is_empty(): return result
+	var anchor := 0
+	for index: int in _parts.size():
+		if _parts[index].body == _belly[-1].body: anchor = index; break
+	for direction: int in [-1,1]:
+		var index := anchor+direction
+		while index>=0 and index<_parts.size():
+			var child_index := index if direction>0 else index+1
+			var a: Dictionary = _parts[child_index-1]
+			var b: Dictionary = _parts[child_index]
+			var joint: Generic6DOFJoint3D = b.incoming_joint
+			if _live(a) and _live(b) and is_instance_valid(joint) and not joint.is_queued_for_deletion() and (not ground_only or (a.belly and b.belly)):
+				var pa: Transform3D = result.get(a.body,a.rest)
+				var pb: Transform3D = result.get(b.body,b.rest)
+				var fa: Transform3D = pa*Transform3D(joint.get_meta(&"generated_joint_frame_a"))
+				var fb: Transform3D = pb*Transform3D(joint.get_meta(&"generated_joint_frame_b"))
+				var offset: Vector3 = fa.affine_inverse()*fb.origin
+				var bounds := _joint_slide_bounds(b,true)
+				var limited := offset.clamp(bounds.lower,bounds.upper)
+				limited.y = offset.y
+				var correction := fa.basis*(limited-offset)
+				if direction>0: pb.origin += correction
+				else: pa.origin -= correction
+				if b.ground_pair:
+					var gap := pb.origin-pa.origin
+					var center_correction := gap.limit_length(float(bounds.maximum_center_distance))-gap
+					if direction>0: pb.origin += center_correction
+					else: pa.origin -= center_correction
+				result[b.body if direction>0 else a.body] = pb if direction>0 else pa
+			index += direction
+	return result
 
 func get_attack_root_offset() -> Vector3:
 	if _belly.is_empty(): return Vector3.ZERO
@@ -350,6 +440,9 @@ func _held_root_delta() -> Transform3D:
 	return get_attack_root_pose(_belly[-1].rest)*Transform3D(_belly[-1].rest).affine_inverse()
 
 func _connection_pose(row: Dictionary) -> Transform3D:
+	if _path_ready and _uses_ground_path():
+		# Relative pair targets are frame-invariant; avoid rebuilding the belly frame per link.
+		return Transform3D(_path_pose_basis*Basis(row.rest.basis),row.path_target)
 	var pose: Transform3D = _attack_poses.get(row.body,row.rest) if is_instance_valid(_attack_owner) else _idle_ground_poses.get(row.body,row.rest)
 	if not is_instance_valid(_attack_owner):
 		if not row.belly: pose = _held_root_delta()*pose
@@ -358,14 +451,17 @@ func _connection_pose(row: Dictionary) -> Transform3D:
 
 ## Tighten each joint around a reachable target, never through its current solver anchors.
 func _update_connections(delta: float) -> void:
-	if not is_instance_valid(_attack_owner) and _idle_ground_poses.is_empty(): return
 	var ready := true
 	var limits_ready := true
 	var maximum_error := 0.0
 	var maximum_excess := 0.0
 	var maximum_error_ratio := 0.0
+	var maximum_pose_error := 0.0
+	var maximum_separation_speed := 0.0
 	var worst: StringName = &"none"
 	var blocked := 0
+	var structural_failure := false
+	var structure_settled := true
 	var blocked_parts: Array[StringName] = []
 	for index: int in range(1,_parts.size()):
 		var a: Dictionary = _parts[index-1]
@@ -377,6 +473,8 @@ func _update_connections(delta: float) -> void:
 		var desired_a := _connection_pose(a)*Transform3D(joint.get_meta(&"generated_joint_frame_a"))
 		var desired_b := _connection_pose(b)*Transform3D(joint.get_meta(&"generated_joint_frame_b"))
 		var desired := desired_a.affine_inverse()*desired_b.origin
+		var bounds := _joint_slide_bounds(b,_path_ready or is_instance_valid(_attack_owner) or not _idle_ground_poses.is_empty())
+		desired = desired.clamp(bounds.lower,bounds.upper)
 		var actual := fa.affine_inverse()*fb.origin
 		var error := Vector3(desired.x-actual.x,0,desired.z-actual.z)
 		var velocity_a: Vector3 = a.body.linear_velocity+a.body.angular_velocity.cross(fa.origin-a.body.global_position)
@@ -392,20 +490,17 @@ func _update_connections(delta: float) -> void:
 		# Thin paper parts still need solver tolerance proportional to their anchor lever arms.
 		var margin := maxf(maxf(width*0.1,length*0.05),0.005)
 		var excess := 0.0
+		if b.ground_pair: excess = maxf(0.0,a.body.global_position.distance_to(b.body.global_position)-float(bounds.maximum_center_distance))
 		for axis: String in ["x","z"]:
 			var component := 0 if axis == "x" else 2
-			var lower: float = b.base_x_lower if axis == "x" else b.base_slide_lower
-			var upper: float = b.base_x_upper if axis == "x" else b.base_slide_upper
-			lower = minf(lower,desired[component]-margin)
-			upper = maxf(upper,desired[component]+margin)
+			var lower: float = bounds.lower[component]
+			var upper: float = bounds.upper[component]
 			excess = maxf(excess,maxf(lower-actual[component],actual[component]-upper))
-			var safe_lower := minf(lower,actual[component]-margin)
-			var safe_upper := maxf(upper,actual[component]+margin)
 			var rate := maxf(length,width)*delta*4.0
 			var current_lower: float = joint.call("get_param_"+axis,Generic6DOFJoint3D.PARAM_LINEAR_LOWER_LIMIT)
 			var current_upper: float = joint.call("get_param_"+axis,Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT)
-			var next_lower := minf(lower,maxf(current_lower,move_toward(current_lower,safe_lower,rate)))
-			var next_upper := maxf(upper,minf(current_upper,move_toward(current_upper,safe_upper,rate)))
+			var next_lower := move_toward(current_lower,lower,rate)
+			var next_upper := move_toward(current_upper,upper,rate)
 			if not is_equal_approx(current_lower,next_lower): joint.call("set_param_"+axis,Generic6DOFJoint3D.PARAM_LINEAR_LOWER_LIMIT,next_lower)
 			if not is_equal_approx(current_upper,next_upper): joint.call("set_param_"+axis,Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT,next_upper)
 			if absf(next_lower-lower)>margin*2.5 or absf(next_upper-upper)>margin*2.5:
@@ -418,6 +513,12 @@ func _update_connections(delta: float) -> void:
 			maximum_error = error.length()
 			worst = b.body.name
 		maximum_excess = maxf(maximum_excess,excess)
+		structural_failure = structural_failure or excess>maxf(margin*2.0,float(b.rest_gap)*0.25)
+		var center_delta: Vector3 = b.body.global_position-a.body.global_position
+		var separation_speed: float = absf((b.body.linear_velocity-a.body.linear_velocity).dot(center_delta.normalized()))
+		maximum_separation_speed = maxf(maximum_separation_speed,separation_speed)
+		structure_settled = structure_settled and excess<=margin*2.0 and separation_speed<=maxf(length*0.3,0.15)
+		maximum_pose_error = maxf(maximum_pose_error,Vector3(b.get("pose_error",Vector3.ZERO)).length()/maxf(Vector3(b.size).length()*0.04,0.01))
 		maximum_error_ratio = maxf(maximum_error_ratio,maxf(error.length()/tolerance,maxf(excess,0.0)/(margin*2.0)))
 		if excess>margin*2.0 or error.length()>tolerance or relative_velocity.slide(Vector3.UP).length()>maxf(length*0.3,0.15):
 			ready = false
@@ -427,15 +528,58 @@ func _update_connections(delta: float) -> void:
 		var acceleration := (error*motion_data.raised_pose_strength-relative_velocity.slide(Vector3.UP)*motion_data.raised_pose_damping).limit_length(motion_data.maximum_pose_acceleration)
 		var reduced_mass: float = a.body.mass*b.body.mass/(a.body.mass+b.body.mass)
 		var force := fa.basis*acceleration*reduced_mass*_support_blend
+		b["connection_span_force"] = Vector3.ZERO
+		if b.ground_pair and center_delta.length()>float(bounds.maximum_center_distance):
+			var normal := center_delta.normalized()
+			var response := maxf(motion_data.velocity_response_time*0.5,delta)
+			var excess_distance := center_delta.length()-float(bounds.maximum_center_distance)
+			var outward_speed := maxf((b.body.linear_velocity-a.body.linear_velocity).dot(normal),0.0)
+			var span_acceleration := minf((excess_distance/(response*response)+outward_speed*2.0/response)/(1.0+2.0*delta/response+delta*delta/(response*response)),motion_data.maximum_pose_acceleration)
+			var span_force := -normal*span_acceleration*reduced_mass*_support_blend
+			# This radial safety acts at the centers, without adding a new twisting couple.
+			a.body.apply_central_force(-span_force)
+			b.body.apply_central_force(span_force)
+			b.connection_span_force = span_force
 		# A common anchor midpoint keeps the relative correction free of a net twisting couple.
 		var midpoint := (fa.origin+fb.origin)*0.5
 		a.body.apply_force(-force,midpoint-a.body.global_position)
 		b.body.apply_force(force,midpoint-b.body.global_position)
 	_connection_diagnostics = {"ready":ready,"limits_ready":limits_ready,"maximum_error":maximum_error,"maximum_excess":maximum_excess,"maximum_error_ratio":maximum_error_ratio,"worst_part":worst,"blocked_joints":blocked,"blocked_parts":blocked_parts,
-		"profile":"attack" if is_instance_valid(_attack_owner) else "idle_hold"}
-	if ready and not is_instance_valid(_attack_owner):
+		"maximum_pose_error_ratio":maximum_pose_error,"maximum_separation_speed":maximum_separation_speed,"structure_settled":structure_settled,"recovering":_connection_recovery_active,"settle_time":_connection_settle_time,
+		"profile":"attack" if is_instance_valid(_attack_owner) else "rejoining" if _connection_recovery_active else "locomotion" if _path_ready else "idle_hold"}
+	if not is_instance_valid(_attack_owner) and not _connection_recovery_active and (_path_ready or _attack_slide_release_pending) and structural_failure:
+		_begin_connection_recovery()
+	if _connection_recovery_active:
+		_connection_settle_time = _connection_settle_time+delta if structure_settled else 0.0
+		if _connection_settle_time>=minf(0.2,motion_data.path_transition_time):
+			_connection_recovery_active = false
+			if _connection_recovery_resume_path:
+				# Keep the visited route through rejoining; rebuilding a straight history would unfold a reversed belly.
+				_idle_ground_poses.clear()
+				_attack_slide_release_pending = false
+				_path_ready = true
+				_path_blend = 1.0
+				for row: Dictionary in _parts:
+					if not _live(row): continue
+					row.path_target = row.body.global_position
+					row.path_velocity = row.body.linear_velocity.slide(Vector3.UP)
+					row.path_acceleration = Vector3.ZERO
+					row.path_drive_acceleration = Vector3.ZERO
+					row.erase("connection_target")
+				for row: Dictionary in _parts:
+					if row.belly or not _live(row): continue
+					var offset: Vector3 = _path_pose_basis.inverse()*(Vector3(row.path_target)-Vector3(_path_leader.path_target))
+					var rest_offset: Vector3 = row.rest.origin-_path_leader.rest.origin
+					offset.x = rest_offset.x
+					offset.y = rest_offset.y
+					row.path_target = Vector3(_path_leader.path_target)+_path_pose_basis*offset
+			_connection_recovery_resume_path = false
+	if ready and not is_instance_valid(_attack_owner) and not _connection_recovery_active:
 		_attack_slide_release_pending = false
 		_path_slides_expanded = false
+	_connection_diagnostics.recovering = _connection_recovery_active
+	_connection_diagnostics.settle_time = _connection_settle_time
+	_connection_diagnostics.profile = "attack" if is_instance_valid(_attack_owner) else "rejoining" if _connection_recovery_active else "locomotion" if _path_ready else "idle_hold"
 
 func get_attack_connection_diagnostics() -> Dictionary:
 	return _connection_diagnostics
@@ -460,17 +604,17 @@ func _tick(delta: float) -> void:
 		return
 	_configure_contacts(true)
 	_direction = get_input_movement_direction()
+	if _connection_recovery_active: _direction = Vector3.ZERO
 	_actual_velocity = frame.travel_velocity
 	_actual_yaw_speed = frame.yaw_speed
 	var source := _source() if locomotion_enabled else null
 	var speed := motion_data.target_speed
 	if source != null and source.has_method("get_npc_movement_speed_scale"): speed *= source.get_npc_movement_speed_scale(speed)
 	var target_velocity := _direction * speed
-	if not _direction.is_zero_approx() and not is_instance_valid(_attack_owner) and not _idle_ground_poses.is_empty():
+	if not _connection_recovery_active and not _direction.is_zero_approx() and not is_instance_valid(_attack_owner) and not _idle_ground_poses.is_empty():
 		_idle_ground_poses.clear()
 		_attack_slide_release_pending = false
 		_path_slides_expanded = false
-		_connection_diagnostics = {"ready":true,"profile":"locomotion"}
 	var facing: Vector3 = source.get_generated_facing_direction(delta) if source != null and source.has_method("get_generated_facing_direction") else (_held_heading if locomotion_enabled else frame.heading)
 	var attacking := is_instance_valid(_attack_owner)
 	if attacking:
@@ -479,11 +623,13 @@ func _tick(delta: float) -> void:
 		_direction = target_velocity.normalized()
 	if not facing.is_finite() or facing.is_zero_approx(): facing = _held_heading
 	facing = facing.slide(Vector3.UP).normalized()
+	if _connection_recovery_active: facing = _held_heading
 	_held_heading = facing
 	_command_heading = facing
 	var angle := atan2(frame.heading.cross(facing).y, frame.heading.dot(facing))
 	_turn_rate = clampf(angle / motion_data.turn_response_time, -deg_to_rad(motion_data.turn_speed_degrees), deg_to_rad(motion_data.turn_speed_degrees))
 	if is_attack_support_locked(): _turn_rate = 0.0
+	if _connection_recovery_active: _turn_rate = 0.0
 	if motion_data.ground_path_enabled and motion_data.sway_enabled and locomotion_enabled and not attacking:
 		# A commanded whole-body turn starts a new route after the turn settles.
 		# A reverse movement input with unchanged facing stays on this route.
@@ -606,7 +752,7 @@ func _update_trajectories(delta: float) -> void:
 		row.trajectory_velocity = (Vector3(row.trajectory_offset)-Vector3(row.previous_trajectory_offset))/delta if active else Vector3.ZERO
 
 func _apply_movement(frame: Dictionary, target_velocity: Vector3) -> void:
-	if is_attack_support_locked():
+	if is_attack_support_locked() or _connection_recovery_active:
 		for row: Dictionary in _parts: row.movement_force = Vector3.ZERO
 		return
 	var reference := get_pose_reference()
@@ -672,6 +818,9 @@ func _cache_sway_chain() -> void:
 		row["base_x_upper"] = joint.get_param_x(Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT) if joint != null else 0.0
 		row["base_slide_lower"] = row.slide_lower
 		row["base_slide_upper"] = row.slide_upper
+		var previous: Node3D = joint.get_node(joint.node_a) if joint != null else null
+		row["rest_gap"] = Vector3(row.rest.origin-rows[previous].rest.origin).length() if rows.has(previous) else 0.0
+		row["ground_pair"] = rows.has(previous) and row.belly and rows[previous].belly
 		_sway_chain.append(row)
 		row = rows.get(joint.get_node(joint.node_a), {}) if joint != null else {}
 	_update_wave_limits()
@@ -701,7 +850,7 @@ func _update_sway(delta: float) -> void:
 	if _sway_chain.is_empty(): return
 	_update_wave_limits()
 	var attacking := is_instance_valid(_attack_owner)
-	var active := motion_data.sway_enabled and not attacking and _support_blend > 0.0 and _sway_max_amplitude > 0.0
+	var active := motion_data.sway_enabled and not attacking and not _connection_recovery_active and _idle_ground_poses.is_empty() and _support_blend > 0.0 and _sway_max_amplitude > 0.0
 	if not locomotion_enabled or not active:
 		_sway_travelling = false
 	elif not _direction.is_zero_approx():
@@ -727,7 +876,7 @@ func _update_sway(delta: float) -> void:
 func _uses_ground_path() -> bool:
 	return motion_data != null and motion_data.ground_path_enabled and motion_data.sway_enabled \
 		and motion_data.trajectory_following_enabled and not motion_data.head_orbit_enabled \
-		and not is_instance_valid(_attack_owner) and locomotion_enabled and not _path_turning
+		and not is_instance_valid(_attack_owner) and not _connection_recovery_active and _idle_ground_poses.is_empty() and locomotion_enabled and not _path_turning
 
 func _set_path_slide_limits(active: bool) -> void:
 	if is_instance_valid(_attack_owner) or not _idle_ground_poses.is_empty() or _attack_slide_release_pending: return
@@ -751,15 +900,11 @@ func _set_path_slide_limits(active: bool) -> void:
 	for row: Dictionary in _sway_chain:
 		if not is_instance_valid(row.sway_joint) or row.sway_joint.is_queued_for_deletion(): continue
 		var joint: Generic6DOFJoint3D = row.sway_joint
-		var a: Node3D = joint.get_node_or_null(joint.node_a)
-		var b: Node3D = joint.get_node_or_null(joint.node_b)
-		var reach := Vector3(a.position-b.position).length()*3.0 if a != null and b != null else 0.0
-		var x_range := maxf(reach,float(row.base_x_upper)) if active else float(row.base_x_upper)
-		row.sway_joint.set_param_x(Generic6DOFJoint3D.PARAM_LINEAR_LOWER_LIMIT,-x_range)
-		row.sway_joint.set_param_x(Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT,x_range)
-		var z_range := maxf(reach,float(row.base_slide_upper)*motion_data.path_joint_slide_widths) if active else float(row.base_slide_upper)
-		row.slide_lower = -z_range
-		row.slide_upper = z_range
+		var bounds := _joint_slide_bounds(row,active)
+		row.sway_joint.set_param_x(Generic6DOFJoint3D.PARAM_LINEAR_LOWER_LIMIT,bounds.lower.x)
+		row.sway_joint.set_param_x(Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT,bounds.upper.x)
+		row.slide_lower = bounds.lower.z
+		row.slide_upper = bounds.upper.z
 		row.sway_joint.set_param_z(Generic6DOFJoint3D.PARAM_LINEAR_LOWER_LIMIT,row.slide_lower)
 		row.sway_joint.set_param_z(Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT,row.slide_upper)
 
@@ -945,6 +1090,7 @@ func _clear_spacing_wave() -> void:
 		row["pair_force"] = Vector3.ZERO
 
 func _update_ground_path(delta: float, speed: float, frame: Dictionary) -> void:
+	if _connection_recovery_active: return
 	if not _uses_ground_path() or _sway_links <= 0 or _sway_links >= _sway_chain.size():
 		if not _spacing_pairs.is_empty(): _clear_spacing_wave()
 		_set_path_slide_limits(false)
@@ -1049,6 +1195,9 @@ func _update_ground_path(delta: float, speed: float, frame: Dictionary) -> void:
 	_smooth_path_targets(delta,drive_speed)
 
 func _smooth_path_targets(delta: float, drive_speed: float) -> void:
+	var previous: Dictionary = {}
+	for row: Dictionary in _belly:
+		previous[row.body] = {"position":row.path_target,"velocity":row.path_velocity,"acceleration":row.path_acceleration}
 	var cap := motion_data.maximum_acceleration
 	var response := motion_data.path_execution_response_time
 	var jerk := motion_data.path_maximum_jerk
@@ -1082,6 +1231,20 @@ func _smooth_path_targets(delta: float, drive_speed: float) -> void:
 		row.path_target = position
 		row.path_velocity = velocity
 		row.path_acceleration = acceleration
+	var poses: Dictionary = {}
+	for row: Dictionary in _parts:
+		poses[row.body] = Transform3D(_path_pose_basis*Basis(row.rest.basis),row.path_target)
+	var constrained := _constrain_connection_poses(poses,true)
+	for row: Dictionary in _belly:
+		var pose: Transform3D = constrained[row.body]
+		row["path_constraint_offset"] = pose.origin-Vector3(row.path_target)
+		if Vector3(row.path_constraint_offset).is_zero_approx(): continue
+		row.path_target = pose.origin
+		var old: Dictionary = previous[row.body]
+		var desired := ((pose.origin-Vector3(old.position))/delta).limit_length(maxf(drive_speed,Vector3(row.path_raw_velocity).length()))
+		var acceleration := ((desired-Vector3(old.velocity))/delta).limit_length(cap)
+		row.path_acceleration = Vector3(old.acceleration).move_toward(acceleration,jerk*delta).limit_length(cap)
+		row.path_velocity = Vector3(old.velocity)+Vector3(row.path_acceleration)*delta
 	for row: Dictionary in _parts:
 		if row.belly or not _live(row): continue
 		# The raised chain shares the executed anchor, preserving every authored backward XY bend.
@@ -1105,8 +1268,9 @@ func _apply_pose(frame: Dictionary, delta: float) -> void:
 		var rate := _attack_pose_speed_multiplier if is_instance_valid(_attack_owner) and not row.belly else 1.0
 		var gain: float = motion_data.raised_pose_strength*rate*rate
 		var damping: float = motion_data.raised_pose_damping*rate
-		if is_attack_support_locked() and row.belly:
-			var support_response := _attack_response_time*0.5
+		var held := is_attack_support_locked() or _connection_recovery_active
+		if held and row.belly:
+			var support_response := (_attack_response_time if is_attack_support_locked() else motion_data.velocity_response_time)*0.5
 			gain = 1.0/(support_response*support_response)
 			damping = 2.0/support_response
 		var denominator := 1.0+damping*delta+gain*delta*delta
@@ -1147,9 +1311,9 @@ func _apply_pose(frame: Dictionary, delta: float) -> void:
 		if row.grounded and not world_path:
 			position_error = position_error.slide(reference_pose.basis.y) if ground_wave or is_instance_valid(_attack_owner) else reference_pose.basis.x*position_error.dot(reference_pose.basis.x)
 		var cap := _attack_pose_acceleration if is_instance_valid(_attack_owner) else motion_data.maximum_pose_acceleration
-		if is_attack_support_locked() and row.belly: cap = _attack_acceleration
+		if held and row.belly: cap = _attack_acceleration if is_attack_support_locked() else motion_data.maximum_pose_acceleration
 		var moving_frame_velocity := Vector3(frame.velocity)+Vector3.UP.cross(body.global_position-Vector3(frame.center))*float(frame.yaw_speed)
-		if is_attack_support_locked(): moving_frame_velocity = Vector3.ZERO
+		if held: moving_frame_velocity = Vector3.ZERO
 		var velocity_error := moving_frame_velocity+desired_linear-body.linear_velocity
 		if world_path: velocity_error = Vector3(row.path_velocity)-body.linear_velocity
 		if row.grounded and not world_path:
@@ -1162,7 +1326,7 @@ func _apply_pose(frame: Dictionary, delta: float) -> void:
 		else: body.apply_central_force(force)
 		# World-route tracking is an external drive; cancelling its horizontal reaction would oppose it.
 		# Fixed belly tracking is external ground support; cancelling it would release the anchor.
-		if not is_attack_support_locked() or not row.belly:
+		if not held or not row.belly:
 			reaction -= (Vector3.UP*correction.y if world_path else correction)*body.mass*_support_blend
 		row["pose_error"] = position_error
 		row["posture_torque"] = torque
@@ -1220,6 +1384,9 @@ func _apply_path_horizontal_forces(delta: float) -> void:
 func cancel_motion(_reason: StringName = &"cancelled") -> void:
 	_set_path_slide_limits(false)
 	end_attack_control(_attack_owner)
+	_connection_recovery_active = false
+	_connection_recovery_resume_path = false
+	_connection_settle_time = 0.0
 	_idle_ground_poses.clear()
 	_attack_ground_poses.clear()
 	_attack_slide_release_pending = false
@@ -1317,9 +1484,10 @@ func get_snake_motion_diagnostics(include_parts: bool = true) -> Dictionary:
 			"posture_torque": row.get("posture_torque", Vector3.ZERO) if _support_blend > 0.0 else Vector3.ZERO,
 			"support_force": row.get("support_force", Vector3.ZERO) if _support_blend > 0.0 else Vector3.ZERO}
 		detail.merge({"connection_target":row.get("connection_target",Vector3.ZERO),
-			"connection_error":row.get("connection_error",Vector3.ZERO),"connection_relative_velocity":row.get("connection_relative_velocity",Vector3.ZERO)})
+			"connection_error":row.get("connection_error",Vector3.ZERO),"connection_relative_velocity":row.get("connection_relative_velocity",Vector3.ZERO),"connection_span_force":row.get("connection_span_force",Vector3.ZERO)})
 		var joint: Generic6DOFJoint3D = row.incoming_joint
 		if is_instance_valid(joint) and not joint.is_queued_for_deletion():
+			detail["structural_slide_bounds"] = _joint_slide_bounds(row,true)
 			var a := joint.get_node(joint.node_a) as RigidBody3D
 			var fa: Transform3D = joint.get_meta(&"generated_joint_frame_a")
 			var fb: Transform3D = joint.get_meta(&"generated_joint_frame_b")
@@ -1353,6 +1521,7 @@ func get_snake_motion_diagnostics(include_parts: bool = true) -> Dictionary:
 				"path_raw_velocity":row.get("path_raw_velocity",Vector3.ZERO),
 				"path_desired_velocity":row.get("path_desired_velocity",Vector3.ZERO) if row.belly else row.path_velocity,
 				"path_execution_offset":Vector3(row.path_target)-Vector3(row.get("path_raw_target",row.path_target)),
+				"path_constraint_offset":row.get("path_constraint_offset",Vector3.ZERO),
 				"path_corner_speed":row.get("path_corner_speed",0.0) if row.belly else _path_leader.get("path_corner_speed",0.0),
 				"path_applied_force":row.get("path_applied_force",Vector3.ZERO),
 				"path_drive_acceleration":row.get("path_drive_acceleration",Vector3.ZERO),
@@ -1365,7 +1534,7 @@ func get_snake_motion_diagnostics(include_parts: bool = true) -> Dictionary:
 			detail.merge({"surface_normal": contact.get("normal", Vector3.ZERO)})
 		rows.append(detail)
 	return {"enabled": enabled and _character_enabled and can_process(), "requested_speed": motion_data.target_speed if motion_data != null and locomotion_enabled else 0.0,
-		"connection_recovery":_connection_diagnostics,"idle_shape_hold":not _idle_ground_poses.is_empty(),"held_heading":_held_heading,
+		"connection_recovery":_connection_diagnostics,"connection_recovering":_connection_recovery_active,"idle_shape_hold":not _idle_ground_poses.is_empty(),"held_heading":_held_heading,
 		"attack_support_locked":is_attack_support_locked(),"attack_ground_error":_attack_ground_error,
 		"locomotion_enabled": locomotion_enabled, "sway_enabled": motion_data != null and motion_data.sway_enabled,
 		"sway_time": _sway_time, "sway_amplitude": _sway_amplitude,
@@ -1398,8 +1567,8 @@ func get_snake_motion_diagnostics(include_parts: bool = true) -> Dictionary:
 		"trajectory_following_enabled": motion_data != null and motion_data.trajectory_following_enabled,
 		"trajectory_follow_delay": motion_data.trajectory_follow_delay if motion_data != null else 0.0,
 		"orbit_period": motion_data.head_orbit_period if motion_data != null else 0.0,
-		"drive_allowed": enabled and _character_enabled and can_process() and _contact_count > 0 and locomotion_enabled,
-		"driven_parts": _parts.filter(func(row: Dictionary) -> bool: return _live(row) and (not is_instance_valid(_attack_owner) or row.belly)).size() if enabled and can_process() and _contact_count > 0 and locomotion_enabled else 0,
+		"drive_allowed": enabled and _character_enabled and can_process() and _contact_count > 0 and locomotion_enabled and not _connection_recovery_active,
+		"driven_parts": _parts.filter(func(row: Dictionary) -> bool: return _live(row) and (not is_instance_valid(_attack_owner) or row.belly)).size() if enabled and can_process() and _contact_count > 0 and locomotion_enabled and not _connection_recovery_active else 0,
 		"valid_settings": motion_data != null and motion_data.is_valid(),
 		"direction": _direction, "actual_velocity": _actual_velocity, "actual_speed": _actual_velocity.slide(Vector3.UP).length(),
 		"ground_contacts": _contact_count, "traction_contacts": _traction_count, "support_blend": _support_blend,

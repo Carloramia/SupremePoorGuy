@@ -390,7 +390,7 @@ func _spawn_damage_number(amount: float, hit_position: Vector3) -> void:
 	if popup == null:
 		push_warning("Damage Number Scene must instantiate a Node3D.")
 		return
-	var scene_parent := get_tree().current_scene
+	var scene_parent := preload("res://Scripts/Player/PlayerControlContext.gd").level(self)
 	if scene_parent == null:
 		scene_parent = get_tree().root
 	scene_parent.add_child(popup)

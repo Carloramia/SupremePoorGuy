@@ -1,0 +1,41 @@
+[gd_scene load_steps=3 format=3]
+[ext_resource type="PackedScene" path="res://Modules/PaperUI/Scenes/UI/Components/LooseLeafPage.tscn" id="Paper"]
+[sub_resource type="StyleBoxFlat" id="Card"]
+content_margin_left = 12.0
+content_margin_top = 10.0
+content_margin_right = 12.0
+content_margin_bottom = 10.0
+bg_color = Color(0.94, 0.89, 0.81, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.36, 0.26, 0.16, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_left = 4
+corner_radius_bottom_right = 4
+[node name="LocationHint" instance=ExtResource("Paper")]
+visible = false
+custom_minimum_size = Vector2(260, 0)
+mouse_filter = 2
+z_index = 30
+theme_override_styles/panel = SubResource("Card")
+[node name="Contents" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 6
+mouse_filter = 2
+[node name="Title" type="Label" parent="Contents"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+mouse_filter = 2
+autowrap_mode = 3
+text = "地点"
+[node name="Summary" type="Label" parent="Contents"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+mouse_filter = 2
+autowrap_mode = 3
+text = "地区词条\n怪物种类：待侦察\n数量概况：待侦察"

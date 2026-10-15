@@ -1,0 +1,135 @@
+地图与UI交付包接入方案
+日期：2026-10-16
+状态：方案，未实施。以下新增文件名和接口均为拟议设计，不是已存在的功能。
+主工程：D:/GameJamWorkspace/ItIsTime/it-is-time
+交付来源：D:/GameJamWorkspace/涌现_地图与UI交付包_20261015/涌现_地图与UI交付包_20261015
+
+一、总体选择
+
+将交付包的大地图、素材与战场环境作为新地图后端接入，继续使用主工程的GameRoot、GameSession、BattleHost和CreatureFactory。
+当前PaperUI大部分已经相同，保留现有UI及宿主适配，不整套覆盖交付包GameDemo、PrototypeState、WorldView或project.godot。
+运行链路：交付地图视图/运行时 -> 地图适配层 -> GameRoot -> BattleHost -> CreatureFactory -> 现有物理NPC。
+GameSession仍为库存、魔力、地图进度、待处理战斗和结算账本的唯一保存者。
+现有Wolf、Snake物理控制器、本次修复及其他生物的姿态/关节预设不因地图接入而修改。
+
+二、实际差异与接入阻点
+
+1. 当前GameRoot.world_map强类型依赖WorldMapController，使用原Frontier模块的初始化、交互、保存和暂停API；交付包WorldMapRuntime是RefCounted数据模型，FrontierMapView是Control。不能只替换world_scene。
+2. 当前GameWorldView隐藏旧地图并由GameRoot创建视口；交付包WorldView会自动创建地图及战场预览。如果整体更新，会出现重复地图、重复视口或重复战斗部署。
+3. 当前GameSession使用worlds[map_id]、battle和battle_results；交付包使用world_map、active_battle、pending_battle_setup和battle_receipts。直接换PrototypeState会破坏当前存档校验和战斗事务。
+4. 13张交付战场均为external_monster_system，实际对象中没有enemy实例。enemy_config_id只是外部编队引用，不能凭战场场景自动产生敌军。
+5. 当前BattleHost拒绝collision_damage、mud、web、thorns、pit、post_battle等新类型；现有导入器也不等同于交付转换器的美术还原流程。
+6. 当前工厂只注册human/wolf/snake；Spider已有NPC场景但未注册。Ratkin仅找到非NPC场景，不能据此认为巨鼠敌军已经就绪。
+7. 交付战场半径约17~22，部署槽间距约1~3个源单位；必须针对实际物理生物的整体包围盒检查尺度、阵容容量及可通行空间。
+
+三、资源入库
+
+拟新增Modules/FrontierDelivery：仅存放Scripts/Map等地图运行组件与必要Shader，不复制第二套UI业务控制器。
+拟新增Content/Maps/FrontierDelivery_20261015：存放地图JSON、索引、原生探索/战场场景和实际引用的纹理。
+已有字体、主题、UI场景继续引用Modules/PaperUI，避免重复UID和两套公共主题。
+导入时同时改写GDScript、场景和JSON中的res://引用；保留.import和.uid并检查重复UID，生成来源SHA-256及资源映射记录。
+交付包的地图编辑器、两个原始工作集和历史备份留在工程外的编辑源目录，不全部塞入运行时资源。
+不重跑现有SyncModules.py覆盖已适配模块；制作针对新交付资源的增量导入入口。
+转换工具保留原始战场/据点美术选择、展开SVG、标牌、狼穴70%图标倍率及围边羽化，不用旧转换器重新导出后默认认为视觉一致。
+
+四、大地图和UI适配
+
+拟新增DeliveryMapBridge.gd，集中包装Catalog、Runtime和FrontierMapView。为GameRoot提供加载/恢复、快照、启停输入、抵达交互和战斗请求接口。
+修改GameRoot的地图专属调用，通过适配层执行，避免散布两套后端的条件判断。保留旧入口用于整阶段回退，运行时只启用一个地图后端。
+将新地图视图挂在现有WorldView矩形中，复用交付视图内部的大地图SubViewport；不再在外面叠加第二个探索视口。
+禁用交付视图的战场预览、BattleMap3D.deploy和彩色占位部署。正式战斗只在当前BattleHost的独立World3D运行。
+交付视图interaction_requested表示已经抵达，直接路由到宿主处理；不能再次送入旧_location_clicked发起第二次寻路。
+打开纸页、控制台或转场时停止地图移动及交互；关闭最后一个阻塞界面后按宿主状态恢复。战斗期间冻结并停更大地图画面。
+新游戏采用交付地图召唤小屋[700,2368]、魔力300、空库存/空出战和正常迷雾。已有会话切换地图时不重置魔力或库存。
+保留Q切换系统鼠标/地形光标、Space暂停/继续、暂停提示、显示设置、B工坊禁用、Q轮盘禁用、不生成玩家Controller及默认自由地形光标。
+UI区域、字体、纸页、书签和动效保持现有布局，避免整体更新RitualPanel带回试验按钮语义。
+
+五、存档与战斗事务
+
+将主存档升级为schema_version=2，worlds内采用带backend标签的快照。旧Frontier快照包装为legacy_frontier，新地图采用frontier_delivery_v1。
+迁移保留原怪物实例ID、物理姿态、数值、队列、pending、魔力、奖励记录及旧地图快照；第一次成功写新版前备份原文件。保存失败不得覆盖旧档。
+旧地图的位置、迷雾和地点ID与新地图不同，不直接按坐标搬运：保留旧快照，新地图首次从召唤小屋建立独立进度。
+存在旧待处理战斗或结算时先完成/恢复原流程，再切换地图；不能丢弃请求后直接初始化新地图。
+地图运行时中的active_battle和battle_receipts由适配层从主会话补齐；不建立另一份可独立发奖的持久账本。
+
+请求映射：
+  request_id -> 主会话battle_id，同一次请求重试不重新生成。
+  source_map_id -> 主会话map_id。
+  location_id、kind、party_ids -> 原样保留。
+  battle_map_id -> 战场环境目录索引。
+  enemy_config_id -> 敌方编队资源索引。
+  deployment_id -> 对应玩家部署区。
+  return_position -> 新地图快照中的玩家位置。
+
+战斗启动前一次性保存请求与队伍实例ID；加载失败回滚到地图并保留队伍。
+结果继续由BattleHost提供battle_id/outcome/reward/parts/duration；适配层在副本上计算地图cleared等变化，再由GameSession原子保存地图、战损、奖励和回执。
+只在kind=clear且胜利时写永久清理标记，遭遇胜利不自动永久清营地。
+重复回执不重复奖励；保存失败保留相同结果供重试。不能同时调用交付GameDemo.receive_battle_result和当前GameSession.commit_battle。
+空队伍禁止手动进入战斗；自动遭遇时停下并打开既有仓库出战准备，玩家确认队伍后才提交。取消、读档和保存失败都保留相应状态，不自动替玩家选怪。
+
+六、13张战场与敌方编队
+
+拟新增DeliveryBattleEnvironmentAdapter.gd，从交付Scenes/Maps3D场景复用Ground/GroundVisual、ExteriorBackground、Objects和六面边界。
+相机、输入、WorldEnvironment归宿主统一选择，移除重复Camera/Party及预览部署逻辑；不同时保留两个地面或两个环境。
+BattleHost扩展为消费环境适配器的地面范围、导航碰撞、部署区和效果描述；保留现有AI、武器、伤害、自由光标、胜负与结算逻辑。
+
+探索坐标仍使用源X/Y。战场源[x,y]转换到Godot[X,Z]，旋转、碰撞偏移、部署朝向和美术使用同一换算。
+每张战场配置固定unit_scale：用实际生物包围盒和最大阵容验证后确定，并写入导入配置。不可在每次开战时随阵容改变地图尺寸。
+倍率作用于环境生成的坐标/尺寸/碰撞参数，不给生物或其刚体父节点施加非单位缩放。
+部署槽不足时在部署区域内按包围盒补位，保证不互相重叠、不越界、不压障碍；无合法位置则在开战前明确报错，不强行塞入。
+源场景地面为CSGPolygon3D，适配时需提供导航烘焙能够解析的地面几何/碰撞，验证绕序、法线与地面高度；不只加载GroundVisual就宣称接地正常。
+导航根据真实地面与障碍烘焙，效果区与装饰不自动当墙。大体型生物需要检查通道宽度，不能仅沿用统一agent_radius=1假定可通行。
+
+拟新增EnemyRosterData.gd及若干tres，以enemy_config_id指定物种定义、数量、阵营、生成区域与朝向：
+  bandit_* -> 已有持矛Human；具体数量由编队资源确定。
+  wolf_*、forest_wolf_* -> 已有Wolf。
+  spider_* -> 注册现有Generate_Spider_NPC后使用。
+  rat_*、forest_rat_* -> 待明确对应巨鼠NPC模板；不默认用Ratkin或Snake冒充。
+  tree_* -> 按明确编队配置选择物种，不从名称猜测。
+清理编队与遭遇编队分别绑定，不能只按战场ID决定敌军。未配置的引用在进入前提示并拒绝启动，不生成空敌方直接判胜。
+首轮用小编队验证，再验证完整6队位和敌军；不以大量敌军同时生成作为首次接入基线。
+
+七、环境效果与战后动作
+
+拟新增BattleEnvironmentEffects3D.gd，处理区域进入/离开和有限频率结算：
+  collision_damage：复用实体障碍碰撞，按配置使用冲量/护甲规则，不把贴图本身当碰撞体。
+  mud/thorns：通过临时速度修正层施加slow_ratio，退出恢复；不改共享移动tres或永久目标速度。
+  web：依据真实空中状态、targets及高度区间施加有时限控制；不停止整个角色及其他角色的物理处理。
+  pit：完成真实地面开孔/下层碰撞和导航避让；不仅绘制洞口后宣称角色能够掉落。
+  post_battle：胜利条件成立后映射到现有召唤/升级入口；与结算共用一次战斗ID，不重复发放奖励。
+移动修正优先接入AI命令源或公共移动参数入口；专用控制器若缺少入口，仅增加最小读取适配并单独回归，不重写其受力算法。
+区域按角色去重并维护部位接触引用计数，避免多Part角色重复减速/重复伤害，以及一只脚退出就解除全角色效果。
+环境伤害使用DamageService的公式/护甲计算和PhysicalBodyPart3D.apply_damage的HP/断裂入口，不伪装成可拾取武器。
+源码只有effect_ref而正式规则缺失时列为待配置，不能悄悄忽略。效果未完成的关卡仅允许明确标记的开发预览，正式入口不宣称完整可用。
+通用事件节点运行时、天气和环境生成权重不随本轮自动实现；先保留ID和入口，对尚未配置的交互明确提示。
+
+八、实施顺序、验收和回退
+
+阶段1 资源隔离：导入与路径/UID检查；对照验收图查看大地图及13张战场，主入口暂保持原地图。
+阶段2 大地图：适配视图与Runtime、暂停/输入、寻路、迷雾、出生、破石、已知地点和开局边界。通过后再切换主入口。
+阶段3 会话闭环：schema迁移、库存条件、空队伍出战准备、请求/回执原子保存、取消/重试/退出读档。
+阶段4 真实战斗：接入环境、固定单位换算、敌方编队、部署补位和导航，先以Human/Wolf及已配置战场跑通。
+阶段5 完整关卡：注册Spider、补齐其他敌军预设，接入环境效果和战后动作，逐张开放13个战场。
+每阶段独立记录修改文件、功能结果、资源版本与回退入口，不将未完成内容混称已经接入。
+
+必须通过的检查：
+  新游戏无赠送角色；升级旧档保留库存、魔力和同一实例ID。
+  迷雾不提前揭示狼窝；树干/入口石头阻挡正常，破坏和清理记录重启可恢复。
+  手动空队伍按钮不可交互；遭遇选队/取消/重试不会重复开战。
+  13张战场的部署、围边、美术与效果类型分别核对；编队缺失不能变成自动胜利。
+  保存失败、重复回执、战斗中退出、待确认结算恢复均不丢怪或重复奖励。
+  多部位区域效果不重复叠加，Broken与飞行状态的目标筛选正常。
+  Q、Space、控制台、显示设置与纸页暂停的现有回归继续通过。
+  1120x680、1280x720、1920x1080及Forward+实机核对点击、字体、裁剪、动效和战场贴片。
+  保留Wolf/Snake及其他已开放生物的移动/攻击回归，NPC压力测试与地图绘制成本分别统计。
+
+回退：保留旧Frontier入口、原模块、旧地图快照和迁移备份。代码回退配合旧schema备份；不能让旧代码读取新版文件，也不删除新版库存存档。
+
+九、预计修改位置
+
+已有：Scripts/Application/GameRoot.gd、GameSession.gd、GameUIController.gd、GameWorldView.gd、BattleHost.gd、CreatureFactory.gd、Scenes/Application/GameRoot.tscn。
+新增：Modules/FrontierDelivery、Content/Maps/FrontierDelivery_20261015、地图/环境适配脚本、编队资源、效果组件及Tests/Integration专项。
+旧WorldMapSessionSave.gd保留给旧入口，新地图通过主GameSession校验和保存。
+不覆盖：project.godot、现有Autoload、物理角色场景姿态、共享UI主题，以及Wolf/Snake控制器。
+
+本方案只保存为说明文件，没有执行资源复制、存档迁移、场景切换或游戏代码变更。

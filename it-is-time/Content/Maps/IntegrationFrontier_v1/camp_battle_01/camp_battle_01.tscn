@@ -1,0 +1,229 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Tools/Integration/Frontier/godot/battle_preview.gd" id="1_l8wug"]
+[ext_resource type="Script" path="res://Modules/Frontier/scenario_2_5d/data/scene_definition.gd" id="2_ejc4s"]
+
+[sub_resource type="Resource" id="Resource_sjihh"]
+script = ExtResource("2_ejc4s")
+scene_id = &"camp_battle_01"
+display_name = "边境演练场"
+camera_bounds = Rect2(-110, -110, 220, 220)
+default_camera_size = 198.0
+min_camera_size = 66.0
+max_camera_size = 242.00000000000003
+default_scene_mode = 1
+metadata = {
+"editor_data": {
+"assets": {
+"altar": {
+"category": "内置素材",
+"id": "altar",
+"name": "战后祭坛",
+"path": "res://Tools/Integration/Frontier/assets/altar.svg"
+},
+"barricade": {
+"category": "内置素材",
+"id": "barricade",
+"name": "完好路障",
+"path": "res://Tools/Integration/Frontier/assets/barricade.svg"
+},
+"camp": {
+"category": "内置素材",
+"id": "camp",
+"name": "怪兽营地",
+"path": "res://Tools/Integration/Frontier/assets/camp.svg"
+},
+"cloth": {
+"category": "内置素材",
+"id": "cloth",
+"name": "衬布纹理",
+"path": "res://Tools/Integration/Frontier/assets/cloth.svg"
+},
+"grass": {
+"category": "内置素材",
+"id": "grass",
+"name": "草丛",
+"path": "res://Tools/Integration/Frontier/assets/grass.svg"
+},
+"house": {
+"category": "内置素材",
+"id": "house",
+"name": "林间小屋",
+"path": "res://Tools/Integration/Frontier/assets/house.svg"
+},
+"monster": {
+"category": "内置素材",
+"id": "monster",
+"name": "怪兽示意",
+"path": "res://Tools/Integration/Frontier/assets/monster.svg"
+},
+"mud": {
+"category": "内置素材",
+"id": "mud",
+"name": "泥潭",
+"path": "res://Tools/Integration/Frontier/assets/mud.svg"
+},
+"pit": {
+"category": "内置素材",
+"id": "pit",
+"name": "落穴",
+"path": "res://Tools/Integration/Frontier/assets/pit.svg"
+},
+"road": {
+"category": "内置素材",
+"id": "road",
+"name": "碎石道路",
+"path": "res://Tools/Integration/Frontier/assets/road.svg"
+},
+"rock": {
+"category": "内置素材",
+"id": "rock",
+"name": "层叠岩石",
+"path": "res://Tools/Integration/Frontier/assets/rock.svg"
+},
+"rubble": {
+"category": "内置素材",
+"id": "rubble",
+"name": "路障残骸",
+"path": "res://Tools/Integration/Frontier/assets/rubble.svg"
+},
+"thorns": {
+"category": "内置素材",
+"id": "thorns",
+"name": "荆棘",
+"path": "res://Tools/Integration/Frontier/assets/thorns.svg"
+},
+"town": {
+"category": "内置素材",
+"id": "town",
+"name": "边境城镇",
+"path": "res://Tools/Integration/Frontier/assets/town.svg"
+},
+"tree": {
+"category": "内置素材",
+"id": "tree",
+"name": "林地树木",
+"path": "res://Tools/Integration/Frontier/assets/tree.svg"
+},
+"web": {
+"category": "内置素材",
+"id": "web",
+"name": "蛛网",
+"path": "res://Tools/Integration/Frontier/assets/web.svg"
+}
+},
+"catalogs": {
+"conditions": [],
+"deployment_rules": [],
+"effects": [],
+"enemy_configs": [{
+"id": "camp_guards",
+"name": "营地守卫队"
+}],
+"events": [],
+"monster_configs": [{
+"id": "demo_guard",
+"name": "示意守卫"
+}],
+"options": [{
+"id": "summon",
+"name": "召唤"
+}, {
+"id": "upgrade",
+"name": "升级"
+}]
+},
+"map": {
+"background_asset": "",
+"background_blur": 9.0,
+"edge_feather": 0.8,
+"ground_asset": "",
+"ground_color": "#6b8060",
+"id": "camp_battle_01",
+"kind": "battle",
+"name": "边境演练场",
+"natural_border": true,
+"objects": [{
+"facing": 0.0,
+"height": 0.0,
+"id": "player_deploy_01",
+"layer": "deployment",
+"name": "己方入口部署区",
+"position": [-32.0, 0.0],
+"region": {
+"depth": 0.0,
+"enabled": true,
+"height": 2.0,
+"offset": [0.0, 0.0],
+"points": [],
+"rotation": 0.0,
+"shape": "rect",
+"size": [10.0, 135.0]
+},
+"rotation": 0.0,
+"rule_ref": "",
+"scale": [1.0, 1.0],
+"slots": [[0.0, 0.0], [0.0, -20.0], [0.0, 20.0], [0.0, -40.0], [0.0, 40.0], [0.0, 60.0]],
+"type": "deployment",
+"visual": {
+"asset": "",
+"opacity": 1.0,
+"size": [2.2, 2.2],
+"tint": "#9fba8d",
+"visible": true,
+"z_index": 0.0
+}
+}, {
+"facing": 180.0,
+"height": 0.0,
+"id": "camp_guard_01",
+"layer": "deployment",
+"monster_config_id": "demo_guard",
+"name": "营地守卫",
+"position": [28.0, 0.0],
+"rotation": 0.0,
+"scale": [1.0, 1.0],
+"team_group": "enemy",
+"type": "enemy",
+"visual": {
+"asset": "monster",
+"opacity": 1.0,
+"size": [2.2, 2.2],
+"tint": "#9fba8d",
+"visible": true,
+"z_index": 0.0
+}
+}, {
+"height": 0.0,
+"id": "arena_tree_01",
+"layer": "decoration",
+"linked_collision_id": "",
+"name": "场内装饰树",
+"position": [0.0, -70.0],
+"rotation": 0.0,
+"scale": [1.0, 1.0],
+"type": "tree",
+"visual": {
+"asset": "tree",
+"opacity": 1.0,
+"size": [8.0, 10.0],
+"tint": "#9fba8d",
+"visible": true,
+"z_index": 0.0
+}
+}],
+"orientation": "flat",
+"radius": 110.0,
+"wall": {
+"height": 12.0,
+"layer": 1.0,
+"thickness": 0.5
+}
+},
+"version": 1
+}
+}
+
+[node name="camp_battle_01" type="Node3D" unique_id=1893895697]
+script = ExtResource("1_l8wug")
+definition = SubResource("Resource_sjihh")

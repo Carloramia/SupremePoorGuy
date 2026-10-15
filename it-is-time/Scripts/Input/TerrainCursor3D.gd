@@ -18,6 +18,8 @@ signal selection_changed(character: Node3D)
 @export_range(0.02, 1.0, 0.01) var selection_search_interval: float = 0.1
 
 @export_group("Control")
+@export var free_cursor_mode: bool = false
+@export var free_camera_rig: Node3D
 @export var input_enabled: bool = true
 @export_range(0.001, 1.0, 0.001, "or_greater") var cursor_sensitivity: float = 0.025
 @export_range(0.0, 1000.0, 0.5, "or_greater") var maximum_anchor_distance: float = 30.0
@@ -89,6 +91,8 @@ func _perf_impl__physics_process(delta: float) -> void:
 		_pending_mouse_motion = Vector2.ZERO
 		_clamp_to_anchor()
 	_update_ground_transform(camera, delta)
+	if free_cursor_mode and is_instance_valid(free_camera_rig):
+		free_camera_rig.global_position = get_mouse_ground_position()
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
@@ -194,6 +198,10 @@ func _set_gameplay_cursor_active(active: bool) -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED if active else Input.MOUSE_MODE_VISIBLE
 
 func _reset_desired_position() -> void:
+	if free_cursor_mode:
+		_desired_horizontal_position = Vector2(global_position.x,global_position.z)
+		_has_desired_position = true
+		return
 	if not is_instance_valid(movement_anchor):
 		return
 	_desired_horizontal_position = Vector2(
@@ -205,6 +213,9 @@ func _reset_desired_position() -> void:
 	_last_anchor_position = movement_anchor.global_position
 
 func _resolve_movement_anchor() -> void:
+	if free_cursor_mode:
+		movement_anchor = null
+		return
 	if is_instance_valid(movement_anchor):
 		return
 	movement_anchor = get_tree().get_first_node_in_group(&"npc_navigation_target") as Node3D
@@ -459,6 +470,7 @@ func _smoothing_weight(speed: float, delta: float) -> float:
 	return 1.0 if speed <= 0.0 else 1.0 - exp(-speed * maxf(delta, 0.0))
 
 func _is_external_interface_open() -> bool:
+	if PLAYER_CONTEXT.interface_open(self): return true
 	for node: Node in get_tree().get_nodes_in_group(&"ui_interface_2d"):
 		if node is CanvasLayer and (node as CanvasLayer).visible and not node.is_queued_for_deletion():
 			return true
@@ -466,6 +478,7 @@ func _is_external_interface_open() -> bool:
 	return console != null and console.has_method("is_console_open") and bool(console.call("is_console_open"))
 
 func _charge_input_pressed() -> bool:
+	if free_cursor_mode: return false
 	var source := PLAYER_CONTEXT.controller(self)
 	if source != null: return source.is_gameplay_action_pressed(&"MouseLeft")
 	return InputMap.has_action(&"MouseLeft") and Input.is_action_pressed(&"MouseLeft")

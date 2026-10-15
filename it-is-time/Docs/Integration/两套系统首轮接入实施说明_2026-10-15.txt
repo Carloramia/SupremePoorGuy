@@ -1,0 +1,227 @@
+ItIsTime：UI原型与 Frontier Toolkit 首轮接入实施说明
+日期：2026-10-15
+工程：D:\GameJamWorkspace\ItIsTime\it-is-time
+
+新游戏队列调整（2026-10-15）：
+  新游戏保留300魔力，但不再赠送持矛人形，初始仓库、出战队列均为空。
+  战斗地点的“进入战斗”按钮在出战队列为空时禁用，并提示先召唤妖兽并加入出战队列。
+  从队列界面返回地点后会重新判断按钮状态；加入妖兽后启用，移除最后一名妖兽后禁用。
+  已有存档中的角色不会被本次调整删除。战斗相关测试改为显式准备测试角色，不依赖新游戏赠送。
+
+新增战斗快捷键与显示设置（2026-10-15）：
+  以下快捷键适用于GameRoot主流程中的实际战斗，纸页弹窗或控制台打开时不触发。
+  QPressed：按一次释放系统鼠标，再按一次返回自由地形光标；不暂停战斗。
+  Space：切换手动暂停/继续。暂停时显示“战斗已暂停 · 按 Space 继续”，停止真实物理模拟并释放鼠标。
+  手动暂停与纸页暂停独立；关闭设置/仓库不会解除手动暂停。继续战斗时保留此前Q选择的鼠标模式。
+  战斗结算或离开战斗会清除手动暂停与Q鼠标状态。长按按键产生的重复事件不会连续切换。
+  设置菜单新增分辨率、全屏开关和“应用显示设置”，显示设置独立保存在user://settings/display.cfg，并在启动时恢复。
+  分辨率预设：1120×680、1280×720、1366×768、1600×900、1920×1080、2560×1440、3840×2160。
+  窗口模式调整实际窗口尺寸；全屏使用桌面显示模式，按选择的分辨率渲染。过大的窗口尺寸会提示改用较小分辨率或全屏。
+  设置弹窗已扩展可用高度，在1120×680下可直接看到应用按钮与其他设置。
+  ValidateBattleControlsAndDisplay、ValidateApplicationInput、ValidateGameRoot、ValidateApplicationRecovery通过。
+  CaptureBattleControlsAndDisplay通过真实D3D12 Forward+验证系统鼠标、暂停提示、全屏与窗口切换，并输出截图。
+  验证记录：D:\GameJamWorkspace\Reports\BattleControlsDisplay_2026-10-15。
+  本次没有修改NPC、生物运动、攻击、伤害预设，也没有恢复PlayerController或Q轮盘。
+
+最新控制方式调整（2026-10-15，覆盖本文早先关于Q/B与玩家接入的说明）：
+  BPressed不再打开工坊。
+  BattleHost、TestLevel、HumanTestLevel均不再创建/挂载PlayerController；Q轮盘、接入和弹出无运行入口。
+  战斗默认使用TerrainCursor3D自由光标，镜头跟随实际光标位置；仍保留地形贴合与目标吸附。
+  双方NPC由各自AI控制。自由模式阻止键盘/鼠标输入回退为角色控制。
+  角色专属物品栏和朝向弧在自由模式下隐藏；纸页、暂停、保存与结算保持原流程。
+  工坊资源及程序调用接口保留，原Controller组件也保留但不被游戏场景引用。
+  本次输入/流程、两测试场景、光标吸附与真实渲染检查通过。
+  AI实战第一次未在25秒观察窗内触发挥击，重试通过；本轮没有修改AI攻击规则，未做长时间战斗验收。
+  本次验证记录：D:\GameJamWorkspace\Reports\FreeCursor_2026-10-15。
+
+已完成的结果
+
+F5 现在启动 Scenes/Application/GameRoot.tscn。
+纸页UI、大地图、2.5D探索场景和真实3D物理战斗由同一个宿主管理。
+原 Scenes/Levels/TestLevel.tscn、HumanTestLevel.tscn 未改动，打开后仍可F6运行。
+来源 UI跳转原型、frontier_toolkit 工程未被修改，也没有把其project.godot覆盖到主工程。
+主工程仍使用现有Forward Plus、Jolt、输入映射和三个Autoload。
+
+这轮是接入方案中的首个可运行闭环，不代表所有召唤规则、事件和地编字段均已实现。
+
+一、如何使用
+
+1. F5 → 开始游戏。新会话有300魔力，仓库和出战队列为空；先召唤并将妖兽加入出战队列。
+   “开始游戏”会替换当前正式槽，旧文件保留为.bak；“继续游戏”读正式槽。
+2. 大地图点击地点，沿导航路径实际抵达后交互。城镇可进入2.5D探索场景。
+   战斗地点需要队列至少有一个生物，才允许进入战斗。
+3. 左侧召唤纸页可绘制/刻入符文；普通召唤一次尝试5个实例。
+   当前目录映射：人形→Human Spear1，兽形→Wolf，蛇形→Snake。
+   演出与安置不重新随机，也不会再次扣费。
+4. 仓库可按原有方式筛选、改名、回收、加入/撤回出战。队位容量6。
+   战斗已开始后，队列变更只影响下一场。已部署实例结束前不能回收。
+5. 战斗沿用既有角色控制、物理NPC、武器/攻击、伤害和断裂系统。
+   WASD移动、Q轮盘接入/弹出、B武器工坊，控制台映射仍为CallConsole。
+   工坊物品、伤害数字、冲击波和诊断标记进入当前战斗的World3D。
+6. 返回大地图会先询问撤退。胜利、失败、撤退统一结算；确认后地图下拉返回。
+   当前首轮胜利奖励20魔力，失败/撤退不发奖。
+   部位战损写入战斗回执；本轮采用战后恢复，暂不永久断肢或删除库存生物。
+
+二、存档和恢复
+
+正式槽：user://saves/slot_01.json。
+标准Windows位置通常为 %APPDATA%/Godot/app_userdata/ItIsTime/saves/slot_01.json。
+根节点GameRoot的Save Path可以更换槽路径；未读取来源工程的试玩存档。
+保存采用临时文件替换并保留.bak。主文件损坏时验证备份后恢复，再保存不会用坏主档覆盖好备份。
+
+同一槽保存经济、法阵布局、稳定生物ID、物理姿态/部位属性、队列、地图位置/迷雾/地点状态、待处理战斗与结算回执。
+开始战斗先提交请求和party_ids，保存失败不会进入战斗。
+结算将奖励、地点结果和battle_id回执一起保存；失败留在结束态重试，重复回执不会再次发奖。
+中途退出后从该战斗的初始部署重开；这不是逐帧刚体/装备快照续战。
+已提交的结算重启后恢复结算页，不重新战斗或领取奖励。
+
+每个实例记录已有场景的局部Transform3D与部位HP/Armor，部署不调用生成器重新生成框架。
+版本检查目前使用物种根场景哈希、节点/部位结构和数值校验。
+限制：它不是所有贴图、模型、脚本和继承资源的完整冻结副本。更改物种资源后需要明确的存档迁移策略；没有自动迁移旧蓝图。
+源场景版本/结构不兼容时拒绝读档并保留文件，不静默重抽。
+测试数据仅写Tests/.runtime和工程外Reports目录，不写入上述正式槽。
+
+三、数值映射与当前开放范围
+
+HP：按照召唤试验数值相对base_stats的倍率，缩放真实各部位max_hp。
+Armor：同样缩放真实各部位Armor；UI显示平均值，受击时仍读取命中部位自己的护甲。
+攻击：通过实例的summon_damage_multiplier进入武器和冲击波原始伤害，随后仍由DamageService减甲。
+UI攻击值是冲量10时挥击原始伤害的参考，并非每次命中的固定扣血。
+移速：从真实slow_gait_data/motion_data读取目标速度，按数值倍率复制修改每个实例自己的资源。
+攻击间隔：缩放NPC攻击选项与动作自身的cooldown，不缩放物理蓄力/挥动过程时长。
+
+开放普通结构，数值符文：health、armor、attack、iron、bloodblade、vitality、fang、haste。
+开放bone-die的现有随机数值效果。
+巨化、超巨化、增殖、缩小、定向配方，以及护盾/灼烧/回血等未兑现效果，均在扣费前阻止。
+其他奇物也阻止，避免仅显示说明却收费。天气和地区生成权重尚未开放。
+仓库仍沿用原型概念肖像，图上已标“概念图·非生成结果”，不是实时物理角色截图。
+
+四、模块与接口位置
+
+Modules/PaperUI：UI副本，所有res路径已隔离。
+Modules/Frontier：地图、2.5D场景及必要集成副本。
+Modules/sources.json：实际文件、来源位置、原始与安装文件SHA256，便于比对上游。
+Tools/Integration/SyncModules.py：首次复制工具；目录存在时拒绝覆盖，避免丢失适配补丁。
+
+Scripts/Application/GameRoot.gd：唯一流程/视口/暂停宿主。
+GameSession.gd：正式槽、仓库/召唤事务、生物记录、结算去重。
+WorldMapSessionSave.gd：Toolkit保存接口到同一槽的桥接。
+GameUIController.gd、GameWorldView.gd：复用纸页表现，替换测试路由与数值说明。
+CreatureFactory.gd：受控物种目录、姿态记录校验与真实NPC部署。
+BattleHost.gd：环境、部署、导航同步、阵营存活判断、战损回执。
+
+没有新增常驻Autoload。纸页布局保持来源版本，去除了重复地图HUD与测试跳过战斗。
+地图与战斗各自使用独立SubViewport；战斗为独立World3D，地图为独立World2D。
+地图在后台暂停并停更画面，战斗结束释放刚体世界。
+UI、Workshop通过同一暂停原因表协作；关闭一个界面不会错误解除另一个界面的暂停。
+常驻HUD不暂停，纸页和Workshop暂停真实刚体。
+PlayerControlContext优先解析当前宿主，独立TestLevel没有宿主时继续走原有路径。
+
+副本修正：
+  PrototypeState保存使用JSON完整精度，避免物理姿态反复读写漂移。
+  地图请求/resolve按保存返回值决定是否完成；失败回滚地点状态并保留交互。
+  导出战场地面采用Godot正确绕序，否则碰撞朝向和导航烘焙异常。
+  已替换原型详情中的虚构part_hp和固定测试奖励入口。
+  物种目录同时遍历普通Node和Node3D，避免漏掉基于Node的移动控制器。
+
+五、地编导入流程
+
+浏览器地编仍在来源frontier_toolkit/editor内作为开发工具使用。
+主工程导入命令，在主工程目录的PowerShell执行：
+
+./Tools/Integration/ImportFrontierLevel.ps1 -Source "D:/路径/关卡.mapproject.json" -Version "MyLevel_v1" -GodotPath "D:/路径/Godot_console.exe"
+
+先调用来源工具Validate-Level.cjs，再导入主工程资源并转换到Content/Maps/MyLevel_v1。
+版本目录已存在会拒绝覆盖，不会改TestLevel或既有生物场景。
+输出WorldDefinition.tres/探索tscn、SceneDefinition.tres/战场预览和initial_configuration.json。
+预览场景本身不是NPC战斗；正式战斗由BattleHost消费SceneDefinition中的editor_data。
+
+已提供：
+  编辑源 Content/Maps/Sources/IntegrationFrontier.mapproject.json。
+  产物 Content/Maps/IntegrationFrontier_v1/。
+  GameRoot默认战场使用其中camp_battle_01/SceneDefinition.tres。
+  当前默认大地图仍为Toolkit原有WorldMapDemo，已有真实旅行、地点、迷雾和保存。
+
+使用自己的导入地图时，在GameRoot Inspector：
+  World Scene → 对应探索tscn。
+  Battle Definitions → battle_map_id作为键，对应SceneDefinition.tres作为值。
+  Monster Config Definitions → 地编monster_config_id映射human/wolf/snake。
+  Default Battle Definition → 未指定battle_map_id的地点使用的战场。
+示例导入地图中的camp_battle_01需要在Battle Definitions中配置；测试已验证此路由。
+enemy_config_id目前随请求保留，不另行覆盖战场内enemy对象；实际敌军由各enemy对象的monster_config_id与上述映射决定。独立敌军编队目录仍属后续接入范围。
+
+已接入战场：地面、空气墙、静态障碍/装饰、部署槽、敌方物种、实际碰撞与导航烘焙。
+部署检查整个角色碰撞体是否越界；队位/地图空间不足则取消本次战斗并保留队伍。
+尚未接入的战场对象/效果/部署规则会拒绝部署并给出原因。
+探索地图中有破障/跨越或外部条件/事件引用时也会拒绝进入，防止把配置当作已经实现。
+完整事件核心依赖在来源工程中仍缺失；当前只有固定地点访问/资源/手记适配，不是完整剧情事件执行器。
+
+六、诊断命令
+
+CallConsole打开控制台：
+  trackintegration on
+  trackintegration status
+  trackintegration off
+
+事件输出含route、summon_commit/rollback、battle_load/start/commit、save_failure、pause、map_restore。
+不会每帧打印整个蓝图。
+原有trackmotion、tracknpcstate、tracknpcmotion、trackgrip、trackdamage、trackperformance、showsteptargets、showsnakepath仍可使用；help可查看用法。
+新部署角色名称为Creature_<实例ID>，可用这一名称/路径作为已有命令的筛选参数。
+
+七、验证结果与性能限制
+
+集成检查：
+  ValidateGameSession：同批ID/费用/精确姿态、改名/转队、保存失败回滚、无效存档与备份恢复。
+  ValidateGameRoot：真实地点→战斗→结算→地图、物理暂停、提交失败重试、结算设置返回。
+  ValidateApplicationRecovery：探索退出、中断战斗重开、已提交结算恢复与奖励去重。
+  ValidateFrontierImport：实际JSON转换、探索路由、战场空气墙/导航与真实地面支撑。
+  ValidateBattleGameplay：NPC实际移动/攻击、Controller重挂载、工坊物品World3D、Human/Wolf/Snake混合部署和速度倍率。
+  ValidateApplicationInput：实际鼠标点击、地图坐标转换、Esc、Q和B、纸页输入阻塞。
+
+原有八组回归通过：Spear1IdleGripPose、SpearNPCCombat、EquipmentMultiGrip、WeaponTaggedAttacks、HumanArmedVariants、NPCCombat、NPCCombatPositioning、NPCSwingAim。
+默认入口启动检查通过。
+真实D3D12 Forward+、RTX4090截图检查完成：主菜单、地图、召唤/安置/详情/仓库、战场、Q轮盘、Workshop、结算/返回，以及1120×680、1280×720、1920×1080布局。
+这不替代长时间游戏测试或所有输入组合的人工验收。
+
+八Human NPC、相同战场与AI、600采样帧的headless对比：
+  无纸页宿主：物理帧中位数80.930ms，P95 110.401ms；process中位数5.260ms。
+  有纸页宿主：物理帧中位数79.149ms，P95 96.972ms；process中位数5.187ms。
+  单次对比受物理轨迹和运行环境影响，不能据此声称性能提高。
+  结论：未观察到明显宿主额外开销；两组均超过60FPS的16.7ms物理预算。
+  尚未达成8NPC稳定60FPS，更不能视作50NPC容量验证。下一轮应单独剖析已有物理/控制器负载。
+
+首轮UI接入阶段没有为掩盖性能问题修改生物关节、步幅、攻击或伤害预设。后续战斗姿态修复见第八节。
+Godot编辑器导入仍会报告当前机器缺失.NET SDK10.0.5/MSBuild，以及工具预览时DamageService不在树内的旧警告；本轮GDScript运行与真实渲染测试没有依赖C#编译。
+
+完整测试日志、截图与benchmark.json：
+D:\GameJamWorkspace\Reports\ApplicationIntegration_2026-10-15
+
+未提交Git、未推送远端。后续接入应比较Modules/sources.json并保留副本适配，不能直接重新覆盖模块。
+
+
+八、Wolf与Snake战斗姿态修复（2026-10-15）
+
+Wolf：整体朝向偏差超过原有转向入口阈值时，即使没有新转身命令，也进入接地脚牵引的朝向恢复。
+无命令的漂移恢复期间继续维持肢体相对躯干的平面；真实转身仍按原有规则释放肢体平面。
+薄片部件的平面修正改为同时求解两个轴的有效惯性，避免标量近似将力矩引向另一轴。
+没有恢复此前取消的世界X/Y硬锁，Z轴铰链运动、侧向移动与转身保持原有接口。
+
+Snake：连接滑移范围从生成时的静态结构计算，不再按已经拉长的运行时距离扩大。
+接地体节允许沿锐角/反向轨迹交换相对位置，但目标中心间距限定为原始间距的1.15倍，超出后施加有上限的成对向心恢复力。
+这仍是物理力和关节约束，外部撞击可产生短暂误差，不进行刚体位置瞬移。
+普通行走也持续检查连接；明显超限或攻击结束后进入连接恢复，保留接地支撑，暂时停止推进与新攻击。
+连接范围及相邻体节分离速度持续稳定后退出恢复，不以攻击超时直接绕过恢复。
+行走中恢复连接会保留已访问的世界轨迹，避免把转弯后的身体重新排成初始直线。
+抬起躯干保持原有XY布局；反向行进仍通过路径延伸转向完成。
+
+沿用控制台命令：
+  motiondetail full
+  tracknpcmotion on
+  tracknpcmotion on Creature_summon_1_1
+  tracknpcmotion off
+
+新增诊断包括Wolf的recovering_drift，以及Snake的connection_recovering、structure_settled、maximum_excess、maximum_separation_speed、structural_slide_bounds、path_constraint_offset、connection_span_force。
+按实际角色名称替换上述筛选参数；不指定筛选参数会追踪所有NPC。
+当前修复的检查记录：D:/GameJamWorkspace/Reports/BattleCreatureFix_2026-10-15。
+
+本次最终12项回归通过；具体测试文件、数值与适用限制见 Reports/BattleCreatureFix_2026-10-15/修复与验证记录.txt（D:/GameJamWorkspace下）。

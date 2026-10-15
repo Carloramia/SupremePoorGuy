@@ -79,6 +79,7 @@ func apply_contact_damage(target: PhysicalBodyPart3D, impulse: float) -> float:
 	var service := get_node_or_null("/root/DamageService")
 	if service == null: return 0.0
 	var raw: float = service.calculate_weapon_raw_damage(impulse, swing_damage_active)
+	if is_instance_valid(wielder_character): raw *= float(wielder_character.get_meta(&"summon_damage_multiplier",1.0))
 	var damage: float = service.apply_weapon_armor(raw, target.armor, swing_damage_active)
 	var registered := damage > 0.0 and try_register_hit(target)
 	if damage_logging_enabled or target.damage_logging_enabled:

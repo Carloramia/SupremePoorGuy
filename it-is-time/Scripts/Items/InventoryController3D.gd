@@ -89,6 +89,7 @@ func _exit_tree() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not _character_control_enabled: return
+	if not PLAYER_CONTEXT.input_allowed(self): return
 	if get_parent().has_node("NPCStateMachine3D") and PLAYER_CONTEXT.controlled_character(self) != get_parent(): return
 	if PLAYER_CONTEXT.controller(self) != null: return
 	if _is_external_interface_open():
@@ -407,7 +408,7 @@ func _drop_equipped_item() -> void:
 		_items[slot_index] = null
 		if _selected_slot == slot_index:
 			_selected_slot = -1
-	item.reparent(get_tree().current_scene if get_tree().current_scene != null else get_tree().root, true)
+	item.reparent(PLAYER_CONTEXT.level(self), true)
 	item.global_transform = drop_transform
 	item.visible = true
 	item.freeze = false

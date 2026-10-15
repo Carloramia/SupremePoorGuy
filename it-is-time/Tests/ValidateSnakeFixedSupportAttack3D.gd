@@ -132,6 +132,7 @@ func validate_safety(level: Node3D, floor_body: StaticBody3D) -> void:
 	attack._cached_plan = {}
 	await physics_frame
 	check(attack.try_start_npc_attack(attack.ACTION,target,0.0),"Start lateral escape fixture")
+	if not attack.is_npc_attack_active(): print("SNAKE_REJOIN_DIAGNOSTIC ",movement.get_snake_motion_diagnostics(false))
 	for tick: int in 300:
 		await physics_frame
 		if attack._phase == &"preparing": break

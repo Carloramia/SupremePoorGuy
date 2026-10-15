@@ -1,0 +1,45 @@
+[gd_scene load_steps=6 format=3]
+[ext_resource type="Script" path="res://Modules/PaperUI/Scripts/GameDemo.gd" id="1"]
+[ext_resource type="PackedScene" path="res://Modules/PaperUI/Scenes/UI/Components/AppShell.tscn" id="Shell"]
+[ext_resource type="PackedScene" path="res://Modules/PaperUI/Scenes/UI/Components/ModalHost.tscn" id="Modal"]
+[ext_resource type="Theme" path="res://Modules/PaperUI/Assets/UI/PaperRelief/PaperReliefTheme.tres" id="Theme"]
+[ext_resource type="PackedScene" path="res://Modules/PaperUI/Scenes/UI/Screens/MainMenu.tscn" id="Menu"]
+[node name="GameDemo" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+theme = ExtResource("Theme")
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.153, 0.137, 0.122, 1)
+[node name="AppShell" parent="." instance=ExtResource("Shell")]
+unique_name_in_owner = true
+layout_mode = 1
+[node name="MainMenu" parent="." instance=ExtResource("Menu")]
+unique_name_in_owner = true
+layout_mode = 1
+[node name="ModalBackdrop" type="TextureRect" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 70.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 0
+[node name="ModalHost" parent="." instance=ExtResource("Modal")]
+unique_name_in_owner = true
+layout_mode = 1

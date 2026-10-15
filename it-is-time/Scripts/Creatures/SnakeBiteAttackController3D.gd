@@ -407,6 +407,7 @@ func is_npc_target_in_attack_range(action_id: StringName, target: Node3D) -> boo
 
 func predict_npc_attack(action_id: StringName, target: Node3D, _charge: float, samples: int = 16, margin: float = 0.1, completing_alignment: bool = false, preparation_remaining: float = -1.0) -> Dictionary:
 	if not has_npc_attack(action_id) or not _valid_target(target): return {"hit":false,"reason":&"unavailable_or_invalid_target"}
+	if movement.is_connection_recovering(): return {"hit":false,"reason":&"connections_recovering"}
 	if (is_npc_attack_active() and not completing_alignment) or _cooldown > 0.0: return {"hit":false,"reason":&"busy_or_cooldown"}
 	if not completing_alignment and not is_npc_target_in_attack_range(action_id,target):
 		_perf.count(&"prediction_range_rejects")

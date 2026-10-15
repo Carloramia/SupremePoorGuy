@@ -21,7 +21,7 @@ func bind_inventory(inventory: Node) -> void:
 	_on_inventory_changed(inventory.get_items(), inventory.get_selected_slot())
 
 func _process(_delta: float) -> void:
-	visible = not _is_external_interface_open() and (PLAYER_CONTEXT.controller(self) == null or PLAYER_CONTEXT.controlled_character(self) == PLAYER_CONTEXT.character_of(self))
+	visible = not PLAYER_CONTEXT.is_free_cursor_mode(self) and not _is_external_interface_open() and (PLAYER_CONTEXT.controller(self) == null or PLAYER_CONTEXT.controlled_character(self) == PLAYER_CONTEXT.character_of(self))
 
 func _build_ui() -> void:
 	var root := Control.new()
@@ -71,6 +71,7 @@ func _on_inventory_changed(items: Array, selected_slot: int) -> void:
 		_icons[index].texture = item.get_item_image() if is_instance_valid(item) else null
 
 func _is_external_interface_open() -> bool:
+	if PLAYER_CONTEXT.interface_open(self): return true
 	for node: Node in get_tree().get_nodes_in_group(&"ui_interface_2d"):
 		if node is CanvasLayer and (node as CanvasLayer).visible and not node.is_queued_for_deletion():
 			return true

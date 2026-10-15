@@ -49,12 +49,28 @@ func run() -> void:
 		assert(not row.is_empty() and row.plane_error_degrees > 14.9)
 		assert(row.b_torque.y < 0.0 and Vector3(row.a_torque + row.b_torque).length() < 0.000001)
 		assert(absf(Vector3(row.b_torque).dot(root_body.global_basis.z)) < 0.000001, "Plane alignment must not oppose Z hinge motion")
+		var ia: Basis = move._wolf_unlocked_inverse_inertia(root_body)
+		var ib: Basis = move._wolf_unlocked_inverse_inertia(limb)
+		var normal: Vector3 = root_body.global_basis.z.normalized()
+		var requested: Vector3 = (limb.global_basis.z.normalized().cross(normal).normalized()*deg_to_rad(15.0)*data.limb_plane_strength-Vector3(row.relative_rate)*data.limb_plane_damping).limit_length(data.limb_plane_maximum_acceleration)
+		var applied: Vector3 = (Basis(ia.x+ib.x,ia.y+ib.y,ia.z+ib.z)*Vector3(row.b_torque)).slide(normal)
+		assert(applied.normalized().dot(requested.normalized())>0.999,"Thin-part inertia must not redirect the plane correction to another axis")
 		assert(not limb.axis_lock_angular_x and not limb.axis_lock_angular_y, "Do not restore the canceled world locks")
 		limb.global_basis = Basis(Vector3.FORWARD, deg_to_rad(35.0)) * limb_rest
 		move._update_wolf_plane_constraints(0.016)
 		for item: Dictionary in move._wolf_plane_rows:
 			if item.a == root_body.name and item.b == limb.name:
 				assert(item.plane_error_degrees < 0.001 and Vector3(item.b_torque).length() < 0.000001)
+		var torso_rest: Basis = root_body.global_basis
+		root_body.global_basis = Basis(Vector3.UP,deg_to_rad(40))*torso_rest
+		move._segment_goal_yaw = 0.0
+		move._turn_command_pending = false
+		move._wolf_turn_state_frame = -1
+		move._update_wolf_heading_state(0.016)
+		assert(move._wolf_heading_turn_active() and move._wolf_heading_recovery,"Large physical drift starts full realignment without requiring a turn command")
+		move._update_wolf_plane_constraints(0.016)
+		assert(move._wolf_plane_rows.any(func(item: Dictionary) -> bool: return item.b==limb.name),"Drift recovery keeps limb plane stabilization active")
+		root_body.global_basis = torso_rest
 		move._segment_goal_yaw = PI
 		move._turn_command_pending = true
 		move._wolf_turn_state_frame = -1
