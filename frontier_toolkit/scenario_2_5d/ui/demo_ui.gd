@@ -125,3 +125,4 @@ func _ground(point: Vector3, event_name: String) -> void:
 	status.text = "%s  (%.2f, %.2f, %.2f)" % [event_name, point.x, point.y, point.z]
 	marker.position = point + Vector3(0, 0.03, 0)
 	marker.show()
+

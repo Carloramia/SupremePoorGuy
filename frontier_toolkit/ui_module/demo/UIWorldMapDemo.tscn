@@ -1,0 +1,6 @@
+[gd_scene load_steps=3 format=3]
+[ext_resource type="PackedScene" path="res://world_map/demo/WorldMapDemo.tscn" id="World"]
+[ext_resource type="Script" path="res://ui_module/integration/world_map_ui_bridge.gd" id="Bridge"]
+[node name="UIWorldMapDemo" instance=ExtResource("World")]
+[node name="GameUILayer" type="CanvasLayer" parent="."]
+script = ExtResource("Bridge")

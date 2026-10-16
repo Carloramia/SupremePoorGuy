@@ -1,0 +1,118 @@
+{
+	"engine": "4.7.2-stable (official)",
+	"failures": 0,
+	"results": {
+		"api_exact": {
+			"description": "Programmatic API preserves exact destination unless snapping explicitly enabled",
+			"status": "PASS"
+		},
+		"arrival": {
+			"description": "Player actually arrives at snapped center line",
+			"status": "PASS"
+		},
+		"bend_path": {
+			"description": "Planned path includes road bends rather than an off-road diagonal",
+			"status": "PASS"
+		},
+		"bend_trajectory": {
+			"description": "Actual physics trajectory stays on centerline and reaches the corner before turning; deviation=0.0000",
+			"status": "PASS"
+		},
+		"blocked_centerline": {
+			"description": "A road through a mountain is rejected even when ordinary Navigation can detour to its end",
+			"status": "PASS"
+		},
+		"branch_route": {
+			"description": "Changing roads follows the main/south junction and all branch bends",
+			"status": "PASS"
+		},
+		"branch_trajectory": {
+			"description": "Actual movement across the shared junction stays on road centers",
+			"status": "PASS"
+		},
+		"closest_road": {
+			"description": "Nearest south-road segment selected across road registry",
+			"status": "PASS"
+		},
+		"degenerate": {
+			"description": "Zero-length segments safely ignored",
+			"status": "PASS"
+		},
+		"endpoint": {
+			"description": "Projection clamps beyond the last endpoint",
+			"status": "PASS"
+		},
+		"entry_arrival": {
+			"description": "Off-road connector joins road and arrives on exact center",
+			"status": "PASS"
+		},
+		"entry_connector": {
+			"description": "Off-road approach uses Navigation to enter nearest center without teleporting",
+			"status": "PASS"
+		},
+		"far_ground": {
+			"description": "Distant ground remains exact",
+			"status": "PASS"
+		},
+		"intent": {
+			"description": "Road ground command retains selected location intent",
+			"status": "PASS"
+		},
+		"interior_junction": {
+			"description": "Crossings split segment interiors into proper road junctions",
+			"status": "PASS"
+		},
+		"invalid_raw": {
+			"description": "Road snapping rejects obstacle and exterior raw clicks",
+			"status": "PASS"
+		},
+		"invalid_snapped": {
+			"description": "Unreachable snapped center line is rejected instead of falling back or bypassing obstacles",
+			"status": "PASS"
+		},
+		"location_exact": {
+			"description": "Location commands preserve exact interaction points without road snapping",
+			"status": "PASS"
+		},
+		"mouse_snap": {
+			"description": "Real viewport ground click snaps target, marker and actual navigation path",
+			"status": "PASS"
+		},
+		"near_road": {
+			"description": "Ground near the road snaps within configurable margin",
+			"status": "PASS"
+		},
+		"pause": {
+			"description": "Road commands respect subsystem pause",
+			"status": "PASS"
+		},
+		"projection": {
+			"description": "Click within road width projects to nearest segment center",
+			"status": "PASS"
+		},
+		"registry": {
+			"description": "Demo registers main and south center lines",
+			"status": "PASS"
+		},
+		"route_cancel": {
+			"description": "Cancel clears centerline waypoints and path display",
+			"status": "PASS"
+		},
+		"route_pause": {
+			"description": "Pause/resume retains centerline route and progresses after resume",
+			"status": "PASS"
+		},
+		"route_retarget": {
+			"description": "New road command replaces old route, including reverse travel",
+			"status": "PASS"
+		},
+		"speed_areas": {
+			"description": "Real Area2D contacts accelerate road movement, Mud overrides and exit restores base speed",
+			"status": "PASS"
+		},
+		"translated_map": {
+			"description": "Road projection remains correct in translated independent map instances",
+			"status": "PASS"
+		}
+	}
+}

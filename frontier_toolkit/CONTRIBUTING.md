@@ -2,6 +2,8 @@
 
 先阅读 [首次运行](docs/GETTING_STARTED.md) 与 [模块架构](docs/ARCHITECTURE.md)。修改放在对应模块；跨模块连接放 integration；新增配置保持源配置和玩家状态分离。
 
+GitHub 交接与后续整合按 [BUILD.md](BUILD.md)、[整合与扩展指南](docs/INTEGRATION_AND_EXTENSION.md) 和 [交付范围](docs/RELEASE_CONTENTS.md)。两个固定来源工程的 .import 元信息和来源字节受清单保护，其他本机导入记录不提交。
+
 保留目录和 `res://` 资源路径，提交脚本 `.uid`。不要提交 `.godot`、本机引擎、用户存档、密码、日志或依赖目录。新增二进制素材前确认其来源和使用权限。
 
 提交前运行涉及模块的测试。只改浏览器编辑器至少执行 Node 语法检查、`node editor/tests/model.test.cjs` 和示例配置检查；修改导出器或共享数据类需执行 Godot 导入及对应模块测试。渲染相关变更再加 `-Render`，说明验证环境与限制。

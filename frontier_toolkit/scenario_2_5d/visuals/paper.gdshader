@@ -12,3 +12,4 @@ void fragment() {
 	ALPHA = paper.a * tint.a * fade;
 	if (paper.a < 0.08) { discard; }
 }
+

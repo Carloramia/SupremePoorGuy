@@ -159,3 +159,4 @@ WorldMapGenerator.generate(definition, seed, fixed_overrides) 返回 WorldMapGen
 `Run-Tests.ps1` 运行 400 组坐标可逆检查及 28 项真实 SceneTree 验收；结果位于 `debug/test_results.json`。`render_preview.gd` 使用真实 OpenGL 渲染并保存 8 张 UI/地图截图。概览图是调试脚本探索全图后的状态，首次启动仍只有出生点附近可见。详见本模块 docs/ 中的测试清单及实施报告。
 
 道路验收：`road_tests.gd` 的 28 项结果保存为 `debug/road_test_results.json`，Run-Tests 默认运行，包含弯道实际轨迹、支路连接、接路、反向移动及中断接口。`Run-Tests.ps1 -Render` 额外验证 Hex debug 显隐以及道路实际渲染、鼠标吸附和中心线拐点路径，保存 `debug/preview_roads.png`、`debug/preview_road_snap.png` 和 `debug/preview_road_bends.png`。
+

@@ -675,34 +675,34 @@ encounter_data = {
 }
 }
 
-[node name="frontier" type="Node2D" unique_id=941742753]
+[node name="frontier" type="Node2D" unique_id=515854101]
 script = ExtResource("1_6ubjx")
 definition = SubResource("Resource_o2mb3")
 save_path = "user://editor_frontier_save.json"
 
-[node name="Obstacles" type="Node2D" parent="." unique_id=572846288]
+[node name="Obstacles" type="Node2D" parent="." unique_id=1094662469]
 
-[node name="rock_ridge" type="Polygon2D" parent="Obstacles" unique_id=1259486307]
+[node name="rock_ridge" type="Polygon2D" parent="Obstacles" unique_id=2009600960]
 color = Color(0.62352943, 0.7294118, 0.5529412, 1)
 polygon = PackedVector2Array(420, 220, 520, 195, 585, 280, 545, 375, 465, 420, 405, 335)
 
-[node name="Roads" type="Node2D" parent="." unique_id=336179236]
+[node name="Roads" type="Node2D" parent="." unique_id=1518000128]
 
-[node name="frontier_road" type="Area2D" parent="Roads" unique_id=585413063]
+[node name="frontier_road" type="Area2D" parent="Roads" unique_id=1740421795]
 priority = 10
 script = ExtResource("3_kcwqm")
 center_line = PackedVector2Array(120, 220, 200, 340, 200, 490, 520, 490, 640, 490, 740, 450, 900, 420, 1150, 415)
 
-[node name="frontier_south_road" type="Area2D" parent="Roads" unique_id=380522922]
+[node name="frontier_south_road" type="Area2D" parent="Roads" unique_id=298167856]
 priority = 10
 script = ExtResource("3_kcwqm")
 center_line = PackedVector2Array(200, 490, 240, 650, 260, 800, 330, 895)
 road_width = 52.0
 
-[node name="Locations" type="Node2D" parent="." unique_id=513830115]
+[node name="Locations" type="Node2D" parent="." unique_id=803751683]
 script = ExtResource("4_8ic0m")
 
-[node name="town" type="Node2D" parent="Locations" unique_id=1713418200]
+[node name="town" type="Node2D" parent="Locations" unique_id=162265999]
 position = Vector2(260, 265)
 script = ExtResource("5_s3hru")
 location_id = &"town"
@@ -710,7 +710,7 @@ definition = SubResource("Resource_t6juc")
 discovery_radius = 240.0
 interaction_radius = 42.0
 
-[node name="monster_camp_01" type="Node2D" parent="Locations" unique_id=985336799]
+[node name="monster_camp_01" type="Node2D" parent="Locations" unique_id=111961223]
 position = Vector2(900, 420)
 script = ExtResource("5_s3hru")
 location_id = &"monster_camp_01"
@@ -718,7 +718,7 @@ definition = SubResource("Resource_ipk4y")
 discovery_radius = 240.0
 interaction_radius = 42.0
 
-[node name="monument" type="Node2D" parent="Locations" unique_id=1393889793]
+[node name="monument" type="Node2D" parent="Locations" unique_id=1067029749]
 position = Vector2(330, 860)
 script = ExtResource("5_s3hru")
 location_id = &"monument"
@@ -726,14 +726,14 @@ definition = SubResource("Resource_kjswl")
 discovery_radius = 240.0
 interaction_radius = 42.0
 
-[node name="EditorVisuals" type="Node2D" parent="." unique_id=1489516664]
+[node name="EditorVisuals" type="Node2D" parent="." unique_id=1371273260]
 
-[node name="cloth_01" type="Sprite2D" parent="EditorVisuals" unique_id=245503792]
+[node name="cloth_01" type="Sprite2D" parent="EditorVisuals" unique_id=100759351]
 modulate = Color(1, 1, 1, 0.7)
 z_index = -100
 position = Vector2(700, 600)
 scale = Vector2(12.890625, 11.328125)
 texture = ExtResource("14_w8ilc")
 
-[node name="ScenarioOverlay" type="Node" parent="." unique_id=654988803]
+[node name="ScenarioOverlay" type="Node" parent="." unique_id=1813285559]
 script = ExtResource("15_selka")

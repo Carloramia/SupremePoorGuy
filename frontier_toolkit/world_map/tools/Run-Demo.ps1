@@ -14,3 +14,4 @@ try {
     if ($Editor) { & $GodotPath --editor --path $projectRoot }
     else { & $GodotPath --path $projectRoot }
 } finally { $env:APPDATA = $previousAppData }
+

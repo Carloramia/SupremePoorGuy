@@ -1,0 +1,108 @@
+{
+  "date": "2026-10-15",
+  "repository": "Carloramia/SupremePoorGuy",
+  "commit": "e97c6994152301127fd07b779e1dc32fc940b9c4",
+  "sourceFiles": 287,
+  "sourceChanges": [],
+  "engine": "4.7.2-stable (official)",
+  "renderer": "gl_compatibility",
+  "device": "Windows / OpenGL 3.3 / NVIDIA GeForce RTX 4070 SUPER",
+  "upstreamChecks": 1789,
+  "upstreamSuites": [
+    {
+      "suite": "SUMMON_V2_VALIDATION",
+      "checks": 697,
+      "failures": 0,
+      "renderer": "headless"
+    },
+    {
+      "suite": "RITUAL_PRESENTATION_VALIDATION",
+      "checks": 792,
+      "failures": 0,
+      "renderer": "headless"
+    },
+    {
+      "suite": "COMPONENT_CONTRACT_VALIDATION",
+      "checks": 29,
+      "failures": 0,
+      "renderer": "headless"
+    },
+    {
+      "suite": "EVENT_PANEL_VALIDATION",
+      "checks": 26,
+      "failures": 0,
+      "renderer": "headless"
+    },
+    {
+      "suite": "EVENT_LIFECYCLE_VALIDATION",
+      "checks": 15,
+      "failures": 0,
+      "renderer": "headless"
+    },
+    {
+      "suite": "TASKS_VALIDATION",
+      "checks": 31,
+      "failures": 0,
+      "renderer": "headless"
+    },
+    {
+      "suite": "FILTER_TABS_VALIDATION",
+      "checks": 40,
+      "failures": 0,
+      "renderer": "headless"
+    },
+    {
+      "suite": "SCROLL_PRESENTATION_VALIDATION",
+      "checks": 36,
+      "failures": 0,
+      "renderer": "headless"
+    },
+    {
+      "suite": "NESTED_MODAL_VALIDATION",
+      "checks": 22,
+      "failures": 0,
+      "renderer": "headless"
+    },
+    {
+      "suite": "LOCATION_HINT_VALIDATION",
+      "checks": 61,
+      "failures": 0,
+      "renderer": "headless"
+    },
+    {
+      "suite": "A2_MOTION_VALIDATION",
+      "checks": 40,
+      "failures": 0,
+      "renderer": "gl_compatibility"
+    }
+  ],
+  "shaderHeadlessChecks": 82,
+  "shaderGpuChecks": 118,
+  "shaderFailures": [],
+  "screenshots": [
+    "native_before_1120.png",
+    "native_combined_1120.png",
+    "native_before_1280.png",
+    "native_combined_1280.png",
+    "native_before_1920.png",
+    "native_combined_1920.png",
+    "comparison_medium_1280x720.png",
+    "comparison_dark.png",
+    "comparison_map.png",
+    "comparison_light.png",
+    "comparison_strong.png",
+    "comparison_medium_1920x1080.png",
+    "comparison_native_states.png",
+    "cutout_alpha_probe.png"
+  ],
+  "layoutResolutions": [
+    "1120x680",
+    "1280x720",
+    "1920x1080"
+  ],
+  "notes": [
+    "Shader checks overlap between headless and GPU runs; do not add them as unique cases.",
+    "All tracked upstream source bytes were preserved. TA/test/tool additions are separate.",
+    "No mobile-device performance claim."
+  ]
+}
