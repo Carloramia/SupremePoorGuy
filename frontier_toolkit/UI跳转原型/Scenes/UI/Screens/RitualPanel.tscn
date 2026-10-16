@@ -1,0 +1,112 @@
+[gd_scene load_steps=4 format=3]
+[ext_resource type="PackedScene" path="res://Scenes/UI/Components/RuneBoard.tscn" id="Board"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/Components/ActionButton.tscn" id="Button"]
+[ext_resource type="Theme" path="res://Assets/UI/PaperRelief/PaperReliefTheme.tres" id="Theme"]
+[node name="RitualPanel" type="VBoxContainer"]
+offset_right = 1196.0
+offset_bottom = 530.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = ExtResource("Theme")
+[node name="Columns" type="HBoxContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+[node name="LeftScroll" type="ScrollContainer" parent="Columns"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(210, 0)
+layout_mode = 2
+horizontal_scroll_mode = 0
+[node name="Left" type="VBoxContainer" parent="Columns/LeftScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+[node name="Title" type="Label" parent="Columns/LeftScroll/Left"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "奇物匣"
+[node name="Hint" type="Label" parent="Columns/LeftScroll/Left"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "拖入阵面，或点选后放置。\n同名奇物只能放一件。"
+autowrap_mode = 3
+[node name="Relics" type="VBoxContainer" parent="Columns/LeftScroll/Left"]
+unique_name_in_owner = true
+layout_mode = 2
+[node name="Separator" type="HSeparator" parent="Columns/LeftScroll/Left"]
+layout_mode = 2
+[node name="ActiveTitle" type="Label" parent="Columns/LeftScroll/Left"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "已刻入"
+[node name="ActiveList" type="VBoxContainer" parent="Columns/LeftScroll/Left"]
+unique_name_in_owner = true
+layout_mode = 2
+[node name="BoardFrame" type="AspectRatioContainer" parent="Columns"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+ratio = 1.0
+stretch_mode = 2
+[node name="Board" parent="Columns/BoardFrame" instance=ExtResource("Board")]
+unique_name_in_owner = true
+layout_mode = 2
+[node name="RightScroll" type="ScrollContainer" parent="Columns"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(260, 0)
+layout_mode = 2
+horizontal_scroll_mode = 0
+[node name="Right" type="VBoxContainer" parent="Columns/RightScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+[node name="Title" type="Label" parent="Columns/RightScroll/Right"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "符文书"
+[node name="Hint" type="Label" parent="Columns/RightScroll/Right"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "照形绘制，可旋转与镜像。"
+[node name="References" type="VBoxContainer" parent="Columns/RightScroll/Right"]
+unique_name_in_owner = true
+layout_mode = 2
+[node name="Summary" type="Label" parent="."]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+text = "魔力 300　/　本次消耗 0　/　启用 0 枚　/　草稿 0 格\n停用仍占格；奇物不消耗魔力。当前产出与数值为测试规则。"
+autowrap_mode = 3
+max_lines_visible = 2
+[node name="Controls" type="HFlowContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+[node name="Commit" parent="Controls" instance=ExtResource("Button")]
+unique_name_in_owner = true
+layout_mode = 2
+text = "刻入符文"
+[node name="Undo" parent="Controls" instance=ExtResource("Button")]
+unique_name_in_owner = true
+layout_mode = 2
+text = "撤回一格"
+[node name="Cancel" parent="Controls" instance=ExtResource("Button")]
+unique_name_in_owner = true
+layout_mode = 2
+text = "取消笔画"
+[node name="Freehand" type="CheckButton" parent="Controls"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "连续笔触吸附"
+[node name="Save" parent="Controls" instance=ExtResource("Button")]
+unique_name_in_owner = true
+layout_mode = 2
+text = "保存法阵"
+[node name="Clear" parent="Controls" instance=ExtResource("Button")]
+unique_name_in_owner = true
+layout_mode = 2
+text = "清空阵面"
+[node name="Summon" parent="Controls" instance=ExtResource("Button")]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"PrimaryButton"
+theme_type_variation = &"PrimaryButton"
+text = "确认召唤 · 3 只"

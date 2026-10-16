@@ -1,0 +1,79 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://ui_module/shader_lab/components/paper_button.gd" id="1"]
+[ext_resource type="Script" path="res://ui_module/shader_lab/components/paper_surface.gd" id="2"]
+[ext_resource type="Script" path="res://ui_module/shader_lab/components/ink_path.gd" id="3"]
+
+[sub_resource type="StyleBoxEmpty" id="Empty"]
+[sub_resource type="StyleBoxFlat" id="Focus"]
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.28, 0.38, 0.28, 1)
+corner_radius_top_left = 9
+corner_radius_top_right = 9
+corner_radius_bottom_left = 9
+corner_radius_bottom_right = 9
+
+[node name="PaperButton" type="Button"]
+custom_minimum_size = Vector2(180, 42)
+offset_right = 210.0
+offset_bottom = 44.0
+theme_override_colors/font_color = Color(0.18, 0.18, 0.16, 1)
+theme_override_colors/font_hover_color = Color(0.18, 0.18, 0.16, 1)
+theme_override_colors/font_pressed_color = Color(0.18, 0.18, 0.16, 1)
+theme_override_colors/font_focus_color = Color(0.18, 0.18, 0.16, 1)
+theme_override_colors/font_disabled_color = Color(0.40, 0.40, 0.36, 1)
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("Empty")
+theme_override_styles/hover = SubResource("Empty")
+theme_override_styles/pressed = SubResource("Empty")
+theme_override_styles/disabled = SubResource("Empty")
+theme_override_styles/focus = SubResource("Empty")
+text = "召唤 · 120"
+script = ExtResource("1")
+
+[node name="Paper" type="Control" parent="."]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("2")
+corner_radius = 9.0
+
+[node name="Ink" type="Control" parent="."]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("3")
+corner_radius = 9.0
+inset = 2.5
+
+[node name="Focus" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -3.0
+offset_top = -3.0
+offset_right = 3.0
+offset_bottom = 3.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("3")
+corner_radius = 12.0
+inset = 1.0
+allow_repeat = false

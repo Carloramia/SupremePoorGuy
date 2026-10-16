@@ -19,7 +19,7 @@ $env:GODOT_BIN = 'C:\Apps\Godot\Godot_v4.7.2-stable_win64_console.exe'
 ./scenario_2_5d/tools/Run-Demo.ps1 -GodotPath 'D:\Apps\Godot.exe'
 ```
 
-Godot 项目管理器选择“导入”，定位仓库根目录 `project.godot`。首次导入会重建缓存和素材导入记录。F5 默认大地图；打开各模块 Demo 后 F6 运行该场景。
+Godot 项目管理器选择“导入”，定位仓库根目录 `project.godot`。首次导入会重建缓存和素材导入记录。F5 默认带 UI 的大地图；顶部进入仓库／出战队列，右下角书本打开召唤。UI接入与边界见 [UI模块说明](../ui_module/README.md)；打开各模块 Demo 后 F6 运行该场景。
 
 ## 跨平台命令行
 
@@ -27,6 +27,7 @@ Godot 项目管理器选择“导入”，定位仓库根目录 `project.godot`�
 
 ```sh
 godot --headless --editor --path . --import --quit
+godot --path . res://ui_module/demo/UIWorldMapDemo.tscn
 godot --path . res://world_map/demo/WorldMapDemo.tscn
 godot --path . res://scenario_2_5d/demo/Scenario25DDemo.tscn
 node editor/tools/serve.cjs 8765
@@ -56,6 +57,7 @@ godot --headless --path . --script res://editor/godot/import_level.gd -- --sourc
 
 ```powershell
 node tools/Verify-Package.cjs
+./ui_module/tools/Run-Tests.ps1 -Render
 node editor/tests/model.test.cjs
 ./world_map/tools/Run-Tests.ps1
 ./scenario_2_5d/tools/Run-Tests.ps1

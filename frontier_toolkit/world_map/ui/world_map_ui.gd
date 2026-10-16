@@ -26,11 +26,13 @@ func _ready() -> void:
 	panel_style.set_corner_radius_all(8)
 	theme.set_stylebox("panel", "PanelContainer", panel_style)
 	var root := Control.new()
+	root.name = "Root"
 	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.theme = theme
 	add_child(root)
 	var header := PanelContainer.new()
+	header.name = "MapHeader"
 	header.position = Vector2(22, 20)
 	header.custom_minimum_size = Vector2(350, 112)
 	root.add_child(header)
@@ -51,6 +53,7 @@ func _ready() -> void:
 	help.add_theme_color_override("font_color", Color("9db8b8"))
 	header_box.add_child(help)
 	var toolbar := PanelContainer.new()
+	toolbar.name = "MapToolbar"
 	toolbar.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
 	toolbar.position = Vector2(-250, 20)
 	toolbar.custom_minimum_size = Vector2(228, 170)
@@ -71,6 +74,7 @@ func _ready() -> void:
 	nav_toggle.toggled.connect(func(value: bool) -> void: nav_debug_changed.emit(value))
 	tools.add_child(nav_toggle)
 	feedback = Label.new()
+	feedback.name = "MapFeedback"
 	feedback.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT)
 	feedback.position = Vector2(24, -54)
 	feedback.add_theme_color_override("font_color", Color("edca81"))

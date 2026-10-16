@@ -50,3 +50,5 @@ func _process(delta: float) -> void:
 			material.albedo_color = color
 		else:
 			material.set_shader_parameter("fade", fade_amount)
+
+

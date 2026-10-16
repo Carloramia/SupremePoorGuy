@@ -189,3 +189,4 @@ func run() -> void:
 	scene.queue_free()
 	await process_frame
 	quit(0 if failed == 0 else 1)
+

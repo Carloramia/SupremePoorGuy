@@ -2,7 +2,7 @@
 
 ## 上传内容
 
-解压 `frontier-toolkit-*.zip` 后，进入其中含 `project.godot` 的目录。**这个目录就是仓库根目录**。不要再把整个目录嵌套上传为 GitHub 仓库内的一层，否则根目录操作会多一层。
+解压 `supremepoor-toolkit-*.zip` 后，外层含 README、BUILD、.github 和 `frontier_toolkit/` 的目录是仓库根。Godot 宿主入口为 `frontier_toolkit/project.godot`。上传这一层文件树，不要再嵌套成 frontier_toolkit/frontier_toolkit。
 
 保留隐藏文件 `.gitignore`、`.gitattributes` 和 `.github/`。上传文件树中的源码、素材、示例与文档；不要上传整个 ZIP 来替代源码文件树。
 
@@ -20,9 +20,9 @@ git remote add origin https://github.com/YOUR_ACCOUNT/YOUR_REPOSITORY.git
 git push -u origin main
 ```
 
-已有仓库应按现有分支策略合入，不要重复 git init 或改写历史。GitHub 网页也可上传文件，但 Git 推送更容易完整保留隐藏文件和目录层级。打包本身不会创建远程仓库或自动推送。
+合回 SupremePoorGuy 时，包内 frontier_toolkit 对应仓库同名目录；保留现有 it-is-time。根 README、BUILD、CI、忽略和换行规则需要与已有内容合并。外层 docs/INTEGRATING_IN_SUPREMEPOORGUY.md 给出逐项映射。已有仓库不要重复 git init 或改写历史；打包不自动推送。
 
-仓库 Actions 包含纯 Node 编辑器检查。完整 Godot 和图形测试按 [首次运行](GETTING_STARTED.md) 本地执行。
+根 Actions 检查交付结构、三个工程的静态引用、协议和编辑器模型；工作目录设置为 frontier_toolkit。Godot 和图形测试按 [BUILD](../BUILD.md) 本地执行。
 
 ## 再次生成发布包
 
@@ -32,18 +32,21 @@ git push -u origin main
 ./tools/Build-GitHub-Package.ps1
 ```
 
-需要 Node.js 用于引用检查。脚本按白名单复制模块和必要文档到 `dist/frontier-toolkit-时间戳/`，生成同名 ZIP 和 `.zip.sha256`。可以传 `-Name frontier-toolkit-v1`，目标存在时会停止，不覆盖旧包。
+需要 Node.js。脚本读取 tools/github-package.config.json，将工具集、两版独立 UI、TA、来源/需求/文档复制到 `dist/<Name>/frontier_toolkit/`，再由 tools/github_repository 模板生成仓库外层，输出同名 ZIP 和 `.zip.sha256`。可以传 `-Name supremepoor-toolkit-v2`；目标存在时停止，不覆盖旧包。
 
-白名单包含三个模块、integration、docs、tools、根配置与 .github；排除 `.godot`、`.tools`、`.git`、Node 依赖、临时文件、日志、Godot 生成的 `.import` 和测试运行 JSON。保留脚本 `.uid`、必要资源、地编工作集、转换示例以及已有渲染截图。测试结果 JSON 可执行测试重新生成。
+排除 `.godot/.tools/.git/.runtime`、Node 依赖、引擎、历史压缩包、本机录屏、临时文件、日志、测试存档及备份。两个上游来源清单跟踪的 `.import` 元信息与原有小型 MP4 预览保留并校验，其他本机生成 .import 排除。保留 UID、必要素材、字体授权、关卡源文件、转换示例、截图和 docs 中的历史验证快照。
 
-`PACKAGE_MANIFEST.json` 列出包内每个文件的相对路径、字节数和 SHA-256（不包含清单自身），用于交接核对。包外 `.sha256` 用于检查整个 ZIP。
+仓库根 PACKAGE_MANIFEST.json 列出交付文件路径、字节数和 SHA-256（不含清单自身），RELEASE_CONTENTS.json 记录来源和布局。包外 .sha256 检查 ZIP；首次解压加 --manifest 校验原始字节。Git 换行或 Godot 导入后使用普通源码检查，清单保留为原始交付记录。
 
 ## 新克隆验收
 
 ```sh
+node frontier_toolkit/tools/Verify-GitHub-Repository.cjs .
+cd frontier_toolkit
 node tools/Verify-Package.cjs
+node tools/Verify-Battle-Integration-Docs.cjs --contracts-only
 node editor/tests/model.test.cjs
 node editor/tools/Validate-Level.cjs editor/examples/Frontier.mapproject.json
 ```
 
-安装 Godot，执行资源导入和三个模块测试。确认 F5 大地图、F6 2.5D、城镇悬浮进入/返回、编辑器保存重开和转换输出均可使用。原生图形测试需要图形环境。
+安装 Godot，导入工具集宿主与新版 UI 两个开发工程并执行对应测试。确认 F5 带 UI 地图、F6 2.5D、城镇返回、两套 Shader 独立场景和地编转换可用。图形测试需要 GPU。边界与扩展步骤见 [整合指南](INTEGRATION_AND_EXTENSION.md) 和 [交付范围](RELEASE_CONTENTS.md)。

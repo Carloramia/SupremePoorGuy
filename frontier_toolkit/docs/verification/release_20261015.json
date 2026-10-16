@@ -1,0 +1,536 @@
+{
+  "date": "2026-10-15",
+  "environment": {
+    "os": "Windows",
+    "engine": "Godot 4.7.2-stable official standard",
+    "node": "v24.19.0",
+    "mode": "headless"
+  },
+  "method": "Extracted staged ZIP into a fresh directory; verified original manifest; ran Node and Godot tests. TA runner order was then corrected in that isolated tree and retested with no pre-existing TA result output.",
+  "candidate_archive": "supremepoor-toolkit-20261015.zip",
+  "candidate_archive_sha256": "c6a5f612d75d5ded11ee8bede15cb8afabd2f69981dfed4c1ac6433e3a74bea5",
+  "static_checks": {
+    "projects": 3,
+    "pinned_source_files": 458,
+    "recognized_source_adaptations": 1,
+    "resource_references": 658,
+    "documentation_links": 98,
+    "manifest_files_checked": 1001,
+    "git_dry_run_files": 1002,
+    "editor_model_checks": 33,
+    "level_maps": 2,
+    "level_objects": 18,
+    "level_errors": 0,
+    "contract_checks": 25
+  },
+  "runtime_fingerprint": {
+    "files": 796,
+    "sha256": "90477da160ed85326ac7d73e060afe6db5e831c3fb0f4f19bb5ca6466f83b5dc",
+    "definition": "Godot scripts/shaders/scenes/resources/UID/config and PNG/SVG/JPG/font/import assets, excluding docs and tooling; compare final manifest to establish unchanged runtime payload."
+  },
+  "results": {
+    "scenario": {
+      "failed": 0,
+      "passed": 42,
+      "tests": [
+        {
+          "name": "lifecycle_initialized",
+          "pass": true
+        },
+        {
+          "name": "orthographic",
+          "pass": true
+        },
+        {
+          "name": "zoom_target_changes_before_actual",
+          "pass": true
+        },
+        {
+          "name": "zoom_smoothly_converges",
+          "pass": true
+        },
+        {
+          "name": "zoom_min",
+          "pass": true
+        },
+        {
+          "name": "zoom_max",
+          "pass": true
+        },
+        {
+          "name": "drag_changes_target_xz",
+          "pass": true
+        },
+        {
+          "name": "drag_moves_rig",
+          "pass": true
+        },
+        {
+          "name": "release_over_ui_stops_no_inertia",
+          "pass": true
+        },
+        {
+          "name": "fixed_rotation_height_structure",
+          "pass": true
+        },
+        {
+          "name": "right_mouse_cannot_rotate",
+          "pass": true
+        },
+        {
+          "name": "camera_input_lock",
+          "pass": true
+        },
+        {
+          "name": "pause_independent_camera_input",
+          "pass": true
+        },
+        {
+          "name": "bounds_extreme_clamped",
+          "pass": true
+        },
+        {
+          "name": "quadmesh_upright",
+          "pass": true
+        },
+        {
+          "name": "bottom_anchor",
+          "pass": true
+        },
+        {
+          "name": "quad_casts_no_shadow",
+          "pass": true
+        },
+        {
+          "name": "blob_present",
+          "pass": true
+        },
+        {
+          "name": "player_occluder_detection",
+          "pass": true
+        },
+        {
+          "name": "fade_material_instance_alpha",
+          "pass": true
+        },
+        {
+          "name": "fade_restores_original",
+          "pass": true
+        },
+        {
+          "name": "nearest_interactable_selected",
+          "pass": true
+        },
+        {
+          "name": "object_click_no_ground_event",
+          "pass": true
+        },
+        {
+          "name": "info_panel_visible",
+          "pass": true
+        },
+        {
+          "name": "request_signal",
+          "pass": true
+        },
+        {
+          "name": "selection_replaces_previous",
+          "pass": true
+        },
+        {
+          "name": "hover_feedback",
+          "pass": true
+        },
+        {
+          "name": "hover_restores",
+          "pass": true
+        },
+        {
+          "name": "explore_ground_dispatch",
+          "pass": true
+        },
+        {
+          "name": "combat_ground_dispatch",
+          "pass": true
+        },
+        {
+          "name": "solid_obstacle_blocks_ground",
+          "pass": true
+        },
+        {
+          "name": "building_blocks_hidden_object_pick",
+          "pass": true
+        },
+        {
+          "name": "selected_occlusion_target_fades",
+          "pass": true
+        },
+        {
+          "name": "multiple_targets_and_occluders",
+          "pass": true
+        },
+        {
+          "name": "unregister_restores_tree",
+          "pass": true
+        },
+        {
+          "name": "multiple_blockers_same_ray",
+          "pass": true
+        },
+        {
+          "name": "deselect_restores_building",
+          "pass": true
+        },
+        {
+          "name": "focus_api",
+          "pass": true
+        },
+        {
+          "name": "freed_focus_target_safe",
+          "pass": true
+        },
+        {
+          "name": "navigation_spawn_slots",
+          "pass": true
+        },
+        {
+          "name": "resize_pick_valid",
+          "pass": true
+        },
+        {
+          "name": "ui_button_request_and_no_clickthrough",
+          "pass": true
+        }
+      ]
+    },
+    "world_map": {
+      "checks": {
+        "1": "PASS",
+        "2": "PASS",
+        "3": "PASS",
+        "4": "PASS",
+        "5": "PASS",
+        "6": "PASS",
+        "7": "PASS",
+        "8": "PASS",
+        "9": "PASS",
+        "10": "PASS",
+        "11": "PASS",
+        "12": "PASS",
+        "13": "PASS",
+        "14": "PASS",
+        "15": "PASS",
+        "16": "PASS",
+        "17": "PASS",
+        "18": "PASS",
+        "19": "PASS",
+        "20": "PASS",
+        "21": "PASS",
+        "22": "PASS",
+        "23": "PASS",
+        "24": "PASS",
+        "25": "PASS",
+        "26": "PASS",
+        "27": "PASS",
+        "28": "PASS"
+      },
+      "details": {
+        "1": "Real Navigation2D detour and arrival; path points=5, final=(689.9976, 220.0007)",
+        "2": "Mid-route destination replaced immediately",
+        "3": "Obstacle, exterior and disabled Hex rejected without snapping",
+        "4": "Continuous capsule exploration, EXPLORED and VISIBLE transitions; shader falloff present",
+        "5": "Distance-based discovery makes hidden marker persistent",
+        "6": "Distant discovered marker stays hit-testable, dim and hoverable",
+        "7": "Selected location navigates to separate interaction point and automatically opens UI",
+        "8": "Passing an unselected location never opens formal UI",
+        "9": "Ground click retains A; entering A radius later triggers it",
+        "10": "New location replaces previous interaction intent",
+        "11": "Unreachable interaction point clears selected location",
+        "12": "Settlement action completes visit, stays repeatable and clears movement",
+        "13": "Collect action removes resource and autosaves",
+        "14": "Both event choices produce distinct runtime data; session lifecycle respected",
+        "15": "External request and FakeBattle victory / defeat / error roundtrips",
+        "16": "JSON restores player, byte-identical fog mask, discovered/removed/session states and clears transient path",
+        "17": "Physical Road/Mud Area2D overlap uses priority, not multiplication",
+        "18": "Camera follow, RMB pan, wheel zoom and focus API",
+        "19": "Modal freezes module input/movement/camera/fog while SceneTree and UI keep running; completion resumes",
+        "20": "Missing and corrupt save fail gracefully",
+        "21": "RESPAWNABLE policy and public respawn API",
+        "22": "PAUSE retains intent; resume moves; CANCEL clears path",
+        "23": "Two independent map subtrees, translated positions and private Navigation maps",
+        "24": "Battle scene reconstruction restores pending request, player, seed and removes monster on victory",
+        "25": "Runtime registry add/replace/remove and session reconstruction preserve descriptors and tombstones",
+        "26": "Invalid field types and unknown save versions rejected before runtime parsing",
+        "27": "Viewport GUI consumes Save clicks (true); location marker click selects interaction through real input routing (true)",
+        "28": "Every TileMap center matches axial geometry; actual movement detours around second irregular obstacle"
+      },
+      "engine": "4.7.2-stable (official)",
+      "failures": 0
+    },
+    "roads": {
+      "engine": "4.7.2-stable (official)",
+      "failures": 0,
+      "results": {
+        "api_exact": {
+          "description": "Programmatic API preserves exact destination unless snapping explicitly enabled",
+          "status": "PASS"
+        },
+        "arrival": {
+          "description": "Player actually arrives at snapped center line",
+          "status": "PASS"
+        },
+        "bend_path": {
+          "description": "Planned path includes road bends rather than an off-road diagonal",
+          "status": "PASS"
+        },
+        "bend_trajectory": {
+          "description": "Actual physics trajectory stays on centerline and reaches the corner before turning; deviation=0.0000",
+          "status": "PASS"
+        },
+        "blocked_centerline": {
+          "description": "A road through a mountain is rejected even when ordinary Navigation can detour to its end",
+          "status": "PASS"
+        },
+        "branch_route": {
+          "description": "Changing roads follows the main/south junction and all branch bends",
+          "status": "PASS"
+        },
+        "branch_trajectory": {
+          "description": "Actual movement across the shared junction stays on road centers",
+          "status": "PASS"
+        },
+        "closest_road": {
+          "description": "Nearest south-road segment selected across road registry",
+          "status": "PASS"
+        },
+        "degenerate": {
+          "description": "Zero-length segments safely ignored",
+          "status": "PASS"
+        },
+        "endpoint": {
+          "description": "Projection clamps beyond the last endpoint",
+          "status": "PASS"
+        },
+        "entry_arrival": {
+          "description": "Off-road connector joins road and arrives on exact center",
+          "status": "PASS"
+        },
+        "entry_connector": {
+          "description": "Off-road approach uses Navigation to enter nearest center without teleporting",
+          "status": "PASS"
+        },
+        "far_ground": {
+          "description": "Distant ground remains exact",
+          "status": "PASS"
+        },
+        "intent": {
+          "description": "Road ground command retains selected location intent",
+          "status": "PASS"
+        },
+        "interior_junction": {
+          "description": "Crossings split segment interiors into proper road junctions",
+          "status": "PASS"
+        },
+        "invalid_raw": {
+          "description": "Road snapping rejects obstacle and exterior raw clicks",
+          "status": "PASS"
+        },
+        "invalid_snapped": {
+          "description": "Unreachable snapped center line is rejected instead of falling back or bypassing obstacles",
+          "status": "PASS"
+        },
+        "location_exact": {
+          "description": "Location commands preserve exact interaction points without road snapping",
+          "status": "PASS"
+        },
+        "mouse_snap": {
+          "description": "Real viewport ground click snaps target, marker and actual navigation path",
+          "status": "PASS"
+        },
+        "near_road": {
+          "description": "Ground near the road snaps within configurable margin",
+          "status": "PASS"
+        },
+        "pause": {
+          "description": "Road commands respect subsystem pause",
+          "status": "PASS"
+        },
+        "projection": {
+          "description": "Click within road width projects to nearest segment center",
+          "status": "PASS"
+        },
+        "registry": {
+          "description": "Demo registers main and south center lines",
+          "status": "PASS"
+        },
+        "route_cancel": {
+          "description": "Cancel clears centerline waypoints and path display",
+          "status": "PASS"
+        },
+        "route_pause": {
+          "description": "Pause/resume retains centerline route and progresses after resume",
+          "status": "PASS"
+        },
+        "route_retarget": {
+          "description": "New road command replaces old route, including reverse travel",
+          "status": "PASS"
+        },
+        "speed_areas": {
+          "description": "Real Area2D contacts accelerate road movement, Mud overrides and exit restores base speed",
+          "status": "PASS"
+        },
+        "translated_map": {
+          "description": "Road projection remains correct in translated independent map instances",
+          "status": "PASS"
+        }
+      }
+    },
+    "overlay": {
+      "failed": 0,
+      "passed": 14,
+      "tests": [
+        {
+          "name": "configured_town_entry",
+          "pass": true
+        },
+        {
+          "name": "entry_button_opens_embedded_scene",
+          "pass": true
+        },
+        {
+          "name": "map_stays_frozen",
+          "pass": true
+        },
+        {
+          "name": "isolated_viewport_and_window_size",
+          "pass": true
+        },
+        {
+          "name": "duplicate_open_rejected",
+          "pass": true
+        },
+        {
+          "name": "embedded_mouse_picking",
+          "pass": true
+        },
+        {
+          "name": "embedded_mouse_zoom",
+          "pass": true
+        },
+        {
+          "name": "background_input_and_motion_blocked",
+          "pass": true
+        },
+        {
+          "name": "responsive_floating_frame",
+          "pass": true
+        },
+        {
+          "name": "return_ends_visit_once",
+          "pass": true
+        },
+        {
+          "name": "map_resumes_and_town_remains_available",
+          "pass": true
+        },
+        {
+          "name": "original_map_preserved",
+          "pass": true
+        },
+        {
+          "name": "scenario_end_signal_returns",
+          "pass": true
+        },
+        {
+          "name": "invalid_scene_keeps_original_interaction",
+          "pass": true
+        }
+      ]
+    },
+    "host_ui": [
+      {
+        "suite": "NATIVE_UI_VALIDATION",
+        "checks": 257,
+        "failures": 0
+      },
+      {
+        "suite": "UI_LAYOUT_VALIDATION",
+        "checks": 436,
+        "failures": 0
+      },
+      {
+        "suite": "ART_UI_VALIDATION",
+        "checks": 43,
+        "failures": 0
+      },
+      {
+        "suite": "UI_MODULE_INTEGRATION",
+        "checks": 50,
+        "failures": 0
+      }
+    ],
+    "new_ui_and_ta": [
+      {
+        "suite": "TA_SHADER_VALIDATION",
+        "checks": 82,
+        "failures": 0
+      },
+      {
+        "suite": "SUMMON_V2_VALIDATION",
+        "checks": 697,
+        "failures": 0
+      },
+      {
+        "suite": "RITUAL_PRESENTATION_VALIDATION",
+        "checks": 792,
+        "failures": 0
+      },
+      {
+        "suite": "COMPONENT_CONTRACT_VALIDATION",
+        "checks": 29,
+        "failures": 0
+      },
+      {
+        "suite": "EVENT_PANEL_VALIDATION",
+        "checks": 26,
+        "failures": 0
+      },
+      {
+        "suite": "EVENT_LIFECYCLE_VALIDATION",
+        "checks": 15,
+        "failures": 0
+      },
+      {
+        "suite": "TASKS_VALIDATION",
+        "checks": 31,
+        "failures": 0
+      },
+      {
+        "suite": "FILTER_TABS_VALIDATION",
+        "checks": 40,
+        "failures": 0
+      },
+      {
+        "suite": "SCROLL_PRESENTATION_VALIDATION",
+        "checks": 36,
+        "failures": 0
+      },
+      {
+        "suite": "NESTED_MODAL_VALIDATION",
+        "checks": 22,
+        "failures": 0
+      },
+      {
+        "suite": "LOCATION_HINT_VALIDATION",
+        "checks": 61,
+        "failures": 0
+      }
+    ]
+  },
+  "not_performed": [
+    "GPU rerender",
+    "Actual it-is-time combat integration",
+    "Hosted Linux GitHub Actions run",
+    ".NET or Android export"
+  ]
+}

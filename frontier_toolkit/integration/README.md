@@ -1,5 +1,7 @@
 # 大地图与 2.5D 悬浮场景
 
+真实战斗的入口、物理角色、跨 World3D 隔离和可靠结算设计见 [it-is-time 对接技术文档](../docs/BATTLE_INTEGRATION_GUIDE.md)。以下实现仍为城镇访问窗口，战斗接入尚未实施。
+
 城镇弹窗的“进入场景 / Enter town”在原有大地图上打开应用内窗口。大地图节点、玩家位置、相机、迷雾和地点状态保留，移动与输入继续保持弹窗期间的冻结状态。2.5D 使用独立 SubViewport 和 World3D，窗口内可选择物件、拖动和缩放镜头。
 
 点击窗口右上角“返回大地图 / Return”，或场景发出 `scenario_exit_requested(reason)`，关闭悬浮窗口、结束原城镇交互、恢复大地图并保存。记录一次 visit 和退出原因，`complete_location=false`；重复城镇保持可访问。每次进入重新实例化 2.5D 场景，当前不保存其内部状态。

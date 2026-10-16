@@ -1,0 +1,53 @@
+[gd_scene load_steps=5 format=3]
+[ext_resource type="Theme" path="res://Assets/UI/PaperRelief/PaperReliefTheme.tres" id="Theme"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/Components/MonsterPortrait.tscn" id="Portrait"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/Components/ActionButton.tscn" id="Button"]
+[ext_resource type="StyleBox" path="res://Assets/UI/PaperRelief/Styles/PaperCard.tres" id="PaperCard"]
+[node name="MonsterCard" type="PanelContainer"]
+size_flags_horizontal = 3
+theme = ExtResource("Theme")
+theme_override_styles/panel = ExtResource("PaperCard")
+[node name="Row" type="BoxContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+[node name="Portrait" parent="Row" instance=ExtResource("Portrait")]
+unique_name_in_owner = true
+layout_mode = 2
+[node name="Summary" type="VBoxContainer" parent="Row"]
+layout_mode = 2
+size_flags_horizontal = 3
+[node name="Name" type="Label" parent="Row/Summary"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "妖兽名称"
+clip_text = true
+text_overrun_behavior = 3
+[node name="State" type="Label" parent="Row/Summary"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "兽形　·　仓库"
+[node name="Stats" type="HFlowContainer" parent="Row/Summary"]
+unique_name_in_owner = true
+layout_mode = 2
+[node name="Traits" type="HFlowContainer" parent="Row/Summary"]
+unique_name_in_owner = true
+layout_mode = 2
+[node name="Commands" type="BoxContainer" parent="Row"]
+unique_name_in_owner = true
+layout_mode = 2
+vertical = true
+[node name="Detail" parent="Row/Commands" instance=ExtResource("Button")]
+unique_name_in_owner = true
+layout_mode = 2
+text = "查看详情"
+[node name="Move" parent="Row/Commands" instance=ExtResource("Button")]
+unique_name_in_owner = true
+layout_mode = 2
+text = "加入出战"
+[node name="Store" parent="Row/Commands" instance=ExtResource("Button")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+text = "存入仓库"

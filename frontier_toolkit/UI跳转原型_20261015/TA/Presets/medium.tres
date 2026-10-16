@@ -1,0 +1,45 @@
+[gd_resource type="Resource" load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://Scripts/UI/UISkinPreset.gd" id="Preset"]
+[ext_resource type="Texture2D" path="res://TA/Assets/paper.svg" id="Paper"]
+[ext_resource type="Texture2D" path="res://TA/Assets/outline.svg" id="Outline"]
+[ext_resource type="Shader" path="res://TA/Shaders/paper.gdshader" id="S3"]
+[ext_resource type="Shader" path="res://TA/Shaders/ink.gdshader" id="S1"]
+[ext_resource type="Shader" path="res://TA/Shaders/cutout.gdshader" id="S2"]
+
+[sub_resource type="ShaderMaterial" id="PaperMaterial"]
+resource_local_to_scene = true
+shader = ExtResource("S3")
+shader_parameter/paper_grain = 0.065
+shader_parameter/pigment_grain = 0.045
+shader_parameter/edge_coverage = 0.34
+shader_parameter/edge_size = 1.2
+shader_parameter/ink_loss = 0.1
+
+[sub_resource type="ShaderMaterial" id="InkMaterial"]
+resource_local_to_scene = true
+shader = ExtResource("S1")
+shader_parameter/line_width = 2.8
+shader_parameter/width_variation = 0.25
+shader_parameter/irregularity = 0.32
+shader_parameter/ink_loss = 0.1
+shader_parameter/edge_coverage = 0.34
+shader_parameter/repeat_strength = 0.7
+
+[sub_resource type="ShaderMaterial" id="CutoutMaterial"]
+resource_local_to_scene = true
+shader = ExtResource("S2")
+shader_parameter/backing_width = 6
+
+[resource]
+script = ExtResource("Preset")
+resource_name = "TA medium"
+surface_texture = ExtResource("Paper")
+surface_material = SubResource("PaperMaterial")
+outline_texture = ExtResource("Outline")
+outline_material = SubResource("InkMaterial")
+cutout_material = SubResource("CutoutMaterial")
+patch_margin = 24
+stable_seed = 42
+remove_legacy_shadows = true
+

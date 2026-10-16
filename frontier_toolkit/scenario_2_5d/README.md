@@ -86,3 +86,4 @@ NavigationRoot 为未来 NavigationRegion3D 的接入位置，本版没有烘焙
 替换 demo/assets/Hero/NPC/Tree/Crate.png 为带透明边缘的正式 PNG，保留导入设置的 mipmaps/generate=true 与 fix_alpha_border=true。`debug/generate_placeholders.gd` 用程序绘制并保存 PNG，无需任何正式美术资源。
 
 [架构](docs/SCENARIO_25D_ARCHITECTURE.md)、[测试清单](docs/SCENARIO_25D_TEST_CHECKLIST.md)、[实施报告](docs/SCENARIO_25D_IMPLEMENTATION_REPORT.md)。结果保存于 debug/test_results.json 和 debug/render_test_results.json；截图为 debug/preview_*.png。
+

@@ -1,0 +1,42 @@
+{
+  "audit_date": "2026-10-15",
+  "upstream_commit": "e97c6994152301127fd07b779e1dc32fc940b9c4",
+  "scope": "Existing host infrastructure regression and proposed integration documentation; actual combat integration not implemented or executed.",
+  "environment": {
+    "os": "Windows",
+    "engine": "Godot 4.7.2-stable official standard build",
+    "project": "workspace root project.godot",
+    "renderer": "GL Compatibility",
+    "mode": "headless"
+  },
+  "checks": {
+    "scenario_acceptance": {"passed": 42, "failed": 0, "result_file": "scenario_2_5d/debug/test_results.json"},
+    "world_map_data_validation": {"passed": true, "coordinate_roundtrips": 400},
+    "world_map_acceptance": {"passed": 28, "failed": 0, "result_file": "world_map/debug/test_results.json"},
+    "roads": {"passed": 28, "failed": 0, "result_file": "world_map/debug/road_test_results.json"},
+    "scenario_overlay": {"passed": 14, "failed": 0, "result_file": "integration/scenario_overlay_test_results.json"},
+    "package": {"passed": true, "required_entries": 18, "resolved_resource_references": 277},
+    "documentation": {"passed": true, "contract_checks": 25, "local_links": 64, "source_hashes_checked": 51, "source_unavailable": 0}
+  },
+  "source_audit": {
+    "indexed_files": 51,
+    "upstream_tracked_combat_cs_files": 0,
+    "upstream_tracked_combat_test_gd_files": 261,
+    "resource_literal_counts": {"available": 497, "tracked_not_checked_out": 893, "not_in_git_tree": 27},
+    "resource_literal_caveat": "Sparse checkout and literal scan only. Unmatched entries include directories, templates and generated test files; not a full missing-resource count."
+  },
+  "not_executed": [
+    "Actual physics combat embedded in BattleScenario",
+    "Full it-is-time resource import and its 261 test scripts",
+    "Forward Plus/Jolt integration validation",
+    "GPU visual verification",
+    "C# or Android export",
+    "New UI 0.7.12 integration with host",
+    "Persistence fault injection and crash recovery"
+  ],
+  "warnings": [
+    "Nested reference project ignored by host import",
+    "Freed camera focus warning in negative test",
+    "Corrupt save JSON warning in negative test"
+  ]
+}

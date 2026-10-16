@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "battle_id": "battle-demo-20261015-001",
+  "map_id": "frontier",
+  "location_id": "encounter-demo-01",
+  "encounter_id": "encounter.duel.v1",
+  "scene_id": "arena.frontier.v1",
+  "seed": 2048,
+  "party_revision": 7,
+  "ruleset_id": "rules.mvp.session_only",
+  "balance_version": "balance.demo.1",
+  "party_slots_limit": 6,
+  "health_policy": "session_only",
+  "party": [
+    {
+      "monster_id": "summon_1_0",
+      "actor_id": "ally-001",
+      "archetype_id": "human.spear.v1",
+      "blueprint_id": "blueprint.human.default",
+      "blueprint_revision": 1,
+      "faction_id": 1,
+      "spawn_id": "ally-slot-01",
+      "mode": "normal",
+      "slot_group": "unit-summon_1_0",
+      "slot_cost": 1,
+      "batch_id": "batch_1",
+      "recoverable": true,
+      "stat_profile": {
+        "hp": 100, "attack": 20, "armor": 10, "speed": 1,
+        "interval": 1.2, "visual_scale": 1,
+        "part_hp": {"head": 75, "core": 100, "limb": 30}
+      }
+    }
+  ],
+  "waves": [
+    {"wave_id": "wave-01", "trigger": "on_start", "enemies": [
+      {"actor_id": "enemy-001", "archetype_id": "wolf.melee.v1", "faction_id": 2, "spawn_id": "enemy-slot-01"}
+    ]}
+  ],
+  "return_context": {"route": "world", "location_id": "encounter-demo-01"}
+}

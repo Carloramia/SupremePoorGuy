@@ -1,0 +1,177 @@
+{
+  "version": "0.5",
+  "date": "2026-10-11",
+  "style": "layered cut-paper relief",
+  "status": "prototype visual examples, not production approval",
+  "scope": "UI跳转原型 only; no formal game or web integration",
+  "generation": "built-in image_gen; three separate blank PNG components",
+  "assets": [
+    {
+      "id": "ui_common_paper_v1",
+      "file": "Textures/paper_v1.png",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "size_limit": 256,
+      "sha256": "94A899AD371D2473B1A44D6A29777EEA876256208F929926D2BB4C3F6D0697F4",
+      "region_panel": [
+        40,
+        40,
+        176,
+        176
+      ],
+      "patch_panel": [
+        16,
+        16,
+        16,
+        16
+      ],
+      "region_card": [
+        16,
+        16,
+        224,
+        224
+      ],
+      "patch_card": [
+        40,
+        40,
+        40,
+        40
+      ],
+      "region_board": [
+        48,
+        48,
+        160,
+        160
+      ],
+      "patch_board": [
+        16,
+        16,
+        16,
+        16
+      ],
+      "source": "generated exec-1bf1028e-7518-4b9f-803b-89fe24077445.png"
+    },
+    {
+      "id": "ui_common_frame_v1",
+      "file": "Textures/layered_frame_v1.png",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "size_limit": 256,
+      "patch": [
+        32,
+        32,
+        32,
+        32
+      ],
+      "draw_center": false,
+      "sha256": "297F62D749CD10689D2BD3DDC90747AAAD29BC81A499EE8C4B889FD9E76C62D1",
+      "center_alpha": 0,
+      "slot": "Scenes/UI/Components/BoardSurface.tscn:WoodFrame",
+      "source": "generated exec-1da9a29d-c11f-45c6-ad97-c324c1bff96f.png"
+    },
+    {
+      "id": "ui_common_button_v1",
+      "file": "Textures/button_paper_v1.png",
+      "source_size": [
+        2172,
+        724
+      ],
+      "size_limit": 512,
+      "region": [
+        48,
+        32,
+        416,
+        96
+      ],
+      "patch": [
+        16,
+        8,
+        16,
+        8
+      ],
+      "content_margin": [
+        16,
+        8,
+        16,
+        8
+      ],
+      "states": "normal/hover/pressed/disabled share one texture with modulation",
+      "sha256": "36A7FE5604C4F0DBFDAB61612910BE9ABC894AFB61B233EC2463F8FC5E5763C8",
+      "source": "generated exec-01cbdf9a-9ead-46e8-ad54-3b1194cf95f6.png"
+    },
+    {
+      "id": "ui_common_clip_v1",
+      "file": "Icons/copper_clip.svg",
+      "size": [
+        80,
+        36
+      ],
+      "source": "extended existing native SVG system"
+    },
+    {
+      "id": "ui_common_rivet_v1",
+      "file": "Icons/copper_rivet.svg",
+      "size": [
+        20,
+        20
+      ],
+      "source": "extended existing native SVG system"
+    },
+    {
+      "id": "ui_summon_book_v1",
+      "file": "Icons/summon_book.svg",
+      "size": [
+        64,
+        52
+      ],
+      "source": "extended existing native SVG system"
+    },
+    {
+      "id": "reference_beast",
+      "file": "ExampleArt/wolf_reference.png",
+      "source_archive": "D:/Downloads/1009素材.rar",
+      "source_entry": "多足狼（异形野兽模版）/1 (1).png",
+      "source_size": [
+        1344,
+        768
+      ],
+      "size_limit": 768,
+      "sha256": "0B37CDB3E9021242B71DF71A87C4CD20856D4472595B0A67A9A67A5986A74024",
+      "production_cutout": false,
+      "modified": false
+    },
+    {
+      "id": "reference_human",
+      "file": "ExampleArt/bandit_reference.png",
+      "source_archive": "D:/Downloads/10019美术素材.rar",
+      "source_entry": "强盗（人类）/1 (5).png",
+      "source_size": [
+        1344,
+        768
+      ],
+      "size_limit": 768,
+      "sha256": "72A0EE0A79DA310C3D842A769BC4E4DD77BCC3B259146B4A41AE1ADE9932037B",
+      "production_cutout": false,
+      "modified": false
+    },
+    {
+      "id": "reference_snake",
+      "file": "ExampleArt/sandworm_reference.png",
+      "source_archive": "D:/Downloads/10019美术素材.rar",
+      "source_entry": "沙虫(蛇类)/1 (3).png",
+      "source_size": [
+        1344,
+        768
+      ],
+      "size_limit": 768,
+      "sha256": "C4A73A047943AFD4DBA40ED8F8A700E787836E1F1520F74E99A494324CBB5FF1",
+      "production_cutout": false,
+      "modified": false
+    }
+  ],
+  "alpha_review": "Sampled with 13px step; all 3 selected concepts fully opaque in samples. Inspected bandit/sandworm split montages contain true alpha; not a production asset audit."
+}

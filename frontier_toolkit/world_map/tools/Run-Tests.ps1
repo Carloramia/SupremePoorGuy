@@ -25,3 +25,4 @@ try {
         if ($LASTEXITCODE -ne 0) { throw 'Road render verification failed.' }
     }
 } finally { $env:APPDATA = $previousAppData }
+
