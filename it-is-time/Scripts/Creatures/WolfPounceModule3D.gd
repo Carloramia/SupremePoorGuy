@@ -16,6 +16,8 @@ var _support_count := 0
 var _foreleg_flight: Array[Dictionary] = []
 var _flight_forward := Vector3.RIGHT
 var _gallop_grace_remaining := 0.0
+var _preparation_remaining := 0.0
+var _preparation_target: WeakRef
 
 func _launch_support_ready() -> bool:
 	var required := maxi(1,ceili(controller.movement.get_leg_parts().size()*0.5))
@@ -111,6 +113,8 @@ func maximum_target_distance(part: Node3D = null) -> float:
 	return reach
 
 func intercept_plan(next_target: PhysicalBodyPart3D, remaining_charge_time: float = -1.0, actual_launch_origin: Vector3 = Vector3.INF) -> Dictionary:
+	var distance_check: Dictionary = controller.get_pounce_distance_check(next_target)
+	if not distance_check.hit: return distance_check
 	var current_origin: Vector3 = controller.torso.global_position
 	var offset := _planned_charge_offset() if not actual_launch_origin.is_finite() else Vector3.ZERO
 	var origin: Vector3 = current_origin+offset if not actual_launch_origin.is_finite() else actual_launch_origin
@@ -136,7 +140,8 @@ func intercept_plan(next_target: PhysicalBodyPart3D, remaining_charge_time: floa
 	var velocity := (endpoint-origin)/(duration-brake_time*0.5)
 	velocity.y = (endpoint.y-origin.y)/duration-gravity.y*(0.5*duration)
 	if velocity.length() > data.maximum_launch_speed*sqrt(scale): return {"hit":false,"reason":&"launch_speed_limit"}
-	return {"hit":true,"reason":&"ballistic_intercept","confidence":0.9,"endpoint":endpoint,"velocity":velocity,"duration":duration,"charge_duration":charge_time,"prediction_horizon":charge_time+duration,"launch_origin":origin,"charge_offset":offset,"body_scale":scale,"predicted_target_position":target_position,"target_velocity":target_velocity,"current_distance":delta.slide(Vector3.UP).length(),"planned_distance":distance,"maximum_distance":maximum}
+	return {"hit":true,"reason":&"ballistic_intercept","confidence":0.9,"endpoint":endpoint,"velocity":velocity,"duration":duration,"charge_duration":charge_time,"prediction_horizon":charge_time+duration,"launch_origin":origin,"charge_offset":offset,"body_scale":scale,"predicted_target_position":target_position,"target_velocity":target_velocity,"current_distance":delta.slide(Vector3.UP).length(),"planned_distance":distance,"maximum_distance":maximum,
+		"minimum_distance":distance_check.minimum_distance,"nearest_torso_distance":distance_check.distance,"nearest_torso":distance_check.blocking_part}
 
 func _trajectory_point(origin: Vector3, velocity: Vector3, gravity: Vector3, time: float, duration: float, brake_time: float) -> Vector3:
 	var horizontal_time := time
@@ -156,14 +161,24 @@ func landing_standoff() -> float:
 		reach = maxf(reach,offset.dot(controller.forward())+float(chain.length)*0.5)
 	return reach*data.landing_reach_ratio
 
-func has_launch_gait() -> bool:
-	return controller.movement._gallop_active() or _gallop_grace_remaining > 0.0
+func reserve_preparation(next_target: PhysicalBodyPart3D) -> void:
+	# Reserve a real running approach once; repeated AI checks cannot renew a stopped approach.
+	if controller.movement._gallop_active() or _gallop_grace_remaining > 0.0:
+		if _preparation_remaining <= 0.0 or _preparation_target.get_ref() != next_target:
+			_preparation_target = weakref(next_target)
+			_preparation_remaining = data.pounce_plant_timeout + data.pounce_charge_time + data.pounce_gallop_grace_time
+
+func has_launch_gait(next_target: PhysicalBodyPart3D = null) -> bool:
+	var reserved := _preparation_remaining > 0.0 and _preparation_target != null and is_instance_valid(_preparation_target.get_ref())
+	if next_target != null: reserved = reserved and _preparation_target.get_ref() == next_target
+	return controller.movement._gallop_active() or _gallop_grace_remaining > 0.0 or reserved
 
 func predict(next_target: PhysicalBodyPart3D, _samples: int, _margin: float) -> Dictionary:
 	if not available(): return {"hit":false,"reason":&"cooldown_or_disabled"}
-	if controller.is_target_in_bite_distance(next_target): return {"hit":false,"reason":&"within_bite_range"}
+	var plan := intercept_plan(next_target)
+	if not plan.hit: return plan
 	var movement: Node = controller.movement
-	if not has_launch_gait(): return {"hit":false,"reason":&"not_galloping"}
+	if not has_launch_gait(next_target): return {"hit":false,"reason":&"not_galloping"}
 	if movement.get_action_support_feet().is_empty():
 		var can_plant := false
 		for foot: RigidBody3D in movement.get_leg_parts():
@@ -171,8 +186,6 @@ func predict(next_target: PhysicalBodyPart3D, _samples: int, _margin: float) -> 
 			var below: Dictionary = movement._get_surface_below_leg(foot,movement.surface_adhesion_probe_distance)
 			if not below.is_empty() and movement._surface_is_walkable(below.normal): can_plant = true; break
 		if not can_plant: return {"hit":false,"reason":&"no_launch_surface"}
-	var plan := intercept_plan(next_target)
-	if not plan.hit: return plan
 	if not _trajectory_clear(plan): return {"hit":false,"reason":&"trajectory_blocked"}
 	return plan
 
@@ -250,6 +263,8 @@ func _launch() -> void:
 
 func tick(delta: float) -> void:
 	super.tick(delta)
+	_preparation_remaining = maxf(0.0, _preparation_remaining - delta)
+	if active or controller.movement.recovery_control_active or controller.movement.is_action_turn_blocked(): _preparation_remaining = 0.0
 	if active:
 		_gallop_grace_remaining = 0.0
 	elif controller.movement._gallop_active():
@@ -317,6 +332,8 @@ func finish(reason: StringName = &"completed") -> void:
 	_foreleg_flight.clear()
 	_phase = &"idle"
 	_gallop_grace_remaining = 0.0
+	_preparation_remaining = 0.0
+	_preparation_target = null
 	super.finish(reason)
 
 func diagnostics() -> Dictionary:
@@ -327,5 +344,5 @@ func diagnostics() -> Dictionary:
 	for row: Dictionary in _foreleg_flight:
 		if alive(row.foot): forelegs.append({"foot":row.foot.name,"offset_target":_foreleg_offset(row,clampf(_phase_time/flight_duration,0.0,1.0)),"position":row.foot.global_position})
 	result["foreleg_flight"] = forelegs
-	result.merge({"phase":_phase,"phase_elapsed":_phase_time,"charge_offset":_charge_offset,"pinned_feet":_support_count,"recent_gallop_remaining":_gallop_grace_remaining})
+	result.merge({"phase":_phase,"phase_elapsed":_phase_time,"charge_offset":_charge_offset,"pinned_feet":_support_count,"recent_gallop_remaining":_gallop_grace_remaining,"preparation_reservation_remaining":_preparation_remaining})
 	return result

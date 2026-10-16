@@ -149,7 +149,7 @@ func build_manual_layout(use_live_joint_anchors: bool = false) -> Resource:
 		var snapshot := PART_SNAPSHOT.capture(body, multiplier, source_scene.resource_path)
 		if snapshot.is_empty(): return null
 		layout["internal_snapshot"] = snapshot
-		var current_bounds := PART_GEOMETRY.bounds(body)
+		var current_bounds := PART_GEOMETRY.bounds(body, false)
 		if current_bounds.size != Vector3.ZERO: layout.size = current_bounds.size / multiplier
 		if layout.has("connector_span"): layout.connector_span /= multiplier
 		if body.has_meta(&"body_segment_id"): layout["segment_id"] = int(body.get_meta(&"body_segment_id"))
@@ -1107,7 +1107,7 @@ func _instantiate_blueprint(blueprint: Dictionary, generator_transform: Transfor
 		_prepare_generated_part(part, layout, blueprint)
 		if blueprint.get("manual_layout", false) and layout.has("internal_snapshot"):
 			if PART_SNAPSHOT.apply_to(part, layout.internal_snapshot, float(blueprint.get("overall_scale",1.0)), scene.resource_path):
-				var restored_bounds := PART_GEOMETRY.bounds(part)
+				var restored_bounds := PART_GEOMETRY.bounds(part, false)
 				if restored_bounds.size != Vector3.ZERO: size = restored_bounds.size
 		var part_type := _get_generated_part_type(layout)
 		var density := mass_density if density_data == null else density_data.get_density(part_type, mass_density)

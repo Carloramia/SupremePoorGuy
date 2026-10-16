@@ -9,7 +9,13 @@ func run() -> void:
 	viewport.own_world_3d = true
 	root.add_child(viewport)
 	var host := preload("res://Scripts/Application/BattleHost.gd").new()
-	host.definition = preload("res://Content/Maps/IntegrationFrontier_v1/camp_battle_01/SceneDefinition.tres")
+	if "--delivery" in OS.get_cmdline_user_args():
+		host.delivery_settings = preload("res://Resources/Application/FrontierDeliveryBattle.tres").duplicate(true)
+		var roster := EnemyRosterData.new()
+		roster.definitions.assign(["human"])
+		host.delivery_settings.enemy_rosters["stability"] = roster
+		host.delivery_request = {"battle_map_id":"battle_wolf_savanna","enemy_config_id":"stability","deployment_id":""}
+	else: host.definition = preload("res://Content/Maps/IntegrationFrontier_v1/camp_battle_01/SceneDefinition.tres")
 	host.monster_config_definitions = {"demo_guard":"human"}
 	viewport.add_child(host)
 	var records: Array = []
@@ -18,6 +24,7 @@ func run() -> void:
 		record.merge({"id":"stability_"+str(records.size()),"position":"team","traits":[]},true)
 		records.append(record)
 	check(await host.deploy(records,"creature_stability"),"Mixed battle deploys")
+	check(host.start_combat(),"Explicitly finish deployment before testing combat")
 	if host.actors.size()!=4: quit(1); return
 	host.ended = true
 	for actor: Node3D in host.actors:

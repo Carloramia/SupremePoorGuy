@@ -5,6 +5,7 @@ func check(ok: bool, message: String) -> void:
 	if not ok: failed=true; push_error(message)
 func run() -> void:
 	var app := preload("res://Scenes/Application/GameRoot.tscn").instantiate()
+	app.use_delivery_map = false
 	app.save_path = "res://Tests/.runtime/integration/frontier_"+str(Time.get_ticks_usec())+".json"
 	app.world_scene = load("res://Content/Maps/IntegrationFrontier_v1/frontier/frontier.tscn")
 	app.battle_definitions = {"camp_battle_01":app.default_battle_definition}
@@ -24,6 +25,7 @@ func run() -> void:
 	check(app.world_map.interaction.begin(location),"Imported camp opens only after arrival")
 	app.world_map.interaction.request_battle()
 	for tick: int in 600:
+		if app.phase=="deployment": app.start_battle()
 		if app.phase=="battle": break
 		await physics_frame
 	check(app.phase=="battle" and app.battle!=null,"Imported battle definition deploys actual NPCs")

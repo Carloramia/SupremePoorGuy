@@ -1,0 +1,15 @@
+[gd_scene load_steps=5 format=3]
+[ext_resource type="Script" path="res://Scripts/Geometry/BattleEnvironmentPhysicalPart3D.gd" id="script"]
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Environment/FrontierBattle/Scenes/Props/DeadTree.tscn" id="model"]
+[ext_resource type="ConcavePolygonShape3D" path="res://Resources/Meshes/Environment/FrontierBattle/Props/DeadTreeCollision.res" id="collision"]
+[sub_resource type="ConcavePolygonShape3D" id="initial"]
+[node name="DeadTree" type="StaticBody3D"]
+script = ExtResource("script")
+thickness = 0.08
+unit_collision = ExtResource("collision")
+metadata/source_asset_ids = ["frontier_dead"]
+metadata/source_png = "res://Assets/2DResources/Environment/FrontierBattle/Separated/Props/DeadTree.png"
+[node name="Model" parent="." instance=ExtResource("model")]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+rotation = Vector3(0, 0, 0)
+shape = SubResource("initial")

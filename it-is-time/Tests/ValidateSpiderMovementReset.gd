@@ -26,7 +26,7 @@ func validate(actor: Node) -> void:
 		var expected: Transform3D = layout.transform
 		expected.origin *= generator.overall_scale
 		check(part.transform.is_equal_approx(generator.transform * expected), "Saved and regenerated body placement must match the restored frame: " + str(layout.name))
-		check(GEOMETRY.bounds(part).size.is_equal_approx(layout.size * generator.overall_scale), "Imported meshes/colliders must fit the original frame size: " + str(layout.name))
+		check(GEOMETRY.bounds(part, false).size.is_equal_approx(layout.size * generator.overall_scale), "Imported meshes/colliders must fit the original frame size: " + str(layout.name))
 		var collision := part.get_node("CollisionShape3D") as CollisionShape3D
 		check(collision.shape is BoxShape3D, "Every Part must use the original box collider: " + str(layout.name))
 		check(collision.transform.is_equal_approx(Transform3D.IDENTITY), "Legacy colliders must remain centered without local rotation or scaling")

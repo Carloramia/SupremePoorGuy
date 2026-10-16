@@ -32,6 +32,8 @@ var _log_elapsed := 0.0
 var _charge_time_limit := 0.0
 var _target_half_width := 0.0
 var _navigation_check: Dictionary = {}
+var _navigation_cache: Dictionary = {}
+var _approach_check: Dictionary = {}
 var _force_frame: int = -1
 var _force_applied := false
 var _force_skip_reason: StringName = &"not_processed"
@@ -42,7 +44,7 @@ var _force_rows: Array[Dictionary] = []
 func uses_navigation_attack_gate() -> bool:
 	return true
 
-func _check_navigation_path(target: Node3D) -> Dictionary:
+func _check_navigation_path(target: Node3D, origin: Vector3 = Vector3.INF, goal: Vector3 = Vector3.INF) -> Dictionary:
 	var map := get_world_3d().navigation_map
 	var layers := 1
 	var machine := get_parent().get_node_or_null("NPCStateMachine3D")
@@ -51,13 +53,34 @@ func _check_navigation_path(target: Node3D) -> Dictionary:
 		layers = machine.navigation_agent.navigation_layers
 	if not map.is_valid() or NavigationServer3D.map_get_iteration_id(map) == 0:
 		return {"hit":false,"reason":&"navigation_not_ready"}
-	var start := NavigationServer3D.map_get_closest_point(map, _body.global_position)
-	var end := NavigationServer3D.map_get_closest_point(map, target.global_position)
-	if (start-_body.global_position).slide(Vector3.UP).length() > data.navigation_projection_tolerance or (end-target.global_position).slide(Vector3.UP).length() > data.navigation_projection_tolerance:
+	if not origin.is_finite(): origin = _body.global_position
+	if not goal.is_finite(): goal = target.global_position
+	var context := [map, layers, NavigationServer3D.map_get_iteration_id(map), origin, goal]
+	if _navigation_cache.get("frame", -1) == Engine.get_physics_frames() and _navigation_cache.get("context", []) == context: return _navigation_cache.result.duplicate()
+	var start := NavigationServer3D.map_get_closest_point(map, origin)
+	var end := NavigationServer3D.map_get_closest_point(map, goal)
+	if (start-origin).slide(Vector3.UP).length() > data.navigation_projection_tolerance or (end-goal).slide(Vector3.UP).length() > data.navigation_projection_tolerance:
 		return {"hit":false,"reason":&"outside_navigation_mesh","navigation_start":start,"navigation_end":end}
 	var points := NavigationServer3D.map_get_path(map,start,end,true,layers)
 	var reached := not points.is_empty() and points[-1].distance_to(end) <= data.navigation_endpoint_tolerance
-	return {"hit":reached,"reason":&"navigation_path_available" if reached else &"navigation_unreachable","navigation_start":start,"navigation_end":end,"path_points":points.size(),"path_complete":reached}
+	var result := {"hit":reached,"reason":&"navigation_path_available" if reached else &"navigation_unreachable","navigation_start":start,"navigation_end":end,"path_points":points.size(),"path_complete":reached}
+	_navigation_cache = {"frame":Engine.get_physics_frames(), "context":context, "result":result}
+	return result
+
+func should_prepare_npc_attack(action_id: StringName, target: Node3D) -> bool:
+	return action_id == &"ground_charge" and not is_active() and _target_check(_resolve_target(target)).hit
+
+## Navigation moves the Torso, while charge admission and lane alignment measure the Head.
+func get_npc_attack_approach(action_id: StringName, target: Node3D, preferred: float, origin: Vector3) -> Dictionary:
+	var resolved := _resolve_target(target)
+	if action_id != &"ground_charge" or not _alive(_body) or not _alive(resolved): return {"valid":false,"reason":&"unavailable"}
+	var side := signf(resolved.global_position.x - _body.global_position.x)
+	if is_zero_approx(side): side = 1.0
+	var offset := resolved.global_position - _body.global_position
+	var goal := origin + Vector3(offset.x - side * preferred, 0.0, offset.z)
+	var route := _check_navigation_path(resolved, origin, goal)
+	_approach_check = {"valid":route.hit,"reason":route.reason,"goal":goal,"distance":absf(offset.x),"z_error":offset.z,"z_tolerance":data.z_tolerance,"navigation":route}
+	return _approach_check.duplicate(true)
 
 func get_npc_attack_minimum_range(_action_id: StringName) -> float:
 	return data.get_minimum_distance()
@@ -136,7 +159,7 @@ func get_npc_attack_range_diagnostics(action_id: StringName, target: Node3D) -> 
 		"body_alive":_alive(_body),"movement_available":is_instance_valid(_movement),
 		"receiver_available":has_npc_attack(action_id),"receiver_cooldown":_cooldown,
 		"phase":Phase.keys()[phase],"minimum_distance":data.get_minimum_distance() if data != null else -1.0,
-		"maximum_unlimited":true,"height_check_enabled":false,"navigation_check":_navigation_check}, true)
+		"maximum_unlimited":true,"height_check_enabled":false,"navigation_check":_navigation_check,"approach":_approach_check}, true)
 	if _alive(_body) and _alive(resolved):
 		var offset := resolved.global_position - _body.global_position
 		result.merge({"source_part":str(_body.get_path()),"target_part":str(resolved.get_path()),

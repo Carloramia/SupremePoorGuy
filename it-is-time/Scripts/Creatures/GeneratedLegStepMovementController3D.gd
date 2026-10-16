@@ -1656,7 +1656,7 @@ func _apply_torso_response() -> void:
 			# Default support excludes leg weight; full-flight support carries the whole assembly.
 			if body is RigidBody3D and (carries_limbs or not passive_leg_bodies.has(body)) and not _is_body_broken(body) and not body.freeze: assembly_mass += body.mass
 		for segment: Dictionary in _segments.values(): assigned_mass += float(segment.mass)
-		support_mass_scale = assembly_mass / maxf(assigned_mass, 0.001)
+		support_mass_scale = maxf(assembly_mass-_height_support_external_gravity_mass(),0.0) / maxf(assigned_mass, 0.001)
 	for id: int in _segments:
 		var segment: Dictionary = _segments[id]
 		var support_floor := 0.0
@@ -1743,6 +1743,9 @@ func _apply_torso_response() -> void:
 
 func _height_support_carries_limb_weight() -> bool:
 	return false
+
+func _height_support_external_gravity_mass() -> float:
+	return 0.0
 
 func _airborne_height_support_authorized() -> bool:
 	return _gallop_active()

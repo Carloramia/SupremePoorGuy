@@ -14,6 +14,11 @@ var elapsed := 0.0
 var enemy_definitions: Array[String] = ["human"]
 var defeat_below_y := -20.0
 var definition: SceneDefinition
+var delivery_request: Dictionary = {}
+var delivery_settings: DeliveryBattleSettings
+var delivery_adapter: RefCounted
+var deployment: Node3D
+var deployment_polygon := PackedVector2Array([Vector2(-80,-60),Vector2(-2,-60),Vector2(-2,60),Vector2(-80,60)])
 var monster_config_definitions: Dictionary = {}
 var _deployment: Array[Dictionary] = []
 var _enemy_positions: Array[Dictionary] = []
@@ -69,7 +74,11 @@ func _ready() -> void:
 func deploy(records: Array, id: String) -> bool:
 	battle_id = id
 	if records.is_empty(): return false
-	if definition != null and not _prepare_editor_layout(): return false
+	if not delivery_request.is_empty():
+		delivery_adapter = preload("res://Scripts/Application/DeliveryBattleEnvironmentAdapter.gd").new()
+		if not delivery_adapter.build(self,records): return false
+	elif definition != null and not _prepare_editor_layout(): return false
+	var authored := definition!=null or not delivery_request.is_empty()
 	var navigation := NavigationRegion3D.new()
 	navigation.name = "NavigationRegion3D"
 	var navmesh := NavigationMesh.new()
@@ -91,8 +100,8 @@ func deploy(records: Array, id: String) -> bool:
 		if navigation.navigation_mesh.get_polygon_count()==0: last_error = "导航烘焙未生成多边形。"; push_warning(last_error); return false
 	var index := 0
 	for record: Dictionary in records:
-		if definition != null and index>=_deployment.size(): return false
-		var position_data: Dictionary = _deployment[index] if definition != null else {"position":Vector3(-32,0.1,(index-(records.size()-1)*0.5)*16),"facing":0.0}
+		if authored and index>=_deployment.size(): return false
+		var position_data: Dictionary = _deployment[index] if authored else {"position":Vector3(-32,0.1,(index-(records.size()-1)*0.5)*16),"facing":0.0}
 		var actor := FACTORY.spawn(record,self,position_data.position,0,position_data.facing)
 		if actor == null: return false
 		actors.append(actor)
@@ -101,16 +110,32 @@ func deploy(records: Array, id: String) -> bool:
 	for enemy_index: int in enemy_definitions.size():
 		var record := FACTORY.template(enemy_definitions[enemy_index])
 		record.id = "enemy_"+str(enemy_index)
-		var position_data: Dictionary = _enemy_positions[enemy_index] if definition != null else {"position":Vector3(28,0.1,enemy_index*16),"facing":PI}
+		var position_data: Dictionary = _enemy_positions[enemy_index] if authored else {"position":Vector3(28,0.1,enemy_index*16),"facing":PI}
 		var enemy := FACTORY.spawn(record,self,position_data.position,1,position_data.facing)
 		if enemy == null: return false
 		actors.append(enemy)
 		if not _inside_level(enemy): last_error = "敌方碰撞体超出战场边界。"; return false
 	await get_tree().physics_frame
 	await get_tree().physics_frame
-	for actor: Node3D in actors: FACTORY.activate(actor)
+	if delivery_adapter!=null:
+		camera.maximum_distance = float(delivery_adapter.layout.radius)*delivery_adapter.scale*3.0
+		camera.set_distance(camera.maximum_distance*0.55)
 	cursor.set_cursor_world_position(actors[0].get_combat_anchor().global_position)
 	camera.global_position = cursor.get_mouse_ground_position()
+	deployment = preload("res://Scripts/Application/BattleDeployment3D.gd").new()
+	add_child(deployment)
+	deployment.begin(self)
+	return true
+
+func start_combat() -> bool:
+	if ready_for_combat or ended or not is_instance_valid(deployment) or not deployment.can_start(): return false
+	deployment.complete()
+	deployment = null
+	for actor: Node3D in actors: FACTORY.activate(actor)
+	if delivery_adapter != null:
+		var effects := preload("res://Scripts/Application/BattleEnvironmentEffects3D.gd").new()
+		effects.configure(self,delivery_adapter.layout,delivery_adapter.scale)
+		add_child(effects)
 	ready_for_combat = true
 	return true
 
@@ -133,6 +158,9 @@ func _prepare_editor_layout() -> bool:
 		var origin := Vector3(float(object.position[0]),float(object.height)+0.1,float(object.position[1]))
 		var yaw := -deg_to_rad(float(object.rotation))
 		if object.type=="deployment":
+			var converter := preload("res://Scripts/Application/DeliveryBattleEnvironmentAdapter.gd").new()
+			converter.scale = 1.0
+			deployment_polygon = converter.shape_polygon(object,object.region)
 			for slot: Array in object.slots:
 				var offset := Basis(Vector3.UP,yaw)*Vector3(float(slot[0])*float(object.scale[0]),0,float(slot[1])*float(object.scale[1]))
 				_deployment.append({"position":origin+offset,"facing":deg_to_rad(float(object.facing))+yaw})
@@ -196,5 +224,15 @@ func finish(outcome: String) -> void:
 		for part: PhysicalBodyPart3D in actor.find_children("*","PhysicalBodyPart3D",true,false):
 			parts[str(part.get_meta(&"creature_part_key",str(part.name)))] = {"hp":part.current_hp,"max_hp":part.max_hp,"broken":part.is_broken}
 		damage[str(actor.get_meta(&"creature_instance_id"))] = parts
-	finished.emit({"battle_id":battle_id,"outcome":outcome,"reward":20 if outcome=="victory" else 0,"parts":damage,"duration":elapsed})
+	var result := {"battle_id":battle_id,"outcome":outcome,"reward":20 if outcome=="victory" else 0,"parts":damage,"duration":elapsed}
+	if delivery_adapter!=null:
+		result.battle_map_id = delivery_request.battle_map_id
+		result.post_battle_options = []
+		if outcome=="victory":
+			for object: Dictionary in delivery_adapter.layout.objects:
+				if object.type!="post_battle" or object.get("condition_ref","") not in ["","battle_won"]: continue
+				for field: String in ["summon_option_ref","upgrade_option_ref"]:
+					var option: String = object.get(field,"")
+					if not option.is_empty() and option not in result.post_battle_options: result.post_battle_options.append(option)
+	finished.emit(result)
 

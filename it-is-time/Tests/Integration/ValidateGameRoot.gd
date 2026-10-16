@@ -5,11 +5,13 @@ func check(ok: bool, message: String) -> void:
 	if not ok: failed=true; push_error(message)
 func wait_phase(app: Node, wanted: String) -> bool:
 	for frame: int in 600:
+		if wanted=="battle" and app.phase=="deployment": app.start_battle()
 		if app.phase==wanted: return true
 		await physics_frame
 	return false
 func run() -> void:
 	var app := preload("res://Scenes/Application/GameRoot.tscn").instantiate()
+	app.use_delivery_map = false
 	app.save_path = "res://Tests/.runtime/integration/root_"+str(Time.get_ticks_usec())+".json"
 	app.integration_logging = true
 	root.add_child(app)

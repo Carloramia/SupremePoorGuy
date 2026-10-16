@@ -1,5 +1,6 @@
 @tool
 extends Node
+signal module_event(module: StringName, event: StringName, details: Dictionary)
 const PLAYER = preload("res://Scripts/Player/PlayerControlContext.gd")
 const MODULE = preload("res://Scripts/Creatures/WolfAttackModule3D.gd")
 @export var enabled := true
@@ -105,7 +106,7 @@ func get_npc_attack_maximum_range(action_id: StringName, _target: Node3D = null)
 		var jaw = _module(action_id).jaw
 		if is_instance_valid(jaw):
 			var bite := _module(action_id)
-			reach = torso.global_position.distance_to(jaw.global_position)+Vector3(jaw.get_meta(&"generated_size",Vector3.ONE)).length()+minf(pounce_scale()*_module(&"wolf_pounce").data.reference_body_length*bite.data.bite_advance_ratio,bite._travel_limit(forward()))
+			reach = bite.admission_range(_target)
 	return reach
 
 func get_npc_attack_distance_tolerance(action_id: StringName) -> float:
@@ -118,7 +119,7 @@ func get_npc_attack_preferred_distance(action_id: StringName, target: Node3D = n
 	if action_id == &"wolf_pounce":
 		var bite := _module(&"wolf_bite")
 		if bite.enabled and bite.data != null and bite.data.enabled:
-			minimum = maxf(minimum,get_npc_attack_maximum_range(&"wolf_bite",target)+tolerance*2.0)
+			minimum = maxf(minimum,bite.maximum_reach()+tolerance*2.0)
 	var upper := maxf(minimum,maximum-tolerance)
 	return lerpf(minimum,upper,_module(action_id).data.preferred_range_ratio)
 
@@ -126,33 +127,57 @@ func should_prepare_npc_attack(action_id: StringName, target: Node3D) -> bool:
 	if action_id != &"wolf_pounce" or not has_npc_attack(action_id) or not _target_valid(target): return false
 	if movement.recovery_control_active or movement._planar_mode_active() or movement.simplified_physics_mode or movement.is_action_turn_blocked(): return false
 	var pounce := _module(action_id)
-	return pounce.available() and pounce.has_launch_gait() and is_npc_target_in_attack_range(action_id,target)
+	if not pounce.available() or not pounce.has_launch_gait(target) or not is_npc_target_in_attack_range(action_id,target): return false
+	pounce.reserve_preparation(target)
+	return true
 
 func is_npc_attack_distance_candidate(action_id: StringName, target: Node3D) -> bool:
-	return action_id != &"wolf_pounce" or not is_instance_valid(target) or not is_target_in_bite_distance(target)
+	return action_id != &"wolf_pounce" or not is_instance_valid(target) or get_pounce_distance_check(target).hit
+
+func get_pounce_distance_check(target: Node3D) -> Dictionary:
+	if not is_instance_valid(target) or not is_instance_valid(torso): return {"hit":false,"reason":&"invalid_target"}
+	var actor := PLAYER.character_of(target)
+	if actor == null: return {"hit":false,"reason":&"invalid_target"}
+	var damage := actor.get_node_or_null("CharacterDamageController3D")
+	var parts: Array = damage.get_parts() if damage != null else actor._get_physical_body_parts()
+	var minimum := get_npc_attack_minimum_range(&"wolf_pounce")
+	var closest := INF
+	var closest_part: Node3D
+	var bite := _module(&"wolf_bite")
+	var bite_usable: bool = bite != null and bite.enabled and bite.data != null and bite.data.enabled and is_instance_valid(bite.head) and not bite.head.is_broken and is_instance_valid(bite.jaw) and not bite.jaw.is_broken and is_instance_valid(bite.joint) and not bite.joint.is_queued_for_deletion()
+	var reach: float = bite.maximum_reach() if bite_usable else 0.0
+	var preparation: float = bite.data.bite_plant_prediction_time+maxf(bite.data.bite_retract_time,bite.data.jaw_open_time) if bite_usable else 0.0
+	# Choosing a farther Torso must not bypass a nearby part of the same enemy.
+	for part: Variant in parts:
+		if not is_instance_valid(part) or part.is_queued_for_deletion() or part.is_broken or PhysicalBodyPart3D.BodyPartTag.Torso not in part.tags: continue
+		var offset: Vector3 = part.global_position-torso.global_position
+		var horizontal := offset.slide(Vector3.UP).length()
+		if horizontal < closest:
+			closest = horizontal
+			closest_part = part
+		var closing_speed := maxf(-part.linear_velocity.dot(offset.slide(Vector3.UP).normalized()),0.0)
+		var bite_distance := reach+closing_speed*preparation
+		if bite_usable and offset.length() <= bite_distance:
+			return {"hit":false,"reason":&"within_bite_range","blocking_part":str(part.get_path()),"distance":offset.length(),"bite_maximum_distance":bite_distance,"minimum_distance":minimum}
+	if closest_part == null: return {"hit":false,"reason":&"no_living_target_torso"}
+	return {"hit":closest >= minimum,"reason":&"pounce_distance_available" if closest >= minimum else &"pounce_too_close","blocking_part":str(closest_part.get_path()),"distance":closest,"minimum_distance":minimum}
 
 func is_target_in_bite_distance(target: Node3D) -> bool:
-	var bite := _module(&"wolf_bite")
-	if bite == null or not bite.enabled or bite.data == null or not bite.data.enabled: return false
-	if not is_instance_valid(bite.head) or bite.head.is_broken or not is_instance_valid(bite.jaw) or bite.jaw.is_broken or not is_instance_valid(bite.joint): return false
-	# Distance exclusion is independent of cooldown and current attack ownership.
-	return torso.global_position.distance_to(target.global_position) <= get_npc_attack_maximum_range(&"wolf_bite",target)
+	return get_pounce_distance_check(target).get("reason") == &"within_bite_range"
 
 func is_npc_target_in_attack_range(action_id: StringName, target: Node3D) -> bool:
 	if not _target_valid(target) or not is_instance_valid(torso): return false
-	if action_id == &"wolf_pounce": return not is_target_in_bite_distance(target) and _module(action_id).intercept_plan(target).hit
+	if action_id == &"wolf_pounce": return _module(action_id).intercept_plan(target).hit
 	var distance := torso.global_position.distance_to(target.global_position)
 	return distance >= get_npc_attack_minimum_range(action_id) and distance <= get_npc_attack_maximum_range(action_id,target)
 
 func get_npc_attack_range_diagnostics(action_id: StringName, target: Node3D) -> Dictionary:
-	if action_id == &"wolf_pounce" and _target_valid(target) and is_target_in_bite_distance(target):
-		return {"hit":false,"reason":&"within_bite_range","bite_maximum_distance":get_npc_attack_maximum_range(&"wolf_bite",target)}
 	return _module(action_id).intercept_plan(target) if action_id == &"wolf_pounce" and _target_valid(target) else {}
 
 func get_npc_attack_maximum_duration(_action_id: StringName) -> float:
 	var pounce := _module(&"wolf_pounce").data
 	var bite := _module(&"wolf_bite").data
-	return pounce.pounce_plant_timeout+pounce.pounce_charge_time+maxf(pounce.flight_time*sqrt(pounce_scale()),sqrt(8.0*pounce.minimum_lift_height*pounce_scale()/maxf(movement._gravity_acceleration().length(),0.001)))+pounce.landing_timeout+bite.bite_spacing_retreat_time*2.0+bite.bite_plant_timeout+bite.bite_retract_time+bite.jaw_open_time+bite.bite_lunge_timeout+bite.jaw_close_time+bite.recovery_time+0.5
+	return pounce.pounce_plant_timeout+pounce.pounce_charge_time+maxf(pounce.flight_time*sqrt(pounce_scale()),sqrt(8.0*pounce.minimum_lift_height*pounce_scale()/maxf(movement._gravity_acceleration().length(),0.001)))+pounce.landing_timeout+bite.bite_spacing_retreat_time*2.0+bite.bite_plant_timeout+bite.bite_retract_time+bite.jaw_open_time+bite.bite_lunge_timeout+bite.jaw_close_time+bite.jaw_close_extra_wait+bite.recovery_time+0.5
 
 func pounce_scale() -> float:
 	if not is_instance_valid(torso): return 1.0
@@ -241,6 +266,7 @@ func _exit_tree() -> void:
 	if not Engine.is_editor_hint(): cancel_action(&"removed")
 
 func log_event(module: StringName, event: StringName, details: Dictionary = {}) -> void:
+	module_event.emit(module, event, details)
 	if diagnostic_logging: print("[wolf_attack] character=",get_parent().get_path()," module=",module," event=",event," details=",details)
 
 func get_attack_diagnostics() -> Array[Dictionary]:

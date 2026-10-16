@@ -37,7 +37,7 @@ func run() -> void:
 				counts[str(part.get_meta("generated_role"))] += 1
 				assert(part.scale.is_equal_approx(Vector3.ONE) and not part.is_broken)
 				assert(str(part.get_meta("generated_scene_path")).contains("Human%d" % set_index))
-				assert(is_equal_approx(GEOMETRY.bounds(part).size.z, 0.08 * multiplier))
+				assert(is_equal_approx(GEOMETRY.bounds(part).size.z, 0.08 * multiplier * 2.0))
 				var source := load(str(part.get_meta("generated_scene_path"))).instantiate() as PhysicalBodyPart3D
 				source.prepare_generated_geometry()
 				var native_size := GEOMETRY.bounds(source).size

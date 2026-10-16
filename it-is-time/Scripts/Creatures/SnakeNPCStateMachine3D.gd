@@ -7,6 +7,9 @@ var _reposition_elapsed := 0.0
 var _reposition_stalled := 0.0
 var _reposition_best_error := INF
 var _reposition_timeout := 0.0
+var _waiting_for_support := false
+var _lane_alignment_active := false
+var _lane_alignment: Dictionary = {}
 
 func _clear_reposition() -> void:
 	_reposition_target = null
@@ -18,6 +21,8 @@ func _clear_reposition() -> void:
 
 func _cancel_attack() -> void:
 	_clear_reposition()
+	_lane_alignment_active = false
+	_lane_alignment.clear()
 	super._cancel_attack()
 	if current_state == State.ATTACK: change_state(State.WAITING)
 
@@ -25,8 +30,24 @@ func _preferred_attack_distance(attack: ATTACK) -> float:
 	if _reposition_distance >= 0.0 and _reposition_target == _target: return _reposition_distance
 	return super._preferred_attack_distance(attack)
 
+func _attack_approach(attack: ATTACK) -> Dictionary:
+	var approach := super._attack_approach(attack)
+	if not generated_x_axis_facing or approach.is_empty(): return approach
+	var previous := _lane_alignment_active
+	_lane_alignment_active = absf(approach.z_error) > float(approach.z_tolerance)*(0.5 if previous else 1.0)
+	_lane_alignment = approach.duplicate()
+	_lane_alignment["aligning"] = _lane_alignment_active
+	if _lane_alignment_active:
+		approach.z_tolerance *= 0.5
+	else:
+		approach.z_error = 0.0
+		approach.goal.z = _get_navigation_origin_position().z
+	if previous != _lane_alignment_active: _log_state_event(&"snake_lane_alignment",_lane_alignment)
+	return approach
+
 func _predict_attack(attack: ATTACK, target: Node3D) -> Dictionary:
 	var result := super._predict_attack(attack,target)
+	_waiting_for_support = result.get("reason") == &"no_ground_support"
 	if not result.get("hit",false) and result.get("reason") in [&"snake_sweep_misses",&"outside_fixed_root_reach"]:
 		_snake_reposition_pending = true
 	return result
@@ -45,6 +66,8 @@ func _update_combat(delta: float) -> void:
 			_clear_reposition()
 	# A killed/despawned victim must not interrupt the physical recovery pose halfway through.
 	if current_state == State.ATTACK and _active_attack != null and is_instance_valid(_attack_receiver) and _attack_receiver.is_npc_attack_active():
+		_lane_alignment_active = false
+		if not _lane_alignment.is_empty(): _lane_alignment["aligning"] = false
 		_advance_active_attack(delta)
 		return
 	super._update_combat(delta)
@@ -52,6 +75,16 @@ func _update_combat(delta: float) -> void:
 ## Retain faction selection, repathing and friendly avoidance when attacks are unavailable.
 func _plan_attack_distance(distance: float, attacks: Array[ATTACK]) -> bool:
 	if not attacks.is_empty():
+		var receiver := get_parent().get_node("SnakeBiteAttackController3D")
+		if generated_x_axis_facing:
+			distance = absf(_target.global_position.x-_get_navigation_origin_position().x)
+			if _lane_alignment_active: _snake_reposition_pending = false
+		if _waiting_for_support and receiver._grounded_belly_count() == 0 and receiver.is_npc_target_in_attack_range(attacks[0].action_id,_target):
+			_clear_reposition()
+			_distance_attack = attacks[0]
+			_distance_error = 0.0
+			return false
+		_waiting_for_support = false
 		if _reposition_distance >= 0.0 and _reposition_target != _target: _clear_reposition()
 		var error := absf(distance-_reposition_distance)
 		var tolerance := _attack_distance_tolerance(attacks[0])
@@ -81,6 +114,8 @@ func _plan_attack_distance(distance: float, attacks: Array[ATTACK]) -> bool:
 			_log_state_event(&"snake_reposition",{"sample":_prediction_distance_sample,"distance":_reposition_distance,"timeout":_reposition_timeout})
 		return super._plan_attack_distance(distance, attacks)
 	_clear_reposition()
+	_lane_alignment_active = false
+	_lane_alignment.clear()
 	_distance_attack = null
 	_distance_error = distance - behavior.preferred_distance
 	if _distance_error <= arrival_distance: return false
@@ -90,6 +125,11 @@ func _plan_attack_distance(distance: float, attacks: Array[ATTACK]) -> bool:
 	return true
 
 func get_npc_movement_speed_scale(full_speed: float) -> float:
+	if generated_x_axis_facing and not _manual_command:
+		if current_state != State.MOVE_TO_TARGET or not _has_requested_target: return 0.0
+		# Pure Z corrections still need propulsion when the X distance error is zero.
+		var remaining := (_requested_target_position-_get_navigation_origin_position()).slide(Vector3.UP).length()
+		return clampf(minf(remaining/approach_slowdown_distance,sqrt(2.0*approach_braking_acceleration*remaining)/maxf(full_speed,0.001)),0.0,1.0)
 	if _reposition_distance < 0.0 or _manual_command: return super.get_npc_movement_speed_scale(full_speed)
 	var remaining := maxf(absf(_distance_error)-_attack_distance_tolerance(_distance_attack)*0.5,0.0)
 	var braking_speed := sqrt(2.0*approach_braking_acceleration*remaining)
@@ -98,5 +138,5 @@ func get_npc_movement_speed_scale(full_speed: float) -> float:
 func get_state_diagnostics() -> Dictionary:
 	var result := super.get_state_diagnostics()
 	result.merge({"snake_reposition_distance":_reposition_distance,"snake_reposition_elapsed":_reposition_elapsed,
-		"snake_reposition_stalled":_reposition_stalled,"snake_reposition_timeout":_reposition_timeout})
+		"snake_reposition_stalled":_reposition_stalled,"snake_reposition_timeout":_reposition_timeout,"snake_lane_alignment":_lane_alignment})
 	return result

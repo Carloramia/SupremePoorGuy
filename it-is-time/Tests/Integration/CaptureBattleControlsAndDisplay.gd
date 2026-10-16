@@ -26,6 +26,7 @@ func capture(name: String) -> void:
 func run() -> void:
 	root.size = Vector2i(1280,720)
 	app = preload("res://Scenes/Application/GameRoot.tscn").instantiate()
+	app.use_delivery_map = false
 	var path := "res://Tests/.runtime/integration/native_display_"+str(Time.get_ticks_usec())
 	app.save_path = path+".json"
 	app.display_settings_path = path+".cfg"
@@ -66,6 +67,7 @@ func run() -> void:
 	app.world_map.interaction.begin(location)
 	app.world_map.interaction.request_battle()
 	for tick: int in 600:
+		if app.phase=="deployment": app.start_battle()
 		if app.phase=="battle": break
 		await physics_frame
 	assert(app.phase=="battle")

@@ -54,6 +54,19 @@ var _gameplay_cursor_active: bool = false
 var _orbiting_camera: bool = false
 var _last_anchor: Node3D
 var _last_anchor_position: Vector3 = Vector3.ZERO
+var deployment_mode := false
+var deployment_drag_target: Node3D
+var deployment_ground_height := 0.03
+
+func set_deployment_mode(active: bool) -> void:
+	deployment_mode = active
+	set_deployment_drag_target(null)
+
+func set_deployment_drag_target(character: Node3D) -> void:
+	deployment_drag_target = character
+	_set_selected_character(character)
+	_selection_search_elapsed = INF
+	_update_selection_visuals(1.0,false)
 
 func _ready() -> void:
 	_control_perf.register(self)
@@ -236,6 +249,13 @@ func _update_ground_transform(camera: Camera3D, delta: float) -> void:
 		visible = false
 		return
 	var selection := _update_character_selection(delta)
+	if deployment_mode and is_instance_valid(deployment_drag_target) and not selection.is_empty():
+		var center: Vector3 = selection.center
+		global_transform = Transform3D(_get_surface_basis(Vector3.UP,camera),Vector3(center.x,deployment_ground_height,center.z))
+		_selected_ground_position = global_position
+		_has_ground_hit = true
+		visible = true
+		return
 	var display_position := _desired_horizontal_position
 	var reference_y := global_position.y
 	if not selection.is_empty():
@@ -301,17 +321,19 @@ func _update_selection_visuals(size_multiplier: float, selected: bool) -> void:
 		var material: StandardMaterial3D = entry.material
 		var original_scale: Vector3 = entry.scale
 		visual.scale = original_scale * Vector3(size_multiplier, 1.0, size_multiplier)
-		if selected:
-			var color := selected_color
+		if selected or deployment_mode:
+			var color := (Color(0.1,1.0,0.25) if is_instance_valid(deployment_drag_target) else Color(0.15,0.6,1.0)) if deployment_mode else selected_color
 			color.a = (entry.color as Color).a
 			material.albedo_color = color
-			material.emission = Color(selected_color.r, selected_color.g, selected_color.b)
+			material.emission = Color(color.r,color.g,color.b)
 		else:
 			material.albedo_color = entry.color
 			material.emission = entry.emission
 
 func _is_selectable_character(character: Node3D) -> bool:
 	if not is_instance_valid(character) or character.is_queued_for_deletion() or not character.is_visible_in_tree():
+		return false
+	if deployment_mode and (not character.has_method("get_faction_id") or character.get_faction_id() != 0 or character.get_world_3d() != get_world_3d()):
 		return false
 	if character == controlled_character:
 		return false
@@ -382,6 +404,11 @@ func _update_character_selection(delta: float) -> Dictionary:
 	return result
 
 func _perf_impl__update_character_selection(delta: float) -> Dictionary:
+	if deployment_mode and is_instance_valid(deployment_drag_target):
+		var projection := _get_character_projection(deployment_drag_target)
+		_set_selected_character(deployment_drag_target)
+		if not projection.is_empty(): _update_selection_visuals(float(projection.radius)*selected_radius_multiplier/0.5,true)
+		return projection
 	_update_charge_target_follow()
 	_selection_search_elapsed += delta
 	if not selection_enabled:

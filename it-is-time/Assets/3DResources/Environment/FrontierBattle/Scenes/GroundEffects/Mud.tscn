@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3]
+[ext_resource type="ArrayMesh" path="res://Resources/Meshes/Environment/FrontierBattle/GroundEffects/Mud.res" id="mesh"]
+[node name="Mud" type="Node3D"]
+rotation = Vector3(-1.5707963268, 0, 0)
+[node name="Visual" type="MeshInstance3D" parent="."]
+scale = Vector3(1, 1, 0.02)
+mesh = ExtResource("mesh")
+cast_shadow = 0

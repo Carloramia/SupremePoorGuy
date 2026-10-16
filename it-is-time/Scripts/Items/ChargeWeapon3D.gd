@@ -5,6 +5,15 @@ var attached_shape: CollisionShape3D
 var attached_body: PhysicalBodyPart3D
 var _previous_center := Vector3.ZERO
 var _has_previous_center := false
+var _debug_query: PhysicsShapeQueryParameters3D
+var _ground_box_valid := false
+
+func get_attack_debug_shapes() -> Array[Dictionary]:
+	if not _ground_box_valid or not is_instance_valid(attached_shape) or attached_shape.is_queued_for_deletion() or not is_instance_valid(attached_body) or attached_body.is_broken: return []
+	# Show the actual swept query, which is wider than the instantaneous box at high speed.
+	if _debug_query != null and swing_damage_active:
+		return [{"shape":_debug_query.shape,"transform":_debug_query.transform,"active":true}]
+	return [{"shape":attached_shape.shape,"transform":attached_shape.global_transform,"active":false}]
 
 func attach_to_body(body: PhysicalBodyPart3D, length_ratio: float, radius_ratio: float) -> void:
 	attached_body = body
@@ -24,6 +33,8 @@ func attach_to_body(body: PhysicalBodyPart3D, length_ratio: float, radius_ratio:
 	begin_damage_swing()
 
 func update_ground_box(direction: float, terrain_mask: int, deal_damage: bool = true) -> void:
+	_debug_query = null
+	_ground_box_valid = false
 	if not is_instance_valid(attached_body) or not is_instance_valid(attached_shape): return
 	var box := attached_shape.shape as BoxShape3D
 	var body_size: Vector3 = attached_body.get_meta(&"generated_size",Vector3.ONE)
@@ -45,6 +56,7 @@ func update_ground_box(direction: float, terrain_mask: int, deal_damage: bool = 
 		return
 	center.y = ground.position.y + box.size.y*0.5
 	attached_shape.global_transform = Transform3D(Basis.IDENTITY,center)
+	_ground_box_valid = true
 	if deal_damage and swing_damage_active:
 		# Sweep the axis-aligned volume between ticks so fast charges do not skip thin parts.
 		var query_box := BoxShape3D.new()
@@ -54,6 +66,7 @@ func update_ground_box(direction: float, terrain_mask: int, deal_damage: bool = 
 		query.transform = Transform3D(Basis.IDENTITY,(center+_previous_center)*0.5 if _has_previous_center else center)
 		query.exclude = exclude
 		query.collision_mask = 0xFFFFFFFF
+		_debug_query = query
 		for contact: Dictionary in get_world_3d().direct_space_state.intersect_shape(query,256):
 			var target := contact.collider as PhysicalBodyPart3D
 			if target == null or target.is_broken or target._is_friendly_weapon(self): continue

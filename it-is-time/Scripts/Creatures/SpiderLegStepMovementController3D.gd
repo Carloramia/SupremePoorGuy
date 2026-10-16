@@ -127,7 +127,7 @@ func _apply_spider_independent_support() -> void:
 		var query := PhysicsRayQueryParameters3D.create(center + up * ray_start_height, center - up * ray_length)
 		query.exclude = _spider_support_exclusions
 		query.collision_mask = terrain_collision_mask
-		var hit := get_viewport().world_3d.direct_space_state.intersect_ray(query)
+		var hit := get_viewport().find_world_3d().direct_space_state.intersect_ray(query)
 		var error := 0.0
 		var has_floor := not hit.is_empty() and _surface_is_walkable(hit.normal)
 		if has_floor: error = Vector3(hit.position).dot(up) + float(segment.reference_height) - center.dot(up)

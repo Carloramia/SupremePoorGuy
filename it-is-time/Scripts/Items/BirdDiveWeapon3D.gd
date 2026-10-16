@@ -4,6 +4,10 @@ extends SampleWeapon3D
 var attached_shape: CollisionShape3D
 var attached_head: PhysicalBodyPart3D
 
+func get_attack_debug_shapes() -> Array[Dictionary]:
+	if not is_instance_valid(attached_shape) or attached_shape.is_queued_for_deletion() or not is_instance_valid(attached_head) or attached_head.is_broken: return []
+	return [{"shape":attached_shape.shape,"transform":attached_shape.global_transform,"active":swing_damage_active and not attached_shape.disabled}]
+
 func attach_to_head(head: PhysicalBodyPart3D, length_ratio: float, radius_ratio: float) -> void:
 	attached_head = head
 	var character: Node = preload("res://Scripts/Player/PlayerControlContext.gd").character_of(head)

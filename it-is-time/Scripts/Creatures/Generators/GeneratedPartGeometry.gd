@@ -3,8 +3,8 @@ extends RefCounted
 
 const RULE = preload("res://Scripts/Creatures/Generators/GeneratedPartSceneRule.gd")
 
-## Return actual local collision bounds, including the collider transform.
-static func bounds(part: PhysicalBodyPart3D) -> AABB:
+## Generation uses unpadded bounds to preserve model scale, frame placement and mass.
+static func bounds(part: PhysicalBodyPart3D, include_collision_padding: bool = true) -> AABB:
 	var collider := part.get_node_or_null("CollisionShape3D") as CollisionShape3D
 	if collider == null or collider.disabled: return AABB()
 	var points := PackedVector3Array()
@@ -16,17 +16,28 @@ static func bounds(part: PhysicalBodyPart3D) -> AABB:
 			for y: float in [-half.y, half.y]:
 				for z: float in [-half.z, half.z]: points.append(Vector3(x,y,z))
 	if points.is_empty(): return AABB()
+	if not include_collision_padding:
+		var multiplier := float(collider.shape.get_meta(PhysicalBodyPart3D.COLLISION_DEPTH_META, 1.0))
+		if multiplier != 1.0:
+			var low := INF
+			var high := -INF
+			for point: Vector3 in points:
+				low = minf(low, point.z)
+				high = maxf(high, point.z)
+			var center := (low + high) * 0.5
+			for index: int in points.size(): points[index].z = center + (points[index].z - center) / multiplier
 	var result := AABB(collider.transform * points[0], Vector3.ZERO)
 	for point: Vector3 in points: result = result.expand(collider.transform * point)
 	return result
 
+## Return unpadded dimensions; collision padding must never participate in visual fitting.
 static func fit(part: PhysicalBodyPart3D, target: Vector3, rule: RULE, role: String = "", paper_depth: float = -1.0) -> AABB:
 	if part.get_node_or_null("Sprite3D") == null: return AABB()
 	if part.geometry_mode == part.GeometryMode.CUSTOM_MODEL:
 		var model := part.get_node_or_null(part.custom_model_path) as Node3D
 		if model == null or model == part or not part.is_ancestor_of(model): return AABB()
 	part.prepare_generated_geometry()
-	var original := bounds(part)
+	var original := bounds(part, false)
 	if not original.size.is_finite() or original.size.x <= 0.0 or original.size.y <= 0.0 or original.size.z <= 0.0:
 		return AABB()
 	var multiplier := rule.size_multiplier
@@ -45,12 +56,12 @@ static func fit(part: PhysicalBodyPart3D, target: Vector3, rule: RULE, role: Str
 		part.prepare_generated_geometry()
 		if role == "Tail":
 			# A box tail grows toward -X from the center of its front shell.
-			var tail_bounds := bounds(part)
+			var tail_bounds := bounds(part, false)
 			var inlet := part.get_node_or_null("JointIn") as Marker3D
 			var outlet := part.get_node_or_null("JointOut") as Marker3D
 			if inlet != null: inlet.position = tail_bounds.get_center() + Vector3(tail_bounds.size.x * 0.5, 0, 0)
 			if outlet != null: outlet.position = tail_bounds.get_center() - Vector3(tail_bounds.size.x * 0.5, 0, 0)
-		return bounds(part)
+		return bounds(part, false)
 	var ratio := Vector3.ONE
 	# Paper depth is fitted separately so source thickness never constrains XY.
 	var source_paper_depth := part.paper_volume_enabled
@@ -103,7 +114,7 @@ static func fit(part: PhysicalBodyPart3D, target: Vector3, rule: RULE, role: Str
 	collider.transform = Transform3D.IDENTITY
 	collider.shape = shape
 	part.prepare_generated_geometry()
-	return bounds(part)
+	return bounds(part, false)
 
 static func connection_marker(part: PhysicalBodyPart3D, planned: Vector3) -> Vector3:
 	var result := planned

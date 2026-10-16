@@ -13,12 +13,14 @@ func key(code: Key, echo: bool = false) -> void:
 	await process_frame
 func wait_phase(app: Node, wanted: String) -> bool:
 	for tick: int in 600:
+		if wanted=="battle" and app.phase=="deployment": app.start_battle()
 		if app.phase==wanted: return true
 		await physics_frame
 	return false
 func run() -> void:
 	root.size = Vector2i(1280,720)
 	var app := preload("res://Scenes/Application/GameRoot.tscn").instantiate()
+	app.use_delivery_map = false
 	var path := "res://Tests/.runtime/integration/display_"+str(Time.get_ticks_usec())
 	app.save_path = path+".json"
 	app.display_settings_path = path+".cfg"

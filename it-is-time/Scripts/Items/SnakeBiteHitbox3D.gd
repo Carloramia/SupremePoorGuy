@@ -4,6 +4,10 @@ var head: PhysicalBodyPart3D
 var contacted_parts: Dictionary = {}
 var peak_impulse := 0.0
 
+func get_attack_debug_shapes() -> Array[Dictionary]:
+	if not is_instance_valid(head) or not head.is_inside_tree() or head.is_queued_for_deletion() or head.is_broken: return []
+	return super.get_attack_debug_shapes()
+
 func _init() -> void: damage_label = &"snake_bite_hit"
 func effective_mass() -> float: return body.mass+head.mass
 

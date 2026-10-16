@@ -111,7 +111,7 @@ func _make_part(node_name: String, role: String, subtype: String = "") -> Dictio
 	if rule == null or rule.part_scene == null: return {}
 	var part := rule.part_scene.instantiate() as PhysicalBodyPart3D
 	if part == null: return {}
-	var target := GEOMETRY.bounds(part).size
+	var target := GEOMETRY.bounds(part, false).size
 	if type == "SubTorso": target = Vector3(support_plate_size, support_plate_size, part_width)
 	elif type == "Tail" and not (use_segmented_tail and _tail_segment_index(node_name) >= 0): target = Vector3(tail_length, tail_height, part_width)
 	elif type == "Horn": target *= horn_size_scale

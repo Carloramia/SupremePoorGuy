@@ -103,6 +103,17 @@ func _register_hit(target: Node) -> bool:
 func set_damage_logging_enabled(enabled: bool) -> void:
 	damage_logging_enabled = enabled
 
+func get_attack_debug_shapes() -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	if not swing_damage_active: return result
+	var body: RigidBody3D = rigid_attachment_holder if is_instance_valid(rigid_attachment_holder) else self
+	for node: Node in body.get_children():
+		if not node is CollisionShape3D or node.is_queued_for_deletion() or node.disabled or node.shape == null: continue
+		# Rigid equipment uses cloned shapes on the hand; never draw the hand's own collider.
+		if body != self and (not node.has_meta(&"equipped_item") or node.get_meta(&"equipped_item") != self): continue
+		result.append({"shape":node.shape,"transform":node.global_transform,"active":true})
+	return result
+
 
 ## Resolve a merged weapon by the exact contacting shape, so bare Arm contacts do not become weapon hits.
 static func from_contact(collider: Object, shape_index: int) -> SampleWeapon3D:

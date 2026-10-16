@@ -24,7 +24,7 @@ func run() -> void:
 			assert(body.scale.is_equal_approx(Vector3.ONE))
 			assert(body.position.is_finite() and not body.is_broken)
 			assert(str(body.get_meta("generated_scene_path")).contains("/Wolf/"))
-			assert(is_equal_approx(GEOMETRY.bounds(body).size.z, 0.08*multiplier))
+			assert(is_equal_approx(GEOMETRY.bounds(body).size.z, 0.08*multiplier*2.0))
 			var rule: GeneratedPartSceneRule = generator.get_part_scene_rule(str(body.get_meta("generated_part_type", "")),str(body.name),str(body.name))
 			assert(rule.size_mode == GeneratedPartSceneRule.SizeMode.FIT_UNIFORM)
 			var source := rule.part_scene.instantiate() as PhysicalBodyPart3D

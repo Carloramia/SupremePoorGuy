@@ -99,7 +99,7 @@ func _piece(node_name: String, role: String, height: float, span: float = -1.0, 
 	if part == null: return {}
 	var inlet := part.get_node_or_null("JointIn") as Marker3D
 	var outlet := part.get_node_or_null("JointOut") as Marker3D
-	var original := GEOMETRY.bounds(part)
+	var original := GEOMETRY.bounds(part, false)
 	if inlet == null or outlet == null or original.size.y <= 0.0:
 		part.free()
 		return {}

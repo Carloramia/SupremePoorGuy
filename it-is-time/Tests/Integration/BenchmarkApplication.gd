@@ -42,10 +42,12 @@ func run() -> void:
 	host.monster_config_definitions = {"demo_guard":"human"}
 	viewport.add_child(host)
 	assert(await host.deploy(records(),"baseline"))
+	assert(host.start_combat())
 	var baseline := await measure(host,"battle_without_shell")
 	viewport.queue_free()
 	await process_frame; await process_frame
 	var app := preload("res://Scenes/Application/GameRoot.tscn").instantiate()
+	app.use_delivery_map = false
 	app.default_battle_definition = battle_definition()
 	app.save_path = "res://Tests/.runtime/integration/benchmark_"+str(Time.get_ticks_usec())+".json"
 	root.add_child(app)
@@ -62,6 +64,7 @@ func run() -> void:
 	assert(app.world_map.interaction.begin(location))
 	app.world_map.interaction.request_battle()
 	for tick: int in 600:
+		if app.phase=="deployment": app.start_battle()
 		if app.phase=="battle": break
 		await physics_frame
 	assert(app.battle!=null and app.phase=="battle")

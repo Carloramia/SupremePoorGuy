@@ -55,8 +55,9 @@ func run() -> void:
 		movement._apply_torso_response()
 		var carried := 0.0
 		for segment: Dictionary in movement._segments.values(): carried += float(segment.support_mass)
-		assert(is_equal_approx(carried, total_mass), "Airborne height support must include every intact part")
-		assert(movement._last_auxiliary_support_force.y > total_mass * movement._gravity_acceleration().length(), "Height recovery must have force above full assembly weight")
+		var independent_mass: float = movement._height_support_external_gravity_mass()
+		assert(is_equal_approx(carried+independent_mass, total_mass), "Assembly support includes every intact part without duplicating the Head gravity servo")
+		assert(movement._last_auxiliary_support_force.y > (total_mass-independent_mass) * movement._gravity_acceleration().length(), "Height recovery must have force above its share of assembly weight")
 		movement._physics_elapsed += 2.0
 		movement._apply_torso_response()
 		assert(movement._gallop_contacts.is_empty())

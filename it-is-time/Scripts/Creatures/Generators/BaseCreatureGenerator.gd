@@ -99,7 +99,7 @@ static func _copy_default_value(value: Variant) -> Variant:
 @export_range(0.1, 10.0, 0.05, "or_greater") var overall_scale: float = 4.0
 ## Shared local Z size for Torso, SubTorso, feet, Limb blocks, Neck and Head.
 ## Applied before Overall Scale; overrides Z in all per-part size settings and the Torso curve.
-## Physical Custom paper models use Part Width * Overall Scale as final depth, without Size Multiplier.
+## Custom paper visuals use Part Width * Overall Scale; their collision Z depth is twice that value.
 @export_range(0.01, 100.0, 0.01, "or_greater") var part_width: float = 0.2
 
 @export_group("Framework Display")

@@ -48,7 +48,7 @@ func verify_actor(actor: Node, mapping: Dictionary) -> void:
 	var generator := actor.get_node("SpiderGenerator")
 	var rear_model: Node3D = parts.get_node("Torso_Rear/Model")
 	assert(absf(rear_model.scale.x-rear_model.scale.y)<0.000001,"Rear Torso preserves original texture aspect ratio")
-	var expected_depth := float(generator.part_width)*float(generator.overall_scale)
+	var expected_depth := float(generator.part_width)*float(generator.overall_scale)*2.0
 	for key: String in mapping:
 		var body: PhysicalBodyPart3D = parts.get_node(key)
 		assert(body.get_meta("generated_scene_path")==mapping[key],key+" scene rule")

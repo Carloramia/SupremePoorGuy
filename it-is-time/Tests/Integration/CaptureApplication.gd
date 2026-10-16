@@ -12,6 +12,7 @@ func capture(name: String) -> void:
 func run() -> void:
 	root.size = Vector2i(1280,720)
 	app = preload("res://Scenes/Application/GameRoot.tscn").instantiate()
+	app.use_delivery_map = false
 	app.save_path = "res://Tests/.runtime/integration/capture_"+str(Time.get_ticks_usec())+".json"
 	root.add_child(app)
 	app.ui.animate_panels = false
@@ -49,6 +50,7 @@ func run() -> void:
 	await capture("05_location")
 	app.world_map.interaction.request_battle()
 	for tick: int in 600:
+		if app.phase=="deployment": app.start_battle()
 		if app.phase=="battle": break
 		await physics_frame
 	assert(app.phase=="battle")

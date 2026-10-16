@@ -1,0 +1,116 @@
+地图与UI交付包接入实施记录
+日期：2026-10-16
+工程：D:/GameJamWorkspace/ItIsTime/it-is-time
+入口：res://Scenes/Application/GameRoot.tscn（F6运行该场景，或F5运行工程）
+
+完成范围
+
+阶段1：资源隔离
+导入3371个文件到Modules/FrontierDelivery与Content/Maps/FrontierDelivery_20261015，保留来源SHA-256和目标路径记录Modules/FrontierDelivery/sources.json。
+包含1张探索地图、13张原生3D战场以及对应原生2D场景。探索地图保留293个对象、14个营地及其独立清理/遭遇引用。
+没有覆盖project.godot、PaperUI主题/布局、Autoload或任何生成生物的控制器/姿态场景。
+Tools/Integration/ImportDeliveryMaps.py提供可复现的版本导入；已存在版本会拒绝覆盖适配文件。
+资源UID检查扫描3385个UID，新增资源与现有资源没有UID冲突；实际运行资源引用均可加载。
+frontier_layout.json/native中的两个res://world_map/...路径是交付原工程的来源说明，不是本运行时加载入口，按原文保留。
+
+阶段2：大地图与UI
+GameRoot默认Use Delivery Map=true。新DeliveryMapBridge将交付FrontierMapView挂入现有WorldView，复用自己的2D视口，不建立第二份地图。
+关闭交付视图的战场预览；正式战斗仅由现有BattleHost在隔离World3D运行。
+保留迷雾、已知地点、移动寻路、开局边界、树木阻挡、破石及营地清理。
+新游戏仍是300魔力、空仓库/空队列，出生于召唤小屋[700,2368]；不会赠送角色。
+鼠标点击原生召唤小屋已验证能打开既有召唤界面。打开纸页/控制台会停止地图输入与行走推进，关闭后恢复。
+已修复旧空视口盖住新地图并截获点击的问题；还修复交付视图在遇阻清空路径后仍访问path[0]的问题。
+已知但尚无正式事件实现的地点明确显示提示，不伪造奖励。
+
+阶段3：会话与事务
+GameSession升级为schema_version=2，worlds中的快照带backend标签；仍只使用一个存档和一个battle_results账本。
+旧存档升级保留库存实例ID、物理姿态、队列、魔力及旧地图进度。第一次写入新版前保存同路径.pre_delivery_v2.bak备份。
+旧地图与新地图分别保存，不把旧位置直接搬到新地图。存在旧待处理战斗/结算时，本次启动使用旧入口完成原流程；下次无旧待处理战斗时使用新入口。
+交付Runtime的active_battle、battle_receipts只从主会话重建，不另行持久化。
+进入战斗前原子保存请求ID、队伍ID及地图位置；重复回执只发一次奖励。
+清理胜利才永久清理营地，范围遭遇胜利不永久清营地。
+空队伍的手动战斗按钮不可点击；自动遭遇会打开仓库准备，需要玩家明确加入队列后确认出战。取消会保存并解除准备状态。
+保存失败不扣除队伍、不发奖；战场加载失败回滚到地图；如果取消保存也失败，会保留原请求并提供重试按钮。
+已验证中断加载后重启能够以同一个请求ID重新部署真实NPC；结算也能恢复。
+战损继续保存在回执中；延续既有战后恢复规则，不永久删除库存生物。
+
+阶段4：真实战场
+DeliveryBattleEnvironmentAdapter加载原生美术、障碍和边界，移除预览相机、Party、重复环境及原CSG地面。
+Unit Scale默认8.0，统一换算场景、碰撞、区域与部署坐标；生物和刚体父级不缩放。
+单独生成实际地面碰撞、落穴开孔/底面/侧壁，并从真实StaticBody碰撞烘焙导航。
+修正了地面三角形绕序；向下射线现在能够命中y=0地面及穴底，导航可以生成多边形。
+修正透明地面/围边/场内贴片的绘制顺序，避免正交或斜视相机下地面盖住内部美术。
+部署按保存的实际碰撞包围盒选点，保留同一库存ID；原部署区域限定角色碰撞包围盒的中心，完整包围盒必须在战场内且不压障碍、落穴或其他角色。
+原槽位不足时在区域内补位；没有合法位置则明确拒绝开战。碰撞范围使用模板几何缓存和保存的姿态计算，不重复实例化角色来测量。
+13张战场均完成六个人形队位部署和真实地面/导航检查；另完成蛇、狼、蛇与人形敌军的混合战斗物理回归。
+导航继续采用现有通用agent_radius=1；包围盒部署校验不等同于保证任意体型、任意数量生物都可通过所有狭窄通道。
+
+敌军配置
+Resources/Application/FrontierDeliveryBattle.tres中有Unit Scale与Enemy Rosters入口。
+Resources/Application/EnemyRosters下18份编队资源对应实际营地的enemy_config_id。
+人形使用已有持矛Human NPC，狼使用Wolf NPC，蜘蛛和树窟蜘蛛使用Spider NPC。首轮采用小编队：人形2只，狼/蜘蛛1只，可在Definitions数组增减。
+按用户选择，rat_clear_team、forest_rat_clear_team、forest_rat_encounter_team保持Enabled=false，提供“巨鼠NPC未接入”说明。巨鼠地图美术/配置保留，但游戏中的战斗入口拒绝启动。
+没有用Ratkin或Snake代替巨鼠，也不会生成空敌军直接判胜。
+
+阶段5：效果与战后动作
+BattleEnvironmentEffects3D按身体接触计数、按角色去重，每0.1秒更新区域状态。
+泥地/荆棘使用最强单项slow_ratio，不按身体数量叠加；离开最后一个身体接触后恢复每个角色独有的移动资源目标速度。
+蛛网读取实际BirdFlightController3D空中状态与高度范围，施加有时限布娃娃控制；不会暂停整个场景。检测高度覆盖配置max_height，而非仅原示意2单位高度。
+collision_damage保留实体障碍。源配置damage=0，因此默认不会新增HP伤害；此时也不启用额外接触监控。
+如将collision_damage的damage设为正数，该值作为冲量伤害倍率：每物理帧读取实际求解器接触冲量，用DamageService.calculate_raw_damage换算、乘倍率、减护甲，再走PhysicalBodyPart3D.apply_damage。每区域/角色按interval限频。
+非碰撞型区域的正damage可作为周期原始伤害，仍走护甲和HP入口。
+落穴是真实几何孔洞，未额外增加即死/传送规则。
+战后召唤/升级来自战场post_battle配置，仅胜利开放，选项随回执保存；召唤复用既有入口，升级复用既有胜利条件和费用。
+控制台trackintegration on/off/status继续用于宿主路由、事务与环境速度状态日志；getlogs沿用既有归档功能。
+
+保留的战斗操作
+QPressed：切换自由系统鼠标/地形光标；不生成Q轮盘或玩家Controller。
+Space：暂停/继续战斗，显示暂停提示。
+BPressed：仍然禁用工坊呼出。
+分辨率与全屏设置继续使用当前设置菜单。
+Wolf、Snake和其他生物的移动/攻击控制算法没有被本次接入重写。
+
+验证
+Godot 4.7.2 mono，headless物理测试fixed-fps=60；图像使用D3D12 Forward+、RTX4090真实渲染。
+专项：ValidateDeliveryAssets、ValidateDeliveryApplication、ValidateDeliverySaveAndEffects、ValidateDeliveryEnvironments。
+回归：ValidateGameSession、ValidateGameRoot、ValidateApplicationRecovery、ValidateApplicationInput、ValidateBattleControlsAndDisplay。
+混合生物：ValidateBattleCreatureStability -- --delivery，模拟1800个物理帧。
+画面：CaptureDeliveryApplication在1120x680、1280x720、1920x1080检查地图、设置、战斗暂停、结算和返回；CaptureDeliveryEnvironments输出13张战场截图。
+输出：D:/GameJamWorkspace/Reports/DeliveryIntegration_2026-10-16，包含日志、截图、battle_environment_contact_sheet.png和resource_audit.json。
+专项覆盖升级前备份、旧库存保持、迷雾、入口石头恢复、空队伍准备/取消、真实鼠标点击、战场加载失败、取消保存失败重试、结算保存失败、重复回执、中断加载恢复、区域身体计数、飞行筛选、护甲/HP及地面/落穴/导航。
+
+本次没有验证的范围
+没有完成50个NPC或所有六种大型生物混编的持续性能压测，也没有逐营地跑完自然AI胜负。
+混合物理回归通过现有有限性/结构跨度阈值，仍观察到战斗碰撞中的较大Wolf瞬时朝向/平面偏差，不能据此宣称所有物理姿态问题已经解决。
+蛛网筛选通过飞行状态替身验证，尚未新增鸟类召唤入口；当前召唤池见下方追加记录。
+环境冲量伤害公式/护甲入口已验证；源配置均为0，尚未对启用正倍率的岩石进行自然撞击调参。
+编辑器导入完成，但本机原有.NET SDK 10.0.5/MSBuild缺失提示仍存在；本次GDScript运行和Forward+截图成功，不代表C#构建环境已修复。
+
+回退
+在GameRoot Inspector关闭Use Delivery Map可运行原Frontier后端；保留Modules/Frontier和旧地图快照。
+若连同代码退回只支持schema1的版本，使用.pre_delivery_v2.bak另行恢复；不要让旧代码覆盖新存档。
+本次未提交或推送Git。
+
+2026-10-16：战斗中段部署调整
+当前 13 张交付战场统一按地图 X 轴部署：友方位于左侧并朝 +X，敌方位于右侧并朝 -X。
+以 R=地图半径×UnitScale 为基准，整个生物的碰撞包围盒限制在 |X|≤0.45R、|Z|≤0.35R，
+两队优先以 X=±0.25R、Z=0 为中心沿 Z 错开排列，中线两侧各留出至少 0.03R 的间隙。
+依据保存姿态计算完整包围盒，保留原始生物姿态和尺寸；避开边界、落穴、原障碍占地及
+泥潭/荆棘/蛛网区域。空间不足时明确提示部署失败，不将生物移到地图边缘或另一阵营一侧。
+原 deployment_id 仍用于验证战场请求，入口部署区坐标和旧槽位不再决定当前实际站位。
+参数常量位于 Scripts/Application/DeliveryBattleEnvironmentAdapter.gd 文件开头。
+验证：全部 13 张地图使用人形、Wolf、Snake、Spider 的 6 友方/4 敌方混合编队检查，
+覆盖左右分区、中段范围、相向站立、互不重叠、危险区域、过大生物拒绝、地面与导航；
+ValidateDeliveryApplication 同时确认正式游戏中的实际阵营、位置、朝向和战斗流程正常。
+
+2026-10-16：召唤随机池调整
+正式游戏从 StumpBeast、Wolf、Snake、HornedBeast、Spider 中等概率抽取成功召唤的生物，
+每种为 20%；随机池位于 Scripts/Application/CreatureFactory.gd 的 SUMMON_POOL。
+Human 不再参与新的随机召唤，仍保留物种注册，兼容已有库存和敌方配置。
+StumpBeast、HornedBeast 使用现有 NPC 场景的已保存姿态及其 AI/攻击组件，部署时不重新生成框架。
+召唤界面直接按同一随机池显示五种生物名称；费用、批次数量、符文及畸变规则维持原有计算。
+验证：8 组固定种子共 40 次成功召唤覆盖全部五种，无 Human；全部可入库并保存重载，
+已有 Human 记录仍可读取。13 张战场均检查包含五种生物的六槽混合部署。
+实际混合部署时检查五种生物均保留可用 AI 攻击模组，并进行 60 帧有限性检查；
+Spider 独立支撑的物理查询改用 find_world_3d()，以兼容战斗子视口的独立物理世界。
+本次未进行五种生物的长时间混战或性能压力测试。

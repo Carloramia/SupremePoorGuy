@@ -1,0 +1,276 @@
+[gd_scene format=3]
+[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/GroundDecorations/ActiveAltar.tscn" id="0"]
+[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/GroundDecorations/BrokenBarricade.tscn" id="1"]
+[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/GroundDecorations/DryGrassPatch.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/GroundDecorations/GrassTuft.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/GroundDecorations/Gravel.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/GroundDecorations/LeafLitter.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/GroundDecorations/ShalePatch.tscn" id="6"]
+[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/GroundDecorations/SummoningArray.tscn" id="7"]
+[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/GroundDecorations/WoodFragment.tscn" id="8"]
+[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/GroundEffects/Mud.tscn" id="9"]
+[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/GroundEffects/PitArtwork.tscn" id="10"]
+[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/GroundEffects/Thorns.tscn" id="11"]
+[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/GroundEffects/Web.tscn" id="12"]
+[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/Props/BrokenStump.tscn" id="13"]
+[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/Props/CaveMouth.tscn" id="14"]
+[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/Props/DeadTree.tscn" id="15"]
+[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/Props/LargeRock.tscn" id="16"]
+[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/Props/LivingTree.tscn" id="17"]
+[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/Props/RatMound.tscn" id="18"]
+[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/Props/RootFan.tscn" id="19"]
+[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/Props/SupplyCrate.tscn" id="20"]
+[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/Props/TentAndFlag.tscn" id="21"]
+[sub_resource type="Environment" id="env"]
+background_mode = 1
+background_color = Color(0.12, 0.15, 0.18, 1)
+[node name="FrontierBattlePartsPreview" type="Node3D"]
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.8320503, -0.5547002, 0, 0.5547002, 0.8320503, 0, 25, 37.5)
+projection = 1
+size = 34.0
+current = true
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("env")
+[node name="ActiveAltar" parent="." instance=ExtResource("0")]
+position = Vector3(-20.0, 0, -22.5)
+scale = Vector3(0.80555555555556, 0.80555555555556, 0.80555555555556)
+collision_enabled = false
+[node name="Label0" type="Label3D" parent="."]
+position = Vector3(-20.0, 0.1, -19.3)
+text = "ActiveAltar"
+font_size = 32
+pixel_size = 0.025
+billboard = 1
+no_depth_test = true
+[node name="BrokenBarricade" parent="." instance=ExtResource("1")]
+position = Vector3(-12.0, 0, -22.5)
+scale = Vector3(1.18852459016393, 1.18852459016393, 1.18852459016393)
+collision_enabled = false
+[node name="Label1" type="Label3D" parent="."]
+position = Vector3(-12.0, 0.1, -19.3)
+text = "BrokenBarricade"
+font_size = 32
+pixel_size = 0.025
+billboard = 1
+no_depth_test = true
+[node name="DryGrassPatch" parent="." instance=ExtResource("2")]
+position = Vector3(-4.0, 0, -22.5)
+scale = Vector3(1.93333333333333, 1.93333333333333, 1.93333333333333)
+collision_enabled = false
+[node name="Label2" type="Label3D" parent="."]
+position = Vector3(-4.0, 0.1, -19.3)
+text = "DryGrassPatch"
+font_size = 32
+pixel_size = 0.025
+billboard = 1
+no_depth_test = true
+[node name="GrassTuft" parent="." instance=ExtResource("3")]
+position = Vector3(4.0, 0, -22.5)
+scale = Vector3(16.5714285714286, 16.5714285714286, 16.5714285714286)
+collision_enabled = false
+[node name="Label3" type="Label3D" parent="."]
+position = Vector3(4.0, 0.1, -19.3)
+text = "GrassTuft"
+font_size = 32
+pixel_size = 0.025
+billboard = 1
+no_depth_test = true
+[node name="Gravel" parent="." instance=ExtResource("4")]
+position = Vector3(12.0, 0, -22.5)
+scale = Vector3(8.05555555555556, 8.05555555555556, 8.05555555555556)
+collision_enabled = false
+[node name="Label4" type="Label3D" parent="."]
+position = Vector3(12.0, 0.1, -19.3)
+text = "Gravel"
+font_size = 32
+pixel_size = 0.025
+billboard = 1
+no_depth_test = true
+[node name="LeafLitter" parent="." instance=ExtResource("5")]
+position = Vector3(20.0, 0, -22.5)
+scale = Vector3(1.93333333333333, 1.93333333333333, 1.93333333333333)
+collision_enabled = false
+[node name="Label5" type="Label3D" parent="."]
+position = Vector3(20.0, 0.1, -19.3)
+text = "LeafLitter"
+font_size = 32
+pixel_size = 0.025
+billboard = 1
+no_depth_test = true
+[node name="ShalePatch" parent="." instance=ExtResource("6")]
+position = Vector3(-20.0, 0, -7.5)
+scale = Vector3(1.93333333333333, 1.93333333333333, 1.93333333333333)
+collision_enabled = false
+[node name="Label6" type="Label3D" parent="."]
+position = Vector3(-20.0, 0.1, -4.3)
+text = "ShalePatch"
+font_size = 32
+pixel_size = 0.025
+billboard = 1
+no_depth_test = true
+[node name="SummoningArray" parent="." instance=ExtResource("7")]
+position = Vector3(-12.0, 0, -7.5)
+scale = Vector3(1.22881355932203, 1.22881355932203, 1.22881355932203)
+collision_enabled = false
+[node name="Label7" type="Label3D" parent="."]
+position = Vector3(-12.0, 0.1, -4.3)
+text = "SummoningArray"
+font_size = 32
+pixel_size = 0.025
+billboard = 1
+no_depth_test = true
+[node name="WoodFragment" parent="." instance=ExtResource("8")]
+position = Vector3(-4.0, 0, -7.5)
+scale = Vector3(4.39393939393939, 4.39393939393939, 4.39393939393939)
+collision_enabled = false
+[node name="Label8" type="Label3D" parent="."]
+position = Vector3(-4.0, 0.1, -4.3)
+text = "WoodFragment"
+font_size = 32
+pixel_size = 0.025
+billboard = 1
+no_depth_test = true
+[node name="Mud" parent="." instance=ExtResource("9")]
+position = Vector3(4.0, 0, -7.5)
+scale = Vector3(4.53125, 4.53125, 4.53125)
+collision_enabled = false
+[node name="Label9" type="Label3D" parent="."]
+position = Vector3(4.0, 0.1, -4.3)
+text = "Mud"
+font_size = 32
+pixel_size = 0.025
+billboard = 1
+no_depth_test = true
+[node name="PitArtwork" parent="." instance=ExtResource("10")]
+position = Vector3(12.0, 0, -7.5)
+scale = Vector3(4.53125, 4.53125, 4.53125)
+collision_enabled = false
+[node name="Label10" type="Label3D" parent="."]
+position = Vector3(12.0, 0.1, -4.3)
+text = "PitArtwork"
+font_size = 32
+pixel_size = 0.025
+billboard = 1
+no_depth_test = true
+[node name="Thorns" parent="." instance=ExtResource("11")]
+position = Vector3(20.0, 0, -7.5)
+scale = Vector3(1.9205298013245, 1.9205298013245, 1.9205298013245)
+collision_enabled = false
+[node name="Label11" type="Label3D" parent="."]
+position = Vector3(20.0, 0.1, -4.3)
+text = "Thorns"
+font_size = 32
+pixel_size = 0.025
+billboard = 1
+no_depth_test = true
+[node name="Web" parent="." instance=ExtResource("12")]
+position = Vector3(-20.0, 0, 7.5)
+scale = Vector3(4.53125, 4.53125, 4.53125)
+collision_enabled = false
+[node name="Label12" type="Label3D" parent="."]
+position = Vector3(-20.0, 0.1, 10.7)
+text = "Web"
+font_size = 32
+pixel_size = 0.025
+billboard = 1
+no_depth_test = true
+[node name="BrokenStump" parent="." instance=ExtResource("13")]
+position = Vector3(-12.0, 0, 7.5)
+scale = Vector3(3.22222222222222, 3.22222222222222, 3.22222222222222)
+collision_enabled = false
+[node name="Label13" type="Label3D" parent="."]
+position = Vector3(-12.0, 0.1, 10.7)
+text = "BrokenStump"
+font_size = 32
+pixel_size = 0.025
+billboard = 1
+no_depth_test = true
+[node name="CaveMouth" parent="." instance=ExtResource("14")]
+position = Vector3(-4.0, 0, 7.5)
+scale = Vector3(1.8125, 1.8125, 1.8125)
+collision_enabled = false
+[node name="Label14" type="Label3D" parent="."]
+position = Vector3(-4.0, 0.1, 10.7)
+text = "CaveMouth"
+font_size = 32
+pixel_size = 0.025
+billboard = 1
+no_depth_test = true
+[node name="DeadTree" parent="." instance=ExtResource("15")]
+position = Vector3(4.0, 0, 7.5)
+scale = Vector3(9.20634920634921, 9.20634920634921, 9.20634920634921)
+collision_enabled = false
+[node name="Label15" type="Label3D" parent="."]
+position = Vector3(4.0, 0.1, 10.7)
+text = "DeadTree"
+font_size = 32
+pixel_size = 0.025
+billboard = 1
+no_depth_test = true
+[node name="LargeRock" parent="." instance=ExtResource("16")]
+position = Vector3(12.0, 0, 7.5)
+scale = Vector3(2.14814814814815, 2.14814814814815, 2.14814814814815)
+collision_enabled = false
+[node name="Label16" type="Label3D" parent="."]
+position = Vector3(12.0, 0.1, 10.7)
+text = "LargeRock"
+font_size = 32
+pixel_size = 0.025
+billboard = 1
+no_depth_test = true
+[node name="LivingTree" parent="." instance=ExtResource("17")]
+position = Vector3(20.0, 0, 7.5)
+scale = Vector3(1.55495978552279, 1.55495978552279, 1.55495978552279)
+collision_enabled = false
+[node name="Label17" type="Label3D" parent="."]
+position = Vector3(20.0, 0.1, 10.7)
+text = "LivingTree"
+font_size = 32
+pixel_size = 0.025
+billboard = 1
+no_depth_test = true
+[node name="RatMound" parent="." instance=ExtResource("18")]
+position = Vector3(-20.0, 0, 22.5)
+scale = Vector3(1.8125, 1.8125, 1.8125)
+collision_enabled = false
+[node name="Label18" type="Label3D" parent="."]
+position = Vector3(-20.0, 0.1, 25.7)
+text = "RatMound"
+font_size = 32
+pixel_size = 0.025
+billboard = 1
+no_depth_test = true
+[node name="RootFan" parent="." instance=ExtResource("19")]
+position = Vector3(-12.0, 0, 22.5)
+scale = Vector3(1.8125, 1.8125, 1.8125)
+collision_enabled = false
+[node name="Label19" type="Label3D" parent="."]
+position = Vector3(-12.0, 0.1, 25.7)
+text = "RootFan"
+font_size = 32
+pixel_size = 0.025
+billboard = 1
+no_depth_test = true
+[node name="SupplyCrate" parent="." instance=ExtResource("20")]
+position = Vector3(-4.0, 0, 22.5)
+scale = Vector3(3.86666666666667, 3.86666666666667, 3.86666666666667)
+collision_enabled = false
+[node name="Label20" type="Label3D" parent="."]
+position = Vector3(-4.0, 0.1, 25.7)
+text = "SupplyCrate"
+font_size = 32
+pixel_size = 0.025
+billboard = 1
+no_depth_test = true
+[node name="TentAndFlag" parent="." instance=ExtResource("21")]
+position = Vector3(4.0, 0, 22.5)
+scale = Vector3(1.36792452830189, 1.36792452830189, 1.36792452830189)
+collision_enabled = false
+[node name="Label21" type="Label3D" parent="."]
+position = Vector3(4.0, 0.1, 25.7)
+text = "TentAndFlag"
+font_size = 32
+pixel_size = 0.025
+billboard = 1
+no_depth_test = true

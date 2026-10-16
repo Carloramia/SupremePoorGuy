@@ -1,0 +1,30 @@
+战斗前部署阶段
+
+操作
+1. 进入战斗地图后先进入部署阶段。双方生物及装备冻结，AI、战斗计时和环境伤害尚未启用。
+2. 蓝色边界标示友方部署区。地形光标只吸附友方生物，选中时保持蓝色。
+3. 点击 MouseLeft 拾起选中的生物，光标变绿；移动鼠标整体平移生物，再次点击 MouseLeft 放置。无需持续按住鼠标。
+4. 放置时检查生物身体的完整水平范围、其他生物、启用的障碍碰撞体、坑洞、危险区域和地面连续性。禁用的碰撞箱不阻挡放置；自身及自身装备不互相阻挡。装备随身体平移，其碰撞箱也参与外部重叠检查。
+5. 非法位置会显示拒绝原因并保持绿色拖动状态，不能直接开始战斗。
+6. 放置完成后按 Q 显示系统鼠标，点击画面下方“开始战斗”。开始后恢复地形光标，移除部署边界，启用双方物理、AI和环境效果。Space 恢复暂停/继续战斗功能。
+7. 部署期间仍可右键旋转摄像机、滚轮缩放；不允许旋转生物。调整保留身体各部件、碰撞箱、关节和装备的相对姿态，并按地面高度差整体平移。
+
+数据与地图
+- 部署只改变本场战斗实例，不能修改仓库中的原始姿态、生成器、Part或NPC场景。
+- 战斗中途退出后重新加载仍沿用原有的战斗重开流程；临时部署位置不会写入存档。
+- 交付地图沿用现有居中左侧友军生成区：X 从 -0.45R 到 -max(1,0.03R)，Z 为 ±0.35R，R 为地图实际半径。敌方位置保持原有生成流程。
+- 旧 Frontier 编辑器地图读取其 deployment.region。默认旧演示地图的部署区宽度由10调至30，中心、槽位和朝向未改变，以容纳当前生物完整碰撞范围。
+
+代码入口
+- Scripts/Application/BattleDeployment3D.gd：冻结、整组平移、放置合法性和边界显示。
+- Scripts/Application/BattleHost.gd：deploy() 只生成并进入部署；start_combat() 正式启用战斗。
+- Scripts/Application/GameRoot.gd：新增 deployment 阶段，两个地图入口都接入；start_battle() 为开始按钮入口。
+- Scripts/Input/TerrainCursor3D.gd：部署专用友军选择、蓝/绿状态及拖动期间的目标保持。
+- Scripts/Application/GameUIController.gd：部署提示和开始战斗按钮。
+- 移动过的生物在正式开始前刷新移动控制器缓存，包括 Snake 的世界空间路径，避免回到旧位置。
+
+日志与验证
+- 控制台 trackmap on 开启地图事件追踪；trackmap off 关闭。
+- 新事件：deployment_started、deployment_pickup、deployment_rejected、deployment_placed。battle_started 只在真正开始战斗后输出。
+- Tests/Integration/ValidateBattleDeployment.gd 覆盖两个入口、真实鼠标点击、蓝/绿状态、身体与装备姿态保持、友军限制、重叠/越界拒绝、存档不变、正式开始、环境效果延后启用和五种召唤生物。
+- 原战斗测试和截图工具显式结束部署后再检查战斗，不再假定 deploy() 自动开始。

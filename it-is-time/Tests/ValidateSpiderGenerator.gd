@@ -121,7 +121,7 @@ func run() -> void:
 	for part: Node in parts.get_children():
 		if not part is PhysicalBodyPart3D: continue
 		assert(part.basis.z.is_equal_approx(Vector3.BACK))
-		assert(is_equal_approx(preload("res://Scripts/Creatures/Generators/GeneratedPartGeometry.gd").bounds(part).size.z, physical_generator.part_width * physical_generator.overall_scale))
+		assert(is_equal_approx(preload("res://Scripts/Creatures/Generators/GeneratedPartGeometry.gd").bounds(part).size.z, physical_generator.part_width * physical_generator.overall_scale * 2.0))
 		if PhysicalBodyPart3D.BodyPartTag.Leg in part.tags: legs += 1
 		if PhysicalBodyPart3D.BodyPartTag.LegLimb in part.tags: limbs += 1
 	assert(legs == 8 and limbs == 8 and parts.get_node("Joints").get_child_count() == 18)

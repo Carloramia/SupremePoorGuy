@@ -56,6 +56,10 @@ func run() -> void:
 	for character in [actor,enemy]:
 		for part: RigidBody3D in character._get_physical_body_parts(): part.freeze = true
 	var charge := actor.get_node("ChargeAttackController3D")
+	assert(charge.data.resource_path == "res://Resources/Actions/HornedBeastCharge.tres")
+	assert(is_equal_approx(charge.data.get_minimum_distance(),44.3333333333))
+	assert(charge.data.maximum_acceleration >= charge.data.acceleration)
+	assert(is_equal_approx(load("res://Resources/Actions/GroundCharge.tres").get_minimum_distance(),133.0))
 	charge.data = preload("res://Scripts/Creatures/ChargeAttackData.gd").new()
 	charge.set_physics_process(false)
 	charge.diagnostic_logging = true
@@ -92,6 +96,24 @@ func run() -> void:
 	var machine := actor.get_node("NPCStateMachine3D")
 	machine._enemy = enemy
 	machine._target = target
+	var origin: Vector3 = machine._get_navigation_origin_position()
+	for side: float in [-1.0,1.0]:
+		target.global_position.x = charge._body.global_position.x + side*80.0
+		var approach: Dictionary = charge.get_npc_attack_approach(&"ground_charge",target,20.0,origin)
+		assert(approach.valid)
+		var moved_head: Vector3 = charge._body.global_position + Vector3(approach.goal)-origin
+		assert(is_equal_approx(absf(target.global_position.x-moved_head.x),20.0))
+		assert(is_equal_approx(moved_head.z,target.global_position.z))
+		assert(not charge.get_npc_attack_approach(&"ground_charge",target,500.0,origin).valid)
+	target.global_position = saved
+	var actual_data: Resource = charge.data
+	charge.data = actual_data.duplicate()
+	charge.data.acceleration = 0.1
+	assert(machine._plan_attack_distance(100.0,machine.behavior.attacks))
+	assert(machine._distance_attack.action_id == &"foreleg_stomp","Unreachable run-up falls back to an available close attack")
+	charge.data = actual_data
+	assert(not machine._plan_attack_distance(100.0,machine.behavior.attacks))
+	assert(machine._distance_attack.action_id == &"ground_charge")
 	var attack_data = machine.behavior.attacks[0]
 	assert(is_inf(machine._attack_maximum_range(attack_data,target)))
 	assert(is_equal_approx(machine._attack_minimum_range(attack_data),14.0))

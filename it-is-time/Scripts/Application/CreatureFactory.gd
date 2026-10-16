@@ -3,10 +3,31 @@ extends RefCounted
 
 const DEFINITIONS := {
 	"human": {"scene":"res://Scenes/Creatures/Characters/Human/Armed/Generate_Human_Spear1_NPC.tscn","name":"持矛人形","form":"人形","color":"8caaa3"},
+	"stump_beast": {"scene":"res://Scenes/Creatures/Characters/Generate_StumpBeast_NPC.tscn","name":"树桩兽","form":"兽形","color":"927e60"},
 	"wolf": {"scene":"res://Scenes/Creatures/Characters/Generate_Wolf_NPC.tscn","name":"灰狼","form":"兽形","color":"839b78"},
 	"snake": {"scene":"res://Scenes/Creatures/Characters/Generate_Snake_NPC.tscn","name":"蛇兽","form":"蛇形","color":"bb9272"},
+	"horned_beast": {"scene":"res://Scenes/Creatures/Characters/Generate_HornedBeast_NPC.tscn","name":"角兽","form":"兽形","color":"b49a72"},
+	"spider": {"scene":"res://Scenes/Creatures/Characters/Generate_Spider_NPC.tscn","name":"蜘蛛","form":"兽形","color":"826f59"},
 }
+const SUMMON_POOL := ["stump_beast","wolf","snake","horned_beast","spider"]
 static var _templates: Dictionary = {}
+
+static var _collisions: Dictionary = {}
+
+static func local_bounds(record: Dictionary) -> AABB:
+	if not _collisions.has(record.definition_id): template(record.definition_id)
+	var result := AABB()
+	var first := true
+	for path: String in _collisions[record.definition_id]:
+		var transform := Transform3D.IDENTITY
+		var current := path
+		while not current.is_empty():
+			transform = unpack_transform(record.poses[current])*transform
+			current = current.get_base_dir() if "/" in current else ""
+		var bounds: AABB = transform*_collisions[record.definition_id][path]
+		result = bounds if first else result.merge(bounds)
+		first = false
+	return result
 
 static func pack_transform(pose: Transform3D) -> Array:
 	return [pose.basis.x.x,pose.basis.x.y,pose.basis.x.z,pose.basis.y.x,pose.basis.y.y,pose.basis.y.z,pose.basis.z.x,pose.basis.z.y,pose.basis.z.z,pose.origin.x,pose.origin.y,pose.origin.z]
@@ -23,11 +44,22 @@ static func template(id: String) -> Dictionary:
 	var actor := scene.instantiate()
 	var poses := {}
 	var parts := {}
+	_collisions[id] = {}
 	var hp := 0.0
 	var armor := 0.0
 	var speed := 3.0
 	for node: Node in actor.find_children("*","",true,false):
 		if node is Node3D: poses[str(actor.get_path_to(node))] = pack_transform(node.transform)
+		if node is CollisionShape3D and not node.disabled and node.shape!=null and node.get_parent() is PhysicalBodyPart3D:
+			var points := PackedVector3Array()
+			if node.shape is ConvexPolygonShape3D: points = node.shape.points
+			elif node.shape is BoxShape3D:
+				var box := AABB(-node.shape.size*0.5,node.shape.size)
+				for corner: int in 8: points.append(box.get_endpoint(corner))
+			if not points.is_empty():
+				var bounds := AABB(points[0],Vector3.ZERO)
+				for point: Vector3 in points: bounds = bounds.expand(point)
+				_collisions[id][str(actor.get_path_to(node))] = bounds
 		if node is PhysicalBodyPart3D:
 			parts[str(actor.get_path_to(node))] = {"key":str(node.get_meta(&"generated_part_key",str(node.name))),"hp":node.max_hp,"armor":node.armor}
 			hp += node.max_hp

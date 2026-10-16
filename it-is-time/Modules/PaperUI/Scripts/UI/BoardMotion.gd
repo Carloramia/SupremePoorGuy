@@ -55,5 +55,7 @@ func _finished(kind: StringName) -> void:
 	completed.emit(String(kind))
 
 func _input(event: InputEvent) -> void:
+	# Application settings stay reachable while a paper page is animating.
+	if event is InputEventKey and (event.keycode == KEY_ESCAPE or event.physical_keycode == KEY_ESCAPE): return
 	if busy and (event is InputEventKey or event is InputEventMouseButton):
 		get_viewport().set_input_as_handled()

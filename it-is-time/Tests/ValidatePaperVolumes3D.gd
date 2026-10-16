@@ -48,12 +48,13 @@ func run() -> void:
 			var scene := load(dir.path_join(group).path_join(file)) as PackedScene
 			var part := scene.instantiate() as PhysicalBodyPart3D
 			part.freeze = true
+			part.paper_volume_thickness = 0.08
 			root.add_child(part)
 			var model := part.get_node("Model") as Node3D
 			var mesh := model.get_node("PaperVolume") as MeshInstance3D
 			var collision := part.get_node("CollisionShape3D") as CollisionShape3D
 			var shape := collision.shape as ConvexPolygonShape3D
-			assert(part.paper_volume_enabled and mesh.visible and is_equal_approx(depth(shape),0.08))
+			assert(part.paper_volume_enabled and mesh.visible and is_equal_approx(depth(shape),0.16), file + " depth=" + str(depth(shape)) + " visible=" + str(mesh.visible) + " enabled=" + str(part.paper_volume_enabled))
 			assert(mesh.mesh.get_surface_count() == 3 and mesh.mesh.surface_get_array_len(2) > 0)
 			var front_material := mesh.mesh.surface_get_material(0) as StandardMaterial3D
 			var back_material := mesh.mesh.surface_get_material(1) as StandardMaterial3D
@@ -73,13 +74,13 @@ func run() -> void:
 			var points := shape.points
 			part.paper_volume_thickness = 0.25
 			part.paper_side_color = Color.RED
-			assert(is_equal_approx(mesh.scale.z,0.25) and is_equal_approx(depth(shape),0.25))
+			assert(is_equal_approx(mesh.scale.z,0.25) and is_equal_approx(depth(shape),0.5))
 			assert(mesh.get_surface_override_material(2).albedo_color == Color.RED)
 			assert(model.transform == before_model and part.get_node("JointOut").transform == before_joint)
 			for index: int in points.size():
 				assert(Vector2(points[index].x,points[index].y).is_equal_approx(Vector2(shape.points[index].x,shape.points[index].y)))
 			part.paper_volume_enabled = false
-			assert(not mesh.visible and is_equal_approx(depth(shape),0.02))
+			assert(not mesh.visible and is_equal_approx(depth(shape),0.04))
 			for node: MeshInstance3D in source_meshes:
 				if node != mesh: assert(node.visible)
 			part.paper_volume_enabled = true
@@ -89,16 +90,17 @@ func run() -> void:
 			assert(model.visible)
 			var second := scene.instantiate() as PhysicalBodyPart3D
 			second.freeze = true
+			second.paper_volume_thickness = 0.08
 			# Simulate an editor save whose collision points already contain volume depth.
 			var stored_shape := second.get_node("CollisionShape3D").shape as ConvexPolygonShape3D
 			var stored_points := stored_shape.points
 			for index: int in stored_points.size(): stored_points[index].z *= 4.0
 			stored_shape.points = stored_points
 			root.add_child(second)
-			assert(is_equal_approx(depth(second.get_node("CollisionShape3D").shape),0.08))
+			assert(is_equal_approx(depth(second.get_node("CollisionShape3D").shape),0.16))
 			assert(second.get_node("Model/PaperVolume").get_surface_override_material(2).albedo_color != Color.RED)
 			second.paper_volume_enabled = false
-			assert(is_equal_approx(depth(stored_shape),0.02),"Reloading an expanded shape must not lose the flat collision depth")
+			assert(is_equal_approx(depth(stored_shape),0.04),"Reloading an expanded shape must not lose the flat collision depth")
 			second.free()
 			part.free()
 			count += 1

@@ -70,6 +70,30 @@ func run() -> void:
 	var parser := JSON.new()
 	parser.parse(FileAccess.get_file_as_string(session.save_path+".bak"))
 	check(recovery._valid_save(parser.data),"Good backup is not replaced by the corrupt main file")
+	_check_summon_pool(rules)
 	print("APPLICATION_SESSION_", "FAILED" if failed else "PASSED")
 	quit(1 if failed else 0)
+
+func _check_summon_pool(rules: RefCounted) -> void:
+	var seen := {}
+	for seed_value: int in 8:
+		var session := SESSION.new()
+		session.save_path = "res://Tests/.runtime/integration/summon_pool_%d_%d.json" % [Time.get_ticks_usec(),seed_value]
+		var rng := RandomNumberGenerator.new()
+		rng.seed = seed_value
+		check(session.summon(rules,"frontier","world",rng),"Summon from the five-species pool")
+		for record: Dictionary in session.data.monsters:
+			check(record.definition_id in ["stump_beast","wolf","snake","horned_beast","spider"],"New summons exclude Human")
+			seen[record.definition_id] = true
+		check(session.store_pending(),"All summoned species can enter the warehouse")
+		var restored := SESSION.new()
+		restored.save_path = session.save_path
+		check(restored.load_save() and restored.data.monsters.size()==5,"New species survive save/load")
+	check(seen.size()==5,"Seeded batches can produce every requested species")
+	var legacy := SESSION.new()
+	legacy.save_path = "res://Tests/.runtime/integration/legacy_human_"+str(Time.get_ticks_usec())+".json"
+	preload("res://Tests/Integration/ApplicationFixtures.gd").add_human(legacy)
+	var restored := SESSION.new()
+	restored.save_path = legacy.save_path
+	check(restored.load_save() and restored.monsters("team")[0].definition_id=="human","Existing Human inventory remains loadable")
 

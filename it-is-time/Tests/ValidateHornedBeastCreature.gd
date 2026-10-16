@@ -67,7 +67,7 @@ func run() -> void:
 			assert(body.scale.is_equal_approx(Vector3.ONE))
 			assert(body.get_meta("generated_scene_path").contains("/HornedBeast/"))
 			if body.geometry_mode == body.GeometryMode.BOX_FIT:
-				assert(is_equal_approx(GEOMETRY.bounds(body).size.z, 0.08 * multiplier))
+				assert(is_equal_approx(GEOMETRY.bounds(body).size.z, 0.08 * multiplier * 2.0))
 			else:
 				assert(is_equal_approx(body.paper_volume_thickness * body.get_node("Model").basis.z.length(), 0.08 * multiplier))
 			if PhysicalBodyPart3D.BodyPartTag.Leg in body.tags or PhysicalBodyPart3D.BodyPartTag.ForeLeg in body.tags:
@@ -120,7 +120,7 @@ func run() -> void:
 	assert(actor.generate_creature())
 	tail = actor.get_node("GeneratedParts/Tail")
 	horn = actor.get_node("GeneratedParts/HornLeft")
-	assert(GEOMETRY.bounds(tail).size.is_equal_approx(Vector3(2.4, 0.4, 0.08)))
+	assert(GEOMETRY.bounds(tail).size.is_equal_approx(Vector3(2.4, 0.4, 0.16)))
 	assert(tail.geometry_mode == tail.GeometryMode.CUSTOM_MODEL)
 	assert(tail.basis.is_equal_approx(Basis(Vector3.BACK, deg_to_rad(35))))
 	var torso: PhysicalBodyPart3D = actor.get_node("GeneratedParts/Torso")
@@ -128,7 +128,7 @@ func run() -> void:
 	var expected_root: Vector3 = torso.transform * (torso_bounds.get_center() + Vector3(-torso_bounds.size.x * 0.5, torso_bounds.size.y * generator.tail_root_height_ratio, 0)) + generator.tail_root_offset
 	assert((tail.transform * tail.get_node("JointIn").position).distance_to(expected_root) < 0.0001)
 	assert(is_equal_approx(GEOMETRY.bounds(horn).size.x, original_horn_size.x * 1.5))
-	assert(is_equal_approx(GEOMETRY.bounds(horn).size.z, 0.08))
+	assert(is_equal_approx(GEOMETRY.bounds(horn).size.z, 0.08 * 2.0))
 	assert(horn.basis.is_equal_approx(Basis(Vector3.BACK, deg_to_rad(25))))
 	generator.tail_enabled = false
 	generator.curl_horns_enabled = false

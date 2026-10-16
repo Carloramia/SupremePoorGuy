@@ -72,7 +72,7 @@ func _piece(node_name: String, role: String, uniform_size: float, dimensions: Di
 			instance.free()
 			return {}
 		part.prepare_generated_geometry()
-		var bounds: AABB = PART_GEOMETRY.bounds(part)
+		var bounds: AABB = PART_GEOMETRY.bounds(part, false)
 		var inlet := part.get_node_or_null("JointIn") as Marker3D
 		dimensions[rule.part_scene] = {"size": bounds.size, "inlet": (inlet.position if inlet != null else Vector3.ZERO) - bounds.get_center(), "has_inlet": inlet != null}
 		part.free()

@@ -6,6 +6,7 @@ func check(ok: bool, message: String) -> void:
 	if not ok: failed=true; push_error(message)
 func run() -> void:
 	var app := preload("res://Scenes/Application/GameRoot.tscn").instantiate()
+	app.use_delivery_map = false
 	app.save_path = "res://Tests/.runtime/integration/gameplay_"+str(Time.get_ticks_usec())+".json"
 	root.add_child(app)
 	app.ui.animate_panels = false
@@ -20,6 +21,7 @@ func run() -> void:
 	check(app.world_map.interaction.begin(location),"Open real battle location")
 	app.world_map.interaction.request_battle()
 	for tick: int in 600:
+		if app.phase=="deployment": app.start_battle()
 		if app.phase=="battle": break
 		await physics_frame
 	check(app.phase=="battle","Battle initialized")
@@ -61,6 +63,7 @@ func run() -> void:
 		record.interval_multiplier = 0.8
 		records.append(record)
 	check(await mixed.deploy(records,"mixed"),"Human/Wolf/Snake records deploy together without rerunning generators")
+	check(mixed.start_combat(),"Explicitly finish deployment before testing combat")
 	check(mixed.actors.size()==6,"Mixed battle contains each configured side")
 	for index: int in mini(3,mixed.actors.size()):
 		var actor: Node3D = mixed.actors[index]

@@ -27,6 +27,7 @@ func click_at(point: Vector2) -> void:
 func run() -> void:
 	root.size = Vector2i(1280,720)
 	var app := preload("res://Scenes/Application/GameRoot.tscn").instantiate()
+	app.use_delivery_map = false
 	app.save_path = "res://Tests/.runtime/integration/input_"+str(Time.get_ticks_usec())+".json"
 	root.add_child(app)
 	app.ui.animate_panels = false
@@ -53,7 +54,12 @@ func run() -> void:
 	check(app.world_map.interaction.begin(location),"Location paper")
 	await key(KEY_ESCAPE)
 	await key(KEY_ESCAPE,false)
-	check(app.world_map.interaction.active_location==null and not app.ui.overlay.visible,"Esc exits actual location paper without leaking gameplay")
+	check(app.ui.modal_stack.back().kind=="settings" and app.world_map.interaction.active_location==location,"Esc opens settings above the location paper")
+	await key(KEY_ESCAPE)
+	await key(KEY_ESCAPE,false)
+	check(app.world_map.interaction.active_location==location,"Second Esc returns to the location paper")
+	app.ui._close_modal()
+	check(app.world_map.interaction.active_location==null and not app.ui.overlay.visible,"Closing the location paper exits the actual visit")
 	app.world_map.interaction.begin(location)
 	var enter: Button = app.ui.modal_box.find_child("EnterBattle",true,false)
 	check(enter.disabled and not enter.tooltip_text.is_empty(),"Empty party disables the battle button with an explanation")
@@ -75,6 +81,7 @@ func run() -> void:
 	app.ui._close_modal()
 	app.world_map.interaction.request_battle()
 	for tick: int in 600:
+		if app.phase=="deployment": app.start_battle()
 		if app.phase=="battle": break
 		await physics_frame
 	check(app.phase=="battle","Battle input fixture")

@@ -187,7 +187,26 @@ func get_torso_parts() -> Array[RigidBody3D]:
 	return result
 
 func _live(row: Dictionary) -> bool:
-	return is_instance_valid(row.body) and row.body.is_inside_tree() and not row.body.is_queued_for_deletion() and not row.body.is_broken
+	var body: Variant = row.get("body")
+	return is_instance_valid(body) and body.is_inside_tree() and not body.is_queued_for_deletion() and not body.is_broken
+
+func _live_joint(row: Dictionary, key: StringName = &"incoming_joint") -> Generic6DOFJoint3D:
+	var joint: Variant = row.get(key)
+	if not is_instance_valid(joint) or not joint is Generic6DOFJoint3D or joint.is_queued_for_deletion(): return null
+	return joint
+
+func _on_joint_exiting(joint: Generic6DOFJoint3D) -> void:
+	# Keep rest poses and row order; rebuilding them would adopt the damaged pose.
+	for row: Dictionary in _parts:
+		for key: StringName in [&"incoming_joint",&"follow_joint",&"sway_joint"]:
+			if row.get(key) != joint: continue
+			row[key] = null
+			if key == &"follow_joint": row.leader = {}
+			row.erase("connection_target")
+			row["connection_error"] = Vector3.ZERO
+			row["connection_relative_velocity"] = Vector3.ZERO
+			row["connection_span_force"] = Vector3.ZERO
+			row["pair_force"] = Vector3.ZERO
 
 func _source() -> Node:
 	if is_instance_valid(command_source): return command_source
@@ -256,7 +275,7 @@ func get_pose_reference(use_attack_facing: bool = true) -> Transform3D:
 	var basis := Basis(Vector3.UP, yaw) * _rest_basis if locomotion_enabled else _rest_basis
 	return Transform3D(basis, frame.center - basis * _rest_center)
 
-func set_attack_control(owner_node: Node, poses: Dictionary, velocity: Vector3, facing: Vector3, acceleration: float, pose_acceleration: float, angular_acceleration: float = 60.0, response_time: float = 0.1, delta: float = 0.0, pose_speed_multiplier: float = 1.0, lock_ground: bool = false) -> bool:
+func set_attack_control(owner_node: Node, poses: Dictionary, velocity: Vector3, facing: Vector3, acceleration: float, pose_acceleration: float, angular_acceleration: float = 60.0, response_time: float = 0.1, delta: float = 0.0, pose_speed_multiplier: float = 1.0, lock_ground: bool = false, support_reference: Transform3D = Transform3D.IDENTITY) -> bool:
 	if not locomotion_enabled or _connection_recovery_active: return false
 	if not is_instance_valid(owner_node) or (is_instance_valid(_attack_owner) and _attack_owner != owner_node): return false
 	if _attack_owner != owner_node:
@@ -281,7 +300,8 @@ func set_attack_control(owner_node: Node, poses: Dictionary, velocity: Vector3, 
 		for row: Dictionary in _parts:
 			if _live(row): _attack_entry_poses[row.body] = inverse*row.body.global_transform
 	if lock_ground and not _attack_support_locked:
-		_attack_support_reference = get_pose_reference()
+		# The caller can commit the exact world frame already validated by its attack plan.
+		_attack_support_reference = get_pose_reference() if support_reference == Transform3D.IDENTITY else support_reference
 		var inverse := _attack_support_reference.affine_inverse()
 		for row: Dictionary in _belly:
 			if not _live(row): continue
@@ -369,7 +389,8 @@ func _begin_connection_recovery() -> void:
 		row.trajectory_velocity = Vector3.ZERO
 
 func _joint_slide_bounds(row: Dictionary, expanded: bool) -> Dictionary:
-	var joint: Generic6DOFJoint3D = row.incoming_joint
+	var joint := _live_joint(row)
+	if joint == null: return {}
 	var x := maxf(absf(row.base_x_lower),absf(row.base_x_upper))
 	var z := maxf(absf(row.base_slide_lower),absf(row.base_slide_upper))
 	if expanded:
@@ -399,8 +420,8 @@ func _constrain_connection_poses(poses: Dictionary, ground_only: bool) -> Dictio
 			var child_index := index if direction>0 else index+1
 			var a: Dictionary = _parts[child_index-1]
 			var b: Dictionary = _parts[child_index]
-			var joint: Generic6DOFJoint3D = b.incoming_joint
-			if _live(a) and _live(b) and is_instance_valid(joint) and not joint.is_queued_for_deletion() and (not ground_only or (a.belly and b.belly)):
+			var joint := _live_joint(b)
+			if _live(a) and _live(b) and joint != null and (not ground_only or (a.belly and b.belly)):
 				var pa: Transform3D = result.get(a.body,a.rest)
 				var pb: Transform3D = result.get(b.body,b.rest)
 				var fa: Transform3D = pa*Transform3D(joint.get_meta(&"generated_joint_frame_a"))
@@ -466,8 +487,9 @@ func _update_connections(delta: float) -> void:
 	for index: int in range(1,_parts.size()):
 		var a: Dictionary = _parts[index-1]
 		var b: Dictionary = _parts[index]
-		var joint: Generic6DOFJoint3D = b.incoming_joint
-		if not _live(a) or not _live(b) or not is_instance_valid(joint) or joint.is_queued_for_deletion(): continue
+		if not _live(a) or not _live(b): continue
+		var joint := _live_joint(b)
+		if joint == null: continue
 		var fa: Transform3D = a.body.global_transform*Transform3D(joint.get_meta(&"generated_joint_frame_a"))
 		var fb: Transform3D = b.body.global_transform*Transform3D(joint.get_meta(&"generated_joint_frame_b"))
 		var desired_a := _connection_pose(a)*Transform3D(joint.get_meta(&"generated_joint_frame_a"))
@@ -553,7 +575,7 @@ func _update_connections(delta: float) -> void:
 		_connection_settle_time = _connection_settle_time+delta if structure_settled else 0.0
 		if _connection_settle_time>=minf(0.2,motion_data.path_transition_time):
 			_connection_recovery_active = false
-			if _connection_recovery_resume_path:
+			if _connection_recovery_resume_path and not _ground_path.points.is_empty():
 				# Keep the visited route through rejoining; rebuilding a straight history would unfold a reversed belly.
 				_idle_ground_poses.clear()
 				_attack_slide_release_pending = false
@@ -637,6 +659,7 @@ func _tick(delta: float) -> void:
 			_path_turning = true
 			_path_reversing = false
 			_path_ready = false
+			_connection_recovery_resume_path = false
 			_ground_path.points.clear()
 			_ground_path.corners.clear()
 		elif _path_turning and absf(angle) < deg_to_rad(5.0):
@@ -681,6 +704,8 @@ func _cache_trajectory_chain(container: Node) -> void:
 		rows[a].leader = rows[b]
 		rows[a].follow_joint = joint
 		rows[b].incoming_joint = joint
+		var callback := _on_joint_exiting.bind(joint)
+		if not joint.tree_exiting.is_connected(callback): joint.tree_exiting.connect(callback)
 
 func _sample_trajectory(row: Dictionary, time: float) -> Vector3:
 	var history: Array = row.history
@@ -730,8 +755,8 @@ func _update_trajectories(delta: float) -> void:
 	for index: int in range(_parts.size()-2,-1,-1):
 		var row: Dictionary = _parts[index]
 		if not _live(row) or row.grounded or row.leader.is_empty() or not _live(row.leader): continue
-		var joint: Generic6DOFJoint3D = row.follow_joint if is_instance_valid(row.follow_joint) else null
-		if joint == null or joint.is_queued_for_deletion(): continue
+		var joint := _live_joint(row,&"follow_joint")
+		if joint == null: continue
 		var desired: Vector3 = row.trajectory_offset
 		desired.z = clampf(desired.z, float(row.leader.trajectory_offset.z)-joint.get_param_z(Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT), float(row.leader.trajectory_offset.z)-joint.get_param_z(Generic6DOFJoint3D.PARAM_LINEAR_LOWER_LIMIT))
 		row.trajectory_offset = desired
@@ -739,8 +764,8 @@ func _update_trajectories(delta: float) -> void:
 	for index: int in _parts.size():
 		var row: Dictionary = _parts[index]
 		if not _live(row): continue
-		var joint: Generic6DOFJoint3D = row.incoming_joint if is_instance_valid(row.incoming_joint) else null
-		if index > 0 and not row.leader.is_empty() and joint != null and not joint.is_queued_for_deletion():
+		var joint := _live_joint(row)
+		if index > 0 and not row.leader.is_empty() and joint != null:
 			var parent: Dictionary = _parts[index-1]
 			if _live(parent):
 				var desired: Vector3 = row.trajectory_offset
@@ -810,7 +835,7 @@ func _cache_sway_chain() -> void:
 		seen[row.body] = true
 		row["sway_distance"] = _sway_chain.size()
 		if row.belly and _sway_links == 0: _sway_links = _sway_chain.size()
-		var joint: Generic6DOFJoint3D = row.incoming_joint
+		var joint := _live_joint(row)
 		row["sway_joint"] = joint
 		row["slide_lower"] = joint.get_param_z(Generic6DOFJoint3D.PARAM_LINEAR_LOWER_LIMIT) if joint != null else 0.0
 		row["slide_upper"] = joint.get_param_z(Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT) if joint != null else 0.0
@@ -885,8 +910,8 @@ func _set_path_slide_limits(active: bool) -> void:
 		if is_instance_valid(_attack_owner): return
 		# Contract only after the physical anchors have returned inside the original travel.
 		for row: Dictionary in _sway_chain:
-			var joint: Generic6DOFJoint3D = row.sway_joint
-			if not is_instance_valid(joint) or joint.is_queued_for_deletion(): continue
+			var joint := _live_joint(row,&"sway_joint")
+			if joint == null: continue
 			var a := joint.get_node_or_null(joint.node_a) as Node3D
 			var b := joint.get_node_or_null(joint.node_b) as Node3D
 			if a == null or b == null or not a.is_inside_tree() or not b.is_inside_tree(): continue
@@ -898,9 +923,10 @@ func _set_path_slide_limits(active: bool) -> void:
 	_path_slides_expanded = active
 	if not active: _attack_slide_release_pending = false
 	for row: Dictionary in _sway_chain:
-		if not is_instance_valid(row.sway_joint) or row.sway_joint.is_queued_for_deletion(): continue
-		var joint: Generic6DOFJoint3D = row.sway_joint
+		var joint := _live_joint(row,&"sway_joint")
+		if joint == null: continue
 		var bounds := _joint_slide_bounds(row,active)
+		if bounds.is_empty(): continue
 		row.sway_joint.set_param_x(Generic6DOFJoint3D.PARAM_LINEAR_LOWER_LIMIT,bounds.lower.x)
 		row.sway_joint.set_param_x(Generic6DOFJoint3D.PARAM_LINEAR_UPPER_LIMIT,bounds.upper.x)
 		row.slide_lower = bounds.lower.z
@@ -1347,7 +1373,7 @@ func _apply_path_pair_forces() -> void:
 	for index: int in range(1,_parts.size()):
 		var a: Dictionary = _parts[index-1]
 		var b: Dictionary = _parts[index]
-		if not _live(a) or not _live(b): continue
+		if not _live(a) or not _live(b) or _live_joint(b) == null: continue
 		var body_a: RigidBody3D = a.body
 		var body_b: RigidBody3D = b.body
 		var desired: Vector3 = Vector3(b.path_target)-Vector3(a.path_target)
@@ -1485,8 +1511,8 @@ func get_snake_motion_diagnostics(include_parts: bool = true) -> Dictionary:
 			"support_force": row.get("support_force", Vector3.ZERO) if _support_blend > 0.0 else Vector3.ZERO}
 		detail.merge({"connection_target":row.get("connection_target",Vector3.ZERO),
 			"connection_error":row.get("connection_error",Vector3.ZERO),"connection_relative_velocity":row.get("connection_relative_velocity",Vector3.ZERO),"connection_span_force":row.get("connection_span_force",Vector3.ZERO)})
-		var joint: Generic6DOFJoint3D = row.incoming_joint
-		if is_instance_valid(joint) and not joint.is_queued_for_deletion():
+		var joint := _live_joint(row)
+		if joint != null:
 			detail["structural_slide_bounds"] = _joint_slide_bounds(row,true)
 			var a := joint.get_node(joint.node_a) as RigidBody3D
 			var fa: Transform3D = joint.get_meta(&"generated_joint_frame_a")

@@ -65,7 +65,7 @@ func run() -> void:
 	var stage := actor._instantiate_blueprint(blueprint, Transform3D.IDENTITY)
 	assert(stage != null)
 	var part := stage.get_child(0) as PhysicalBodyPart3D
-	assert(GEOMETRY.bounds(part).size.is_equal_approx(Vector3(2,3,0.2)))
+	assert(GEOMETRY.bounds(part, false).size.is_equal_approx(Vector3(2,3,0.2)))
 	assert(GEOMETRY.bounds(part).get_center().is_equal_approx(Vector3.ZERO))
 	assert(part.scale.is_equal_approx(Vector3.ONE))
 	assert(part.get_meta("generated_scene_path") == PAPER.resource_path)
@@ -74,7 +74,7 @@ func run() -> void:
 	root.add_child(stage)
 	assert(part.max_hp == hp and part.armor == armor)
 	part.prepare_generated_geometry()
-	assert(GEOMETRY.bounds(part).size.is_equal_approx(Vector3(2,3,0.2)), "Ready must not undo custom collision fitting")
+	assert(GEOMETRY.bounds(part, false).size.is_equal_approx(Vector3(2,3,0.2)), "Ready must not undo custom collision fitting")
 	stage.free()
 	exact.use_joint_markers = true
 	var second := layouts[0].duplicate()
@@ -147,7 +147,7 @@ func run() -> void:
 	var saved_sample := scene_state.instantiate() as Node3D
 	var stored_part := saved_sample.get_node("GeneratedParts/Leg_1_Limb_1") as PhysicalBodyPart3D
 	stored_part.prepare_generated_geometry()
-	assert(GEOMETRY.bounds(stored_part).size.is_equal_approx(sample.get_node("GeneratedParts/Leg_1_Limb_1").get_meta("generated_size")), "Saved generated geometry must retain fitting")
+	assert(GEOMETRY.bounds(stored_part, false).size.is_equal_approx(sample.get_node("GeneratedParts/Leg_1_Limb_1").get_meta("generated_size")), "Saved generated geometry must retain fitting")
 	saved_sample.free()
 	sample.free()
 	print("GENERATED_PART_SCENES_VALIDATION_PASSED")

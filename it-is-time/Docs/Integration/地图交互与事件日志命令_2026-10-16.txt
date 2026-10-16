@@ -1,0 +1,70 @@
+地图交互与事件日志
+工程：D:/GameJamWorkspace/ItIsTime/it-is-time
+更新：2026-10-16
+
+建议测试步骤
+1. F5运行主工程（GameRoot）。用CallConsole输入映射打开控制台。
+2. 输入 trackmap on。可在主菜单提前开启，初始化新地图时会继承开关。
+3. 关闭控制台，测试地图点击、移动、破石、地点交互、遭遇、召唤或战斗返回。
+4. 打开控制台，输入 mapstate 查看当前状态；需要具体地点时输入 mapstate 地点ID。
+5. 输入 getlogs，沿用原有归档机制将运行日志打包。编辑器运行时输出根目录：D:/GameJamWorkspace/ItIsTime/it-is-time。
+6. 完成后输入 trackmap off。
+
+命令
+trackmap on       开启地图交互和事件追踪，立即输出一次状态快照。
+trackmap off      关闭追踪。
+trackmap status   只查询开关和当前阶段，不切换状态。
+trackmap          无参数时切换开关。
+mapstate          输出一次地图状态，即使trackmap关闭也可使用。
+mapstate wizard_wolf_gate_rock
+                  示例：检查入口石头的可见性、条件和交互拒绝原因。
+mapstate layout_wolf_den_001
+                  示例：检查荒原狼窝的遭遇配置与交互条件。
+help              查看全部命令。
+trackintegration on
+                  可选：同时查看原有场景路由、存档事务和结算日志。
+getlogs           打包运行日志，输出路径以控制台实际返回为准。
+
+输出格式
+统一前缀：[map_event]，后面是单行JSON。
+event表示事件阶段，sequence是递增序号，time_ms是本次进程启动后的毫秒数。
+活动地图日志通常包括backend、map_id、phase、player、location_id、location_name、event_id、party_count和battle_id。
+开战相关记录同时保留request_id、battle_map_id和enemy_config_id，便于关联一次遭遇、战斗加载和结算。
+
+主要事件
+map_loaded / map_ready：地图载入或返回后准备完成。
+map_click：实际进入地图控件的左键点击，记录屏幕坐标、世界坐标和命中的对象。
+interaction_requested / interaction_arrived：提出交互或已经抵达。
+interaction_rejected / map_feedback：条件、迷雾、距离或导航拒绝及具体原因。
+travel_started / travel_completed / travel_stopped / travel_rejected：路线启动、结束、中止和拒绝。
+movement_blocked：沿路线推进时碰到实体阻挡。
+location_discovered / opening_unlocked：新地点发现、开局区域解锁。
+encounter_roll：进入遭遇范围时的实际概率判定，包含radius、probability、roll、triggered和latched。
+encounter_exited：离开遭遇范围，解除本次进入锁存。
+encounter_suppressed：跨入范围但营地已清理或入口未解除阻挡；不是概率失败。
+party_setup_required / party_setup_cancelled：空队伍需要准备或取消准备。
+obstacle_destroyed：破坏路障已经保存成功。
+event_routed / event_opened：交互被交给哪个处理入口、打开事件界面。
+event_requested / event_completed / event_rejected：实际请求执行、成功提交或失败。召唤成功会记录批次、同一批妖兽实例ID和剩余魔力。
+event_unavailable：地点有交互入口，但尚无已接入事件，不等同于成功执行。
+battle_requested / battle_request_committed / battle_load / battle_started：请求开战、保存请求、加载与正式开始。
+battle_rejected / battle_load_failed / battle_cancelled：开战拒绝、加载失败和已保存取消。
+battle_result_committed / battle_result_duplicate：结算已保存或重复回执被忽略。
+map_save_failed / battle_request_save_failed / battle_cancel_save_failed / battle_result_save_failed / return_save_failed：对应保存失败阶段和原因。
+settlement_opened / map_returned / ui_route：结算、恢复地图和界面路由。
+
+如何判读
+看到encounter_roll但triggered=false，表示本次进入概率没有命中；留在范围内不会重复掷骰，需要真正退出再进入。
+看到event_routed或event_opened只代表路由或界面打开；应以event_completed、battle_started或battle_result_committed确认具体动作是否成功。
+没有map_click时，可能点击被纸页/控制台接收。mapstate会列出console_open、paper_open、input_enabled、visible、input_blockers、busy、pending_interaction和pending_battle_setup。
+控制台打开时，input_blockers包含console是正常行为；关闭控制台后再测试地图交互。
+巨鼠未开放时会记录battle_rejected和预设未接入原因；没有替代敌军或空敌方自动判胜。
+未知地点ID不会崩溃，快照中会返回地点不存在。
+
+开销与边界
+默认关闭。按操作/状态变化记录，不按帧记录鼠标移动、人物坐标或保存成功；静止时不会持续刷屏。
+不修改存档格式、事件成功条件、奖励、遭遇概率或额外消耗随机数。
+控制台窗口仍只保留最近maximum_output_lines行（默认100）；文件日志可用getlogs完整归档。
+详细点击、路线和概率日志针对默认交付地图；旧Frontier入口同时提供地点发现/选择、交互完成及宿主流程日志。
+本次测试：实际鼠标点击与召唤、成功/拒绝事件、遭遇随机数开关前后一致、开关与状态查询、空闲不刷屏、加载失败取消、控制台遮挡说明、实际getlogs归档；旧入口回归通过。
+日志：D:/GameJamWorkspace/Reports/DeliveryIntegration_2026-10-16/ValidateMapLogging_map_logging.log。

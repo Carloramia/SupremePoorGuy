@@ -41,6 +41,8 @@ enum State { STANDING, FALLEN, ESTABLISH_SUPPORT, RIGHTING, STABILIZING, RETRY }
 @export_range(1.0, 45.0, 1.0) var stable_angle_degrees: float = 15.0
 @export_range(0.5, 1.0, 0.05) var stable_height_ratio: float = 0.9
 @export_range(0.1, 10.0, 0.1) var stable_speed: float = 1.5
+## Recovery owns height support while normal locomotion support is paused.
+@export var carry_connected_assembly_weight: bool = false
 
 var state: State = State.STANDING
 var _movement: Node
@@ -61,6 +63,12 @@ var _lift_force_limited: bool = false
 var _segment_rise_heights: Dictionary = {}
 var _segment_recovery_diagnostics: Array[Dictionary] = []
 var _support_plan_elapsed: float = 0.0
+var _load_owners: Dictionary = {}
+var _support_lift_by_segment: Dictionary = {}
+var _relaxed_feet: Dictionary = {}
+var _best_height_ratio := 0.0
+var _height_stall_time := 0.0
+var _support_replans := 0
 
 func _ready() -> void:
 	add_to_group(&"creature_recovery_state_machines")
@@ -87,7 +95,11 @@ func refresh_physics_query_cache() -> void:
 	_support_plan_elapsed = 0.0
 	_rest_offsets.clear()
 	_attempts = 0
+	_relaxed_feet.clear()
+	_support_replans = 0
+	_load_owners.clear()
 	var torsos: Array[RigidBody3D] = _movement.get_torso_parts()
+	if carry_connected_assembly_weight: _cache_load_owners(torsos)
 	var feet: Array[RigidBody3D] = _movement.get_leg_parts()
 	if torsos.is_empty() or feet.is_empty(): return
 	var center := _torso_center(torsos)
@@ -179,6 +191,9 @@ func _transition(next: State, reason: StringName) -> void:
 		_attempt_elapsed = 0.0
 		_segment_rise_heights.clear()
 		_support_plan_elapsed = 0.0
+		_relaxed_feet.clear()
+		_best_height_ratio = 0.0
+		_height_stall_time = 0.0
 		_plan_support()
 	state_changed.emit(previous, state)
 	var console := get_tree().root.get_node_or_null("RuntimeConsole")
@@ -242,6 +257,7 @@ func _physics_process(delta: float) -> void:
 			if _has_group_support(torsos): _transition(State.RIGHTING, &"support_ready")
 			elif _elapsed >= support_setup_duration: _transition(State.RETRY, &"no_support")
 		State.RIGHTING, State.STABILIZING:
+			if carry_connected_assembly_weight and not stable: _check_height_progress(feet, delta)
 			_apply_support_forces()
 			_right_torso(torsos)
 			_lift_torso(torsos, delta)
@@ -264,6 +280,9 @@ func _plan_support() -> void:
 	for foot: RigidBody3D in _movement.get_leg_parts():
 		if not _rest_offsets.has(foot) or not _movement._chain_is_intact(foot): continue
 		var rest: Vector3 = _movement._get_leg_rest_world_position(foot)
+		if _relaxed_feet.has(foot):
+			var anchor: Vector3 = _movement._chains[foot].root.to_global(_movement._chains[foot].anchor)
+			rest += (anchor - rest).slide(up) * 0.6
 		var hit := _probe(rest + up * _reference_height, _reference_height * 3.0)
 		if hit.is_empty() or not _movement._surface_is_walkable(hit.normal): continue
 		var target: Vector3 = _movement._body_position_for_ground_contact(foot, hit.position)
@@ -330,13 +349,66 @@ func _can_assist_lift(_required: int) -> bool:
 		if group.targets >= group.required and is_finite(group.height) and group.height < group.reference_height * stable_height_ratio: return true
 	return false
 
+func _cache_load_owners(torsos: Array[RigidBody3D]) -> void:
+	var graph: Dictionary = {}
+	for body: Node in get_parent()._get_physical_body_parts():
+		if not _movement._is_body_broken(body): graph[body] = []
+	for connection: Node in get_parent().get_body_connections():
+		if connection.is_queued_for_deletion(): continue
+		if connection.has_method("is_segment_spring") and not connection.enabled: continue
+		var a := connection.get_node_or_null(connection.node_a)
+		var b := connection.get_node_or_null(connection.node_b)
+		if graph.has(a) and graph.has(b):
+			graph[a].append(b)
+			graph[b].append(a)
+	var queue: Array[RigidBody3D] = torsos.duplicate()
+	for body: RigidBody3D in queue: _load_owners[body] = int(body.get_meta(&"body_segment_id", 0))
+	var cursor := 0
+	while cursor < queue.size():
+		var body := queue[cursor]
+		cursor += 1
+		for neighbor: RigidBody3D in graph.get(body, []):
+			if _load_owners.has(neighbor): continue
+			_load_owners[neighbor] = _load_owners[body]
+			queue.append(neighbor)
+
+func _check_height_progress(feet: Array[RigidBody3D], delta: float) -> void:
+	var ratio := float(_metrics.minimum_segment_height_ratio)
+	if ratio >= stable_height_ratio:
+		_height_stall_time = 0.0
+		return
+	if ratio > _best_height_ratio + 0.01:
+		_best_height_ratio = ratio
+		_height_stall_time = 0.0
+	else: _height_stall_time += delta
+	if _height_stall_time < 1.0: return
+	_height_stall_time = 0.0
+	var obstructing: RigidBody3D
+	var greatest_extension := -1.0
+	for foot: RigidBody3D in feet:
+		if not _movement._chain_is_intact(foot) or _relaxed_feet.has(foot): continue
+		var chain: Dictionary = _movement._chains[foot]
+		var extension := foot.global_position.distance_to(chain.root.to_global(chain.anchor)) / maxf(chain.length, 0.001)
+		if extension > greatest_extension:
+			greatest_extension = extension
+			obstructing = foot
+	if obstructing == null: return
+	_relaxed_feet[obstructing] = true
+	_movement._release_support_pin(obstructing)
+	_support_replans += 1
+	_plan_support()
+
 func _apply_support_forces() -> void:
+	_support_lift_by_segment.clear()
 	for foot: RigidBody3D in _targets:
 		if not is_instance_valid(foot) or not _movement._chain_is_intact(foot): continue
 		# Keep the sole on the selected terrain as the foot rotates upright.
 		_targets[foot] = _movement._body_position_for_ground_contact(foot, _target_surfaces[foot])
 		var acceleration: Vector3 = (_targets[foot] - foot.global_position) * foot_strength - foot.linear_velocity * foot_damping
-		foot.apply_central_force((acceleration * foot.mass).limit_length(maximum_foot_force))
+		var force := (acceleration * foot.mass).limit_length(maximum_foot_force)
+		foot.apply_central_force(force)
+		var id := int(_load_owners.get(foot, 0))
+		_support_lift_by_segment[id] = float(_support_lift_by_segment.get(id, 0.0)) + force.dot(_up())
 
 func _right_torso(torsos: Array[RigidBody3D]) -> void:
 	# Segment balance remains active during recovery; do not double its attitude servo.
@@ -365,16 +437,29 @@ func _lift_torso(torsos: Array[RigidBody3D], delta: float) -> void:
 				if other.id in _movement._connected_body_segments(group.id) and (other.grounded >= other.required or other.targets >= other.required): can_lift = true
 		var amount := 0.0
 		var mass := 0.0
+		var load_mass := 0.0
+		var independently_supported_mass := 0.0
 		var velocity := 0.0
 		for body: RigidBody3D in group.bodies:
 			mass += body.mass
 			velocity += body.linear_velocity.dot(_up()) * body.mass
+		load_mass = mass
+		if carry_connected_assembly_weight:
+			load_mass = 0.0
+			var load_bodies: Array[RigidBody3D] = []
+			for body: Variant in _load_owners:
+				if is_instance_valid(body) and not _movement._is_body_broken(body) and int(_load_owners[body]) == int(group.id):
+					load_mass += body.mass
+					load_bodies.append(body)
+			var head_support := get_parent().get_node_or_null("HeadPositionSupport3D")
+			if head_support != null: independently_supported_mass = head_support.get_gravity_supported_mass(load_bodies)
 		if can_lift and is_finite(group.height) and mass > 0.0:
 			var rise: float = minf(float(group.reference_height), float(_segment_rise_heights.get(group.id, minf(float(group.height), float(group.reference_height)))) + rise_speed * delta)
 			_segment_rise_heights[group.id] = rise
 			var acceleration := clampf((rise - float(group.height)) * lift_strength - velocity / mass * lift_damping, -maximum_lift_acceleration, maximum_lift_acceleration)
-			amount = maxf(0.0, (acceleration + _movement._gravity_acceleration().length()) * mass)
-		requests.append({"group": group, "mass": mass, "force": amount})
+			amount = maxf(0.0, acceleration * load_mass + _movement._gravity_acceleration().length() * (load_mass-independently_supported_mass))
+			if carry_connected_assembly_weight: amount = maxf(0.0, amount - maxf(float(_support_lift_by_segment.get(group.id, 0.0)), 0.0))
+		requests.append({"group": group, "mass": mass, "load_mass": load_mass, "independent_mass": independently_supported_mass, "force": amount})
 		total += amount
 	var scale := minf(1.0, maximum_total_lift_force / maxf(total, 0.001))
 	_last_lift_force = total * scale
@@ -384,10 +469,10 @@ func _lift_torso(torsos: Array[RigidBody3D], delta: float) -> void:
 		var force: float = request.force * scale
 		for body: RigidBody3D in group.bodies:
 			if not body.freeze: body.apply_central_force(_up() * force * body.mass / maxf(request.mass, 0.001))
-		_segment_recovery_diagnostics.append({"segment": group.id, "grounded": group.grounded, "targets": group.targets, "required": group.required, "height": group.height, "reference_height": group.reference_height, "lift_force": force})
+		_segment_recovery_diagnostics.append({"segment": group.id, "grounded": group.grounded, "targets": group.targets, "required": group.required, "height": group.height, "reference_height": group.reference_height, "lift_force": force, "load_mass": request.load_mass, "torso_mass": request.mass, "independent_gravity_mass": request.independent_mass, "foot_lift": _support_lift_by_segment.get(group.id, 0.0)})
 
 func get_recovery_diagnostics() -> Dictionary:
-	return {"paused_for_zero_gravity": is_instance_valid(_movement) and _movement.simplified_physics_mode,"state": State.keys()[state], "attempt": _attempts, "elapsed": _elapsed, "reference_height": _reference_height, "targets": _targets.size(), "height_ratio": float(_metrics.get("height", 0.0)) / maxf(_reference_height, 0.001), "fall_confirmation": _fall_elapsed, "lift_force": _last_lift_force, "lift_force_limited": _lift_force_limited, "segments": _segment_recovery_diagnostics, "metrics": _metrics}
+	return {"paused_for_zero_gravity": is_instance_valid(_movement) and _movement.simplified_physics_mode,"state": State.keys()[state], "attempt": _attempts, "elapsed": _elapsed, "reference_height": _reference_height, "targets": _targets.size(), "height_ratio": float(_metrics.get("height", 0.0)) / maxf(_reference_height, 0.001), "fall_confirmation": _fall_elapsed, "lift_force": _last_lift_force, "lift_force_limited": _lift_force_limited, "segments": _segment_recovery_diagnostics, "metrics": _metrics, "assembly_weight": carry_connected_assembly_weight, "height_stall_time": _height_stall_time, "support_replans": _support_replans, "relaxed_feet": _relaxed_feet.size()}
 
 func resume_ground_after_flight() -> void:
 	# Keep the generated standing height and foot layout instead of adopting a compressed landing pose.

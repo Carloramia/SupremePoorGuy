@@ -1,0 +1,226 @@
+[gd_scene load_steps=19 format=3]
+
+[ext_resource type="Script" path="res://Modules/FrontierDelivery/Scripts/Map/GeneratedMap.gd" id="MapScript"]
+[ext_resource type="FontFile" path="res://Modules/PaperUI/Assets/UI/Fonts/Xiaolai-Regular.ttf" id="MapFont"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/e9e45c44bd0772cb1d39f1ae.png" id="Tex_0"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/d8649aa7c7e0d9503ffa1aa6.svg" id="Tex_1"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/6dca112353890d6d59b74690.png" id="Tex_2"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/9cfacbba0feb45ca6ff3c0fe.png" id="Tex_3"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/81ed4ab3dc34f10999248154.svg" id="Tex_4"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/51a02cbc97cdc14d63f4afec.svg" id="Tex_5"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/650573588a8f2df99d252326.svg" id="Tex_6"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/c5a13c7830da374f81ab3701.svg" id="Tex_7"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/4dee9aa1c10ff5f2e00f43b4.svg" id="Tex_8"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/4bd844e9c289559d6313de43.svg" id="Tex_9"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/512740e5d0f99d2653ef88c2.svg" id="Tex_10"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/26f210bf08f039e621935ebd.svg" id="Tex_11"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/351938199258718aaa93e632.svg" id="Tex_12"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/11c62b05eb01b2ba919c8b04.svg" id="Tex_13"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/86aab8d45abccae79b95284b.svg" id="Tex_14"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/bd3f057b7352ad4eb3341282.svg" id="Tex_15"]
+
+[node name="battle_forest_wolf" type="Node2D"]
+script = ExtResource("MapScript")
+map_id = "battle_forest_wolf"
+data_path = "res://Content/Maps/FrontierDelivery_20261015/Data/Maps/battle_forest_wolf.json"
+[node name="Ground" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(18, 0, 9, 15.5884573, -9, 15.5884573, -18, 2.20436424e-15, -9, -15.5884573, 9, -15.5884573)
+color = Color(0.419607843, 0.501960784, 0.376470588, 1)
+z_index = -1000
+[node name="Objects" type="Node2D" parent="."]
+[node name="battle_forest_wolf_player_deploy_01" type="Node2D" parent="Objects"]
+position = Vector2(-8, 7)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 0
+metadata/source_id = "battle_forest_wolf_player_deploy_01"
+[node name="battle_forest_wolf_arena_rock_01" type="Node2D" parent="Objects"]
+position = Vector2(-2, -3)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 0
+metadata/source_id = "battle_forest_wolf_arena_rock_01"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_forest_wolf_arena_rock_01"]
+texture = ExtResource("Tex_0")
+scale = Vector2(0.0118518519, 0.0118518519)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="Body" type="StaticBody2D" parent="Objects/battle_forest_wolf_arena_rock_01"]
+collision_layer = 1
+collision_mask = 0
+[node name="Shape" type="CollisionPolygon2D" parent="Objects/battle_forest_wolf_arena_rock_01/Body"]
+position = Vector2(0, 0)
+rotation = 0
+polygon = PackedVector2Array(-1.3, -1.25, 1.3, -1.25, 1.3, 1.25, -1.3, 1.25)
+[node name="battle_forest_wolf_arena_mud_01" type="Node2D" parent="Objects"]
+position = Vector2(4, 3)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 0
+metadata/source_id = "battle_forest_wolf_arena_mud_01"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_forest_wolf_arena_mud_01"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0390625, 0.02734375)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_forest_wolf_arena_tree_01" type="Node2D" parent="Objects"]
+position = Vector2(-6, -7)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 0
+metadata/source_id = "battle_forest_wolf_arena_tree_01"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_forest_wolf_arena_tree_01"]
+texture = ExtResource("Tex_2")
+scale = Vector2(0.00589812332, 0.00589812332)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_forest_wolf_camp_altar_01" type="Node2D" parent="Objects"]
+position = Vector2(0, 0)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 0
+metadata/source_id = "battle_forest_wolf_camp_altar_01"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_forest_wolf_camp_altar_01"]
+texture = ExtResource("Tex_3")
+scale = Vector2(0.00305555556, 0.00305555556)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="Interaction" type="Area2D" parent="Objects/battle_forest_wolf_camp_altar_01"]
+collision_layer = 2
+collision_mask = 0
+[node name="Shape" type="CollisionPolygon2D" parent="Objects/battle_forest_wolf_camp_altar_01/Interaction"]
+position = Vector2(0, 0)
+rotation = 0
+polygon = PackedVector2Array(1.1, 0, 1.07886381, 0.214599354, 1.01626749, 0.420951776, 0.914616574, 0.611127256, 0.777817459, 0.777817459, 0.611127256, 0.914616574, 0.420951776, 1.01626749, 0.214599354, 1.07886381, 6.7355574e-17, 1.1, -0.214599354, 1.07886381, -0.420951776, 1.01626749, -0.611127256, 0.914616574, -0.777817459, 0.777817459, -0.914616574, 0.611127256, -1.01626749, 0.420951776, -1.07886381, 0.214599354, -1.1, 1.34711148e-16, -1.07886381, -0.214599354, -1.01626749, -0.420951776, -0.914616574, -0.611127256, -0.777817459, -0.777817459, -0.611127256, -0.914616574, -0.420951776, -1.01626749, -0.214599354, -1.07886381, -2.02066722e-16, -1.1, 0.214599354, -1.07886381, 0.420951776, -1.01626749, 0.611127256, -0.914616574, 0.777817459, -0.777817459, 0.914616574, -0.611127256, 1.01626749, -0.420951776, 1.07886381, -0.214599354)
+[node name="battle_forest_wolf_camp_battle_01_biome_edge_01" type="Node2D" parent="Objects"]
+position = Vector2(13.9933427, 4.30957909)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 12
+metadata/source_id = "battle_forest_wolf_camp_battle_01_biome_edge_01"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_forest_wolf_camp_battle_01_biome_edge_01"]
+texture = ExtResource("Tex_4")
+scale = Vector2(0.03125, 0.03125)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_forest_wolf_camp_battle_01_biome_edge_02" type="Node2D" parent="Objects"]
+position = Vector2(10.121573, 10.702742)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 12
+metadata/source_id = "battle_forest_wolf_camp_battle_01_biome_edge_02"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_forest_wolf_camp_battle_01_biome_edge_02"]
+texture = ExtResource("Tex_5")
+scale = Vector2(0.03125, 0.03125)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_forest_wolf_camp_battle_01_biome_edge_03" type="Node2D" parent="Objects"]
+position = Vector2(5.539303, 14.954651)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 12
+metadata/source_id = "battle_forest_wolf_camp_battle_01_biome_edge_03"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_forest_wolf_camp_battle_01_biome_edge_03"]
+texture = ExtResource("Tex_6")
+scale = Vector2(0.03125, 0.03125)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_forest_wolf_camp_battle_01_biome_edge_04" type="Node2D" parent="Objects"]
+position = Vector2(-3.707915, 14.362769)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 12
+metadata/source_id = "battle_forest_wolf_camp_battle_01_biome_edge_04"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_forest_wolf_camp_battle_01_biome_edge_04"]
+texture = ExtResource("Tex_7")
+scale = Vector2(0.03125, 0.03125)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_forest_wolf_camp_battle_01_biome_edge_05" type="Node2D" parent="Objects"]
+position = Vector2(-10.5196429, 10.7714071)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 12
+metadata/source_id = "battle_forest_wolf_camp_battle_01_biome_edge_05"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_forest_wolf_camp_battle_01_biome_edge_05"]
+texture = ExtResource("Tex_8")
+scale = Vector2(0.03125, 0.03125)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_forest_wolf_camp_battle_01_biome_edge_06" type="Node2D" parent="Objects"]
+position = Vector2(-13.4710607, 5.09251357)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 12
+metadata/source_id = "battle_forest_wolf_camp_battle_01_biome_edge_06"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_forest_wolf_camp_battle_01_biome_edge_06"]
+texture = ExtResource("Tex_9")
+scale = Vector2(0.03125, 0.03125)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_forest_wolf_camp_battle_01_biome_edge_07" type="Node2D" parent="Objects"]
+position = Vector2(-14.2856506, -3.96478765)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 12
+metadata/source_id = "battle_forest_wolf_camp_battle_01_biome_edge_07"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_forest_wolf_camp_battle_01_biome_edge_07"]
+texture = ExtResource("Tex_10")
+scale = Vector2(0.03125, 0.03125)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_forest_wolf_camp_battle_01_biome_edge_08" type="Node2D" parent="Objects"]
+position = Vector2(-9.80540143, -11.0617743)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 12
+metadata/source_id = "battle_forest_wolf_camp_battle_01_biome_edge_08"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_forest_wolf_camp_battle_01_biome_edge_08"]
+texture = ExtResource("Tex_11")
+scale = Vector2(0.03125, 0.03125)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_forest_wolf_camp_battle_01_biome_edge_09" type="Node2D" parent="Objects"]
+position = Vector2(-3.056529, -14.103875)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 12
+metadata/source_id = "battle_forest_wolf_camp_battle_01_biome_edge_09"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_forest_wolf_camp_battle_01_biome_edge_09"]
+texture = ExtResource("Tex_12")
+scale = Vector2(0.03125, 0.03125)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_forest_wolf_camp_battle_01_biome_edge_10" type="Node2D" parent="Objects"]
+position = Vector2(3.47334222, -14.4614711)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 12
+metadata/source_id = "battle_forest_wolf_camp_battle_01_biome_edge_10"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_forest_wolf_camp_battle_01_biome_edge_10"]
+texture = ExtResource("Tex_13")
+scale = Vector2(0.03125, 0.03125)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_forest_wolf_camp_battle_01_biome_edge_11" type="Node2D" parent="Objects"]
+position = Vector2(10.43843, -11.9183743)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 12
+metadata/source_id = "battle_forest_wolf_camp_battle_01_biome_edge_11"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_forest_wolf_camp_battle_01_biome_edge_11"]
+texture = ExtResource("Tex_14")
+scale = Vector2(0.03125, 0.03125)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_forest_wolf_camp_battle_01_biome_edge_12" type="Node2D" parent="Objects"]
+position = Vector2(15.2072825, -2.6192175)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 12
+metadata/source_id = "battle_forest_wolf_camp_battle_01_biome_edge_12"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_forest_wolf_camp_battle_01_biome_edge_12"]
+texture = ExtResource("Tex_15")
+scale = Vector2(0.03125, 0.03125)
+modulate = Color(1, 1, 1, 1)
+visible = true

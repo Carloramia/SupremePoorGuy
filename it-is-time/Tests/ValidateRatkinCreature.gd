@@ -61,7 +61,7 @@ func run() -> void:
 			else:
 				assert(is_equal_approx(GEOMETRY.bounds(body).size.x, original.size.x) and is_equal_approx(GEOMETRY.bounds(body).size.y, original.size.y))
 			source.free()
-			assert(is_equal_approx(GEOMETRY.bounds(body).size.z, 0.08 * multiplier))
+			assert(is_equal_approx(GEOMETRY.bounds(body).size.z, 0.08 * multiplier * 2.0))
 			if PhysicalBodyPart3D.BodyPartTag.Leg in body.tags:
 				counts.feet += 1
 				assert(absf((body.transform * GEOMETRY.bounds(body)).position.y) < 0.0001)

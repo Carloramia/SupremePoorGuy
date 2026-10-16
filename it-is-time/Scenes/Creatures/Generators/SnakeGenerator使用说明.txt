@@ -119,13 +119,13 @@ Generate_Snake_NPC 使用独立 SnakeBiteAttackController3D；普通 Generate_Sn
 
 动作分为：
 1. positioning：正式攻击前先接近可达位置，制动并对齐攻击平面；这个阶段仍允许整体转向。
-2. preparing：保存此刻每节接地躯干的世界水平位置和共同朝向，暂停地面 S 路线。仅抬起部分 Torso、Head 和 Jaw 后收、抬高及瞄准。
-3. lunging / closing：固定根部，通过原关节范围内的链式求解伸头、下探、合口。没有整身起攻冲量、持续推进或恢复后退。
+2. preparing：保存此刻每节接地躯干的世界水平位置、共同朝向和一次性预测攻击点，暂停地面 S 路线。仅抬起部分 Torso、Head 和 Jaw 按已求解的固定姿态后收、抬高及瞄准。
+3. lunging / closing：固定根部，执行锁定时在原关节范围内求解出的伸头、下探姿态并合口，不根据实时目标重新求解。没有整身起攻冲量、持续推进或恢复后退。
 4. recovering / rejoining：仅上半身返回自然姿态，检查闭口、头部位置、身体制动和全部物理连接；通过后交还移动控制。
 
-接地躯干由物理恢复力和阻尼维持捕获的世界水平位置，继续保留重力、地形碰撞和上半身反作用力，不冻结刚体、不瞬移。允许物理求解产生少量位置误差；修改了地面接触状态不会把上半身误认成支点。支点全部离地且支撑缓冲耗尽时输出 ground_support_lost 并释放控制。正式攻击中目标明显离开固定攻击平面时进入恢复，输出 target_left_attack_plane；重新定位与转向留给下一次攻击前处理。
+接地躯干由物理恢复力和阻尼维持捕获的世界水平位置，继续保留重力、地形碰撞和上半身反作用力，不冻结刚体、不瞬移。允许物理求解产生少量位置误差；修改了地面接触状态不会把上半身误认成支点。支点全部离地且支撑缓冲耗尽时输出 ground_support_lost 并释放控制。只有锁定前的positioning阶段会因目标持续离开攻击平面而进入恢复，输出target_left_attack_plane；准备开始后目标逃离不再中断，重新定位与转向留给下一次攻击前处理。
 
-攻击距离由实际地面根部、抬起链、Head 尺寸和当前关节限位共同决定。AI 不再把整身突进距离计入可达范围；超出范围先正常寻路接近。行走中预测使用当前地面根部位置，对齐完成及准备结束各复算一次；固定支点后的预测和执行使用同一 FK、原 Z 转角范围和嘴部碰撞体。目标速度做短时滤波；已有地面接触/吸附的目标不将步态瞬时 Y 速度外推成持续升降。若 Head 速度参考要求更长的伸展时间，同时更新接触时刻和目标外推位置；无法收敛时输出 intercept_time_unstable，不报告虚假的可命中结果。
+攻击距离由实际地面根部、抬起链、Head 尺寸和当前关节限位共同决定。AI 不再把整身突进距离计入可达范围；超出范围先正常寻路接近。行走中预测使用当前地面根部位置，对齐完成后刷新一次计划并锁定，准备结束不再复算；固定支点的预测和执行使用同一 FK、原 Z 转角范围和嘴部碰撞体。目标速度做短时滤波；已有地面接触/吸附的目标不将步态瞬时 Y 速度外推成持续升降。锁定前若 Head 速度参考要求更长的伸展时间，同时更新接触时刻和目标外推位置；无法收敛时输出 intercept_time_unstable，不报告虚假的可命中结果。
 
 常态闭口仍由 SnakeGenerator / Snake Materials / Jaw Closed Angle Degrees 定义，默认32°，修改后重新生成并保存。Head-Jaw 的 Z 限位仅在攻击期间临时放宽，结束或中断后恢复。临时嘴部伤害盒只参与伤害查询；Head/Jaw 与本次目标的实体碰撞临时忽略，地形碰撞保留。伤害仍按嘴部速度、Head+Jaw质量和目标质量估计冲量，进入全局伤害与 Armor 结算，同次攻击同一 Part 只结算一次有效伤害，不伤害友军。
 
@@ -133,7 +133,7 @@ Generate_Snake_NPC 使用独立 SnakeBiteAttackController3D；普通 Generate_Sn
 - Preparation Time / Extra Wait：准备时长及未就绪时的额外等待，参考体型默认0.7/1.0秒。
 - Lift Ratio / Retract Ratio：相对于抬起链长度的抬高、后收比例，默认0.06/0.03。
 - Preserved Root Ratio：保留根部 S 弯折的比例，默认0.3；此区域除第一根关节外使用原 Z 弯折范围的30%。第一根关节可带动上半身俯身，提高此值通常会减小有效范围。
-- Aim Tolerance Degrees：真实头部视觉轴和目标连线的允许角误差，默认15°。准备时逐帧用末端至多4节关节重新瞄准，不旋转地面支点。自然轴来自生成后 Head 的 JointIn → JointOut；当前素材相对节点局部+X向上倾斜约19.23°，没有有效标记时才回退到+X。
+- Aim Tolerance Degrees：真实头部视觉轴和锁定攻击点连线的允许角误差，默认15°。准备开始前一次性求解末端至多4节关节的瞄准角；准备期间仅按固定姿态施加物理追踪力，不重新瞄准或旋转地面支点。自然轴来自生成后 Head 的 JointIn → JointOut；当前素材相对节点局部+X向上倾斜约19.23°，没有有效标记时才回退到+X。
 - Jaw Open Degrees / Jaw Close Time：张嘴角度与合口时长，默认40°/0.18秒。
 - Burst Speed：参考 Head 伸展速度，默认16；不再代表整身冲锋速度。目标距离过长时可延长计划伸展时间，实际速度仍受施力上限及物理结构影响。
 - Lunge Time：参考伸展时间，默认1.5秒。计划时间至少为 Lunge Time×体型时间倍率÷Head Extension Speed Multiplier，同时考虑伸头距离和速度参考。
@@ -147,7 +147,7 @@ Generate_Snake_NPC 使用独立 SnakeBiteAttackController3D；普通 Generate_Sn
 - Damage Box Ratio / Center Ratio：嘴部查询盒相对实际 Head 的大小与位置。
 - Impulse Multiplier：接触冲量估计倍率，默认2；Cooldown：动作结束后的冷却，默认2.8秒，AI行为资源仍可独立限制调用频率。
 
-恢复保留原有连接保护：逐关节按实际锚点收紧 X/Z 行程，使用有界、等大反向的锚点修复力。恢复进度根据最差追踪误差减速；只有全部完成条件通过才输出 completed，超时输出 rejoin_timeout。无移动输入时继续保留地面 S 型和最后朝向，有移动输入时接回普通路线。目标消失/死亡进入恢复；组件停用、布娃娃、部位断裂、移除或重新生成释放支点锁、控制权、临时伤害盒以及关节/碰撞临时设置。
+恢复保留原有连接保护：逐关节按实际锚点收紧 X/Z 行程，使用有界、等大反向的锚点修复力。恢复进度根据最差追踪误差减速；只有全部完成条件通过才输出 completed，超时输出 rejoin_timeout。无移动输入时继续保留地面 S 型和最后朝向，有移动输入时接回普通路线。目标在准备开始前消失/死亡进入恢复；锁定后即使目标消失也完成原动作。组件停用、布娃娃、自身部位断裂、失去全部支撑、移除或重新生成仍释放支点锁、控制权、临时伤害盒以及关节/碰撞临时设置。
 
 诊断命令（沿用原有开关，每0.1秒输出一次）：
 tracksnakeattacks on GenerateSnakeNPC
@@ -162,7 +162,7 @@ getlogs
 攻击快照中的 support_locked 为地面支点锁定状态；ground_displacement 为当前最大地面水平追踪误差；head_traveled 为起攻后 Head 相对起攻位置的位移（正式起攻前为0），不代表身体突进。body_velocity 用于检查剩余支点运动。head_forward_source/local/rest/world、head_aim_error_degrees 用于核对自然视觉轴和准备瞄准；head_extension_time / speed_multiplier、planned_contact_time、intercept_aim / pose_error、predicted_target_velocity / target_supported 用于检查拦截。
 connections.ready / limits_ready 表示连接和行程收紧是否完成；maximum_error / maximum_excess / maximum_error_ratio / worst_part 指出最差锚点误差。motiondetail full 的逐部位 connection_target/error/relative_velocity 可定位连接问题；摘要新增 attack_support_locked 和 attack_ground_error。AI 的 snake_reposition_* 继续显示持有的候选站位及 arrived/stalled/timeout 原因；预测失败不会每次重新选择站位。
 
-回归：ValidateSnakeFixedSupportAttack3D 覆盖不同体型固定世界支点、真实伤害、不可达目标、慢速 Head 的预测时刻、目标离开攻击平面及支撑丢失清理；ValidateSnakeAttacks3D 覆盖高低目标、重复AI攻击、旋转、移动目标与中断；ValidateSnakeHeadAim3D 验证自然轴与前伸倍率；ValidateSnakeIntercept3D 检查 TestLevel 实战拦截及恢复。普通行走由 ValidateSnakeRaisedLayout3D / ValidateSnakeGroundPath3D 验证。
+回归：ValidateSnakeFixedSupportAttack3D 覆盖不同体型固定世界支点、真实伤害、不可达目标、慢速 Head 的预测时刻、目标离开攻击平面及支撑丢失清理；ValidateSnakeLockedAttack3D 覆盖锁定后目标逃离、被击毁、被删除时仍完成固定动作，不重新求解、不产生远程伤害，并验证护甲挡住伤害时仍记录真实接触；ValidateSnakeAttacks3D 覆盖高低目标、重复AI攻击、旋转、移动目标与中断；ValidateSnakeHeadAim3D 验证自然轴与前伸倍率。普通行走由 ValidateSnakeRaisedLayout3D 验证；旧 ValidateSnakeIntercept3D 依赖已变更的 TestLevel 节点，运行前需更新场景夹具。
 
 锐角路径的平滑物理执行（2026-10-13）：
 - 世界S路线继续直接锐角换向，已占用的历史路线不改变。新增执行目标在水平面内积分连续的位置、速度和加速度；贴地体节执行加速度不超过Movement / Maximum Acceleration，其变化率不超过Path Maximum Jerk。实际刚体由物理力追踪执行目标，不直接改写位置或速度。
@@ -174,9 +174,24 @@ connections.ready / limits_ready 表示连接和行程收紧是否完成；maxim
 - 继续使用motiondetail full、tracknpcmotion on GenerateSnakeNPC、showsnakepath on GenerateSnakeNPC。绘制的仍是锐角计划路线。完整部位输出新增path_raw_target/path_raw_velocity（原始计划）、path_target/path_velocity/path_acceleration（执行参考）、path_execution_offset（执行与原始计划之差，包含沿路径滞后）、path_desired_velocity/path_corner_speed（预瞄速度）、path_applied_force/path_drive_acceleration（合并后实际施加的水平控制力/加速度）。摘要新增path_execution_speed_scale（跟随滞后导致的速度比例）、path_corner_speed_limit（领头折角速度上限）和path_corners。原movement_force/support_force/pair_force是各通道的请求值；drive_force在路线模式下改为合并后实际水平控制力的总和。
 
 攻击规划性能修复（2026-10-13）：
-- 同一次完整规划只捕获一次实时根部，所有IK、准备瞄准与扫掠采样复用同一快照。重新定位、起攻前与再生成仍读取新的真实根部；缓存额外检查根部位移，避免以旧快照代替实际支点。
+- 同一次完整规划只捕获一次实时根部，所有IK、准备瞄准与扫掠采样复用同一快照。重新定位、进入准备前与再生成读取新的真实根部；正式准备开始时强制刷新计划并锁定，之后不重新预测或求解。缓存额外检查根部位移，避免以旧快照代替实际支点。
 - IK保留原16轮迭代、目标权重和全部转角约束；每次调整关节只绕同一枢轴更新该关节及后方链段，不再为每个关节重算整个链并重复遍历全身刚体。
 - 目标在保守可达包络之外时，站位先以包络80%的距离引导接近，进入包络后切回原精确站位与命中预测；该估计不授权发动攻击。直接预测远处目标也可在IK前拒绝。正式攻击依然需要原来的扫掠、支撑和状态检查。
 - 继续使用trackcontrolperf。SnakeBiteAttackController3D新增attack_range_estimate（站位估算）、attack_planning（完整规划及缓存查找）、ik_solve（求解）、prediction_sweep（碰撞预测）计时；它们为包含子调用的计时，不能直接相加。
 - 新增计数coarse_range_estimates、prediction_range_rejects、plan_requests、plan_builds、plan_cache_hits、fk_evaluations、ik_iterations和prediction_shape_queries。fk_evaluations表示完整链构造次数，不含逐关节更新后方链段的工作；攻击执行snake_attack保持原含义。
 - 性能回归Tests/ValidateSnakePlanningPerformance3D.gd检查远处不求解、真实根部读取次数、整链构造次数、计划缓存复用及失效、再生成刷新。原固定支点、头部瞄准、不同体型攻击、TestLevel移动目标和行走恢复测试继续有效。
+
+NPC左右朝向与攻击通道对齐（2026-10-16）：
+- Generate_Snake_NPC / NPCStateMachine3D 的 Generated X Axis Facing 默认启用。普通追击与攻击只请求世界 +X 或 -X 朝向；目标的Z偏差通过寻路平移消除，不以整身偏航消除。左右切换仍使用原来的物理180度转向，过程中会暂时经过斜向姿态。
+- 攻击站位以实际抬起链根部所在的口部平面为准，并预测目标在准备及伸头期间的Z位移。容差根据目标碰撞体投影和口部伤害盒宽度自动计算；不要求双方导航中心Z严格相等。X已经处于攻击站位停止区间时只调整Z。
+- Z对齐进入与结束使用外/内两档容差，避免S路线小幅摆动导致反复横移。纯Z调整按完整导航剩余距离计算减速，不会因X距离误差为0而失去推进力。
+- 目标跨到当前确认朝向背后时等待正常转身，不提前锁定旧朝向。Z未对齐时预测返回z_alignment_pending，不接管支点；准备前仍检查实际身体朝向、链连接和停止状态。准备开始后保留固定地面S形支点和攻击点，即使目标离开攻击平面也完成原动作后重新寻路。
+
+单次锁定攻击（2026-10-16）：
+- positioning仍会根据实时目标站位和制动；只有其完成、即将进入preparing时才锁定世界攻击点。此点为目标当时位置加过滤速度乘以计划准备及伸头时间；未来预测失败但当前包络可达时沿用原有低置信度当前点方案。锁定后不追踪目标位置、速度或朝向变化。
+- 准备姿态、伸头姿态、攻击朝向、地面参考系、根部姿态和伸头计划时长在锁定时一次确定。准备阶段只检查实际头部与锁定点的对准、张嘴进度和结构追踪；起攻时直接执行同一计划，不再次预测。
+- 物理力仍按实际位置、速度和姿态反馈计算；真实嘴部伤害盒接触敌方部位可以提前合颚，同次攻击伤害规则不变。目标能通过移动躲开这次攻击，空咬会输出lunge_limit_no_contact；恢复完成与实际命中结果分别记录。
+- Data移除Maximum Preparation Reaims；Preparation Reaim Interval改名Positioning Update Interval，仍默认0.1参考秒，但只用于锁定前更新站位朝向。Prediction Retry Grace也只作用于锁定前。
+- tracksnakeattacks增加target_locked事件；快照增加target_locked、locked_aim和target_position_at_lock。intercept_aim同样为固定点，predicted_target_velocity为锁定时的估计；planned_contact_time从锁定开始计时，并非当前阶段剩余时间。head_aim_error_degrees衡量准备阶段头部对锁定点的误差。
+- 日志继续使用tracknpcstate on GenerateSnakeNPC、tracksnakeattacks on GenerateSnakeNPC、tracknpcmotion on GenerateSnakeNPC和showsnakepath on GenerateSnakeNPC。状态快照新增snake_lane_alignment，包含aligning、goal、z_error、z_tolerance、aim和forward；对齐开始/结束输出snake_lane_alignment事件。攻击alignment增加axis_facing。
+- Tests/ValidateSnakeAxisPositioning3D.gd覆盖左右两侧、口部平面补偿、纯Z推进、容差滞回、背后目标等待转身，以及真实NPC通过S路线对齐并造成伤害。保留原固定支点、移动目标、多体型攻击、抬起布局和世界路径回归。

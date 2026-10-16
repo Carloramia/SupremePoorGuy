@@ -236,6 +236,7 @@ func _instantiate_blueprint(blueprint: Dictionary, generator_transform: Transfor
 		part.top_distance = size.y * 0.5
 		part.bottom_distance = size.y * 0.5
 		part.collision_thickness = size.z
+		part._sync_collision_depth(size.z)
 		part.set_meta(&"generated_size", size)
 	LIMB_HOLE_ALIGNMENT.align(container)
 	return container

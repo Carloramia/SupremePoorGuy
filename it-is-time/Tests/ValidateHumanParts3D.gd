@@ -72,7 +72,7 @@ func run() -> void:
 		var shape := part.get_node("CollisionShape3D").shape as ConvexPolygonShape3D
 		assert(shape != null and shape.points.size() >= 8)
 		var initial := shape_bounds(shape)
-		assert(is_equal_approx(initial.size.z, 0.08))
+		assert(is_equal_approx(initial.size.z, 0.08 * 2.0))
 		var alpha_size := Vector2(record.visible_world_size[0], record.visible_world_size[1])
 		assert(absf(initial.size.x-alpha_size.x) < alpha_size.x/20.0)
 		assert(absf(initial.size.y-alpha_size.y) < alpha_size.y/20.0)
@@ -89,9 +89,9 @@ func run() -> void:
 		assert(second.get_node("CollisionShape3D").shape != shape)
 		part.paper_volume_thickness = 0.16
 		var changed := shape_bounds(shape)
-		assert(is_equal_approx(changed.size.z, 0.16))
+		assert(is_equal_approx(changed.size.z, 0.16 * 2.0))
 		assert(is_equal_approx(initial.size.x, changed.size.x) and is_equal_approx(initial.size.y, changed.size.y))
-		assert(is_equal_approx(shape_bounds(second.get_node("CollisionShape3D").shape).size.z, 0.08))
+		assert(is_equal_approx(shape_bounds(second.get_node("CollisionShape3D").shape).size.z, 0.08 * 2.0))
 		var model_scene := load(BASE + str(record.scene)) as PackedScene
 		var model := model_scene.instantiate()
 		assert(model.get_node("PaperVolume").mesh.get_surface_count() == 3)

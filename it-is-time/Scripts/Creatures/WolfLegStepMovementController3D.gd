@@ -389,7 +389,11 @@ func _get_expected_horizontal_speed() -> float:
 	return super._get_expected_horizontal_speed()
 
 func _height_support_carries_limb_weight() -> bool:
-	return _airborne_height_support_authorized() and not _charge_gait_active()
+	return not _charge_gait_active()
+
+func _height_support_external_gravity_mass() -> float:
+	var support := get_parent().get_node_or_null("HeadPositionSupport3D")
+	return support.get_gravity_supported_mass(get_parent()._get_physical_body_parts()) if support != null else 0.0
 
 func _height_support_weight_share() -> float:
 	return maxf(1.0, sub_torso_weight_share) if _height_support_carries_limb_weight() else super._height_support_weight_share()

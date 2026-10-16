@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3]
+[ext_resource type="ArrayMesh" path="res://Resources/Meshes/Environment/FrontierBattle/Props/RatMound.res" id="mesh"]
+[node name="RatMound" type="Node3D"]
+rotation = Vector3(0, 0, 0)
+[node name="Visual" type="MeshInstance3D" parent="."]
+scale = Vector3(1, 1, 0.08)
+mesh = ExtResource("mesh")
+cast_shadow = 0

@@ -14,6 +14,13 @@ var _material: ShaderMaterial
 var _visual: MeshInstance3D
 var impact_impulse := 0.0
 var raw_impact_damage := 0.0
+var _debug_shape: SphereShape3D
+
+func get_attack_debug_shapes() -> Array[Dictionary]:
+	if data == null or elapsed <= 0.0 or elapsed >= data.duration: return []
+	if _debug_shape == null: _debug_shape = SphereShape3D.new()
+	_debug_shape.radius = data.radius*clampf(elapsed/data.duration,0.0,1.0)
+	return [{"shape":_debug_shape,"transform":Transform3D(Basis.IDENTITY,contact),"active":true}]
 
 func setup(settings: DATA, source: Node3D, point: Vector3, surface_normal: Vector3, measured_impulse: float = 0.0) -> void:
 	data = settings
@@ -26,6 +33,7 @@ func setup(settings: DATA, source: Node3D, point: Vector3, surface_normal: Vecto
 func _ready() -> void:
 	if data == null or not data.enabled or not data.is_valid(): queue_free(); return
 	add_to_group(&"stomp_shockwaves")
+	add_to_group(&"damage_components")
 	global_position = contact
 	var service := get_tree().root.get_node_or_null("DamageService")
 	if service != null: raw_impact_damage = service.calculate_raw_damage(impact_impulse*data.impulse_scale)

@@ -11,6 +11,8 @@ const OUTLINE_SHADER: Shader = preload("res://Shaders/BodyPartOutline.gdshader")
 const DEFAULT_DAMAGE_NUMBER_SCENE: PackedScene = preload("res://Scenes/VFX/DamageNumber3D.tscn")
 const MIN_SIZE: float = 0.001
 const VISUAL_SWITCHER = preload("res://Scripts/Creatures/BodyPartVisualSwitcher3D.gd")
+const COLLISION_DEPTH_MULTIPLIER: float = 2.0
+const COLLISION_DEPTH_META: StringName = &"body_part_collision_depth_multiplier"
 
 enum BodyPartTag {
 	Torso,
@@ -98,7 +100,7 @@ enum BodyPartTag {
 
 @export_group("Visuals")
 enum GeometryMode { BOX_FIT, CUSTOM_MODEL }
-## Custom models retain their authored transforms, collision shape and joint markers.
+## Custom models retain authored transforms, collision XY profiles and joint markers.
 @export var geometry_mode: GeometryMode = GeometryMode.BOX_FIT:
 	set(value):
 		if is_instance_valid(_custom_model) and _custom_model != _mesh: _custom_model.visible = false
@@ -158,7 +160,7 @@ enum GeometryMode { BOX_FIT, CUSTOM_MODEL }
 @export_range(0.001, 100.0, 0.01, "or_greater") var bottom_distance: float = 1.28
 
 @export_group("Collision")
-## Collision depth perpendicular to the Sprite3D plane.
+## Base model depth perpendicular to the Sprite3D plane. The collider's local Z depth is doubled.
 @export_range(0.001, 100.0, 0.01, "or_greater") var collision_thickness: float = 0.2
 
 @onready var _sprite: Sprite3D = $Sprite3D
@@ -491,6 +493,7 @@ func _sync_geometry() -> void:
 	var mesh_bounds := mesh_resource.get_aabb() if mesh_resource != null else AABB()
 	var signature := [edges, safe_thickness, _sprite.axis, _sprite.texture, mesh_resource, mesh_bounds]
 	if signature == _last_signature:
+		_sync_collision_depth(_box_visual_size(edges, safe_thickness).z)
 		return
 	_last_signature = signature
 
@@ -503,25 +506,57 @@ func _sync_geometry() -> void:
 	_material.set_shader_parameter(&"edge_distances", edges)
 	_sprite.extra_cull_margin = maxf(edges.x + edges.y, edges.z + edges.w)
 
-	var width := edges.x + edges.y
-	var height := edges.z + edges.w
 	var horizontal_center := (edges.y - edges.x) * 0.5
 	var vertical_center := (edges.z - edges.w) * 0.5
 	var shape := _collision.shape as BoxShape3D
 	if shape == null:
 		shape = BoxShape3D.new()
 		_collision.shape = shape
+	var visual_size := _box_visual_size(edges, safe_thickness)
+	shape.size = visual_size
 	match _sprite.axis:
 		Vector3.AXIS_X:
-			shape.size = Vector3(safe_thickness, height, width)
 			_collision.position = Vector3(0.0, vertical_center, -horizontal_center)
 		Vector3.AXIS_Y:
-			shape.size = Vector3(width, safe_thickness, height)
 			_collision.position = Vector3(horizontal_center, 0.0, -vertical_center)
 		_:
-			shape.size = Vector3(width, height, safe_thickness)
 			_collision.position = Vector3(horizontal_center, vertical_center, 0.0)
-	_sync_mesh_geometry(shape.size)
+	_sync_mesh_geometry(visual_size)
+	_sync_collision_depth(visual_size.z)
+
+func _box_visual_size(edges: Vector4, depth: float) -> Vector3:
+	var width := edges.x + edges.y
+	var height := edges.z + edges.w
+	match _sprite.axis:
+		Vector3.AXIS_X: return Vector3(depth, height, width)
+		Vector3.AXIS_Y: return Vector3(width, depth, height)
+	return Vector3(width, height, depth)
+
+## Keep authored XY and center; set an absolute depth so reload/regeneration never compounds it.
+func _sync_collision_depth(visual_depth: float) -> void:
+	if not is_instance_valid(_collision) or _collision.shape == null: return
+	var shape := _collision.shape
+	var depth := visual_depth * COLLISION_DEPTH_MULTIPLIER / maxf(_collision.basis.z.length(), MIN_SIZE)
+	if shape is BoxShape3D:
+		if not is_equal_approx(shape.size.z, depth):
+			var size: Vector3 = shape.size
+			size.z = depth
+			shape.size = size
+	elif shape is ConvexPolygonShape3D:
+		var points: PackedVector3Array = shape.points
+		var low := INF
+		var high := -INF
+		for point: Vector3 in points:
+			low = minf(low, point.z)
+			high = maxf(high, point.z)
+		if high <= low: return
+		if not is_equal_approx(high - low, depth):
+			var center := (low + high) * 0.5
+			for index: int in points.size(): points[index].z = center + (points[index].z - center) * depth / (high - low)
+			shape.points = points
+	else: return
+	if shape.get_meta(COLLISION_DEPTH_META, 1.0) != COLLISION_DEPTH_MULTIPLIER:
+		shape.set_meta(COLLISION_DEPTH_META, COLLISION_DEPTH_MULTIPLIER)
 
 func _sync_visual_visibility() -> void:
 	if is_instance_valid(_sprite):
@@ -547,19 +582,20 @@ func _sync_paper_volume() -> void:
 		if _paper_volume == null: return
 		for node: Node in _custom_model.find_children("*","MeshInstance3D",true,false):
 			if node != _paper_volume: _paper_source_meshes.append(node as MeshInstance3D)
-	var shape := _collision.shape as ConvexPolygonShape3D if is_instance_valid(_collision) else null
-	if shape != _paper_collision_shape:
-		_paper_collision_shape = shape
-		if shape != null and not shape.points.is_empty():
+	var shape := _collision.shape if is_instance_valid(_collision) else null
+	var convex := shape as ConvexPolygonShape3D
+	if convex != _paper_collision_shape:
+		_paper_collision_shape = convex
+		if convex != null and not convex.points.is_empty():
 			var low := INF
 			var high := -INF
-			for point: Vector3 in shape.points:
+			for point: Vector3 in convex.points:
 				low = minf(low,point.z)
 				high = maxf(high,point.z)
 			# Keep the flat depth stable even after an editor save stores expanded points.
-			_paper_original_depth = maxf(float(_paper_volume.get_meta("flat_collision_depth",high-low)),MIN_SIZE)
+			_paper_original_depth = maxf(float(_paper_volume.get_meta("flat_collision_depth",(high-low)/float(shape.get_meta(COLLISION_DEPTH_META,1.0)))),MIN_SIZE)
 	var model_depth_scale := _custom_model.basis.z.length()
-	var signature := [paper_volume_enabled,paper_volume_thickness,paper_side_color,shape,_paper_volume,model_depth_scale]
+	var signature := [paper_volume_enabled,paper_volume_thickness,paper_side_color,shape,_paper_volume,model_depth_scale,_collision.transform if is_instance_valid(_collision) else Transform3D.IDENTITY]
 	if signature == _paper_signature: return
 	_paper_signature = signature
 	_paper_volume.visible = paper_volume_enabled
@@ -571,19 +607,7 @@ func _sync_paper_volume() -> void:
 		_paper_side_material = _paper_volume.mesh.surface_get_material(2).duplicate() as StandardMaterial3D
 		_paper_volume.set_surface_override_material(2,_paper_side_material)
 	_paper_side_material.albedo_color = paper_side_color
-	if shape != null:
-		var points := shape.points
-		var low := INF
-		var high := -INF
-		for point: Vector3 in points:
-			low = minf(low,point.z)
-			high = maxf(high,point.z)
-		if high-low > 0.0:
-			var depth := (paper_volume_thickness if paper_volume_enabled else _paper_original_depth) * model_depth_scale
-			if not is_equal_approx(high-low,depth):
-				var center := (low+high)*0.5
-				for index: int in points.size(): points[index].z = center + (points[index].z-center)*depth/(high-low)
-				shape.points = points
+	_sync_collision_depth((paper_volume_thickness if paper_volume_enabled else _paper_original_depth) * model_depth_scale)
 
 func _sync_mesh_geometry(size: Vector3) -> void:
 	if not is_instance_valid(_mesh) or _mesh.mesh == null:
