@@ -1,0 +1,67 @@
+{
+  "date": "2026-10-14",
+  "prototype_version": "0.6 interaction experiment",
+  "baseline_commit": "0bacb931e93ed54406f09dea2412b67e31d91f8a",
+  "engine": "4.7.2.stable.steam.ed1daf0bf",
+  "tests": [
+    {
+      "script": "ValidateNativeUI.gd",
+      "checks": 447,
+      "failures": 0
+    },
+    {
+      "script": "ValidateUILayout.gd",
+      "checks": 436,
+      "failures": 0
+    },
+    {
+      "script": "ValidateArtUI.gd",
+      "checks": 43,
+      "failures": 0
+    },
+    {
+      "script": "ValidateSummonWarehouseV06.gd",
+      "checks": 722,
+      "failures": 0
+    }
+  ],
+  "total_checks": 1648,
+  "failures": 0,
+  "static_isolation": {
+    "files": 47,
+    "references": 120,
+    "passed": true
+  },
+  "original_files_verified_unchanged": 3340,
+  "resolutions": [
+    "960x540",
+    "1280x720",
+    "1600x900",
+    "1920x1080",
+    "1024x768",
+    "1920x800"
+  ],
+  "screenshots": [
+    "v06_array7.png",
+    "v06_basic.png",
+    "v06_mutation.png",
+    "v06_results5.png",
+    "v06_ultra.png",
+    "v06_warehouse.png",
+    "v06_warehouse_1024.png",
+    "v06_warehouse_details.png"
+  ],
+  "test_saves_use_separate_appdata": true,
+  "trial_user_dir": "SupremePoorGuy_UIPrototype_SummonWarehouse_V06_Experiment",
+  "limitations": [
+    "No real 3D combat or battle-duration validation",
+    "No real clone/shield/burn/heal combat triggers",
+    "No generated 3D/mutation appearance assets",
+    "Balance, probabilities, recipe and group policies are explicitly experimental"
+  ],
+  "environment_messages": [
+    "Restricted root certificate store access",
+    "Editor settings write denied in Steam self-contained location during import",
+    "One earlier capture reported GL cache initialization messages; final capture rendered normally"
+  ]
+}

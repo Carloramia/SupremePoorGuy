@@ -1,0 +1,263 @@
+[gd_scene load_steps=10 format=3]
+[ext_resource type="PackedScene" path="res://Scenes/UI/Components/ActionButton.tscn" id="Button"]
+[ext_resource type="Theme" path="res://Assets/UI/PaperRelief/PaperReliefTheme.tres" id="Theme"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/Components/LooseLeafPage.tscn" id="Leaf"]
+[ext_resource type="Script" path="res://Scripts/UI/CopperLinks.gd" id="Rings"]
+[ext_resource type="Script" path="res://Scripts/UI/FilterTab.gd" id="FilterTab"]
+[ext_resource type="Script" path="res://Scripts/UI/ExtendedLeaf.gd" id="ExtendedLeaf"]
+[ext_resource type="Script" path="res://Scripts/UI/WarehouseView.gd" id="View"]
+[sub_resource type="StyleBoxFlat" id="D1Style"]
+content_margin_left = 16.0
+content_margin_top = 16.0
+content_margin_right = 36.0
+content_margin_bottom = 14.0
+bg_color = Color(0.92, 0.86, 0.72, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.48, 0.36, 0.22, 1)
+corner_radius_top_left = 9
+corner_radius_top_right = 12
+corner_radius_bottom_left = 7
+corner_radius_bottom_right = 11
+shadow_color = Color(0.03, 0.025, 0.02, 0.55)
+shadow_size = 6
+shadow_offset = Vector2(4, 5)
+[sub_resource type="StyleBoxFlat" id="D2Style"]
+expand_margin_right = 72.0
+content_margin_left = 36.0
+content_margin_top = 16.0
+content_margin_right = 16.0
+content_margin_bottom = 14.0
+bg_color = Color(0.92, 0.86, 0.72, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.48, 0.36, 0.22, 1)
+corner_radius_top_left = 9
+corner_radius_top_right = 12
+corner_radius_bottom_left = 7
+corner_radius_bottom_right = 11
+shadow_color = Color(0.03, 0.025, 0.02, 0.55)
+shadow_size = 6
+shadow_offset = Vector2(4, 5)
+[node name="WarehousePanel" type="HBoxContainer"]
+script = ExtResource("View")
+theme_override_constants/separation = 40
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = ExtResource("Theme")
+[node name="D1" parent="." instance=ExtResource("Leaf")]
+z_index = 2
+theme_override_styles/panel = SubResource("D1Style")
+layout_mode = 2
+size_flags_horizontal = 3
+[node name="Content" type="VBoxContainer" parent="D1"]
+layout_mode = 2
+size_flags_vertical = 3
+[node name="PageHeader" type="HBoxContainer" parent="D1/Content"]
+layout_mode = 2
+[node name="PageTitle" type="Label" parent="D1/Content/PageHeader"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 24
+text = "妖兽仓库"
+clip_text = true
+[node name="PageBack" parent="D1/Content/PageHeader" instance=ExtResource("Button")]
+unique_name_in_owner = true
+layout_mode = 2
+text = "返回"
+[node name="DetailScroll" type="ScrollContainer" parent="D1/Content"]
+custom_minimum_size = Vector2(360, 0)
+size_flags_vertical = 3
+layout_mode = 2
+size_flags_horizontal = 3
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 4
+
+[node name="DetailBody" type="VBoxContainer" parent="D1/Content/DetailScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+[node name="DetailHint" type="Label" parent="D1/Content/DetailScroll/DetailBody"]
+layout_mode = 2
+text = "详情面板 D1\n选择右侧怪物便条查看"
+[node name="DetailCommands" type="HFlowContainer" parent="D1/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+[node name="D2" parent="." instance=ExtResource("Leaf")]
+script = ExtResource("ExtendedLeaf")
+z_index = 2
+custom_minimum_size = Vector2(400, 0)
+theme_override_styles/panel = SubResource("D2Style")
+layout_mode = 2
+size_flags_horizontal = 3
+[node name="Row" type="VBoxContainer" parent="D2"]
+layout_mode = 2
+[node name="FilterHeader" type="HBoxContainer" parent="D2/Row"]
+layout_mode = 2
+[node name="Heading" type="Label" parent="D2/Row/FilterHeader"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "怪物列表"
+[node name="All" parent="D2/Row/FilterHeader" instance=ExtResource("Button")]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"SecondaryButton"
+text = "清空筛选"
+tooltip_text = "显示全部怪物，取消位置与形态筛选"
+[node name="ListScroll" type="ScrollContainer" parent="D2/Row"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 4
+
+[node name="List" type="VBoxContainer" parent="D2/Row/ListScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+[node name="Empty" type="Label" parent="D2/Row/ListScroll/List"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "暂无符合筛选的怪物"
+autowrap_mode = 3
+[node name="Cards" type="VBoxContainer" parent="D2/Row/ListScroll/List"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+[node name="TagsRail" type="Control" parent="."]
+custom_minimum_size = Vector2(108, 0)
+layout_mode = 2
+mouse_filter = 2
+[node name="Tabs" type="Control" parent="TagsRail"]
+offset_left = -52.0
+offset_top = 32.0
+offset_right = 108.0
+offset_bottom = 300.0
+z_index = 0
+mouse_filter = 2
+[node name="Warehouse" parent="TagsRail/Tabs" instance=ExtResource("Button")]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 148.0
+offset_bottom = 48.0
+theme_type_variation = &"FilterTab"
+toggle_mode = true
+text = ""
+tooltip_text = "仓库怪物（再次点击取消）"
+script = ExtResource("FilterTab")
+[node name="WarehouseTerm" type="Label" parent="TagsRail/Tabs/Warehouse"]
+unique_name_in_owner = true
+offset_left = 86.0
+offset_top = 6.0
+offset_right = 122.0
+offset_bottom = 42.0
+vertical_alignment = 1
+horizontal_alignment = 0
+theme_override_font_sizes/font_size = 18
+mouse_filter = 2
+text = "仓库"
+[node name="WarehouseCount" type="Label" parent="TagsRail/Tabs/Warehouse"]
+unique_name_in_owner = true
+offset_left = 122.0
+offset_top = 6.0
+offset_right = 146.0
+offset_bottom = 42.0
+vertical_alignment = 1
+horizontal_alignment = 2
+theme_override_font_sizes/font_size = 18
+mouse_filter = 2
+text = "0"
+[node name="Team" parent="TagsRail/Tabs" instance=ExtResource("Button")]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 0.0
+offset_top = 58.0
+offset_right = 148.0
+offset_bottom = 106.0
+theme_type_variation = &"FilterTab"
+toggle_mode = true
+text = ""
+tooltip_text = "出战怪物（再次点击取消）"
+script = ExtResource("FilterTab")
+[node name="TeamTerm" type="Label" parent="TagsRail/Tabs/Team"]
+unique_name_in_owner = true
+offset_left = 86.0
+offset_top = 6.0
+offset_right = 122.0
+offset_bottom = 42.0
+vertical_alignment = 1
+horizontal_alignment = 0
+theme_override_font_sizes/font_size = 18
+mouse_filter = 2
+text = "出战"
+[node name="TeamCount" type="Label" parent="TagsRail/Tabs/Team"]
+unique_name_in_owner = true
+offset_left = 122.0
+offset_top = 6.0
+offset_right = 146.0
+offset_bottom = 42.0
+vertical_alignment = 1
+horizontal_alignment = 2
+theme_override_font_sizes/font_size = 18
+mouse_filter = 2
+text = "0"
+[node name="Human" parent="TagsRail/Tabs" instance=ExtResource("Button")]
+z_index = 1
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 0.0
+offset_top = 132.0
+offset_right = 116.0
+offset_bottom = 176.0
+theme_type_variation = &"FilterTab"
+toggle_mode = true
+alignment = 2
+text = "人"
+tooltip_text = "人形筛选（可多选）"
+script = ExtResource("FilterTab")
+[node name="Beast" parent="TagsRail/Tabs" instance=ExtResource("Button")]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 0.0
+offset_top = 166.0
+offset_right = 148.0
+offset_bottom = 210.0
+theme_type_variation = &"FilterTab"
+toggle_mode = true
+text = "兽"
+alignment = 2
+tooltip_text = "兽形筛选（可多选）"
+script = ExtResource("FilterTab")
+[node name="Serpent" parent="TagsRail/Tabs" instance=ExtResource("Button")]
+z_index = 1
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 0.0
+offset_top = 220.0
+offset_right = 116.0
+offset_bottom = 264.0
+theme_type_variation = &"FilterTab"
+toggle_mode = true
+alignment = 2
+text = "蛇"
+tooltip_text = "蛇形筛选（可多选）"
+script = ExtResource("FilterTab")
+[node name="PaperInputGuard" type="Control" parent="TagsRail"]
+layout_mode = 0
+anchor_bottom = 1.0
+offset_left = -40.0
+offset_right = 32.0
+mouse_filter = 0
+z_index = 2
+[node name="CopperLinks" type="Control" parent="D1"]
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("Rings")
+next_page = NodePath("../../D2")
