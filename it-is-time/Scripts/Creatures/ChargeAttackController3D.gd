@@ -234,6 +234,7 @@ func _start_charge() -> void:
 		for part: RigidBody3D in get_parent()._get_physical_body_parts():
 			if not _load_parts.has(part): _load_parts.append(part)
 	_direction = signf(_target.global_position.x - _body.global_position.x)
+	if is_zero_approx(_direction): _direction = -1.0 if _body.global_basis.x.x < 0.0 else 1.0
 	_target_x = _target.global_position.x
 	_target_half_width = float(_target.get_meta(&"generated_size", Vector3.ONE).x) * 0.5
 	_lane_z = _body.global_position.z
@@ -281,7 +282,7 @@ func _physics_process(delta: float) -> void:
 			for torso: RigidBody3D in _movement.get_torso_parts():
 				if _alive(torso) and torso.global_basis.x.slide(Vector3.UP).normalized().dot(direction) < cos(deg_to_rad(15.0)): ready = false
 		if absf(_target.global_position.z-_body.global_position.z) <= data.z_tolerance and ready:
-			if _target_check(_target).hit: _start_charge()
+			_start_charge()
 	elif phase == Phase.CHARGING:
 		_speed = move_toward(_speed,data.maximum_speed,data.acceleration*delta)
 		if _alive(_target): _target_x = _target.global_position.x

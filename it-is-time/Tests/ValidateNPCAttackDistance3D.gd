@@ -6,6 +6,7 @@ class RangeProbe extends AttackProbe:
 	func has_npc_attack(_id: StringName) -> bool: return available
 
 func run() -> void:
+	root.get_node("RuntimeConsole").auto_getlogs_enabled = false
 	var npc := actor(1,Vector3.ZERO)
 	var enemy := actor(2,Vector3(20,0,0))
 	var far := TORSO.instantiate() as RigidBody3D
@@ -87,6 +88,8 @@ func run() -> void:
 	# Prefer a new enemy already in attack range over a distant pursuit target.
 	ai._cooldowns.clear()
 	var close_enemy := actor(3,Vector3(3,0,0))
+	# This scan tests priority after the existing target-switch cooldown has expired.
+	ai._target_switch_remaining = 0.0
 	ai._scan_elapsed = 0.0
 	ai._update_combat(0.5)
 	check(ai._enemy == close_enemy and receiver.target == close_enemy,"A nearby attackable enemy must take priority over a distant chase target")

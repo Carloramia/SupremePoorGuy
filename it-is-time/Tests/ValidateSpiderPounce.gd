@@ -49,6 +49,7 @@ func target_actor(level: Node, team: int, at: Vector3) -> Node3D:
 	return actor
 
 func run() -> void:
+	root.get_node("RuntimeConsole").auto_getlogs_enabled = false
 	if "off" in OS.get_cmdline_user_args(): load("res://Resources/Settings/PerformanceOptimization.tres").set(&"enabled", false)
 	var level := Node3D.new()
 	root.add_child(level)
@@ -129,6 +130,11 @@ func run() -> void:
 	var torso_joint := actor.get_node("GeneratedParts/Joints/Joint_001_Torso") as Generic6DOFJoint3D
 	var torso_settings := joint_settings(torso_joint)
 	check(module.try_start_npc_attack(&"spider_pounce", target, 0.0), "NPC must start the physical attack")
+	var committed_endpoint: Vector3 = module._plan.endpoint
+	var target_local_position := target.position
+	if "escape" in OS.get_cmdline_user_args():
+		target.global_position += Vector3(500,0,100)
+		check(not module._trajectory(target,0.0,false).hit,"Escape fixture must invalidate a fresh launch prediction")
 	check(not torso_joint.get_flag_z(Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_LIMIT), "Preparation must release the relative Torso Z rotation")
 	for axis: String in ["x", "y"]:
 		check(torso_joint.call("get_flag_"+axis, Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_LIMIT), "Other Torso rotation axes must remain constrained")
@@ -173,6 +179,8 @@ func run() -> void:
 		if module.phase == module.Phase.LEAPING:
 			if not sampled_launch:
 				sampled_launch = true
+				check(module._plan.endpoint == committed_endpoint and module._plan.velocity.is_finite(),"Actual launch retains the admitted endpoint and finite velocity")
+				check(Vector3(module._plan.velocity).length() <= module.data.maximum_launch_speed*module._time_scale+0.001,"Committed leap retains its physical speed limit")
 				launch_pose = module.get_action_diagnostics().preparation_pose.duplicate()
 				for part: Dictionary in launch_pose.parts:
 					if part.has("relative_angle_degrees"): knee_angles[part.part] = part.relative_angle_degrees
@@ -208,7 +216,9 @@ func run() -> void:
 	check(phases.has("RISING") and phases.has("LEAPING") and phases.has("RECOVERING"), "Attack must physically pass through lift, leap and recovery")
 	check(module._maximum_front_rise > 0.08 and front_lift > 0.15, "Front torso and front feet must visibly lift before launch")
 	check(maximum_speed > 3.5 and maximum_height-initial_height > 0.35, "Leap must have a real burst and upward motion")
-	check(target.current_hp < target.max_hp and module._hits > 0, "Sweeping feet must deal real damage through DamageService")
+	if "escape" in OS.get_cmdline_user_args():
+		check(target.current_hp == target.max_hp and module._hits == 0,"Executing a committed miss must not fabricate remote damage")
+	else: check(target.current_hp < target.max_hp and module._hits > 0, "Sweeping feet must deal real damage through DamageService")
 	check(friendly.current_hp == friendly.max_hp, "Overlapping friend must remain undamaged")
 	check(module._hits <= 4, "Each front-foot hitbox must damage the same Part at most once")
 	# An immovable target is an impact stress test; allow a brief solver overshoot,
@@ -220,6 +230,7 @@ func run() -> void:
 	check(not module.try_start_npc_attack(&"spider_pounce", target, 0.0), "Cooldown must prevent immediate repeat attacks")
 	check(not module.get_action_diagnostics().active, "Existing trackmotion must expose the completed action")
 	# Exercise the real AI selector, rather than only calling its receiver directly.
+	target.position = target_local_position
 	for tick: int in 180: await physics_frame
 	enemy.global_position = torso.global_position + Vector3.RIGHT*7.29
 	ally.global_position = enemy.global_position + Vector3.BACK*10.0

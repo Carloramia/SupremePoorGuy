@@ -289,14 +289,6 @@ func _closing_prediction(next_target: PhysicalBodyPart3D, samples: int, margin: 
 			return {"hit":true,"reason":&"bite_sweep_hit" if forecast_motion else &"current_reach_hit","confidence":1.0 if forecast_motion else 0.5,"time":time}
 	return {"hit":false,"reason":&"bite_sweep_misses"}
 
-func _revalidate_intercept(delay: float) -> bool:
-	var forecast := _closing_prediction(target,16,0.1,true,delay)
-	if forecast.hit: return true
-	# Crowded targets stop or reverse; a linear forecast miss is not proof of unreachable geometry.
-	var reachable := _closing_prediction(target,16,0.1,true,delay,false)
-	controller.log_event(name,&"intercept_rechecked",{"phase":_phase,"forecast":forecast,"current_reach":reachable,"target_position":target.global_position,"target_velocity":target.linear_velocity})
-	return reachable.hit
-
 func start(next_target: PhysicalBodyPart3D) -> bool:
 	if not predict(next_target,24,0.1).hit or not super.start(next_target): return false
 	_last_hits = 0
@@ -352,13 +344,9 @@ func tick(delta: float) -> void:
 		if not active: return
 	elif _phase == &"planting":
 		if _reposition_feet(delta):
-			if not _revalidate_intercept(maxf(data.bite_retract_time,data.jaw_open_time)):
-				finish(&"plant_intercept_invalid"); return
 			_begin_charge()
 		elif _phase_time >= data.bite_plant_timeout: finish(&"cannot_plant_feet"); return
 	elif _phase == &"charging" and _phase_time >= maxf(data.bite_retract_time,data.jaw_open_time):
-		if not _revalidate_intercept(0.0):
-			finish(&"charge_intercept_invalid"); return
 		_set_phase(&"lunging")
 		var speed: float = data.bite_lunge_speed*sqrt(controller.pounce_scale())
 		for body: RigidBody3D in owned_bodies: body.apply_central_impulse(_forward*(speed-body.linear_velocity.dot(_forward))*body.mass)

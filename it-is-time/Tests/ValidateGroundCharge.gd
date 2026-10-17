@@ -20,6 +20,7 @@ class MovementStub extends Node:
 	func cancel_step(_reason: StringName) -> void: pass
 func _initialize() -> void: call_deferred("run")
 func run() -> void:
+	root.get_node("RuntimeConsole").auto_getlogs_enabled = false
 	var region := NavigationRegion3D.new()
 	var mesh := NavigationMesh.new()
 	mesh.vertices = PackedVector3Array([Vector3(-200,0,-200),Vector3(-200,0,200),Vector3(200,0,200),Vector3(200,0,-200)])
@@ -648,6 +649,25 @@ func run() -> void:
 	charge.enabled = false
 	charge._physics_process(0.1)
 	assert(not charge.is_active() and charge._weapon == null and movement.command_source == original)
+	charge.enabled = true
+	charge._cooldown = 0.0
+	movement.supported = true
+	charge._body.global_position.x = target.global_position.x+25.0
+	charge._body.global_position.z = target.global_position.z
+	assert(charge.try_start_action(&"ground_charge",target))
+	var admitted_position := target.global_position
+	target.global_position.x = charge._body.global_position.x-1.0
+	assert(not charge._target_check(target,false).hit,"New attacks still require run-up distance")
+	charge._physics_process(0.1)
+	assert(charge.phase == charge.Phase.CHARGING,"An admitted charge is not revoked when the target approaches during alignment")
+	charge.cancel_action(&"test_cleanup")
+	charge._cooldown = 0.0
+	assert(not charge.try_start_action(&"ground_charge",target))
+	target.global_position = admitted_position
+	assert(charge.try_start_action(&"ground_charge",target))
+	target.global_position.z += charge.data.z_tolerance+1.0
+	charge._physics_process(charge.data.alignment_timeout+0.1)
+	assert(not charge.is_active() and charge._reason == &"alignment_timeout","Physical alignment still has a timeout")
 	var console := root.get_node("RuntimeConsole")
 	assert(console.execute_command("trackcharge").contains("enabled"))
 	assert(console.is_charge_tracking_enabled())

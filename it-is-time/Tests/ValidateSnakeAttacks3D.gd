@@ -30,7 +30,7 @@ func run() -> void:
 	settings.positioning_update_interval = 0.1
 	for invalid: float in [-1.0,NAN,INF]:
 		settings.prediction_retry_grace = invalid
-		check(not settings.is_valid(),"Invalid prediction grace is rejected")
+		check(settings.is_valid(),"Obsolete prediction-cancel grace cannot disable attacks")
 	settings.prediction_retry_grace = 0.2
 	for invalid: float in [-1.0,NAN,INF]:
 		settings.lunge_extra_wait = invalid

@@ -273,13 +273,8 @@ func _physics_process(delta: float) -> void:
 		var ready: bool = _elapsed>=maxf(data.minimum_aiming_time,data.fold_time) and _aiming_status.head_ready and _aiming_status.wings_ready
 		_aiming_ready_elapsed = _aiming_ready_elapsed+delta if ready else 0.0
 		if ready and _aiming_ready_elapsed>=data.aiming_confirmation_time:
-			var check := _target_check(_target)
-			_last_target_check = check.duplicate()
-			if not check.hit: _begin_pull_up(&"target_no_longer_valid")
-			else:
-				_aim = check.aim
-				_log(&"aim_ready",_aiming_status)
-				_set_phase(Phase.DIVING,&"aim_and_wings_ready")
+			_log(&"aim_ready",_aiming_status)
+			_set_phase(Phase.DIVING,&"aim_and_wings_ready")
 		elif _elapsed>=data.maximum_aiming_time:
 			_log(&"aim_timeout",_aiming_status)
 			cancel_action(&"aim_timeout")

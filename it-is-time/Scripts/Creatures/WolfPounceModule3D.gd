@@ -231,17 +231,19 @@ func start(next_target: PhysicalBodyPart3D) -> bool:
 	return true
 
 func _launch() -> void:
-	# Recheck from the actual settled body pose; only the airborne trajectory is locked.
-	var plan := intercept_plan(target,0.0,controller.torso.global_position)
-	if not plan.hit or not _trajectory_clear(plan):
-		controller.log_event(name,&"launch_prediction_failed",plan)
-		finish(&"launch_intercept_invalid")
+	# Preparation may move the body, but cannot revoke an accepted interception.
+	var origin: Vector3 = controller.torso.global_position
+	var gravity: Vector3 = controller.movement._gravity_acceleration()
+	var maximum_speed: float = data.maximum_launch_speed*sqrt(maxf(body_scale,0.0))
+	if _intercept.is_empty() or not origin.is_finite() or not locked_position.is_finite() or not gravity.is_finite() or not is_finite(body_scale) or body_scale <= 0.0 or not is_finite(flight_duration) or flight_duration <= 0.0 or not is_finite(maximum_speed) or maximum_speed <= 0.0:
+		finish(&"invalid_committed_plan")
 		return
-	locked_position = plan.endpoint
-	launch_velocity = plan.velocity
-	flight_duration = plan.duration
-	body_scale = plan.body_scale
-	_intercept = plan.duplicate()
+	var brake_time := minf(data.combo_window*sqrt(body_scale),flight_duration*0.4)
+	launch_velocity = (locked_position-origin)/(flight_duration-brake_time*0.5)
+	launch_velocity.y = (locked_position.y-origin.y)/flight_duration-gravity.y*flight_duration*0.5
+	if not launch_velocity.is_finite(): finish(&"invalid_committed_plan"); return
+	launch_velocity = launch_velocity.limit_length(maximum_speed)
+	_intercept.merge({"launch_origin":origin,"velocity":launch_velocity,"committed":true},true)
 	_phase = &"flying"
 	_phase_time = 0.0
 	_foreleg_flight.clear()
@@ -290,11 +292,9 @@ func tick(delta: float) -> void:
 		_drive_charge(delta)
 		if _phase == &"planting":
 			if _support_count >= maxi(1,ceili(owned_feet.size()*0.5)):
-				var plan := intercept_plan(target,data.pounce_charge_time)
-				if not plan.hit or not _trajectory_clear(plan): finish(&"plant_intercept_invalid"); return
-				controller.log_event(name,&"launch_support_ready",{"plant_elapsed":_phase_time,"grounded_feet":_support_count,"planned_distance":plan.planned_distance,"maximum_distance":plan.maximum_distance})
-				_intercept = plan
-				_charge_offset = plan.charge_offset
+				controller.log_event(name,&"launch_support_ready",{"plant_elapsed":_phase_time,"grounded_feet":_support_count,"committed":true})
+				_charge_offset = _planned_charge_offset()
+				_intercept["charge_offset"] = _charge_offset
 				for row: Dictionary in _charge_torsos: row.origin = row.body.global_position
 				_phase = &"charging"
 				_phase_time = 0.0

@@ -152,8 +152,12 @@ func run() -> void:
 	check(pounce.start(target),"A genuinely distant running approach can still prepare pounce")
 	near_part.global_position = attacks.torso.global_position+attacks.forward()*2.0
 	var velocity_before: Vector3 = attacks.torso.linear_velocity
+	var committed_endpoint: Vector3 = pounce.locked_position
 	pounce._launch()
-	check(not pounce.active and attacks.torso.linear_velocity == velocity_before,"A target entering bite range during charge cancels before the launch impulse")
+	check(pounce.active and pounce._phase == &"flying" and pounce.locked_position == committed_endpoint,"A target entering bite range after admission cannot cancel or redirect pounce")
+	check(pounce.launch_velocity.is_finite() and pounce.launch_velocity.length() <= pounce.data.maximum_launch_speed*sqrt(pounce.body_scale)+0.001,"Committed pounce retains finite bounded launch speed")
+	check(attacks.torso.linear_velocity == velocity_before,"Frozen fixture parts never receive launch impulses")
+	pounce.finish()
 	near_part.global_position = near_original
 	bite.enabled = false
 	pounce.cooldown_remaining = 0.0
@@ -199,7 +203,7 @@ func run() -> void:
 			attacks.torso.global_position += offset
 			target.global_position += target.linear_velocity*pounce.data.pounce_charge_time
 			pounce._launch()
-			check(pounce._phase == &"flying","Charge revalidates and launches from the actual torso pose")
+			check(pounce._phase == &"flying","Charge launches the admitted plan from the actual torso pose")
 			var locked: Vector3 = pounce.locked_position
 			var launched_velocity: Vector3 = pounce.launch_velocity
 			target.global_position += Vector3(2.0,0.0,1.0)
@@ -230,10 +234,16 @@ func run() -> void:
 	pounce._target_velocities.clear()
 	pounce.cooldown_remaining = 0.0
 	check(pounce.start(target),"Pounce can prepare another valid intercept")
+	committed_endpoint = pounce.locked_position
 	target.global_position += attacks.forward()*1000.0
 	pounce._launch()
-	check(not pounce.active and pounce._phase == &"idle","Target leaving reach during charge cancels instead of launching at a stale endpoint")
-	check(pounce.owned_feet.is_empty() and pounce.owned_bodies.is_empty(),"Failed launch releases action ownership")
+	check(pounce.active and pounce._phase == &"flying" and pounce.locked_position == committed_endpoint,"An escaped target cannot revoke the admitted pounce endpoint")
+	pounce.finish()
+	check(pounce.owned_feet.is_empty() and pounce.owned_bodies.is_empty(),"Completion releases action ownership")
+	pounce.active = true
+	pounce._intercept.clear()
+	pounce._launch()
+	check(not pounce.active and pounce._phase == &"idle","Missing committed physics data still aborts safely")
 	pounce.cooldown_remaining = 0.0
 	for part: RigidBody3D in npc._get_physical_body_parts(): part.freeze = false
 	target.linear_velocity = Vector3.RIGHT*4.0
@@ -257,10 +267,10 @@ func run() -> void:
 	target.linear_velocity = attacks.forward()*1000.0
 	check(not bite._closing_prediction(target,16,0.1,true,0.7).hit,"Fixture exercises an uncertain future outside the sweep")
 	bite.target = target
-	check(bite._revalidate_intercept(0.7),"A future linear miss does not cancel an already reachable target")
+	check(bite._closing_prediction(target,16,0.1,true,0.7,false).hit,"Current geometry can still detect a reachable target")
 	target.global_position += attacks.forward()*10000.0
 	await physics_frame
-	check(not bite._revalidate_intercept(0.7),"Both forecast and present geometry reject a truly unreachable target")
+	check(not bite._closing_prediction(target,16,0.1,true,0.7,false).hit,"Admission geometry still rejects an unreachable target")
 	check(target.current_hp == hp_before_prediction,"Prediction fallback never creates damage without actual contact")
 	target.global_position = reachable_position
 	target.linear_velocity = Vector3.ZERO
@@ -315,6 +325,12 @@ func run() -> void:
 		var relative: Vector3 = foot.global_position-chain.root.to_global(chain.anchor)
 		var radius := maxf(float(chain.length)*0.98,relative.length()+0.001)
 		check((relative-(charge_end-charge_start)).length() <= radius+0.001,"Combined crouch and retraction remain inside chain reach")
+	var before_escape: Vector3 = target.global_position
+	target.global_position += Vector3(1000,0,1000)
+	bite._phase_time = charge_duration
+	bite.tick(0.01)
+	check(bite.active and bite._phase == &"lunging","An admitted bite strikes even when the target escapes during charge")
+	target.global_position = before_escape
 	bite._set_phase(&"recovering")
 	check(bite._body_target(torso_row,0.0) == torso_row.body.global_position,"Recovery starts at the actual torso pose")
 	check(bite._body_target(torso_row,bite.data.recovery_time).distance_to(torso_row.origin) < 0.001,"Recovery returns smoothly to the original pose")

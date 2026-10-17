@@ -62,7 +62,7 @@ func _register_module(actor: Dictionary, node: Node, action: String, wolf: bool 
 func _context(actor: Dictionary) -> Dictionary:
 	var target: Variant = actor.ai.get("_target")
 	return {"alive": actor.node.is_combat_alive(), "ragdolled": actor.node.is_temporarily_ragdolled(),
-		"target_valid": is_instance_valid(target) and target.is_inside_tree() and not target.is_broken,
+		"target_valid": is_instance_valid(target) and target.is_inside_tree() and not target.is_queued_for_deletion() and target.get("is_broken") != true,
 		"target": _target_actor(target), "state": actor.ai.current_state}
 
 func _on_combat_event(event: StringName, details: Dictionary, actor: Dictionary) -> void:

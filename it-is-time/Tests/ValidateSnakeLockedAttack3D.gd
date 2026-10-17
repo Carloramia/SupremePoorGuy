@@ -12,7 +12,7 @@ func run() -> void:
 	floor_body.add_child(collider)
 	floor_body.position.y = -0.5
 	level.add_child(floor_body)
-	for interruption: StringName in [&"escape",&"broken_target",&"freed_target",&"armored_target"]:
+	for interruption: StringName in [&"escape",&"broken_target",&"freed_target",&"armored_target",&"escape_before_commit"]:
 		await check_locked_attack(level,interruption)
 	level.free()
 	await process_frame
@@ -49,6 +49,9 @@ func check_locked_attack(level: Node3D, interruption: StringName) -> void:
 	target.linear_velocity = Vector3.RIGHT*0.6
 	await physics_frame
 	check(attack.try_start_npc_attack(attack.ACTION,target,0.0),"Admit target before fixing its world point")
+	if interruption == &"escape_before_commit":
+		target.global_position += Vector3(100,0,100)
+		target.linear_velocity = Vector3(30,0,30)
 	for tick: int in 300:
 		target.global_position += Vector3.RIGHT*0.01
 		await physics_frame
@@ -59,6 +62,7 @@ func check_locked_attack(level: Node3D, interruption: StringName) -> void:
 		victim.free()
 		return
 	var plan: Dictionary = attack._plan.duplicate(true)
+	if interruption == &"escape_before_commit": check(plan.get("reused_valid_plan",false),"A pre-commit prediction miss reuses the admitted poses and continues preparation")
 	check(plan.target_locked and Vector3(plan.aim).is_equal_approx(Vector3(plan.target_position)+Vector3(plan.target_velocity)*float(plan.contact_time)),"Lock the one-time forecast including preparation and extension")
 	check(Vector3(plan.target_velocity).x>0.5 and Vector3(plan.aim).x>Vector3(plan.target_position).x,"Moving target uses a forecast rather than its current position")
 	attack.set_control_performance_tracking_enabled(true)
@@ -77,7 +81,7 @@ func check_locked_attack(level: Node3D, interruption: StringName) -> void:
 	elif interruption == &"freed_target":
 		target.free()
 		target = null
-	else:
+	elif interruption == &"armored_target":
 		target.armor = 10000000.0
 		target.linear_velocity = Vector3.ZERO
 	var phases := {}

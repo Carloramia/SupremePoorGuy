@@ -42,8 +42,6 @@ var _plan_preparation_time := -1.0
 var _plan_stage: StringName = &"idle"
 var _revision := 0
 var _positioning_update_elapsed := 0.0
-var _prediction_failure_time := 0.0
-var _plane_departure_time := 0.0
 var _attack_result: StringName = &"none"
 var _recovery_result: StringName = &"none"
 var _initial_reference := Transform3D.IDENTITY
@@ -524,12 +522,35 @@ func predict_npc_attack(action_id: StringName, target: Node3D, _charge: float, s
 func _revalidate_plan(remaining: float, snapshot: Dictionary) -> Dictionary:
 	var forecast := predict_npc_attack(ACTION,_target,0.0,16,0.1,true,remaining,snapshot)
 	if forecast.get("hit",false) or forecast.reason not in [&"snake_sweep_misses",&"outside_fixed_root_reach",&"intercept_time_unstable",&"z_alignment_pending"]: return forecast
-	# A noisy future estimate need not cancel a physically reachable current target.
+	# Prefer an updated reachable plan; a miss falls back to the admitted poses.
 	var current := predict_npc_attack(ACTION,_target,0.0,16,0.1,true,remaining,snapshot,false)
 	if current.get("hit",false):
 		current.merge({"reason":&"current_reachable_envelope","confidence":0.55,"forecast_reject":forecast.reason},true)
 		return current
 	return forecast
+
+func _commit_attack_plan(snapshot: Dictionary) -> bool:
+	var prediction := _revalidate_plan(data.preparation_time*_time_scale(),snapshot)
+	if prediction.get("hit",false):
+		_plan = Dictionary(prediction.plan).duplicate(true)
+	else:
+		# Rebase the last valid poses on the settled support instead of cancelling.
+		_plan = _plan.duplicate(true)
+		_plan["reference"] = snapshot.reference
+		_plan["root_pose"] = snapshot.root_pose
+		_plan["forward"] = Transform3D(snapshot.reference).basis.x.normalized()
+		_plan["forecast_reject"] = prediction.get("reason",&"prediction_miss")
+		_plan["reused_valid_plan"] = true
+	_reference_shift = _initial_reference.origin.distance_to(Transform3D(_plan.reference).origin)
+	_reference_turn_degrees = rad_to_deg(_initial_reference.basis.x.angle_to(Transform3D(_plan.reference).basis.x))
+	_forward = _plan.forward
+	if not movement.set_attack_control(self,_poses(_angles,_plan.root_pose),Vector3.ZERO,_forward,data.maximum_acceleration,data.maximum_pose_acceleration,data.maximum_angular_acceleration,data.burst_response_time,0.0,1.0,true,_plan.reference):
+		cancel_action(&"movement_owned")
+		return false
+	_plan["target_locked"] = true
+	_set_phase(&"preparing")
+	_log(&"target_locked",get_attack_diagnostics())
+	return true
 
 func _blend(a: PackedFloat32Array, b: PackedFloat32Array, weight: float) -> PackedFloat32Array:
 	var result := a.duplicate()
@@ -550,7 +571,6 @@ func try_start_npc_attack(action_id: StringName, target: Node3D, charge: float) 
 	_last_contacts = 0
 	_last_impulse = 0.0
 	_total_elapsed = 0.0
-	_plane_departure_time = 0.0
 	_recovery_progress = 0.0
 	_alignment_elapsed = 0.0
 	_attack_result = &"pending"
@@ -592,8 +612,6 @@ func _set_phase(value: StringName, reason: StringName = &"ready") -> void:
 	_phase = value
 	_elapsed = 0.0
 	_positioning_update_elapsed = 0.0
-	_prediction_failure_time = 0.0
-	_plane_departure_time = 0.0
 	_last_reason = reason
 	if value == &"lunging":
 		_plan["launched"] = true
@@ -623,21 +641,6 @@ func _tick(delta: float) -> void:
 	if movement.is_attack_support_locked() and _grounded_belly_count() == 0 and movement._support_blend <= 0.0:
 		cancel_action(&"ground_support_lost")
 		return
-	if _phase == &"positioning" and _alignment(_target).axis_facing:
-		var remaining := data.preparation_time*_time_scale()+float(_plan.duration)
-		var future := _target.global_position+_target_velocity(_target)*remaining
-		var reference: Transform3D = movement.get_pose_reference()
-		var lateral := (reference.affine_inverse()*future).z-Transform3D(_poses(_angles)[head]).origin.z
-		var bounds := GEOMETRY.bounds(_target)
-		var half_width := 0.0
-		for corner: int in 8:
-			half_width = maxf(half_width,absf(reference.basis.z.dot(_target.to_global(bounds.get_endpoint(corner))-_target.global_position)))
-		var allowed := half_width+_box().size.z*0.5+maxf(_head_size.x*0.1,0.1)
-		var current_lateral := (reference.affine_inverse()*_target.global_position).z-Transform3D(_poses(_angles)[head]).origin.z
-		var outside := absf(lateral) > allowed and absf(current_lateral) > allowed
-		_plane_departure_time = _plane_departure_time+delta if outside else 0.0
-		if outside and _plane_departure_time >= data.prediction_retry_grace*_time_scale():
-			_set_phase(&"recovering",&"target_left_attack_plane")
 	_elapsed += delta
 	_total_elapsed += delta
 	var time_scale := _time_scale()
@@ -646,12 +649,11 @@ func _tick(delta: float) -> void:
 	if _phase == &"positioning":
 		_alignment_elapsed = _elapsed
 		_positioning_update_elapsed += delta
-		var alignment := _alignment(_target)
+		var alignment := _alignment(_target,_plan.aim)
 		# Axis-facing NPCs align their lane before takeover; preparation only settles the body.
 		if _positioning_update_elapsed >= data.positioning_update_interval*time_scale:
 			_positioning_update_elapsed = 0.0
-			var remaining: float = data.preparation_time*time_scale+float(_plan.duration)
-			_forward = _alignment(_target,_target.global_position+_target_velocity(_target)*remaining).forward
+			_forward = alignment.forward
 		var reference: Transform3D = movement.get_pose_reference()
 		var desired: Transform3D = reference*_poses(_angles)[head]
 		_head_error = head.global_position.distance_to(desired.origin)
@@ -664,27 +666,11 @@ func _tick(delta: float) -> void:
 		var frame: Dictionary = movement._update_anchor()
 		var stopped: bool = Vector3(frame.velocity).slide(Vector3.UP).length()<maxf(_head_size.x*0.05,0.1) and absf(frame.yaw_speed)<deg_to_rad(5.0)
 		var facing_ready: bool = reference.basis.x.dot(_forward) >= cos(deg_to_rad(0.1)) and (not alignment.axis_facing or Vector3(frame.heading).dot(_forward) >= cos(deg_to_rad(5.0)))
-		var future_alignment := _alignment(_target,_target.global_position+_target_velocity(_target)*(data.preparation_time*time_scale+float(_plan.duration)))
-		if stopped and chain_aligned and head_aimed and facing_ready and future_alignment.ready and _elapsed >= movement.motion_data.path_transition_time and _head_error < maxf(minf(_chain_length*0.04,float(alignment.tolerance)*0.5),_head_size.length()*0.05):
+		if stopped and chain_aligned and head_aimed and facing_ready and _elapsed >= movement.motion_data.path_transition_time and _head_error < maxf(minf(_chain_length*0.04,float(alignment.tolerance)*0.5),_head_size.length()*0.05):
 			var snapshot := _support_snapshot(data.preparation_time*time_scale)
 			_prediction_cache.clear()
 			_cached_plan = {}
-			var prediction := _revalidate_plan(data.preparation_time*time_scale,snapshot)
-			if prediction.get("hit",false):
-				_prediction_failure_time = 0.0
-				_plan = Dictionary(prediction.plan).duplicate(true)
-				_reference_shift = _initial_reference.origin.distance_to(Transform3D(_plan.reference).origin)
-				_reference_turn_degrees = rad_to_deg(_initial_reference.basis.x.angle_to(Transform3D(_plan.reference).basis.x))
-				_forward = _plan.forward
-				if not movement.set_attack_control(self,_poses(_angles,_plan.root_pose),Vector3.ZERO,_forward,data.maximum_acceleration,data.maximum_pose_acceleration,data.maximum_angular_acceleration,data.burst_response_time,0.0,1.0,true,_plan.reference):
-					cancel_action(&"movement_owned"); return
-				# Commit the predicted world point and both poses once the supporting body has settled.
-				_plan["target_locked"] = true
-				_set_phase(&"preparing")
-				_log(&"target_locked",get_attack_diagnostics())
-			else:
-				_prediction_failure_time += delta
-				if _prediction_failure_time >= data.prediction_retry_grace*time_scale: _set_phase(&"recovering",prediction.get("reason",&"alignment_failed"))
+			if not _commit_attack_plan(snapshot): return
 		elif _elapsed >= float(_plan.alignment_duration): _set_phase(&"recovering",&"alignment_timeout")
 	elif _phase == &"preparing":
 		var progress := smoothstep(0.0,data.preparation_time*time_scale,_elapsed)
@@ -696,7 +682,7 @@ func _tick(delta: float) -> void:
 		opening = data.jaw_open_degrees*progress
 		var desired: Transform3D = reference*Transform3D(poses[head])
 		_head_error = head.global_position.distance_to(desired.origin)
-		_head_aim_error_degrees = rad_to_deg((head.global_basis*_head_forward_local).angle_to(Vector3(_plan.aim)-head.global_position))
+		_head_aim_error_degrees = rad_to_deg((head.global_basis*_head_forward_local).angle_to(desired.basis*_head_forward_local))
 		var aimed := _head_aim_error_degrees <= data.aim_tolerance_degrees
 		if _elapsed >= data.preparation_time*time_scale and aimed and _head_error <= maxf(_chain_length*0.06,0.1) and absf(_jaw_error) < 10.0 and float(movement.get_attack_connection_diagnostics().get("maximum_error_ratio",INF)) < 2.0:
 			_set_phase(&"lunging")
@@ -824,7 +810,7 @@ func get_npc_attack_range_diagnostics(action_id: StringName, target: Node3D) -> 
 
 func get_attack_diagnostics() -> Dictionary:
 	return {"phase":_phase,"phase_elapsed":_elapsed,"attack_elapsed":_total_elapsed,"reason":_last_reason,
-		"chain_fault":_chain_fault(),"grounded_belly_count":_grounded_belly_count(),"plane_departure_time":_plane_departure_time,"prediction_failure_time":_prediction_failure_time,
+		"chain_fault":_chain_fault(),"grounded_belly_count":_grounded_belly_count(),"plane_departure_time":0.0,"prediction_failure_time":0.0,"prediction_cancel_enabled":false,
 		"attack_result":_attack_result,"recovery_result":_recovery_result,"planning_revision":_revision,"target_locked":is_npc_attack_active() and _plan.get("target_locked",false),"plan_stage":_plan.get("stage",&"none"),"plan_reference":_plan.get("reference",Transform3D.IDENTITY),"plan_root_pose":_plan.get("root_pose",Transform3D.IDENTITY),
 		"locked_aim":_plan.get("aim",Vector3.ZERO),"target_position_at_lock":_plan.get("target_position",Vector3.ZERO),
 		"initial_reference":_initial_reference,"committed_reference_shift":_reference_shift,"committed_reference_turn_degrees":_reference_turn_degrees,
