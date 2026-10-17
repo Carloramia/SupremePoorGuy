@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=3]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/_PhysicalSampleBodyParts.tscn" id="1_base"]
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/Rats/Models/Rat_1/Tail/Tail08.glb" id="2_model"]
+[ext_resource type="ArrayMesh" path="res://Resources/Meshes/Rats/Rat_1/Tail/Tail08.res" id="3_mesh"]
+[sub_resource type="ConvexPolygonShape3D" id="Shape"]
+resource_local_to_scene = true
+points = PackedVector3Array(-0.19862986, -0.00927526, -0.01000000, -0.17637986, 0.01322474, -0.01000000, 0.55787014, 0.01322474, -0.01000000, 0.80262014, -0.05427526, -0.01000000, 1.00287014, -0.12177526, -0.01000000, 1.11412014, -0.16677526, -0.01000000, 1.20312014, -0.21177526, -0.01000000, 1.24762014, -0.23427526, -0.01000000, 1.31437014, -0.30177526, -0.01000000, 1.33662014, -0.32427526, -0.01000000, 1.33662014, -0.36927526, -0.01000000, 1.24762014, -0.36927526, -0.01000000, -0.13187986, -0.07677526, -0.01000000, -0.19862986, -0.05427526, -0.01000000, -0.19862986, -0.00927526, 0.01000000, -0.17637986, 0.01322474, 0.01000000, 0.55787014, 0.01322474, 0.01000000, 0.80262014, -0.05427526, 0.01000000, 1.00287014, -0.12177526, 0.01000000, 1.11412014, -0.16677526, 0.01000000, 1.20312014, -0.21177526, 0.01000000, 1.24762014, -0.23427526, 0.01000000, 1.31437014, -0.30177526, 0.01000000, 1.33662014, -0.32427526, 0.01000000, 1.33662014, -0.36927526, 0.01000000, 1.24762014, -0.36927526, 0.01000000, -0.13187986, -0.07677526, 0.01000000, -0.19862986, -0.05427526, 0.01000000)
+[node name="Rats_Rat_1_Tail08" instance=ExtResource("1_base")]
+mass = 0.1
+geometry_mode = 1
+custom_model_path = NodePath("Model")
+paper_volume_enabled = true
+paper_volume_thickness = 0.08
+sprite_visible = false
+mesh_visible = true
+tags = Array[int]([10])
+metadata/source_png = "res://Assets/2DResources/Rats/Separated/Rat_1/Tail/Tail08.png"
+metadata/pivot_is_initial_estimate = true
+[node name="CollisionShape3D" parent="." index="0"]
+position = Vector3(0, 0, 0)
+shape = SubResource("Shape")
+[node name="MeshInstance3D" parent="." index="2"]
+visible = false
+mesh = null
+[node name="Model" parent="." instance=ExtResource("2_model")]
+[node name="PaperVolume" type="MeshInstance3D" parent="Model"]
+scale = Vector3(1, 1, 0.08)
+mesh = ExtResource("3_mesh")
+metadata/flat_collision_depth = 0.02
+[node name="JointIn" type="Marker3D" parent="."]
+[node name="JointOut" type="Marker3D" parent="."]
+position = Vector3(1.19283298, -0.23449328, 0.00000000)

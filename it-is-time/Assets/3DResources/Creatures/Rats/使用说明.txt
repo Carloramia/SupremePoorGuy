@@ -1,0 +1,96 @@
+Rats（Rat_1 / Rat_2）资源与测试说明
+
+所有新资源均归入 Rats，与已有 Ratkin 分类相互独立。
+
+一、场景入口
+双 NPC 实机测试：res://Scenes/Levels/RatsTestLevel.tscn
+角色：res://Scenes/Creatures/Characters/Generate_Rat_1.tscn
+      res://Scenes/Creatures/Characters/Generate_Rat_2.tscn
+NPC： res://Scenes/Creatures/Characters/Generate_Rat_1_NPC.tscn
+      res://Scenes/Creatures/Characters/Generate_Rat_2_NPC.tscn
+生成器：res://Scenes/Creatures/Generators/RatsGenerator.tscn
+        res://Scenes/Creatures/Generators/RatsGenerator_Rat1.tscn
+        res://Scenes/Creatures/Generators/RatsGenerator_Rat2.tscn
+
+打开测试场景并用 F6 运行。场景自带地面、导航网格、正交相机和两个敌对阵营的 NPC。
+两个 NPC 资源默认阵营均为 1；测试关卡把第二只覆盖为 2，便于直接观察对战。
+普通角色默认阵营为 0，可接入已有 Controller。攻击目前仅由 NPC AI 调用。
+本次没有注册到召唤池或修改正式战斗地图。
+
+二、尺寸与结构
+基准取自当前 Generate_Wolf.tscn 中 Torso / Head / LowerJaw 的 X 轴总范围，排除尾巴、四肢与耳部。
+Wolf 基准体长：17.764331817627；两种 Rats 的 Body Length 默认：5.329299545288（30%）。
+该比例是本次制作时的基准，不会在运行时加载 Wolf 场景重新测量。
+修改生成器的 Body Length 可改变主体体长；Overall Scale 可统一缩放整体，包括厚度。
+Part Width 默认 0.08，负责全部生成部位的视觉 Z 厚度；碰撞 Z 厚度自动为视觉的 2 倍。
+XY 始终等比例换算，不使用非等比拉伸适配贴图。
+四足：两个 ForeLeg、两个 Leg，另有四个 SubTorso 支撑连接。
+Rat_1 的前腿各两节 LegLimb、后腿各三节；Rat_2 的四条腿仍各两节。
+Rat_1 新上节 Leg_1_Limb_3、Leg_2_Limb_3 分别沿用各自 Limb_2 的部件引用。
+后腿连接顺序：SubTorso → Limb_3 → Limb_2 → Limb_1 → 脚部。
+Rat_1：33 个物理部位、32 个关节、8 节尾巴。
+Rat_2：28 个物理部位、27 个关节、7 节尾巴。
+头部、下颚分离。耳部和牙齿固定连接于头部；Rat_2 的上门齿已绘入头部图片。
+原图额外颈板、舌头、铆钉等仍作为独立资源保留，部分不默认装到角色。
+生成姿态无随机偏移；已保存编辑器可见的冻结部位，运行时按同一参数重新生成。
+可使用基类已有的“自动对齐连接点”“将当前部件姿态写入生成器”继续调整。
+
+三、参数入口
+生成器脚本：res://Scripts/Creatures/Generators/RatsGenerator.gd
+Rat Preset：选择 Rat 1 或 Rat 2。
+Rats Standing Layout：站立伸展、髋部位置、前后脚偏移、头部倾角和躯干站高。
+Rats Attachments：耳部、牙齿、尾巴开关，下颚默认闭合角度与尾巴方向。
+两套默认值分别保存到 Resources/Generators/Rats/Rat1GeneratorDefaults.tres 与 Rat2GeneratorDefaults.tres。
+基类中用于随机通用生物的体块数量、轮廓曲线等不参与这套固定四足布局。
+
+移动：res://Resources/Movement/RatsWalk.tres
+使用既有 WolfLegStepMovementController3D（继承 GeneratedLegStepMovementController3D），
+复用其牵引恢复、躯干参照落点、着地制动与纸片平面稳定机制。
+Rats 的速度、步频、伸展范围等全部来自独立 RatsWalk.tres；默认目标速度 1.2，参考总步频 6。
+两套 Rats 均使用正常物理模式，未启用 PlanarConstraints 或无重力模式。
+密度：res://Resources/Creatures/RatsDensity.tres
+
+啃咬：res://Resources/Attacks/RatsBite.tres
+AI：  res://Resources/AI/RatsAI.tres
+组件：res://Scenes/Creatures/Components/RatsBiteAttackController3D.tscn
+沿用既有 Wolf 啃咬实现和全局 DamageService；组件节点名保留 WolfAttackController3D，
+动作 ID 保留 wolf_bite，以兼容现有恢复控制、伤害和控制台诊断接口。
+Pounce 节点只是公共控制器需要的配置入口，模块和资源均禁用，NPC 选项列表中只有啃咬。
+RatsBite 独立调整了小体型的落脚等待、回拉、爆发速度与冲量倍率；没有修改 Wolf 的预设。
+
+四、资源分类
+Assets/2DResources/Rats/Originals：原图副本，原始 Unprocessed/Rats 文件未改动。
+Assets/2DResources/Rats/RawEdits：内置 image_gen 的 11 次独立遮挡补全原始输出。
+Assets/2DResources/Rats/Separated/Rat_1、Rat_2：55 份最终透明分件及总览图。
+Assets/3DResources/Creatures/Rats/Models、Textures、Scenes：55 套 GLB、贴图副本和冻结展示场景。
+Resources/Meshes/Rats：烘焙好的正面、背面和侧面厚片 Mesh。
+Scenes/Creatures/Bodyparts/Rats：55 个继承 _PhysicalSampleBodyParts 的物理部件。
+Assets/3DResources/Creatures/Rats/Metadata：源图哈希、坐标、像素换算、连接点和完整引用清单。
+Previews/RatsPartsPreview.tscn：全部物理部件的静态浏览场景。
+AI 提示词保存于 Assets/2DResources/Rats/generation_prompts.json 和 additional_generation_prompts.json。
+最终整理只清理透明边缘/红黄杂边、裁切以及等比重采样；原始素材和 RawEdits 保持不变。
+
+五、诊断命令
+tracknpcstate on Rat
+tracknpcmotion on Rat
+motiondetail full
+trackwolfattacks on Rat
+trackdamage
+getlogs
+关闭对应追踪时，把 on 改成 off；trackdamage 是切换开关。
+
+六、重建流程（在 Godot 关闭或没有编辑这些资源时执行）
+1. Python 运行本目录 Tools/prepare_assets.py。
+2. Python 运行 Tools/build_models.py，Godot 完成新资产导入。
+3. Godot --headless --path 项目目录 --script res://Tools/BakeRatsVolumes.gd。
+4. Python 运行 Tools/build_models.py --physical。
+5. Godot --headless --path 项目目录 --script res://Tools/AuthorRatsScenes.gd。
+默认保留已存在的模型/物理部件，避免覆盖手工编辑。
+--refresh 仅供主动覆盖本次构建清单中的资产；会覆盖物理部件上的手工修改。
+AuthorRatsScenes 会按生成器参数重写两套角色的编辑器部位，应先保存需要保留的手动布局。
+仅重建 Rat_1 时可在命令末尾加 -- --rat1-only，Rat_2 场景不会被重写。
+
+自动验证：res://Tests/Integration/ValidateRats.gd
+报告目录：D:/GameJamWorkspace/Reports/Rats_2026-10-17/
+验证覆盖 55 套资源链、体长、碰撞厚度、关节、内部碰撞忽略、重复生成及 30 秒 NPC 对战。
+尚未进行 50 NPC 性能压测或跨全部物种的混战平衡测试。

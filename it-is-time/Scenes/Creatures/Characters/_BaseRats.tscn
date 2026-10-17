@@ -1,0 +1,35 @@
+[gd_scene format=3]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Characters/_BaseGeneratedCreature.tscn" id="1"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Generators/RatsGenerator.tscn" id="2"]
+[ext_resource type="Resource" path="res://Resources/Movement/RatsWalk.tres" id="3"]
+[ext_resource type="Resource" path="res://Resources/Creatures/RatsDensity.tres" id="4"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/RatsBiteAttackController3D.tscn" id="5"]
+[ext_resource type="Script" path="res://Scripts/Creatures/WolfLegStepMovementController3D.gd" id="6"]
+[ext_resource type="Script" path="res://Scripts/Creatures/CreatureActionData.gd" id="7"]
+[node name="BaseRats" instance=ExtResource("1")]
+generator_path = NodePath("RatsGenerator")
+planar_constraints_enabled = false
+zero_gravity_test_mode = false
+density_data = ExtResource("4")
+minimum_part_mass = 0.02
+maximum_part_mass = 10.0
+part_angular_damping = 1.5
+limb_angular_limit_degrees = 65.0
+limb_joint_linear_slack = Vector3(0,0,0)
+segmented_torso_enabled = false
+tail_joint_angular_limit_degrees = 25.0
+[node name="GeneratedLegStepMovementController3D" parent="." index="0"]
+script = ExtResource("6")
+slow_gait_data = ExtResource("3")
+fast_gait_data = ExtResource("3")
+forelegs_participate_in_walking = true
+stable_turn_control_enabled = true
+independent_torso_height_support = true
+locomotion_height_support_enabled = true
+foot_joint_yaw_lock_enabled = true
+torso_path = NodePath("../GeneratedParts/Torso")
+[node name="CreatureActionController3D" parent="." index="2"]
+enabled = false
+actions = Array[ExtResource("7")]([])
+[node name="RatsGenerator" parent="." instance=ExtResource("2")]
+[node name="WolfAttackController3D" parent="." instance=ExtResource("5")]

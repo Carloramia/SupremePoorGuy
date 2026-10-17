@@ -1,0 +1,23 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/Rats/Models/Rat_2/Feet/HindFoot1.glb" id="1_model"]
+
+[sub_resource type="ConvexPolygonShape3D" id="Shape"]
+points = PackedVector3Array(-0.35937500, 0.51264407, -0.01000000, 0.16312500, 0.51264407, -0.01000000, 1.44325000, -0.32803390, -0.01000000, 1.46937500, -0.35430508, -0.01000000, 1.46937500, -0.66955932, -0.01000000, 1.28650000, -0.77464407, -0.01000000, 0.21537500, -0.77464407, -0.01000000, -0.09812500, -0.66955932, -0.01000000, -0.17650000, -0.61701695, -0.01000000, -0.20262500, -0.59074576, -0.01000000, -0.25487500, -0.51193220, -0.01000000, -0.28100000, -0.38057627, -0.01000000, -0.35937500, 0.40755932, -0.01000000, -0.35937500, 0.51264407, 0.01000000, 0.16312500, 0.51264407, 0.01000000, 1.44325000, -0.32803390, 0.01000000, 1.46937500, -0.35430508, 0.01000000, 1.46937500, -0.66955932, 0.01000000, 1.28650000, -0.77464407, 0.01000000, 0.21537500, -0.77464407, 0.01000000, -0.09812500, -0.66955932, 0.01000000, -0.17650000, -0.61701695, 0.01000000, -0.20262500, -0.59074576, 0.01000000, -0.25487500, -0.51193220, 0.01000000, -0.28100000, -0.38057627, 0.01000000, -0.35937500, 0.40755932, 0.01000000)
+
+[node name="HindFoot1" type="RigidBody3D"]
+freeze = true
+freeze_mode = 1
+mass = 0.1
+metadata/source_png = "res://Assets/2DResources/Rats/Separated/Rat_2/Feet/HindFoot1.png"
+metadata/pivot_is_initial_estimate = true
+
+[node name="Model" parent="." instance=ExtResource("1_model")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("Shape")
+
+[node name="JointIn" type="Marker3D" parent="."]
+
+[node name="JointOut" type="Marker3D" parent="."]
+position = Vector3(1.20250000, -0.26200000, 0.00000000)

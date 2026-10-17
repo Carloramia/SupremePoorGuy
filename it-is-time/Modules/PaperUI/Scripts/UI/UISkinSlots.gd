@@ -174,3 +174,7 @@ func refresh() -> void:
 			var target := host.get_node_or_null(path) as CanvasItem
 			if target:
 				_material(target,_value(pair[1]))
+	# The TA adapter draws these through a CanvasItem chain that inherits the host transform.
+	if has_meta(&"ta_bound"):
+		generated.hide()
+		outline.hide()
