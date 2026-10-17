@@ -1,0 +1,71 @@
+[gd_scene load_steps=5 format=3]
+[ext_resource type="Texture2D" path="res://Assets/UI/PaperRelief/Textures/paper_v1.png" id="Paper"]
+[ext_resource type="Texture2D" path="res://Assets/UI/PaperRelief/Textures/layered_frame_v1.png" id="Frame"]
+[ext_resource type="Texture2D" path="res://Assets/UI/PaperRelief/Icons/copper_clip.svg" id="Clip"]
+[ext_resource type="Texture2D" path="res://Assets/UI/PaperRelief/Icons/copper_rivet.svg" id="Rivet"]
+[node name="BoardSurface" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+[node name="Paper" type="NinePatchRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
+mouse_filter = 2
+texture = ExtResource("Paper")
+region_rect = Rect2(48, 48, 160, 160)
+patch_margin_left = 16
+patch_margin_top = 16
+patch_margin_right = 16
+patch_margin_bottom = 16
+[node name="WoodFrame" type="NinePatchRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+texture = ExtResource("Frame")
+patch_margin_left = 32
+patch_margin_top = 32
+patch_margin_right = 32
+patch_margin_bottom = 32
+draw_center = false
+[node name="Clip" type="TextureRect" parent="."]
+layout_mode = 1
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -40.0
+offset_top = -5.0
+offset_right = 40.0
+offset_bottom = 31.0
+mouse_filter = 2
+texture = ExtResource("Clip")
+expand_mode = 1
+stretch_mode = 5
+[node name="LeftRivet" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 28.0
+offset_bottom = 28.0
+mouse_filter = 2
+texture = ExtResource("Rivet")
+[node name="RightRivet" type="TextureRect" parent="."]
+layout_mode = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -28.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = 28.0
+mouse_filter = 2
+texture = ExtResource("Rivet")

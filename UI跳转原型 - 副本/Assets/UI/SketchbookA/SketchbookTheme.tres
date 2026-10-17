@@ -1,0 +1,55 @@
+[gd_resource type="Theme" load_steps=10 format=3]
+[ext_resource type="StyleBox" path="res://Assets/UI/SketchbookA/Styles/PaperPanel.tres" id="Paper"]
+[ext_resource type="StyleBox" path="res://Assets/UI/SketchbookA/Styles/BrushNormal.tres" id="Normal"]
+[ext_resource type="StyleBox" path="res://Assets/UI/SketchbookA/Styles/BrushHover.tres" id="Hover"]
+[ext_resource type="StyleBox" path="res://Assets/UI/SketchbookA/Styles/BrushPressed.tres" id="Pressed"]
+[ext_resource type="StyleBox" path="res://Assets/UI/SketchbookA/Styles/BrushDisabled.tres" id="Disabled"]
+[sub_resource type="SystemFont" id="Font"]
+font_names = PackedStringArray("Microsoft YaHei", "Noto Sans CJK SC", "sans-serif")
+[sub_resource type="StyleBoxFlat" id="Focus"]
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.85, 0.6, 0.26, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_left = 2
+corner_radius_bottom_right = 2
+[sub_resource type="StyleBoxFlat" id="Input"]
+content_margin_left = 12.0
+content_margin_right = 12.0
+content_margin_top = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(0.99, 0.95, 0.85, 1)
+border_width_bottom = 2
+border_color = Color(0.737, 0.537, 0.259, 1)
+[sub_resource type="StyleBoxLine" id="Separator"]
+color = Color(0.42, 0.34, 0.24, 0.45)
+thickness = 2
+[resource]
+default_font = SubResource("Font")
+default_font_size = 18
+Button/colors/font_color = Color(0.98, 0.94, 0.83, 1)
+Button/colors/font_hover_color = Color(1, 0.97, 0.86, 1)
+Button/colors/font_pressed_color = Color(0.98, 0.94, 0.83, 1)
+Button/colors/font_focus_color = Color(1, 0.97, 0.86, 1)
+Button/colors/font_disabled_color = Color(0.8, 0.82, 0.76, 1)
+Button/styles/normal = ExtResource("Normal")
+Button/styles/hover = ExtResource("Hover")
+Button/styles/pressed = ExtResource("Pressed")
+Button/styles/hover_pressed = ExtResource("Pressed")
+Button/styles/disabled = ExtResource("Disabled")
+Button/styles/focus = SubResource("Focus")
+Label/colors/font_color = Color(0.149, 0.231, 0.231, 1)
+RichTextLabel/colors/default_color = Color(0.149, 0.231, 0.231, 1)
+LineEdit/colors/font_color = Color(0.149, 0.231, 0.231, 1)
+LineEdit/styles/normal = SubResource("Input")
+LineEdit/styles/focus = SubResource("Focus")
+PanelContainer/styles/panel = ExtResource("Paper")
+HSeparator/styles/separator = SubResource("Separator")
+VBoxContainer/constants/separation = 12
+HBoxContainer/constants/separation = 12
+HFlowContainer/constants/h_separation = 10
+HFlowContainer/constants/v_separation = 10
