@@ -21,8 +21,17 @@ func check(value: bool, message: String) -> void:
 		push_error(message)
 
 func run() -> void:
+	root.get_node("RuntimeConsole").auto_getlogs_enabled = false
 	var settings := preload("res://Scripts/Creatures/SnakeBiteAttackData.gd").new()
 	check(settings.is_valid(),"Attack defaults are valid")
+	for invalid: float in [0.0,0.6,NAN,INF]:
+		settings.positioning_update_interval = invalid
+		check(not settings.is_valid(),"Invalid pre-commit facing update interval is rejected")
+	settings.positioning_update_interval = 0.1
+	for invalid: float in [-1.0,NAN,INF]:
+		settings.prediction_retry_grace = invalid
+		check(settings.is_valid(),"Obsolete prediction-cancel grace cannot disable attacks")
+	settings.prediction_retry_grace = 0.2
 	for invalid: float in [-1.0,NAN,INF]:
 		settings.lunge_extra_wait = invalid
 		check(not settings.is_valid(),"Invalid lunge catch-up time is rejected")
@@ -106,7 +115,7 @@ func run() -> void:
 			await physics_frame
 			if attacks._phase == &"lunging" and not launched:
 				launched = true
-				check(attacks._head_aim_error_degrees <= attacks.data.aim_tolerance_degrees,"Preparation physically aims the visual Head axis at the live target")
+				check(attacks._head_aim_error_degrees <= attacks.data.aim_tolerance_degrees,"Preparation physically aims the visual Head axis at the locked point")
 				check(is_equal_approx(attacks._plan.extension_duration,attacks._plan.duration),"Prediction and execution share the fixed-root extension duration")
 			if not phases.has(attacks._phase): print("SNAKE_ATTACK_PHASE scale=",size," data=",attacks.get_attack_diagnostics())
 			phases[attacks._phase] = true

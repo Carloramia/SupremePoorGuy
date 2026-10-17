@@ -1,0 +1,63 @@
+[gd_resource type="Resource" format=3 uid="uid://bolemvx1jnxq8"]
+
+[ext_resource type="Texture2D" uid="uid://dduwgv0jow68g" path="res://Modules/PaperUI/TA/Assets/outline.svg" id="Outline"]
+[ext_resource type="Texture2D" uid="uid://cymlha8pal46y" path="res://Modules/PaperUI/TA/Assets/paper.svg" id="Paper"]
+[ext_resource type="Script" uid="uid://yo4ytllkm211" path="res://Modules/PaperUI/Scripts/UI/UISkinPreset.gd" id="Preset"]
+[ext_resource type="Shader" uid="uid://bmsgm6bv70eai" path="res://Modules/PaperUI/TA/Shaders/ink.gdshader" id="S1"]
+[ext_resource type="Shader" uid="uid://dbhsdfpp01mj4" path="res://Modules/PaperUI/TA/Shaders/cutout.gdshader" id="S2"]
+[ext_resource type="Shader" uid="uid://daktyxmbvdtrp" path="res://Modules/PaperUI/TA/Shaders/paper.gdshader" id="S3"]
+
+[sub_resource type="ShaderMaterial" id="CutoutMaterial"]
+resource_local_to_scene = true
+shader = ExtResource("S2")
+shader_parameter/ui_size_px = Vector2(128, 128)
+shader_parameter/ui_seed = 42
+shader_parameter/backing_width = 6.0
+shader_parameter/backing_color = Color(1, 1, 1, 1)
+shader_parameter/smoothing = 0.7
+shader_parameter/backing_enabled = true
+shader_parameter/ui_prepared = false
+shader_parameter/field_size = Vector2(192, 192)
+shader_parameter/subject_size = Vector2(128, 128)
+shader_parameter/field_padding = 32.0
+shader_parameter/display_size = Vector2(128, 128)
+
+[sub_resource type="ShaderMaterial" id="InkMaterial"]
+resource_local_to_scene = true
+shader = ExtResource("S1")
+shader_parameter/ui_size_px = Vector2(200, 60)
+shader_parameter/ui_seed = 42
+shader_parameter/ink_color = Color(0.19, 0.18, 0.16, 1)
+shader_parameter/line_width = 2.8
+shader_parameter/width_variation = 0.25
+shader_parameter/irregularity = 0.32
+shader_parameter/ink_loss = 0.1
+shader_parameter/edge_coverage = 0.34
+shader_parameter/grain_size = 1.3
+shader_parameter/repeat_strength = 0.7
+shader_parameter/ui_state_tint = Color(1, 1, 1, 1)
+
+[sub_resource type="ShaderMaterial" id="PaperMaterial"]
+resource_local_to_scene = true
+shader = ExtResource("S3")
+shader_parameter/ui_size_px = Vector2(200, 100)
+shader_parameter/ui_seed = 42
+shader_parameter/grain_size = 1.3
+shader_parameter/paper_grain = 0.065
+shader_parameter/pigment_grain = 0.045
+shader_parameter/edge_coverage = 0.34
+shader_parameter/edge_size = 1.2
+shader_parameter/ink_loss = 0.1
+shader_parameter/protected_margin = 8.0
+shader_parameter/use_protection_mask = false
+shader_parameter/ui_state_tint = Color(1, 1, 1, 1)
+
+[resource]
+resource_name = "TA medium"
+script = ExtResource("Preset")
+surface_texture = ExtResource("Paper")
+surface_material = SubResource("PaperMaterial")
+outline_texture = ExtResource("Outline")
+outline_material = SubResource("InkMaterial")
+patch_margin = 24
+cutout_material = SubResource("CutoutMaterial")

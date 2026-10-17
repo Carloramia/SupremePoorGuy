@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3]
+[ext_resource type="PackedScene" path="res://Scenes/UI/Components/ActionButton.tscn" id="Button"]
+[ext_resource type="Script" path="res://Scripts/UI/MonsterNote.gd" id="Script"]
+[node name="MonsterNote" instance=ExtResource("Button")]
+script = ExtResource("Script")
+custom_minimum_size = Vector2(0, 76)
+theme_type_variation = &"SecondaryButton"
+toggle_mode = true

@@ -57,7 +57,7 @@ func check_actor(actor: Node3D, expected: Dictionary, overall: float) -> void:
 		var pose: Transform3D = layout.transform
 		pose.origin *= overall
 		assert(part.transform.is_equal_approx(pose))
-		assert(GEOMETRY.bounds(part).size.is_equal_approx(layout.size * overall))
+		assert(GEOMETRY.bounds(part, false).size.is_equal_approx(layout.size * overall))
 		assert(part.get_meta("generated_scene_path").contains("/Snake/"))
 		var model := part.get_node("Model") as Node3D
 		assert(is_equal_approx(model.scale.x, model.scale.y), "XY texture must remain proportional.")

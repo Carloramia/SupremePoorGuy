@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3]
+[ext_resource type="Script" path="res://Modules/PaperUI/Scripts/UI/UISkinSlots.gd" id="Slots"]
+[ext_resource type="Resource" path="res://Modules/PaperUI/Assets/UI/PaperRelief/DefaultSkin.tres" id="Default"]
+[node name="VisualSkin" type="Node"]
+script = ExtResource("Slots")
+shared_preset = ExtResource("Default")
+[node name="Surface" type="NinePatchRect" parent="."]
+visible = false
+show_behind_parent = true
+mouse_filter = 2
+[node name="Outline" type="NinePatchRect" parent="."]
+visible = false
+mouse_filter = 2

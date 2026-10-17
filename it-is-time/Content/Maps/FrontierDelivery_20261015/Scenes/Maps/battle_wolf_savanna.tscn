@@ -1,0 +1,583 @@
+[gd_scene load_steps=21 format=3]
+
+[ext_resource type="Script" path="res://Modules/FrontierDelivery/Scripts/Map/GeneratedMap.gd" id="MapScript"]
+[ext_resource type="FontFile" path="res://Modules/PaperUI/Assets/UI/Fonts/Xiaolai-Regular.ttf" id="MapFont"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/360d732820bc29d798b4e37d.svg" id="Tex_0"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/e7d739cab1a9dc214a6e832e.png" id="Tex_1"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/ff90ec506af73e568f154784.png" id="Tex_2"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/95be016ab82e0eca2fb2dfb5.svg" id="Tex_3"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/e9e45c44bd0772cb1d39f1ae.png" id="Tex_4"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/1c7023eabb8afa18070342d8.png" id="Tex_5"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/db9e49ad6d251e225ae78670.svg" id="Tex_6"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/5a83e3e2f01186151b1789f1.svg" id="Tex_7"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/c52b25bd7e628483773b7305.svg" id="Tex_8"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/f213e7cd884bcafb44aa5409.svg" id="Tex_9"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/1ece5fba8b9df145ca4eaec1.svg" id="Tex_10"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/702f9a42205f2d45ad2888ff.svg" id="Tex_11"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/e6f9ee1d70d32df16fe6bc33.svg" id="Tex_12"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/dc94439a02600127eebb35e7.svg" id="Tex_13"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/8c6054b90c9280acf0dcc777.svg" id="Tex_14"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/25a98d5f4fcda8f7979a2891.svg" id="Tex_15"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/3386785d6ef012aead6390b0.svg" id="Tex_16"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/82e5793b83d75ce8c2a49ea1.svg" id="Tex_17"]
+
+[node name="battle_wolf_savanna" type="Node2D"]
+script = ExtResource("MapScript")
+map_id = "battle_wolf_savanna"
+data_path = "res://Content/Maps/FrontierDelivery_20261015/Data/Maps/battle_wolf_savanna.json"
+[node name="Ground" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(20, 0, 10, 17.3205081, -10, 17.3205081, -20, 2.4492936e-15, -10, -17.3205081, 10, -17.3205081)
+color = Color(0.576470588, 0.568627451, 0.415686275, 1)
+z_index = -1000
+[node name="Objects" type="Node2D" parent="."]
+[node name="battle_wolf_savanna_decoration_001" type="Node2D" parent="Objects"]
+position = Vector2(-7, -7.6)
+rotation = -0.261672354
+scale = Vector2(1, 1)
+z_index = -20
+metadata/source_id = "battle_wolf_savanna_decoration_001"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_decoration_001"]
+texture = ExtResource("Tex_0")
+scale = Vector2(0.0306666667, 0.0306666667)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_wolf_savanna_decoration_002" type="Node2D" parent="Objects"]
+position = Vector2(6.8, 6.4)
+rotation = -0.221130721
+scale = Vector2(1, 1)
+z_index = -20
+metadata/source_id = "battle_wolf_savanna_decoration_002"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_decoration_002"]
+texture = ExtResource("Tex_0")
+scale = Vector2(0.0306666667, 0.0306666667)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_wolf_savanna_decoration_003" type="Node2D" parent="Objects"]
+position = Vector2(-9, 2.4)
+rotation = -0.0399165589
+scale = Vector2(1, 1)
+z_index = -20
+metadata/source_id = "battle_wolf_savanna_decoration_003"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_decoration_003"]
+texture = ExtResource("Tex_0")
+scale = Vector2(0.0306666667, 0.0306666667)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_wolf_savanna_decoration_004" type="Node2D" parent="Objects"]
+position = Vector2(8, -4.8)
+rotation = -0.147574174
+scale = Vector2(1, 1)
+z_index = -20
+metadata/source_id = "battle_wolf_savanna_decoration_004"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_decoration_004"]
+texture = ExtResource("Tex_0")
+scale = Vector2(0.0306666667, 0.0306666667)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_wolf_savanna_decoration_005" type="Node2D" parent="Objects"]
+position = Vector2(0.4, 11.6)
+rotation = 0.00826467145
+scale = Vector2(1, 1)
+z_index = -20
+metadata/source_id = "battle_wolf_savanna_decoration_005"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_decoration_005"]
+texture = ExtResource("Tex_0")
+scale = Vector2(0.0306666667, 0.0306666667)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_wolf_savanna_decoration_006" type="Node2D" parent="Objects"]
+position = Vector2(8.632, -1.124)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_wolf_savanna_decoration_006"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_decoration_006"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.561201556)
+visible = true
+[node name="battle_wolf_savanna_decoration_007" type="Node2D" parent="Objects"]
+position = Vector2(11.657, -10.748)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_wolf_savanna_decoration_007"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_decoration_007"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.739981432)
+visible = true
+[node name="battle_wolf_savanna_decoration_008" type="Node2D" parent="Objects"]
+position = Vector2(-12.848, 4.247)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_wolf_savanna_decoration_008"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_decoration_008"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.655176498)
+visible = true
+[node name="battle_wolf_savanna_decoration_009" type="Node2D" parent="Objects"]
+position = Vector2(9.169, -7.057)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_wolf_savanna_decoration_009"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_decoration_009"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.771471293)
+visible = true
+[node name="battle_wolf_savanna_decoration_010" type="Node2D" parent="Objects"]
+position = Vector2(-12.837, 11.936)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_wolf_savanna_decoration_010"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_decoration_010"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.622488521)
+visible = true
+[node name="battle_wolf_savanna_decoration_011" type="Node2D" parent="Objects"]
+position = Vector2(-7.252, 9.275)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_wolf_savanna_decoration_011"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_decoration_011"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.607793401)
+visible = true
+[node name="battle_wolf_savanna_decoration_012" type="Node2D" parent="Objects"]
+position = Vector2(-4.956, 9.475)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_wolf_savanna_decoration_012"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_decoration_012"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.617871958)
+visible = true
+[node name="battle_wolf_savanna_decoration_013" type="Node2D" parent="Objects"]
+position = Vector2(11.879, 6.397)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_wolf_savanna_decoration_013"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_decoration_013"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.604986436)
+visible = true
+[node name="battle_wolf_savanna_decoration_014" type="Node2D" parent="Objects"]
+position = Vector2(3.844, -9.827)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_wolf_savanna_decoration_014"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_decoration_014"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.667849981)
+visible = true
+[node name="battle_wolf_savanna_decoration_015" type="Node2D" parent="Objects"]
+position = Vector2(9.556, -8.768)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_wolf_savanna_decoration_015"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_decoration_015"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.702948901)
+visible = true
+[node name="battle_wolf_savanna_decoration_016" type="Node2D" parent="Objects"]
+position = Vector2(-1.538, 5.998)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_wolf_savanna_decoration_016"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_decoration_016"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.631374698)
+visible = true
+[node name="battle_wolf_savanna_decoration_017" type="Node2D" parent="Objects"]
+position = Vector2(4.746, -1.105)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_wolf_savanna_decoration_017"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_decoration_017"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.650618106)
+visible = true
+[node name="battle_wolf_savanna_decoration_018" type="Node2D" parent="Objects"]
+position = Vector2(-4.379, -8.179)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_wolf_savanna_decoration_018"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_decoration_018"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.613315593)
+visible = true
+[node name="battle_wolf_savanna_decoration_019" type="Node2D" parent="Objects"]
+position = Vector2(2.42, -2)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_wolf_savanna_decoration_019"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_decoration_019"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.663502242)
+visible = true
+[node name="battle_wolf_savanna_decoration_020" type="Node2D" parent="Objects"]
+position = Vector2(0.863, 7.056)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_wolf_savanna_decoration_020"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_decoration_020"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.752421179)
+visible = true
+[node name="battle_wolf_savanna_decoration_021" type="Node2D" parent="Objects"]
+position = Vector2(-3.87, 0.597)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_wolf_savanna_decoration_021"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_decoration_021"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.58430359)
+visible = true
+[node name="battle_wolf_savanna_decoration_022" type="Node2D" parent="Objects"]
+position = Vector2(-10.148, -11.285)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_wolf_savanna_decoration_022"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_decoration_022"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.756836221)
+visible = true
+[node name="battle_wolf_savanna_decoration_023" type="Node2D" parent="Objects"]
+position = Vector2(-9.436, 10.192)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_wolf_savanna_decoration_023"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_decoration_023"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.561061466)
+visible = true
+[node name="battle_wolf_savanna_decoration_024" type="Node2D" parent="Objects"]
+position = Vector2(4.206, -13.364)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_wolf_savanna_decoration_024"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_decoration_024"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.772505294)
+visible = true
+[node name="battle_wolf_savanna_decoration_025" type="Node2D" parent="Objects"]
+position = Vector2(2.577, -5.042)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_wolf_savanna_decoration_025"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_decoration_025"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.612619931)
+visible = true
+[node name="battle_wolf_savanna_decoration_026" type="Node2D" parent="Objects"]
+position = Vector2(9.382, -3.221)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_wolf_savanna_decoration_026"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_decoration_026"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.621555333)
+visible = true
+[node name="battle_wolf_savanna_decoration_027" type="Node2D" parent="Objects"]
+position = Vector2(0.658, 11.027)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_wolf_savanna_decoration_027"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_decoration_027"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.697383952)
+visible = true
+[node name="battle_wolf_savanna_decoration_028" type="Node2D" parent="Objects"]
+position = Vector2(-5.15, -2.101)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_wolf_savanna_decoration_028"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_decoration_028"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.649455143)
+visible = true
+[node name="battle_wolf_savanna_decoration_029" type="Node2D" parent="Objects"]
+position = Vector2(-9.889, 1.42)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_wolf_savanna_decoration_029"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_decoration_029"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.701735532)
+visible = true
+[node name="battle_wolf_savanna_deployment_135" type="Node2D" parent="Objects"]
+position = Vector2(8.25366, 9.78351)
+rotation = 2.44080875
+scale = Vector2(1, 1)
+z_index = 0
+metadata/source_id = "battle_wolf_savanna_deployment_135"
+[node name="battle_wolf_savanna_post_battle_139" type="Node2D" parent="Objects"]
+position = Vector2(0, 0)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -1
+metadata/source_id = "battle_wolf_savanna_post_battle_139"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_post_battle_139"]
+texture = ExtResource("Tex_2")
+scale = Vector2(0.0110169492, 0.0110169492)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="Interaction" type="Area2D" parent="Objects/battle_wolf_savanna_post_battle_139"]
+collision_layer = 2
+collision_mask = 0
+[node name="Shape" type="CollisionPolygon2D" parent="Objects/battle_wolf_savanna_post_battle_139/Interaction"]
+position = Vector2(0, 0)
+rotation = 0
+polygon = PackedVector2Array(2.2, 0, 2.15772762, 0.331653547, 2.03253497, 0.650561835, 1.82923315, 0.944469396, 1.55563492, 1.20208153, 1.22225451, 1.41349834, 0.841903551, 1.57059521, 0.429198708, 1.66733498, 1.34711148e-16, 1.7, -0.429198708, 1.66733498, -0.841903551, 1.57059521, -1.22225451, 1.41349834, -1.55563492, 1.20208153, -1.82923315, 0.944469396, -2.03253497, 0.650561835, -2.15772762, 0.331653547, -2.2, 2.08189956e-16, -2.15772762, -0.331653547, -2.03253497, -0.650561835, -1.82923315, -0.944469396, -1.55563492, -1.20208153, -1.22225451, -1.41349834, -0.841903551, -1.57059521, -0.429198708, -1.66733498, -4.04133444e-16, -1.7, 0.429198708, -1.66733498, 0.841903551, -1.57059521, 1.22225451, -1.41349834, 1.55563492, -1.20208153, 1.82923315, -0.944469396, 2.03253497, -0.650561835, 2.15772762, -0.331653547)
+[node name="battle_wolf_savanna_decoration_143" type="Node2D" parent="Objects"]
+position = Vector2(2, -12.2)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 5
+metadata/source_id = "battle_wolf_savanna_decoration_143"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_decoration_143"]
+texture = ExtResource("Tex_3")
+scale = Vector2(0.0228125, 0.0228125)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_wolf_savanna_collision_damage_144" type="Node2D" parent="Objects"]
+position = Vector2(-3.5, -3.9)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 8
+metadata/source_id = "battle_wolf_savanna_collision_damage_144"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_collision_damage_144"]
+texture = ExtResource("Tex_4")
+scale = Vector2(0.0125925926, 0.0125925926)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="Body" type="StaticBody2D" parent="Objects/battle_wolf_savanna_collision_damage_144"]
+collision_layer = 1
+collision_mask = 0
+[node name="Shape" type="CollisionPolygon2D" parent="Objects/battle_wolf_savanna_collision_damage_144/Body"]
+position = Vector2(0, 0)
+rotation = 0
+polygon = PackedVector2Array(1.088, 0, 1.06709439, 0.17577638, 1.00518093, 0.344797773, 0.904638938, 0.50056878, 0.769332178, 0.63710321, 0.604460414, 0.749154121, 0.416359574, 0.832415459, 0.21225827, 0.883687538, 6.66207859e-17, 0.901, -0.21225827, 0.883687538, -0.416359574, 0.832415459, -0.604460414, 0.749154121, -0.769332178, 0.63710321, -0.904638938, 0.50056878, -1.00518093, 0.344797773, -1.06709439, 0.17577638, -1.088, 1.10340677e-16, -1.06709439, -0.17577638, -1.00518093, -0.344797773, -0.904638938, -0.50056878, -0.769332178, -0.63710321, -0.604460414, -0.749154121, -0.416359574, -0.832415459, -0.21225827, -0.883687538, -1.99862358e-16, -0.901, 0.21225827, -0.883687538, 0.416359574, -0.832415459, 0.604460414, -0.749154121, 0.769332178, -0.63710321, 0.904638938, -0.50056878, 1.00518093, -0.344797773, 1.06709439, -0.17577638)
+[node name="battle_wolf_savanna_collision_damage_145" type="Node2D" parent="Objects"]
+position = Vector2(5, 4.5)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 8
+metadata/source_id = "battle_wolf_savanna_collision_damage_145"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_collision_damage_145"]
+texture = ExtResource("Tex_4")
+scale = Vector2(0.01, 0.01)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="Body" type="StaticBody2D" parent="Objects/battle_wolf_savanna_collision_damage_145"]
+collision_layer = 1
+collision_mask = 0
+[node name="Shape" type="CollisionPolygon2D" parent="Objects/battle_wolf_savanna_collision_damage_145/Body"]
+position = Vector2(0, 0)
+rotation = 0
+polygon = PackedVector2Array(0.864, 0, 0.847398482, 0.139587125, 0.798231916, 0.273809996, 0.718389745, 0.397510502, 0.610940259, 0.505934902, 0.480012681, 0.594916508, 0.330638486, 0.661035806, 0.168558038, 0.701751868, 5.29047417e-17, 0.7155, -0.168558038, 0.701751868, -0.330638486, 0.661035806, -0.480012681, 0.594916508, -0.610940259, 0.505934902, -0.718389745, 0.397510502, -0.798231916, 0.273809996, -0.847398482, 0.139587125, -0.864, 8.76234785e-17, -0.847398482, -0.139587125, -0.798231916, -0.273809996, -0.718389745, -0.397510502, -0.610940259, -0.505934902, -0.480012681, -0.594916508, -0.330638486, -0.661035806, -0.168558038, -0.701751868, -1.58714225e-16, -0.7155, 0.168558038, -0.701751868, 0.330638486, -0.661035806, 0.480012681, -0.594916508, 0.610940259, -0.505934902, 0.718389745, -0.397510502, 0.798231916, -0.273809996, 0.847398482, -0.139587125)
+[node name="battle_wolf_savanna_collision_damage_146" type="Node2D" parent="Objects"]
+position = Vector2(8.6, 1.6)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 8
+metadata/source_id = "battle_wolf_savanna_collision_damage_146"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_collision_damage_146"]
+texture = ExtResource("Tex_4")
+scale = Vector2(0.00925925926, 0.00925925926)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="Body" type="StaticBody2D" parent="Objects/battle_wolf_savanna_collision_damage_146"]
+collision_layer = 1
+collision_mask = 0
+[node name="Shape" type="CollisionPolygon2D" parent="Objects/battle_wolf_savanna_collision_damage_146/Body"]
+position = Vector2(0, 0)
+rotation = 0
+polygon = PackedVector2Array(0.8, 0, 0.784628224, 0.129247338, 0.739103626, 0.253527774, 0.66517569, 0.368065279, 0.565685425, 0.468458243, 0.444456186, 0.550848618, 0.306146746, 0.61207019, 0.156072258, 0.649770248, 4.8985872e-17, 0.6625, -0.156072258, 0.649770248, -0.306146746, 0.61207019, -0.444456186, 0.550848618, -0.565685425, 0.468458243, -0.66517569, 0.368065279, -0.739103626, 0.253527774, -0.784628224, 0.129247338, -0.8, 8.11328504e-17, -0.784628224, -0.129247338, -0.739103626, -0.253527774, -0.66517569, -0.368065279, -0.565685425, -0.468458243, -0.444456186, -0.550848618, -0.306146746, -0.61207019, -0.156072258, -0.649770248, -1.46957616e-16, -0.6625, 0.156072258, -0.649770248, 0.306146746, -0.61207019, 0.444456186, -0.550848618, 0.565685425, -0.468458243, 0.66517569, -0.368065279, 0.739103626, -0.253527774, 0.784628224, -0.129247338)
+[node name="battle_wolf_savanna_thorns_147" type="Node2D" parent="Objects"]
+position = Vector2(-8, -3)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -2
+metadata/source_id = "battle_wolf_savanna_thorns_147"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_thorns_147"]
+texture = ExtResource("Tex_5")
+scale = Vector2(0.0145695364, 0.0145695364)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_wolf_savanna_biome_edge_01" type="Node2D" parent="Objects"]
+position = Vector2(16.1028355, 3.99256)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 12
+metadata/source_id = "battle_wolf_savanna_biome_edge_01"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_biome_edge_01"]
+texture = ExtResource("Tex_6")
+scale = Vector2(0.03125, 0.03125)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_wolf_savanna_biome_edge_02" type="Node2D" parent="Objects"]
+position = Vector2(11.7639989, 11.1088267)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 12
+metadata/source_id = "battle_wolf_savanna_biome_edge_02"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_biome_edge_02"]
+texture = ExtResource("Tex_7")
+scale = Vector2(0.03125, 0.03125)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_wolf_savanna_biome_edge_03" type="Node2D" parent="Objects"]
+position = Vector2(4.81983, 16.0117844)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 12
+metadata/source_id = "battle_wolf_savanna_biome_edge_03"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_biome_edge_03"]
+texture = ExtResource("Tex_8")
+scale = Vector2(0.03125, 0.03125)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_wolf_savanna_biome_edge_04" type="Node2D" parent="Objects"]
+position = Vector2(-3.78368727, 16.0488673)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 12
+metadata/source_id = "battle_wolf_savanna_biome_edge_04"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_biome_edge_04"]
+texture = ExtResource("Tex_9")
+scale = Vector2(0.03125, 0.03125)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_wolf_savanna_biome_edge_05" type="Node2D" parent="Objects"]
+position = Vector2(-12.047393, 11.549864)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 12
+metadata/source_id = "battle_wolf_savanna_biome_edge_05"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_biome_edge_05"]
+texture = ExtResource("Tex_10")
+scale = Vector2(0.03125, 0.03125)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_wolf_savanna_biome_edge_06" type="Node2D" parent="Objects"]
+position = Vector2(-16.3942385, 2.97731077)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 12
+metadata/source_id = "battle_wolf_savanna_biome_edge_06"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_biome_edge_06"]
+texture = ExtResource("Tex_11")
+scale = Vector2(0.03125, 0.03125)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_wolf_savanna_biome_edge_07" type="Node2D" parent="Objects"]
+position = Vector2(-15.73653, -4.85584286)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 12
+metadata/source_id = "battle_wolf_savanna_biome_edge_07"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_biome_edge_07"]
+texture = ExtResource("Tex_12")
+scale = Vector2(0.03125, 0.03125)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_wolf_savanna_biome_edge_08" type="Node2D" parent="Objects"]
+position = Vector2(-12.3054636, -11.6829073)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 12
+metadata/source_id = "battle_wolf_savanna_biome_edge_08"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_biome_edge_08"]
+texture = ExtResource("Tex_13")
+scale = Vector2(0.03125, 0.03125)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_wolf_savanna_biome_edge_09" type="Node2D" parent="Objects"]
+position = Vector2(-5.1601325, -16.1763162)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 12
+metadata/source_id = "battle_wolf_savanna_biome_edge_09"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_biome_edge_09"]
+texture = ExtResource("Tex_14")
+scale = Vector2(0.03125, 0.03125)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_wolf_savanna_biome_edge_10" type="Node2D" parent="Objects"]
+position = Vector2(4.979545, -15.7677817)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 12
+metadata/source_id = "battle_wolf_savanna_biome_edge_10"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_biome_edge_10"]
+texture = ExtResource("Tex_15")
+scale = Vector2(0.03125, 0.03125)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_wolf_savanna_biome_edge_11" type="Node2D" parent="Objects"]
+position = Vector2(11.3011933, -12.6164344)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 12
+metadata/source_id = "battle_wolf_savanna_biome_edge_11"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_biome_edge_11"]
+texture = ExtResource("Tex_16")
+scale = Vector2(0.03125, 0.03125)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_wolf_savanna_biome_edge_12" type="Node2D" parent="Objects"]
+position = Vector2(16.2032291, -4.96093091)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 12
+metadata/source_id = "battle_wolf_savanna_biome_edge_12"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_wolf_savanna_biome_edge_12"]
+texture = ExtResource("Tex_17")
+scale = Vector2(0.03125, 0.03125)
+modulate = Color(1, 1, 1, 1)
+visible = true

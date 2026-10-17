@@ -14,7 +14,8 @@ func check(actor: Node) -> Dictionary:
 		var vertices: PackedVector3Array = mesh.mesh.surface_get_arrays(2)[Mesh.ARRAY_VERTEX]
 		var box := AABB(pose*vertices[0],Vector3.ZERO)
 		for vertex: Vector3 in vertices: box = box.expand(pose*vertex)
-		var bounds := GEO.bounds(body)
+		var bounds := GEO.bounds(body, false)
+		assert(is_equal_approx(GEO.bounds(body).size.z, bounds.size.z * 2.0), str(body.name)+" collider depth")
 		assert(bounds.position.distance_to(box.position)<0.0001,str(body.name)+" collider offset")
 		assert(bounds.size.distance_to(box.size)<0.0001,str(body.name)+" collider size")
 		count += 1

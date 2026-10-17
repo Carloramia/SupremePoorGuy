@@ -173,7 +173,7 @@ func _spawn_shockwave(point: Vector3, normal: Vector3, impulse: float) -> void:
 	if _data.shockwave == null or not _data.shockwave.enabled or not _data.shockwave.is_valid(): return
 	var wave := SHOCKWAVE.instantiate()
 	wave.setup(_data.shockwave,get_parent(),point,normal,impulse)
-	var host: Node = get_tree().current_scene if get_tree().current_scene != null else get_tree().root
+	var host: Node = preload("res://Scripts/Player/PlayerControlContext.gd").level(self)
 	host.add_child.call_deferred(wave)
 	_shockwaves_spawned += 1
 

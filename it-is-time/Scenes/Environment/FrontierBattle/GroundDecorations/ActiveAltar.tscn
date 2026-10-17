@@ -1,0 +1,15 @@
+[gd_scene load_steps=5 format=3]
+[ext_resource type="Script" path="res://Scripts/Geometry/BattleEnvironmentPhysicalPart3D.gd" id="script"]
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Environment/FrontierBattle/Scenes/GroundDecorations/ActiveAltar.tscn" id="model"]
+[ext_resource type="ConcavePolygonShape3D" path="res://Resources/Meshes/Environment/FrontierBattle/GroundDecorations/ActiveAltarCollision.res" id="collision"]
+[sub_resource type="ConcavePolygonShape3D" id="initial"]
+[node name="ActiveAltar" type="StaticBody3D"]
+script = ExtResource("script")
+thickness = 0.02
+unit_collision = ExtResource("collision")
+metadata/source_asset_ids = ["altar"]
+metadata/source_png = "res://Assets/2DResources/Environment/FrontierBattle/Separated/GroundDecorations/ActiveAltar.png"
+[node name="Model" parent="." instance=ExtResource("model")]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+rotation = Vector3(-1.5707963268, 0, 0)
+shape = SubResource("initial")

@@ -1,12 +1,21 @@
 @tool
 extends "res://Scripts/Creatures/WolfAttackModule3D.gd"
 const HITBOX = preload("res://Scripts/Items/TemporaryAttackHitbox3D.gd")
+class BiteHitbox extends HITBOX:
+	var contacted := false
+	func apply_contact_damage(other: PhysicalBodyPart3D, impulse: float) -> float:
+		contacted = true
+		return super.apply_contact_damage(other,impulse)
 var jaw: PhysicalBodyPart3D
 var head: PhysicalBodyPart3D
 var joint: Generic6DOFJoint3D
 var _rest := Quaternion.IDENTITY
+var _jaw_rest_pose := Transform3D.IDENTITY
+var _head_anchor := Vector3.ZERO
+var _reason: StringName = &"none"
+var _contacted := false
 var _joint_state: Dictionary = {}
-var _weapon: HITBOX
+var _weapon: BiteHitbox
 var _phase: StringName = &"idle"
 var _last_hits := 0
 var _angle_error := 0.0
@@ -128,7 +137,9 @@ func _plan_natural_feet() -> bool:
 		if surface.is_empty() or not controller.movement._surface_is_walkable(surface.normal): return false
 		var point: Vector3 = controller.movement._body_position_for_ground_contact(foot,surface.position)
 		if point.distance_to(anchor) > maxf(float(chain.length)*0.98,foot.global_position.distance_to(anchor))+0.05: return false
-		_foot_plans.append({"foot":foot,"start":foot.global_position,"target":point,"normal":surface.normal,"best_error":foot.global_position.distance_to(point),"stalled_time":0.0,"skipped":false,"elapsed":0.0,"done":false})
+		var error := foot.global_position.distance_to(point)
+		var settled: bool = error <= maxf(float(chain.length)*0.025,0.08) and foot.linear_velocity.length() <= 0.8 and not controller.movement._support_surface_contact(foot).is_empty()
+		_foot_plans.append({"foot":foot,"start":foot.global_position,"target":point,"normal":surface.normal,"best_error":error,"stalled_time":0.0,"skipped":false,"elapsed":0.0,"done":settled})
 	controller.log_event(name,&"feet_replanned",{"feet":_foot_plans})
 	return not _foot_plans.is_empty()
 
@@ -189,7 +200,7 @@ func _drive_torsos() -> void:
 			acceleration += error*data.position_gain+(velocity-row.body.linear_velocity).slide(Vector3.UP)*data.velocity_gain
 		elif _phase == &"lunging" and _phase_time < data.bite_lunge_acceleration_time:
 			acceleration += _forward*data.bite_lunge_acceleration*sqrt(controller.pounce_scale())
-		elif _phase == &"closing": acceleration -= row.body.linear_velocity.slide(Vector3.UP)*data.velocity_gain
+		elif _phase == &"closing" and (_contacted or _phase_time >= data.jaw_close_time): acceleration -= row.body.linear_velocity.slide(Vector3.UP)*data.velocity_gain
 		row.body.apply_central_force(acceleration.limit_length(data.maximum_acceleration)*row.body.mass)
 
 func refresh() -> void:
@@ -204,47 +215,85 @@ func refresh() -> void:
 		if body.get_meta(&"generated_part_key",body.name) == data.head_key: head = body
 	if not is_instance_valid(jaw) or not is_instance_valid(head): return
 	_rest = (head.global_basis.orthonormalized().inverse()*jaw.global_basis.orthonormalized()).get_rotation_quaternion()
+	_jaw_rest_pose = head.global_transform.affine_inverse()*jaw.global_transform
 	for candidate: Node in parts.get_node("Joints").get_children():
 		if not candidate is Generic6DOFJoint3D: continue
 		var a: Node = candidate.get_node_or_null(candidate.node_a)
 		var b: Node = candidate.get_node_or_null(candidate.node_b)
 		if (a == head and b == jaw) or (a == jaw and b == head): joint = candidate; break
+	if is_instance_valid(joint):
+		var key: StringName = &"generated_joint_frame_a" if joint.get_node_or_null(joint.node_a) == head else &"generated_joint_frame_b"
+		_head_anchor = Transform3D(joint.get_meta(key,head.global_transform.affine_inverse()*joint.global_transform)).origin
 
 func _shape() -> BoxShape3D:
 	var box := BoxShape3D.new()
 	box.size = (Vector3(jaw.get_meta(&"generated_size",Vector3.ONE))*data.box_size_ratio).max(Vector3.ONE*0.02)
 	return box
 
-func predict(next_target: PhysicalBodyPart3D, samples: int, margin: float) -> Dictionary:
-	if not available() or not alive(head) or not alive(jaw) or not is_instance_valid(joint): return {"hit":false,"reason":&"jaw_unavailable"}
-	return _closing_prediction(next_target,samples,margin,true)
-
-func _closing_prediction(next_target: PhysicalBodyPart3D, samples: int, margin: float, include_lunge: bool = false) -> Dictionary:
+func maximum_reach() -> float:
 	var box := _shape()
 	var offset := Vector3(jaw.get_meta(&"generated_size",Vector3.ONE))*data.box_center_ratio
-	var axis := head.global_basis.z.normalized()
-	var pivot := joint.global_position
+	var reach := 0.0
+	for index: int in 9:
+		var pose := _closure_pose(float(index)/8.0,true)
+		for corner: int in 8:
+			var point := offset+box.size*Vector3(1.0 if corner&1 else -1.0,1.0 if corner&2 else -1.0,1.0 if corner&4 else -1.0)*0.5
+			reach = maxf(reach,controller.torso.global_position.distance_to(pose*point))
+	var length: float = controller.pounce_scale()*controller.get_node("Pounce").data.reference_body_length
+	return reach+minf(length*data.bite_advance_ratio,_travel_limit(controller.forward()))
+
+func admission_range(next_target: Node3D) -> float:
+	var reach := maximum_reach()
+	if not is_instance_valid(next_target): return reach
+	var direction: Vector3 = (next_target.global_position-controller.torso.global_position).slide(Vector3.UP).normalized()
+	var closing_speed := maxf(-PREDICTION.velocity(next_target).dot(direction),0.0)
+	return reach+closing_speed*(data.bite_plant_prediction_time+maxf(data.bite_retract_time,data.jaw_open_time))
+
+func predict(next_target: PhysicalBodyPart3D, samples: int, margin: float) -> Dictionary:
+	if not alive(head) or not alive(jaw) or not is_instance_valid(joint) or joint.is_queued_for_deletion(): return {"hit":false,"reason":&"jaw_unavailable"}
+	if not available(): return {"hit":false,"reason":&"busy_or_cooldown"}
+	return _closing_prediction(next_target,samples,margin,true)
+
+func _closure_pose(progress: float, include_lunge: bool) -> Transform3D:
+	var head_pose := Transform3D(head.global_basis.orthonormalized(),head.global_position)
+	var start := _jaw_rest_pose if include_lunge else head_pose.affine_inverse()*jaw.global_transform
+	if include_lunge:
+		var opening := Basis(Vector3.BACK,-deg_to_rad(data.jaw_open_degrees))
+		start = Transform3D(opening*start.basis,_head_anchor+opening*(start.origin-_head_anchor))
+	var relative := start.basis.get_rotation_quaternion().slerp(_rest,progress)
+	var rotation := Basis(relative)*start.basis.inverse()
+	return head_pose*Transform3D(Basis(relative),_head_anchor+rotation*(start.origin-_head_anchor))
+
+func _closing_prediction(next_target: PhysicalBodyPart3D, samples: int, margin: float, include_lunge: bool = false, preparation_delay: float = -1.0, forecast_motion: bool = true) -> Dictionary:
+	var box := _shape()
+	var offset := Vector3(jaw.get_meta(&"generated_size",Vector3.ONE))*data.box_center_ratio
 	for index: int in range(clampi(samples,8,32)):
 		var progress := float(index)/float(clampi(samples,8,32)-1)
-		var angle := -deg_to_rad(data.jaw_open_degrees)*(1.0-progress)
-		var rotation := Basis(axis,angle)
-		var time := data.jaw_close_time*progress
-		var center := pivot+rotation*(jaw.to_global(offset)-pivot)+head.linear_velocity*time
+		var time := (data.jaw_close_time+data.jaw_close_extra_wait)*progress
+		var pose := _closure_pose(smoothstep(0.0,data.jaw_close_time,time),include_lunge)
+		pose.origin = pose*offset
 		if include_lunge:
-			var spacing := _spacing_for(next_target)
-			time += maxf(data.bite_retract_time,data.jaw_open_time)+data.bite_lunge_timeout*progress
+			var spacing := _spacing_for(next_target) if preparation_delay < 0.0 else 0.0
+			time += (data.bite_plant_prediction_time+maxf(data.bite_retract_time,data.jaw_open_time) if preparation_delay < 0.0 else preparation_delay)+data.bite_lunge_timeout*progress
 			if spacing > 0.0:
 				time += data.bite_spacing_retreat_time
-				center -= controller.forward()*spacing
+				pose.origin -= controller.forward()*spacing
 			var length: float = controller.pounce_scale()*controller.get_node("Pounce").data.reference_body_length
-			center += controller.forward()*minf(length*data.bite_advance_ratio,_travel_limit(controller.forward()))*progress
-		if predicts_enemy_hit(box,Transform3D(rotation*jaw.global_basis.orthonormalized(),center),next_target,time,margin):
-			return {"hit":true,"reason":&"bite_sweep_hit","confidence":1.0,"time":time}
+			var travel := minf(length*data.bite_advance_ratio,_travel_limit(controller.forward()))
+			if is_zero_approx(preparation_delay) and _phase == &"charging":
+				travel = minf(maxf(_advance-(controller.torso.global_position-_origin).dot(_forward),0.0),_travel_limit(_forward))
+				pose.origin.y += _crouch*smoothstep(0.0,data.jaw_open_time,data.bite_lunge_timeout*progress)
+			pose.origin += controller.forward()*travel*progress
+		else: pose.origin += head.linear_velocity*time
+		if predicts_enemy_hit(box,pose,next_target,time if forecast_motion else 0.0,margin):
+			return {"hit":true,"reason":&"bite_sweep_hit" if forecast_motion else &"current_reach_hit","confidence":1.0 if forecast_motion else 0.5,"time":time}
 	return {"hit":false,"reason":&"bite_sweep_misses"}
 
 func start(next_target: PhysicalBodyPart3D) -> bool:
 	if not predict(next_target,24,0.1).hit or not super.start(next_target): return false
 	_last_hits = 0
+	_reason = &"started"
+	_contacted = false
 	_close_reason = &""
 	_support_count = 0
 	_crouch = 0.0
@@ -267,7 +316,7 @@ func start(next_target: PhysicalBodyPart3D) -> bool:
 	joint.set_flag_z(Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_LIMIT,false)
 	joint.set_flag_z(Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_SPRING,false)
 	joint.set_flag_z(Generic6DOFJoint3D.FLAG_ENABLE_MOTOR,false)
-	_weapon = HITBOX.new()
+	_weapon = BiteHitbox.new()
 	_weapon.name = "BiteHitbox"
 	_weapon.setup(jaw,controller.get_parent(),_shape().size,Vector3(jaw.get_meta(&"generated_size",Vector3.ONE))*data.box_center_ratio,data.impulse_multiplier,data.hit_ragdoll_duration)
 	add_child(_weapon)
@@ -284,12 +333,18 @@ func tick(delta: float) -> void:
 		if not alive(body): finish(&"torso_broken"); return
 	for foot: RigidBody3D in owned_feet:
 		if not alive(foot) or not controller.movement._chain_is_intact(foot): finish(&"leg_chain_broken"); return
+	# Query the arriving mouth before closing/braking can erase its impact velocity.
+	_weapon.update_hitbox(delta,_phase in [&"lunging",&"closing"])
+	if not active: return
+	_contacted = _contacted or _weapon.contacted
+	if _weapon.hit_count > 0: _reason = &"hit"
 	if _phase not in [&"planting",&"spacing_retreat"]: _support_count = _plant_feet(delta)
 	if _phase == &"spacing_retreat":
 		_retreat_for_spacing()
 		if not active: return
 	elif _phase == &"planting":
-		if _reposition_feet(delta): _begin_charge()
+		if _reposition_feet(delta):
+			_begin_charge()
 		elif _phase_time >= data.bite_plant_timeout: finish(&"cannot_plant_feet"); return
 	elif _phase == &"charging" and _phase_time >= maxf(data.bite_retract_time,data.jaw_open_time):
 		_set_phase(&"lunging")
@@ -298,12 +353,18 @@ func tick(delta: float) -> void:
 	elif _phase == &"lunging":
 		var can_hit: bool = _closing_prediction(target,12,0.05).hit
 		var at_limit: bool = (controller.torso.global_position-_origin).dot(_forward) >= _advance
-		if (can_hit and _phase_time >= data.bite_lunge_acceleration_time) or at_limit or _phase_time >= data.bite_lunge_timeout:
-			_close_reason = &"predicted_hit" if can_hit else &"advance_limit" if at_limit else &"lunge_timeout"
+		if (can_hit and _phase_time >= data.bite_lunge_acceleration_time) or _contacted:
+			_close_reason = &"mouth_contact" if _contacted else &"predicted_hit"
 			_set_phase(&"closing")
+		elif at_limit or _phase_time >= data.bite_lunge_timeout:
+			_close_reason = &"reach_limit_no_contact" if at_limit else &"lunge_timeout"
+			_reason = _close_reason
+			_set_phase(&"recovering")
 	elif _phase == &"closing" and _phase_time >= data.jaw_close_time:
-		_set_phase(&"recovering")
-	elif _phase == &"recovering" and _phase_time >= data.recovery_time: finish(); return
+		var relative := (head.global_basis.orthonormalized().inverse()*jaw.global_basis.orthonormalized()).get_rotation_quaternion()
+		if rad_to_deg(relative.angle_to(_rest)) <= data.jaw_close_tolerance_degrees or _phase_time >= data.jaw_close_time+data.jaw_close_extra_wait:
+			_set_phase(&"recovering")
+	elif _phase == &"recovering" and (_phase_time >= data.recovery_time or (_phase_time >= 0.05 and _recovery_settled())): finish(); return
 	_drive_torsos()
 	var angle := deg_to_rad(data.jaw_open_degrees)
 	if _phase in [&"planting",&"spacing_retreat"]: angle = 0.0
@@ -321,9 +382,15 @@ func tick(delta: float) -> void:
 	var torque := axis*clampf(acceleration/maxf(inverse,0.000001),-cap,cap)
 	jaw.apply_torque(torque)
 	head.apply_torque(-torque)
-	_weapon.update_hitbox(delta,_phase == &"closing")
+
+func _recovery_settled() -> bool:
+	if absf(_angle_error) > 5.0: return false
+	for row: Dictionary in _torsos:
+		if row.body.global_position.distance_to(row.origin) > maxf(controller.pounce_scale()*0.1,0.02) or row.body.linear_velocity.length() > 0.5: return false
+	return true
 
 func finish(reason: StringName = &"completed") -> void:
+	if active and _reason != &"hit" and (reason != &"completed" or _reason == &"started"): _reason = reason
 	if controller != null and controller.movement != null:
 		for foot: RigidBody3D in owned_feet: controller.movement._release_support_pin(foot)
 	_torsos.clear()
@@ -356,7 +423,7 @@ func diagnostics() -> Dictionary:
 		if alive(row.body): torso_targets.append({"part":row.body.name,"position":row.body.global_position,"target":_body_target(row,_phase_time)})
 	result["torso_targets"] = torso_targets
 	result["advance_limit"] = _advance
-	result["torso_advance"] = (controller.torso.global_position-_origin).dot(_forward) if controller != null and is_instance_valid(controller.torso) else 0.0
+	result["torso_advance"] = (controller.torso.global_position-_origin).dot(_forward) if controller != null and is_instance_valid(controller.torso) and controller.torso.is_inside_tree() else 0.0
 	result["pinned_feet"] = _support_count
 	var foot_status: Array[Dictionary] = []
 	for row: Dictionary in _foot_plans:
@@ -366,6 +433,8 @@ func diagnostics() -> Dictionary:
 	result["burst_acceleration"] = data.bite_lunge_acceleration if data != null else 0.0
 	result["burst_duration"] = data.bite_lunge_acceleration_time if data != null else 0.0
 	result["close_reason"] = _close_reason
+	result["result"] = _reason
+	result["head_anchor_world"] = head.to_global(_head_anchor) if alive(head) else Vector3.ZERO
 	result["spacing_retreat_distance"] = _spacing_distance
-	result["spacing_retreat_traveled"] = (_spacing_origin-controller.torso.global_position).dot(_forward) if controller != null and is_instance_valid(controller.torso) else 0.0
+	result["spacing_retreat_traveled"] = (_spacing_origin-controller.torso.global_position).dot(_forward) if controller != null and is_instance_valid(controller.torso) and controller.torso.is_inside_tree() else 0.0
 	return result

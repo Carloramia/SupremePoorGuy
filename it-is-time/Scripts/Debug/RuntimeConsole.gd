@@ -8,17 +8,24 @@ const STEP_TARGET_DISPLAY = preload("res://Scripts/Debug/StepTargetDisplay3D.gd"
 var _step_target_display: Node3D
 const SNAKE_PATH_DISPLAY = preload("res://Scripts/Debug/SnakePathDisplay3D.gd")
 var _snake_path_display: Node3D
+const ATTACK_COLLISION_DISPLAY = preload("res://Scripts/Debug/AttackCollisionDisplay3D.gd")
+var _attack_collision_display: Node
 
 const COMMAND_HELP: Array[Dictionary] = [
+	{&"name":"trackmap [on|off|status]",&"description":"Track map clicks, travel, interaction refusals, encounter rolls, events and battle returns; event-based, off by default."},
+	{&"name":"mapstate [location_id]",&"description":"Print current map/input/pending state; optionally inspect a location's visibility, conditions and interaction refusal."},
+	{&"name":"trackintegration [on|off|status]",&"description":"Track application routes, transactions, save failures and battle lifecycle."},
 	{&"name": "perfmode [on|off|status]", &"description": "Switch shared NPC performance optimizations; independent of diagnostic tracking."},
 	{&"name": "trackjoints [on|off] [filter]", &"description": "Track joint reference rotations, limits and anchor gaps; filter by character name, path or ID."},
 	{&"name": "jointstates [filter]", &"description": "Print joint snapshots reconstructed from activation frames (not private solver angles)."},
 	{&"name": "showsteptargets [on|off]", &"description": "Toggle world-space planned landing rings; each foot has a fixed color."},
+	{&"name": "showattackboxes [on|off|status]", &"description": "Draw all temporary attack volumes and active weapon colliders; red=damage enabled, orange=inactive temporary volume."},
 	{&"name": "showsnakepath [on|off] [filter]", &"description": "Draw Snake routes on terrain: cyan history, orange preview; filter by character name, path or ID."},
 	{&"name": "motiondetail [summary|full]", &"description": "Choose compact gait summaries (default) or full BodyPart snapshots for motion tracking."},
 	{&"name": "trackcharge", &"description": "Toggle charge phases, torso speeds/forces, support foot locks/steps and stuck timers every 0.1s."},
 	{&"name": "help", &"description": "List all available console commands."},
 	{&"name": "getlogs", &"description": "Pack runtime logs into a ZIP in the project root."},
+	{&"name": "autogetlogs [on|off|status]", &"description": "Automatically archive logs on debugger breaks or runtime errors; on rearms immediately; warnings are ignored."},
 	{&"name": "trackgenerated", &"description": "Toggle generated creature foot, limb-chain and gait diagnostics."},
 	{&"name": "trackflight [on|off]", &"description": "Track controlled bird flight, dive attacks, landing, wing torques and feather errors every 0.1s."},
 	{&"name": "trackmotion", &"description": "Toggle controlled character motion tracking; use motiondetail to choose summary/full."},
@@ -41,6 +48,8 @@ const COMMAND_HELP: Array[Dictionary] = [
 # Enable before starting the game to capture first-frame creature generation.
 @export var control_performance_on_start: bool = false
 @export var toggle_action: StringName = &"CallConsole"
+@export var auto_getlogs_enabled: bool = true
+@export_range(1.0,300.0,1.0,"or_greater") var auto_getlogs_cooldown: float = 30.0
 @export_range(10, 1000, 1) var maximum_output_lines: int = 100
 @export_range(0.05, 10.0, 0.05, "or_greater") var motion_tracking_interval: float = 0.1
 @export_range(0.25, 10.0, 0.25, "or_greater") var performance_tracking_interval: float = 1.0
@@ -55,6 +64,8 @@ var _control_perf_max_delta: float = 0.0
 var _control_perf_slow_frames: int = 0
 
 var _output_lines: Array[String] = []
+var _map_tracking_enabled := false
+var _map_event_sequence := 0
 var _output_dirty := false
 var _output_refresh_elapsed := 0.0
 var _full_motion_details := false
@@ -92,6 +103,54 @@ var _grip_tracking_enabled := false
 var _grip_tracking_filter := ""
 var _grip_tracking_elapsed := 0.0
 var _turn_tracking_enabled: bool = true
+var _error_capture := preload("res://Scripts/Debug/RuntimeErrorLogCapture.gd").new()
+var _archive_mutex := Mutex.new()
+var _auto_archiving := false
+var _last_auto_archive_time: int = -1
+var _last_auto_archive_path := ""
+var _archive_bridge_connected := false
+
+func _enter_tree() -> void:
+	OS.add_logger(_error_capture)
+	if EngineDebugger.is_active(): EngineDebugger.register_message_capture("runtime_console",_capture_debugger_message)
+
+func _exit_tree() -> void:
+	OS.remove_logger(_error_capture)
+	if EngineDebugger.has_capture("runtime_console"): EngineDebugger.unregister_message_capture("runtime_console")
+
+func _capture_debugger_message(message: String, _data: Array) -> bool:
+	if message == "bridge_ready":
+		_archive_bridge_connected = true
+		print("[auto_getlogs] editor breakpoint bridge connected")
+		return true
+	if message != "archive_on_break": return false
+	print("[auto_getlogs] debugger break received")
+	var context := _error_capture.take_error()
+	context["trigger"] = "debugger_break"
+	var traces: Array[String] = []
+	for trace: ScriptBacktrace in Engine.capture_script_backtraces(): traces.append(trace.format())
+	context["paused_backtraces"] = traces
+	var path := _try_auto_archive(context)
+	if path.is_empty(): print("[auto_getlogs] archive skipped; enabled=%s cooldown=%.1fs last=%s" % [auto_getlogs_enabled,auto_getlogs_cooldown,_last_auto_archive_path])
+	if EngineDebugger.is_active(): EngineDebugger.send_message("runtime_console:archive_result",[path])
+	return true
+
+func _try_auto_archive(context: Dictionary) -> String:
+	_archive_mutex.lock()
+	var now := Time.get_ticks_msec()
+	if not auto_getlogs_enabled or _auto_archiving or (_last_auto_archive_time >= 0 and now-_last_auto_archive_time < auto_getlogs_cooldown*1000.0):
+		_archive_mutex.unlock()
+		return ""
+	_auto_archiving = true
+	_last_auto_archive_time = now
+	_archive_mutex.unlock()
+	var path := create_logs_archive("","user://logs",context)
+	_archive_mutex.lock()
+	_last_auto_archive_path = path
+	_auto_archiving = false
+	_archive_mutex.unlock()
+	_append_output.call_deferred("[auto_getlogs] "+("Archive failed; check output for the reason." if path.is_empty() else path))
+	return path
 
 func _ready() -> void:
 	_control_performance_tracking_enabled = control_performance_on_start
@@ -100,6 +159,14 @@ func _ready() -> void:
 	visible = false
 	_command_input.text_submitted.connect(_on_command_submitted)
 	_append_output("Runtime console ready. Type 'help' to list available commands.")
+	print("[auto_getlogs] enabled=%s cooldown=%.1fs debugger_attached=%s" % [auto_getlogs_enabled,auto_getlogs_cooldown,EngineDebugger.is_active()])
+	if EngineDebugger.is_active():
+		EngineDebugger.send_message("runtime_console:ready",[])
+		get_tree().create_timer(3.0).timeout.connect(_check_archive_bridge)
+
+func _check_archive_bridge() -> void:
+	if auto_getlogs_enabled and not _archive_bridge_connected:
+		print("[auto_getlogs] editor breakpoint bridge is not connected; enable Runtime Log Archive in Project Settings > Plugins, or reopen the Godot project. Runtime error archives will wait until execution resumes.")
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed(toggle_action):
@@ -107,6 +174,8 @@ func _input(event: InputEvent) -> void:
 		set_console_open(not visible)
 
 func _process(delta: float) -> void:
+	var error := _error_capture.take_error()
+	if not error.is_empty(): _try_auto_archive(error)
 	_output_refresh_elapsed += delta
 	if _grip_tracking_enabled:
 		_grip_tracking_elapsed += delta
@@ -172,6 +241,37 @@ func is_console_open() -> bool:
 
 func execute_command(command: String) -> String:
 	var args := command.strip_edges().split(" ",false)
+	if not args.is_empty() and args[0].to_lower()=="autogetlogs":
+		if args.size()!=2 or args[1].to_lower() not in ["on","off","status"]: return "Usage: autogetlogs [on|off|status]"
+		_archive_mutex.lock()
+		if args[1].to_lower()!="status":
+			auto_getlogs_enabled = args[1].to_lower()=="on"
+			if auto_getlogs_enabled: _last_auto_archive_time = -1
+		var result := "Automatic log archives %s; cooldown=%.1fs; bridge=%s; last=%s" % ["enabled" if auto_getlogs_enabled else "disabled",auto_getlogs_cooldown,"connected" if _archive_bridge_connected else "not_connected",_last_auto_archive_path]
+		_archive_mutex.unlock()
+		return result
+	if not args.is_empty() and args[0].to_lower()=="trackmap":
+		if args.size()>2 or (args.size()==2 and args[1].to_lower() not in ["on","off","status"]): return "Usage: trackmap [on|off|status]"
+		if args.size()==1: _map_tracking_enabled = not _map_tracking_enabled
+		elif args[1].to_lower()!="status": _map_tracking_enabled = args[1].to_lower()=="on"
+		var host := MOTION_PLAYER_CONTEXT.application(self)
+		if host!=null and is_instance_valid(host.delivery_map): host.delivery_map.set_map_diagnostic_logging(_map_tracking_enabled)
+		if _map_tracking_enabled and (args.size()==1 or args[1].to_lower()=="on") and host!=null:
+			log_map_event("snapshot",host.get_map_diagnostics())
+		return "Map tracking: %s; event-based; %s" % ["enabled" if _map_tracking_enabled else "disabled","phase="+host.phase if host!=null else "waiting for GameRoot"]
+	if not args.is_empty() and args[0].to_lower()=="mapstate":
+		if args.size()>2: return "Usage: mapstate [location_id]"
+		var host := MOTION_PLAYER_CONTEXT.application(self)
+		if host==null: return "Application host is not active (open GameRoot)."
+		log_map_event("snapshot",host.get_map_diagnostics(args[1] if args.size()==2 else ""),true)
+		return "Map snapshot printed with [map_event]."
+	if not args.is_empty() and args[0].to_lower()=="trackintegration":
+		var host := MOTION_PLAYER_CONTEXT.application(self)
+		if host == null: return "Application host is not active (open GameRoot)."
+		if args.size()>2 or (args.size()==2 and args[1] not in ["on","off","status"]): return "Usage: trackintegration [on|off|status]"
+		if args.size()==1: host.session.integration_logging = not host.session.integration_logging
+		elif args[1]!="status": host.session.integration_logging = args[1]=="on"
+		return "Integration tracking: %s; phase=%s" % [host.session.integration_logging,host.phase]
 	if not args.is_empty() and args[0].to_lower() == "gripstates":
 		return "Weapon grip snapshots: %d" % _emit_weapon_grip_snapshot(" ".join(args.slice(1)))
 	if not args.is_empty() and args[0].to_lower() == "trackgrip":
@@ -229,20 +329,33 @@ func execute_command(command: String) -> String:
 		if not is_instance_valid(_snake_path_display):
 			_snake_path_display = SNAKE_PATH_DISPLAY.new()
 			_snake_path_display.name = "SnakePathDisplay3D"
-			add_child(_snake_path_display)
+			MOTION_PLAYER_CONTEXT.level(self).add_child(_snake_path_display)
 		var value: bool = not _snake_path_display.enabled if args.size() == 1 else args[1].to_lower() == "on"
 		var actor_filter := " ".join(args.slice(2))
 		_snake_path_display.set_enabled(value,actor_filter)
 		var message := "Snake ground path display %s; filter=%s; cyan=history; orange=preview." % ["enabled" if value else "disabled",actor_filter if not actor_filter.is_empty() else "all"]
 		_append_log_output("[snake_path_display] "+message)
 		return message
+	if not args.is_empty() and args[0].to_lower() == "showattackboxes":
+		if args.size() > 2 or (args.size() == 2 and args[1].to_lower() not in ["on","off","status"]):
+			return "Usage: showattackboxes [on|off|status]"
+		var value: bool = is_instance_valid(_attack_collision_display) and _attack_collision_display.enabled
+		if args.size() == 1: value = not value
+		elif args[1].to_lower() != "status": value = args[1].to_lower() == "on"
+		if value and not is_instance_valid(_attack_collision_display):
+			_attack_collision_display = ATTACK_COLLISION_DISPLAY.new()
+			_attack_collision_display.name = "AttackCollisionDisplay3D"
+			add_child(_attack_collision_display)
+		if is_instance_valid(_attack_collision_display) and (args.size() == 1 or args[1].to_lower() != "status"):
+			_attack_collision_display.set_enabled(value)
+		return "Attack collision display %s; shapes=%d; red=damage enabled; orange=inactive temporary volume." % ["enabled" if value else "disabled",_attack_collision_display._meshes.size() if is_instance_valid(_attack_collision_display) else 0]
 	if not args.is_empty() and args[0].to_lower() == "showsteptargets":
 		if args.size() > 2 or (args.size() == 2 and args[1].to_lower() not in ["on", "off"]):
 			return "Usage: showsteptargets [on|off]"
 		if not is_instance_valid(_step_target_display):
 			_step_target_display = STEP_TARGET_DISPLAY.new()
 			_step_target_display.name = "StepTargetDisplay3D"
-			add_child(_step_target_display)
+			MOTION_PLAYER_CONTEXT.level(self).add_child(_step_target_display)
 		var value: bool = not _step_target_display.enabled if args.size() == 1 else args[1].to_lower() == "on"
 		_step_target_display.set_enabled(value)
 		return "Step target rings %s." % ("enabled" if value else "disabled")
@@ -366,6 +479,18 @@ func _get_help_text() -> String:
 		lines.append("  %-16s %s" % [entry.name, entry.description])
 	return "\n".join(lines)
 
+func is_map_tracking_enabled() -> bool:
+	return _map_tracking_enabled
+
+func log_map_event(event: String, detail: Dictionary, force: bool = false) -> void:
+	if not _map_tracking_enabled and not force: return
+	_map_event_sequence += 1
+	var row := detail.duplicate()
+	row.event = event
+	row.sequence = _map_event_sequence
+	row.time_ms = Time.get_ticks_msec()
+	_append_log_output("[map_event] "+JSON.stringify(row))
+
 func _npc_matches(machine: Node, filter: String) -> bool:
 	var actor := machine.get_parent()
 	return filter.is_empty() or filter.to_lower() == "all" or str(actor.name).to_lower() == filter.to_lower() or str(actor.get_path()) == filter or str(actor.get_instance_id()) == filter or str(machine.get_path()) == filter
@@ -386,7 +511,7 @@ func _emit_npc_state_snapshot(filter: String) -> int:
 	return count
 
 ## Packs user://logs into a ZIP. Tests may pass different writable source and output directories.
-func create_logs_archive(output_directory: String = "", log_directory: String = "user://logs") -> String:
+func create_logs_archive(output_directory: String = "", log_directory: String = "user://logs", trigger: Dictionary = {}) -> String:
 	var destination_directory := output_directory
 	if destination_directory.is_empty():
 		destination_directory = get_archive_output_directory()
@@ -399,7 +524,7 @@ func create_logs_archive(output_directory: String = "", log_directory: String = 
 			return ""
 
 	var timestamp := Time.get_datetime_string_from_system().replace(":", "-").replace("T", "_")
-	var archive_path := destination_directory.path_join("runtime_logs_%s.zip" % timestamp)
+	var archive_path := destination_directory.path_join("runtime_logs_%s_%d_%d.zip" % [timestamp,OS.get_process_id(),Time.get_ticks_usec()])
 	var writer := ZIPPacker.new()
 	var open_error := writer.open(archive_path)
 	if open_error != OK:
@@ -424,6 +549,9 @@ func create_logs_archive(output_directory: String = "", log_directory: String = 
 	)
 	if writer.start_file("archive_manifest.txt") == OK:
 		writer.write_file(manifest.to_utf8_buffer())
+		writer.close_file()
+	if not trigger.is_empty() and writer.start_file("archive_trigger.json") == OK:
+		writer.write_file(JSON.stringify(trigger,"\t").to_utf8_buffer())
 		writer.close_file()
 	writer.close()
 	print("Runtime logs archived to: %s" % archive_path)

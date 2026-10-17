@@ -39,6 +39,9 @@ func _process(_delta: float) -> void:
 	_update_follow_position()
 
 func _unhandled_input(event: InputEvent) -> void:
+	if preload("res://Scripts/Player/PlayerControlContext.gd").interface_open(self):
+		cancel_orbit()
+		return
 	if not input_enabled:
 		return
 

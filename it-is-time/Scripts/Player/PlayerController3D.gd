@@ -47,11 +47,13 @@ func _ready() -> void:
 	add_to_group(&"player_controller_3d")
 	_level = get_parent()
 	while _level != get_tree().root and _level.get_parent() != get_tree().root:
+		if _level.has_meta(&"gameplay_level"): break
 		_level = _level.get_parent()
 	wheel.option_chosen.connect(_on_wheel_option)
 	call_deferred("_initialize_controller")
 
 func _initialize_controller() -> void:
+	if not is_inside_tree() or is_queued_for_deletion(): return
 	# Parent _ready has now run, so the character group is registered. A level
 	# may contain characters, but it must never itself become the control target.
 	if initial_character == null and get_parent().is_in_group(&"physical_characters_3d"):
@@ -227,6 +229,7 @@ func _external_interface_open() -> bool:
 	return result
 
 func _perf_impl__external_interface_open() -> bool:
+	if preload("res://Scripts/Player/PlayerControlContext.gd").interface_open(self): return true
 	if get_tree().paused: return true
 	for node: Node in get_tree().get_nodes_in_group(&"ui_interface_2d"):
 		if node != wheel and node is CanvasLayer and node.visible and not node.is_queued_for_deletion(): return true

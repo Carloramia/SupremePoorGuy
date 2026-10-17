@@ -1,0 +1,60 @@
+运行时断点与错误自动导出日志
+
+默认开启。RuntimeConsole 的 Auto Getlogs Enabled 控制开关，Auto Getlogs Cooldown
+控制自动导出的最短间隔，默认为 30 秒。告警不触发，普通打印不触发。
+
+命令（可用 help 查询）：
+autogetlogs status    查看启用状态、冷却时间、编辑器桥接连接状态及最后一个自动导出路径
+autogetlogs off       停止自动导出
+autogetlogs on        启用并立即重新允许一次导出，不必等待上一轮冷却
+getlogs              保留原有手动导出，不受自动导出的冷却影响
+
+输出位置：项目根目录 D:/GameJamWorkspace/ItIsTime/it-is-time。
+文件名 runtime_logs_日期_时间_进程ID_运行微秒.zip，避免同秒导出覆盖此前的压缩包。
+沿用 getlogs 对 user://logs 的打包逻辑，增加 archive_trigger.json：
+runtime_error 包含错误来源、说明及 Logger 捕获的调用栈；
+debugger_break 包含命中断点时的 paused_backtraces。
+
+普通运行时错误通过 Logger 收集，再由 RuntimeConsole 在下一帧导出。
+Logger 回调可能来自工作线程，仅在互斥保护下保存数据，不直接操作场景树或打印。
+编辑器断点通过已启用的 Runtime Log Archive 插件监听 EditorDebuggerSession.breaked，
+向 RuntimeConsole 发送自定义调试消息，在暂停调试循环内同步导出，不要求先继续运行。
+冷却保护也适用于连续命中的断点；手动导出始终可以使用。
+普通 warning 不触发；导出只包含此前已开启的诊断日志，不会自动启用所有追踪命令。
+
+首次应用代码后重新打开 Godot 项目，让新增编辑器插件加载。
+也可在项目设置 > 插件中启用 Runtime Log Archive，再重新运行游戏。
+运行端会主动与编辑器握手；成功时输出：
+[auto_getlogs] editor breakpoint bridge connected
+若运行 3 秒后仍未连接，输出插件未连接的具体提示，避免无提示地等待下一帧。
+每次实际收到断点请求会输出 debugger break received；冷却或关闭时会说明跳过状态。
+编辑器插件仅随 Godot 编辑器工作，导出的游戏继续支持运行时错误自动导出。
+在 RuntimeConsole 初始化前发生的解析/启动错误，以及进程硬崩溃，不保证能够自动导出。
+暂停时错误处理可能尚未把错误正文写入日志，因此独立保存 paused_backtraces 用于定位；
+恢复执行后，错误正文由引擎正常写入运行日志。
+
+验证：Tests/ValidateRuntimeConsole.gd 验证已有命令与手动 ZIP；
+Tests/ValidateAutomaticLogArchives.gd 验证真实失效引用错误、线程错误、忽略告警、
+开关、冷却、唯一文件名及真实远程调试连接下暂停期间的自动 ZIP。
+该测试会故意产生脚本错误、push_error 和 push_warning，检查是否触发对应行为。
+远程调试测试仅使用 127.0.0.1 的临时端口，测试 ZIP 验证后移除。
+
+2026-10-16 修复与补充验证
+SnakeMovementController3D 对 incoming_joint/follow_joint/sway_joint 统一先验证实例再赋值；
+关节 tree_exiting 时清除相关引用和跟随关联，保留原始 rest 姿态和行序，避免重建时
+将当前受伤姿态误当成生成基准。已删除连接不会继续通过路径配对力牵引两端。
+ValidateSnakeBrokenConnections3D 重现 Torso_020 断裂和断尾连带 Broken，覆盖继续运行、
+详细控制台快照、姿态约束、限位恢复、直接删除关节、遗留失效缓存及退出场景。
+原 ValidateSnakeConnectionRecovery3D 回归通过。
+ValidateSnakeMovement3D 的站立、前进、侧向移动、制动、转身、NPC 寻路及断裂/布娃娃
+等回归也通过。本次没有进行长时间多 NPC 混战或性能压力测试。
+新增 ValidateEditorLogArchiveBridge.gd，使用真正的无窗口 Godot 编辑器及正式项目插件
+启动 AutomaticLogArchiveBreak.tscn，确认握手、普通断点和脚本错误断点均在恢复前完成 ZIP。
+测试观察者只负责检查及恢复，不发送任何自动打包请求，覆盖此前模拟调试端未验证的链路。
+观察者会等待编辑器处理栈帧变量后才恢复，以免测试过快继续触发 DAP 栈帧告警。
+模拟断点测试也继续保留，用于验证运行端、线程错误、开关与冷却。
+
+官方接口：
+https://docs.godotengine.org/en/stable/classes/class_logger.html
+https://docs.godotengine.org/en/stable/classes/class_editordebuggersession.html
+https://docs.godotengine.org/en/stable/classes/class_editordebuggerplugin.html

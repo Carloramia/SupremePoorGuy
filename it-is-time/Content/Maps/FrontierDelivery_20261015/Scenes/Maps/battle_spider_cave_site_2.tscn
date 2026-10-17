@@ -1,0 +1,566 @@
+[gd_scene load_steps=22 format=3]
+
+[ext_resource type="Script" path="res://Modules/FrontierDelivery/Scripts/Map/GeneratedMap.gd" id="MapScript"]
+[ext_resource type="FontFile" path="res://Modules/PaperUI/Assets/UI/Fonts/Xiaolai-Regular.ttf" id="MapFont"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/c444f8cb10e52e41bd6f8afd.svg" id="Tex_0"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/e7d739cab1a9dc214a6e832e.png" id="Tex_1"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/ff90ec506af73e568f154784.png" id="Tex_2"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/95be016ab82e0eca2fb2dfb5.svg" id="Tex_3"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/abb79c7b6ca43284e4b8bbc8.svg" id="Tex_4"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/e9e45c44bd0772cb1d39f1ae.png" id="Tex_5"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/d8649aa7c7e0d9503ffa1aa6.svg" id="Tex_6"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/39d273eef361699785d67b72.svg" id="Tex_7"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/31cfc45e968a070d53377c1c.svg" id="Tex_8"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/f9494f0431bec43eb438fb29.svg" id="Tex_9"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/9d72ca3b44ce31a0bd1f997d.svg" id="Tex_10"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/1f24c9537c448baae09b0391.svg" id="Tex_11"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/3cb41752b6c90340ce5e8a32.svg" id="Tex_12"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/09edd12d6f22aa7388b34cf0.svg" id="Tex_13"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/a9aafe2b07e854e0fda017b5.svg" id="Tex_14"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/92aaed1769fec63a66faf006.svg" id="Tex_15"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/77765d0cfcd2122c4b9e0262.svg" id="Tex_16"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/436b45c1b707cb34a1b82b89.svg" id="Tex_17"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/4b400b4970bf97e05c56497f.svg" id="Tex_18"]
+
+[node name="battle_spider_cave_site_2" type="Node2D"]
+script = ExtResource("MapScript")
+map_id = "battle_spider_cave_site_2"
+data_path = "res://Content/Maps/FrontierDelivery_20261015/Data/Maps/battle_spider_cave_site_2.json"
+[node name="Ground" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(18, 0, 9, 15.5884573, -9, 15.5884573, -18, 2.20436424e-15, -9, -15.5884573, 9, -15.5884573)
+color = Color(0.392156863, 0.450980392, 0.37254902, 1)
+z_index = -1000
+[node name="Objects" type="Node2D" parent="."]
+[node name="battle_spider_cave_site_2_object_001" type="Node2D" parent="Objects"]
+position = Vector2(-6.3, -6.84)
+rotation = -0.261475655
+scale = Vector2(1, 1)
+z_index = -20
+metadata/source_id = "battle_spider_cave_site_2_object_001"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_object_001"]
+texture = ExtResource("Tex_0")
+scale = Vector2(0.0276, 0.0276)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_spider_cave_site_2_object_002" type="Node2D" parent="Objects"]
+position = Vector2(6.12, 5.76)
+rotation = -0.0568181833
+scale = Vector2(1, 1)
+z_index = -20
+metadata/source_id = "battle_spider_cave_site_2_object_002"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_object_002"]
+texture = ExtResource("Tex_0")
+scale = Vector2(0.0276, 0.0276)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_spider_cave_site_2_object_003" type="Node2D" parent="Objects"]
+position = Vector2(-8.1, 2.16)
+rotation = 0.100960553
+scale = Vector2(1, 1)
+z_index = -20
+metadata/source_id = "battle_spider_cave_site_2_object_003"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_object_003"]
+texture = ExtResource("Tex_0")
+scale = Vector2(0.0276, 0.0276)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_spider_cave_site_2_object_004" type="Node2D" parent="Objects"]
+position = Vector2(7.2, -4.32)
+rotation = -0.139612157
+scale = Vector2(1, 1)
+z_index = -20
+metadata/source_id = "battle_spider_cave_site_2_object_004"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_object_004"]
+texture = ExtResource("Tex_0")
+scale = Vector2(0.0276, 0.0276)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_spider_cave_site_2_object_005" type="Node2D" parent="Objects"]
+position = Vector2(0.36, 10.44)
+rotation = -0.215402381
+scale = Vector2(1, 1)
+z_index = -20
+metadata/source_id = "battle_spider_cave_site_2_object_005"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_object_005"]
+texture = ExtResource("Tex_0")
+scale = Vector2(0.0276, 0.0276)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_spider_cave_site_2_object_006" type="Node2D" parent="Objects"]
+position = Vector2(-5.46, 5.262)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_spider_cave_site_2_object_006"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_object_006"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.707578158)
+visible = true
+[node name="battle_spider_cave_site_2_object_007" type="Node2D" parent="Objects"]
+position = Vector2(4.439, 8.28)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_spider_cave_site_2_object_007"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_object_007"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.62416603)
+visible = true
+[node name="battle_spider_cave_site_2_object_008" type="Node2D" parent="Objects"]
+position = Vector2(-12.585, 3.554)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_spider_cave_site_2_object_008"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_object_008"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.732799183)
+visible = true
+[node name="battle_spider_cave_site_2_object_009" type="Node2D" parent="Objects"]
+position = Vector2(-7.466, 8.415)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_spider_cave_site_2_object_009"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_object_009"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.555200336)
+visible = true
+[node name="battle_spider_cave_site_2_object_010" type="Node2D" parent="Objects"]
+position = Vector2(2.92, -5.107)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_spider_cave_site_2_object_010"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_object_010"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.620134191)
+visible = true
+[node name="battle_spider_cave_site_2_object_011" type="Node2D" parent="Objects"]
+position = Vector2(12.998, -5.952)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_spider_cave_site_2_object_011"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_object_011"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.682288696)
+visible = true
+[node name="battle_spider_cave_site_2_object_012" type="Node2D" parent="Objects"]
+position = Vector2(0.121, 8.437)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_spider_cave_site_2_object_012"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_object_012"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.706843357)
+visible = true
+[node name="battle_spider_cave_site_2_object_013" type="Node2D" parent="Objects"]
+position = Vector2(-6.339, 3.878)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_spider_cave_site_2_object_013"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_object_013"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.765987298)
+visible = true
+[node name="battle_spider_cave_site_2_object_014" type="Node2D" parent="Objects"]
+position = Vector2(-2.86, 10.093)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_spider_cave_site_2_object_014"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_object_014"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.603411284)
+visible = true
+[node name="battle_spider_cave_site_2_object_015" type="Node2D" parent="Objects"]
+position = Vector2(6.312, 6.068)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_spider_cave_site_2_object_015"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_object_015"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.587617221)
+visible = true
+[node name="battle_spider_cave_site_2_object_016" type="Node2D" parent="Objects"]
+position = Vector2(6.924, -5.056)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_spider_cave_site_2_object_016"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_object_016"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.765438747)
+visible = true
+[node name="battle_spider_cave_site_2_object_017" type="Node2D" parent="Objects"]
+position = Vector2(-11.065, 0.367)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_spider_cave_site_2_object_017"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_object_017"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.667491851)
+visible = true
+[node name="battle_spider_cave_site_2_object_018" type="Node2D" parent="Objects"]
+position = Vector2(6.539, 9.699)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_spider_cave_site_2_object_018"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_object_018"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.772965789)
+visible = true
+[node name="battle_spider_cave_site_2_object_019" type="Node2D" parent="Objects"]
+position = Vector2(1.433, 5.852)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_spider_cave_site_2_object_019"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_object_019"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.746045065)
+visible = true
+[node name="battle_spider_cave_site_2_object_020" type="Node2D" parent="Objects"]
+position = Vector2(5.876, -2.869)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_spider_cave_site_2_object_020"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_object_020"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.588517208)
+visible = true
+[node name="battle_spider_cave_site_2_object_021" type="Node2D" parent="Objects"]
+position = Vector2(-1.758, 10.081)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_spider_cave_site_2_object_021"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_object_021"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.756860007)
+visible = true
+[node name="battle_spider_cave_site_2_object_022" type="Node2D" parent="Objects"]
+position = Vector2(7.684, -0.787)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_spider_cave_site_2_object_022"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_object_022"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.764327171)
+visible = true
+[node name="battle_spider_cave_site_2_object_023" type="Node2D" parent="Objects"]
+position = Vector2(7.751, -7.202)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_spider_cave_site_2_object_023"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_object_023"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.786181712)
+visible = true
+[node name="battle_spider_cave_site_2_object_024" type="Node2D" parent="Objects"]
+position = Vector2(-8.967, 9.073)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_spider_cave_site_2_object_024"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_object_024"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.756544235)
+visible = true
+[node name="battle_spider_cave_site_2_object_025" type="Node2D" parent="Objects"]
+position = Vector2(1.508, -3.712)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_spider_cave_site_2_object_025"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_object_025"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.772365556)
+visible = true
+[node name="battle_spider_cave_site_2_object_026" type="Node2D" parent="Objects"]
+position = Vector2(-8.327, 8.506)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -15
+metadata/source_id = "battle_spider_cave_site_2_object_026"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_object_026"]
+texture = ExtResource("Tex_1")
+scale = Vector2(0.0112903226, 0.0112903226)
+modulate = Color(1, 1, 1, 0.722805043)
+visible = true
+[node name="battle_spider_cave_site_2_object_041" type="Node2D" parent="Objects"]
+position = Vector2(-11.27973, 2.34054)
+rotation = 4.50779241
+scale = Vector2(1, 1)
+z_index = 0
+metadata/source_id = "battle_spider_cave_site_2_object_041"
+[node name="battle_spider_cave_site_2_object_042" type="Node2D" parent="Objects"]
+position = Vector2(0, 0)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -1
+metadata/source_id = "battle_spider_cave_site_2_object_042"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_object_042"]
+texture = ExtResource("Tex_2")
+scale = Vector2(0.0110169492, 0.0110169492)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="Interaction" type="Area2D" parent="Objects/battle_spider_cave_site_2_object_042"]
+collision_layer = 2
+collision_mask = 0
+[node name="Shape" type="CollisionPolygon2D" parent="Objects/battle_spider_cave_site_2_object_042/Interaction"]
+position = Vector2(0, 0)
+rotation = 0
+polygon = PackedVector2Array(2.2, 0, 2.15772762, 0.331653547, 2.03253497, 0.650561835, 1.82923315, 0.944469396, 1.55563492, 1.20208153, 1.22225451, 1.41349834, 0.841903551, 1.57059521, 0.429198708, 1.66733498, 1.34711148e-16, 1.7, -0.429198708, 1.66733498, -0.841903551, 1.57059521, -1.22225451, 1.41349834, -1.55563492, 1.20208153, -1.82923315, 0.944469396, -2.03253497, 0.650561835, -2.15772762, 0.331653547, -2.2, 2.08189956e-16, -2.15772762, -0.331653547, -2.03253497, -0.650561835, -1.82923315, -0.944469396, -1.55563492, -1.20208153, -1.22225451, -1.41349834, -0.841903551, -1.57059521, -0.429198708, -1.66733498, -4.04133444e-16, -1.7, 0.429198708, -1.66733498, 0.841903551, -1.57059521, 1.22225451, -1.41349834, 1.55563492, -1.20208153, 1.82923315, -0.944469396, 2.03253497, -0.650561835, 2.15772762, -0.331653547)
+[node name="battle_spider_cave_site_2_object_043" type="Node2D" parent="Objects"]
+position = Vector2(1.2, -10.8)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 5
+metadata/source_id = "battle_spider_cave_site_2_object_043"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_object_043"]
+texture = ExtResource("Tex_3")
+scale = Vector2(0.025, 0.025)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_spider_cave_site_2_object_044" type="Node2D" parent="Objects"]
+position = Vector2(1.2, -9.72)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 6
+metadata/source_id = "battle_spider_cave_site_2_object_044"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_object_044"]
+texture = ExtResource("Tex_4")
+scale = Vector2(0.03203125, 0.02890625)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_spider_cave_site_2_object_045" type="Node2D" parent="Objects"]
+position = Vector2(-4, -4)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 8
+metadata/source_id = "battle_spider_cave_site_2_object_045"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_object_045"]
+texture = ExtResource("Tex_5")
+scale = Vector2(0.0122222222, 0.0122222222)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="Body" type="StaticBody2D" parent="Objects/battle_spider_cave_site_2_object_045"]
+collision_layer = 1
+collision_mask = 0
+[node name="Shape" type="CollisionPolygon2D" parent="Objects/battle_spider_cave_site_2_object_045/Body"]
+position = Vector2(0, 0)
+rotation = 0
+polygon = PackedVector2Array(1.056, 0, 1.03570926, 0.170606487, 0.975616786, 0.334656662, 0.878031911, 0.485846169, 0.746704761, 0.61836488, 0.586682166, 0.727120176, 0.404113705, 0.807932651, 0.20601538, 0.857696728, 6.4661351e-17, 0.8745, -0.20601538, 0.857696728, -0.404113705, 0.807932651, -0.586682166, 0.727120176, -0.746704761, 0.61836488, -0.878031911, 0.485846169, -0.975616786, 0.334656662, -1.03570926, 0.170606487, -1.056, 1.07095363e-16, -1.03570926, -0.170606487, -0.975616786, -0.334656662, -0.878031911, -0.485846169, -0.746704761, -0.61836488, -0.586682166, -0.727120176, -0.404113705, -0.807932651, -0.20601538, -0.857696728, -1.93984053e-16, -0.8745, 0.20601538, -0.857696728, 0.404113705, -0.807932651, 0.586682166, -0.727120176, 0.746704761, -0.61836488, 0.878031911, -0.485846169, 0.975616786, -0.334656662, 1.03570926, -0.170606487)
+[node name="battle_spider_cave_site_2_object_046" type="Node2D" parent="Objects"]
+position = Vector2(6, 4)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 8
+metadata/source_id = "battle_spider_cave_site_2_object_046"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_object_046"]
+texture = ExtResource("Tex_5")
+scale = Vector2(0.01, 0.01)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="Body" type="StaticBody2D" parent="Objects/battle_spider_cave_site_2_object_046"]
+collision_layer = 1
+collision_mask = 0
+[node name="Shape" type="CollisionPolygon2D" parent="Objects/battle_spider_cave_site_2_object_046/Body"]
+position = Vector2(0, 0)
+rotation = 0
+polygon = PackedVector2Array(0.864, 0, 0.847398482, 0.139587125, 0.798231916, 0.273809996, 0.718389745, 0.397510502, 0.610940259, 0.505934902, 0.480012681, 0.594916508, 0.330638486, 0.661035806, 0.168558038, 0.701751868, 5.29047417e-17, 0.7155, -0.168558038, 0.701751868, -0.330638486, 0.661035806, -0.480012681, 0.594916508, -0.610940259, 0.505934902, -0.718389745, 0.397510502, -0.798231916, 0.273809996, -0.847398482, 0.139587125, -0.864, 8.76234785e-17, -0.847398482, -0.139587125, -0.798231916, -0.273809996, -0.718389745, -0.397510502, -0.610940259, -0.505934902, -0.480012681, -0.594916508, -0.330638486, -0.661035806, -0.168558038, -0.701751868, -1.58714225e-16, -0.7155, 0.168558038, -0.701751868, 0.330638486, -0.661035806, 0.480012681, -0.594916508, 0.610940259, -0.505934902, 0.718389745, -0.397510502, 0.798231916, -0.273809996, 0.847398482, -0.139587125)
+[node name="battle_spider_cave_site_2_object_047" type="Node2D" parent="Objects"]
+position = Vector2(-7, -1)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -2
+metadata/source_id = "battle_spider_cave_site_2_object_047"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_object_047"]
+texture = ExtResource("Tex_4")
+scale = Vector2(0.03671875, 0.03359375)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_spider_cave_site_2_object_048" type="Node2D" parent="Objects"]
+position = Vector2(8, 2)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -2
+metadata/source_id = "battle_spider_cave_site_2_object_048"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_object_048"]
+texture = ExtResource("Tex_4")
+scale = Vector2(0.03359375, 0.0296875)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_spider_cave_site_2_object_049" type="Node2D" parent="Objects"]
+position = Vector2(1.8, 5)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = -2
+metadata/source_id = "battle_spider_cave_site_2_object_049"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_object_049"]
+texture = ExtResource("Tex_6")
+scale = Vector2(0.0328125, 0.021875)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_spider_cave_site_2_biome_edge_01" type="Node2D" parent="Objects"]
+position = Vector2(15.4432736, 2.76440909)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 12
+metadata/source_id = "battle_spider_cave_site_2_biome_edge_01"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_biome_edge_01"]
+texture = ExtResource("Tex_7")
+scale = Vector2(0.03125, 0.03125)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_spider_cave_site_2_biome_edge_02" type="Node2D" parent="Objects"]
+position = Vector2(11.3548907, 9.71594533)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 12
+metadata/source_id = "battle_spider_cave_site_2_biome_edge_02"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_biome_edge_02"]
+texture = ExtResource("Tex_8")
+scale = Vector2(0.03125, 0.03125)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_spider_cave_site_2_biome_edge_03" type="Node2D" parent="Objects"]
+position = Vector2(4.379176, 14.563027)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 12
+metadata/source_id = "battle_spider_cave_site_2_biome_edge_03"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_biome_edge_03"]
+texture = ExtResource("Tex_9")
+scale = Vector2(0.03125, 0.03125)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_spider_cave_site_2_biome_edge_04" type="Node2D" parent="Objects"]
+position = Vector2(-6.80047625, 14.69232)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 12
+metadata/source_id = "battle_spider_cave_site_2_biome_edge_04"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_biome_edge_04"]
+texture = ExtResource("Tex_10")
+scale = Vector2(0.03125, 0.03125)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_spider_cave_site_2_biome_edge_05" type="Node2D" parent="Objects"]
+position = Vector2(-11.9722608, 9.51161083)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 12
+metadata/source_id = "battle_spider_cave_site_2_biome_edge_05"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_biome_edge_05"]
+texture = ExtResource("Tex_11")
+scale = Vector2(0.03125, 0.03125)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_spider_cave_site_2_biome_edge_06" type="Node2D" parent="Objects"]
+position = Vector2(-15.1148691, 2.92240727)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 12
+metadata/source_id = "battle_spider_cave_site_2_biome_edge_06"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_biome_edge_06"]
+texture = ExtResource("Tex_12")
+scale = Vector2(0.03125, 0.03125)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_spider_cave_site_2_biome_edge_07" type="Node2D" parent="Objects"]
+position = Vector2(-13.88642, -4.49008857)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 12
+metadata/source_id = "battle_spider_cave_site_2_biome_edge_07"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_biome_edge_07"]
+texture = ExtResource("Tex_13")
+scale = Vector2(0.03125, 0.03125)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_spider_cave_site_2_biome_edge_08" type="Node2D" parent="Objects"]
+position = Vector2(-9.883732, -12.87702)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 12
+metadata/source_id = "battle_spider_cave_site_2_biome_edge_08"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_biome_edge_08"]
+texture = ExtResource("Tex_14")
+scale = Vector2(0.03125, 0.03125)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_spider_cave_site_2_biome_edge_09" type="Node2D" parent="Objects"]
+position = Vector2(-2.44682333, -14.3418083)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 12
+metadata/source_id = "battle_spider_cave_site_2_biome_edge_09"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_biome_edge_09"]
+texture = ExtResource("Tex_15")
+scale = Vector2(0.03125, 0.03125)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_spider_cave_site_2_biome_edge_10" type="Node2D" parent="Objects"]
+position = Vector2(4.20908133, -14.404758)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 12
+metadata/source_id = "battle_spider_cave_site_2_biome_edge_10"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_biome_edge_10"]
+texture = ExtResource("Tex_16")
+scale = Vector2(0.03125, 0.03125)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_spider_cave_site_2_biome_edge_11" type="Node2D" parent="Objects"]
+position = Vector2(11.507064, -8.883646)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 12
+metadata/source_id = "battle_spider_cave_site_2_biome_edge_11"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_biome_edge_11"]
+texture = ExtResource("Tex_17")
+scale = Vector2(0.03125, 0.03125)
+modulate = Color(1, 1, 1, 1)
+visible = true
+[node name="battle_spider_cave_site_2_biome_edge_12" type="Node2D" parent="Objects"]
+position = Vector2(13.8684873, -5.00346133)
+rotation = 0
+scale = Vector2(1, 1)
+z_index = 12
+metadata/source_id = "battle_spider_cave_site_2_biome_edge_12"
+[node name="Visual" type="Sprite2D" parent="Objects/battle_spider_cave_site_2_biome_edge_12"]
+texture = ExtResource("Tex_18")
+scale = Vector2(0.03125, 0.03125)
+modulate = Color(1, 1, 1, 1)
+visible = true

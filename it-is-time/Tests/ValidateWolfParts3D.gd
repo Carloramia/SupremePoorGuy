@@ -38,7 +38,7 @@ func run() -> void:
 		assert(part.tags.size() == record.tags.size())
 		for tag: int in record.tags: assert(tag in part.tags)
 		var initial := bounds(shape)
-		assert(is_equal_approx(initial.size.z, 0.08))
+		assert(is_equal_approx(initial.size.z, 0.08 * 2.0))
 		var second := scene.instantiate() as PhysicalBodyPart3D
 		second.freeze = true
 		root.add_child(second)
@@ -47,9 +47,9 @@ func run() -> void:
 		assert(second.get_node("CollisionShape3D").shape != shape)
 		part.paper_volume_thickness = 0.16
 		var changed := bounds(shape)
-		assert(is_equal_approx(changed.size.z, 0.16))
+		assert(is_equal_approx(changed.size.z, 0.16 * 2.0))
 		assert(is_equal_approx(changed.size.x, initial.size.x) and is_equal_approx(changed.size.y, initial.size.y))
-		assert(is_equal_approx(bounds(second.get_node("CollisionShape3D").shape).size.z, 0.08))
+		assert(is_equal_approx(bounds(second.get_node("CollisionShape3D").shape).size.z, 0.08 * 2.0))
 		part.queue_free()
 		second.queue_free()
 		await process_frame

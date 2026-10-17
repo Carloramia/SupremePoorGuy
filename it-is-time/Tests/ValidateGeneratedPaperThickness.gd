@@ -27,6 +27,10 @@ func run() -> void:
 					part.paper_volume_thickness = thickness
 					var actual := GEOMETRY.fit(part, Vector3(0.6, 0.8, 0.08) * overall, rule, role, 0.12 * overall)
 					assert(is_equal_approx(actual.size.z, 0.12 * overall), "Final depth must equal Part Width * Overall Scale regardless of authored thickness or Size Multiplier")
+					assert(is_equal_approx(GEOMETRY.bounds(part).size.z, actual.size.z * 2.0), "Collider must be twice the visual depth")
+					var volume := part.get_node("Model/PaperVolume") as MeshInstance3D
+					var visual_bounds: AABB = part.get_node("Model").transform * volume.transform * volume.get_aabb()
+					assert(is_equal_approx(visual_bounds.size.z, actual.size.z), "Padding must not change visual thickness")
 					if thickness != 0.08:
 						assert(Vector2(actual.size.x,actual.size.y).is_equal_approx(Vector2(previous.size.x,previous.size.y)), "Depth changed front-face size")
 						assert(Vector2(actual.position.x,actual.position.y).is_equal_approx(Vector2(previous.position.x,previous.position.y)), "Depth changed front-face position")
@@ -53,7 +57,7 @@ func run() -> void:
 	var stage := actor._instantiate_blueprint({"parts":parts,"connections":[],"overall_scale":2.0,"paper_depth":0.09*2.0,"manual_layout":true},Transform3D.IDENTITY)
 	assert(stage != null)
 	var body := stage.get_node("Foot") as PhysicalBodyPart3D
-	assert(is_equal_approx(GEOMETRY.bounds(body).size.z,0.18))
+	assert(is_equal_approx(GEOMETRY.bounds(body).size.z,0.36))
 	assert(is_equal_approx(body.mass,GEOMETRY.bounds(body).size.x*GEOMETRY.bounds(body).size.y*0.18))
 	stage.free()
 	actor.free()
@@ -70,7 +74,7 @@ func run() -> void:
 		for node: Node in npc.get_node("GeneratedParts").get_children():
 			var part := node as PhysicalBodyPart3D
 			if part == null or not part.paper_volume_enabled: continue
-			assert(is_equal_approx(GEOMETRY.bounds(part).size.z,0.11*overall),"Real generated parts have unequal depth: "+str(part.name))
+			assert(is_equal_approx(GEOMETRY.bounds(part).size.z,0.22*overall),"Real generated parts have unequal padded depth: "+str(part.name))
 	npc.free()
 	print("PAPER_THICKNESS_VALIDATION_PASSED cases=%d" % checks)
 	quit()

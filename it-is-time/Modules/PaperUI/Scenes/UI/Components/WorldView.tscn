@@ -1,0 +1,91 @@
+[gd_scene load_steps=5 format=3]
+[ext_resource type="Script" path="res://Modules/PaperUI/Scripts/UI/WorldView.gd" id="Script"]
+[ext_resource type="PackedScene" path="res://Modules/PaperUI/Scenes/UI/Components/SummonBookButton.tscn" id="Book"]
+[ext_resource type="PackedScene" path="res://Modules/PaperUI/Scenes/UI/Components/ActionButton.tscn" id="Button"]
+[ext_resource type="PackedScene" path="res://Modules/PaperUI/Scenes/UI/Components/LocationHint.tscn" id="Hint"]
+[node name="WorldView" type="Control"]
+clip_contents = true
+custom_minimum_size = Vector2(500, 350)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("Script")
+[node name="Backdrop" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = -4.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+[node name="Grassland" parent="." instance=ExtResource("Button")]
+layout_mode = 1
+anchor_left = 0.25
+anchor_top = 0.61
+anchor_right = 0.25
+anchor_bottom = 0.61
+offset_left = -75.0
+offset_top = -23.0
+offset_right = 75.0
+offset_bottom = 23.0
+text = "⚔ 荒原兽群"
+[node name="Forest" parent="." instance=ExtResource("Button")]
+layout_mode = 1
+anchor_left = 0.62
+anchor_top = 0.3
+anchor_right = 0.62
+anchor_bottom = 0.3
+offset_left = -75.0
+offset_top = -23.0
+offset_right = 75.0
+offset_bottom = 23.0
+text = "⚔ 蛛树守卫"
+[node name="Desert" parent="." instance=ExtResource("Button")]
+layout_mode = 1
+anchor_left = 0.8
+anchor_top = 0.67
+anchor_right = 0.8
+anchor_bottom = 0.67
+offset_left = -75.0
+offset_top = -23.0
+offset_right = 75.0
+offset_bottom = 23.0
+text = "⚔ 沙丘遗迹"
+[node name="Traveler" parent="." instance=ExtResource("Button")]
+layout_mode = 1
+anchor_left = 0.37
+anchor_top = 0.26
+anchor_right = 0.37
+anchor_bottom = 0.26
+offset_left = -75.0
+offset_top = -23.0
+offset_right = 75.0
+offset_bottom = 23.0
+text = "◇ 旅人手记"
+[node name="SummonBookButton" parent="." instance=ExtResource("Book")]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -112.0
+offset_top = -110.0
+offset_right = -22.0
+offset_bottom = -22.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="LocationHint" parent="." instance=ExtResource("Hint")]

@@ -6,19 +6,46 @@ class CountedMovement extends "res://Scripts/Creatures/SnakeMovementController3D
 		anchor_rebuilds += 1
 		return super._update_anchor()
 
+class MoveCommand extends Node:
+	func get_movement_direction() -> Vector3: return Vector3.RIGHT
+	func get_generated_facing_direction(_delta: float) -> Vector3: return Vector3.RIGHT
+
 func run() -> void:
-	var level: Node3D = load("res://Scenes/Levels/TestLevel.tscn").instantiate()
-	var movement: Node3D = level.get_node("GenerateSnakeNPC/SnakeMovementController3D")
+	# Authoring TestLevel no longer contains this matchup; keep the regression independent.
+	var level := Node3D.new()
+	var floor_body := StaticBody3D.new()
+	var collider := CollisionShape3D.new()
+	var box := BoxShape3D.new()
+	box.size = Vector3(2000,1,2000)
+	collider.shape = box
+	floor_body.position.y = -0.5
+	floor_body.add_child(collider)
+	level.add_child(floor_body)
+	var npc := NPC.instantiate()
+	enable_attacks(npc)
+	npc.generate_on_ready = false
+	var movement: Node3D = npc.get_node("SnakeMovementController3D")
 	movement.set_script(CountedMovement)
+	level.add_child(npc)
 	root.add_child(level)
 	current_scene = level
-	for tick: int in 150: await physics_frame
-	var npc: Node3D = level.get_node("GenerateSnakeNPC")
 	var ai: Node = npc.get_node("NPCStateMachine3D")
 	ai.set_physics_process(false)
-	level.get_node("CharacterTestNPC/NPCStateMachine3D").set_physics_process(false)
+	var command := MoveCommand.new()
+	level.add_child(command)
+	movement.command_source = command
+	for tick: int in 150: await physics_frame
+	movement.command_source = null
 	var attack: Node3D = npc.get_node("SnakeBiteAttackController3D")
-	var target := level.get_node("CharacterTestNPC/Torso") as PhysicalBodyPart3D
+	var victim := CHARACTER.instantiate()
+	victim.faction_id = 2
+	var target := PART.instantiate() as PhysicalBodyPart3D
+	target.tags.assign([PhysicalBodyPart3D.BodyPartTag.Torso,PhysicalBodyPart3D.BodyPartTag.Head])
+	target.freeze = true
+	target.position = Vector3(200,2,0)
+	victim.add_child(target)
+	level.add_child(victim)
+	await physics_frame
 	check(movement._path_ready,"Regression measures planning during actual S-route locomotion")
 	attack.set_control_performance_tracking_enabled(true)
 	attack.consume_control_performance_stats()

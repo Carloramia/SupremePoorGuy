@@ -4,6 +4,10 @@ extends "res://Scripts/Creatures/CreatureAttackData.gd"
 @export_group("Preparation")
 @export_range(0.1, 3.0, 0.05) var preparation_time: float = 0.7
 @export_range(0.0, 3.0, 0.05) var preparation_extra_wait: float = 1.0
+## Pre-commit facing update interval; preparation and lunge use a single locked world point.
+@export_range(0.05, 0.5, 0.01) var positioning_update_interval: float = 0.1
+## Legacy serialized value; prediction misses no longer cancel an accepted attack.
+@export_storage var prediction_retry_grace: float = 0.2
 ## Fractions of the raised chain length, measured from the authored pose.
 @export_range(0.0, 0.3, 0.01) var lift_ratio: float = 0.06
 @export_range(0.0, 0.3, 0.01) var retract_ratio: float = 0.03
@@ -50,11 +54,12 @@ func _default_cooldown() -> float: return 2.8
 func is_valid() -> bool:
 	for value: float in [preparation_time, reference_chain_length, burst_speed, lunge_time,
 		maximum_acceleration, burst_response_time, maximum_pose_acceleration, maximum_angular_acceleration, angular_strength, angular_damping,
-		jaw_close_time, recovery_time, impulse_multiplier]:
+		jaw_close_time, recovery_time, impulse_multiplier, positioning_update_interval]:
 		if not is_finite(value) or value <= 0.0: return false
 	for value: float in [cooldown, preparation_extra_wait, lunge_extra_wait, recovery_extra_wait, lift_ratio, retract_ratio, extension_ratio]:
 		if not is_finite(value) or value < 0.0: return false
-	return is_finite(head_extension_speed_multiplier) and head_extension_speed_multiplier >= 1.0 and head_extension_speed_multiplier <= 3.0 \
+	return positioning_update_interval >= 0.05 and positioning_update_interval <= 0.5 \
+		and is_finite(head_extension_speed_multiplier) and head_extension_speed_multiplier >= 1.0 and head_extension_speed_multiplier <= 3.0 \
 		and is_finite(preserved_root_ratio) and preserved_root_ratio >= 0.0 and preserved_root_ratio <= 0.6 \
 		and is_finite(jaw_open_degrees) and jaw_open_degrees > 0.0 and jaw_open_degrees <= 75.0 \
 		and is_finite(aim_tolerance_degrees) and aim_tolerance_degrees > 0.0 and aim_tolerance_degrees <= 45.0 \

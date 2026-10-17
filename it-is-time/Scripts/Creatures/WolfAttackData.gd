@@ -46,11 +46,16 @@ extends "res://Scripts/Creatures/CreatureAttackData.gd"
 @export_range(0.0, 75.0, 0.5) var jaw_open_degrees := 30.0
 @export_range(0.01, 2.0, 0.01) var jaw_open_time := 0.2
 @export_range(0.01, 2.0, 0.01) var jaw_close_time := 0.12
+## Allow the physical jaw to catch up without extending a swing indefinitely.
+@export_range(0.0, 0.15, 0.01) var jaw_close_extra_wait := 0.15
+@export_range(1.0, 10.0, 0.5) var jaw_close_tolerance_degrees := 5.0
 @export_range(0.0, 500.0, 1.0) var angular_strength := 160.0
 @export_range(0.0, 100.0, 1.0) var angular_damping := 20.0
 @export_range(0.0, 500.0, 1.0) var maximum_angular_acceleration := 180.0
 @export_range(0.0, 1000.0, 1.0, "or_greater") var maximum_torque := 250.0
 @export_group("Bite Body Motion")
+## The existing simultaneous foot placement can take up to 1.5 seconds before charge.
+@export_range(0.0, 1.5, 0.05) var bite_plant_prediction_time := 1.5
 @export_range(0.05, 10.0, 0.01) var bite_plant_timeout := 4.0
 ## Horizontal head-to-target distance, retreat distance and duration before planting.
 @export_range(0.0, 1.0, 0.01) var bite_close_distance_ratio := 0.25

@@ -50,7 +50,7 @@ func run() -> void:
 		if attack._phase == &"lunging" and not launched:
 			launched = true
 			var plan: Dictionary = attack._plan
-			check(is_equal_approx(plan.contact_time,plan.duration),"Launch prediction uses the full remaining downstroke, with no elapsed preparation")
+			check(plan.target_locked and is_equal_approx(plan.contact_time,plan.preparation_time+plan.duration),"Launch retains the forecast committed before preparation")
 			check(plan.target_supported and is_zero_approx(plan.target_velocity.y),"Grounded gait bobbing does not extrapolate the torso vertically")
 			check(Vector3(plan.pose_error).length() < attack._head_size.length(),"Constrained IK reaches the predicted target rather than stopping metres above it")
 			print("SNAKE_INTERCEPT_LAUNCH frame=",tick," target_velocity=",plan.target_velocity," contact_time=",plan.contact_time," pose_error=",plan.pose_error)

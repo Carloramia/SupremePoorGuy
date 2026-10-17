@@ -1,6 +1,7 @@
 extends "res://Tests/ValidateSnakeAttacks3D.gd"
 
 func run() -> void:
+	root.get_node("RuntimeConsole").auto_getlogs_enabled = false
 	var level := Node3D.new()
 	root.add_child(level)
 	var floor_body := StaticBody3D.new()
@@ -63,6 +64,9 @@ func measure_fixed_bite(level: Node3D, size: float) -> void:
 				fixed_reference = movement.get_pose_reference()
 				for row: Dictionary in movement._belly: positions[row.body] = row.body.global_position
 			check(fixed_reference.is_equal_approx(movement.get_pose_reference()),"Attack reference remains fixed in world space")
+			check(fixed_reference.is_equal_approx(attack._plan.reference),"Committed support uses the exact reference validated by prediction")
+			check(Transform3D(attack._plan.root_pose).is_equal_approx(movement.get_attack_root_pose(attack._root_rest)),"Prediction and physical control share the locked root pose")
+			check(attack._plan.target_locked,"Preparation locks its target without resetting the phase clock")
 			check(movement._attack_velocity.is_zero_approx() and is_zero_approx(movement._turn_rate),"Locked support receives no translation or whole-body turn command")
 			for row: Dictionary in movement._belly:
 				var offset: Vector3 = row.body.global_position-Vector3(positions[row.body])
@@ -80,6 +84,7 @@ func measure_fixed_bite(level: Node3D, size: float) -> void:
 	check(maximum_ground_displacement<0.15*size,"Ground blocks remain near their captured world positions")
 	check(maximum_head_slide<0.65*size,"Head stays connected to its raised chain")
 	check(attack._last_reason == &"completed","Fixed-root bite completes verified recovery")
+	check(attack._attack_result == &"hit" and attack._recovery_result == &"completed","Successful recovery preserves the actual attack result")
 	print("SNAKE_FIXED_SUPPORT_RESULT scale=",size," max_ground_displacement=",maximum_ground_displacement," head_slide=",maximum_head_slide," head_speed=",maximum_head_speed," phases=",phases," reason=",attack._last_reason)
 	var near := target.global_position
 	target.global_position += Vector3.RIGHT*100.0*size
@@ -131,7 +136,23 @@ func validate_safety(level: Node3D, floor_body: StaticBody3D) -> void:
 	attack._velocity_frame = -1
 	attack._cached_plan = {}
 	await physics_frame
+	var earlier: Dictionary = attack.predict_npc_attack(attack.ACTION,target,0.0,16,0.1,true,0.2,attack._support_snapshot(0.2))
+	var later: Dictionary = attack.predict_npc_attack(attack.ACTION,target,0.0,16,0.1,true,0.0,attack._support_snapshot(0.0))
+	check(is_equal_approx(earlier.plan.preparation_time,0.2) and is_zero_approx(later.plan.preparation_time),"Same-frame prediction cache distinguishes remaining preparation time")
+	attack._target = target
+	target.linear_velocity = Vector3.RIGHT*50.0
+	attack._velocity_target = null
+	var envelope: Dictionary = attack._revalidate_plan(0.0,attack._support_snapshot(0.0))
+	check(envelope.get("hit",false) and envelope.reason == &"current_reachable_envelope" and envelope.confidence < 0.85,"Failed future estimates may use a reachable current envelope before commitment")
+	check(Vector3(envelope.plan.target_velocity).is_zero_approx(),"Current-envelope sweep and endpoint use the same stationary target reference")
+	var reachable_position := target.global_position
+	target.global_position.x += 500.0
+	check(not attack._revalidate_plan(0.0,attack._support_snapshot(0.0)).get("hit",false),"Current-envelope fallback never admits a physically unreachable target")
+	target.global_position = reachable_position
+	target.linear_velocity = Vector3.ZERO
+	attack._velocity_target = null
 	check(attack.try_start_npc_attack(attack.ACTION,target,0.0),"Start lateral escape fixture")
+	if not attack.is_npc_attack_active(): print("SNAKE_REJOIN_DIAGNOSTIC ",movement.get_snake_motion_diagnostics(false))
 	for tick: int in 300:
 		await physics_frame
 		if attack._phase == &"preparing": break
@@ -139,7 +160,13 @@ func validate_safety(level: Node3D, floor_body: StaticBody3D) -> void:
 	target.global_position.z += 20.0
 	await physics_frame
 	await physics_frame
-	check(attack._phase == &"recovering" and attack._last_reason == &"target_left_attack_plane","Off-plane target triggers recovery without turning the supporting belly")
+	check(attack._phase == &"preparing","Brief lateral departures get a bounded preparation confirmation window")
+	var locked_aim: Vector3 = attack._plan.aim
+	for tick: int in 300:
+		await physics_frame
+		check(Vector3(attack._plan.aim).is_equal_approx(locked_aim),"Escaping target cannot change the committed world point")
+		if attack._phase != &"preparing": break
+	check(attack._phase == &"lunging","Off-plane target does not cancel a committed lunge")
 	attack.cancel_action()
 	for tick: int in 180: await physics_frame
 	target.global_position = attack.head.to_global(attack._mouth_offset())+Vector3.RIGHT*6.0
@@ -157,6 +184,21 @@ func validate_safety(level: Node3D, floor_body: StaticBody3D) -> void:
 	check(not attack.is_npc_attack_active() and attack._last_reason == &"ground_support_lost","Loss of all supporting ground releases attack control")
 	check(not movement.is_attack_support_locked() and movement._attack_owner == null and attack._weapon == null,"Ground loss cleans the lock and damage volume")
 	check(attack._mouth_collision_pairs.is_empty() and attack._joint_state.is_empty(),"Interruption restores collision exceptions and Jaw limits")
+	attack._cooldown = 0.0
+	target.global_position = attack.head.to_global(attack._mouth_offset())+Vector3.RIGHT*3.0
+	var ai: Node = npc.get_node("NPCStateMachine3D")
+	ai._target = target
+	ai._enemy = victim
+	var options: Array = ai._available_attacks()
+	check(not options.is_empty(),"Intact but airborne Snake retains its attack capability")
+	var unsupported: Dictionary = ai._predict_attack(options[0],target)
+	check(unsupported.reason == &"no_ground_support","Only original ground belly contact can authorize preparation")
+	check(not ai._plan_attack_distance(3.0,options) and not ai._snake_reposition_pending,"Temporary support loss waits instead of selecting repeated attack stations")
+	attack._links[0].joint.queue_free()
+	check(not attack.has_npc_attack(attack.ACTION),"A queued broken chain cannot reserve NPC attack distance")
+	check(ai._available_attacks().is_empty(),"Broken attack chains leave NPC attack-distance planning")
+	await physics_frame
+	check(not attack.has_npc_attack(attack.ACTION) and attack._chain_fault() != &"","Freed chain references remain safely unavailable")
 	print("SNAKE_FIXED_SUPPORT_SAFETY_RESULT slow_contact_time=",slow.contact_time," end_reason=",attack._last_reason)
 	npc.free()
 	victim.free()

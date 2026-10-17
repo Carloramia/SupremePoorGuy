@@ -74,7 +74,8 @@ func run() -> void:
 		if frame == 120: command.direction = Vector3.RIGHT
 		if frame == 210:
 			# Real NPC selector, real prediction, real solver; approach travel is supplied by fixture.
-			var displacement: Vector3 = movement._torso.global_position+Vector3.RIGHT*maxf(16.0,attacks.get_npc_attack_maximum_range(&"wolf_bite",target)+6.0)-target.global_position
+			var distance: float = maxf(attacks.get_npc_attack_minimum_range(&"wolf_pounce"),attacks.get_npc_attack_maximum_range(&"wolf_bite",target))+6.0
+			var displacement: Vector3 = movement._torso.global_position+Vector3.RIGHT*distance-target.global_position
 			for body: RigidBody3D in enemy._get_physical_body_parts(): body.global_position += displacement
 			ai._enemy = enemy
 			ai._target = target
@@ -140,6 +141,9 @@ func run() -> void:
 	var damage := 0.0
 	for body: RigidBody3D in enemy._get_physical_body_parts(): damage += 100000.0-body.current_hp
 	print("WOLF_ATTACK_PHYSICS started=",started," finished=",finished," lift=",maximum_lift," bite=",combo_bite," bite_stages=",bite_stages," damage=",damage," spacing_travel=",spacing_travel," bite_lunge_travel=",bite_lunge_travel," burst_elapsed=",bite_burst_elapsed," rejection=",ai._attack_block_reason," predictions=",ai._attack_predictions)
-	var passed: bool = priority_checked and (not measure_plant or plant_seen) and started and launched and finished and maximum_lift>0.05 and combo_bite and damage>0.0 and movement._action_feet.is_empty() and &"lunging" in bite_stages and &"closing" in bite_stages and charge_feet_checked and bite_lunge_travel>0.5 and bite_burst_elapsed>=0.25 and forelegs_moved and (not measure_spacing or spacing_seen and spacing_travel>0.1)
+	# Real mouth contact can complete the lunge before a full burst is sampled.
+	var lunge_completed: bool = (bite_lunge_travel>0.5 and bite_burst_elapsed>=0.25) or (damage>0.0 and attacks.get_node("Bite")._close_reason == &"mouth_contact")
+	var passed: bool = priority_checked and (not measure_plant or plant_seen) and started and launched and finished and maximum_lift>0.05 and combo_bite and damage>0.0 and movement._action_feet.is_empty() and &"lunging" in bite_stages and &"closing" in bite_stages and charge_feet_checked and lunge_completed and forelegs_moved and (not measure_spacing or spacing_seen and spacing_travel>0.1)
+	if passed: print("WOLF_ATTACK_PHYSICS_PASSED")
 	actor.free(); enemy.free()
 	quit(0 if passed else 1)

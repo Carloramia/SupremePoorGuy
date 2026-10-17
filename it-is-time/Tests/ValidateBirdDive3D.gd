@@ -9,6 +9,7 @@ func _initialize() -> void: call_deferred("run")
 func frames(count: int) -> void:
 	for index: int in range(count): await physics_frame
 func run() -> void:
+	root.get_node("RuntimeConsole").auto_getlogs_enabled = false
 	var bird := BIRD.instantiate()
 	bird.generate_on_ready = false
 	bird.mass_limits_enabled = false
@@ -88,6 +89,10 @@ func run() -> void:
 	var aim_start_center: Vector3 = dive._flight._flight_structure().center
 	player._unhandled_input(click)
 	check(dive.is_active(),"Player MouseLeft must route to the dive action")
+	var admitted_angle: float = dive.data.maximum_horizontal_angle_degrees
+	if "prediction_changes" in OS.get_cmdline_user_args():
+		dive.data.maximum_horizontal_angle_degrees = 0.1
+		check(not dive._target_check(target).hit,"Aiming fixture must invalidate the admission geometry")
 	var folded := false
 	check(dive.is_aiming(),"Accepted attack must start in aiming, not diving")
 	var aim_rise := 0.0
@@ -113,6 +118,7 @@ func run() -> void:
 		pulled_up = pulled_up or dive.phase == dive.Phase.PULLING_UP
 		if not dive.is_active(): break
 	print("[bird_dive_test] impact=",dive._last_impact," hp_before=",hp," hp_after=",target.current_hp," folded=",folded," pulled_up=",pulled_up)
+	dive.data.maximum_horizontal_angle_degrees = admitted_angle
 	check(aim_rise>0.1,"Aiming must slowly raise the whole creature")
 	check(launch_checked,"Aiming must finish with a validated launch")
 	check(folded,"Dive must fold wings before impact")

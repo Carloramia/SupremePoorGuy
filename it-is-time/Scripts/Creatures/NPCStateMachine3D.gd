@@ -9,6 +9,8 @@ var _movement_direction_frame: int = -1
 var _cached_movement_direction: Vector3 = Vector3.ZERO
 
 signal state_changed(previous_state: State, current_state: State)
+## Passive lifecycle telemetry; observers do not participate in attack decisions.
+signal combat_event(event: StringName, details: Dictionary)
 
 enum State { IDLE, MOVE_TO_TARGET, ATTACK, WAITING }
 @export var enabled: bool = true
@@ -174,6 +176,7 @@ func change_state(next_state: State) -> void:
 	_log_state_event(&"transition", {"from":State.keys()[previous_state],"to":State.keys()[current_state]})
 
 func _log_state_event(event: StringName, details: Dictionary = {}) -> void:
+	combat_event.emit(event, details)
 	var console := get_tree().root.get_node_or_null("RuntimeConsole")
 	if debug_logging_enabled or (console != null and console.is_npc_state_tracking_enabled(self)):
 		print("[npc_state] event=",event," npc_path=",get_parent().get_path()," npc_id=",get_parent().get_instance_id()," state=",State.keys()[current_state]," details=",details)
@@ -525,6 +528,12 @@ func _target_z_attack_ready(attack: ATTACK, target: Node3D) -> bool:
 	var limit := maxf(attack_z_tolerance,predicted_attack_z_tolerance) if attack.prediction_enabled else attack_z_tolerance
 	return absf(target.global_position.z-_get_navigation_origin_position().z) <= limit
 
+func _attack_approach(attack: ATTACK) -> Dictionary:
+	var receiver := get_parent().get_node_or_null(attack.receiver_path)
+	if receiver != null and receiver.has_method("get_npc_attack_approach"):
+		return receiver.get_npc_attack_approach(attack.action_id, _target, _preferred_attack_distance(attack), _get_navigation_origin_position())
+	return {}
+
 func _plan_attack_distance(distance: float, attacks: Array[ATTACK]) -> bool:
 	if humanoid_xz_positioning and is_instance_valid(_target):
 		distance = absf(_target.global_position.x - _get_navigation_origin_position().x)
@@ -548,13 +557,22 @@ func _plan_attack_distance(distance: float, attacks: Array[ATTACK]) -> bool:
 			if ready_exists and float(_cooldowns.get(attack,0.0)) > 0.0: continue
 			var receiver := get_parent().get_node_or_null(attack.receiver_path)
 			if receiver != null and receiver.has_method("is_npc_attack_distance_candidate") and not receiver.is_npc_attack_distance_candidate(attack.action_id,_target): continue
-			var cost := absf(distance-_preferred_attack_distance(attack))
+			var approach := _attack_approach(attack)
+			if not approach.get("valid", true): continue
+			var cost := absf(float(approach.get("distance", distance))-_preferred_attack_distance(attack))
 			if cost < best:
 				best = cost
 				_distance_attack = attack
 	_distance_error = 0.0
 	if _distance_attack == null: return false
 	var desired := _preferred_attack_distance(_distance_attack)
+	var approach := _attack_approach(_distance_attack)
+	if not approach.is_empty():
+		_distance_error = float(approach.get("distance", distance)) - desired
+		if not approach.get("valid", false): return false
+		if absf(_distance_error) <= _attack_distance_tolerance(_distance_attack) and absf(float(approach.z_error)) <= float(approach.z_tolerance): return false
+		_set_agent_target(approach.goal)
+		return true
 	_distance_error = distance-desired
 	var tolerance := minf(_attack_distance_tolerance(_distance_attack), (_attack_maximum_range(_distance_attack,_target)-_attack_minimum_range(_distance_attack))*0.5)
 	if humanoid_xz_positioning:

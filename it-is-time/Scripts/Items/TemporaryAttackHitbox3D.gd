@@ -11,6 +11,7 @@ var hit_count := 0
 var damage_label: StringName = &"wolf_attack_hit"
 var _excluded: Array[RID] = []
 var _debug_shape: CollisionShape3D
+var _debug_damage_active := false
 
 func setup(part: PhysicalBodyPart3D, character: Node, size: Vector3, offset: Vector3, multiplier: float, ragdoll_duration: float = 1.0) -> void:
 	body = part
@@ -33,7 +34,12 @@ func pose() -> Transform3D:
 
 func effective_mass() -> float: return body.mass
 
+func get_attack_debug_shapes() -> Array[Dictionary]:
+	if not is_instance_valid(body) or not body.is_inside_tree() or body.is_queued_for_deletion() or body.is_broken: return []
+	return [{"shape":box,"transform":pose(),"active":_debug_damage_active and swing_damage_active}]
+
 func update_hitbox(delta: float, damaging: bool) -> void:
+	_debug_damage_active = damaging and swing_damage_active
 	if not is_instance_valid(body) or body.is_broken: return
 	var current := pose()
 	global_transform = current

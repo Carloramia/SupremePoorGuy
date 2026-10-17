@@ -79,6 +79,7 @@ func apply_contact_damage(target: PhysicalBodyPart3D, impulse: float) -> float:
 	var service := get_node_or_null("/root/DamageService")
 	if service == null: return 0.0
 	var raw: float = service.calculate_weapon_raw_damage(impulse, swing_damage_active)
+	if is_instance_valid(wielder_character): raw *= float(wielder_character.get_meta(&"summon_damage_multiplier",1.0))
 	var damage: float = service.apply_weapon_armor(raw, target.armor, swing_damage_active)
 	var registered := damage > 0.0 and try_register_hit(target)
 	if damage_logging_enabled or target.damage_logging_enabled:
@@ -101,6 +102,17 @@ func _register_hit(target: Node) -> bool:
 
 func set_damage_logging_enabled(enabled: bool) -> void:
 	damage_logging_enabled = enabled
+
+func get_attack_debug_shapes() -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	if not swing_damage_active: return result
+	var body: RigidBody3D = rigid_attachment_holder if is_instance_valid(rigid_attachment_holder) else self
+	for node: Node in body.get_children():
+		if not node is CollisionShape3D or node.is_queued_for_deletion() or node.disabled or node.shape == null: continue
+		# Rigid equipment uses cloned shapes on the hand; never draw the hand's own collider.
+		if body != self and (not node.has_meta(&"equipped_item") or node.get_meta(&"equipped_item") != self): continue
+		result.append({"shape":node.shape,"transform":node.global_transform,"active":true})
+	return result
 
 
 ## Resolve a merged weapon by the exact contacting shape, so bare Arm contacts do not become weapon hits.

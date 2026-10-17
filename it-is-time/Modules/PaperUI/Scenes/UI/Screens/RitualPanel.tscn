@@ -1,0 +1,274 @@
+[gd_scene load_steps=9 format=3]
+[ext_resource type="PackedScene" path="res://Modules/PaperUI/Scenes/UI/Components/RuneBoard.tscn" id="Board"]
+[ext_resource type="PackedScene" path="res://Modules/PaperUI/Scenes/UI/Components/ActionButton.tscn" id="Button"]
+[ext_resource type="Theme" path="res://Modules/PaperUI/Assets/UI/PaperRelief/PaperReliefTheme.tres" id="Theme"]
+[ext_resource type="PackedScene" path="res://Modules/PaperUI/Scenes/UI/Components/LooseLeafPage.tscn" id="Leaf"]
+[ext_resource type="Script" path="res://Modules/PaperUI/Scripts/UI/CopperLinks.gd" id="Rings"]
+[sub_resource type="StyleBoxFlat" id="C1Style"]
+content_margin_left = 16.0
+content_margin_top = 16.0
+content_margin_right = 36.0
+content_margin_bottom = 14.0
+bg_color = Color(0.92, 0.86, 0.72, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.48, 0.36, 0.22, 1)
+corner_radius_top_left = 9
+corner_radius_top_right = 12
+corner_radius_bottom_left = 7
+corner_radius_bottom_right = 11
+shadow_color = Color(0.03, 0.025, 0.02, 0.55)
+shadow_size = 6
+shadow_offset = Vector2(4, 5)
+[sub_resource type="StyleBoxFlat" id="C2Style"]
+content_margin_left = 36.0
+content_margin_top = 16.0
+content_margin_right = 36.0
+content_margin_bottom = 14.0
+bg_color = Color(0.92, 0.86, 0.72, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.48, 0.36, 0.22, 1)
+corner_radius_top_left = 9
+corner_radius_top_right = 12
+corner_radius_bottom_left = 7
+corner_radius_bottom_right = 11
+shadow_color = Color(0.03, 0.025, 0.02, 0.55)
+shadow_size = 6
+shadow_offset = Vector2(4, 5)
+[sub_resource type="StyleBoxFlat" id="C3Style"]
+content_margin_left = 36.0
+content_margin_top = 16.0
+content_margin_right = 16.0
+content_margin_bottom = 14.0
+bg_color = Color(0.92, 0.86, 0.72, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.48, 0.36, 0.22, 1)
+corner_radius_top_left = 9
+corner_radius_top_right = 12
+corner_radius_bottom_left = 7
+corner_radius_bottom_right = 11
+shadow_color = Color(0.03, 0.025, 0.02, 0.55)
+shadow_size = 6
+shadow_offset = Vector2(4, 5)
+[node name="RitualPanel" type="VBoxContainer"]
+offset_right = 1196.0
+offset_bottom = 530.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = ExtResource("Theme")
+[node name="Columns" type="HBoxContainer" parent="."]
+theme_override_constants/separation = 40
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+[node name="C1" parent="Columns" instance=ExtResource("Leaf")]
+theme_override_styles/panel = SubResource("C1Style")
+layout_mode = 2
+[node name="LeftScroll" type="ScrollContainer" parent="Columns/C1"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(195, 0)
+layout_mode = 2
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 4
+
+[node name="Left" type="VBoxContainer" parent="Columns/C1/LeftScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+[node name="Context" type="RichTextLabel" parent="Columns/C1/LeftScroll/Left"]
+unique_name_in_owner = true
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+text = "当前状态 C1"
+[node name="Summary" type="Label" parent="Columns/C1/LeftScroll/Left"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "当前魔力消耗"
+autowrap_mode = 3
+[node name="Risk" type="Label" parent="Columns/C1/LeftScroll/Left"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+autowrap_mode = 3
+text = "畸变风险"
+[node name="ExperimentTitle" type="Label" parent="Columns/C1/LeftScroll/Left"]
+layout_mode = 2
+text = "法阵配置"
+theme_override_font_sizes/font_size = 18
+[node name="Upgrade" parent="Columns/C1/LeftScroll/Left" instance=ExtResource("Button")]
+unique_name_in_owner = true
+layout_mode = 2
+text = "胜利后解锁下一圈"
+theme_override_font_sizes/font_size = 16
+[node name="Examples" type="OptionButton" parent="Columns/C1/LeftScroll/Left"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+selected = 0
+item_count = 8
+popup/item_0/text = "载入示例构筑…"
+popup/item_0/id = 0
+popup/item_1/text = "基础血脉（7格）"
+popup/item_1/id = 1
+popup/item_2/text = "四甲片畸变（19格）"
+popup/item_2/id = 2
+popup/item_3/text = "巨化（7格）"
+popup/item_3/id = 3
+popup/item_4/text = "超巨化（37格）"
+popup/item_4/id = 4
+popup/item_5/text = "增殖（19格）"
+popup/item_5/id = 5
+popup/item_6/text = "缩小（19格）"
+popup/item_6/id = 6
+popup/item_7/text = "定向灵狼（19格）"
+popup/item_7/id = 7
+[node name="TrialInfo" parent="Columns/C1/LeftScroll/Left" instance=ExtResource("Button")]
+unique_name_in_owner = true
+layout_mode = 2
+text = "规则与配方"
+theme_override_font_sizes/font_size = 16
+[node name="Separator" type="HSeparator" parent="Columns/C1/LeftScroll/Left"]
+layout_mode = 2
+[node name="ActiveTitle" type="Label" parent="Columns/C1/LeftScroll/Left"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "已刻入"
+[node name="ActiveList" type="VBoxContainer" parent="Columns/C1/LeftScroll/Left"]
+unique_name_in_owner = true
+layout_mode = 2
+[node name="C2" parent="Columns" instance=ExtResource("Leaf")]
+theme_override_styles/panel = SubResource("C2Style")
+layout_mode = 2
+size_flags_horizontal = 3
+[node name="Center" type="VBoxContainer" parent="Columns/C2"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+[node name="PageHeader" type="HBoxContainer" parent="Columns/C2/Center"]
+layout_mode = 2
+[node name="PageTitle" type="Label" parent="Columns/C2/Center/PageHeader"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 24
+text = "六相召唤阵"
+clip_text = true
+[node name="PageBack" parent="Columns/C2/Center/PageHeader" instance=ExtResource("Button")]
+unique_name_in_owner = true
+layout_mode = 2
+text = "返回"
+[node name="BoardFrame" type="AspectRatioContainer" parent="Columns/C2/Center"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+ratio = 1.0
+stretch_mode = 2
+[node name="Board" parent="Columns/C2/Center/BoardFrame" instance=ExtResource("Board")]
+unique_name_in_owner = true
+layout_mode = 2
+[node name="C3" parent="Columns" instance=ExtResource("Leaf")]
+theme_override_styles/panel = SubResource("C3Style")
+layout_mode = 2
+[node name="RightScroll" type="ScrollContainer" parent="Columns/C3"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(235, 0)
+layout_mode = 2
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 4
+
+[node name="Right" type="VBoxContainer" parent="Columns/C3/RightScroll"]
+theme_override_constants/separation = 6
+layout_mode = 2
+size_flags_horizontal = 3
+[node name="RuneTab" parent="Columns/C3/RightScroll/Right" instance=ExtResource("Button")]
+theme_override_font_sizes/font_size = 16
+unique_name_in_owner = true
+layout_mode = 2
+text = "符文 E1"
+tooltip_text = "查看符文；自动合上奇物页"
+[node name="RelicTab" parent="Columns/C3/RightScroll/Right" instance=ExtResource("Button")]
+theme_override_font_sizes/font_size = 16
+unique_name_in_owner = true
+layout_mode = 2
+text = "奇物 E2"
+tooltip_text = "查看奇物；自动合上符文页"
+[node name="References" type="VBoxContainer" parent="Columns/C3/RightScroll/Right"]
+theme_override_constants/separation = 6
+unique_name_in_owner = true
+layout_mode = 2
+[node name="Relics" type="VBoxContainer" parent="Columns/C3/RightScroll/Right"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+[node name="Controls" type="HFlowContainer" parent="Columns/C2/Center"]
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6
+unique_name_in_owner = true
+layout_mode = 2
+[node name="Commit" parent="Columns/C2/Center/Controls" instance=ExtResource("Button")]
+unique_name_in_owner = true
+layout_mode = 2
+text = "刻入"
+custom_minimum_size = Vector2(0, 42)
+theme_type_variation = &"SecondaryButton"
+theme_override_font_sizes/font_size = 16
+[node name="Undo" parent="Columns/C2/Center/Controls" instance=ExtResource("Button")]
+unique_name_in_owner = true
+layout_mode = 2
+text = "撤回"
+custom_minimum_size = Vector2(0, 42)
+theme_type_variation = &"SecondaryButton"
+theme_override_font_sizes/font_size = 16
+[node name="Cancel" parent="Columns/C2/Center/Controls" instance=ExtResource("Button")]
+unique_name_in_owner = true
+layout_mode = 2
+text = "取消"
+custom_minimum_size = Vector2(0, 42)
+theme_type_variation = &"SecondaryButton"
+theme_override_font_sizes/font_size = 16
+[node name="Freehand" type="CheckButton" parent="Columns/C2/Center/Controls"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "连笔"
+theme_override_font_sizes/font_size = 16
+tooltip_text = "连续笔触吸附；也可逐格点击绘制"
+[node name="Save" parent="Columns/C2/Center/Controls" instance=ExtResource("Button")]
+unique_name_in_owner = true
+layout_mode = 2
+text = "保存"
+custom_minimum_size = Vector2(0, 42)
+theme_type_variation = &"SecondaryButton"
+theme_override_font_sizes/font_size = 16
+[node name="Clear" parent="Columns/C2/Center/Controls" instance=ExtResource("Button")]
+unique_name_in_owner = true
+layout_mode = 2
+text = "清空"
+custom_minimum_size = Vector2(0, 42)
+theme_type_variation = &"SecondaryButton"
+theme_override_font_sizes/font_size = 16
+[node name="Summon" parent="Columns/C2/Center" instance=ExtResource("Button")]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"PrimaryButton"
+text = "确认召唤 · 5 只"
+[node name="CopperLinks" type="Control" parent="Columns/C1"]
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("Rings")
+next_page = NodePath("../../C2")
+[node name="CopperLinks" type="Control" parent="Columns/C2"]
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("Rings")
+next_page = NodePath("../../C3")

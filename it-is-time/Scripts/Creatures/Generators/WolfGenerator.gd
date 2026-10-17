@@ -68,7 +68,7 @@ func _part(node_name: String, role: String, subtype: String = "", xy_multiplier:
 	var part := rule.part_scene.instantiate() as PhysicalBodyPart3D
 	if part == null: return {}
 	part.prepare_generated_geometry()
-	var target := GEOMETRY.bounds(part).size
+	var target := GEOMETRY.bounds(part, false).size
 	target *= Vector3(xy_multiplier,xy_multiplier,1.0)
 	var actual := GEOMETRY.fit(part, target, rule, role, part_width)
 	var inlet := part.get_node_or_null("JointIn") as Marker3D

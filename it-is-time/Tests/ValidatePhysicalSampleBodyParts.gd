@@ -29,7 +29,7 @@ func _validate() -> void:
 	assert(part.tags[1] == part.BodyPartTag.Arm)
 	assert(part.arm_swing_bindings.size() == 1)
 	assert(part.arm_swing_bindings[0].swing_preset is LimbSwingPresetBase)
-	assert(shape.size.is_equal_approx(Vector3(4.0, 6.0, 0.5)))
+	assert(shape.size.is_equal_approx(Vector3(4.0, 6.0, 1.0)))
 	assert(collision.position.is_equal_approx(Vector3(1.0, 1.0, 0.0)))
 	assert(sprite.material_override is ShaderMaterial)
 	var material := sprite.material_override as ShaderMaterial
@@ -90,6 +90,8 @@ func _assert_mesh_node_matches_collision(part: Node3D, collision: CollisionShape
 		found_mesh = true
 	assert(found_mesh, "MeshInstance3D must contain a mesh")
 	var box := collision.shape as BoxShape3D
-	var expected: AABB = collision.transform * AABB(-box.size * 0.5, box.size)
+	var visual_size := box.size
+	visual_size.z *= 0.5
+	var expected: AABB = collision.transform * AABB(-visual_size * 0.5, visual_size)
 	assert(actual.size.is_equal_approx(expected.size), "Mesh dimensions must match collision")
 	assert(actual.get_center().is_equal_approx(expected.get_center()), "Mesh center must match collision")

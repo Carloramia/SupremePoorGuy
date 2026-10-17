@@ -1,0 +1,826 @@
+{
+  "format": "frontier-map-editor",
+  "version": 1,
+  "name": "ItIsTime 首轮集成示例",
+  "assets": [
+    {
+      "id": "road",
+      "name": "碎石道路",
+      "path": "res://editor/assets/road.svg",
+      "category": "内置素材"
+    },
+    {
+      "id": "rock",
+      "name": "层叠岩石",
+      "path": "res://editor/assets/rock.svg",
+      "category": "内置素材"
+    },
+    {
+      "id": "tree",
+      "name": "林地树木",
+      "path": "res://editor/assets/tree.svg",
+      "category": "内置素材"
+    },
+    {
+      "id": "barricade",
+      "name": "完好路障",
+      "path": "res://editor/assets/barricade.svg",
+      "category": "内置素材"
+    },
+    {
+      "id": "rubble",
+      "name": "路障残骸",
+      "path": "res://editor/assets/rubble.svg",
+      "category": "内置素材"
+    },
+    {
+      "id": "house",
+      "name": "林间小屋",
+      "path": "res://editor/assets/house.svg",
+      "category": "内置素材"
+    },
+    {
+      "id": "town",
+      "name": "边境城镇",
+      "path": "res://editor/assets/town.svg",
+      "category": "内置素材"
+    },
+    {
+      "id": "camp",
+      "name": "怪兽营地",
+      "path": "res://editor/assets/camp.svg",
+      "category": "内置素材"
+    },
+    {
+      "id": "grass",
+      "name": "草丛",
+      "path": "res://editor/assets/grass.svg",
+      "category": "内置素材"
+    },
+    {
+      "id": "thorns",
+      "name": "荆棘",
+      "path": "res://editor/assets/thorns.svg",
+      "category": "内置素材"
+    },
+    {
+      "id": "mud",
+      "name": "泥潭",
+      "path": "res://editor/assets/mud.svg",
+      "category": "内置素材"
+    },
+    {
+      "id": "web",
+      "name": "蛛网",
+      "path": "res://editor/assets/web.svg",
+      "category": "内置素材"
+    },
+    {
+      "id": "pit",
+      "name": "落穴",
+      "path": "res://editor/assets/pit.svg",
+      "category": "内置素材"
+    },
+    {
+      "id": "monster",
+      "name": "怪兽示意",
+      "path": "res://editor/assets/monster.svg",
+      "category": "内置素材"
+    },
+    {
+      "id": "altar",
+      "name": "战后祭坛",
+      "path": "res://editor/assets/altar.svg",
+      "category": "内置素材"
+    },
+    {
+      "id": "cloth",
+      "name": "衬布纹理",
+      "path": "res://editor/assets/cloth.svg",
+      "category": "内置素材"
+    }
+  ],
+  "catalogs": {
+    "conditions": [],
+    "events": [],
+    "effects": [],
+    "options": [
+      {
+        "id": "summon",
+        "name": "召唤"
+      },
+      {
+        "id": "upgrade",
+        "name": "升级"
+      }
+    ],
+    "monster_configs": [
+      {
+        "id": "demo_guard",
+        "name": "示意守卫"
+      }
+    ],
+    "enemy_configs": [
+      {
+        "id": "camp_guards",
+        "name": "营地守卫队"
+      }
+    ],
+    "deployment_rules": []
+  },
+  "maps": [
+    {
+      "id": "frontier",
+      "name": "边境 · 探索大地图",
+      "kind": "exploration",
+      "ground_asset": "",
+      "background_asset": "",
+      "ground_color": "#465d49",
+      "bounds": {
+        "position": [
+          -64,
+          -64
+        ],
+        "size": [
+          1568,
+          1385.64
+        ]
+      },
+      "outline": [],
+      "spawn": [
+        120,
+        220
+      ],
+      "native": {
+        "source_scene": "res://world_map/demo/WorldMapDemo.tscn",
+        "definition_path": "res://world_map/demo/data/frontier.tres",
+        "map_id": "frontier",
+        "width": 16,
+        "height": 12,
+        "hex_size": 64,
+        "disabled_hexes": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            15,
+            4
+          ],
+          [
+            14,
+            4
+          ],
+          [
+            7,
+            4
+          ],
+          [
+            8,
+            3
+          ]
+        ],
+        "default_spawn_id": "harbor",
+        "spawns": {
+          "harbor": [
+            120,
+            220
+          ]
+        },
+        "discovery_radius": 240,
+        "interaction_radius": 42,
+        "vision_radius": 210,
+        "generator_config": {}
+      },
+      "fog": {
+        "enabled": true,
+        "source_ref": "player",
+        "radius": 210,
+        "unknown_color": "#101c20",
+        "unknown_opacity": 0.94,
+        "texture_ref": "",
+        "retention": "recover",
+        "explored_color": "#172d2b",
+        "explored_opacity": 0.5,
+        "feather": 36,
+        "fade_duration": 0.3
+      },
+      "objects": [
+        {
+          "id": "cloth_01",
+          "name": "独立衬布层",
+          "type": "cloth",
+          "layer": "cloth",
+          "position": [
+            700,
+            600
+          ],
+          "height": 0,
+          "rotation": 0,
+          "scale": [
+            1,
+            1
+          ],
+          "visual": {
+            "asset": "cloth",
+            "size": [
+              1650,
+              1450
+            ],
+            "visible": true,
+            "opacity": 0.7,
+            "z_index": -100,
+            "tint": "#9fba8d"
+          }
+        },
+        {
+          "id": "frontier_road",
+          "name": "营地主路",
+          "type": "road",
+          "layer": "roads",
+          "position": [
+            0,
+            0
+          ],
+          "height": 0,
+          "rotation": 0,
+          "scale": [
+            1,
+            1
+          ],
+          "visual": {
+            "asset": "road",
+            "size": [
+              78,
+              78
+            ],
+            "visible": true,
+            "opacity": 1,
+            "z_index": 1,
+            "tint": "#9fba8d"
+          },
+          "points": [
+            [
+              120,
+              220
+            ],
+            [
+              200,
+              340
+            ],
+            [
+              200,
+              490
+            ],
+            [
+              520,
+              490
+            ],
+            [
+              640,
+              490
+            ],
+            [
+              740,
+              450
+            ],
+            [
+              900,
+              420
+            ],
+            [
+              1150,
+              415
+            ]
+          ],
+          "width": 64,
+          "style_ref": "gravel",
+          "connection_ids": [],
+          "snap_margin": 24,
+          "speed_multiplier": 1.5
+        },
+        {
+          "id": "frontier_south_road",
+          "name": "南方支路",
+          "type": "road",
+          "layer": "roads",
+          "position": [
+            0,
+            0
+          ],
+          "height": 0,
+          "rotation": 0,
+          "scale": [
+            1,
+            1
+          ],
+          "visual": {
+            "asset": "road",
+            "size": [
+              78,
+              78
+            ],
+            "visible": true,
+            "opacity": 1,
+            "z_index": 0,
+            "tint": "#9fba8d"
+          },
+          "points": [
+            [
+              200,
+              490
+            ],
+            [
+              240,
+              650
+            ],
+            [
+              260,
+              800
+            ],
+            [
+              330,
+              895
+            ]
+          ],
+          "width": 52,
+          "style_ref": "gravel",
+          "connection_ids": [],
+          "snap_margin": 24,
+          "speed_multiplier": 1.5
+        },
+        {
+          "id": "rock_ridge",
+          "name": "山脊",
+          "type": "indestructible",
+          "layer": "props",
+          "position": [
+            0,
+            0
+          ],
+          "height": 0,
+          "rotation": 0,
+          "scale": [
+            1,
+            1
+          ],
+          "visual": {
+            "asset": "rock",
+            "size": [
+              78,
+              78
+            ],
+            "visible": true,
+            "opacity": 1,
+            "z_index": 0,
+            "tint": "#9fba8d"
+          },
+          "collision": {
+            "enabled": true,
+            "shape": "polygon",
+            "offset": [
+              0,
+              0
+            ],
+            "size": [
+              78,
+              78
+            ],
+            "rotation": 0,
+            "points": [
+              [
+                420,
+                220
+              ],
+              [
+                520,
+                195
+              ],
+              [
+                585,
+                280
+              ],
+              [
+                545,
+                375
+              ],
+              [
+                465,
+                420
+              ],
+              [
+                405,
+                335
+              ]
+            ],
+            "height": 2,
+            "depth": 0,
+            "layer": 1
+          },
+          "discovery": {
+            "initially_visible": true,
+            "condition_ref": "",
+            "radius": 240,
+            "marker_layer": "above",
+            "allow_hidden_interaction": false
+          },
+          "hint": "当前无法通过",
+          "blocked_ids": [],
+          "native_obstacle": true
+        },
+        {
+          "id": "town",
+          "name": "Test Town",
+          "type": "town",
+          "layer": "landmarks",
+          "position": [
+            260,
+            265
+          ],
+          "height": 0,
+          "rotation": 0,
+          "scale": [
+            1,
+            1
+          ],
+          "visual": {
+            "asset": "town",
+            "size": [
+              78,
+              78
+            ],
+            "visible": true,
+            "opacity": 1,
+            "z_index": 0,
+            "tint": "#9fba8d"
+          },
+          "discovery": {
+            "initially_visible": true,
+            "condition_ref": "",
+            "radius": 240,
+            "marker_layer": "above",
+            "allow_hidden_interaction": false
+          },
+          "click_area": {
+            "enabled": true,
+            "shape": "circle",
+            "offset": [
+              0,
+              0
+            ],
+            "size": [
+              78,
+              78
+            ],
+            "rotation": 0,
+            "points": [],
+            "height": 2,
+            "depth": 0
+          },
+          "condition_ref": "",
+          "event_id": "",
+          "target_scene": "res://scenario_2_5d/demo/Scenario25DDemo.tscn",
+          "interaction_offset": [
+            0,
+            35
+          ],
+          "interaction_radius": 42,
+          "repeatable": true,
+          "completion_behavior": "KEEP"
+        },
+        {
+          "id": "monster_camp_01",
+          "name": "林地怪兽营地",
+          "type": "camp",
+          "layer": "landmarks",
+          "position": [
+            900,
+            420
+          ],
+          "height": 0,
+          "rotation": 0,
+          "scale": [
+            1,
+            1
+          ],
+          "visual": {
+            "asset": "camp",
+            "size": [
+              78,
+              78
+            ],
+            "visible": true,
+            "opacity": 1,
+            "z_index": 0,
+            "tint": "#9fba8d"
+          },
+          "discovery": {
+            "initially_visible": true,
+            "condition_ref": "",
+            "radius": 240,
+            "marker_layer": "above",
+            "allow_hidden_interaction": false
+          },
+          "click_area": {
+            "enabled": true,
+            "shape": "circle",
+            "offset": [
+              0,
+              0
+            ],
+            "size": [
+              78,
+              78
+            ],
+            "rotation": 0,
+            "points": [],
+            "height": 2,
+            "depth": 0
+          },
+          "condition_ref": "",
+          "event_id": "",
+          "target_scene": "",
+          "interaction_offset": [
+            0,
+            35
+          ],
+          "interaction_radius": 42,
+          "repeatable": false,
+          "completion_behavior": "KEEP",
+          "blocking_obstacle_ids": [],
+          "battle_map_id": "camp_battle_01",
+          "enemy_config_id": "camp_guards",
+          "deployment_id": "player_deploy_01",
+          "post_event_id": "",
+          "transition": {
+            "duration": 1.2,
+            "zoom": 3,
+            "fade": 0.3
+          }
+        },
+        {
+          "id": "monument",
+          "name": "Ancient Monument",
+          "type": "house",
+          "layer": "landmarks",
+          "position": [
+            330,
+            860
+          ],
+          "height": 0,
+          "rotation": 0,
+          "scale": [
+            1,
+            1
+          ],
+          "visual": {
+            "asset": "house",
+            "size": [
+              78,
+              78
+            ],
+            "visible": true,
+            "opacity": 1,
+            "z_index": 0,
+            "tint": "#9fba8d"
+          },
+          "discovery": {
+            "initially_visible": false,
+            "condition_ref": "",
+            "radius": 240,
+            "marker_layer": "above",
+            "allow_hidden_interaction": false
+          },
+          "click_area": {
+            "enabled": true,
+            "shape": "circle",
+            "offset": [
+              0,
+              0
+            ],
+            "size": [
+              78,
+              78
+            ],
+            "rotation": 0,
+            "points": [],
+            "height": 2,
+            "depth": 0
+          },
+          "condition_ref": "",
+          "event_id": "",
+          "target_scene": "",
+          "interaction_offset": [
+            0,
+            35
+          ],
+          "interaction_radius": 42,
+          "repeatable": false,
+          "completion_behavior": "HIDE_SESSION",
+          "native_type_id": "event",
+          "native_definition_path": "res://world_map/demo/data/event.tres"
+        },
+        {
+          "id": "initial_harbor",
+          "name": "港口初始揭示",
+          "type": "reveal_area",
+          "layer": "reveals",
+          "position": [
+            120,
+            220
+          ],
+          "height": 0,
+          "rotation": 0,
+          "scale": [
+            1,
+            1
+          ],
+          "visual": {
+            "asset": "",
+            "size": [
+              78,
+              78
+            ],
+            "visible": true,
+            "opacity": 1,
+            "z_index": 0,
+            "tint": "#9fba8d"
+          },
+          "region": {
+            "enabled": true,
+            "shape": "circle",
+            "offset": [
+              0,
+              0
+            ],
+            "size": [
+              340,
+              340
+            ],
+            "rotation": 0,
+            "points": [],
+            "height": 2,
+            "depth": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "camp_battle_01",
+      "name": "边境演练场",
+      "kind": "battle",
+      "radius": 110,
+      "orientation": "flat",
+      "ground_asset": "",
+      "background_asset": "",
+      "ground_color": "#6b8060",
+      "background_blur": 9,
+      "edge_feather": 0.8,
+      "natural_border": true,
+      "wall": {
+        "thickness": 0.5,
+        "height": 12,
+        "layer": 1
+      },
+      "objects": [
+        {
+          "id": "player_deploy_01",
+          "name": "己方入口部署区",
+          "type": "deployment",
+          "layer": "deployment",
+          "position": [
+            -32,
+            0
+          ],
+          "height": 0,
+          "rotation": 0,
+          "scale": [
+            1,
+            1
+          ],
+          "visual": {
+            "asset": "",
+            "size": [
+              2.2,
+              2.2
+            ],
+            "visible": true,
+            "opacity": 1,
+            "z_index": 0,
+            "tint": "#9fba8d"
+          },
+          "region": {
+            "enabled": true,
+            "shape": "rect",
+            "offset": [
+              0,
+              0
+            ],
+            "size": [
+              10,
+              135
+            ],
+            "rotation": 0,
+            "points": [],
+            "height": 2,
+            "depth": 0
+          },
+          "facing": 0,
+          "slots": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              -20
+            ],
+            [
+              0,
+              20
+            ],
+            [
+              0,
+              -40
+            ],
+            [
+              0,
+              40
+            ],
+            [
+              0,
+              60
+            ]
+          ],
+          "rule_ref": ""
+        },
+        {
+          "id": "camp_guard_01",
+          "name": "营地守卫",
+          "type": "enemy",
+          "layer": "deployment",
+          "position": [
+            28,
+            0
+          ],
+          "height": 0,
+          "rotation": 0,
+          "scale": [
+            1,
+            1
+          ],
+          "visual": {
+            "asset": "monster",
+            "size": [
+              2.2,
+              2.2
+            ],
+            "visible": true,
+            "opacity": 1,
+            "z_index": 0,
+            "tint": "#9fba8d"
+          },
+          "monster_config_id": "demo_guard",
+          "facing": 180,
+          "team_group": "enemy"
+        },
+        {
+          "id": "arena_tree_01",
+          "name": "场内装饰树",
+          "type": "tree",
+          "layer": "decoration",
+          "position": [
+            0,
+            -70
+          ],
+          "height": 0,
+          "rotation": 0,
+          "scale": [
+            1,
+            1
+          ],
+          "visual": {
+            "asset": "tree",
+            "size": [
+              8,
+              10
+            ],
+            "visible": true,
+            "opacity": 1,
+            "z_index": 0,
+            "tint": "#9fba8d"
+          },
+          "linked_collision_id": ""
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+[gd_scene load_steps=3 format=3]
+[ext_resource type="PackedScene" path="res://Modules/PaperUI/Scenes/UI/Components/ActionButton.tscn" id="Button"]
+[ext_resource type="Theme" path="res://Modules/PaperUI/Assets/UI/PaperRelief/PaperReliefTheme.tres" id="Theme"]
+[node name="MainMenu" type="CenterContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("Theme")
+[node name="Menu" type="VBoxContainer" parent="."]
+custom_minimum_size = Vector2(320, 0)
+layout_mode = 2
+theme_override_constants/separation = 24
+[node name="Title" type="Label" parent="Menu"]
+layout_mode = 2
+text = "蛹现"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 54
+[node name="Start" parent="Menu" instance=ExtResource("Button")]
+unique_name_in_owner = true
+layout_mode = 2
+text = "开始游戏"
+[node name="Continue" parent="Menu" instance=ExtResource("Button")]
+unique_name_in_owner = true
+layout_mode = 2
+text = "继续游戏"
+[node name="Settings" parent="Menu" instance=ExtResource("Button")]
+unique_name_in_owner = true
+layout_mode = 2
+text = "设置"

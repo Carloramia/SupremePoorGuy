@@ -58,10 +58,21 @@ func run() -> void:
 		var worst := {}
 		for degrees: float in [75.0,165.0,345.0]:
 			var start: float = m._path_progress
+			var progress := 0.0
+			var last_progress := start
+			var recovery_ticks := 0
 			command.direction = Basis(Vector3.UP,deg_to_rad(degrees))*Vector3.RIGHT
 			for tick: int in 420:
 				await physics_frame
-				check(m._path_ready,"Direction changes keep the world route active")
+				if not m._path_ready:
+					check(m.is_connection_recovering() or m._path_turning,"Only a structural rejoin or whole-body turn may suspend the route")
+					if recovery_ticks==0: print("SNAKE_CORNER_REJOIN ",m.get_snake_motion_diagnostics(false))
+					recovery_ticks += 1
+					previous.clear()
+					last_progress = 0.0
+					continue
+				progress += maxf(m._path_progress-last_progress,0.0)
+				last_progress = m._path_progress
 				for row: Dictionary in m._parts:
 					var a: Vector3 = row.path_acceleration
 					var drive: Vector3 = row.path_drive_acceleration
@@ -84,7 +95,9 @@ func run() -> void:
 						var expected: Vector3 = row.rest.origin-m._path_leader.rest.origin
 						var target: Vector3 = m._path_pose_basis.inverse()*(Vector3(row.path_target)-Vector3(m._path_leader.path_target))
 						check(Vector2(expected.x-target.x,expected.y-target.y).length() < .0002,"Corner filtering preserves the full raised XY layout")
-			check(m._path_progress-start > 10.0,"Sharp-corner execution keeps making progress")
+			check(progress > 10.0,"Sharp-corner execution keeps making progress")
+			check(recovery_ticks<120,"Structural rejoining cannot indefinitely suspend corner movement")
+			print("SNAKE_CORNER_PROGRESS angle=",degrees," distance=",progress," rejoin_ticks=",recovery_ticks," connections=",m.get_attack_connection_diagnostics())
 		print("SNAKE_SMOOTH_CORNERS scale=",scale_value," reference_jerk=",max_jerk," drive_jerk=",max_drive_jerk," execution_offset=",max_offset," cross_track=",max_cross_track," speed=",m._actual_velocity.length())
 		print("SNAKE_SMOOTH_WORST ",worst)
 		check(max_jerk <= m.motion_data.path_maximum_jerk+.02,"Reference acceleration cannot jump at corners")

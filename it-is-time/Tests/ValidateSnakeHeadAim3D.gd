@@ -1,6 +1,7 @@
 extends "res://Tests/ValidateSnakeAttacks3D.gd"
 
 func run() -> void:
+	root.get_node("RuntimeConsole").auto_getlogs_enabled = false
 	var level := Node3D.new()
 	root.add_child(level)
 	var floor_body := StaticBody3D.new()
@@ -87,7 +88,7 @@ func measure(level: Node3D, multiplier: float, move_target: bool) -> Dictionary:
 			if not is_finite(quarter_time) and progress>=0.25: quarter_time = attack._elapsed
 			if not is_finite(half_time) and progress>=0.5: half_time = attack._elapsed
 		if not attack.is_npc_attack_active(): break
-	check(launched and launch_error<=attack.data.aim_tolerance_degrees,"Bite waits until the real visual forward points at its live target")
+	check(launched and launch_error<=attack.data.aim_tolerance_degrees,"Bite waits until the real visual forward points at its locked point")
 	check(not move_target or shifted,"Target actually moves during preparation")
 	# Actual contact can end a bite before full extension; compare a milestone both bites reach.
 	check(is_finite(quarter_time),"Head physically reaches the common relative extension milestone")

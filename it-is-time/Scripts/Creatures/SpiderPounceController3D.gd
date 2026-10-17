@@ -363,8 +363,18 @@ func _preparation_pose_status() -> Dictionary:
 	return {"ready": pending.is_empty(), "pending": pending, "parts": parts, "maximum_position_error": position_error, "maximum_angle_error_degrees": angle_error, "extra_wait": clampf(_elapsed-data.rise_time, 0.0, data.preparation_pose_max_wait), "wait_expired": _elapsed >= data.rise_time+data.preparation_pose_max_wait}
 
 func _launch() -> void:
-	_plan = _trajectory(_target, 0.0, false)
-	if not _plan.hit: cancel_action(&"launch_target_unreachable"); return
+	# Use the admitted endpoint even when the target has since escaped the leap.
+	var origin: Vector3 = _movement._torso.global_position
+	var endpoint: Vector3 = _plan.get("endpoint",Vector3.INF)
+	var duration: float = _plan.get("duration",0.0)
+	var maximum_speed: float = data.maximum_launch_speed*_time_scale
+	var gravity: Vector3 = _movement._gravity_acceleration()
+	if not origin.is_finite() or not endpoint.is_finite() or not gravity.is_finite() or not is_finite(duration) or duration <= 0.0 or not is_finite(maximum_speed) or maximum_speed <= 0.0:
+		cancel_action(&"invalid_committed_plan"); return
+	var velocity := (endpoint-origin)/duration-gravity*duration*0.5
+	if not velocity.is_finite(): cancel_action(&"invalid_committed_plan"); return
+	velocity = velocity.limit_length(maximum_speed)
+	_plan.merge({"velocity":velocity,"launch_origin":origin,"committed":true},true)
 	_movement.release_all_support_pins()
 	for row: Dictionary in _feet:
 		_movement.set_action_foot_grounded(row.body, false)

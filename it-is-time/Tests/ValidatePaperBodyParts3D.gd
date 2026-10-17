@@ -16,17 +16,26 @@ func run() -> void:
 			assert(part.geometry_mode == part.GeometryMode.CUSTOM_MODEL)
 			part.paper_volume_enabled = false
 			part.freeze = true
+			var incoming: Transform3D = part.get_node("JointIn").transform
+			var outgoing: Transform3D = part.get_node("JointOut").transform
 			root.add_child(part)
 			var source := load(part.get_meta("paper_source_scene")).instantiate() as RigidBody3D
 			var collision := part.get_node("CollisionShape3D") as CollisionShape3D
 			var source_collision := source.get_node("CollisionShape3D") as CollisionShape3D
 			assert(collision.shape is ConvexPolygonShape3D)
 			var authored_points: PackedVector3Array = source_collision.shape.points
+			var low := INF
+			var high := -INF
+			for point: Vector3 in authored_points:
+				low = minf(low, point.z)
+				high = maxf(high, point.z)
+			var center := (low + high) * 0.5
+			for index: int in authored_points.size(): authored_points[index].z = center + (authored_points[index].z - center) * 2.0
 			assert(collision.shape.points == authored_points)
 			assert(collision.transform.is_equal_approx(source_collision.transform))
 			assert(part.get_node("Model").transform.is_equal_approx(source.get_node("Model").transform))
-			assert(part.get_node("JointIn").transform.is_equal_approx(source.get_node("JointIn").transform))
-			assert(part.get_node("JointOut").transform.is_equal_approx(source.get_node("JointOut").transform))
+			assert(part.get_node("JointIn").transform.is_equal_approx(incoming))
+			assert(part.get_node("JointOut").transform.is_equal_approx(outgoing))
 			assert(not part.get_node("MeshInstance3D").visible and not part.get_node("Sprite3D").visible)
 			assert(part.get_node("Model").visible and part.current_hp == part.max_hp)
 			part.mesh_visible = false

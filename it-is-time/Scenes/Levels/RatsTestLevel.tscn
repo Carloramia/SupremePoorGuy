@@ -1,0 +1,59 @@
+[gd_scene format=3]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Characters/Generate_Rat_1_NPC.tscn" id="1"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Characters/Generate_Rat_2_NPC.tscn" id="2"]
+[sub_resource type="BoxShape3D" id="FloorShape"]
+size = Vector3(60,0.5,30)
+[sub_resource type="BoxMesh" id="FloorMesh"]
+size = Vector3(60,0.5,30)
+[sub_resource type="StandardMaterial3D" id="FloorMaterial"]
+albedo_color = Color(0.7,0.72,0.74,1)
+[sub_resource type="Environment" id="Environment"]
+background_mode = 1
+background_color = Color(0.94,0.94,0.94,1)
+ambient_light_source = 3
+ambient_light_color = Color(1,1,1,1)
+ambient_light_energy = 0.8
+[sub_resource type="NavigationMesh" id="Navigation"]
+vertices = PackedVector3Array(-29,0,-14,-29,0,14,29,0,14,29,0,-14)
+polygons = [PackedInt32Array(3,2,0),PackedInt32Array(0,2,1)]
+agent_height = 2.5
+agent_radius = 0.4
+[node name="RatsTestLevel" type="Node3D"]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment")
+[node name="Sun" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-45,-30,0)
+light_energy = 0.8
+[node name="Camera3D" type="Camera3D" parent="."]
+position = Vector3(0,6,22)
+rotation_degrees = Vector3(-7,0,0)
+projection = 1
+size = 24.0
+current = true
+[node name="Floor" type="StaticBody3D" parent="."]
+position = Vector3(0,-0.25,0)
+collision_layer = 1
+collision_mask = 0
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor"]
+shape = SubResource("FloorShape")
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Floor"]
+mesh = SubResource("FloorMesh")
+material_override = SubResource("FloorMaterial")
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
+navigation_mesh = SubResource("Navigation")
+[node name="GenerateRat1NPC" parent="." instance=ExtResource("1")]
+position = Vector3(-7,0.15,0)
+faction_id = 1
+[node name="GenerateRat2NPC" parent="." instance=ExtResource("2")]
+position = Vector3(7,0.15,0)
+rotation_degrees = Vector3(0,180,0)
+faction_id = 2
+[node name="Instructions" type="CanvasLayer" parent="."]
+[node name="Label" type="Label" parent="Instructions"]
+offset_left = 24.0
+offset_top = 20.0
+offset_right = 900.0
+offset_bottom = 80.0
+theme_override_colors/font_color = Color(0.1,0.1,0.1,1)
+theme_override_font_sizes/font_size = 20
+text = "Rats 双 NPC 测试：两套外观、四足行走、独立下颚啃咬。\n控制台：tracknpcstate on Rat / tracknpcmotion on Rat / trackwolfattacks on Rat"

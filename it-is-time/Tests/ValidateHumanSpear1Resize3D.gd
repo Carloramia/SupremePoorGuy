@@ -40,14 +40,15 @@ func run() -> void:
 	part.freeze = true
 	root.add_child(part)
 	var part_bounds := bounds_of_shape(part.get_node("CollisionShape3D").shape)
-	check(is_equal_approx(part.paper_volume_thickness,0.08) and is_equal_approx(part_bounds.size.z,0.08),"Legacy PhysicalPart collider and model must retain 0.08 thickness")
+	check(is_equal_approx(part.paper_volume_thickness,0.08) and is_equal_approx(part_bounds.size.z,0.16),"Legacy PhysicalPart retains visual depth and doubles collision depth")
 	check(part.get_node("Model/PaperVolume").mesh.resource_path == record.volume_mesh,"Legacy Part must use the new baked model")
 	check(part.get_node("JointOut").position.is_equal_approx(Vector3(3.705474609375,-3.7926,0)),"Legacy Part connector must match the rebuilt model")
 	var item := load("res://Scenes/Items/Weapons/Human/Human1Spear.tscn").instantiate() as SampleWeapon3D
 	item.freeze = true
 	root.add_child(item)
 	var weapon_bounds := bounds_of_shape(item.get_node("CollisionShape3D").shape)
-	check(weapon_bounds.is_equal_approx(part_bounds),"Weapon and legacy Part colliders must describe the same enlarged volume")
+	check(is_equal_approx(weapon_bounds.size.z,0.08) and is_equal_approx(part_bounds.size.z,weapon_bounds.size.z*2.0),"Only PhysicalBodyPart colliders gain depth padding")
+	check(Vector2(weapon_bounds.size.x,weapon_bounds.size.y).is_equal_approx(Vector2(part_bounds.size.x,part_bounds.size.y)) and weapon_bounds.get_center().is_equal_approx(part_bounds.get_center()),"Weapon and legacy Part retain matching XY and center")
 	check(item.attachment_local_position.is_equal_approx(Vector3(0.1172841796875,-0.141446484375,0)),"Weapon grip must follow the preserved shaft end through the 75% scale")
 	check(is_equal_approx(item.mass,0.5) and is_equal_approx(part.mass,0.5),"The size-only edit must retain authored mass values")
 	print("SPEAR1_RESIZE_DIMENSIONS texture=",texture.get_size()," model=",model_bounds.size," collision=",weapon_bounds.size," depth=",part.paper_volume_thickness)

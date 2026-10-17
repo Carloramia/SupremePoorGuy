@@ -94,6 +94,14 @@ func _chain_intact(binding: Dictionary) -> bool:
 		if not is_instance_valid(joint) or joint.is_queued_for_deletion(): return false
 	return true
 
+func get_gravity_supported_mass(bodies: Array[RigidBody3D]) -> float:
+	if not enabled or not _character_enabled or not is_physics_processing() or _planar_active(): return 0.0
+	var mass := 0.0
+	for binding: Dictionary in bindings:
+		if _chain_intact(binding) and binding.head in bodies and binding.head.head_position_support_enabled and binding.head.head_gravity_compensation:
+			mass += binding.head.mass
+	return mass
+
 func _physics_process(delta: float) -> void:
 	diagnostics.clear()
 	if not enabled or not _character_enabled or _planar_active(): return

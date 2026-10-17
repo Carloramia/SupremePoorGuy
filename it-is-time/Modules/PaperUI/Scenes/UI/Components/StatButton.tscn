@@ -1,0 +1,15 @@
+[gd_scene load_steps=4 format=3]
+[ext_resource type="PackedScene" path="res://Modules/PaperUI/Scenes/UI/Components/ActionButton.tscn" id="Button"]
+[ext_resource type="StyleBox" path="res://Modules/PaperUI/Assets/UI/PaperRelief/Styles/StatNormal.tres" id="Normal"]
+[ext_resource type="StyleBox" path="res://Modules/PaperUI/Assets/UI/PaperRelief/Styles/StatHover.tres" id="Hover"]
+[node name="StatButton" instance=ExtResource("Button")]
+custom_minimum_size = Vector2(0, 32)
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.153, 0.137, 0.122, 1)
+theme_override_colors/font_hover_color = Color(0.153, 0.137, 0.122, 1)
+theme_override_colors/font_pressed_color = Color(0.153, 0.137, 0.122, 1)
+theme_override_colors/font_focus_color = Color(0.153, 0.137, 0.122, 1)
+theme_override_styles/normal = ExtResource("Normal")
+theme_override_styles/hover = ExtResource("Hover")
+theme_override_styles/pressed = ExtResource("Hover")
+theme_override_styles/disabled = ExtResource("Normal")

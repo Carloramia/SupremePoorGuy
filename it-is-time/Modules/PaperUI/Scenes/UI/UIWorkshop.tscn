@@ -1,0 +1,63 @@
+[gd_scene load_steps=7 format=3]
+[ext_resource type="Theme" path="res://Modules/PaperUI/Assets/UI/PaperRelief/PaperReliefTheme.tres" id="Theme"]
+[ext_resource type="PackedScene" path="res://Modules/PaperUI/Scenes/UI/Components/SummonBookButton.tscn" id="Book"]
+[ext_resource type="PackedScene" path="res://Modules/PaperUI/Scenes/UI/Components/MonsterCard.tscn" id="Card"]
+[ext_resource type="PackedScene" path="res://Modules/PaperUI/Scenes/UI/Screens/RitualPanel.tscn" id="Ritual"]
+[ext_resource type="PackedScene" path="res://Modules/PaperUI/Scenes/UI/Components/RuneReferenceRow.tscn" id="Reference"]
+[ext_resource type="PackedScene" path="res://Modules/PaperUI/Scenes/UI/Components/RelicButton.tscn" id="Relic"]
+[node name="UIWorkshop" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("Theme")
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.153, 0.137, 0.122, 1)
+[node name="Scroll" type="ScrollContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 4
+
+[node name="Margin" type="MarginContainer" parent="Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 26
+theme_override_constants/margin_right = 26
+theme_override_constants/margin_top = 22
+theme_override_constants/margin_bottom = 22
+[node name="Examples" type="VBoxContainer" parent="Scroll/Margin"]
+layout_mode = 2
+[node name="Title" type="Label" parent="Scroll/Margin/Examples"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.933333, 0.886275, 0.784314, 1)
+theme_override_font_sizes/font_size = 28
+text = "UI 组件工作台 · 仅预览，不读写进度"
+[node name="Instructions" type="Label" parent="Scroll/Margin/Examples"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.933333, 0.886275, 0.784314, 1)
+text = "双击对应子场景编辑公共组件；不要在此测试页上修改实例来替代源场景。\n容器中的尺寸通过最小尺寸、拉伸比例和间距调整；图标与形象可直接换 Texture。"
+autowrap_mode = 3
+[node name="Book" parent="Scroll/Margin/Examples" instance=ExtResource("Book")]
+layout_mode = 2
+size_flags_horizontal = 0
+[node name="Card" parent="Scroll/Margin/Examples" instance=ExtResource("Card")]
+layout_mode = 2
+[node name="PaperPanel" type="PanelContainer" parent="Scroll/Margin/Examples"]
+layout_mode = 2
+[node name="Ritual" parent="Scroll/Margin/Examples/PaperPanel" instance=ExtResource("Ritual")]
+custom_minimum_size = Vector2(0, 540)
+layout_mode = 2
+[node name="SampleRelic" parent="Scroll/Margin/Examples/PaperPanel/Ritual/Columns/C3/RightScroll/Right/Relics" instance=ExtResource("Relic")]
+layout_mode = 2
+text = "奇物示例 · 可换贴图"
+[node name="SampleReference" parent="Scroll/Margin/Examples/PaperPanel/Ritual/Columns/C3/RightScroll/Right/References" instance=ExtResource("Reference")]
+layout_mode = 2

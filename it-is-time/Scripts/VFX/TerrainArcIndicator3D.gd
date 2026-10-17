@@ -188,6 +188,7 @@ func _resolve_targets() -> void:
 		terrain_cursor = get_tree().get_first_node_in_group(&"terrain_cursor_3d") as Node3D
 
 func _should_be_visible() -> bool:
+	if PLAYER_CONTEXT.is_free_cursor_mode(self): return false
 	if PLAYER_CONTEXT.controller(self) != null and PLAYER_CONTEXT.controlled_character(self) == null: return false
 	if not is_instance_valid(movement_anchor) or not is_instance_valid(terrain_cursor):
 		return false

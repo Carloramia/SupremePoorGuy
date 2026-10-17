@@ -19,12 +19,9 @@ var _was_tree_paused: bool = false
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 
-func _input(event: InputEvent) -> void:
-	if event.is_action_pressed(&"BPressed") and not event.is_echo():
-		get_viewport().set_input_as_handled()
-		toggle_workshop()
-
 func toggle_workshop() -> void:
+	var host := PLAYER_CONTEXT.application(self)
+	if host != null and not is_instance_valid(_workshop) and not host.allow_workshop(): return
 	if _transitioning:
 		return
 	_workshop = _find_workshop()
@@ -49,7 +46,9 @@ func _open_workshop() -> void:
 	_ensure_blur_mask()
 	_blur_mask.layer = _workshop.layer - 1
 	_blur_mask.show_mask()
-	get_tree().paused = true
+	var host := PLAYER_CONTEXT.application(self)
+	if host != null: host.set_pause_reason(&"workshop",true)
+	else: get_tree().paused = true
 
 	var viewport_height := get_viewport().get_visible_rect().size.y
 	_workshop.offset = Vector2(0.0, -viewport_height)
@@ -74,7 +73,9 @@ func _finish_close() -> void:
 	_workshop = null
 	_reposition_or_remove_mask()
 	_transitioning = false
-	get_tree().paused = _was_tree_paused
+	var host := PLAYER_CONTEXT.application(self)
+	if host != null: host.set_pause_reason(&"workshop",false)
+	else: get_tree().paused = _was_tree_paused
 
 func _finish_transition() -> void:
 	_transitioning = false
@@ -98,7 +99,7 @@ func _on_weapon_build_requested(
 	var weapon := WEAPON_TEST_SCENE.instantiate() as RigidBody3D
 	if weapon == null:
 		return
-	_get_ui_parent().add_child(weapon)
+	PLAYER_CONTEXT.level(self).add_child(weapon)
 	weapon.global_position = player_target.global_position + Vector3.UP * weapon_spawn_height
 	weapon.call(
 		&"build_from_material_cells",

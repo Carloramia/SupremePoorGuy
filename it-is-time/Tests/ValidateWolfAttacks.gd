@@ -6,6 +6,8 @@ class LaunchFixture:
 	var support: RigidBody3D
 	var grounded := true
 	var galloping := true
+	var recovery_control_active := false
+	func is_action_turn_blocked() -> bool: return false
 	func _gallop_active() -> bool: return galloping
 	func get_action_support_feet() -> Array[RigidBody3D]: return [support] if grounded else []
 	func get_leg_parts() -> Array[RigidBody3D]: return []
@@ -20,6 +22,7 @@ func check(value: bool, message: String) -> void:
 		push_error(message)
 
 func run() -> void:
+	root.get_node("RuntimeConsole").auto_getlogs_enabled = false
 	var floor_body := StaticBody3D.new()
 	var floor_shape := CollisionShape3D.new()
 	var floor_box := BoxShape3D.new()
@@ -64,6 +67,15 @@ func run() -> void:
 	check(not pounce.predict(target,16,0.1).hit,"Pounce requires gallop")
 	var bite_range: float = attacks.get_npc_attack_maximum_range(&"wolf_bite",target)
 	var original_target_position := target.global_position
+	target.global_position = attacks.torso.global_position+attacks.forward()*(bite_range+5.0)
+	target.linear_velocity = -attacks.forward()*3.0
+	var incoming_range: float = attacks.get_npc_attack_maximum_range(&"wolf_bite",target)
+	check(is_equal_approx(incoming_range-bite_range,3.0*(bite.data.bite_plant_prediction_time+maxf(bite.data.bite_retract_time,bite.data.jaw_open_time))),"Incoming bite admission reserves the actual foot planting and charging delay")
+	check(attacks.is_npc_target_in_attack_range(&"wolf_bite",target),"Incoming targets can be prepared for before entering static mouth reach")
+	check(attacks.is_target_in_bite_distance(target),"Incoming targets inside the bite preparation envelope cannot trigger pounce")
+	target.linear_velocity = attacks.forward()*3.0
+	check(is_equal_approx(attacks.get_npc_attack_maximum_range(&"wolf_bite",target),bite_range),"Receding targets do not gain fictitious physical reach")
+	target.linear_velocity = Vector3.ZERO
 	target.global_position = attacks.torso.global_position+attacks.forward()*(bite_range-0.01)
 	bite.cooldown_remaining = 5.0
 	check(attacks.is_target_in_bite_distance(target),"Bite distance exclusion remains active during cooldown")
@@ -73,6 +85,17 @@ func run() -> void:
 	target.global_position = attacks.torso.global_position+attacks.forward()*(bite_range+0.01)
 	check(not attacks.is_target_in_bite_distance(target),"Outside bite distance remains eligible for other pounce gates")
 	bite.cooldown_remaining = 0.0
+	var near_part: PhysicalBodyPart3D = wolf.get_node("GeneratedParts/SubTorso_ForeLeg_1")
+	var near_original := near_part.global_position
+	target.global_position = attacks.torso.global_position+attacks.forward()*(attacks.get_npc_attack_minimum_range(&"wolf_pounce")+10.0)
+	near_part.global_position = attacks.torso.global_position+attacks.forward()*bite_range*0.5
+	var blocked: Dictionary = attacks.get_pounce_distance_check(target)
+	check(not blocked.hit and blocked.reason == &"within_bite_range" and blocked.blocking_part == str(near_part.get_path()),"A farther target Torso cannot bypass another nearby Torso of the same enemy")
+	check(not attacks.is_npc_attack_distance_candidate(&"wolf_pounce",target),"Near enemies cannot reserve pounce approach distance")
+	check(not attacks.is_npc_target_in_attack_range(&"wolf_pounce",target) and not pounce.intercept_plan(target).hit,"AI and ballistic planning share the whole-enemy distance gate")
+	near_part.global_position = near_original
+	target.global_position = attacks.torso.global_position+attacks.forward()*(attacks.get_npc_attack_minimum_range(&"wolf_pounce")-0.01)
+	check(pounce.intercept_plan(target).reason == &"pounce_too_close","Distances below the enlarged minimum are rejected outside bite reach too")
 	target.global_position = original_target_position
 	var distance_ai = npc.get_node("NPCStateMachine3D")
 	distance_ai._target = target
@@ -102,7 +125,7 @@ func run() -> void:
 	launch_fixture.support = attacks.torso
 	attacks.movement = launch_fixture
 	launch_fixture.grounded = false
-	target.global_position = attacks.torso.global_position+attacks.forward()*8.0*attacks.pounce_scale()
+	target.global_position = attacks.torso.global_position+attacks.forward()*12.0*attacks.pounce_scale()
 	var planting_plan: Dictionary = pounce.intercept_plan(target)
 	check(planting_plan.hit and is_equal_approx(planting_plan.charge_duration,pounce.data.pounce_charge_time+pounce.data.pounce_plant_prediction_time),"Ungrounded prediction includes foot planting before charge")
 	launch_fixture.grounded = true
@@ -113,11 +136,37 @@ func run() -> void:
 	pounce.tick(pounce.data.pounce_gallop_grace_time+0.01)
 	check(pounce.predict(target,16,0.1).get("reason") == &"not_galloping","Expired running qualification cannot authorize a standing pounce")
 	launch_fixture.galloping = true
-	var target_position := target.global_position
+	pounce.tick(0.01)
+	pounce.reserve_preparation(target)
+	launch_fixture.galloping = false
+	pounce.tick(pounce.data.pounce_gallop_grace_time+0.01)
+	check(pounce.predict(target,16,0.1).hit,"Committed running preparation survives the ordinary gallop grace")
+	var reservation: float = pounce._preparation_remaining
+	pounce.reserve_preparation(target)
+	check(is_equal_approx(reservation,pounce._preparation_remaining),"Repeated AI preparation checks cannot renew an expired running approach")
+	pounce.tick(reservation+0.01)
+	check(pounce.predict(target,16,0.1).get("reason") == &"not_galloping","Committed preparation still has a bounded timeout")
+	launch_fixture.galloping = true
+	bite.enabled = true
+	for part: RigidBody3D in npc._get_physical_body_parts(): part.freeze = true
+	check(pounce.start(target),"A genuinely distant running approach can still prepare pounce")
+	near_part.global_position = attacks.torso.global_position+attacks.forward()*2.0
+	var velocity_before: Vector3 = attacks.torso.linear_velocity
+	var committed_endpoint: Vector3 = pounce.locked_position
+	pounce._launch()
+	check(pounce.active and pounce._phase == &"flying" and pounce.locked_position == committed_endpoint,"A target entering bite range after admission cannot cancel or redirect pounce")
+	check(pounce.launch_velocity.is_finite() and pounce.launch_velocity.length() <= pounce.data.maximum_launch_speed*sqrt(pounce.body_scale)+0.001,"Committed pounce retains finite bounded launch speed")
+	check(attacks.torso.linear_velocity == velocity_before,"Frozen fixture parts never receive launch impulses")
+	pounce.finish()
+	near_part.global_position = near_original
+	bite.enabled = false
+	pounce.cooldown_remaining = 0.0
+	for part: RigidBody3D in npc._get_physical_body_parts(): part.freeze = false
+	var target_position: Vector3 = attacks.torso.global_position+attacks.forward()*8.0*attacks.pounce_scale()
 	for size_ratio: float in [0.5,1.0,2.0,4.0]:
 		attacks.torso.set_meta(&"generated_size",torso_size*size_ratio)
 		var scale: float = attacks.pounce_scale()
-		target.global_position = attacks.torso.global_position+attacks.forward()*8.0*scale
+		target.global_position = attacks.torso.global_position+attacks.forward()*12.0*scale
 		var prediction: Dictionary = pounce.predict(target,16,0.1)
 		var ai = npc.get_node("NPCStateMachine3D")
 		check(is_equal_approx(ai._attack_maximum_range(ai.behavior.attacks[0],target),pounce.data.maximum_range*scale*(1.0-pounce.data.pounce_range_margin_ratio)+pounce._planned_charge_offset().dot(attacks.forward())),"AI stop band uses safe scaled pounce range")
@@ -154,7 +203,7 @@ func run() -> void:
 			attacks.torso.global_position += offset
 			target.global_position += target.linear_velocity*pounce.data.pounce_charge_time
 			pounce._launch()
-			check(pounce._phase == &"flying","Charge revalidates and launches from the actual torso pose")
+			check(pounce._phase == &"flying","Charge launches the admitted plan from the actual torso pose")
 			var locked: Vector3 = pounce.locked_position
 			var launched_velocity: Vector3 = pounce.launch_velocity
 			target.global_position += Vector3(2.0,0.0,1.0)
@@ -180,15 +229,21 @@ func run() -> void:
 		pounce._target_velocities.clear()
 	attacks.torso.set_meta(&"generated_size",torso_size)
 	for part: RigidBody3D in npc._get_physical_body_parts(): part.freeze = true
-	target.global_position = attacks.torso.global_position+attacks.forward()*8.0*attacks.pounce_scale()
+	target.global_position = attacks.torso.global_position+attacks.forward()*12.0*attacks.pounce_scale()
 	target.linear_velocity = Vector3.ZERO
 	pounce._target_velocities.clear()
 	pounce.cooldown_remaining = 0.0
 	check(pounce.start(target),"Pounce can prepare another valid intercept")
+	committed_endpoint = pounce.locked_position
 	target.global_position += attacks.forward()*1000.0
 	pounce._launch()
-	check(not pounce.active and pounce._phase == &"idle","Target leaving reach during charge cancels instead of launching at a stale endpoint")
-	check(pounce.owned_feet.is_empty() and pounce.owned_bodies.is_empty(),"Failed launch releases action ownership")
+	check(pounce.active and pounce._phase == &"flying" and pounce.locked_position == committed_endpoint,"An escaped target cannot revoke the admitted pounce endpoint")
+	pounce.finish()
+	check(pounce.owned_feet.is_empty() and pounce.owned_bodies.is_empty(),"Completion releases action ownership")
+	pounce.active = true
+	pounce._intercept.clear()
+	pounce._launch()
+	check(not pounce.active and pounce._phase == &"idle","Missing committed physics data still aborts safely")
 	pounce.cooldown_remaining = 0.0
 	for part: RigidBody3D in npc._get_physical_body_parts(): part.freeze = false
 	target.linear_velocity = Vector3.RIGHT*4.0
@@ -205,7 +260,22 @@ func run() -> void:
 	attacks.movement = movement
 	bite.enabled = true
 	launch_fixture.free()
+	validate_bite_frame(bite)
 	check(bite.predict(target,16,0.1).hit,"Bite predicts an intersecting target")
+	var reachable_position := target.global_position
+	var hp_before_prediction := target.current_hp
+	target.linear_velocity = attacks.forward()*1000.0
+	check(not bite._closing_prediction(target,16,0.1,true,0.7).hit,"Fixture exercises an uncertain future outside the sweep")
+	bite.target = target
+	check(bite._closing_prediction(target,16,0.1,true,0.7,false).hit,"Current geometry can still detect a reachable target")
+	target.global_position += attacks.forward()*10000.0
+	await physics_frame
+	check(not bite._closing_prediction(target,16,0.1,true,0.7,false).hit,"Admission geometry still rejects an unreachable target")
+	check(target.current_hp == hp_before_prediction,"Prediction fallback never creates damage without actual contact")
+	target.global_position = reachable_position
+	target.linear_velocity = Vector3.ZERO
+	bite.target = null
+	await physics_frame
 	var original_limit: bool = bite.joint.get_flag_z(Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_LIMIT)
 	var original_lower: float = bite.joint.get_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_LOWER_LIMIT)
 	var original_y: bool = bite.joint.get_flag_y(Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_LIMIT)
@@ -255,6 +325,12 @@ func run() -> void:
 		var relative: Vector3 = foot.global_position-chain.root.to_global(chain.anchor)
 		var radius := maxf(float(chain.length)*0.98,relative.length()+0.001)
 		check((relative-(charge_end-charge_start)).length() <= radius+0.001,"Combined crouch and retraction remain inside chain reach")
+	var before_escape: Vector3 = target.global_position
+	target.global_position += Vector3(1000,0,1000)
+	bite._phase_time = charge_duration
+	bite.tick(0.01)
+	check(bite.active and bite._phase == &"lunging","An admitted bite strikes even when the target escapes during charge")
+	target.global_position = before_escape
 	bite._set_phase(&"recovering")
 	check(bite._body_target(torso_row,0.0) == torso_row.body.global_position,"Recovery starts at the actual torso pose")
 	check(bite._body_target(torso_row,bite.data.recovery_time).distance_to(torso_row.origin) < 0.001,"Recovery returns smoothly to the original pose")
@@ -330,3 +406,23 @@ func run() -> void:
 	npc.free(); wolf.free()
 	print("WOLF_ATTACK_VALIDATION ","FAILED" if _failed else "PASSED")
 	quit(1 if _failed else 0)
+
+func validate_bite_frame(bite: Node) -> void:
+	var head_pose: Transform3D = bite.head.global_transform
+	var jaw_pose: Transform3D = bite.jaw.global_transform
+	var closed: Transform3D = bite._closure_pose(1.0,true)
+	check(bite._closure_pose(0.0,false).is_equal_approx(jaw_pose),"Remaining closure starts at the actual Jaw pose")
+	var opened: Transform3D = bite._closure_pose(0.0,true)
+	bite.jaw.global_transform = opened
+	check(bite._closure_pose(0.0,false).is_equal_approx(opened),"An already open jaw is not opened twice by prediction")
+	check(bite._closure_pose(1.0,false).is_equal_approx(closed),"Actual and admission sweeps reach the same closed pose")
+	var turn := Transform3D(Basis(Vector3.UP,0.7),Vector3(100,3,-25))
+	var authored_joint: Transform3D = bite.joint.global_transform
+	bite.head.global_transform = turn*head_pose
+	bite.jaw.global_transform = turn*opened
+	check(bite.joint.global_transform == authored_joint,"Regression leaves the static Joint node behind")
+	var expected := turn*closed
+	var actual: Transform3D = bite._closure_pose(1.0,false)
+	check(actual.origin.distance_to(expected.origin)<0.0001 and actual.basis.is_equal_approx(expected.basis),"Closure follows Head translation and rotation instead of the authored Joint node")
+	bite.head.global_transform = head_pose
+	bite.jaw.global_transform = jaw_pose

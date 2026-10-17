@@ -1,0 +1,22 @@
+攻击碰撞箱可视化
+
+showattackboxes on      开启
+showattackboxes off     关闭并移除全部绘制节点
+showattackboxes status  查看开关及当前绘制数量
+showattackboxes         切换开启/关闭
+
+默认关闭，help已包含此命令。
+红色线框：当前启用伤害判定。
+橙色线框：临时攻击范围已创建，但当前未启用伤害判定。
+
+覆盖Snake/Wolf啃咬、Spider前肢攻击的临时查询盒、HornedBeast冲锋盒、Bird俯冲锥体、踏地冲击波的球形范围，以及普通武器在挥舞伤害窗口内的实体碰撞箱。
+普通武器刚性装备后，读取实际转移到手部的武器碰撞箱，不把手部自身碰撞箱混入。工坊拼装武器的多个碰撞箱会分别显示。
+冲锋显示实际用于伤害查询的本帧扫掠长方体；其他移动伤害盒显示当前位置，不保留历史扫掠轨迹。冲击波球形范围随扩散时间增大。
+
+绘制使用独立线框Mesh，不启用查询盒的实体碰撞，不修改碰撞层、质量、关节或伤害逻辑；线框可透过模型查看。
+开启后自动识别后来生成的攻击，攻击销毁或场景替换时自动清理。开关在本次运行内跨战斗场景保留；战斗暂停期间仍可开关。绘制节点分别进入攻击所在Viewport，适配战斗场景的SubViewport。
+关闭后停止绘制轮询，正常运行默认不承担绘制开销。
+
+后续新攻击接入：组件加入damage_components组，并实现get_attack_debug_shapes() -> Array[Dictionary]。每条返回shape: Shape3D、transform: 世界Transform3D、active: 当前伤害窗口bool。临时查询盒复用TemporaryAttackHitbox3D时已自动接入。
+
+回归测试：Tests/ValidateAttackCollisionDisplay3D.gd。

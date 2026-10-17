@@ -142,6 +142,7 @@ func check_spacing_guards(m: Node) -> void:
 	m._ground_path = original_path
 
 func run() -> void:
+	root.get_node("RuntimeConsole").auto_getlogs_enabled = false
 	check_route()
 	var level := Node3D.new()
 	root.add_child(level)

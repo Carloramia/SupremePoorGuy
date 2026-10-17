@@ -522,7 +522,7 @@ func _resolve_generated_gait_data() -> LegMovementData:
 func get_input_movement_direction() -> Vector3:
 	var source := get_player_command_source()
 	if source != null: return source.get_movement_direction()
-	if PLAYER_CONTEXT.controller(self) != null: return Vector3.ZERO
+	if PLAYER_CONTEXT.controller(self) != null or not PLAYER_CONTEXT.input_allowed(self): return Vector3.ZERO
 	var direction := Vector3(
 		Input.get_action_strength(right_action) - Input.get_action_strength(left_action),
 		0.0,
@@ -537,7 +537,7 @@ func is_burst_requested() -> bool:
 	if wings != null and wings.claims_input_action(burst_action): return false
 	var source := get_player_command_source()
 	if source != null: return source.is_jump_requested()
-	return PLAYER_CONTEXT.controller(self) == null and Input.is_action_just_pressed(burst_action)
+	return PLAYER_CONTEXT.controller(self) == null and PLAYER_CONTEXT.input_allowed(self) and Input.is_action_just_pressed(burst_action)
 
 func is_fast_speed_active() -> bool:
 	return false
@@ -1656,7 +1656,7 @@ func _apply_torso_response() -> void:
 			# Default support excludes leg weight; full-flight support carries the whole assembly.
 			if body is RigidBody3D and (carries_limbs or not passive_leg_bodies.has(body)) and not _is_body_broken(body) and not body.freeze: assembly_mass += body.mass
 		for segment: Dictionary in _segments.values(): assigned_mass += float(segment.mass)
-		support_mass_scale = assembly_mass / maxf(assigned_mass, 0.001)
+		support_mass_scale = maxf(assembly_mass-_height_support_external_gravity_mass(),0.0) / maxf(assigned_mass, 0.001)
 	for id: int in _segments:
 		var segment: Dictionary = _segments[id]
 		var support_floor := 0.0
@@ -1743,6 +1743,9 @@ func _apply_torso_response() -> void:
 
 func _height_support_carries_limb_weight() -> bool:
 	return false
+
+func _height_support_external_gravity_mass() -> float:
+	return 0.0
 
 func _airborne_height_support_authorized() -> bool:
 	return _gallop_active()
