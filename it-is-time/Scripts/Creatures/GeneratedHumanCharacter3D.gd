@@ -31,10 +31,11 @@ func _before_replacing_generated_parts(_previous: Node) -> void:
 
 func _prepare_generated_part(part: PhysicalBodyPart3D, layout: Dictionary, blueprint: Dictionary) -> void:
 	get_node(generator_path).apply_reference_connectors(part, str(layout.name))
-	if layout.name == "Arm_R":
+	if layout.name in ["Arm_R","Arm_L"] and not part.has_node("ItemSocket3D"):
 		var socket := Marker3D.new()
 		socket.name = "ItemSocket3D"
 		socket.position = part.get_node("JointOut").position
+		socket.set_meta(&"human_default_socket",true)
 		part.add_child(socket)
 	if layout.name == "Torso": _add_waist_visual(part, float(blueprint.get("overall_scale",1.0)))
 
@@ -43,7 +44,7 @@ func _on_framework_generated(plan: Dictionary) -> void:
 	var container := get_node_or_null("GeneratedParts")
 	if container == null: return
 	var scene_owner := _scene_owner()
-	for path: NodePath in [^"Arm_R/ItemSocket3D", ^"Torso/WaistVisual"]:
+	for path: NodePath in [^"Arm_R/ItemSocket3D", ^"Arm_L/ItemSocket3D", ^"Torso/WaistVisual"]:
 		var node := container.get_node_or_null(path)
 		if node == null: continue
 		node.owner = scene_owner
@@ -58,6 +59,7 @@ func _instantiate_blueprint(blueprint: Dictionary, generator_transform: Transfor
 			layout.scene_rule.size_multiplier *= scale_factor
 	var container := super._instantiate_blueprint(blueprint, generator_transform)
 	if container == null: return null
+	_ensure_arm_sockets(container,true)
 	for node: Node in container.get_children():
 		if not node is PhysicalBodyPart3D: continue
 		var part := node as PhysicalBodyPart3D
@@ -79,7 +81,27 @@ func _instantiate_blueprint(blueprint: Dictionary, generator_transform: Transfor
 	_configure_human_joints(container)
 	return container
 
+func _ensure_arm_sockets(container: Node, generated: bool = false) -> void:
+	for hand_name: String in ["Arm_R","Arm_L"]:
+		var hand := container.get_node_or_null(hand_name)
+		if hand==null: continue
+		var grip := hand.get_node_or_null("JointOut") as Node3D
+		if grip==null: continue
+		var socket := hand.get_node_or_null("ItemSocket3D") as Marker3D
+		if socket!=null:
+			if not generated or not socket.has_meta(&"human_default_socket"): continue
+			socket.remove_meta(&"human_default_socket")
+			var snapshot: Dictionary = hand.get_meta("generated_layout",{}).get("internal_snapshot",{})
+			if snapshot.get("nodes",[]).any(func(entry: Dictionary) -> bool: return NodePath(entry.path)==^"ItemSocket3D"): continue
+		else:
+			socket = Marker3D.new()
+			socket.name = "ItemSocket3D"
+			hand.add_child(socket)
+		# Each hand uses its own calibrated palm, rather than copying the primary hand's offset.
+		socket.position = grip.position
+
 func _activate_parts(container: Node) -> void:
+	_ensure_arm_sockets(container)
 	_configure_human_joints(container)
 	super._activate_parts(container)
 	var swing := get_node_or_null("LimbSwingController3D")

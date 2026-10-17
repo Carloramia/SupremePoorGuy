@@ -38,8 +38,20 @@ extends RigidBody3D
 ## Optional posture for a pair of bound Arms outside attacks; absent preserves existing behavior.
 @export var idle_grip_pose: ItemGripIdlePose
 
+func get_equipment_basis(socket_basis: Basis) -> Basis:
+	return socket_basis
+
 func get_grip_settings(index: int) -> ItemGripSettings:
 	return grip_point_settings[index] if index >= 0 and index < grip_point_settings.size() else null
+
+## Override for articulated equipment whose auxiliary grip moves independently.
+func get_grip_target_pose(index: int) -> Transform3D:
+	if index < 0 or index >= grip_point_poses.size(): return global_transform
+	var pose := grip_point_poses[index]
+	return Transform3D(global_basis*pose.basis.inverse(),to_global(pose.origin))
+
+func get_grip_reaction_body(_index: int) -> RigidBody3D:
+	return rigid_attachment_holder if is_instance_valid(rigid_attachment_holder) else self
 
 func is_grip_enabled(index: int) -> bool:
 	var settings := get_grip_settings(index)
@@ -74,6 +86,8 @@ func select_grip_point(index: int) -> bool:
 
 ## Non-null while this item shares the holder's compound rigid body.
 var rigid_attachment_holder: RigidBody3D
+## Mass and center in holder-local coordinates, captured when merged into its body.
+var rigid_attachment_load: Dictionary = {}
 
 var _temporary_item_image: Texture2D
 
@@ -143,10 +157,10 @@ func create_item_image() -> Texture2D:
 	preview.position = Vector3.ZERO
 	preview.rotation = Vector3.ZERO
 	preview.scale = Vector3.ONE
-	preview_root.add_child(preview)
 	# Inventory storage hides the live item before requesting its icon. The
 	# duplicate inherits that visibility, so force only the preview root visible.
 	_prepare_preview_tree(preview, true)
+	preview_root.add_child(preview)
 	var bounds := _calculate_preview_bounds(preview)
 	var center := bounds.get_center()
 	var extent := maxf(maxf(bounds.size.x, bounds.size.y), 0.5)
@@ -187,6 +201,9 @@ func _prepare_preview_tree(root: Node, force_root_visible: bool = false) -> void
 		(root as Node3D).visible = true
 	if root is CollisionShape3D:
 		(root as CollisionShape3D).disabled = true
+	if root is Joint3D:
+		(root as Joint3D).node_a = NodePath()
+		(root as Joint3D).node_b = NodePath()
 	for child: Node in root.get_children():
 		_prepare_preview_tree(child)
 

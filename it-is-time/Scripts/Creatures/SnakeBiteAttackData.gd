@@ -1,6 +1,12 @@
 @tool
 extends "res://Scripts/Creatures/CreatureAttackData.gd"
 
+@export_group("Attack Joint Limits")
+## Raised Torso/Head Z bending only; never narrows a wider standing limit.
+@export_range(0.0, 90.0, 0.5) var attack_bend_limit_degrees: float = 45.0
+## Return toward standing limits only as the actual and requested poses permit.
+@export_range(1.0, 360.0, 1.0, "or_greater") var bend_restore_speed_degrees: float = 60.0
+
 @export_group("Preparation")
 @export_range(0.1, 3.0, 0.05) var preparation_time: float = 0.7
 @export_range(0.0, 3.0, 0.05) var preparation_extra_wait: float = 1.0
@@ -41,7 +47,7 @@ extends "res://Scripts/Creatures/CreatureAttackData.gd"
 @export_range(0.1, 50.0, 0.1) var angular_damping: float = 12.0
 @export_range(0.05, 1.0, 0.01) var jaw_close_time: float = 0.18
 @export_range(0.1, 5.0, 0.1) var recovery_time: float = 1.2
-@export_range(0.0, 3.0, 0.1) var recovery_extra_wait: float = 2.0
+@export_range(0.0, 10.0, 0.1) var recovery_extra_wait: float = 2.0
 
 @export_group("Damage")
 ## Head-local box axes; visual aiming reads the fitted mouth markers separately.
@@ -54,11 +60,12 @@ func _default_cooldown() -> float: return 2.8
 func is_valid() -> bool:
 	for value: float in [preparation_time, reference_chain_length, burst_speed, lunge_time,
 		maximum_acceleration, burst_response_time, maximum_pose_acceleration, maximum_angular_acceleration, angular_strength, angular_damping,
-		jaw_close_time, recovery_time, impulse_multiplier, positioning_update_interval]:
+		jaw_close_time, recovery_time, impulse_multiplier, positioning_update_interval, bend_restore_speed_degrees]:
 		if not is_finite(value) or value <= 0.0: return false
 	for value: float in [cooldown, preparation_extra_wait, lunge_extra_wait, recovery_extra_wait, lift_ratio, retract_ratio, extension_ratio]:
 		if not is_finite(value) or value < 0.0: return false
 	return positioning_update_interval >= 0.05 and positioning_update_interval <= 0.5 \
+		and is_finite(attack_bend_limit_degrees) and attack_bend_limit_degrees >= 0.0 and attack_bend_limit_degrees <= 90.0 \
 		and is_finite(head_extension_speed_multiplier) and head_extension_speed_multiplier >= 1.0 and head_extension_speed_multiplier <= 3.0 \
 		and is_finite(preserved_root_ratio) and preserved_root_ratio >= 0.0 and preserved_root_ratio <= 0.6 \
 		and is_finite(jaw_open_degrees) and jaw_open_degrees > 0.0 and jaw_open_degrees <= 75.0 \

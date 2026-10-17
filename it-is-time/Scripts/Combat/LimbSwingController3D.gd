@@ -276,6 +276,7 @@ func is_npc_attack_active() -> bool:
 	return _npc_group >= 0 and get_group_state(_npc_group) != SwingState.IDLE
 
 func is_body_driven(body: RigidBody3D) -> bool:
+	if is_instance_valid(body) and body.has_meta(&"equipment_bow_pose_driver") and is_instance_valid(body.get_meta(&"equipment_bow_pose_driver")): return true
 	if is_instance_valid(body) and body.has_meta(&"equipment_grip_driver") and is_instance_valid(body.get_meta(&"equipment_grip_driver")): return true
 	if is_instance_valid(body) and body.has_meta(&"equipment_idle_pose_driver") and is_instance_valid(body.get_meta(&"equipment_idle_pose_driver")): return true
 	return is_body_attacking(body)
@@ -617,6 +618,9 @@ func _predict_weapon_pose(state: Dictionary, target: Node3D, charge: float, samp
 func _chain_is_available(state: Dictionary) -> bool:
 	var hand: Variant = state.get("effector", state.body)
 	if not is_instance_valid(hand) or hand.is_broken: return false
+	if hand.has_meta(&"equipment_bow_pose_driver") and is_instance_valid(hand.get_meta(&"equipment_bow_pose_driver")): return false
+	var held := _equipped_weapon_for(hand)
+	if held != null and (SampleWeapon3D.WeaponTag.Bow in held.weapon_tags or SampleWeapon3D.WeaponTag.Arrow in held.weapon_tags): return false
 	if hand.has_meta(&"equipment_grip_driver") and is_instance_valid(hand.get_meta(&"equipment_grip_driver")): return false
 	for link: Dictionary in state.get("followers", []):
 		if not is_instance_valid(link.body) or link.body.is_broken or not is_instance_valid(link.parent) or link.parent.is_broken or not is_instance_valid(link.joint) or link.joint.is_queued_for_deletion(): return false

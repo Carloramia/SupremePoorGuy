@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="NPCBehaviorData" format=3 uid="uid://csjatll48mjn0"]
+
+[ext_resource type="Script" uid="uid://d4d3pxjthc0yt" path="res://Scripts/Creatures/NPCBehaviorData.gd" id="1"]
+[ext_resource type="Script" uid="uid://bqypvnhjbnrap" path="res://Scripts/Creatures/NPCAttackData.gd" id="2"]
+
+[sub_resource type="Resource" id="Shot"]
+script = ExtResource("2")
+action_id = &"bow_shoot"
+receiver_path = NodePath("BowAttackController3D")
+minimum_range = 10.0
+maximum_range = inf
+preferred_distance = 35.0
+distance_tolerance = 2.0
+cooldown = 1.5
+charge_time = 0.8
+maximum_duration = 8.0
+
+[resource]
+script = ExtResource("1")
+preferred_distance = 35.0
+maximum_vertical_difference = inf
+attacks = Array[ExtResource("2")]([SubResource("Shot")])

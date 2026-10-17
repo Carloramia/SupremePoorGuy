@@ -112,6 +112,8 @@ def hole_centers(image):
 
 def main():
     records = []
+    fixed_file=OUT/'Metadata/fixed_geometry.json'
+    fixed=json.loads(fixed_file.read_text(encoding='utf-8')) if fixed_file.exists() else {}
     # Pixel regions are source-sheet coordinates, not world dimensions.
     regions = {
         1: [
@@ -165,7 +167,16 @@ def main():
         for i, box in enumerate(tails[variant]):
             entries.append((f'Tail/Tail{i+1:02d}', box, None, [0.5,0.12], [0.5,0.88], [10]))
         for category, box, polygon, inlet, outlet, tags in entries:
-            image, _ = package(isolate(sheet, box, polygon, pink=category.startswith('Feet/')), SOURCE / 'Separated' / folder / f'{category}.png')
+            key=f'{folder}/{category}'
+            final=SOURCE/'Separated'/folder/f'{category}.png'
+            if key in fixed:
+                # Completed feet keep their original canvas/pixel anchors; do not crop/recenter them.
+                image=Image.open(P/fixed[key]['repair_source'].removeprefix('res://')).convert('RGBA')
+                assert list(image.size)==fixed[key]['texture_size'],key
+                final.parent.mkdir(parents=True,exist_ok=True)
+                image.save(final)
+            else:
+                image, _ = package(isolate(sheet, box, polygon, pink=category.startswith('Feet/')), final)
             if category.startswith('Tail/'):
                 ys,xs=np.where(np.array(image.getchannel('A'))>=128)
                 points=np.column_stack((xs,ys)); center=points.mean(axis=0)
@@ -175,7 +186,8 @@ def main():
                 ends=[center+axis*np.quantile(along,q) for q in [.08,.92]]
                 inlet,outlet=[[(point[0]-12)/(image.width-24),(point[1]-12)/(image.height-24)] for point in ends]
             records.append(dict(key=f'{folder}/{category}', file=f'{folder}/{category}.png', category=f'{folder}/{category.rsplit("/",1)[0]}', name=category.rsplit('/',1)[1],
-                                joint_in=inlet, joint_out=outlet, tags=tags, units_per_pixel=0.01, origin='original_crop', source_box=list(box)))
+                                joint_in=inlet, joint_out=outlet, tags=tags, units_per_pixel=0.01,
+                                origin='pixel_ankle_completion' if key in fixed else 'original_crop', source_box=list(box)))
         # Four completed templates per preset; both sides retain separate native paws.
         for kind, span in [('fore_upper',165),('fore_lower',125),('hind_upper',180),('hind_lower',205)]:
             raw = SOURCE / 'RawEdits' / folder / f'rat{variant}_{kind}.png'

@@ -363,7 +363,8 @@ func is_connection_recovering() -> bool:
 
 func _begin_connection_recovery() -> void:
 	if _connection_recovery_active or not is_inside_tree() or not _belly.any(_live): return
-	_connection_recovery_resume_path = _path_ready and _uses_ground_path()
+	# Attack/idle pose ownership pauses execution without invalidating the visited route.
+	_connection_recovery_resume_path = _path_ready and not _ground_path.points.is_empty()
 	var reference := get_pose_reference()
 	if _idle_ground_poses.is_empty():
 		var inverse := reference.affine_inverse()
@@ -470,6 +471,26 @@ func _connection_pose(row: Dictionary) -> Transform3D:
 		pose.origin += Vector3(row.trajectory_offset)+Vector3(0,0,row.sway_offset)
 	return pose
 
+func _restore_bend_limit(joint: Generic6DOFJoint3D, actual: Basis, requested: Basis, angular_speed: float, delta: float) -> bool:
+	var standing: Dictionary = joint.get_meta(&"snake_bend_restore",{})
+	if standing.is_empty() or (is_instance_valid(_attack_owner) and not standing.restoring): return true
+	var limits: Vector2 = standing.limits
+	var angle := actual.orthonormalized().get_euler(EULER_ORDER_XYZ).z
+	var desired := requested.orthonormalized().get_euler(EULER_ORDER_XYZ).z
+	# Never contract through the current bend or a still-outstretched recovery target.
+	var margin := deg_to_rad(2.0)+absf(angular_speed)*delta
+	var lower := minf(limits.x,minf(angle-margin,desired))
+	var upper := maxf(limits.y,maxf(angle+margin,desired))
+	var rate: float = standing.speed*delta
+	lower = minf(move_toward(joint.get_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_LOWER_LIMIT),lower,rate),angle-margin)
+	upper = maxf(move_toward(joint.get_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_UPPER_LIMIT),upper,rate),angle+margin)
+	joint.set_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_LOWER_LIMIT,lower)
+	joint.set_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_UPPER_LIMIT,upper)
+	if not is_equal_approx(lower,limits.x) or not is_equal_approx(upper,limits.y): return false
+	joint.set_flag_z(Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_LIMIT,standing.enabled)
+	joint.remove_meta(&"snake_bend_restore")
+	return true
+
 ## Tighten each joint around a reachable target, never through its current solver anchors.
 func _update_connections(delta: float) -> void:
 	var ready := true
@@ -481,6 +502,7 @@ func _update_connections(delta: float) -> void:
 	var maximum_separation_speed := 0.0
 	var worst: StringName = &"none"
 	var blocked := 0
+	var bend_limits_restoring := 0
 	var structural_failure := false
 	var structure_settled := true
 	var blocked_parts: Array[StringName] = []
@@ -494,6 +516,13 @@ func _update_connections(delta: float) -> void:
 		var fb: Transform3D = b.body.global_transform*Transform3D(joint.get_meta(&"generated_joint_frame_b"))
 		var desired_a := _connection_pose(a)*Transform3D(joint.get_meta(&"generated_joint_frame_a"))
 		var desired_b := _connection_pose(b)*Transform3D(joint.get_meta(&"generated_joint_frame_b"))
+		if joint.has_meta(&"snake_bend_restore"):
+			var angular_speed: float = (fa.basis.inverse()*(b.body.angular_velocity-a.body.angular_velocity)).z
+			if not _restore_bend_limit(joint,fa.basis.inverse()*fb.basis,desired_a.basis.inverse()*desired_b.basis,angular_speed,delta):
+				bend_limits_restoring += 1
+				ready = false
+				limits_ready = false
+				structure_settled = false
 		var desired := desired_a.affine_inverse()*desired_b.origin
 		var bounds := _joint_slide_bounds(b,_path_ready or is_instance_valid(_attack_owner) or not _idle_ground_poses.is_empty())
 		desired = desired.clamp(bounds.lower,bounds.upper)
@@ -567,7 +596,7 @@ func _update_connections(delta: float) -> void:
 		a.body.apply_force(-force,midpoint-a.body.global_position)
 		b.body.apply_force(force,midpoint-b.body.global_position)
 	_connection_diagnostics = {"ready":ready,"limits_ready":limits_ready,"maximum_error":maximum_error,"maximum_excess":maximum_excess,"maximum_error_ratio":maximum_error_ratio,"worst_part":worst,"blocked_joints":blocked,"blocked_parts":blocked_parts,
-		"maximum_pose_error_ratio":maximum_pose_error,"maximum_separation_speed":maximum_separation_speed,"structure_settled":structure_settled,"recovering":_connection_recovery_active,"settle_time":_connection_settle_time,
+		"maximum_pose_error_ratio":maximum_pose_error,"maximum_separation_speed":maximum_separation_speed,"structure_settled":structure_settled,"recovering":_connection_recovery_active,"settle_time":_connection_settle_time,"bend_limits_restoring":bend_limits_restoring,
 		"profile":"attack" if is_instance_valid(_attack_owner) else "rejoining" if _connection_recovery_active else "locomotion" if _path_ready else "idle_hold"}
 	if not is_instance_valid(_attack_owner) and not _connection_recovery_active and (_path_ready or _attack_slide_release_pending) and structural_failure:
 		_begin_connection_recovery()
@@ -1117,6 +1146,12 @@ func _clear_spacing_wave() -> void:
 
 func _update_ground_path(delta: float, speed: float, frame: Dictionary) -> void:
 	if _connection_recovery_active: return
+	if is_instance_valid(_attack_owner):
+		# Preserve route history and per-part progress while the attack owns physical targets.
+		_path_speed = 0.0
+		_path_frequency = 0.0
+		_spacing_phase_rate = 0.0
+		return
 	if not _uses_ground_path() or _sway_links <= 0 or _sway_links >= _sway_chain.size():
 		if not _spacing_pairs.is_empty(): _clear_spacing_wave()
 		_set_path_slide_limits(false)
@@ -1467,7 +1502,7 @@ func set_character_control_enabled(value: bool) -> void:
 	set_physics_process(value)
 
 func get_ground_path_debug_snapshot(maximum_points: int = 128) -> Dictionary:
-	if not _path_ready or not _uses_ground_path() or not enabled or not _character_enabled or not _live(_path_leader): return {}
+	if not (_path_ready or _connection_recovery_resume_path) or _ground_path.points.is_empty() or not enabled or not _character_enabled or not _live(_path_leader): return {}
 	var points := PackedVector3Array()
 	var distances := PackedFloat32Array()
 	var start := _path_progress-_path_length
@@ -1565,6 +1600,7 @@ func get_snake_motion_diagnostics(include_parts: bool = true) -> Dictionary:
 		"locomotion_enabled": locomotion_enabled, "sway_enabled": motion_data != null and motion_data.sway_enabled,
 		"sway_time": _sway_time, "sway_amplitude": _sway_amplitude,
 		"ground_path_active": _path_ready and _uses_ground_path(), "path_progress":_path_progress,
+		"ground_path_retained":(_path_ready or _connection_recovery_resume_path) and not _ground_path.points.is_empty(),"path_resume_pending":_connection_recovery_resume_path,
 		"raised_path_mode":"authored_xy", "spacing_scope":"grounded_layout",
 		"path_turning":_path_turning,"path_reversing":_path_reversing,
 		"path_speed":_path_speed,"path_amplitude":_path_amplitude,"path_wavelength":_ground_path.wavelength,

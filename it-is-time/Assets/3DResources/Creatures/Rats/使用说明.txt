@@ -69,6 +69,11 @@ Assets/3DResources/Creatures/Rats/Metadata：源图哈希、坐标、像素换�
 Previews/RatsPartsPreview.tscn：全部物理部件的静态浏览场景。
 AI 提示词保存于 Assets/2DResources/Rats/generation_prompts.json 和 additional_generation_prompts.json。
 最终整理只清理透明边缘/红黄杂边、裁切以及等比重采样；原始素材和 RawEdits 保持不变。
+Rat_1 后脚补充了两张经像素脚本修复的 RawEdits/rat1_hind_foot1_repaired.png、rat1_hind_foot2_repaired.png（均位于 RawEdits/Rat_1）。
+HindFoot1 / HindFoot2 已去掉裁断的小腿残留并补齐脚踝圆头，脚掌、脚趾、孔位和原画布保持不变。
+Metadata/fixed_geometry.json 固定这两张图的画布、像素换算、模型锚点和原始碰撞顶点；prepare_assets 会直接使用修复图，不再裁切或重新居中。
+这两张脚部贴图的可见轮廓已改变，但模型映射框、角色中的模型变换、碰撞箱和关节不随之修改。
+仅重烘焙这两个脚部侧面时，BakeRatsVolumes.gd 命令末尾可加 -- --rat1-hind-feet-only。
 
 五、诊断命令
 tracknpcstate on Rat

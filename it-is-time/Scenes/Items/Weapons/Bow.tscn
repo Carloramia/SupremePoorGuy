@@ -1,0 +1,162 @@
+[gd_scene load_steps=16 format=3]
+
+[ext_resource type="PackedScene" path="res://Scenes/Items/_SampleWeapon.tscn" id="1_base"]
+[ext_resource type="Script" path="res://Scripts/Items/BowWeapon3D.gd" id="2_script"]
+[ext_resource type="Script" path="res://Scripts/Items/ItemGripSettings.gd" id="3_grip"]
+[ext_resource type="PackedScene" path="res://Scenes/Items/Weapons/Arrow.tscn" id="4_arrow"]
+
+[sub_resource type="StandardMaterial3D" id="Wood"]
+albedo_color = Color(0.32, 0.16, 0.065, 1)
+roughness = 0.85
+
+[sub_resource type="StandardMaterial3D" id="StringMaterial"]
+albedo_color = Color(0.88, 0.83, 0.65, 1)
+roughness = 0.8
+
+[sub_resource type="CylinderMesh" id="HolderMesh"]
+material = SubResource("Wood")
+top_radius = 0.27
+bottom_radius = 0.27
+height = 1.2
+radial_segments = 12
+
+[sub_resource type="BoxMesh" id="ArmMesh"]
+material = SubResource("Wood")
+size = Vector3(0.36, 4.3498966, 0.36)
+
+[sub_resource type="CylinderMesh" id="StringMesh"]
+material = SubResource("StringMaterial")
+top_radius = 0.024
+bottom_radius = 0.024
+height = 1.0
+radial_segments = 6
+
+[sub_resource type="SphereMesh" id="CenterMesh"]
+material = SubResource("StringMaterial")
+radius = 0.09
+height = 0.18
+radial_segments = 12
+rings = 6
+
+[sub_resource type="BoxShape3D" id="HolderShape"]
+size = Vector3(0.54, 1.2, 0.54)
+
+[sub_resource type="BoxShape3D" id="ArmShape"]
+size = Vector3(0.36, 4.3498966, 0.36)
+
+[sub_resource type="SphereShape3D" id="CenterShape"]
+radius = 0.075
+
+[sub_resource type="Resource" id="PrimaryGrip"]
+resource_local_to_scene = true
+script = ExtResource("3_grip")
+
+[sub_resource type="Resource" id="StringGrip"]
+resource_local_to_scene = true
+script = ExtResource("3_grip")
+position_frequency = 4.0
+damping_ratio = 1.0
+maximum_force = 80.0
+maximum_acceleration = 100.0
+follow_rotation = false
+
+[node name="Bow" instance=ExtResource("1_base")]
+mass = 0.35
+script = ExtResource("2_script")
+display_name = "Bow"
+weapon_tags = Array[int]([5])
+primary_attack_tag = 5
+attack_forward_local = Vector3(1, 0, 0)
+preferred_holder_name = &"Arm_R"
+has_attachment_point = true
+grip_point_count = 2
+active_grip_point = 0
+grip_point_poses = Array[Transform3D]([Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0), Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, 0)])
+grip_point_arm_paths = Array[NodePath]([NodePath("Arm_R"), NodePath("Arm_L")])
+grip_point_settings = Array[ExtResource("3_grip")]([SubResource("PrimaryGrip"), SubResource("StringGrip")])
+ammunition_scene = ExtResource("4_arrow")
+string_stiffness = 80.0
+string_damping = 2.0
+string_preload_ratio = 0.02
+string_maximum_force = 250.0
+
+[node name="Holder" type="MeshInstance3D" parent="."]
+mesh = SubResource("HolderMesh")
+
+[node name="BowArm_Upper" type="Node3D" parent="."]
+position = Vector3(0, 0.6, 0)
+rotation = Vector3(0, 0, 0.35206384)
+
+[node name="Model" type="MeshInstance3D" parent="BowArm_Upper"]
+position = Vector3(0, 2.1749483, 0)
+mesh = SubResource("ArmMesh")
+
+[node name="Tip" type="Marker3D" parent="BowArm_Upper"]
+position = Vector3(0, 4.3498966, 0)
+
+[node name="BowArm_Lower" type="Node3D" parent="."]
+position = Vector3(0, -0.6, 0)
+rotation = Vector3(0, 0, -0.35206384)
+
+[node name="Model" type="MeshInstance3D" parent="BowArm_Lower"]
+position = Vector3(0, -2.1749483, 0)
+mesh = SubResource("ArmMesh")
+
+[node name="Tip" type="Marker3D" parent="BowArm_Lower"]
+position = Vector3(0, -4.3498966, 0)
+
+[node name="String_Upper" type="MeshInstance3D" parent="."]
+position = Vector3(-1.5, 2.3415435, 0)
+scale = Vector3(1, 4.683087, 1)
+mesh = SubResource("StringMesh")
+
+[node name="String_Lower" type="MeshInstance3D" parent="."]
+position = Vector3(-1.5, -2.3415435, 0)
+scale = Vector3(1, 4.683087, 1)
+mesh = SubResource("StringMesh")
+
+[node name="StringCenter" type="MeshInstance3D" parent="."]
+position = Vector3(-1.5, 0, 0)
+mesh = SubResource("CenterMesh")
+
+[node name="GripMarker" type="Marker3D" parent="StringCenter"]
+
+[node name="StringCenterBody" type="RigidBody3D" parent="."]
+position = Vector3(-1.5, 0, 0)
+mass = 0.03
+gravity_scale = 0.0
+collision_layer = 0
+collision_mask = 0
+linear_damp = 2.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StringCenterBody"]
+shape = SubResource("CenterShape")
+
+[node name="StringGuide" type="Generic6DOFJoint3D" parent="."]
+angular_limit_x/enabled = true
+angular_limit_y/enabled = true
+angular_limit_z/enabled = true
+
+[node name="HolderCollision" type="CollisionShape3D" parent="."]
+shape = SubResource("HolderShape")
+
+[node name="UpperArmCollision" type="CollisionShape3D" parent="."]
+position = Vector3(-0.75, 2.6415435, 0)
+rotation = Vector3(0, 0, 0.35206384)
+shape = SubResource("ArmShape")
+
+[node name="LowerArmCollision" type="CollisionShape3D" parent="."]
+position = Vector3(-0.75, -2.6415435, 0)
+rotation = Vector3(0, 0, -0.35206384)
+shape = SubResource("ArmShape")
+
+[node name="GripPoints" type="Node3D" parent="."]
+metadata/weapon_grip_markers = true
+
+[node name="GripPoint_01" type="Marker3D" parent="GripPoints"]
+rotation = Vector3(0, 0, -1.5707963)
+metadata/weapon_grip_index = 0
+
+[node name="GripPoint_02" type="Marker3D" parent="GripPoints"]
+position = Vector3(-1.5, 0, 0)
+metadata/weapon_grip_index = 1

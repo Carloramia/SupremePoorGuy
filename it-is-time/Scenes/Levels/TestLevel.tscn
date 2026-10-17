@@ -6,13 +6,19 @@
 [ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/NavigationNPCSpawner3D.tscn" id="5_npc_spawner"]
 [ext_resource type="PackedScene" path="res://Scenes/Input/TerrainCursor3D.tscn" id="6_terrain_cursor"]
 [ext_resource type="PackedScene" path="res://Scenes/VFX/TerrainArcIndicator3D.tscn" id="7_terrain_arc"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Characters/Human/Armed/Generate_Human_Bow_NPC.tscn" id="8_1mv4x"]
 [ext_resource type="PackedScene" uid="uid://dstgtopkigikh" path="res://Scenes/Creatures/Characters/Character_Test_NPC.tscn" id="9_a7u0l"]
-[ext_resource type="PackedScene" path="res://Scenes/Creatures/Characters/Human/Armed/Generate_Human_Spear1_NPC.tscn" id="9_qhub5"]
+[ext_resource type="Script" path="res://Scripts/Debug/TestLevelPause.gd" id="10_pause"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_flat_ground"]
 size = Vector3(200, 102, 200)
 
 [node name="TestLevel" type="Node3D" unique_id=1606515158]
+
+[node name="TestLevelPause" type="CanvasLayer" parent="."]
+process_mode = 3
+layer = 900
+script = ExtResource("10_pause")
 
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="." unique_id=555269644]
 transform = Transform3D(5, 0, 0, 0, 1, 0, 0, 0, 5, 0, 0, 0)
@@ -50,8 +56,8 @@ light_energy = 5.0
 omni_range = 500.0
 
 [node name="CharacterTestNPC" parent="." unique_id=418755916 instance=ExtResource("9_a7u0l")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58.451416, 1.3799922, 13.03067)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 277.9645, 1.3799922, 8.064117)
 faction_id = 2
 
-[node name="GenerateHumanSpear1NPC" parent="." unique_id=1439637606 instance=ExtResource("9_qhub5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.829625, 1.7423224, -0.21948242)
+[node name="GenerateHumanBowNPC" parent="." unique_id=1274997847 instance=ExtResource("8_1mv4x")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.444866, 1.7424445, 8.445679)

@@ -37,11 +37,12 @@ const COMMAND_HELP: Array[Dictionary] = [
 	{&"name": "npcstates [filter]", &"description": "Print a one-time NPC state-machine snapshot."},
 	{&"name": "trackcollision", &"description": "Toggle BodyPart contact enter/exit and collision configuration logs."},
 	{&"name": "trackdamage", &"description": "Toggle weapon/shockwave/dive impact, HP, break, and joint-removal logs."},
-	{&"name": "trackwolfattacks [on|off] [filter]", &"description": "Track Wolf pounce, bite and prediction-gated combos."},
+	{&"name": "trackwolfattacks [on|off] [filter]", &"description": "Track Wolf attacks and Rat static-target bites (preparation, locked point, arrival and jaw closure)."},
 	{&"name": "tracksnakeattacks [on|off] [filter]", &"description": "Track Snake preparation, lunge, jaw motion, hits and cancellation every 0.1s."},
 	{&"name": "trackturn", &"description": "Toggle facing decisions, combined walking/turning targets and Leg traction logs."},
 	{&"name": "trackswing", &"description": "Toggle Arm swing direction, load, and Joint diagnostics."},
 	{&"name": "trackgrip [on|off] [filter]", &"description": "Track equipment/grip changes and binding alignment every 0.1s; filter by character name, path or ID."},
+	{&"name": "trackbow [on|off|status] [filter]", &"description": "Track Bow pose, joint torques, string/draw reactions every 0.1s and exact phase/shot events; off by default."},
 	{&"name": "gripstates [filter]", &"description": "Print a one-time equipment/grip snapshot, including empty inventories."},
 ]
 
@@ -102,6 +103,9 @@ var _swing_tracking_enabled: bool = false
 var _grip_tracking_enabled := false
 var _grip_tracking_filter := ""
 var _grip_tracking_elapsed := 0.0
+var _bow_tracking_enabled := false
+var _bow_tracking_filter := ""
+var _bow_tracking_elapsed := 0.0
 var _turn_tracking_enabled: bool = true
 var _error_capture := preload("res://Scripts/Debug/RuntimeErrorLogCapture.gd").new()
 var _archive_mutex := Mutex.new()
@@ -174,6 +178,11 @@ func _input(event: InputEvent) -> void:
 		set_console_open(not visible)
 
 func _process(delta: float) -> void:
+	if _bow_tracking_enabled:
+		_bow_tracking_elapsed += delta
+		if _bow_tracking_elapsed>=motion_tracking_interval:
+			_bow_tracking_elapsed = 0.0
+			_emit_bow_snapshot()
 	var error := _error_capture.take_error()
 	if not error.is_empty(): _try_auto_archive(error)
 	_output_refresh_elapsed += delta
@@ -274,6 +283,14 @@ func execute_command(command: String) -> String:
 		return "Integration tracking: %s; phase=%s" % [host.session.integration_logging,host.phase]
 	if not args.is_empty() and args[0].to_lower() == "gripstates":
 		return "Weapon grip snapshots: %d" % _emit_weapon_grip_snapshot(" ".join(args.slice(1)))
+	if not args.is_empty() and args[0].to_lower()=="trackbow":
+		if args.size()==1: _bow_tracking_enabled = not _bow_tracking_enabled
+		elif args[1].to_lower() in ["on","off","status"]:
+			if args[1].to_lower()!="status":
+				_bow_tracking_enabled = args[1].to_lower()=="on"
+				_bow_tracking_filter = " ".join(args.slice(2))
+		else: return "Usage: trackbow [on|off|status] [character name, path or instance ID]"
+		return "Bow tracking %s; matched=%d; interval=%.2fs" % ["enabled" if _bow_tracking_enabled else "disabled",_emit_bow_snapshot() if _bow_tracking_enabled else 0,motion_tracking_interval]
 	if not args.is_empty() and args[0].to_lower() == "trackgrip":
 		if args.size() == 1:
 			_grip_tracking_enabled = not _grip_tracking_enabled
@@ -494,6 +511,24 @@ func log_map_event(event: String, detail: Dictionary, force: bool = false) -> vo
 func _npc_matches(machine: Node, filter: String) -> bool:
 	var actor := machine.get_parent()
 	return filter.is_empty() or filter.to_lower() == "all" or str(actor.name).to_lower() == filter.to_lower() or str(actor.get_path()) == filter or str(actor.get_instance_id()) == filter or str(machine.get_path()) == filter
+
+func _emit_bow_snapshot() -> int:
+	var count := 0
+	for controller: Node in get_tree().get_nodes_in_group(&"bow_attack_controllers"):
+		if not _npc_matches(controller,_bow_tracking_filter): continue
+		_append_log_output("[bow_attack] "+JSON.stringify(controller.get_attack_diagnostics()))
+		count += 1
+	return count
+
+func is_bow_tracking_enabled(controller: Node) -> bool:
+	return _bow_tracking_enabled and _npc_matches(controller,_bow_tracking_filter)
+
+func log_bow_event(controller: Node, event: StringName, detail: Dictionary) -> void:
+	if not is_bow_tracking_enabled(controller): return
+	var row: Dictionary = controller.get_attack_diagnostics()
+	row.event = event
+	row.details = detail
+	_append_log_output("[bow_event] "+JSON.stringify(row))
 
 func is_npc_state_tracking_enabled(machine: Node) -> bool:
 	return _npc_state_tracking_enabled and _npc_matches(machine,_npc_state_filter)

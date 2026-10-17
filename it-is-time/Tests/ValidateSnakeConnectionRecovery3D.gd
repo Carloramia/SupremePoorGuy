@@ -50,12 +50,42 @@ func run() -> void:
 	for frame: int in 100: movement._update_connections(1.0/60.0)
 	assert(not movement.is_connection_recovering() and movement.get_attack_connection_diagnostics().ready,"Stable connections release recovery without a timeout")
 	assert(movement._path_ready and movement._ground_path.points==history,"Locomotion resumes the visited route instead of replacing its history")
+	movement._path_progress = 3.0
+	movement._ground_path.ensure(3.0,10.0,Vector3.BACK,3.0)
+	history = movement._ground_path.points.duplicate(true)
+	var corners: Array = movement._ground_path.corners.duplicate(true)
+	var distances: Array = movement._parts.map(func(item: Dictionary): return item.path_distance)
+	var phase: float = movement._spacing_phase
+	var head: Dictionary = movement._parts[-1]
+	var attack_pose: Transform3D = head.rest
+	attack_pose.origin += Vector3.RIGHT*2.0
 	assert(movement.set_attack_control(owner,{},Vector3.ZERO,Vector3.RIGHT,40,40))
+	for frame: int in 45:
+		assert(movement.set_attack_control(owner,{head.body:attack_pose},Vector3.ZERO,Vector3.RIGHT,40,40,60,0.1,1.0/60.0,1.0,frame>=15))
+		movement._update_ground_path(1.0/60.0,5.0,movement._update_anchor())
+		assert(movement._path_ready and not movement._uses_ground_path(),"Attack retains the route without letting it own physical targets")
+	assert(movement._ground_path.points==history and movement._ground_path.corners==corners,"Attack freezes visited route points and corners")
+	assert(is_equal_approx(movement._path_progress,3.0) and is_equal_approx(movement._spacing_phase,phase),"Attack freezes route progress and spacing phase")
+	assert(movement._parts.map(func(item: Dictionary): return item.path_distance)==distances,"Attack retains each follower's route distance")
+	assert(not movement.get_ground_path_debug_snapshot().is_empty(),"Paused routes remain visible in path diagnostics")
+	movement._support_blend = 1.0
+	movement._apply_pose(movement._update_anchor(),1.0/60.0)
+	var expected: Vector3 = (movement.get_pose_reference()*Transform3D(movement._attack_poses[head.body])).origin-head.body.global_position
+	assert(Vector3(head.pose_error).is_equal_approx(expected),"Retained path cannot overwrite the attacking Head target")
 	movement.end_attack_control(owner)
 	assert(movement.is_connection_recovering(),"Attack cancellation hands motion to rejoining rather than directly to travel")
+	assert(movement._connection_recovery_resume_path,"Attack recovery remembers the route despite idle pose ownership")
+	assert(not movement.get_ground_path_debug_snapshot().is_empty(),"Connection recovery preserves the displayed route")
+	for frame: int in 100: movement._update_connections(1.0/60.0)
+	assert(not movement.is_connection_recovering() and movement._path_ready,"Attack recovery returns control to the existing path")
+	assert(movement._ground_path.points==history and movement._ground_path.corners==corners and is_equal_approx(movement._path_progress,3.0),"Attack recovery cannot reset route history or progress")
+	assert(movement.set_attack_control(owner,{},Vector3.ZERO,Vector3.RIGHT,40,40))
+	movement.end_attack_control(owner)
 	movement._ground_path.points.clear()
 	for frame: int in 100: movement._update_connections(1.0/60.0)
 	assert(not movement._path_ready,"Recovery cannot publish a route cleared by a whole-body turn")
+	movement.cancel_motion()
+	assert(not movement._path_ready and not movement._connection_recovery_resume_path and movement.get_ground_path_debug_snapshot().is_empty(),"Explicit cancellation still invalidates route state")
 	actor.free()
 	print("SNAKE_CONNECTION_RECOVERY_PASSED")
 	quit()

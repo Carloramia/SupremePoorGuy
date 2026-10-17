@@ -223,8 +223,17 @@ func update(delta: float) -> void:
 			record.row.state = "disabled"
 			continue
 		var hand: RigidBody3D = record.hand
-		var pose: Transform3D = _item.grip_point_poses[record.index]
-		var target := _item.to_global(pose.origin)
+		var pose := _item.get_grip_target_pose(record.index)
+		var reaction := _item.get_grip_reaction_body(record.index)
+		if not is_instance_valid(reaction) or reaction.is_queued_for_deletion():
+			_release_binding(record)
+			record.row.state = "broken"
+			continue
+		# Reparenting articulated equipment can defer its auxiliary body's space entry.
+		if not PhysicsServer3D.body_get_space(reaction.get_rid()).is_valid():
+			record.row.state = "suspended"
+			continue
+		var target := pose.origin
 		var socket_world: Vector3 = record.socket.global_position
 		var desired := target
 		var reachable := true
@@ -233,29 +242,34 @@ func update(delta: float) -> void:
 			var reach: float = record.chain.reach
 			reachable = pivot.distance_to(target) <= reach+0.02
 			desired = pivot+(target-pivot).limit_length(reach*0.995)
-		var relative_velocity := _point_velocity(hand, socket_world)-_point_velocity(_primary, target)
+		var relative_velocity := _point_velocity(hand, socket_world)-_point_velocity(reaction, target)
+		if hand.has_meta(&"equipment_bow_pose_driver") and is_instance_valid(hand.get_meta(&"equipment_bow_pose_driver")):
+			# The Bow's bounded joint pose owns this hand; a second Cartesian spring would fight its plane.
+			record.row.merge({"state":"tracking" if reachable else "unreachable","driver":"bow_pose","target_world":target,"socket_world":socket_world,
+				"error_length":socket_world.distance_to(target),"reachable":reachable,"relative_speed":relative_velocity.length(),"force":Vector3.ZERO,"force_length":0.0,"reach":record.chain.reach,"reaction_body":str(reaction.name)},true)
+			continue
 		var acceleration := _spring(desired-socket_world, relative_velocity, settings.position_frequency, settings.damping_ratio, delta).limit_length(settings.maximum_acceleration)
-		var inverse_mass := 1.0/hand.mass+1.0/_primary.mass
+		var inverse_mass := 1.0/hand.mass+1.0/reaction.mass
 		var force := (acceleration/inverse_mass).limit_length(settings.maximum_force)
 		if not hand.freeze:
 			hand.sleeping = false
 			hand.apply_force(force, socket_world-hand.global_position)
-		if not _primary.freeze: _primary.apply_force(-force, target-_primary.global_position)
+		if not reaction.freeze: reaction.apply_force(-force, target-reaction.global_position)
 		if settings.follow_rotation:
-			var desired_basis := _item.global_basis*pose.basis.inverse()
+			var desired_basis := pose.basis
 			var error: Quaternion = (desired_basis.orthonormalized().get_rotation_quaternion()*record.socket.global_basis.orthonormalized().get_rotation_quaternion().inverse()).normalized()
 			if error.w < 0: error = -error
-			var alpha := _spring(error.get_axis()*error.get_angle(), hand.angular_velocity-_primary.angular_velocity, settings.rotation_frequency, settings.damping_ratio, delta).limit_length(settings.maximum_acceleration)
+			var alpha := _spring(error.get_axis()*error.get_angle(), hand.angular_velocity-reaction.angular_velocity, settings.rotation_frequency, settings.damping_ratio, delta).limit_length(settings.maximum_acceleration)
 			var a := hand.get_inverse_inertia_tensor()
-			var b := _primary.get_inverse_inertia_tensor()
+			var b := reaction.get_inverse_inertia_tensor()
 			var inverse_inertia := Basis(a.x+b.x, a.y+b.y, a.z+b.z)
 			var torque := Vector3.ZERO
 			if absf(inverse_inertia.determinant()) > 1e-18: torque = (inverse_inertia.inverse()*alpha).limit_length(settings.maximum_torque)
 			if not hand.freeze: hand.apply_torque(torque)
-			if not _primary.freeze: _primary.apply_torque(-torque)
+			if not reaction.freeze: reaction.apply_torque(-torque)
 		record.row.merge({"state": "tracking" if reachable else "unreachable", "target_world": target,
 			"socket_world": socket_world, "error_length": socket_world.distance_to(target), "reachable": reachable,
-			"relative_speed": relative_velocity.length(), "force": force, "force_length": force.length(), "reach": record.chain.reach}, true)
+			"relative_speed": relative_velocity.length(), "force": force, "force_length": force.length(), "reach": record.chain.reach,"reaction_body":str(reaction.name)}, true)
 	_update_idle_pose(delta)
 
 func _spring(error: Vector3, velocity: Vector3, frequency: float, damping_ratio: float, delta: float) -> Vector3:

@@ -53,6 +53,13 @@ extends "res://Scripts/Creatures/CreatureAttackData.gd"
 @export_range(0.0, 100.0, 1.0) var angular_damping := 20.0
 @export_range(0.0, 500.0, 1.0) var maximum_angular_acceleration := 180.0
 @export_range(0.0, 1000.0, 1.0, "or_greater") var maximum_torque := 250.0
+@export_group("Bite Head Aim")
+@export var bite_head_aim_enabled := true
+## Additional pitch from the authored Head pose, also bounded by the Head joint's Z limits.
+@export_range(0.0, 75.0, 0.5) var bite_head_aim_limit_degrees := 20.0
+@export_range(1.0, 360.0, 1.0) var bite_head_aim_speed_degrees := 120.0
+@export_range(0.0, 1000.0, 1.0) var bite_head_aim_strength := 500.0
+@export_range(0.0, 100.0, 1.0) var bite_head_aim_damping := 40.0
 @export_group("Bite Body Motion")
 ## The existing simultaneous foot placement can take up to 1.5 seconds before charge.
 @export_range(0.0, 1.5, 0.05) var bite_plant_prediction_time := 1.5

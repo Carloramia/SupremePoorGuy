@@ -6,8 +6,11 @@ func _initialize() -> void:
 
 func run() -> void:
 	var base := "res://Assets/3DResources/Creatures/Rats/"
-	var manifest: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(base+"Metadata/model_manifest.json"))
+	var manifest_file := "hind_claw_model_manifest.json" if "--hind-claws-only" in OS.get_cmdline_user_args() else "model_manifest.json"
+	var manifest: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(base+"Metadata/"+manifest_file))
+	var baked:=0
 	for record: Dictionary in manifest.models:
+		if "--rat1-hind-feet-only" in OS.get_cmdline_user_args() and str(record.key) not in ["Rat_1/Feet/HindFoot1","Rat_1/Feet/HindFoot2"]: continue
 		var scene := load(base+str(record.glb)) as PackedScene
 		assert(scene != null)
 		var instance := scene.instantiate()
@@ -20,5 +23,6 @@ func run() -> void:
 		DirAccess.make_dir_recursive_absolute(str(record.volume_mesh).get_base_dir())
 		assert(ResourceSaver.save(volume,record.volume_mesh)==OK)
 		instance.free()
-	print("PASS: ",manifest.models.size()," Rats double-sided paper volumes baked.")
+		baked+=1
+	print("PASS: ",baked," Rats double-sided paper volumes baked.")
 	quit()

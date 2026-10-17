@@ -32,6 +32,68 @@ var _foot_plans: Array[Dictionary] = []
 var _repositioned_feet := 0
 var _spacing_distance := 0.0
 var _spacing_origin := Vector3.ZERO
+var _head_aim_point := Vector3.ZERO
+var _head_joint: Generic6DOFJoint3D
+var _head_joint_state: Dictionary = {}
+
+func _head_aim_goal(point: Vector3) -> Dictionary:
+	if data == null or not data.bite_head_aim_enabled or not alive(head) or not alive(jaw): return {}
+	var support := controller.get_parent().get_node_or_null("HeadPositionSupport3D")
+	if support == null or not support.enabled or not support.is_physics_processing(): return {}
+	for binding: Dictionary in support.bindings:
+		if binding.head != head or binding.has_neck or not support._chain_intact(binding): continue
+		var neck: Generic6DOFJoint3D = binding.joints[0] as Generic6DOFJoint3D
+		if neck == null: return {}
+		var parent: PhysicalBodyPart3D = binding.torso
+		var parent_basis := parent.global_basis.orthonormalized()
+		var rest_basis := parent_basis*Basis(Quaternion(binding.rest_rotation))
+		var rest_position: Vector3 = parent.global_position+parent.global_basis*Vector3(binding.rest_offset)
+		var pivot: Vector3 = binding.head_pivot
+		var pivot_world: Vector3 = rest_position+rest_basis*pivot
+		var mouth_local: Vector3 = _jaw_rest_pose*(Vector3(jaw.get_meta(&"generated_size",Vector3.ONE))*data.box_center_ratio)
+		var axis := parent_basis.z
+		var from: Vector3 = (rest_basis*(mouth_local-pivot)).slide(axis)
+		var toward := (point-pivot_world).slide(axis)
+		if from.length_squared()<0.000001 or toward.length_squared()<0.000001: return {}
+		var limit := deg_to_rad(data.bite_head_aim_limit_degrees)
+		var angle := clampf(from.signed_angle_to(toward,axis),-limit,limit)
+		if neck.get_flag_z(Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_LIMIT):
+			# Keep the servo inside the real joint limits; never force against its stop.
+			var head_sign := -1.0 if neck.get_node_or_null(neck.node_a) == head else 1.0
+			var lower := neck.get_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_LOWER_LIMIT)
+			var upper := neck.get_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_UPPER_LIMIT)
+			var frame_a: Transform3D = neck.get_meta(&"generated_joint_frame_a",Transform3D.IDENTITY)
+			var frame_b: Transform3D = neck.get_meta(&"generated_joint_frame_b",Transform3D.IDENTITY)
+			var basis_a := (rest_basis if head_sign<0.0 else parent_basis)*frame_a.basis
+			var basis_b := (parent_basis if head_sign<0.0 else rest_basis)*frame_b.basis
+			var rest_angle := (basis_a.inverse()*basis_b).get_euler(EULER_ORDER_ZYX).z
+			var margin := maxf(upper-lower,0.0)*0.05
+			if lower <= upper: angle = (clampf(rest_angle+angle*head_sign,lower+margin,upper-margin)-rest_angle)*head_sign
+		var desired_basis := parent_basis*Basis(Vector3.BACK,angle)*Basis(Quaternion(binding.rest_rotation))
+		var pose := Transform3D(desired_basis,rest_position+rest_basis*pivot-desired_basis*pivot)
+		return {"head":head,"joint":neck,"angle":angle,"pose":pose,"error_degrees":rad_to_deg((head.global_basis*(mouth_local-pivot)).slide(axis).signed_angle_to(toward,axis)),"servo_error_degrees":rad_to_deg((head.global_basis*(mouth_local-pivot)).slide(axis).signed_angle_to((desired_basis*(mouth_local-pivot)).slide(axis),axis))}
+	return {}
+
+func get_head_posture_request() -> Dictionary:
+	if not active: return {}
+	var request := _head_aim_goal(_head_aim_point)
+	if request.is_empty(): return {}
+	if _phase == &"recovering": request.angle = 0.0
+	request["angular_speed"] = deg_to_rad(data.bite_head_aim_speed_degrees)
+	request["z_strength"] = data.bite_head_aim_strength
+	request["z_damping"] = data.bite_head_aim_damping
+	request["z_acceleration_limit"] = data.maximum_angular_acceleration
+	request["z_torque_limit"] = data.maximum_torque*pow(controller.scale_factor(),5.0)
+	return request
+
+func _claim_head_aim() -> void:
+	var request := get_head_posture_request()
+	if request.is_empty(): return
+	_head_joint = request.joint
+	_head_joint_state = {"spring":_head_joint.get_flag_z(Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_SPRING),"motor":_head_joint.get_flag_z(Generic6DOFJoint3D.FLAG_ENABLE_MOTOR)}
+	# The standing zero-angle spring must not oppose the attack servo.
+	_head_joint.set_flag_z(Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_SPRING,false)
+	_head_joint.set_flag_z(Generic6DOFJoint3D.FLAG_ENABLE_MOTOR,false)
 
 func _set_phase(value: StringName) -> void:
 	if value == &"recovering":
@@ -254,8 +316,8 @@ func predict(next_target: PhysicalBodyPart3D, samples: int, margin: float) -> Di
 	if not available(): return {"hit":false,"reason":&"busy_or_cooldown"}
 	return _closing_prediction(next_target,samples,margin,true)
 
-func _closure_pose(progress: float, include_lunge: bool) -> Transform3D:
-	var head_pose := Transform3D(head.global_basis.orthonormalized(),head.global_position)
+func _closure_pose(progress: float, include_lunge: bool, aimed_pose: Variant = null) -> Transform3D:
+	var head_pose: Transform3D = aimed_pose if aimed_pose is Transform3D else Transform3D(head.global_basis.orthonormalized(),head.global_position)
 	var start := _jaw_rest_pose if include_lunge else head_pose.affine_inverse()*jaw.global_transform
 	if include_lunge:
 		var opening := Basis(Vector3.BACK,-deg_to_rad(data.jaw_open_degrees))
@@ -267,10 +329,11 @@ func _closure_pose(progress: float, include_lunge: bool) -> Transform3D:
 func _closing_prediction(next_target: PhysicalBodyPart3D, samples: int, margin: float, include_lunge: bool = false, preparation_delay: float = -1.0, forecast_motion: bool = true) -> Dictionary:
 	var box := _shape()
 	var offset := Vector3(jaw.get_meta(&"generated_size",Vector3.ONE))*data.box_center_ratio
+	var aim := _head_aim_goal(next_target.global_position) if include_lunge else {}
 	for index: int in range(clampi(samples,8,32)):
 		var progress := float(index)/float(clampi(samples,8,32)-1)
 		var time := (data.jaw_close_time+data.jaw_close_extra_wait)*progress
-		var pose := _closure_pose(smoothstep(0.0,data.jaw_close_time,time),include_lunge)
+		var pose := _closure_pose(smoothstep(0.0,data.jaw_close_time,time),include_lunge,aim.get("pose"))
 		pose.origin = pose*offset
 		if include_lunge:
 			var spacing := _spacing_for(next_target) if preparation_delay < 0.0 else 0.0
@@ -297,6 +360,8 @@ func start(next_target: PhysicalBodyPart3D) -> bool:
 	_close_reason = &""
 	_support_count = 0
 	_crouch = 0.0
+	_head_aim_point = next_target.global_position
+	_claim_head_aim()
 	_forward = controller.forward()
 	_origin = controller.torso.global_position
 	var length: float = controller.pounce_scale()*controller.get_node("Pounce").data.reference_body_length
@@ -406,6 +471,11 @@ func finish(reason: StringName = &"completed") -> void:
 		joint.set_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_LOWER_LIMIT,_joint_state.lower)
 		joint.set_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_UPPER_LIMIT,_joint_state.upper)
 	_joint_state.clear()
+	if is_instance_valid(_head_joint) and not _head_joint.is_queued_for_deletion() and not _head_joint_state.is_empty() and PhysicsServer3D.joint_get_type(_head_joint.get_rid()) == PhysicsServer3D.JOINT_TYPE_6DOF:
+		_head_joint.set_flag_z(Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_SPRING,_head_joint_state.spring)
+		_head_joint.set_flag_z(Generic6DOFJoint3D.FLAG_ENABLE_MOTOR,_head_joint_state.motor)
+	_head_joint_state.clear()
+	_head_joint = null
 	_phase = &"idle"
 	super.finish(reason)
 
@@ -435,6 +505,8 @@ func diagnostics() -> Dictionary:
 	result["close_reason"] = _close_reason
 	result["result"] = _reason
 	result["head_anchor_world"] = head.to_global(_head_anchor) if alive(head) else Vector3.ZERO
+	var aim := get_head_posture_request()
+	result["head_aim"] = {"active":not aim.is_empty() and _phase != &"recovering","locked_point":_head_aim_point,"pitch_degrees":rad_to_deg(float(aim.get("angle",0.0))),"error_degrees":aim.get("error_degrees",0.0),"servo_error_degrees":aim.get("servo_error_degrees",0.0)}
 	result["spacing_retreat_distance"] = _spacing_distance
 	result["spacing_retreat_traveled"] = (_spacing_origin-controller.torso.global_position).dot(_forward) if controller != null and is_instance_valid(controller.torso) and controller.torso.is_inside_tree() else 0.0
 	return result

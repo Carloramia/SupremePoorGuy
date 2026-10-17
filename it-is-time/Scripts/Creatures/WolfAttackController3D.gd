@@ -191,6 +191,9 @@ func scale_factor() -> float:
 	var generator := get_parent().get_node_or_null(get_parent().generator_path)
 	return maxf(generator.overall_scale,0.01) if generator != null else 1.0
 
+func get_head_posture_request() -> Dictionary:
+	return get_node("Bite").get_head_posture_request()
+
 func own_rids() -> Array[RID]:
 	return _rids
 

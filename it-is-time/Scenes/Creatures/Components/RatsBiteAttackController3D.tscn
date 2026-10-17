@@ -1,15 +1,6 @@
 [gd_scene format=3]
-[ext_resource type="Script" path="res://Scripts/Creatures/WolfAttackController3D.gd" id="1"]
-[ext_resource type="Script" path="res://Scripts/Creatures/WolfPounceModule3D.gd" id="2"]
-[ext_resource type="Script" path="res://Scripts/Creatures/WolfBiteModule3D.gd" id="3"]
-[ext_resource type="Resource" path="res://Resources/Attacks/RatsPounceDisabled.tres" id="4"]
+[ext_resource type="Script" path="res://Scripts/Creatures/RatBiteAttackController3D.gd" id="1"]
 [ext_resource type="Resource" path="res://Resources/Attacks/RatsBite.tres" id="5"]
 [node name="WolfAttackController3D" type="Node"]
 script = ExtResource("1")
-[node name="Pounce" type="Node" parent="."]
-script = ExtResource("2")
-enabled = false
-data = ExtResource("4")
-[node name="Bite" type="Node" parent="."]
-script = ExtResource("3")
 data = ExtResource("5")

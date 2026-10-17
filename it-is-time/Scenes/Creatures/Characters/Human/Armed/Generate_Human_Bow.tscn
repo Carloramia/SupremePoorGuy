@@ -1,0 +1,10 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Characters/Generate_Human.tscn" id="1_base"]
+[ext_resource type="PackedScene" path="res://Scenes/Items/Weapons/Bow.tscn" id="2_weapon"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/BowAttackController3D.tscn" id="3_attack"]
+
+[node name="GenerateHumanBow" instance=ExtResource("1_base")]
+initial_weapon_scene = ExtResource("2_weapon")
+
+[node name="BowAttackController3D" parent="." instance=ExtResource("3_attack")]

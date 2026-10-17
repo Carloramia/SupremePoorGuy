@@ -157,7 +157,11 @@ func _contact_velocity_force(velocity: Vector3, mass: float, up: Vector3) -> Vec
 	var attacking := false
 	if swing != null:
 		for link: Dictionary in _human_pose._arms:
-			if is_instance_valid(link.child) and swing.is_body_driven(link.child): attacking = true; break
+			if not is_instance_valid(link.child): continue
+			if link.child.has_meta(&"equipment_bow_pose_driver"):
+				var bow_driver: Variant = link.child.get_meta(&"equipment_bow_pose_driver")
+				if is_instance_valid(bow_driver) and bow_driver.is_npc_attack_active(): attacking = true; break
+			elif swing.is_body_driven(link.child): attacking = true; break
 	var supported := not _contact_drive_supports(get_leg_parts()).is_empty()
 	var charge := get_parent().get_node_or_null("ChargeAttackController3D")
 	var charge_owns: bool = charge != null and charge.owns_velocity()

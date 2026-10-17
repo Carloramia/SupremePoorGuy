@@ -102,7 +102,7 @@ func run() -> void:
 		check(actor.generate_creature(),"Repeated generation succeeds")
 		for body: Node in actor.get_node("GeneratedParts").get_children():
 			if body is PhysicalBodyPart3D: check(initial[str(body.name)].is_equal_approx(body.transform),"Repeated layout is deterministic")
-		check(not actor.get_node("WolfAttackController3D/Pounce").enabled,"Pounce disabled")
+		check(actor.get_node("WolfAttackController3D").get_script().resource_path=="res://Scripts/Creatures/RatBiteAttackController3D.gd","Independent static-point Rat bite; no Wolf attack modules")
 		actor.free()
 		await process_frame
 	if failed: quit(1); return

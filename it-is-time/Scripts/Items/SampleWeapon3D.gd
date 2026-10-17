@@ -1,7 +1,7 @@
 class_name SampleWeapon3D
 extends SampleItem3D
 
-enum WeaponTag { Spear, Sword, Claw, Blunt, Shield }
+enum WeaponTag { Spear, Sword, Claw, Blunt, Shield, Bow, Arrow }
 const ARM_ATTACK_PRESETS := {
 	WeaponTag.Spear: preload("res://Resources/Combat/Weapons/SpearAttack.tres"),
 	WeaponTag.Sword: preload("res://Resources/Combat/Weapons/SwordAttack.tres"),

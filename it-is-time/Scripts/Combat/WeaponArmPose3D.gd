@@ -52,6 +52,14 @@ static func poses(state: Dictionary, preset: WeaponArmAttackPreset, direction: V
 	var extension := lerpf(preset.preparation_reach,preset.strike_reach,blend)
 	var height := lerpf(preset.preparation_height,preset.strike_height,blend)
 	var end := pivot+(direction*extension+up*height).limit_length(0.99)*length
+	return targets(state,end,direction,up)
+
+static func targets(state: Dictionary, end: Vector3, direction: Vector3, up: Vector3) -> Array[Transform3D]:
+	var chain: Array[Dictionary] = state.pose_chain
+	var anchor: RigidBody3D = state.anchor_body
+	var pivot := anchor.to_global(state.pose_anchor_local)
+	var length := reach(chain)
+	end = pivot+(end-pivot).limit_length(length*0.99)
 	var points: Array[Vector3] = [pivot]
 	var lengths: Array[float] = []
 	# Deterministic bend plane prevents the IK solution flipping across a straight elbow.

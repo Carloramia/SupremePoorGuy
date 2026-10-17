@@ -287,7 +287,12 @@ func run() -> void:
 	check(bite._spacing_for(target) == 0.0,"Distant target does not request a retreat")
 	target.global_position = spacing_target
 	bite.data.bite_close_distance_ratio = 0.0
+	var neck: Generic6DOFJoint3D = npc.get_node("HeadPositionSupport3D").bindings[0].joints[0]
+	var neck_spring := neck.get_flag_z(Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_SPRING)
 	check(attacks.try_start_npc_attack(&"wolf_bite",target,0.0),"AI bite starts")
+	var locked_head_point: Vector3 = bite._head_aim_point
+	check(locked_head_point == target.global_position and not bite.get_head_posture_request().is_empty(),"Bite commits a head aim point through the normal AI entry")
+	check(not neck.get_flag_z(Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_SPRING),"Bite releases only the standing head Z spring for its aim servo")
 	check(not attacks.try_start_npc_attack(&"wolf_bite",target,0.0),"Active bite cannot restart")
 	check(not pounce.available(),"Pounce cannot overlap bite")
 	check(movement._action_feet.size() == 4 and bite._phase == &"planting","Bite owns all legs before body motion")
@@ -327,6 +332,7 @@ func run() -> void:
 		check((relative-(charge_end-charge_start)).length() <= radius+0.001,"Combined crouch and retraction remain inside chain reach")
 	var before_escape: Vector3 = target.global_position
 	target.global_position += Vector3(1000,0,1000)
+	check(bite._head_aim_point == locked_head_point,"Escaping target cannot move the committed head aim point")
 	bite._phase_time = charge_duration
 	bite.tick(0.01)
 	check(bite.active and bite._phase == &"lunging","An admitted bite strikes even when the target escapes during charge")
@@ -336,6 +342,7 @@ func run() -> void:
 	check(bite._body_target(torso_row,bite.data.recovery_time).distance_to(torso_row.origin) < 0.001,"Recovery returns smoothly to the original pose")
 	attacks.cancel_npc_attack()
 	check(not attacks.is_npc_attack_active() and movement._action_feet.is_empty(),"Cancel releases feet")
+	check(neck.get_flag_z(Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_SPRING) == neck_spring and bite._head_joint_state.is_empty(),"Cancel restores the standing Head joint")
 	check(bite.joint.get_flag_z(Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_LIMIT) == original_limit,"Jaw Z flag restored")
 	check(is_equal_approx(bite.joint.get_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_LOWER_LIMIT),original_lower),"Jaw limits restored")
 	bite.cooldown_remaining = 0.0
@@ -392,6 +399,7 @@ func run() -> void:
 	check(bite.start(target),"Bite can restart after cooldown")
 	attacks.refresh_physics_query_cache()
 	check(not bite.active and bite._joint_state.is_empty(),"Regeneration refresh cancels active jaw control")
+	check(bite._head_joint_state.is_empty() and neck.get_flag_z(Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_SPRING) == neck_spring,"Regeneration refresh also releases the head aim joint")
 	check(bite.joint.get_flag_z(Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_LIMIT) == original_limit,"Regeneration restores jaw limits")
 	bite.cooldown_remaining = 0.0
 	check(bite.start(target),"Bite restarts for character shutdown check")

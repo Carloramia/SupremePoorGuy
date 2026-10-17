@@ -205,7 +205,8 @@ func get_weapon_grip_diagnostics() -> Dictionary:
 	row.socket_valid = is_instance_valid(socket) and socket.is_inside_tree() and not socket.is_queued_for_deletion()
 	if not row.socket_valid or not item.is_inside_tree(): return row
 	var attachment_world := item.to_global(item.attachment_local_position if item.has_attachment_point else Vector3.ZERO)
-	var expected_basis := socket.global_basis * Basis(Vector3.BACK, item.item_rotation) if item.has_attachment_point else socket.global_basis
+	var expected_basis := item.get_equipment_basis(socket.global_basis)
+	if item.has_attachment_point: expected_basis *= Basis(Vector3.BACK, item.item_rotation)
 	row.merge({"socket_world": socket.global_position, "attachment_world": attachment_world,
 		"error": attachment_world - socket.global_position, "error_length": attachment_world.distance_to(socket.global_position),
 		"rotation_error_degrees": rad_to_deg(expected_basis.orthonormalized().get_rotation_quaternion().angle_to(item.global_basis.orthonormalized().get_rotation_quaternion()))})
@@ -316,7 +317,7 @@ func _equip_selected_item() -> void:
 	_equipped_item = item
 	_equipped_holder = holder
 	item.visible = true
-	var item_basis := socket.global_basis
+	var item_basis := item.get_equipment_basis(socket.global_basis)
 	if item.has_attachment_point:
 		item_basis *= Basis(Vector3.BACK, item.item_rotation)
 	var attachment_offset := (
@@ -360,6 +361,10 @@ func _unequip_current_item() -> void:
 
 func _unequip_item(item: SampleItem3D) -> void:
 	_trace_weapon_grip_event("unequip_begin")
+	# Restore the Bow's nested pose override before releasing the auxiliary grip's springs.
+	if is_instance_valid(_equipped_holder) and _equipped_holder.has_meta(&"equipment_bow_pose_driver"):
+		var bow_driver: Variant = _equipped_holder.get_meta(&"equipment_bow_pose_driver")
+		if is_instance_valid(bow_driver): bow_driver.release_weapon_pose()
 	var swing := get_parent().get_node_or_null("LimbSwingController3D")
 	if swing != null and is_instance_valid(_equipped_holder): swing.cancel_attacks_for_holder(_equipped_holder)
 	_remove_rigid_attachment(item)
@@ -510,6 +515,7 @@ func _create_rigid_attachment(item: SampleItem3D, holder: RigidBody3D) -> void:
 	item.collision_layer = 0
 	item.collision_mask = 0
 	item.rigid_attachment_holder = holder
+	item.rigid_attachment_load = {"mass":item.mass,"center":item_center}
 	item.set_meta(&"equipment_inventory", self)
 	item.reparent(holder, true)
 	if item is SampleWeapon3D and holder is PhysicalBodyPart3D and &"grip" in holder.get_available_visual_states():
@@ -552,6 +558,7 @@ func _remove_rigid_attachment(item: SampleItem3D) -> void:
 			holder.set_visual_state(_rigid_attachment_snapshot.holder_visual_state)
 	if is_instance_valid(item):
 		item.rigid_attachment_holder = null
+		item.rigid_attachment_load.clear()
 		item.remove_meta(&"equipment_inventory")
 		item.reparent(_inventory_items, true)
 	_rigid_attachment_snapshot.clear()

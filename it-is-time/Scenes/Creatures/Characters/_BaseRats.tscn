@@ -4,7 +4,7 @@
 [ext_resource type="Resource" path="res://Resources/Movement/RatsWalk.tres" id="3"]
 [ext_resource type="Resource" path="res://Resources/Creatures/RatsDensity.tres" id="4"]
 [ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/RatsBiteAttackController3D.tscn" id="5"]
-[ext_resource type="Script" path="res://Scripts/Creatures/WolfLegStepMovementController3D.gd" id="6"]
+[ext_resource type="Script" path="res://Scripts/Creatures/RatsLegStepMovementController3D.gd" id="6"]
 [ext_resource type="Script" path="res://Scripts/Creatures/CreatureActionData.gd" id="7"]
 [node name="BaseRats" instance=ExtResource("1")]
 generator_path = NodePath("RatsGenerator")
@@ -24,6 +24,7 @@ slow_gait_data = ExtResource("3")
 fast_gait_data = ExtResource("3")
 forelegs_participate_in_walking = true
 stable_turn_control_enabled = true
+grounded_stance_travel_ratio = 0.12
 independent_torso_height_support = true
 locomotion_height_support_enabled = true
 foot_joint_yaw_lock_enabled = true

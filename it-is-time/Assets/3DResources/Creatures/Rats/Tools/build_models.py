@@ -18,6 +18,8 @@ writer.OUT=OUT; writer.PROJECT=P; writer.SOURCE=S
 
 def main():
     settings=json.loads((OUT/'Metadata/build_settings.json').read_text(encoding='utf-8'))
+    fixed_file=OUT/'Metadata/fixed_geometry.json'
+    fixed=json.loads(fixed_file.read_text(encoding='utf-8')) if fixed_file.exists() else {}
     records=[]
     for part in settings['parts']:
         source=S/part['file']; image=Image.open(source).convert('RGBA')
@@ -33,7 +35,14 @@ def main():
                     glb=f'Models/{category}.glb',scene=f'Scenes/{category}.tscn',
                     volume_mesh=f'res://Resources/Meshes/Rats/{category}.res',
                     physical_scene=f'res://Scenes/Creatures/Bodyparts/Rats/{category}.tscn')
-        record['collision_points']=writer.collision_points(image,pivot,unit)
+        if category in fixed:
+            frame=fixed[category]
+            assert list(image.size)==frame['texture_size'],'Completed foot canvas must not change'
+            record.update({k:v for k,v in frame.items() if k!='repair_source'})
+            record['origin']='pixel_ankle_completion'
+            record['repair_source']=frame['repair_source']
+        else:
+            record['collision_points']=writer.collision_points(image,pivot,unit)
         if '--physical' in sys.argv:
             assert (P/record['volume_mesh'].removeprefix('res://')).is_file(),'Bake volumes first'
             target=P/record['physical_scene'].removeprefix('res://')
@@ -46,10 +55,10 @@ def main():
                 target.write_text(content,encoding='utf-8')
         else:
             model=OUT/record['glb']; model.parent.mkdir(parents=True,exist_ok=True)
-            if not model.exists() or '--refresh' in sys.argv: writer.plane_glb(record,source,model)
+            if not model.exists() or '--refresh' in sys.argv or category in fixed: writer.plane_glb(record,source,model)
             writer.write_new(Path(str(model)+'.import'),'[remap]\nimporter="scene"\n\n[params]\ngltf/embedded_image_handling=3\n')
             texture=OUT/'Textures'/f'{category}.png'; texture.parent.mkdir(parents=True,exist_ok=True)
-            if not texture.exists() or '--refresh' in sys.argv: shutil.copyfile(source,texture)
+            if not texture.exists() or '--refresh' in sys.argv or category in fixed: shutil.copyfile(source,texture)
             wrapper=OUT/record['scene']; wrapper.parent.mkdir(parents=True,exist_ok=True)
             if not wrapper.exists() or '--refresh' in sys.argv: writer.part_scene(record,image)
         records.append(record)

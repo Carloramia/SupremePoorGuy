@@ -114,11 +114,14 @@ func refresh_physics_query_cache() -> void:
 		var frame_key: StringName = &"generated_joint_frame_a" if joint.get_node(joint.node_a) == previous else &"generated_joint_frame_b"
 		var anchor: Transform3D = joint.get_meta(frame_key)
 		var child_pose: Transform3D = row.rest
+		var standing: Dictionary = joint.get_meta(&"snake_bend_restore",{})
+		var limits: Vector2 = standing.get("limits",Vector2(joint.get_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_LOWER_LIMIT),joint.get_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_UPPER_LIMIT)))
+		var bend := deg_to_rad(data.attack_bend_limit_degrees) if data != null else 0.0
 		_links.append({"body":child,"joint":joint,"relative":previous_pose.affine_inverse()*child_pose,
 			"rest_pitch":atan2(child_pose.basis.x.y,child_pose.basis.x.x),
-			"pivot":anchor.origin,
-			"lower":joint.get_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_LOWER_LIMIT)*0.9,
-			"upper":joint.get_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_UPPER_LIMIT)*0.9})
+			"pivot":anchor.origin,"standing_limits":limits,
+			"lower":minf(limits.x,-bend)*0.9,
+			"upper":maxf(limits.y,bend)*0.9})
 		_chain_length += previous_pose.origin.distance_to(child_pose.origin)
 		previous = child
 		previous_pose = child_pose
@@ -599,6 +602,13 @@ func try_start_npc_attack(action_id: StringName, target: Node3D, charge: float) 
 	if not movement.set_attack_control(self,_poses(_angles),Vector3.ZERO,_forward,data.maximum_acceleration,data.maximum_pose_acceleration,data.maximum_angular_acceleration,data.burst_response_time):
 		cancel_action(&"movement_owned")
 		return false
+	for link: Dictionary in _links:
+		var joint: Generic6DOFJoint3D = link.joint
+		var standing: Dictionary = joint.get_meta(&"snake_bend_restore",{})
+		joint.set_meta(&"snake_bend_restore",{"limits":link.standing_limits,"enabled":standing.get("enabled",joint.get_flag_z(Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_LIMIT)),"speed":deg_to_rad(data.bend_restore_speed_degrees),"restoring":false})
+		joint.set_flag_z(Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_LIMIT,true)
+		joint.set_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_LOWER_LIMIT,link.lower/0.9)
+		joint.set_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_UPPER_LIMIT,link.upper/0.9)
 	return true
 
 func is_npc_attack_active() -> bool: return _phase != &"idle"
@@ -620,6 +630,12 @@ func _set_phase(value: StringName, reason: StringName = &"ready") -> void:
 		if _attack_result == &"pending": _attack_result = reason if reason != &"ready" else &"no_damage"
 		_recovery_angles = _angles.duplicate()
 		_recovery_progress = 0.0
+		for link: Dictionary in _links:
+			if not is_instance_valid(link.joint) or link.joint.is_queued_for_deletion(): continue
+			var standing: Dictionary = link.joint.get_meta(&"snake_bend_restore",{})
+			if not standing.is_empty():
+				standing.restoring = true
+				link.joint.set_meta(&"snake_bend_restore",standing)
 	_log(&"phase_changed",get_attack_diagnostics())
 
 func _physics_process(delta: float) -> void:
@@ -817,6 +833,7 @@ func get_attack_diagnostics() -> Dictionary:
 		"alignment_elapsed":_alignment_elapsed,"alignment":_alignment(_target) if is_instance_valid(_target) and _valid_target(_target) and is_instance_valid(movement) and movement.get_control_anchor() != null else {},
 		"target":str(_target.get_path()) if is_instance_valid(_target) and _target.is_inside_tree() else "none","chain_length":_chain_length,"scale":_scale,
 		"head_position":head.global_position if _alive(head) else Vector3.ZERO,"head_error":_head_error,
+		"attack_bend_limit_degrees":data.attack_bend_limit_degrees if data != null else 0.0,
 		"head_forward_source":_head_forward_source,"head_forward_local":_head_forward_local,"head_rest_forward":_head_rest_forward,
 		"head_forward_world":(head.global_basis*_head_forward_local).normalized() if _alive(head) else Vector3.ZERO,"head_aim_error_degrees":_head_aim_error_degrees,
 		"jaw_angle_degrees":_jaw_angle,"jaw_error_degrees":_jaw_error,"burst_speed":_speed() if data != null else 0.0,

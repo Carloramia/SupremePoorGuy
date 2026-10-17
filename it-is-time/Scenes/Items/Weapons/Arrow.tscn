@@ -1,0 +1,70 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="PackedScene" path="res://Scenes/Items/_SampleWeapon.tscn" id="1_base"]
+[ext_resource type="Script" path="res://Scripts/Items/ArrowWeapon3D.gd" id="2_script"]
+
+[sub_resource type="StandardMaterial3D" id="Wood"]
+albedo_color = Color(0.45, 0.28, 0.12, 1)
+roughness = 0.85
+
+[sub_resource type="StandardMaterial3D" id="Metal"]
+albedo_color = Color(0.48, 0.52, 0.55, 1)
+metallic = 0.75
+roughness = 0.4
+
+[sub_resource type="StandardMaterial3D" id="Feather"]
+albedo_color = Color(0.8, 0.76, 0.64, 1)
+roughness = 0.9
+
+[sub_resource type="CylinderMesh" id="Shaft"]
+material = SubResource("Wood")
+top_radius = 0.025
+bottom_radius = 0.025
+height = 3.0
+radial_segments = 8
+
+[sub_resource type="CylinderMesh" id="Tip"]
+material = SubResource("Metal")
+top_radius = 0.0
+bottom_radius = 0.09
+height = 0.6
+radial_segments = 8
+
+[sub_resource type="BoxMesh" id="Fletching"]
+material = SubResource("Feather")
+size = Vector3(0.6, 0.12, 0.018)
+
+[sub_resource type="CapsuleShape3D" id="Collision"]
+radius = 0.06
+height = 3.6
+
+[node name="Arrow" instance=ExtResource("1_base")]
+mass = 0.04
+script = ExtResource("2_script")
+display_name = "Arrow"
+weapon_tags = Array[int]([6])
+primary_attack_tag = 6
+attack_forward_local = Vector3(1, 0, 0)
+
+[node name="Shaft" type="MeshInstance3D" parent="."]
+position = Vector3(-0.15, 0, 0)
+rotation = Vector3(0, 0, -1.5707964)
+mesh = SubResource("Shaft")
+
+[node name="ArrowHead" type="MeshInstance3D" parent="."]
+position = Vector3(1.5, 0, 0)
+rotation = Vector3(0, 0, -1.5707964)
+mesh = SubResource("Tip")
+
+[node name="FletchingFront" type="MeshInstance3D" parent="."]
+position = Vector3(-1.2, 0, 0)
+mesh = SubResource("Fletching")
+
+[node name="FletchingSide" type="MeshInstance3D" parent="."]
+position = Vector3(-1.2, 0, 0)
+rotation = Vector3(1.5707964, 0, 0)
+mesh = SubResource("Fletching")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+rotation = Vector3(0, 0, -1.5707964)
+shape = SubResource("Collision")

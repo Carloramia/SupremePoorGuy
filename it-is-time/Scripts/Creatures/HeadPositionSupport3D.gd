@@ -115,6 +115,10 @@ func _physics_process(delta: float) -> void:
 		if head.freeze: continue
 		var charge := get_parent().get_node_or_null("ChargeAttackController3D")
 		var request: Dictionary = charge.get_head_posture_request() if charge != null and charge.has_method("get_head_posture_request") else {"angle":0.0,"transition_time":0.3}
+		var wolf := get_parent().get_node_or_null("WolfAttackController3D")
+		if wolf != null and wolf.has_method("get_head_posture_request"):
+			var bite: Dictionary = wolf.get_head_posture_request()
+			if bite.get("head") == head: request = bite
 		var old_pitch: float = binding.get("charge_pitch",0.0)
 		var target_pitch: float = request.angle
 		var pitch := move_toward(old_pitch,target_pitch,float(request.get("angular_speed",deg_to_rad(50.0)))*delta)
@@ -157,6 +161,13 @@ func _physics_process(delta: float) -> void:
 			var inverse := head.get_inverse_inertia_tensor()
 			if absf(inverse.determinant())>0.000000001:
 				torque = (inverse.inverse()*angular_acceleration).limit_length(maxf(head.head_maximum_posture_torque,0.0))
+			if request.has("z_strength"):
+				var axis := torso.global_basis.z.normalized()
+				var acceleration_z := clampf(error_vector.dot(axis)*float(request.z_strength)+angular_velocity_error.dot(axis)*float(request.z_damping),-float(request.z_acceleration_limit),float(request.z_acceleration_limit))
+				var inverse_z: float = axis.dot(inverse*axis)+axis.dot(torso.get_inverse_inertia_tensor()*axis)
+				var aim_torque := axis*clampf(acceleration_z/maxf(inverse_z,0.000001),-float(request.z_torque_limit),float(request.z_torque_limit))
+				torque += aim_torque-axis*torque.dot(axis)
+				torso.apply_torque(-aim_torque)
 			head.apply_torque(torque)
 		diagnostics.append({"head": head.name,"torso": torso.name,"has_neck": binding.has_neck,"position_error": position_error,"velocity_error": velocity_error,"force": force,"gravity_compensation_owner": "flight" if flight_owns_gravity else "head","rotation_error_degrees": error_vector*(180.0/PI),"angular_velocity_error": angular_velocity_error,"posture_torque": torque,"linear_slack": binding.slack if not binding.has_neck else Vector3.ZERO,"charge_pitch_degrees":rad_to_deg(pitch),"charge_target_pitch_degrees":rad_to_deg(target_pitch)})
 
