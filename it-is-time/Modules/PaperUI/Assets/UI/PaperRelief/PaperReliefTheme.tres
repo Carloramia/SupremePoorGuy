@@ -1,15 +1,17 @@
-[gd_resource type="Theme" load_steps=26 format=3]
-[ext_resource type="StyleBox" path="res://Modules/PaperUI/Assets/UI/PaperRelief/Styles/PaperPanel.tres" id="Paper"]
-[ext_resource type="StyleBox" path="res://Modules/PaperUI/Assets/UI/PaperRelief/Styles/ButtonNormal.tres" id="Normal"]
-[ext_resource type="StyleBox" path="res://Modules/PaperUI/Assets/UI/PaperRelief/Styles/ButtonHover.tres" id="Hover"]
-[ext_resource type="StyleBox" path="res://Modules/PaperUI/Assets/UI/PaperRelief/Styles/ButtonPressed.tres" id="Pressed"]
+[gd_resource type="Theme" format=3 uid="uid://bpt8cdl4p62yy"]
+
+[ext_resource type="StyleBox" path="res://Modules/PaperUI/Assets/UI/PaperRelief/Styles/Bookmark.tres" id="Bookmark"]
 [ext_resource type="StyleBox" path="res://Modules/PaperUI/Assets/UI/PaperRelief/Styles/ButtonDisabled.tres" id="Disabled"]
+[ext_resource type="StyleBox" path="res://Modules/PaperUI/Assets/UI/PaperRelief/Styles/FilterTab.tres" id="FilterTab"]
+[ext_resource type="FontFile" uid="uid://b871m855wc2h8" path="res://Modules/PaperUI/Assets/UI/Fonts/Xiaolai-Regular.ttf" id="Font"]
+[ext_resource type="StyleBox" path="res://Modules/PaperUI/Assets/UI/PaperRelief/Styles/ButtonHover.tres" id="Hover"]
+[ext_resource type="StyleBox" path="res://Modules/PaperUI/Assets/UI/PaperRelief/Styles/ButtonNormal.tres" id="Normal"]
+[ext_resource type="StyleBox" path="res://Modules/PaperUI/Assets/UI/PaperRelief/Styles/PaperPanel.tres" id="Paper"]
+[ext_resource type="StyleBox" path="res://Modules/PaperUI/Assets/UI/PaperRelief/Styles/ButtonPressed.tres" id="Pressed"]
 [ext_resource type="StyleBox" path="res://Modules/PaperUI/Assets/UI/PaperRelief/Styles/Secondary.tres" id="Secondary"]
 [ext_resource type="StyleBox" path="res://Modules/PaperUI/Assets/UI/PaperRelief/Styles/SecondaryHover.tres" id="SecondaryHover"]
 [ext_resource type="StyleBox" path="res://Modules/PaperUI/Assets/UI/PaperRelief/Styles/SecondarySelected.tres" id="SecondarySelected"]
-[ext_resource type="StyleBox" path="res://Modules/PaperUI/Assets/UI/PaperRelief/Styles/FilterTab.tres" id="FilterTab"]
-[ext_resource type="StyleBox" path="res://Modules/PaperUI/Assets/UI/PaperRelief/Styles/Bookmark.tres" id="Bookmark"]
-[ext_resource type="FontFile" path="res://Modules/PaperUI/Assets/UI/Fonts/Xiaolai-Regular.ttf" id="Font"]
+
 [sub_resource type="StyleBoxFlat" id="Focus"]
 bg_color = Color(0, 0, 0, 0)
 border_width_left = 2
@@ -17,111 +19,7 @@ border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0.153, 0.137, 0.122, 1)
-[sub_resource type="StyleBoxFlat" id="Input"]
-content_margin_left = 12.0
-content_margin_right = 12.0
-content_margin_top = 8.0
-content_margin_bottom = 8.0
-bg_color = Color(0.97, 0.92, 0.82, 1)
-border_width_bottom = 2
-border_color = Color(0.58, 0.32, 0.25, 1)
-[sub_resource type="StyleBoxFlat" id="PrimaryFocus"]
-bg_color = Color(0, 0, 0, 0)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.94, 0.89, 0.81, 1)
-[sub_resource type="StyleBoxLine" id="Separator"]
-color = Color(0.58, 0.32, 0.25, 0.45)
-thickness = 1
-[sub_resource type="StyleBoxFlat" id="Primary"]
-content_margin_left = 16.0
-content_margin_top = 8.0
-content_margin_right = 16.0
-content_margin_bottom = 8.0
-bg_color = Color(0.153, 0.137, 0.122, 1)
-border_width_bottom = 3
-border_color = Color(0.58, 0.32, 0.25, 1)
-shadow_color = Color(0.74, 0.49, 0.20, 1)
-shadow_size = 2
-shadow_offset = Vector2(2, 2)
-[sub_resource type="StyleBoxFlat" id="PrimaryHover"]
-content_margin_left = 16.0
-content_margin_top = 8.0
-content_margin_right = 16.0
-content_margin_bottom = 8.0
-bg_color = Color(0.26, 0.22, 0.17, 1)
-border_width_bottom = 3
-border_color = Color(0.74, 0.49, 0.20, 1)
-shadow_color = Color(0.74, 0.49, 0.20, 1)
-shadow_size = 2
-shadow_offset = Vector2(2, 2)
-[sub_resource type="StyleBoxFlat" id="ScrollVTrack"]
-content_margin_left = 5.0
-content_margin_top = 0.0
-content_margin_right = 5.0
-content_margin_bottom = 0.0
-bg_color = Color(0.67, 0.53, 0.33, 0.20)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_left = 4
-corner_radius_bottom_right = 4
-[sub_resource type="StyleBoxFlat" id="ScrollVGrip"]
-content_margin_left = 5.0
-content_margin_top = 16.0
-content_margin_right = 5.0
-content_margin_bottom = 16.0
-bg_color = Color(0.64, 0.43, 0.23, 0.86)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.39, 0.27, 0.16, 0.72)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_left = 4
-corner_radius_bottom_right = 4
-[sub_resource type="StyleBoxFlat" id="ScrollVGripHover"]
-content_margin_left = 5.0
-content_margin_top = 16.0
-content_margin_right = 5.0
-content_margin_bottom = 16.0
-bg_color = Color(0.77, 0.55, 0.28, 0.96)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.39, 0.27, 0.16, 0.72)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_left = 4
-corner_radius_bottom_right = 4
-[sub_resource type="StyleBoxFlat" id="ScrollVGripPressed"]
-content_margin_left = 5.0
-content_margin_top = 16.0
-content_margin_right = 5.0
-content_margin_bottom = 16.0
-bg_color = Color(0.48, 0.31, 0.17, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.39, 0.27, 0.16, 0.72)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_left = 4
-corner_radius_bottom_right = 4
-[sub_resource type="StyleBoxFlat" id="ScrollHTrack"]
-content_margin_left = 0.0
-content_margin_top = 5.0
-content_margin_right = 0.0
-content_margin_bottom = 5.0
-bg_color = Color(0.67, 0.53, 0.33, 0.20)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_left = 4
-corner_radius_bottom_right = 4
+
 [sub_resource type="StyleBoxFlat" id="ScrollHGrip"]
 content_margin_left = 16.0
 content_margin_top = 5.0
@@ -135,8 +33,9 @@ border_width_bottom = 1
 border_color = Color(0.39, 0.27, 0.16, 0.72)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
-corner_radius_bottom_left = 4
 corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
 [sub_resource type="StyleBoxFlat" id="ScrollHGripHover"]
 content_margin_left = 16.0
 content_margin_top = 5.0
@@ -150,8 +49,9 @@ border_width_bottom = 1
 border_color = Color(0.39, 0.27, 0.16, 0.72)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
-corner_radius_bottom_left = 4
 corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
 [sub_resource type="StyleBoxFlat" id="ScrollHGripPressed"]
 content_margin_left = 16.0
 content_margin_top = 5.0
@@ -165,79 +65,190 @@ border_width_bottom = 1
 border_color = Color(0.39, 0.27, 0.16, 0.72)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
-corner_radius_bottom_left = 4
 corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="ScrollHTrack"]
+content_margin_left = 0.0
+content_margin_top = 5.0
+content_margin_right = 0.0
+content_margin_bottom = 5.0
+bg_color = Color(0.67, 0.53, 0.33, 0.2)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxLine" id="Separator"]
+color = Color(0.58, 0.32, 0.25, 0.45)
+
+[sub_resource type="StyleBoxFlat" id="Input"]
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 12.0
+content_margin_bottom = 8.0
+bg_color = Color(0.97, 0.92, 0.82, 1)
+border_width_bottom = 2
+border_color = Color(0.58, 0.32, 0.25, 1)
+
+[sub_resource type="StyleBoxFlat" id="PrimaryFocus"]
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.94, 0.89, 0.81, 1)
+
+[sub_resource type="StyleBoxFlat" id="PrimaryHover"]
+content_margin_left = 16.0
+content_margin_top = 8.0
+content_margin_right = 16.0
+content_margin_bottom = 8.0
+bg_color = Color(0.26, 0.22, 0.17, 1)
+border_width_bottom = 3
+border_color = Color(0.74, 0.49, 0.2, 1)
+shadow_color = Color(0.74, 0.49, 0.2, 1)
+shadow_size = 2
+shadow_offset = Vector2(2, 2)
+
+[sub_resource type="StyleBoxFlat" id="Primary"]
+content_margin_left = 16.0
+content_margin_top = 8.0
+content_margin_right = 16.0
+content_margin_bottom = 8.0
+bg_color = Color(0.153, 0.137, 0.122, 1)
+border_width_bottom = 3
+border_color = Color(0.58, 0.32, 0.25, 1)
+shadow_color = Color(0.74, 0.49, 0.2, 1)
+shadow_size = 2
+shadow_offset = Vector2(2, 2)
+
+[sub_resource type="StyleBoxFlat" id="ScrollVGrip"]
+content_margin_left = 5.0
+content_margin_top = 16.0
+content_margin_right = 5.0
+content_margin_bottom = 16.0
+bg_color = Color(0.64, 0.43, 0.23, 0.86)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.39, 0.27, 0.16, 0.72)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="ScrollVGripHover"]
+content_margin_left = 5.0
+content_margin_top = 16.0
+content_margin_right = 5.0
+content_margin_bottom = 16.0
+bg_color = Color(0.77, 0.55, 0.28, 0.96)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.39, 0.27, 0.16, 0.72)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="ScrollVGripPressed"]
+content_margin_left = 5.0
+content_margin_top = 16.0
+content_margin_right = 5.0
+content_margin_bottom = 16.0
+bg_color = Color(0.48, 0.31, 0.17, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.39, 0.27, 0.16, 0.72)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="ScrollVTrack"]
+content_margin_left = 5.0
+content_margin_top = 0.0
+content_margin_right = 5.0
+content_margin_bottom = 0.0
+bg_color = Color(0.67, 0.53, 0.33, 0.2)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
 [resource]
 default_font = ExtResource("Font")
 default_font_size = 18
+BookmarkButton/base_type = &"Button"
+BookmarkButton/colors/font_disabled_color = Color(0.153, 0.137, 0.122, 1)
+BookmarkButton/styles/disabled = ExtResource("Bookmark")
+BookmarkButton/styles/hover = ExtResource("Bookmark")
+BookmarkButton/styles/hover_pressed = ExtResource("Bookmark")
+BookmarkButton/styles/normal = ExtResource("Bookmark")
+BookmarkButton/styles/pressed = ExtResource("Bookmark")
 Button/colors/font_color = Color(0.153, 0.137, 0.122, 1)
+Button/colors/font_disabled_color = Color(0.3, 0.27, 0.23, 1)
+Button/colors/font_focus_color = Color(0.153, 0.137, 0.122, 1)
 Button/colors/font_hover_color = Color(0.153, 0.137, 0.122, 1)
 Button/colors/font_pressed_color = Color(0.153, 0.137, 0.122, 1)
-Button/colors/font_focus_color = Color(0.153, 0.137, 0.122, 1)
-Button/colors/font_disabled_color = Color(0.30, 0.27, 0.23, 1)
-Button/styles/normal = ExtResource("Normal")
-Button/styles/hover = ExtResource("Hover")
-Button/styles/pressed = ExtResource("Pressed")
-Button/styles/hover_pressed = ExtResource("Pressed")
 Button/styles/disabled = ExtResource("Disabled")
 Button/styles/focus = SubResource("Focus")
-PrimaryButton/base_type = &"Button"
-PrimaryButton/colors/font_color = Color(0.94, 0.89, 0.81, 1)
-PrimaryButton/colors/font_hover_color = Color(1, 0.96, 0.87, 1)
-PrimaryButton/colors/font_pressed_color = Color(1, 0.96, 0.87, 1)
-PrimaryButton/colors/font_focus_color = Color(1, 0.96, 0.87, 1)
-PrimaryButton/styles/normal = SubResource("Primary")
-PrimaryButton/styles/hover = SubResource("PrimaryHover")
-PrimaryButton/styles/pressed = SubResource("Primary")
-PrimaryButton/styles/hover_pressed = SubResource("Primary")
-PrimaryButton/styles/focus = SubResource("PrimaryFocus")
-Label/colors/font_color = Color(0.153, 0.137, 0.122, 1)
-RichTextLabel/colors/default_color = Color(0.153, 0.137, 0.122, 1)
-LineEdit/colors/font_color = Color(0.153, 0.137, 0.122, 1)
-LineEdit/styles/normal = SubResource("Input")
-LineEdit/styles/focus = SubResource("Focus")
-PanelContainer/styles/panel = ExtResource("Paper")
-HSeparator/styles/separator = SubResource("Separator")
-VBoxContainer/constants/separation = 12
+Button/styles/hover = ExtResource("Hover")
+Button/styles/hover_pressed = ExtResource("Pressed")
+Button/styles/normal = ExtResource("Normal")
+Button/styles/pressed = ExtResource("Pressed")
+FilterTab/base_type = &"Button"
+FilterTab/font_sizes/font_size = 18
+FilterTab/styles/disabled = ExtResource("FilterTab")
+FilterTab/styles/hover = ExtResource("FilterTab")
+FilterTab/styles/hover_pressed = ExtResource("FilterTab")
+FilterTab/styles/normal = ExtResource("FilterTab")
+FilterTab/styles/pressed = ExtResource("FilterTab")
 HBoxContainer/constants/separation = 12
 HFlowContainer/constants/h_separation = 10
 HFlowContainer/constants/v_separation = 10
-
-SecondaryButton/base_type = &"Button"
-SecondaryButton/styles/normal = ExtResource("Secondary")
-SecondaryButton/styles/hover = ExtResource("SecondaryHover")
-SecondaryButton/styles/pressed = ExtResource("SecondarySelected")
-SecondaryButton/styles/hover_pressed = ExtResource("SecondarySelected")
-SecondaryButton/styles/disabled = ExtResource("Secondary")
-SecondaryButton/font_sizes/font_size = 16
-TooltipLabel/font_sizes/font_size = 16
-TooltipPanel/styles/panel = SubResource("Input")
-
-FilterTab/base_type = &"Button"
-FilterTab/font_sizes/font_size = 18
-FilterTab/styles/normal = ExtResource("FilterTab")
-FilterTab/styles/hover = ExtResource("FilterTab")
-FilterTab/styles/pressed = ExtResource("FilterTab")
-FilterTab/styles/hover_pressed = ExtResource("FilterTab")
-FilterTab/styles/disabled = ExtResource("FilterTab")
-
-BookmarkButton/base_type = &"Button"
-BookmarkButton/styles/normal = ExtResource("Bookmark")
-BookmarkButton/styles/hover = ExtResource("Bookmark")
-BookmarkButton/styles/pressed = ExtResource("Bookmark")
-BookmarkButton/styles/hover_pressed = ExtResource("Bookmark")
-BookmarkButton/styles/disabled = ExtResource("Bookmark")
-BookmarkButton/colors/font_disabled_color = Color(0.153, 0.137, 0.122, 1)
-
-VScrollBar/styles/scroll = SubResource("ScrollVTrack")
-VScrollBar/styles/scroll_focus = SubResource("ScrollVTrack")
-VScrollBar/styles/grabber = SubResource("ScrollVGrip")
-VScrollBar/styles/grabber_highlight = SubResource("ScrollVGripHover")
-VScrollBar/styles/grabber_pressed = SubResource("ScrollVGripPressed")
-HScrollBar/styles/scroll = SubResource("ScrollHTrack")
-HScrollBar/styles/scroll_focus = SubResource("ScrollHTrack")
 HScrollBar/styles/grabber = SubResource("ScrollHGrip")
 HScrollBar/styles/grabber_highlight = SubResource("ScrollHGripHover")
 HScrollBar/styles/grabber_pressed = SubResource("ScrollHGripPressed")
+HScrollBar/styles/scroll = SubResource("ScrollHTrack")
+HScrollBar/styles/scroll_focus = SubResource("ScrollHTrack")
+HSeparator/styles/separator = SubResource("Separator")
+Label/colors/font_color = Color(0.153, 0.137, 0.122, 1)
+LineEdit/colors/font_color = Color(0.153, 0.137, 0.122, 1)
+LineEdit/styles/focus = SubResource("Focus")
+LineEdit/styles/normal = SubResource("Input")
+PanelContainer/styles/panel = ExtResource("Paper")
+PrimaryButton/base_type = &"Button"
+PrimaryButton/colors/font_color = Color(0.94, 0.89, 0.81, 1)
+PrimaryButton/colors/font_focus_color = Color(1, 0.96, 0.87, 1)
+PrimaryButton/colors/font_hover_color = Color(1, 0.96, 0.87, 1)
+PrimaryButton/colors/font_pressed_color = Color(1, 0.96, 0.87, 1)
+PrimaryButton/styles/focus = SubResource("PrimaryFocus")
+PrimaryButton/styles/hover = SubResource("PrimaryHover")
+PrimaryButton/styles/hover_pressed = SubResource("Primary")
+PrimaryButton/styles/normal = SubResource("Primary")
+PrimaryButton/styles/pressed = SubResource("Primary")
+RichTextLabel/colors/default_color = Color(0.153, 0.137, 0.122, 1)
 ScrollContainer/constants/scrollbar_h_separation = 6
 ScrollContainer/constants/scrollbar_v_separation = 6
+SecondaryButton/base_type = &"Button"
+SecondaryButton/font_sizes/font_size = 16
+SecondaryButton/styles/disabled = ExtResource("Secondary")
+SecondaryButton/styles/hover = ExtResource("SecondaryHover")
+SecondaryButton/styles/hover_pressed = ExtResource("SecondarySelected")
+SecondaryButton/styles/normal = ExtResource("Secondary")
+SecondaryButton/styles/pressed = ExtResource("SecondarySelected")
+TooltipLabel/font_sizes/font_size = 16
+TooltipPanel/styles/panel = SubResource("Input")
+VBoxContainer/constants/separation = 12
+VScrollBar/styles/grabber = SubResource("ScrollVGrip")
+VScrollBar/styles/grabber_highlight = SubResource("ScrollVGripHover")
+VScrollBar/styles/grabber_pressed = SubResource("ScrollVGripPressed")
+VScrollBar/styles/scroll = SubResource("ScrollVTrack")
+VScrollBar/styles/scroll_focus = SubResource("ScrollVTrack")

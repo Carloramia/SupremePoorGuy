@@ -1,0 +1,77 @@
+新 UI 材质资源接入实施说明
+日期：2026-10-17
+主工程：D:/GameJamWorkspace/ItIsTime/it-is-time
+
+已启用
+
+GameRoot现在默认使用Modules/PaperUI/TA/Presets/medium.tres。
+F5启动正式主流程即可看到新底纸、手绘轮廓和透明图标白色衬底。
+主菜单、召唤、仓库/队列、详情、任务/事件、设置、确认与结算沿用现有页面和业务接口。
+字体、字号、控件矩形、原生输入、页面动效、铜环/铜夹、真实生物白底头像保留。
+原有地图/战斗视口、全阶段ESC、Q/Space、部署、存档和正式会话仍由原系统管理。
+
+资源与调整入口
+
+来源为frontier_toolkit/UI跳转原型_20261015/TA，提交4f38f796e8a2081bfd33e0eaf1efc24f6864d9c4。
+本地副本位于res://Modules/PaperUI/TA/；已改写运行和预览资源引用，没有修改来源工程。
+独立预览：res://Modules/PaperUI/TA/Scenes/NativeSkinPreview.tscn，F6运行。
+五列对照：res://Modules/PaperUI/TA/Scenes/ShaderComparison.tscn，F6运行。
+预览中的示意SVG只用于验证，没有替换正式生物头像。
+
+在Scenes/Application/GameRoot.tscn根节点Inspector中调整ui_skin_preset。
+可选择TA/Presets下的light、medium、strong；清空该属性后，下次运行使用原外观。
+运行时可调用GameUIController.set_visual_preset(resource)切换；传null完整撤回。
+某组件使用VisualSkin/local_preset配置完整局部预设；local_preset优先于公共预设。
+VisualSkin/enabled=false可单独关闭，恢复对应原样式。修改嵌套Shader参数后重新应用预设。
+
+对应替换
+
+ActionButton及其继承组件：新底纸和线框成套替换，原生文字/焦点/禁用/选中行为保留。
+LooseLeafPage：替换底纸与轮廓，旧边框/阴影由已有插槽管理，内容边距和D2延伸范围保留。
+BoardSurface：更新Paper和WoodFrame对应外观，保留铜夹/铜钉及遮挡关系。
+MonsterCard、动态Button及原生设置控件：按需补充不参与容器尺寸计算的视觉槽位。
+OptionButton下拉菜单：用交付paper.svg和outline.svg组合的popup.svg九宫格适配原生PopupMenu；文字、箭头和勾选仍由原生控件绘制。
+针对浅色纸面调整原生菜单文字/悬停颜色；撤回时恢复原颜色与样式。
+PrimaryButton：沿用原主题的深色强调底色与浅色字体，新线框按其对比关系调整。
+透明图标：由S2距离场生成连续白底。不透明正交生物截图跳过剪影准备，保留原图。
+现有法阵网格、符文笔迹、地图美术与3D特效没有套用整页滤镜。
+
+运行适配
+
+GameUIController统一持有ShaderSkinBinding；共享UISkinPreset和UISkinSlots使用主工程原脚本身份。
+新增控件时合并一次延后扫描，捕获动态结果、仓库条目、设置和嵌套弹窗，不每帧遍历整棵UI树。
+扫描排除SubViewport和Window，不向真实地图/战斗中的控件安装换肤组件。
+S2仅在纹理/尺寸等签名变化时准备剪影；压缩图像在Alpha检查前解压，保留来源遮罩与缓存上限。
+每个实例继续复制材质，并使用稳定种子。旧局部预设和禁用状态不会被公共预设覆盖。
+撤回恢复原共享/局部预设、enabled、材质、可见性/调制色、焦点环和原生菜单样式，清理生成的节点与失效引用。
+
+检查时修复的两个绘制问题
+
+1. 上游隐藏Paper会使PanelContainer丢失底纸贡献的最小高度。现在只关闭旧底纸自身绘制，仍保留其布局参与，召唤页最小高度不再变化。
+2. 原VisualSkin是普通Node，旧Surface/Outline不能可靠继承父Control的变换和可见性。适配器通过CanvasItem链绘制；UISkinSlots.refresh在适配期间明确关闭旧生成层，避免隐藏页面在左上角留下残影。
+
+验证
+
+Tests/Integration/ValidateUISkin.gd新增实际组件/正式主流程检查：
+  独立预览、动态控件、局部预设优先级、禁用/重新启用、原生菜单颜色与样式恢复、重复切换、已释放控件清理；
+  主菜单、确认、地图、填充仓库、召唤、任务、设置、1120x680和1920x1080；
+  新旧控件位置、最小尺寸、文字、字号、会话数据；真实鼠标点击与下拉菜单；白底头像不被替换。
+无图形测试通过，实际Forward+/D3D12测试通过，新旧几何差异为空。
+最终无图形检查2054项，实际渲染检查2092项；两者包含重叠检查，不合计为独立用例。
+最终日志无新增脚本或Shader错误；实际截图已复核旧视觉层残留、原生菜单文字对比和真实白底头像。
+
+原有ValidateApplicationInput、ValidateGameRoot、ValidateApplicationRecovery、ValidateGlobalSettings、ValidateBattleControlsAndDisplay、ValidateDeliveryApplication通过。
+真实GPU完整流程截图包含召唤结果、详情、填充仓库、战斗、自由光标、结算与返回。
+原有CaptureCreaturePortraitUI检查通过，覆盖真实生物头像与异步切换。
+验证输出标记和日志，不仅检查进程退出码；初轮失败截图已在修复后重新生成。
+
+结果目录：D:/GameJamWorkspace/Reports/UISkin_2026-10-17。
+headless_results.json与render_results.json记录检查数量、布局差异和暖缓存适配器更新耗时。
+页面前后对照在该目录；完整流程在flow/；真实头像在portraits/。
+测试使用独立保存路径；正式存档未被测试替换。
+
+边界
+
+本轮验证平台为Windows、Godot4.7.2、Forward+、D3D12、RTX4090；不代表其他平台和移动设备已验收。
+微基准只记录本测试UI状态的适配器更新耗时，不代表包含战斗/NPC/地图的整帧成本或50NPC性能压测。
+未删除旧UI资源，未提交或推送Git。

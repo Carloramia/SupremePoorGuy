@@ -6,6 +6,8 @@ var deployment_hint: Label
 var start_battle_button: Button
 var _main_menu_button: Button
 var _portrait_renderer: Node
+var visual_preset: Resource
+var skin_binding: Node
 
 func _request_creature_portrait(portrait: Control, monster: Dictionary) -> void:
 	if not is_instance_valid(_portrait_renderer):
@@ -51,6 +53,16 @@ func _ready() -> void:
 	resized.connect(_resize_event)
 	main_menu.get_node("%Continue").disabled = not state.has_save()
 	_show("main")
+	skin_binding = preload("res://Modules/PaperUI/TA/ShaderSkinBinding.gd").new()
+	skin_binding.name = "ShaderSkinBinding"
+	skin_binding.initial_preset = visual_preset
+	add_child(skin_binding)
+
+func set_visual_preset(preset: Resource) -> void:
+	visual_preset = preset
+	if not is_instance_valid(skin_binding): return
+	if preset == null: skin_binding.restore()
+	else: skin_binding.apply_preset(preset)
 
 func update_battle_controls(in_battle: bool, manually_paused: bool, free_mouse: bool) -> void:
 	if is_instance_valid(pause_hint): pause_hint.visible = in_battle and manually_paused

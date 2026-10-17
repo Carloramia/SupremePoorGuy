@@ -1,0 +1,18 @@
+[gd_scene format=3]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Characters/Generate_Rat_2.tscn" id="1"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/NPCStateMachine3D.tscn" id="2"]
+[ext_resource type="Resource" path="res://Resources/AI/RatsAI.tres" id="3"]
+[node name="GenerateRat2NPC" instance=ExtResource("1")]
+faction_id = 1
+[node name="NPCStateMachine3D" parent="." instance=ExtResource("2")]
+behavior = ExtResource("3")
+generated_x_axis_facing = true
+humanoid_xz_positioning = true
+attack_z_tolerance = 0.2
+predicted_attack_z_tolerance = 0.4
+facing_x_dead_zone = 0.3
+friendly_clearance = 1.0
+include_limbs_and_equipment_in_standoff = false
+body_clearance = 0.08
+arrival_distance = 0.2
+navigation_origin_path = NodePath("")

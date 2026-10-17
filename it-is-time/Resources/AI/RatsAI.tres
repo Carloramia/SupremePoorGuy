@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="NPCBehaviorData" format=3 uid="uid://b1500byo450jq"]
+
+[ext_resource type="Script" uid="uid://d4d3pxjthc0yt" path="res://Scripts/Creatures/NPCBehaviorData.gd" id="1"]
+[ext_resource type="Script" uid="uid://bqypvnhjbnrap" path="res://Scripts/Creatures/NPCAttackData.gd" id="2"]
+
+[sub_resource type="Resource" id="Bite"]
+script = ExtResource("2")
+action_id = &"wolf_bite"
+receiver_path = NodePath("WolfAttackController3D")
+maximum_range = 5.0
+cooldown = 0.0
+allow_movement = true
+maximum_duration = 6.0
+
+[resource]
+script = ExtResource("1")
+preferred_distance = 1.2
+attacks = Array[ExtResource("2")]([SubResource("Bite")])

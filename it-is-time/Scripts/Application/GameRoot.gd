@@ -12,6 +12,7 @@ const MAP_CATALOG = preload("res://Modules/FrontierDelivery/Scripts/Map/MapCatal
 @export var delivery_battle_settings: DeliveryBattleSettings = preload("res://Resources/Application/FrontierDeliveryBattle.tres")
 @export var world_scene: PackedScene = preload("res://Modules/Frontier/world_map/demo/WorldMapDemo.tscn")
 @export var integration_logging := false
+@export var ui_skin_preset: Resource = preload("res://Modules/PaperUI/TA/Presets/medium.tres")
 @export var battle_definitions: Dictionary = {}
 @export var default_battle_definition: SceneDefinition
 @export var monster_config_definitions: Dictionary = {"demo_guard":"human","human":"human","wolf":"wolf","snake":"snake"}
@@ -63,6 +64,7 @@ func _ready() -> void:
 	ui.set_script(UI)
 	ui.state = session
 	ui.application = self
+	ui.visual_preset = ui_skin_preset
 	ui.get_node("AppShell/Layout/MainContent/Center/WorldView").set_script(VIEW)
 	add_child(layer)
 	layer.add_child(ui)

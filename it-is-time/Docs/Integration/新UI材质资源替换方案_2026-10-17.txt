@@ -1,0 +1,149 @@
+新 UI 材质资源替换方案（原方案保留，已于2026-10-17实施）
+日期：2026-10-17
+主工程：D:/GameJamWorkspace/ItIsTime/it-is-time
+范围：更新现有 UI 的视觉资源与材质适配，不迁移另一套游戏业务或页面布局。
+
+一、推荐方案与依据
+
+以 frontier_toolkit/UI跳转原型_20261015/TA 为正式接入来源，通过主工程已有 UISkinPreset、UISkinSlots 接口换肤。
+frontier_toolkit/ui_module/shader_lab 作为效果对照和必要算法参考，不同时安装两套全局换肤控制器。
+
+来源提交：4f38f796e8a2081bfd33e0eaf1efc24f6864d9c4，2026-10-16 20:28。
+已检查来源：D:/GameJamWorkspace/ItIsTime/frontier_toolkit/UI跳转原型_20261015/TA/README.md。
+现有接口：res://Modules/PaperUI/Scripts/UI/UISkinPreset.gd、UISkinSlots.gd。
+
+新版 TA 与主工程采用的 UI 0.7.12 接口对应。排除换行差异后，来源原型的共同场景和脚本没有实质变化；现有16项图片、图标与字体也没有实质变化。
+这次应更新的是纸面、线框、透明图标衬底及其运行适配，不需要重新复制原型页面或主题。
+frontier_toolkit/ui_module/prototype 是另一份基于0.5的运行副本，不能拿它覆盖主工程现有0.7.12页面及正式会话适配。
+
+实施基准为主工程当前实际页面，包括后来加入的设置、ESC返回、部署阶段等功能，而不只是上游原型截图。
+
+二、资源对应关系
+
+1. 通用按钮：ActionButton、继承它的主菜单/确认/返回/操作按钮
+   旧资源：按钮底图和原 StyleBox 边框。
+   新资源：TA/Assets/paper.svg + outline.svg，分别使用 paper.gdshader（S3）与 ink.gdshader（S1）。
+   底纸与线框成套替换，避免叠出两层边框。保留按钮内容边距、文字、最小尺寸、信号和点击矩形。
+   分别核对普通、悬停、按下、选中、禁用、键盘焦点状态，不用单一颜色覆盖所有状态。
+
+2. 活页纸：LooseLeafPage，召唤页、仓库D1/D2、详情及结果页面
+   旧资源：Paper底图、StyleBoxFlat边框与阴影。
+   新资源：S3底纸 + S1九宫格轮廓，使用现有 VisualSkin。
+   保留纸内边距、D2右伸范围、遮挡层级、滚动区域及点击阻挡；新轮廓生效后关闭对应旧边框和旧阴影。
+
+3. 通用画板/弹窗：BoardSurface，事件、任务、设置、通用提示与结算
+   旧资源：Paper与WoodFrame。
+   新资源：S3底纸 + S1轮廓；WoodFrame在新轮廓生效时隐藏。
+   Clip、LeftRivet、RightRivet保留已有铜夹/铜钉素材，当前没有新的正式替代图案。
+   保留画板进出动画、模态遮罩、关闭顺序、暂停归属及焦点恢复。
+
+4. 召唤书与已有透明图标：SummonBookButton/Icon等
+   保留原图标，用 cutout.gdshader（S2）和 SilhouetteField 生成连续白色衬底。
+   只处理图像层，Caption和其他文字不套材质。
+   继续使用已有图标轮廓；TA/Assets/book.svg、badge.svg、monster.svg属于验证示意，不替换正式图标或生物头像。
+
+5. 生物头像：MonsterPortrait/Artwork、ReferenceArt
+   当前 CreaturePortraitRenderer 生成512×384、不透明纯白背景的正交截图。
+   本轮保留截图、取景比例与白底，不把不透明截图强行做透明剪影，也不以TA测试monster.svg替换真实生物。
+   可更新头像外围所在纸卡的S1/S3；仅对原本具备真实Alpha的插画启用S2。
+   头像异步完成后只通知对应视觉目标更新，保留缓存、过期请求保护及原生生物资源引用。
+
+6. 仓库筛选页签、妖兽条目、书签
+   有VisualSkin的继承组件直接接入；没有槽位的组件只补独立视觉子层。
+   保留FilterTab.set_active、MonsterNote.set_selected驱动的选中状态，以及页签突出/收回、条目文本和原有尺寸。
+   小型控件使用复制的完整局部预设调节线宽/强度，不为塞入白边缩小字号或压缩布局。
+
+7. 设置中的OptionButton、CheckButton及下拉列表
+   保留原生箭头、勾选标记、键盘导航和Popup菜单。
+   只适配背景/边框视觉；不将普通按钮换肤逻辑直接套给整个复合控件。
+   检查下拉菜单作为独立弹出窗口时的样式和输入，不只检查关闭状态下的按钮。
+
+8. 其他元素
+   手写字体、字号、铜环、地图图标图案、法阵网格、符文笔迹、进度和已有程序绘线没有新的正式替代素材，本轮保持。
+   不在整页、RuneBoard或地图根节点套滤镜；S1不能直接替代所有程序绘制线条。
+   不将CanvasItem材质用于3D生物、战场美术、地形、光标或攻击特效。
+
+三、导入与目录安排
+
+在主工程新增 res://Modules/PaperUI/TA/，保留来源中的Shaders、Assets、Presets目录结构。
+导入运行所需的ShaderSkinBinding.gd、SilhouetteField.gd，以及预设和其实际依赖。
+独立预览场景作为验证入口，来源原型的游戏控制器、存档代码、project.godot及输入配置不迁入。
+来源目录不直接修改，来源提交和接入改动写入实施记录。
+
+准确改写资源路径：
+  res://TA/... -> res://Modules/PaperUI/TA/...
+  res://Scripts/UI/UISkinPreset.gd -> res://Modules/PaperUI/Scripts/UI/UISkinPreset.gd
+  res://Scripts/UI/UISkinSlots.gd -> res://Modules/PaperUI/Scripts/UI/UISkinSlots.gd
+  预览的场景/脚本引用也映射至Modules/PaperUI的现有实现。
+
+必须复用主工程的UISkinPreset/UISkinSlots脚本身份，不复制另一份同名类型；适配器按脚本身份寻找槽位。
+检查复制资源的UID与路径引用，清理来源工程的导入缓存，交给主工程重新导入。
+
+初始样式使用medium.tres。为小按钮、页签等确有需要的控件复制局部预设，而不改共享资源的运行时参数。
+local_preset是整套替换，不与shared_preset逐字段合并；局部预设必须保留需要的完整字段。
+沿用材质实例复制和固定种子，不修改共享ShaderMaterial上的实例尺寸/状态。
+
+四、主游戏接入
+
+1. 先迁入独立预览，展示按钮、活页纸、书本、白底头像及透明图标；比较原始与新材质。
+2. 预览通过后在GameUIController的展示层统一管理换肤适配器，保持现有GameRoot、GameSession与页面路由。
+3. 首轮接入已有VisualSkin的公共组件；第二轮补齐筛选、条目及设置复合控件。
+4. 召唤结果、仓库列表、详情、设置和嵌套弹窗是动态实例，必须在本批内容构建完成后rescan并应用预设。
+   不只在游戏启动时扫描一次，也不使用每帧全树扫描。
+5. 换肤扫描只作用于纸页UI子树，不包含地图、战斗SubViewport、调试控制台与部署光标。
+6. 暂停、模态输入、ESC、Q/Space战斗快捷键、分辨率/全屏、返回主菜单、召唤/库存/队列事务保持当前行为。
+   视觉脚本不读取或改写存档、不生成生物、不重复扣费，不控制战斗状态机。
+
+五、必须完成的适配修正
+
+上游ShaderSkinBinding.apply_preset会直接覆盖slots.local_preset，restore仅禁用槽位，没有恢复原先的局部预设与enabled。
+接入时先记录每个槽位的原local_preset、shared_preset和enabled，撤回时恢复原值并refresh；不能把“禁用”当成完整回退。
+
+同时核对旧底纸/轮廓的可见性、材质、use_parent_material、按钮状态样式、焦点环及适配器生成的视觉节点是否完整恢复。
+反复启用/撤回不能留下重复TAVisuals、TAFocus或残留视觉层。
+动态控件被释放后，适配器必须清理失效引用；避免重开页面时访问已销毁的控件。
+不改动UI数据接口；若只调整资源引用仍无法满足上述恢复要求，仅在迁入的适配器中补齐必要状态管理。
+
+六、布局与性能要求
+
+保持控件position、size、anchors、minimum_size、内容边距、字体、原有容器关系及实际输入矩形。
+生成的视觉锚点不参与Container尺寸计算，装饰层MOUSE_FILTER_IGNORE；现有模态输入阻挡继续独立保留。
+白边可能超出原图，必须检查滚动容器/父级clip_contents与邻近内容；先在现有留白内调节材质，不自动移动控件或扩大页面。
+若确实需要布局变更，单列具体页面、改前/改后、影响和回退方案，不夹带在材质替换中实施。
+
+S2距离场仅在图像/显示尺寸等必要参数变化时重建；预热当前可见透明图标，保留遮罩尺寸和缓存数量上限。
+不在每帧重建图像、随机纹理或扫描所有控件；窗口缩放时合并重复刷新。
+记录首次打开、重复打开、仓库列表滚动和窗口缩放的CPU/渲染帧耗时，区分首次准备成本与持续帧开销。
+
+七、验收
+
+来源验证使用GL Compatibility；本项目使用Forward+、Windows D3D12。因此必须在主工程实际渲染器重验，不能用来源测试通过或headless通过代替GPU验证。
+检查Shader编译、压缩纹理读取/剪影准备、Alpha、九宫格接缝、边缘白底、纸纹尺度、字体清晰度及静止纹理稳定性。
+
+页面覆盖：主菜单、大地图操作入口、召唤页、召唤结果、仓库/队列/详情、事件、任务、设置、部署期间设置、战斗暂停期间设置、结算和嵌套确认。
+状态覆盖：普通/悬停/按下/选中/禁用/焦点；长短文本、空仓库、长列表、筛选切换、快速重开与异步头像完成。
+窗口覆盖：至少1120×680、1280×720、1920×1080，加全屏与运行中缩放。
+
+验收标准：
+  A. 同页面新旧截图中的控件矩形、文字基线、字号和点击区域不变。
+  B. 不出现双重边框、遗留投影、白边遮挡文字、滚动裁切异常或被装饰层拦截输入。
+  C. 动态新增UI能及时换肤，关闭后无失效引用；反复应用/撤回可恢复原外观。
+  D. 真实头像保留；召唤数量/扣费、仓库与队列、事件回执、存档、部署及战斗暂停行为无变化。
+  E. 无新增Shader/脚本错误，暖缓存静止帧不重复生成距离场。
+
+复用主工程现有ValidateApplicationInput、ValidateGameRoot、ValidateApplicationRecovery、ValidateBattleControlsAndDisplay、ValidateGlobalSettings、ValidateCreaturePortraits与CaptureCreaturePortraitUI等检查。
+补一个聚焦换肤生命周期的检查，覆盖动态组件、局部预设恢复和重复应用/撤回。
+保存代表页面的新旧截图、实际GPU日志和性能对照，不只记录进程退出码。
+
+八、实施顺序与回退
+
+阶段1：导入资源与独立预览，核对主工程渲染与组件边界。
+阶段2：补齐适配器恢复与动态生命周期，接入已有VisualSkin的公共组件。
+阶段3：补齐页签/条目/复合控件，执行全流程截图与输入回归。
+阶段4：验收通过后统一启用新预设，保留原资源与完整撤回入口。
+
+回退：撤回适配器、恢复原槽位状态及旧样式，并停止新实例自动应用新预设；不需要回滚存档或恢复生物资源。
+原纸面/主题资源本轮不删除，避免部分页面回退后缺少依赖。
+
+预期交付：TA运行资源、独立预览入口、必要的展示层适配、换肤生命周期检查、实施记录及新旧截图。
+本文件保留实施前方案。最终实现与实际验证结果见同目录“新UI材质资源接入实施说明_2026-10-17.txt”。

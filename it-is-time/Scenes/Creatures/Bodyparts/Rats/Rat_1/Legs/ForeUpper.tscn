@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=3]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/_PhysicalSampleBodyParts.tscn" id="1_base"]
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/Rats/Models/Rat_1/Legs/ForeUpper.glb" id="2_model"]
+[ext_resource type="ArrayMesh" path="res://Resources/Meshes/Rats/Rat_1/Legs/ForeUpper.res" id="3_mesh"]
+[sub_resource type="ConvexPolygonShape3D" id="Shape"]
+resource_local_to_scene = true
+points = PackedVector3Array(-0.21566418, -0.05117023, -0.01000000, -0.19122499, 0.02215878, -0.01000000, -0.16678579, 0.07104478, -0.01000000, -0.04458981, 0.19325980, -0.01000000, 0.02872777, 0.21770280, -0.01000000, 0.24868053, 0.21770280, -0.01000000, 0.32199811, 0.19325980, -0.01000000, 0.37087650, 0.16881679, -0.01000000, 1.61727546, -0.56447328, -0.01000000, 1.64171466, -0.58891628, -0.01000000, 1.66615385, -0.61335929, -0.01000000, 1.69059305, -0.66224529, -0.01000000, 1.69059305, -0.78446031, -0.01000000, 1.66615385, -0.83334631, -0.01000000, 1.64171466, -0.85778931, -0.01000000, 1.54395787, -0.90667532, -0.01000000, 1.44620109, -0.93111832, -0.01000000, 0.93297799, -0.93111832, -0.01000000, 0.66414685, -0.90667532, -0.01000000, 0.22424133, -0.76001730, -0.01000000, -0.02015062, -0.61335929, -0.01000000, -0.04458981, -0.58891628, -0.01000000, -0.11790740, -0.51558728, -0.01000000, -0.14234660, -0.49114427, -0.01000000, -0.19122499, -0.39337226, -0.01000000, -0.21566418, -0.29560025, -0.01000000, -0.21566418, -0.05117023, 0.01000000, -0.19122499, 0.02215878, 0.01000000, -0.16678579, 0.07104478, 0.01000000, -0.04458981, 0.19325980, 0.01000000, 0.02872777, 0.21770280, 0.01000000, 0.24868053, 0.21770280, 0.01000000, 0.32199811, 0.19325980, 0.01000000, 0.37087650, 0.16881679, 0.01000000, 1.61727546, -0.56447328, 0.01000000, 1.64171466, -0.58891628, 0.01000000, 1.66615385, -0.61335929, 0.01000000, 1.69059305, -0.66224529, 0.01000000, 1.69059305, -0.78446031, 0.01000000, 1.66615385, -0.83334631, 0.01000000, 1.64171466, -0.85778931, 0.01000000, 1.54395787, -0.90667532, 0.01000000, 1.44620109, -0.93111832, 0.01000000, 0.93297799, -0.93111832, 0.01000000, 0.66414685, -0.90667532, 0.01000000, 0.22424133, -0.76001730, 0.01000000, -0.02015062, -0.61335929, 0.01000000, -0.04458981, -0.58891628, 0.01000000, -0.11790740, -0.51558728, 0.01000000, -0.14234660, -0.49114427, 0.01000000, -0.19122499, -0.39337226, 0.01000000, -0.21566418, -0.29560025, 0.01000000)
+[node name="Rats_Rat_1_ForeUpper" instance=ExtResource("1_base")]
+mass = 0.1
+geometry_mode = 1
+custom_model_path = NodePath("Model")
+paper_volume_enabled = true
+paper_volume_thickness = 0.08
+sprite_visible = false
+mesh_visible = true
+tags = Array[int]([5])
+metadata/source_png = "res://Assets/2DResources/Rats/Separated/Rat_1/Legs/ForeUpper.png"
+metadata/pivot_is_initial_estimate = true
+[node name="CollisionShape3D" parent="." index="0"]
+position = Vector3(0, 0, 0)
+shape = SubResource("Shape")
+[node name="MeshInstance3D" parent="." index="2"]
+visible = false
+mesh = null
+[node name="Model" parent="." instance=ExtResource("2_model")]
+[node name="PaperVolume" type="MeshInstance3D" parent="Model"]
+scale = Vector3(1, 1, 0.08)
+mesh = ExtResource("3_mesh")
+metadata/flat_collision_depth = 0.02
+[node name="JointIn" type="Marker3D" parent="."]
+[node name="JointOut" type="Marker3D" parent="."]
+position = Vector3(1.48052535, -0.72838500, 0.00000000)
