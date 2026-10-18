@@ -8,6 +8,8 @@ var _main_menu_button: Button
 var _portrait_renderer: Node
 var visual_preset: Resource
 var skin_binding: Node
+var _task_page: Control
+var _task_notifications: Array = []
 
 func _request_creature_portrait(portrait: Control, monster: Dictionary) -> void:
 	if not is_instance_valid(_portrait_renderer):
@@ -22,7 +24,7 @@ func _ready() -> void:
 	_build()
 	pause_hint = Label.new()
 	pause_hint.name = "BattlePauseHint"
-	L10N.bind(pause_hint,&"text","ui.d154fda07dc8")
+	pause_hint.text = "战斗已暂停 · 按 Space 继续"
 	pause_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	pause_hint.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	pause_hint.add_theme_font_size_override("font_size",26)
@@ -41,7 +43,7 @@ func _ready() -> void:
 	deployment_hint.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
 	deployment_hint.offset_top = 14
 	deployment_hint.offset_bottom = 78
-	start_battle_button = _btn(view,"ui.f09db6116878",func(): application.start_battle())
+	start_battle_button = _btn(view,"开始战斗",func(): application.start_battle())
 	start_battle_button.name = "StartBattle"
 	start_battle_button.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
 	start_battle_button.offset_left = -100
@@ -67,16 +69,17 @@ func set_visual_preset(preset: Resource) -> void:
 func update_battle_controls(in_battle: bool, manually_paused: bool, free_mouse: bool) -> void:
 	if is_instance_valid(pause_hint): pause_hint.visible = in_battle and manually_paused
 	if route=="battle" and in_battle and not overlay.visible:
-		L10N.bind(status,&"text",func(): return L10N.text(L10N.text("ui.e356dcf01e24") if manually_paused else (L10N.text("ui.df551b21bc32") if free_mouse else L10N.text("ui.309ca908d28d"))))
+		status.text = "战斗已暂停 · Space 继续；Q 切换鼠标" if manually_paused else ("自由鼠标 · Q 返回地形光标；Space 暂停战斗" if free_mouse else "Q 显示自由鼠标；Space 暂停战斗；双方由 AI 控制。")
 
 func update_deployment_controls(deploying: bool, can_start: bool, error: String) -> void:
 	var shown := deploying and route == "battle" and not overlay.visible
 	start_battle_button.visible = shown
 	start_battle_button.disabled = not can_start
-	L10N.bind(start_battle_button,&"tooltip_text",func(): return L10N.text(L10N.text("ui.59397f10bc47") if not can_start else L10N.text("ui.c8fd5f6d3736")))
+	start_battle_button.tooltip_text = "请先在合法位置放下正在拖动的生物。" if not can_start else "结束部署并启用双方 AI。"
 	deployment_hint.visible = shown
-	L10N.bind(deployment_hint,&"text",func(): return L10N.text("ui.dd7609dd208b")+"\n" + (L10N.text(error) if not error.is_empty() else ("再次点击左键放置；放置后才可开始战斗。" if not can_start else "靠近友军后点击左键拾起，再次点击放置；按 Q 后点击开始战斗。")))
-	if shown: L10N.bind(status,&"text","ui.7077c680a8c6")
+	deployment_hint.text = "部署阶段 · 蓝色边界内调整友军 · Q 切换鼠标"
+	deployment_hint.text += "\n" + (error if not error.is_empty() else ("再次点击左键放置；放置后才可开始战斗。" if not can_start else "靠近友军后点击左键拾起，再次点击放置；按 Q 后点击开始战斗。"))
+	if shown: status.text = "部署期间双方保持静止，位置调整仅在本场战斗生效。"
 
 func _show(next: String) -> void:
 	if next == "main":
@@ -94,8 +97,8 @@ func _show(next: String) -> void:
 	view.configure(next,location,state.monsters("team"))
 	if next == "eruption":
 		view.erupt()
-		_btn(actions,"ui.63ccfb01fdfc",func(): view.skip_eruption())
-	L10N.bind(status,&"text",func(): return L10N.text({"main":"ItIsTime","world":L10N.text("ui.24305da04d78"),"battle":L10N.text("ui.aabd5072736f"),"eruption":L10N.text("ui.ca7f4a820a00")}.get(next,"")))
+		_btn(actions,"跳过召唤演出",func(): view.skip_eruption())
+	status.text = {"main":"ItIsTime","world":"点击地点后前往，抵达后交互。","battle":"自由光标观察战斗，双方由 AI 控制；队伍变更在下一战生效。","eruption":"召唤结果已保存，演出不会再次生成。"}.get(next,"")
 	actions.visible = actions.get_child_count()>0
 	main_content.visible = not _has_page_root()
 	status.visible = next != "main" and not _has_page_root()
@@ -105,8 +108,8 @@ func _show(next: String) -> void:
 func _update_header() -> void:
 	if header == null: return
 	var place: String = application.location_name() if application != null else "边境"
-	L10N.bind(header,&"text",func(): return L10N.text(L10N.text("ui.1f2d217d0c75") % [place,int(state.data.day),state.data.magic]))
-	L10N.bind(header,&"tooltip_text","ui.1749a4558b14")
+	header.text = "%s　|　第 %d 天　|　魔力 %d" % [place,int(state.data.day),state.data.magic]
+	header.tooltip_text = "正式会话；地图、仓库与召唤共用同一个存档槽。"
 
 func _update_motion_status() -> void:
 	pass
@@ -118,6 +121,7 @@ func _location_clicked(id: String, _kind: String) -> void:
 	application.world_map.select_location(StringName(id))
 
 func _navigation_requested(action: String) -> void:
+	if action=="tasks" and not _tasks_available(): return
 	if application.phase in ["loading_world","loading_battle","settlement","returning"]: return
 	if action == "world" and application.phase == "scenario":
 		application._scenario_exit(&"return_to_map")
@@ -143,7 +147,7 @@ func _perform_summon() -> void:
 	application.trace_map_event("event_requested",{"event_id":"summon","magic":state.data.magic})
 	if not application.phase in ["world","battle"]:
 		application.trace_map_event("event_rejected",{"event_id":"summon","reason":"当前阶段不能召唤。"})
-		_notice("ui.7d2dc48c1c2b")
+		_notice("当前阶段不能召唤。")
 		return
 	var serial: int = state.data.serial
 	super._perform_summon()
@@ -153,17 +157,17 @@ func _build_ritual(body: VBoxContainer) -> void:
 	super._build_ritual(body)
 	var species := PackedStringArray()
 	for id: String in state.FACTORY.SUMMON_POOL: species.append(state.FACTORY.DEFINITIONS[id].name)
-	L10N.bind(ritual_page.get_node("%Context"),&"text",func(): return L10N.text(L10N.text("ui.f4caa8ddae37") % [application.location_name()," / ".join(species)]))
-	L10N.bind(ritual_page.get_node("%Upgrade"),&"text","ui.fe216b104dab")
-	L10N.bind(ritual_page.get_node("%Upgrade"),&"tooltip_text","ui.b3929481adbb")
-	L10N.bind(ritual_page.get_node("%Examples"),&"tooltip_text","ui.70e87367c1e1")
+	ritual_page.get_node("%Context").text = "[b]当前位置[/b]\n%s\n\n[b]可召唤物种（等概率）[/b]\n%s\n\n[b]能力边界[/b]\n普通结构与数值符文已接入；天气权重与特殊结构尚未开放。" % [application.location_name()," / ".join(species)]
+	ritual_page.get_node("%Upgrade").text = "胜利后解锁下一圈"
+	ritual_page.get_node("%Upgrade").tooltip_text = "累计胜利达到当前阶数后开放。"
+	ritual_page.get_node("%Examples").tooltip_text = "示例只填入法阵，不赠送魔力；未接入能力会阻止召唤。"
 
 func _refresh_ritual() -> void:
 	super._refresh_ritual()
 	var error: String = state.supported_layout(rules)
 	if not error.is_empty():
 		summon_button.disabled = true
-		L10N.bind(summon_button,&"tooltip_text",func(): return L10N.text(error))
+		summon_button.tooltip_text = error
 
 func _open_event(id: String) -> void:
 	application.open_event(id)
@@ -174,7 +178,7 @@ func _monster_card(parent: Node, monster: Dictionary, result_card: bool) -> void
 	_request_creature_portrait(card.get_node("%Portrait"),monster)
 	var stats: Node = card.get_node("%Stats")
 	for index: int in 4:
-		L10N.bind(stats.get_child(index),&"text",func(): return L10N.text([L10N.text("ui.8ce33e80ad0a") % monster.hp,L10N.text("ui.d7efa579fa05") % monster.attack,L10N.text("ui.e3e64ba9babf") % monster.armor,L10N.text("ui.2de403b8ff0b") % monster.speed][index]))
+		stats.get_child(index).text = ["生命 %.0f" % monster.hp,"攻击 %.1f" % monster.attack,"护甲 %.1f" % monster.armor,"移速 %.1f" % monster.speed][index]
 
 func _fill_detail(body: VBoxContainer, id: String) -> void:
 	var monster: Dictionary = state.monster_by_id(id)
@@ -183,18 +187,16 @@ func _fill_detail(body: VBoxContainer, id: String) -> void:
 	page.get_node("%Portrait").form = monster.form
 	page.get_node("%Portrait").tint = Color(monster.color)
 	_request_creature_portrait(page.get_node("%Portrait"),monster)
-	L10N.bind(page.get_node("%Name"),&"text",func(): return L10N.creature_name(monster))
-	L10N.bind(page.get_node("%Stats"),&"text",func(): return L10N.text(L10N.text("ui.9a8cdfe96ffa") % [monster.hp,monster.attack,monster.armor,monster.speed,monster.get("interval_multiplier",1.0),monster.parts.size()]))
-	L10N.bind(page.get_node("%Stats"),&"tooltip_text","ui.96f971268212")
+	page.get_node("%Name").text = monster.name
+	page.get_node("%Stats").text = "生命 %.0f　攻击参考 %.1f\n平均护甲 %.1f　目标移速 %.1f\n攻击冷却倍率 %.2f\n真实物理部位 %d 个" % [monster.hp,monster.attack,monster.armor,monster.speed,monster.get("interval_multiplier",1.0),monster.parts.size()]
+	page.get_node("%Stats").tooltip_text = "生命为各部位上限之和；护甲为部位平均值。攻击参考为冲量10的挥击原始伤害，实际伤害仍由接触冲量、护甲和全局规则决定。冷却倍率缩放AI与动作自身冷却，不缩放物理动作时长。"
 	var name_input: LineEdit = page.get_node("%NameInput")
-	name_input.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	L10N.bind(name_input,&"placeholder_text",name_input.placeholder_text)
 	name_input.text = monster.name
 	page.get_node("%Save").pressed.connect(func():
 		if state.rename_monster(id,name_input.text): _render_modal()
-		else: _notice(func(): return L10N.text(state.last_error if not state.last_error.is_empty() else L10N.text("ui.e83654164a44"))))
+		else: _notice(state.last_error if not state.last_error.is_empty() else "名称不能为空"))
 	for trait_name: String in monster.traits:
-		_btn(page.get_node("%Traits"),func(): return L10N.text("【%s】" % L10N.text(trait_name)),func(): _trait(trait_name))
+		_btn(page.get_node("%Traits"),"【%s】" % trait_name,func(): _trait(trait_name))
 
 func _trait(name_text: String) -> void:
 	for rune: Dictionary in Rules.RUNES:
@@ -204,9 +206,9 @@ func _trait(name_text: String) -> void:
 
 func _book() -> void:
 	_modal("符文辞典",func(body):
-		var page := _text_screen(body,"ui.2273576d6eef")
+		var page := _text_screen(body,"首轮开放普通结构及数值符文；未接入的结构、特殊效果和奇物会在扣费前阻止召唤。")
 		for rune: Dictionary in Rules.RUNES:
-			_btn(page.get_node("%Commands"),func(): return L10N.text(L10N.text(rune.name)+(L10N.text("ui.f83e2ccb040e") if rune.id in state.SUPPORTED_RUNES else L10N.text("ui.e3c3cda9872d"))),func(): _trait(rune.name)))
+			_btn(page.get_node("%Commands"),rune.name+(" · 已接入" if rune.id in state.SUPPORTED_RUNES else " · 未开放"),func(): _trait(rune.name)))
 
 func _help() -> void:
 	_term("旅途指南","地图点击地点并沿路径抵达后交互。召唤结果可加入出战或存入仓库，队位上限6。\n战场默认使用自由地形光标，双方由AI控制。Q切换系统鼠标与地形光标，Space暂停/继续战斗；鼠标移动地形光标，右键拖拽旋转镜头，滚轮缩放。\nESC在所有阶段打开设置，再按一次返回原界面。设置中可选择分辨率、全屏和保存后返回主菜单。B工坊入口和Q轮盘仍禁用。法阵中Enter刻入、Backspace撤回；纸页可点击返回按钮关闭。\n存档同时保存仓库、召唤结果和地图；中途退出战斗会从初始部署重开。")
@@ -216,13 +218,18 @@ func _term(title: String, content: String) -> void:
 	super._term(title,descriptions.get(title,content))
 
 func _task_action(action: String) -> void:
-	if action == "event":
-		_close_all()
-		_notice("ui.06835cd32070")
-	else: super._task_action(action)
+	if not _tasks_available() or modal_stack.is_empty() or modal_stack.back().get("kind")!="tasks": return
+	var target: String = state.new_player_task_action(action)
+	if target.is_empty(): return
+	_close_all()
+	if not modal_stack.is_empty(): return
+	match target:
+		"world": _show("world")
+		"summon": _open_ritual()
+		"party": _warehouse("team")
 
 func _skip_battle() -> void:
-	_notice("ui.5c7fbcd9b770")
+	_notice("真实战斗不能跳过。")
 
 func toggle_settings() -> void:
 	if not modal_stack.is_empty() and modal_stack.back().get("kind","") == "settings": _close_modal(false)
@@ -231,28 +238,13 @@ func toggle_settings() -> void:
 func _settings() -> void:
 	if not modal_stack.is_empty() and modal_stack.back().get("kind","") == "settings": return
 	_modal("设置 / 保存 / 退出",func(body):
-		var page := _text_screen(body,"ui.d6789f4647ff")
+		var page := _text_screen(body,"ItIsTime · 正式会话")
 		var commands: Node = page.get_node("%Commands")
 		var current: Dictionary = application.get_display_settings()
-		var language_caption := Label.new()
-		L10N.bind(language_caption,&"text","ui.settings.language")
-		commands.add_child(language_caption)
-		var language := OptionButton.new()
-		language.name = "Language"
-		language.custom_minimum_size.y = 42
-		var localization: Node = get_node("/root/GameLocalization")
-		var locales: Array = localization.configuration.locales.keys()
-		for locale: String in locales: language.add_item(localization.configuration.locales[locale].name)
-		language.select(maxi(0,locales.find(localization.current_locale())))
-		language.item_selected.connect(func(index: int):
-			if not localization.set_locale(locales[index]):
-				language.select(maxi(0,locales.find(localization.current_locale())))
-				_notice(L10N.text("ui.settings.language_error")))
-		commands.add_child(language)
 		var choices: Array = application.DISPLAY_RESOLUTIONS.duplicate()
 		if current.resolution not in choices: choices.append(current.resolution)
 		var caption := Label.new()
-		L10N.bind(caption,&"text","ui.c10644a0c7e3")
+		caption.text = "分辨率（窗口尺寸 / 全屏渲染尺寸）"
 		commands.add_child(caption)
 		var resolution := OptionButton.new()
 		resolution.name = "Resolution"
@@ -262,26 +254,26 @@ func _settings() -> void:
 		commands.add_child(resolution)
 		var fullscreen := CheckButton.new()
 		fullscreen.name = "Fullscreen"
-		L10N.bind(fullscreen,&"text","ui.22ea3f47fee8")
+		fullscreen.text = "全屏"
 		fullscreen.button_pressed = current.fullscreen
 		commands.add_child(fullscreen)
-		var apply := _btn(commands,"ui.5865f6bc31f0",func():
-			if application.apply_display_settings(choices[resolution.selected],fullscreen.button_pressed): _notice("ui.f3a57f243657")
-			else: _notice(func(): return L10N.text(application.display_error)))
+		var apply := _btn(commands,"应用显示设置",func():
+			if application.apply_display_settings(choices[resolution.selected],fullscreen.button_pressed): _notice("显示设置已应用并保存。")
+			else: _notice(application.display_error))
 		apply.name = "ApplyDisplay"
-		L10N.bind(apply,&"tooltip_text","ui.af2c63d32afc")
-		_btn(commands,"ui.aa75a16696a6",func(): _notice(func(): return L10N.text(L10N.text("ui.1bd91a7d0c53") if application.save_session() else state.last_error)))
-		_btn(page.get_node("%Commands"),func(): return L10N.text(L10N.text("ui.c66e646390a9") if animate_panels else L10N.text("ui.6827b4782982")),func():
+		apply.tooltip_text = "全屏保持显示器桌面模式，画面按所选分辨率渲染。"
+		_btn(commands,"保存游戏",func(): _notice("已保存" if application.save_session() else state.last_error))
+		_btn(page.get_node("%Commands"),"动效：开启" if animate_panels else "动效：简化",func():
 			animate_panels = not animate_panels
 			board_motion.enabled = animate_panels
 			_render_modal())
-		_main_menu_button = _btn(commands,"ui.e34e61a243be",func(): application.return_to_main_menu())
+		_main_menu_button = _btn(commands,"返回主菜单",func(): application.return_to_main_menu())
 		_main_menu_button.name = "ReturnToMainMenu"
 		_main_menu_button.disabled = application.phase == "main" or application.returning_to_main_menu
-		L10N.bind(_main_menu_button,&"tooltip_text","ui.b8328c8f3763")
-		_btn(page.get_node("%Commands"),"ui.dbc0fe120d31",func():
+		_main_menu_button.tooltip_text = "先保存进度；未结束的战斗在继续游戏时从部署阶段重开。"
+		_btn(page.get_node("%Commands"),"退出游戏",func():
 			if application.save_session(): get_tree().quit()
-			else: _notice(func(): return L10N.text(state.last_error))),"settings")
+			else: _notice(state.last_error)),"settings")
 
 func _resize_event() -> void:
 	super._resize_event()
@@ -296,9 +288,7 @@ func _resize_event() -> void:
 func _render_modal() -> void:
 	super._render_modal()
 	_resize_event()
-	if not modal_stack.is_empty() and modal_stack.back().get("kind","") != "settings":
-		var kind: String = modal_stack.back().get("kind","")
-		L10N.bind(close_button,&"text","离开" if kind=="event" else "关闭" if kind=="tasks" else "返回")
+	if not modal_stack.is_empty() and modal_stack.back().get("kind","") != "settings": close_button.text = close_button.text.replace(" / Esc","")
 	if application != null: close_button.disabled = (application.phase=="settlement" or _battle_cancel_needs_save()) and modal_stack.size()==1 and modal_stack.back().get("kind","") != "settings"
 	if application != null: application.refresh_input_gate()
 
@@ -338,26 +328,45 @@ func _append_battle_confirmation() -> void:
 	var commands: Node = warehouse_page.get_node("%DetailCommands")
 	if commands.get_node_or_null("ConfirmBattleSetup")!=null: return
 	var error: String = application.delivery_map.roster_error(setup.location_id,setup.kind)
-	var button := _btn(commands,"ui.8cbd7b90a986",func(): application.delivery_map.confirm_setup())
+	var button := _btn(commands,"确认出战并进入战场",func(): application.delivery_map.confirm_setup())
 	button.name = "ConfirmBattleSetup"
 	button.disabled = state.monsters("team").is_empty() or not error.is_empty()
-	L10N.bind(button,&"tooltip_text",func(): return L10N.text(error if not error.is_empty() else L10N.text("ui.706dd02d943b") if button.disabled else L10N.text("ui.9ba08e110d33")))
+	button.tooltip_text = error if not error.is_empty() else "请先将至少一只妖兽加入出战队列。" if button.disabled else "使用已选队伍进入本次遭遇。"
 
 func _process(_delta: float) -> void:
 	view.set_process(modal_stack.is_empty() or modal_stack.back().get("kind","") != "settings")
 	if is_instance_valid(_main_menu_button): _main_menu_button.disabled = application.phase == "main" or application.returning_to_main_menu
 	if application != null: application.refresh_input_gate()
+	var task_button: Button = base.get_node("%Navigation").get_node("%Tasks")
+	task_button.disabled = not _tasks_available() or overlay.visible
+	task_button.tooltip_text = "查看新手任务" if _tasks_available() else "新手任务仅在大地图可用"
+	if not _task_notifications.is_empty() and _tasks_available() and modal_stack.is_empty():
+		_notice("新手任务已完成："+"、".join(_task_notifications))
+		_task_notifications.clear()
 
 func _curtain(_raising: bool) -> void:
 	pass
 
 func _tasks() -> void:
+	if not _tasks_available(): return
+	if not state.enable_new_player_tasks():
+		_notice(state.last_error)
+		return
 	_modal("待办事项",func(body):
 		var page := TasksPanel.instantiate()
 		body.add_child(page)
-		page.present_tasks([
-			{"title":"探索边境","description":"发现地点并沿真实路径抵达。","done":not state.data.worlds.is_empty(),"action":"world"},
-			{"title":"召唤妖兽","description":"刻入已接入的符文并安置同一批实例。","done":state.data.serial>0,"action":"summon"},
-			{"title":"准备出战队伍","description":L10N.text("ui.e92f6294f7a5") % state.occupied_slots(),"done":state.occupied_slots()>0,"action":"party"}])
+		_task_page = page
+		page.present_tasks(state.new_player_task_rows())
 		page.action_requested.connect(_task_action),"tasks")
+
+func _tasks_available() -> bool:
+	return application!=null and application.phase=="world" and route=="world" and not _battle_cancel_needs_save()
+
+func refresh_task_list() -> void:
+	if is_instance_valid(_task_page) and not modal_stack.is_empty() and modal_stack.back().get("kind")=="tasks":
+		_task_page.present_tasks(state.new_player_task_rows())
+
+func queue_task_completion(task_ids: Array) -> void:
+	for task: Dictionary in state.task_definitions:
+		if task.id in task_ids and task.title not in _task_notifications: _task_notifications.append(task.title)
 
