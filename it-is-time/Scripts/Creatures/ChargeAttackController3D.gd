@@ -214,6 +214,7 @@ func cancel_action(reason: StringName = &"cancelled") -> void:
 	_speed = 0.0
 func _set_phase(next: Phase, reason: StringName) -> void:
 	phase = next
+	if next == Phase.CHARGING: CombatAudio3D.play_at(_body, &"charge")
 	_elapsed = 0.0
 	_reason = reason
 	_log(&"phase")

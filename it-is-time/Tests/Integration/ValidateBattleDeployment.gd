@@ -60,6 +60,7 @@ func run() -> void:
 		var app := create_app(delivery)
 		app.start_new_game()
 		check(await wait_phase(app,"world"),"World initializes: "+str(delivery))
+		app.ui._close_all()
 		var unit := FACTORY.template("human" if delivery else "stump_beast")
 		unit.merge({"id":"test_human","position":"team","traits":[]},true)
 		app.session.data.monsters.append(unit)

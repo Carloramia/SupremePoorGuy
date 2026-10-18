@@ -1,0 +1,52 @@
+通用模组实现与验证记录（2026-10-18）
+
+实现范围
+- _SampleModule 默认 Parts/Joints 为空，支持纯视觉、逻辑和物理混合挂件。
+- 生成角色根节点增加 CreatureModuleAttachment 数组，按稳定 PartKey 与可选 Marker3D 安装。
+- 独立实例 ID、物理连通性和依赖检查、安装失败保留原物理结构。
+- 接入现有几何、质量/密度、内部碰撞忽略、身体标签、伤害和断裂系统。
+- 模组独立捕获/保存，不污染基础 manual_layout；可返回原模板重新生成。
+- 通用及物种专用装配时保留模组的关节参数；已有 Arm 控制器重新扫描绑定。
+- 现有生成部件快捷编辑面板跳过模组，防止写入错误的基础 PartSceneRules。
+- 提供空、视觉、单物理部件、两节腿、三节腿、两节手臂模板和独立示例角色。
+- 未修改现有角色场景的模组配置，未加入游戏随机池或 TestLevel。
+
+通过的验证
+1. Tests/ValidateCreatureModules.gd
+   - 空 Parts、逻辑回调与启停、纯视觉、多物理部件。
+   - 新脚部被控制器发现、Arm 不被误认为脚、物理体单位缩放。
+   - 内部碰撞例外完整、相同模板的安装项和碰撞形状独立。
+   - 自定义关节限位经刷新保留，宿主 Marker3D 可用。
+   - 原始装配直接打包不重复节点。
+   - 手动位置、碰撞偏移、纯视觉偏移捕获，磁盘保存重载后可再次生成。
+   - OverallScale 两倍放大及重建；纸片模型比例和厚度正确。
+   - 缺失宿主、缺失插槽、断开的内部图、重复 ID 都保留旧物理结构。
+   - 停用/删除安装项无残留，断裂脚部离开控制器脚部列表。
+   - Wolf、Spider、Human、Bird、Snake 的激活不覆盖模组关节设置。
+   - 示例角色运行自动装配成功。
+   最后运行输出 ValidateCreatureModules PASSED，无 SCRIPT ERROR / ERROR 或退出泄漏。
+2. Tests/ValidateCreatureManualLayout.gd：通过。包含 StumpBeast、Bird、Beast 保存/缩放/回滚。
+3. Tests/ValidateManualPartSnapshot.gd：通过。包含 Wolf 内部模型/碰撞箱/保存重载。
+4. Tests/ValidateBirdAssembly.gd：通过，包含 Bird/NPC 装配、尾羽和羽毛物理检查。
+
+没有计为完整通过的检查
+1. Tests/ValidateCreatureModulesEditor.gd：全部功能断言输出 PASSED，但独立命令行编辑器环境
+   存在 AppData 编辑器目录不可写、缺少 .NET 10.0.5 SDK / Microsoft.Build、编辑器退出资源
+   泄漏等环境错误。不能将这一运行认定为无错误的完整编辑器测试。
+   没有改动用户的系统目录或安装 SDK。
+2. Tests/ValidateGeneratedCreatureCharacter3D.gd 第 73 行失败：旧断言要求碰撞箱尺寸等于
+   未加厚 generated_size。项目现行规则将碰撞 Z 厚度扩为视觉的两倍。
+   使用 Git HEAD 的改动前角色脚本在临时目录复现：SubTorso actual=(3,2.4,2.4)，
+   expected=(3,2.4,1.2)。本次未修改这项旧测试或碰撞厚度规则。
+3. Tests/ValidateHumanCreature3D.gd 第 60 行失败：旧断言要求所有 Human 预设脚底 Y 接近 0。
+   使用改动前 GeneratedHumanCharacter3D 和父类复现：Human1 预设 scale=1，
+   Leg_R 脚底 Y=-0.1986957，Leg_L=-0.3367475。本次未调整 Human 的生成布局或该旧断言。
+
+原始输出目录
+D:/GameJamWorkspace/Reports/CreatureModules_2026-10-18/
+modules.log、manual_layout.log、manual_snapshot.log、bird_assembly.log、editor.log、
+assembly.log、human_assembly.log、baseline_assertion.log、baseline_human.log。
+
+未覆盖的范围
+没有进行大规模混战和每种新增解剖结构的步态调参。
+本版不支持战斗中即时移植，也不支持模组作为另一个模组的安装宿主。

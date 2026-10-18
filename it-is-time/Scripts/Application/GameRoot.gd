@@ -38,6 +38,7 @@ var _previous_auto_quit := true
 var _last_ui_route := ""
 var _load_failed := false
 var _delivery_cancel_save_pending := false
+var _open_tasks_on_world_entry := false
 var free_mouse_enabled := false
 var display_error := ""
 var returning_to_main_menu := false
@@ -76,6 +77,11 @@ func _ready() -> void:
 	session.changed.connect(_session_changed)
 	session.new_player_tasks_completed.connect(ui.queue_task_completion)
 	refresh_input_gate()
+	if "--verify-export" in OS.get_cmdline_user_args(): _verify_export.call_deferred()
+
+func _verify_export() -> void:
+	var checker = load("res://Scripts/Debug/ExportPackageCheck.gd").new()
+	await checker.run(self)
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo and (event.keycode == KEY_ESCAPE or event.physical_keycode == KEY_ESCAPE):
@@ -110,6 +116,7 @@ func return_to_main_menu() -> bool:
 		ui._notice("正在完成当前载入或转场，随后保存并返回主菜单…")
 		return false
 	returning_to_main_menu = false
+	_open_tasks_on_world_entry = false
 	if phase == "settlement" and session.data.battle.get("phase") != "settlement":
 		_finalize_battle()
 		if session.data.battle.get("phase") != "settlement": return false
@@ -197,6 +204,7 @@ func _content_view(title: String, spatial: bool) -> SubViewportContainer:
 	viewport.name = title+"Viewport"
 	viewport.size = Vector2i(500,350)
 	viewport.own_world_3d = spatial
+	viewport.audio_listener_enable_3d = spatial
 	viewport.world_2d = World2D.new()
 	viewport.handle_input_locally = true
 	viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
@@ -281,10 +289,19 @@ func start_new_game() -> void:
 	var previous := session.data.duplicate(true)
 	session.reset()
 	if not session.save(): session.data = previous; ui._notice(session.last_error); return
+	_open_tasks_on_world_entry = true
 	ui._task_notifications.clear()
 	ui.rules.import_layout(session.data.layout)
 	ui._close_all()
 	ui._show("world")
+
+func _enable_world_tasks() -> void:
+	if not session.enable_new_player_tasks():
+		ui._notice(session.last_error)
+		return
+	if _open_tasks_on_world_entry:
+		_open_tasks_on_world_entry = false
+		if not returning_to_main_menu and ui.modal_stack.is_empty(): ui._tasks()
 
 func enter_world() -> void:
 	if phase != "main": return
@@ -329,7 +346,7 @@ func enter_world() -> void:
 	map_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	map_container.show()
 	ui._show("world")
-	if not session.enable_new_player_tasks(): ui._notice(session.last_error)
+	_enable_world_tasks()
 	if session.data.battle.get("phase","") == "settlement":
 		_pending_result = session.data.battle.result.duplicate(true)
 		phase = "settlement"
@@ -349,7 +366,7 @@ func _enter_delivery_world() -> void:
 	phase = "world"
 	ui._show("world")
 	if not delivery_map.save_progress(): return
-	if not session.enable_new_player_tasks(): ui._notice(session.last_error)
+	_enable_world_tasks()
 	if session.data.battle.get("phase")=="settlement":
 		_pending_result = session.data.battle.result.duplicate(true)
 		phase = "settlement"

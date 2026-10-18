@@ -1,0 +1,68 @@
+[gd_resource type="Resource" script_class="CombatAudioSettings" load_steps=24 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Audio/CombatAudioSettings.gd" id="1_settings"]
+[ext_resource type="Script" path="res://Scripts/Audio/CombatSoundCue.gd" id="2_cue"]
+[ext_resource type="AudioStream" path="res://Assets/Audio/SFX/Combat/attack_01.wav" id="attack01"]
+[ext_resource type="AudioStream" path="res://Assets/Audio/SFX/Combat/attack_02.wav" id="attack02"]
+[ext_resource type="AudioStream" path="res://Assets/Audio/SFX/Combat/bite_01.wav" id="bite01"]
+[ext_resource type="AudioStream" path="res://Assets/Audio/SFX/Combat/bite_02.wav" id="bite02"]
+[ext_resource type="AudioStream" path="res://Assets/Audio/SFX/Combat/charge_01.wav" id="charge01"]
+[ext_resource type="AudioStream" path="res://Assets/Audio/SFX/Combat/charge_02.wav" id="charge02"]
+[ext_resource type="AudioStream" path="res://Assets/Audio/SFX/Combat/stomp_01.wav" id="stomp01"]
+[ext_resource type="AudioStream" path="res://Assets/Audio/SFX/Combat/stomp_02.wav" id="stomp02"]
+[ext_resource type="AudioStream" path="res://Assets/Audio/SFX/Combat/hit_01.wav" id="hit01"]
+[ext_resource type="AudioStream" path="res://Assets/Audio/SFX/Combat/hit_02.wav" id="hit02"]
+[ext_resource type="AudioStream" path="res://Assets/Audio/SFX/Combat/break_01.wav" id="break01"]
+[ext_resource type="AudioStream" path="res://Assets/Audio/SFX/Combat/break_02.wav" id="break02"]
+[ext_resource type="AudioStream" path="res://Assets/Audio/SFX/Combat/bow_01.wav" id="bow01"]
+[ext_resource type="AudioStream" path="res://Assets/Audio/SFX/Combat/bow_02.wav" id="bow02"]
+
+[sub_resource type="Resource" id="Cue_attack"]
+script = ExtResource("2_cue")
+event = &"attack"
+streams = Array[AudioStream]([ExtResource("attack01"), ExtResource("attack02")])
+volume_db = -9.0
+
+[sub_resource type="Resource" id="Cue_bite"]
+script = ExtResource("2_cue")
+event = &"bite"
+streams = Array[AudioStream]([ExtResource("bite01"), ExtResource("bite02")])
+volume_db = -6.0
+
+[sub_resource type="Resource" id="Cue_charge"]
+script = ExtResource("2_cue")
+event = &"charge"
+streams = Array[AudioStream]([ExtResource("charge01"), ExtResource("charge02")])
+volume_db = -9.0
+cooldown = 0.25
+
+[sub_resource type="Resource" id="Cue_stomp"]
+script = ExtResource("2_cue")
+event = &"stomp"
+streams = Array[AudioStream]([ExtResource("stomp01"), ExtResource("stomp02")])
+volume_db = -5.0
+cooldown = 0.08
+
+[sub_resource type="Resource" id="Cue_hit"]
+script = ExtResource("2_cue")
+event = &"hit"
+streams = Array[AudioStream]([ExtResource("hit01"), ExtResource("hit02")])
+volume_db = -7.0
+cooldown = 0.10
+
+[sub_resource type="Resource" id="Cue_break"]
+script = ExtResource("2_cue")
+event = &"break"
+streams = Array[AudioStream]([ExtResource("break01"), ExtResource("break02")])
+volume_db = -7.0
+cooldown = 0.20
+
+[sub_resource type="Resource" id="Cue_bow"]
+script = ExtResource("2_cue")
+event = &"bow"
+streams = Array[AudioStream]([ExtResource("bow01"), ExtResource("bow02")])
+volume_db = -8.0
+
+[resource]
+script = ExtResource("1_settings")
+cues = Array[ExtResource("2_cue")]([SubResource("Cue_attack"), SubResource("Cue_bite"), SubResource("Cue_charge"), SubResource("Cue_stomp"), SubResource("Cue_hit"), SubResource("Cue_break"), SubResource("Cue_bow")])

@@ -16,6 +16,7 @@ func run() -> void:
 		if app.phase=="world": break
 		await physics_frame
 	check(app.phase=="world","Imported 2D map initializes")
+	app.ui._close_all()
 	preload("res://Tests/Integration/ApplicationFixtures.gd").add_human(app.session)
 	var location: WorldMapLocation = app.world_map.get_location(&"monster_camp_01")
 	check(location!=null,"Imported camp metadata remains addressable")

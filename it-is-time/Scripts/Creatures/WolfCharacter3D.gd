@@ -30,6 +30,7 @@ func _configure_independent_support(container: Node) -> void:
 		var chain: Dictionary = movement._chains[foot]
 		if chain.joints.is_empty(): continue
 		var joint: Generic6DOFJoint3D = chain.joints.back()
+		if joint.has_meta(&"module_joint_settings"): continue
 		for axis: String in ["x", "y", "z"]:
 			joint.call("set_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_LINEAR_LIMIT, true)
 			joint.call("set_param_" + axis, Generic6DOFJoint3D.PARAM_LINEAR_LOWER_LIMIT, 0.0)
@@ -58,6 +59,7 @@ func _configure_wolf_physics(container: Node) -> void:
 	# Also runs before the generated container enters the tree.
 	for joint: Node in container.get_node("Joints").get_children():
 		if not joint is Generic6DOFJoint3D: continue
+		if joint.has_meta(&"module_joint_settings"): continue
 		var a := container.get_node(NodePath(str(joint.node_a).get_file())) as PhysicalBodyPart3D
 		var b := container.get_node(NodePath(str(joint.node_b).get_file())) as PhysicalBodyPart3D
 		if a == null or b == null: continue

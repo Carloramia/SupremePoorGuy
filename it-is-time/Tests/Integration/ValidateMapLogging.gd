@@ -33,6 +33,7 @@ func run() -> void:
 		if app.phase=="world": break
 		await physics_frame
 	check(app.phase=="world" and app.delivery_map.runtime.diagnostic_logging,"Map inherits console tracing on initialization")
+	app.ui._close_all()
 	check(rows("map_loaded").size()==1,"Map initialization emits one structured event")
 	check(not app.session.integration_logging,"Map logs are independent of integration logs")
 	check(not app.delivery_map.request_move(Vector2(-500,-500)) and not rows("travel_rejected").back().reason.is_empty(),"Movement refusal records its reason")

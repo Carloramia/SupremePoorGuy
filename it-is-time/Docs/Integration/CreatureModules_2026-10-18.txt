@@ -1,0 +1,97 @@
+通用生物模组：_SampleModule
+
+一、入口
+模板目录：res://Scenes/Creatures/Modules/
+示例角色：res://Scenes/Creatures/Characters/Examples/Generate_ModularBeast.tscn
+该示例在运行时装配一个视觉指示物和一个物理挂件；不会自动加入 TestLevel 或游戏随机池。
+
+_SampleModule 是 Node3D，Parts 与 Joints 默认均为空：
+  MountPoint：模组自身的安装基准，必须保留。
+  Parts：物理部件，每个直接子节点必须继承 _PhysicalSampleBodyParts。
+  Joints：模组内部的 Generic6DOFJoint3D，端点只引用本模组的 Parts。
+  其他节点：可自由加入视觉或逻辑节点。例如在根节点下增加 Visuals、Behaviors。
+纯视觉、纯逻辑模组可以完全不增加物理部件，也不必指定 Root Part Path。
+混合模组可以同时包含上述内容。
+
+提供的模板：
+  VisualModule：无物理部件的视觉挂件。
+  SinglePartModule：单物理部件，无默认身体标签。
+  TwoSegmentLegModule：两节 LegLimb 加一个 Leg。
+  ThreeSegmentLegModule：三节 LegLimb 加一个 Leg。
+  TwoSegmentArmModule：两节 ArmLimb 加一个 Arm，默认没有攻击绑定。
+这些是白色方块构造模板；可将 Parts 中的场景替换为对应美术物理部件。
+
+二、如何安装
+1. 选中生成角色的根节点，在 Module Attachments 组增加一个数组元素。
+2. 为该元素新建 CreatureModuleAttachment 资源。
+3. 设置 Module Scene，指向从 _SampleModule 继承的场景。
+4. 设置唯一 Instance Id，例如 extra_leg_left。使用字母、数字、下划线。
+5. Host Part Key 填写宿主原有生成部件的稳定 PartKey；默认 Torso。
+   可在生成部件的 Metadata / generated_part_key 中查看，不是节点的完整路径。
+6. Host Socket 可留空，此时使用宿主部件原点；或填写宿主部件内 Marker3D 的相对路径。
+   Marker3D 应在源 Part 场景中存在，或由该生物的装配逻辑稳定创建。
+7. Mount Offset 用于相对宿主插槽调整位置和旋转。位置使用未乘 OverallScale 的基础单位。
+8. Size Multiplier 统一缩放模组位置间距和物理部件的 XY 尺寸。
+9. 点击角色原有的“生成框架与物理角色”按钮，然后保存场景。
+
+宿主 OverallScale 同时影响模组。方块及纸片物理部件的最终厚度遵循宿主 PartWidth × OverallScale，
+Size Multiplier 不会独立改变纸片厚度；非纸片自定义实体模型保留自己的等比厚度。
+碰撞厚度继续复用项目的视觉厚度倍数机制。
+物理体根节点与容器必须保持单位缩放；修改尺寸请使用参数或内部视觉模型。
+Parts/Joints 内部节点的姿态和关节限位在模组自身的局部坐标下编辑。
+
+三、物理连接与控制
+存在物理部件时，Root Part Path 必须指向 Parts 中一个直接子节点。
+系统使用一个额外的 Generic6DOFJoint3D，将宿主与该根部件在 MountPoint 处连接。
+外部关节由根节点 Mount Joint 资源设置：位移限位、角度范围、角弹簧和阻尼。
+位移以模板单位填写，角度以度填写；内部关节直接编辑 Joints 下的节点。
+所有物理部件必须通过内部关节与 Root Part 连通，内部关节不能命名为 Mount。
+
+装配后物理部件并入角色 GeneratedParts，关节并入 GeneratedParts/Joints。
+角色按原有规则处理内部碰撞忽略、阵营、密度/质量、HP、Broken 与断裂传播。
+物理部件保留自己的身体标签，控制器刷新时按标签发现可控制的部位。
+Leg 模板要求宿主有 GeneratedLegStepMovementController3D；缺少时会拒绝装配。
+可以用 Required Components 数组声明其他必须存在的角色组件路径。
+模组不会自动为角色增加飞行、攻击、AI 或新的输入映射。
+Arm 如需挥舞，应在 Arm Part 上设置 ArmSwingBindings 和预设，并确保宿主拥有对应控制组
+与 LimbSwingController3D。模组内部的关节、驱动部件和 follower 路径会随装配重写。
+不同物种的专用迈步算法仍可能需要针对新增肢体比例进行调参；通用装配不保证任意解剖结构
+自动获得稳定步态。增加大量物理部件也会增加原有物理求解和内部碰撞例外的开销。
+
+四、保存手工修改
+先装配，再调整生成结果，使用角色原有的“将当前部件姿态写入生成器”，最后保存角色场景。
+宿主原有身体保存为 manual_layout；每个模组另存为该安装项内部的 captured_scene 快照。
+模组不会混入宿主基础蓝图，反复生成不会叠加重复部件。
+快照保留部件姿态、内部模型、碰撞箱、内部/外部关节设置和模组的视觉/逻辑节点。
+快照不会写回或覆盖原始 Module Scene，同一个模板的多个安装项互相独立。
+修改源模板后，希望安装项重新使用源模板时，点击该安装资源的“重新使用原始模组模板”，
+再重新生成。此操作会丢弃该安装项的手工快照，保留安装偏移与缩放。
+更换 Module Scene 也会清空旧快照；修改 ID、宿主或启用状态后应重新生成再保存。
+现有“生成部件快捷编辑”面板只编辑基础生成器部件，暂不编辑模组；模组请在模板内替换部件，
+或通过普通 Inspector 调整生成结果后捕获快照。
+不要在场景运行且身体已经被物理模拟拉开或断裂后保存模板姿态。
+
+五、逻辑节点接口
+模组残留根节点挂在宿主物理部件下，因此视觉节点自动跟随宿主。
+逻辑节点可实现以下可选回调，根节点会在运行时调用：
+  on_module_mounted(character, host_part)
+  on_module_enabled_changed(active: bool)
+可从模组根节点调用：
+  get_host_character()
+  get_host_part()
+  get_module_part(local_name)
+get_module_part 使用 Parts 中原始局部节点名，即使实际物理体已移到 GeneratedParts 仍可找到。
+逻辑节点应使用这些接口获取角色，不要假设自己的直接父节点就是角色。
+默认在宿主 Broken 或角色控制被停用时，逻辑和视觉一起停用；根节点 Disable On Host Broken
+可以控制宿主断裂时的停用策略。物理部件的断裂仍遵循原有角色伤害系统。
+
+六、诊断和边界
+准备装配时输出 [generated_module] staged id=... host=... parts=... joints=...。
+随后出现 [generated_creature] connected=true 才表示整次装配成功提交。
+错误 ID、缺失宿主/插槽/依赖、不连通或非法物理结构都会拒绝本次装配，并保留旧物理结构。
+新 PartKey 的形式为 Module/<InstanceId>/<原始部件名>。
+本版用于生成阶段装配与保存重建，尚未开放战斗中的即时移植，也不支持把另一个模组的部件
+作为 Host Part Key。只能挂到该生物原有基础部件上。
+
+验证：Tests/ValidateCreatureModules.gd 覆盖空/逻辑/视觉/物理模组、标签发现、碰撞例外、
+重复安装、磁盘保存重载、手工快照、OverallScale、非法配置回滚、停用删除和物种激活兼容。

@@ -75,6 +75,7 @@ func _sync_direct_head_slack(binding: Dictionary) -> void:
 	if binding.has_neck or not _alive(binding.head) or binding.joints.is_empty(): return
 	var joint: Generic6DOFJoint3D = binding.joints[0] as Generic6DOFJoint3D
 	if not is_instance_valid(joint) or joint.is_queued_for_deletion(): return
+	if joint.has_meta(&"module_joint_settings"): return
 	if PhysicsServer3D.joint_get_type(joint.get_rid()) == PhysicsServer3D.JOINT_TYPE_MAX: return
 	var slack: Vector3 = binding.head.head_no_neck_linear_slack
 	if not slack.is_finite(): return

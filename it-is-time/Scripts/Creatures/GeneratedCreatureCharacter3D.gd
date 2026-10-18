@@ -18,6 +18,12 @@ const HEAD_SUPPORT = preload("res://Scripts/Creatures/HeadPositionSupport3D.gd")
 const BODY_PART = preload("res://Scripts/Creatures/PhysicalBodyParts.gd")
 const DENSITY_DATA = preload("res://Scripts/Creatures/GeneratedCreatureDensityData.gd")
 const FEATHER_GEOMETRY = preload("res://Scripts/Creatures/Generators/BirdFeatherGeometry.gd")
+const MODULE_ATTACHMENT = preload("res://Scripts/Creatures/Modules/CreatureModuleAttachment.gd")
+const MODULE_ASSEMBLER = preload("res://Scripts/Creatures/Modules/GeneratedModuleAssembler.gd")
+
+@export_group("Module Attachments")
+## Editor/generation-time installations. Empty preserves the original character assembly.
+@export var module_attachments: Array[MODULE_ATTACHMENT] = []
 
 @export_group("Generation")
 @export var generator_path: NodePath = ^"CreatureGenerator"
@@ -76,7 +82,7 @@ func _align_manual_connections() -> bool:
 		joint.global_position = entry.anchor
 		joint.set_meta(&"generated_joint_frame_a", a.global_transform.affine_inverse()*joint.global_transform)
 		joint.set_meta(&"generated_joint_frame_b", b.global_transform.affine_inverse()*joint.global_transform)
-	if Engine.is_editor_hint(): EditorInterface.mark_scene_as_unsaved()
+	if Engine.is_editor_hint(): Engine.get_singleton("EditorInterface").mark_scene_as_unsaved()
 	print("[manual_layout] Aligned %d joints; maximum_previous_gap=%.6f; body poses unchanged. Capture the layout to persist generation anchors." % [pending.size(),maximum_gap])
 	return true
 
@@ -107,9 +113,16 @@ func _capture_manual_layout() -> bool:
 	var captured := build_manual_layout()
 	if captured == null: return false
 	var generator := get_node(generator_path)
+	var modules := MODULE_ASSEMBLER.capture(get_node("GeneratedParts"),module_attachments,float(generator.overall_scale))
+	if not modules.ok:
+		push_warning("[generated_module] "+str(modules.error))
+		return false
 	generator.manual_layout = captured
 	generator.use_manual_layout = true
-	if Engine.is_editor_hint(): EditorInterface.mark_scene_as_unsaved()
+	for state: Dictionary in modules.pending:
+		state.entry.captured_scene = state.scene
+		state.entry.mount_offset = state.offset
+	if Engine.is_editor_hint(): Engine.get_singleton("EditorInterface").mark_scene_as_unsaved()
 	print("[manual_layout] Captured %d parts and %d connections for %s; save the scene to persist." % [captured.blueprint.parts.size(), captured.blueprint.connections.size(), name])
 	return true
 
@@ -126,7 +139,7 @@ func build_manual_layout(use_live_joint_anchors: bool = false) -> Resource:
 	var to_generator := generator.global_transform.affine_inverse()
 	for child: Node in container.get_children():
 		var body := child as PhysicalBodyPart3D
-		if body == null: continue
+		if body == null or body.has_meta(&"generated_module_id"): continue
 		# Older saved assemblies have generated roles but predate stable keys.
 		var key := str(body.get_meta(&"generated_part_key", str(body.name) if body.has_meta(&"generated_role") else ""))
 		if key.is_empty() or keys.has(key) or body.is_broken:
@@ -165,7 +178,7 @@ func build_manual_layout(use_live_joint_anchors: bool = false) -> Resource:
 	var joints := container.get_node_or_null("Joints")
 	if joints == null: return null
 	for joint: Node in joints.get_children():
-		if joint.has_meta(&"segment_rotation_constraint"): continue
+		if joint.has_meta(&"segment_rotation_constraint") or joint.has_meta(&"generated_module_id"): continue
 		if not joint is Joint3D and not joint is SEGMENT_SPRING: continue
 		var a := joint.get_node_or_null(joint.node_a) as PhysicalBodyPart3D
 		var b := joint.get_node_or_null(joint.node_b) as PhysicalBodyPart3D
@@ -211,7 +224,7 @@ func restore_generated_part_edit(state: Dictionary) -> void:
 	if container == null or outgoing.get_parent() != container:
 		push_warning("[part_editor] Layout changed since this edit; reopen the scene to clear stale undo history.")
 		return
-	var selected: bool = outgoing in EditorInterface.get_selection().get_selected_nodes()
+	var selected: bool = outgoing in Engine.get_singleton("EditorInterface").get_selection().get_selected_nodes()
 	for body: Node in container.get_children():
 		if body is PhysicalBodyPart3D and body != outgoing:
 			body.remove_collision_exception_with(outgoing)
@@ -249,18 +262,18 @@ func restore_generated_part_edit(state: Dictionary) -> void:
 	_invalidate_body_parts_cache()
 	_invalidate_body_connections()
 	_configure_body_part_collision_exceptions()
-	EditorInterface.mark_scene_as_unsaved()
+	Engine.get_singleton("EditorInterface").mark_scene_as_unsaved()
 	incoming.notify_property_list_changed()
 	if selected: _select_edited_part.call_deferred(str(incoming.name))
 
 func _select_edited_part(part_name: String) -> void:
-	if not is_inside_tree(): return
+	if not Engine.is_editor_hint() or not is_inside_tree(): return
 	var part := get_node_or_null("GeneratedParts/" + part_name)
 	if part == null: return
-	var selection := EditorInterface.get_selection()
+	var selection: Object = Engine.get_singleton("EditorInterface").get_selection()
 	selection.clear()
 	selection.add_node(part)
-	EditorInterface.edit_node(part)
+	Engine.get_singleton("EditorInterface").edit_node(part)
 
 @export var generate_on_ready: bool = true
 @export var show_framework: bool = false:
@@ -357,6 +370,7 @@ func _sync_neck_joint_sliding() -> void:
 	if container == null: return
 	for node: Node in container.find_children("*","Generic6DOFJoint3D",true,false):
 		var joint := node as Generic6DOFJoint3D
+		if joint.has_meta(&"module_joint_settings"): continue
 		if joint.is_queued_for_deletion(): continue
 		if PhysicsServer3D.joint_get_type(joint.get_rid()) == PhysicsServer3D.JOINT_TYPE_MAX: continue
 		var a := joint.get_node_or_null(joint.node_a)
@@ -441,6 +455,7 @@ func _ready() -> void:
 			_configure_body_part_collision_exceptions()
 			_reset_damage_controller()
 			_activate_parts(get_node("GeneratedParts"))
+			MODULE_ASSEMBLER.restore_joint_settings(get_node("GeneratedParts"))
 
 func _connect_generator() -> void:
 	var generator := get_node_or_null(generator_path) as Node3D
@@ -518,6 +533,12 @@ func _perf_impl__on_framework_generated(plan: Dictionary) -> void:
 	if staging == null:
 		_rebuilding = false
 		return
+	var module_error := MODULE_ASSEMBLER.assemble(self,staging,module_attachments,generator)
+	if not module_error.is_empty():
+		staging.free()
+		_rebuilding = false
+		push_warning("[generated_module] "+module_error+"; previous physics retained.")
+		return
 	var previous := get_node_or_null("GeneratedParts")
 	# The runtime-only action script is a placeholder while generating in the editor.
 	if not Engine.is_editor_hint():
@@ -543,18 +564,28 @@ func _perf_impl__on_framework_generated(plan: Dictionary) -> void:
 		if part.name == &"Joints":
 			for joint: Node in part.get_children():
 				joint.owner = scene_owner
-	_control_perf.count(&"generated_parts", blueprint.parts.size())
-	_control_perf.count(&"generated_joints", blueprint.connections.size())
+	MODULE_ASSEMBLER.set_owners(staging,scene_owner)
+	var module_part_count := 0
+	var module_joint_count := 0
+	for part: Node in staging.get_children():
+		if part is PhysicalBodyPart3D and part.has_meta(&"generated_module_id"): module_part_count += 1
+	for joint: Node in staging.get_node("Joints").get_children():
+		if joint.has_meta(&"generated_module_id"): module_joint_count += 1
+	var part_count: int = blueprint.parts.size()+module_part_count
+	var joint_count: int = blueprint.connections.size()+module_joint_count
+	_control_perf.count(&"generated_parts", part_count)
+	_control_perf.count(&"generated_joints", joint_count)
 	var exceptions_started: int = _control_perf.start()
 	_configure_body_part_collision_exceptions()
 	_control_perf.finish(&"collision_exceptions", exceptions_started)
 	if body_parts_ignore_each_other:
-		_control_perf.count(&"collision_exception_pairs", blueprint.parts.size() * (blueprint.parts.size() - 1) / 2)
+		_control_perf.count(&"collision_exception_pairs", part_count * (part_count - 1) / 2)
 	if not Engine.is_editor_hint():
 		_reset_damage_controller()
 		_activate_parts(staging)
+		MODULE_ASSEMBLER.restore_joint_settings(staging)
 	else:
-		EditorInterface.mark_scene_as_unsaved()
+		Engine.get_singleton("EditorInterface").mark_scene_as_unsaved()
 	var collision_audit := get_internal_collision_diagnostics()
 	print("[generated_collision] ", collision_audit)
 	if body_parts_ignore_each_other and collision_audit.missing_pairs > 0:
@@ -564,7 +595,7 @@ func _perf_impl__on_framework_generated(plan: Dictionary) -> void:
 	var springs := 0
 	for connection: Dictionary in blueprint.connections:
 		if connection.kind == "Segment": springs += 1
-	print("[generated_creature] character=%s parts=%d physical_joints=%d segment_springs=%d connected=true internal_collisions_ignored=%s" % [name, blueprint.parts.size(), blueprint.connections.size() - springs, springs, body_parts_ignore_each_other])
+	print("[generated_creature] character=%s parts=%d physical_joints=%d segment_springs=%d connected=true internal_collisions_ignored=%s" % [name, part_count, joint_count - springs, springs, body_parts_ignore_each_other])
 	creature_generation_finished.emit(true)
 
 func _before_replacing_generated_parts(_previous: Node) -> void:
@@ -677,6 +708,7 @@ func _activate_parts(container: Node) -> void:
 		var body_a := joint.get_node_or_null(joint.node_a) as PhysicalBodyPart3D
 		var body_b := joint.get_node_or_null(joint.node_b) as PhysicalBodyPart3D
 		if body_a == null or body_b == null: continue
+		if joint.has_meta(&"module_joint_settings"): continue
 		if BODY_PART.BodyPartTag.LegLimb in body_a.tags or BODY_PART.BodyPartTag.LegLimb in body_b.tags:
 			for axis: String in ["x", "y", "z"]:
 				joint.call("set_flag_" + axis, Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_SPRING, false)
@@ -684,6 +716,7 @@ func _activate_parts(container: Node) -> void:
 		if _is_limb_subtorso_pair(body_a, body_b): _lock_limb_root_yaw(joint)
 		if BODY_PART.BodyPartTag.LegLimb not in body_a.tags or BODY_PART.BodyPartTag.LegLimb not in body_b.tags: continue
 		_configure_limb_joint_sliding(joint)
+	MODULE_ASSEMBLER.restore_joint_settings(container)
 	if get_node_or_null("HeadPositionSupport3D") == null:
 		var support := HEAD_SUPPORT.new()
 		support.name = "HeadPositionSupport3D"
@@ -693,6 +726,8 @@ func _activate_parts(container: Node) -> void:
 	for node: Node in find_children("*", "", true, false):
 		if node.has_method("refresh_physics_query_cache"):
 			node.call("refresh_physics_query_cache")
+		if node.has_method("refresh_arm_bindings"):
+			node.call("refresh_arm_bindings",true)
 	_sync_planar_constraints()
 	if not Engine.is_editor_hint():
 		preload("res://Scripts/Debug/JointMotionDiagnostics3D.gd").capture_activation(container)
@@ -701,6 +736,7 @@ func _is_limb_subtorso_pair(a: PhysicalBodyPart3D, b: PhysicalBodyPart3D) -> boo
 	return (BODY_PART.BodyPartTag.LegLimb in a.tags and BODY_PART.BodyPartTag.SubTorso in b.tags) or (BODY_PART.BodyPartTag.LegLimb in b.tags and BODY_PART.BodyPartTag.SubTorso in a.tags)
 
 func _lock_limb_root_yaw(joint: Generic6DOFJoint3D) -> void:
+	if joint.has_meta(&"module_joint_settings"): return
 	joint.set_flag_y(Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_LIMIT, true)
 	joint.set_param_y(Generic6DOFJoint3D.PARAM_ANGULAR_LOWER_LIMIT, 0.0)
 	joint.set_param_y(Generic6DOFJoint3D.PARAM_ANGULAR_UPPER_LIMIT, 0.0)
@@ -708,6 +744,7 @@ func _lock_limb_root_yaw(joint: Generic6DOFJoint3D) -> void:
 	joint.set_flag_y(Generic6DOFJoint3D.FLAG_ENABLE_MOTOR, false)
 
 func _configure_limb_joint_sliding(joint: Generic6DOFJoint3D) -> void:
+	if joint.has_meta(&"module_joint_settings"): return
 	var axes := ["x", "y", "z"]
 	for index: int in range(3):
 		var axis: String = axes[index]

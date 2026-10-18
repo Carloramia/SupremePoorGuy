@@ -66,6 +66,12 @@ func _ready() -> void:
 	camera = preload("res://Scenes/Camera/DragCamera3D.tscn").instantiate()
 	add_child(camera)
 	camera.set_distance(45.0)
+	# Listen near the viewed ground, so zooming far out does not silence the battle.
+	var listener := AudioListener3D.new()
+	listener.name = "CombatAudioListener"
+	listener.position.y = 8.0
+	camera.add_child(listener)
+	listener.make_current()
 	cursor = preload("res://Scenes/Input/TerrainCursor3D.tscn").instantiate()
 	cursor.free_cursor_mode = true
 	cursor.free_camera_rig = camera

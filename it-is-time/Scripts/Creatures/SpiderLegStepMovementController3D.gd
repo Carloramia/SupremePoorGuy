@@ -61,6 +61,7 @@ func _reinforce_spider_hinge_axes() -> void:
 		var chain: Dictionary = _chains[foot]
 		for index: int in range(chain.joints.size() - 1, -1, -1):
 			var hinge: Generic6DOFJoint3D = chain.joints[index]
+			if hinge.has_meta(&"module_joint_settings"): continue
 			var child: RigidBody3D = chain.bodies[index]
 			var parent_body: RigidBody3D = chain.bodies[index + 1]
 			if child.freeze: continue

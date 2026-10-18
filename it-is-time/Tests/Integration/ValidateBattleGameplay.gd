@@ -14,6 +14,7 @@ func run() -> void:
 	for tick: int in 600:
 		if app.phase=="world": break
 		await physics_frame
+	app.ui._close_all()
 	preload("res://Tests/Integration/ApplicationFixtures.gd").add_human(app.session)
 	var location: WorldMapLocation = app.world_map.get_location(&"bandits")
 	location.state.discovered = true

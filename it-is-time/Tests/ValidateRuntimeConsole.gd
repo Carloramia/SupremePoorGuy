@@ -55,6 +55,8 @@ func _validate() -> void:
 	assert(console.is_turn_tracking_enabled())
 	print("RUNTIME_LOG_DIRECTORY=%s" % console.get_runtime_log_directory())
 	print("LOG_ARCHIVE_OUTPUT_DIRECTORY=%s" % console.get_archive_output_directory())
+	var expected_output := "res://" if OS.has_feature("editor") else "user://log_archives"
+	assert(console.get_archive_output_directory() == ProjectSettings.globalize_path(expected_output).trim_suffix("/").trim_suffix("\\"))
 
 	var test_root := "res://Tests/.runtime_console_test"
 	var log_root := test_root.path_join("logs")

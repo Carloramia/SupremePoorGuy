@@ -56,6 +56,7 @@ func run() -> void:
 	for tick: int in 600:
 		if app.phase=="world": break
 		await physics_frame
+	app.ui._close_all()
 	app.session.data.monsters = records()
 	assert(app.session.save())
 	var location: WorldMapLocation = app.world_map.get_location(&"bandits")

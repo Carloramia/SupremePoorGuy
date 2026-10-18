@@ -60,6 +60,7 @@ func run() -> void:
 		if app.phase=="world": break
 		await physics_frame
 	assert(app.phase=="world")
+	app.ui._close_all()
 	preload("res://Tests/Integration/ApplicationFixtures.gd").add_human(app.session)
 	var location: WorldMapLocation = app.world_map.get_location(&"bandits")
 	location.state.discovered = true

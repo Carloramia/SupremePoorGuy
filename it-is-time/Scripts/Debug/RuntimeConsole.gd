@@ -25,7 +25,7 @@ const COMMAND_HELP: Array[Dictionary] = [
 	{&"name": "motiondetail [summary|full]", &"description": "Choose compact gait summaries (default) or full BodyPart snapshots for motion tracking."},
 	{&"name": "trackcharge", &"description": "Toggle charge phases, torso speeds/forces, support foot locks/steps and stuck timers every 0.1s."},
 	{&"name": "help", &"description": "List all available console commands."},
-	{&"name": "getlogs", &"description": "Pack runtime logs into a ZIP in the project root."},
+	{&"name": "getlogs", &"description": "Pack runtime logs into a ZIP and print its output path."},
 	{&"name": "autogetlogs [on|off|status]", &"description": "Automatically archive logs on debugger breaks or runtime errors; on rearms immediately; warnings are ignored."},
 	{&"name": "trackgenerated", &"description": "Toggle generated creature foot, limb-chain and gait diagnostics."},
 	{&"name": "trackflight [on|off]", &"description": "Track controlled bird flight, dive attacks, landing, wing torques and feather errors every 0.1s."},
@@ -594,8 +594,9 @@ func create_logs_archive(output_directory: String = "", log_directory: String = 
 	return archive_path
 
 func get_archive_output_directory() -> String:
-	# globalized res:// is the project root in editor runs and the executable resource root in exports.
-	return ProjectSettings.globalize_path("res://").trim_suffix("/").trim_suffix("\\")
+	# Installed games may live in a read-only directory; keep editor behavior unchanged.
+	var directory := "res://" if OS.has_feature("editor") else "user://log_archives"
+	return ProjectSettings.globalize_path(directory).trim_suffix("/").trim_suffix("\\")
 
 func is_generated_motion_tracking_enabled() -> bool:
 	return _generated_motion_tracking_enabled

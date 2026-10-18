@@ -165,6 +165,7 @@ func run() -> void:
 		if app.phase == "world": break
 		await physics_frame
 	check(app.phase == "world","Normal new-game flow reaches world")
+	app.ui._close_all()
 	FACTORY.add_human(app.session)
 	app.session.data.monsters[0].position = "warehouse"
 	check(app.session.save(),"Save isolated populated warehouse fixture")

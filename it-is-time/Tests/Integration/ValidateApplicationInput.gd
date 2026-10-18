@@ -40,6 +40,7 @@ func run() -> void:
 	for tick: int in 600:
 		if app.phase=="world": break
 		await physics_frame
+	app.ui._close_all()
 	var town: WorldMapLocation = app.world_map.get_location(&"town")
 	app.world_map.camera.focus_on_player()
 	for tick: int in 5: await process_frame

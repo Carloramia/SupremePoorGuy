@@ -21,6 +21,7 @@ func run() -> void:
 	app.start_new_game()
 	while app.phase!="world": await process_frame
 	await capture("delivery_spawn_1280")
+	app.ui._close_all()
 	app.delivery_map.draw_fog = false
 	app.delivery_map.present("world","",[])
 	app.delivery_map.fit_map()

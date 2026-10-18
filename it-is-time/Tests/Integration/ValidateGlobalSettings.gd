@@ -83,6 +83,7 @@ func run() -> void:
 		check(not app.ui.overlay.visible,"Second ESC closes settings")
 		app.start_new_game()
 		check(await wait_phase(app,"world"),"Initialize world: "+str(delivery))
+		app.ui._close_all()
 		preload("res://Tests/Integration/ApplicationFixtures.gd").add_human(app.session)
 		# ESC has priority even during animated warehouse entry and text editing.
 		app.ui.animate_panels = true; app.ui.board_motion.enabled = true

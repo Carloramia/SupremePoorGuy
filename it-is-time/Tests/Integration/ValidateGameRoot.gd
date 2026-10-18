@@ -21,6 +21,8 @@ func run() -> void:
 	app.start_new_game()
 	check(await wait_phase(app,"world"),"World initializes in its own viewport")
 	if app.world_map==null: quit(1); return
+	check(app.ui.modal_stack.size()==1 and app.ui.modal_stack.back().kind=="tasks" and app.world_map.paused,"New game opens the guide after the legacy map is ready")
+	app.ui._close_all()
 	check(app.session.data.monsters.is_empty(),"Starting a new game keeps warehouse and party empty")
 	preload("res://Tests/Integration/ApplicationFixtures.gd").add_human(app.session)
 	check(app.world_map.is_initialized and app.world_map.save_service.session==app.session,"Map uses the unified save service")

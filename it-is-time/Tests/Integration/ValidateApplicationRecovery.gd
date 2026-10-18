@@ -22,6 +22,7 @@ func run() -> void:
 	var app := create_app(path)
 	app.start_new_game()
 	check(await wait_phase(app,"world"),"Initial world")
+	app.ui._close_all()
 	preload("res://Tests/Integration/ApplicationFixtures.gd").add_human(app.session)
 	var town: WorldMapLocation = app.world_map.get_location(&"town")
 	app.world_map.player.global_position = town.interaction_point()

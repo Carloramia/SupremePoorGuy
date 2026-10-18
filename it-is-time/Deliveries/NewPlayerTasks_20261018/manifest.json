@@ -1,0 +1,275 @@
+{
+  "repository": "Carloramia/SupremePoorGuy",
+  "base_commit": "d02ef70973ea3c1a801830ebdee14ebf32c89654",
+  "source_commit": "8b39e62ba2aa52f9a424e6430f5d029e4b270085",
+  "branch": "codex/configurable-new-player-tasks",
+  "date": "2026-10-18",
+  "source_files": [
+    {
+      "path": "it-is-time/Docs/Integration/新手任务栏使用说明_2026-10-18.md",
+      "sha256": "507f36f9e187a367d0b36667057802c6a38e6a2e951d9088a258949ccac8c12c",
+      "git_blob": "22f7fc3ddaf7d75dfed9c6b99024a0598991bde1"
+    },
+    {
+      "path": "it-is-time/Modules/PaperUI/Scripts/UI/TasksView.gd",
+      "sha256": "d57a13a539d76643b1b98c15e076838e4e22498bff9b13e897a7f7981ddd3d27",
+      "git_blob": "f72ba2127e0b5d3662fc7c0fdd9bcf5c3a9f9f8e"
+    },
+    {
+      "path": "it-is-time/Scripts/Application/DeliveryMapBridge.gd",
+      "sha256": "ea1a2adc882974a97d16a49f369328de395f453fac76cb8e05cd2dae472d044a",
+      "git_blob": "3b71c731d55737cecb86759dc9f90d6137424938"
+    },
+    {
+      "path": "it-is-time/Scripts/Application/GameRoot.gd",
+      "sha256": "c615607b08c98d531d8a5e56a0fecc31f3689e9364e6b576a239707e0a4f8bf7",
+      "git_blob": "6e02e91e04ebe5084fd30ddb0a13b675b9d7803d"
+    },
+    {
+      "path": "it-is-time/Scripts/Application/GameSession.gd",
+      "sha256": "2821f4ef98145dfc777fc701f39645ddf147c0b091b1334df4004c06fe5eccc5",
+      "git_blob": "b720aed148a91d9d0d454ba818be882af982824f"
+    },
+    {
+      "path": "it-is-time/Scripts/Application/GameUIController.gd",
+      "sha256": "27201fa77449884ffa4677e0302f095b797b13aae6333198f1d9a8ab078f0f62",
+      "git_blob": "c5f261ac4bd7e2c6d42d8b95d6b19eb83cff55d2"
+    },
+    {
+      "path": "it-is-time/Scripts/Application/NewPlayerTasks.gd",
+      "sha256": "0752f6907272f3a9637139fe973df82a4fcb2558e9b8a0e13c4178be3e92d252",
+      "git_blob": "ee261ae415b0a6b0e36650d7de6d1c2c3163203d"
+    },
+    {
+      "path": "it-is-time/Scripts/Application/NewPlayerTasks.gd.uid",
+      "sha256": "2eb9d1a98150dd6188d762248bb3d9948bfa5df99373be42c9e92f562f052449",
+      "git_blob": "e8a8211118e12d69caa679ab6623c0ef2595b1f8"
+    },
+    {
+      "path": "it-is-time/Tests/Integration/ValidateNewPlayerTaskSession.gd",
+      "sha256": "c8f1639b2852ec992a5f33cdd9ca4037cfa1de205728b3c90a3bf5fffcf281ee",
+      "git_blob": "e5783cc2c7c0800a6c1bf805cf1d841e8761e903"
+    },
+    {
+      "path": "it-is-time/Tests/Integration/ValidateNewPlayerTaskSession.gd.uid",
+      "sha256": "a077fbb9b9bf39fa152a940412d37397c5c52a7d5b7d69b602f79f83c393b155",
+      "git_blob": "80005c0be19b539066b958f6a36645d262fbbdae"
+    },
+    {
+      "path": "it-is-time/Tests/Integration/ValidateNewPlayerTaskUI.gd",
+      "sha256": "1dd5bb339516080f909d4c7328069c8179f89ab0bb1b3a1bfb046f5955f2c906",
+      "git_blob": "3808e5bae09ccb10345704e60437f1eecc03e840"
+    },
+    {
+      "path": "it-is-time/Tests/Integration/ValidateNewPlayerTaskUI.gd.uid",
+      "sha256": "59dba7425c63e70aa1456be7adcbb07bda3ed73a51f86386737deb7f574d79ec",
+      "git_blob": "ccf9f45df79cd1c64cfdc6c617194e37ec69dbd2"
+    },
+    {
+      "path": "it-is-time/Tests/Integration/ValidateNewPlayerTasks.gd",
+      "sha256": "725f22e8764832dfcc96d1342d22f2dac9aada956dcb3d1e1cb04972dd603943",
+      "git_blob": "129ce259a9431f023f8369b415e74a7eba8e458d"
+    },
+    {
+      "path": "it-is-time/Tests/Integration/ValidateNewPlayerTasks.gd.uid",
+      "sha256": "7e59203e2902a74fd55c761d655632b97dcbc12dc9fd42fc9733affe3b2356c1",
+      "git_blob": "7e44b91680e0a3d37d347d9bfa5627530d0f8401"
+    }
+  ],
+  "files": [
+    {
+      "path": "NewPlayerTasks.patch",
+      "sha256": "940ebfeaf885a7bc3ef5633ab3236e62d68f967ebd910f31b1c5b4c92ad4e1e6",
+      "bytes": 56170
+    },
+    {
+      "path": "README.md",
+      "sha256": "69f61e69f0150146478b94e232181908014b4fead1e43d2973fc32d93c765645",
+      "bytes": 1453
+    },
+    {
+      "path": "screenshots/01_initial_1280.png",
+      "sha256": "0205b7118ae17ed441a3dd39cb2607037ba1dfca5308cccb06889cef649f9383",
+      "bytes": 882034
+    },
+    {
+      "path": "screenshots/02_explored_1280.png",
+      "sha256": "f4be2113c1c017443221a612cd02b601d75d0d61be436a1a2ab18f6d5bd0c848",
+      "bytes": 881675
+    },
+    {
+      "path": "screenshots/03_ready_1280.png",
+      "sha256": "10e2eafd37616d0c4b02da529eb507f9557bceac9288664f72e396e4361ab407",
+      "bytes": 877598
+    },
+    {
+      "path": "screenshots/04_complete_1280.png",
+      "sha256": "4469376dc2dffb937b023e76823975030792c32dccb8e356af1b8ed72f2d1a56",
+      "bytes": 880306
+    },
+    {
+      "path": "screenshots/initial_1120.png",
+      "sha256": "780b21c21e039afc59458cd3d05eb89f74bab9e825cbceb0fad50ae74dfad34c",
+      "bytes": 820891
+    },
+    {
+      "path": "screenshots/initial_1920.png",
+      "sha256": "6acb32df2eb8106963544110eb1342a4419c4d2e34e99d8cd44e07d6cb0b32b4",
+      "bytes": 1299431
+    },
+    {
+      "path": "source/it-is-time/Docs/Integration/新手任务栏使用说明_2026-10-18.md",
+      "sha256": "507f36f9e187a367d0b36667057802c6a38e6a2e951d9088a258949ccac8c12c",
+      "bytes": 6431
+    },
+    {
+      "path": "source/it-is-time/Modules/PaperUI/Scripts/UI/TasksView.gd",
+      "sha256": "d57a13a539d76643b1b98c15e076838e4e22498bff9b13e897a7f7981ddd3d27",
+      "bytes": 1762
+    },
+    {
+      "path": "source/it-is-time/Scripts/Application/DeliveryMapBridge.gd",
+      "sha256": "ea1a2adc882974a97d16a49f369328de395f453fac76cb8e05cd2dae472d044a",
+      "bytes": 13279
+    },
+    {
+      "path": "source/it-is-time/Scripts/Application/GameRoot.gd",
+      "sha256": "c615607b08c98d531d8a5e56a0fecc31f3689e9364e6b576a239707e0a4f8bf7",
+      "bytes": 35947
+    },
+    {
+      "path": "source/it-is-time/Scripts/Application/GameSession.gd",
+      "sha256": "2821f4ef98145dfc777fc701f39645ddf147c0b091b1334df4004c06fe5eccc5",
+      "bytes": 14101
+    },
+    {
+      "path": "source/it-is-time/Scripts/Application/GameUIController.gd",
+      "sha256": "27201fa77449884ffa4677e0302f095b797b13aae6333198f1d9a8ab078f0f62",
+      "bytes": 20414
+    },
+    {
+      "path": "source/it-is-time/Scripts/Application/NewPlayerTasks.gd",
+      "sha256": "0752f6907272f3a9637139fe973df82a4fcb2558e9b8a0e13c4178be3e92d252",
+      "bytes": 10603
+    },
+    {
+      "path": "source/it-is-time/Scripts/Application/NewPlayerTasks.gd.uid",
+      "sha256": "2eb9d1a98150dd6188d762248bb3d9948bfa5df99373be42c9e92f562f052449",
+      "bytes": 19
+    },
+    {
+      "path": "source/it-is-time/Tests/Integration/ValidateNewPlayerTasks.gd",
+      "sha256": "725f22e8764832dfcc96d1342d22f2dac9aada956dcb3d1e1cb04972dd603943",
+      "bytes": 8506
+    },
+    {
+      "path": "source/it-is-time/Tests/Integration/ValidateNewPlayerTasks.gd.uid",
+      "sha256": "7e59203e2902a74fd55c761d655632b97dcbc12dc9fd42fc9733affe3b2356c1",
+      "bytes": 19
+    },
+    {
+      "path": "source/it-is-time/Tests/Integration/ValidateNewPlayerTaskSession.gd",
+      "sha256": "c8f1639b2852ec992a5f33cdd9ca4037cfa1de205728b3c90a3bf5fffcf281ee",
+      "bytes": 6592
+    },
+    {
+      "path": "source/it-is-time/Tests/Integration/ValidateNewPlayerTaskSession.gd.uid",
+      "sha256": "a077fbb9b9bf39fa152a940412d37397c5c52a7d5b7d69b602f79f83c393b155",
+      "bytes": 20
+    },
+    {
+      "path": "source/it-is-time/Tests/Integration/ValidateNewPlayerTaskUI.gd",
+      "sha256": "1dd5bb339516080f909d4c7328069c8179f89ab0bb1b3a1bfb046f5955f2c906",
+      "bytes": 7222
+    },
+    {
+      "path": "source/it-is-time/Tests/Integration/ValidateNewPlayerTaskUI.gd.uid",
+      "sha256": "59dba7425c63e70aa1456be7adcbb07bda3ed73a51f86386737deb7f574d79ec",
+      "bytes": 20
+    },
+    {
+      "path": "validation/import.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "validation/results.json",
+      "sha256": "82d246f2ed3e7366ec0fcb3cc289c6786488a0f1706d03c9560335dae6bfe1e9",
+      "bytes": 882
+    },
+    {
+      "path": "validation/ui-render.log",
+      "sha256": "e7a13e2328b98d8defc952fc0796f570ddf4fa0949177343c40d324ac1141cbe",
+      "bytes": 287
+    },
+    {
+      "path": "validation/ValidateDeliveryApplication.gd.log",
+      "sha256": "c4f259d810efd6cfdb77b6f61711370ad3b93de42ca223386db8c4171e5b18dd",
+      "bytes": 13663
+    },
+    {
+      "path": "validation/ValidateGameRoot.gd.log",
+      "sha256": "565316fca758b17461ed7f8270f72c5993e358ad8dd25d47a2c7a5ec2123289a",
+      "bytes": 1800
+    },
+    {
+      "path": "validation/ValidateGameSession.gd.log",
+      "sha256": "fe7a1aaa97b645eeac802326c981733ab010f4d907e48b9883508f7c7e598fe4",
+      "bytes": 171
+    },
+    {
+      "path": "validation/ValidateNewPlayerTasks.gd.log",
+      "sha256": "49f58e15eeab95e23e6638b946f683195c700eaa5bbe2a218eb00df09694b5d6",
+      "bytes": 182
+    },
+    {
+      "path": "validation/ValidateNewPlayerTaskSession.gd.log",
+      "sha256": "b691bc41729a45898cb59abcf486ccaab240fe11f7298f839498c97b14ad8df7",
+      "bytes": 189
+    },
+    {
+      "path": "validation/ValidateNewPlayerTaskUI.gd.log",
+      "sha256": "a9cadcb13cfe2c1b88a2f846f160812513e4d7171010ddd32f0033c235bef2b0",
+      "bytes": 184
+    }
+  ],
+  "validation": [
+    {
+      "Suite": "ValidateNewPlayerTasks.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "Marker": "NEW_PLAYER_TASKS checks=42 failures=0"
+    },
+    {
+      "Suite": "ValidateNewPlayerTaskSession.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "Marker": "NEW_PLAYER_TASK_SESSION checks=33 failures=0"
+    },
+    {
+      "Suite": "ValidateNewPlayerTaskUI.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "Marker": "NEW_PLAYER_TASK_UI checks=41 failures=0"
+    },
+    {
+      "Suite": "ValidateGameSession.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "Marker": "APPLICATION_SESSION_PASSED"
+    },
+    {
+      "Suite": "ValidateGameRoot.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "Marker": "APPLICATION_ROOT_PASSED"
+    },
+    {
+      "Suite": "ValidateDeliveryApplication.gd",
+      "Passed": true,
+      "ExitCode": 0,
+      "Marker": "DELIVERY_APPLICATION_PASSED"
+    }
+  ],
+  "rendered_ui": "53 checks, 0 failures"
+}

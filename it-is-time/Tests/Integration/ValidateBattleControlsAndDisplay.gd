@@ -27,6 +27,7 @@ func run() -> void:
 	root.add_child(app)
 	app.ui.animate_panels = false
 	app.ui.board_motion.enabled = false
+	check(app.battle_viewport.audio_listener_enable_3d, "Formal battle viewport enables spatial audio")
 	await key(KEY_Q)
 	await key(KEY_SPACE)
 	check(not app.free_mouse_enabled and not paused,"Battle shortcuts are inactive in the main menu")
@@ -49,6 +50,7 @@ func run() -> void:
 	app.ui._close_all()
 	app.start_new_game()
 	check(await wait_phase(app,"world"),"Initialize map")
+	app.ui._close_all()
 	preload("res://Tests/Integration/ApplicationFixtures.gd").add_human(app.session)
 	var location: WorldMapLocation = app.world_map.get_location(&"bandits")
 	location.state.discovered = true
@@ -57,6 +59,7 @@ func run() -> void:
 	app.world_map.interaction.request_battle()
 	check(await wait_phase(app,"battle"),"Deploy battle")
 	if app.battle==null: quit(1); return
+	check(app.battle.camera.get_node("CombatAudioListener").is_current(), "Battle listens near the viewed ground")
 	for tick: int in 5: await process_frame
 	var cursor: TerrainCursor3D = app.battle.cursor
 	check(cursor.is_gameplay_cursor_active(),"Battle begins with terrain cursor captured")

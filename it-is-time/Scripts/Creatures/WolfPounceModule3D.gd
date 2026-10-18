@@ -262,6 +262,7 @@ func _launch() -> void:
 	for part: RigidBody3D in controller.get_parent()._get_physical_body_parts():
 		if alive(part): part.apply_central_impulse((launch_velocity-part.linear_velocity)*part.mass)
 	controller.log_event(name,&"intercept_locked",_intercept)
+	CombatAudio3D.play_at(controller.torso, &"attack")
 
 func tick(delta: float) -> void:
 	super.tick(delta)

@@ -187,6 +187,7 @@ func _set_phase(next: Phase, reason: StringName) -> void:
 	if next != Phase.DIVING: _remove_dive_weapons()
 	phase = next; _elapsed = 0.0
 	if next == Phase.DIVING:
+		CombatAudio3D.play_at(self, &"attack")
 		for head: PhysicalBodyPart3D in _heads:
 			if not _alive(head): continue
 			var weapon := DIVE_WEAPON.instantiate() as SampleWeapon3D

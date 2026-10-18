@@ -15,7 +15,7 @@ const MANUAL_LAYOUT = preload("res://Scripts/Creatures/Generators/CreatureManual
 func clear_manual_layout() -> void:
 	manual_layout = null
 	use_manual_layout = false
-	if Engine.is_editor_hint() and is_inside_tree(): EditorInterface.mark_scene_as_unsaved()
+	if Engine.is_editor_hint() and is_inside_tree(): Engine.get_singleton("EditorInterface").mark_scene_as_unsaved()
 
 func _clear_generated_preview() -> void:
 	for child: Node in get_children():
@@ -57,7 +57,7 @@ func _generate_manual_framework() -> bool:
 		block.add_child(label)
 		label.owner = scene_owner
 	framework_generated.emit({"manual_blueprint": blueprint})
-	if Engine.is_editor_hint(): EditorInterface.mark_scene_as_unsaved()
+	if Engine.is_editor_hint(): Engine.get_singleton("EditorInterface").mark_scene_as_unsaved()
 	return true
 
 @export_group("Physical Part Scenes")
@@ -211,7 +211,7 @@ func _ready() -> void:
 	_random.randomize()
 	_update_label_sizes(self)
 	if Engine.is_editor_hint():
-		var filesystem := EditorInterface.get_resource_filesystem()
+		var filesystem: Object = Engine.get_singleton("EditorInterface").get_resource_filesystem()
 		if not filesystem.filesystem_changed.is_connected(_on_defaults_filesystem_changed):
 			filesystem.filesystem_changed.connect(_on_defaults_filesystem_changed)
 		if not filesystem.resources_reload.is_connected(_on_defaults_resources_changed):
@@ -315,7 +315,7 @@ func save_current_parameters_as_defaults() -> bool:
 		return false
 	var path := _get_defaults_path()
 	if not _save_default_preset(path): return false
-	EditorInterface.get_resource_filesystem().call_deferred(&"scan")
+	Engine.get_singleton("EditorInterface").get_resource_filesystem().call_deferred(&"scan")
 	print("[creature_generator] Saved independent generator defaults: ",path)
 	return true
 
@@ -351,7 +351,7 @@ func generate_torso() -> bool:
 	plan[&"overall_scale"] = overall_scale
 	_apply_framework_scale(overall_scale)
 	if Engine.is_editor_hint():
-		EditorInterface.mark_scene_as_unsaved()
+		Engine.get_singleton("EditorInterface").mark_scene_as_unsaved()
 	print("[creature_generator] torsos=%d covered_parts=%d attempts=%d valid=true" % [plan.network_torsos.size(), plan.layouts.size(), plan.attempts])
 	print("[creature_generator] overall_scale=%.3f" % overall_scale)
 	framework_generated.emit(plan)

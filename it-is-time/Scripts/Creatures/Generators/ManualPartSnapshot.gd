@@ -35,6 +35,12 @@ static func capture(body: Node3D, multiplier: float, source_scene: String) -> Di
 	for key: StringName in LENGTH_PROPERTIES: snapshot.properties[key] = float(body.get(key))/multiplier
 	for child: Node in body.find_children("*", "Node3D", true, false):
 		if child.has_meta(&"generated_connection_port"): continue
+		var ancestor := child
+		var module_payload := false
+		while ancestor != body:
+			if ancestor.has_meta(&"generated_module_root"): module_payload = true; break
+			ancestor = ancestor.get_parent()
+		if module_payload: continue
 		var pose := relative_transform(child, body)
 		if not pose.is_finite() or pose.basis.determinant() == 0.0:
 			push_warning("[manual_layout] Invalid internal transform at %s/%s; previous layout retained." % [body.name,body.get_path_to(child)])

@@ -1,0 +1,60 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Modules/_SampleModule.tscn" id="1_base"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/_PhysicalSampleBodyParts.tscn" id="2_part"]
+[ext_resource type="Script" path="res://Scripts/Creatures/Modules/ModuleJointSettings.gd" id="3_joint"]
+
+[sub_resource type="Resource" id="MountSettings"]
+script = ExtResource("3_joint")
+angular_lower_degrees = Vector3(0, 0, -45)
+angular_upper_degrees = Vector3(0, 0, 45)
+
+[node name="TwoSegmentLegModule" instance=ExtResource("1_base")]
+root_part_path = NodePath("Parts/Upper")
+mount_joint = SubResource("MountSettings")
+required_components = Array[NodePath]([NodePath("GeneratedLegStepMovementController3D")])
+
+[node name="Upper" parent="Parts" instance=ExtResource("2_part")]
+position = Vector3(0, -0.4, 0)
+freeze = true
+tags = Array[int]([5])
+left_distance = 0.09
+right_distance = 0.09
+top_distance = 0.4
+bottom_distance = 0.4
+collision_thickness = 0.1
+
+[node name="Lower" parent="Parts" instance=ExtResource("2_part")]
+position = Vector3(0.15, -1.15, 0)
+freeze = true
+tags = Array[int]([5])
+left_distance = 0.08
+right_distance = 0.08
+top_distance = 0.35
+bottom_distance = 0.35
+collision_thickness = 0.1
+
+[node name="Foot" parent="Parts" instance=ExtResource("2_part")]
+position = Vector3(0.15, -1.6, 0)
+freeze = true
+tags = Array[int]([1])
+left_distance = 0.2
+right_distance = 0.2
+top_distance = 0.1
+bottom_distance = 0.1
+collision_thickness = 0.1
+
+[node name="Elbow" type="Generic6DOFJoint3D" parent="Joints"]
+position = Vector3(0.075, -0.8, 0)
+node_a = NodePath("../../Parts/Upper")
+node_b = NodePath("../../Parts/Lower")
+angular_limit_z/lower_angle = -1.0471976
+angular_limit_z/upper_angle = 1.0471976
+
+[node name="End" type="Generic6DOFJoint3D" parent="Joints"]
+position = Vector3(0.15, -1.5, 0)
+node_a = NodePath("../../Parts/Lower")
+node_b = NodePath("../../Parts/Foot")
+angular_limit_z/lower_angle = -1.0471976
+angular_limit_z/upper_angle = 1.0471976
+

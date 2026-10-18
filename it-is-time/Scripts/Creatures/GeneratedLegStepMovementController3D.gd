@@ -672,6 +672,7 @@ func _capture_chains() -> void:
 			var body_b := joint.get_node_or_null(joint.node_b) as RigidBody3D
 			var limb_hinge := body_a != null and body_b != null and _has_body_tag(body_a, LEG_LIMB_TAG) and _has_body_tag(body_b, LEG_LIMB_TAG)
 			for axis: String in ["x", "y", "z"]:
+				if joint.has_meta(&"module_joint_settings"): continue
 				var root_yaw_lock := body_a != null and body_b != null and ((_has_body_tag(body_a, LEG_LIMB_TAG) and _has_body_tag(body_b, SUB_TORSO_TAG)) or (_has_body_tag(body_b, LEG_LIMB_TAG) and _has_body_tag(body_a, SUB_TORSO_TAG)))
 				var foot_link := (_has_body_tag(body_a, LEG_TAG) or _has_body_tag(body_a, FORELEG_TAG)) and _has_body_tag(body_b, LEG_LIMB_TAG) or (_has_body_tag(body_b, LEG_TAG) or _has_body_tag(body_b, FORELEG_TAG)) and _has_body_tag(body_a, LEG_LIMB_TAG)
 				var locked := (limb_hinge and axis != "z") or (root_yaw_lock and axis == "y") or (foot_joint_yaw_lock_enabled and foot_link and axis == "y")

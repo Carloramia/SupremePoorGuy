@@ -109,6 +109,7 @@ func _activate_parts(container: Node) -> void:
 
 func _configure_human_joints(container: Node) -> void:
 	for joint: Generic6DOFJoint3D in container.get_node("Joints").get_children():
+		if joint.has_meta(&"module_joint_settings"): continue
 		var kind: String = joint.get_meta("generated_connection_kind", "")
 		var upper_arm := str(joint.node_a) == "../../Torso" and kind == "HumanArm"
 		var foot := str(joint.node_b) in ["../../Leg_R", "../../Leg_L"]

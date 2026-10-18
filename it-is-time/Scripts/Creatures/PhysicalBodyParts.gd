@@ -373,6 +373,7 @@ func apply_damage(amount: float, source: Node = null) -> float:
 	var applied := minf(amount, current_hp)
 	current_hp = maxf(current_hp - applied, 0.0)
 	damaged.emit(applied, current_hp, source)
+	if applied > 0.0: CombatAudio3D.play_at(self, &"hit")
 	if is_inside_tree():
 		call_deferred("_spawn_damage_number", applied, global_position)
 	if damage_logging_enabled:
@@ -420,6 +421,7 @@ func break_part(source: Node = null) -> void:
 	is_broken = true
 	sync_foot_rotation_lock()
 	broken.emit(source)
+	CombatAudio3D.play_at(self, &"break")
 	if damage_logging_enabled:
 		print(
 			"[part_broken] target=%s source=%s"

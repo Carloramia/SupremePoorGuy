@@ -255,6 +255,7 @@ func _activate_parts(container: Node) -> void:
 		var a := joint.get_node_or_null(joint.node_a) as PhysicalBodyPart3D
 		var b := joint.get_node_or_null(joint.node_b) as PhysicalBodyPart3D
 		if a == null or b == null: continue
+		if joint.has_meta(&"module_joint_settings"): continue
 		if BODY_PART.BodyPartTag.LegLimb not in a.tags and BODY_PART.BodyPartTag.LegLimb not in b.tags: continue
 		_configure_spider_axial_joint(joint, a, b)
 		# Joint frames follow the generated XY sheets; only their Z hinge bends.

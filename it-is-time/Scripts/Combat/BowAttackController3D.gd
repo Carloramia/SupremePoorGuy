@@ -460,6 +460,7 @@ func _fire() -> void:
 	arrow.global_position = origin-arrow.global_basis.x*ARROW.HALF_LENGTH
 	var flight_lifetime := maxf(preset.arrow_lifetime,float(solution.time)*1.25+0.5)
 	arrow.launch(get_parent(),solution.velocity,flight_lifetime)
+	CombatAudio3D.play_at(_bow, &"bow")
 	arrow.impacted.connect(_on_impact)
 	last_shot = {"origin":origin,"velocity":solution.velocity,"speed":Vector3(solution.velocity).length(),"draw_ratio":_draw_ratio,"locked_point":locked_point,"prepare_and_draw_time":_elapsed,"prepare_time":_last_prepare_duration,"predicted_prepare_time":_locked_prediction.get("prepare_time",0.0),"flight_time":solution.time,"lifetime":flight_lifetime,"aim_error_degrees":rad_to_deg(_aim_error),"relative_angular_speed_degrees":rad_to_deg(_relative_bow_speed)}
 	shots_fired += 1

@@ -23,6 +23,7 @@ func run() -> void:
 	app.ui.board_motion.enabled = false
 	app.start_new_game()
 	check(await wait_phase(app,"world"),"Delivery world initializes")
+	app.ui._close_all()
 	check(app.delivery_map!=null and app.world_map==null,"Only the delivery map backend is active")
 	check(app.session.data.monsters.is_empty() and app.session.data.magic==300,"New game keeps empty inventory and 300 magic")
 	check(app.delivery_map.runtime.player()==Vector2(700,2368),"New game starts at summoning hut")
@@ -104,6 +105,7 @@ func run() -> void:
 	check(recovered.delivery_snapshot().battle_receipts.has(battle_id),"Runtime receipts derive from the one session ledger")
 	app.return_to_world()
 	check(await wait_phase(app,"world"),"Settlement returns to existing delivery map")
+	check(app.ui.modal_stack.is_empty(),"Battle return does not reopen the initial task guide")
 	check(app.session.data.battle.is_empty() and app.delivery_map.runtime.data.active_battle.is_empty(),"Return clears the active request")
 	app.ui._close_all()
 	app.delivery_battle_settings = app.delivery_battle_settings.duplicate(true)

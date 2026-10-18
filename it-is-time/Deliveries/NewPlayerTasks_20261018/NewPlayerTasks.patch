@@ -1,0 +1,1010 @@
+diff --git "a/it-is-time/Docs/Integration/\346\226\260\346\211\213\344\273\273\345\212\241\346\240\217\344\275\277\347\224\250\350\257\264\346\230\216_2026-10-18.md" "b/it-is-time/Docs/Integration/\346\226\260\346\211\213\344\273\273\345\212\241\346\240\217\344\275\277\347\224\250\350\257\264\346\230\216_2026-10-18.md"
+new file mode 100644
+index 0000000..22f7fc3
+--- /dev/null
++++ "b/it-is-time/Docs/Integration/\346\226\260\346\211\213\344\273\273\345\212\241\346\240\217\344\275\277\347\224\250\350\257\264\346\230\216_2026-10-18.md"
+@@ -0,0 +1,93 @@
++# 可配置新手任务栏使用说明
++
++实现基线：GitHub main 提交 `8863548b7d93e94f4c001e8e4fb191a16b73f76c`。运行入口仍为本工程 `project.godot` 配置的 `Scenes/Application/GameRoot.tscn`。
++
++上传前已衔接最新 main 提交 `d02ef70973ea3c1a801830ebdee14ebf32c89654`，并重新执行三组新手任务测试与三组原有整合回归。增量交付包位于 `Deliveries/NewPlayerTasks_20261018.zip`，包含修改源码、Git 补丁、文件哈希清单、验证记录和界面截图。
++
++## 运行行为
++
++首次进入大地图时启用新手任务。点击已有“待办事项”按钮打开列表，保留全部任务；未解锁任务注明前置条件，完成任务显示勾选并永久保留。全部完成时显示“新手指引已完成”。
++
++待办仅在大地图可用，加载、部署、战斗、结算、城镇及主菜单阶段禁用入口。探索与战斗任务的“前往”关闭待办返回地图，召唤任务进入召唤页，准备出战进入出战队伍页。锁定与已完成任务不执行跳转。
++
++本次不包含独立 2.5D 开场场景、剧情事件或黑幕点击引导。开场场景自行负责进入大地图前的流程，无需另行调用任务启用接口。
++
++## 修改任务配置
++
++配置入口为 [NewPlayerTasks.gd](../../Scripts/Application/NewPlayerTasks.gd) 的 `DEFINITIONS` 数组。当前四项任务的魔力、符文和奇物奖励全部为零或空列表，保留奖励能力。
++
++```gdscript
++{
++    "id":"explore_frontier",
++    "title":"探索边境",
++    "description":"实际抵达任意一个可交互地点。",
++    "prerequisites":[],
++    "condition":{"type":"location_arrived", "count":1},
++    "action":"world",
++    "reward":{"magic":0, "runes":[], "relics":[]}
++}
++```
++
++| 字段 | 规则 |
++| --- | --- |
++| id | 唯一且稳定的任务 ID。已发布任务不要改 ID，否则会被视为另一条任务 |
++| title／description | 列表名称与操作说明 |
++| prerequisites | 前置任务 ID 数组，全部满足才解锁；空数组表示无前置 |
++| condition.type | `location_arrived`、`summon_settled`、`party_members` 或 `battle_victories` |
++| condition.count | 正整数阈值，缺省为 1 |
++| action | `world`、`summon` 或 `party` |
++| reward.magic | 非负整数魔力，缺省为 0 |
++| reward.runes | 要解锁的符文 ID 数组，缺省为空 |
++| reward.relics | 要解锁的奇物 ID 数组，缺省为空 |
++
++例如奖励可以配置为 `{"magic":20,"runes":["iron"],"relics":["bone-die"]}`。此示例未用于首批任务。符文与奇物名称通过现有 RuneRules 查询；解锁参考内容不会替代 GameSession 对实际战斗能力的支持检查。
++
++保持当前新游戏全部开放的策略。缺省 `known_runes`／`known_relics` 仍代表全部开放；奖励已拥有的内容时不重复添加、不折算其他补偿。
++
++重复任务 ID、不存在的前置任务、循环依赖、未知条件或跳转类型，以及负数、非整数或未知内容的奖励会阻止存档提交，并给出错误。新增条件类型时，在同一规则文件增加校验、事实采集与判定，再补测试。
++
++## 首批任务与完成依据
++
++| 任务 | 前置 | 实际判定 |
++| --- | --- | --- |
++| 探索边境 | 无 | 真实地图抵达记录；不是创建地图存档或仅发现图标 |
++| 完成召唤 | 无 | 成功产生至少一只，并安置完同批结果；仅提交召唤或全部失败不算 |
++| 准备出战 | 完成召唤 | 曾有至少一只出战成员；满足前置后可追认早先行为 |
++| 赢得一次战斗 | 准备出战 | 胜利结算与任务进度成功保存 |
++
++前置关系与数组顺序无关。可靠事实会保存，因此先编队、后安置，或前置任务解锁前已获胜，都可以在满足依赖后自动补判。完成后清空队伍、失败、撤退或改变当前状态不会撤销完成。
++
++## 存档与旧档
++
++任务使用统一 GameSession 存档中的 `new_player_tasks` 字段：保存启用状态、可靠事实、完成任务及当时的奖励回执。完成与对应奖励在原业务存档事务内一起提交，成功后再发完成通知；失败回滚，重试不重复扣费或发奖。
++
++旧档无需事先添加字段。进入地图启用时，从下列可靠记录补判：
++
++- 交付地图的 `visited` 地点，或旧地图 `location_runtime_states` 中大于零的访问次数。
++- 成功报告且无待安置结果，或仍存在的同批生成实例及其安置状态。
++- 当前真实出战成员。
++- 已保存且结果为 victory 的战斗回执。
++
++无充分记录的目标保留未完成。首次追认补发当前任务配置奖励，之后按任务 ID 去重。修改已完成任务的奖励不会再次补发；其展示保留当时的奖励回执。新游戏重置本存档的任务和奖励记录，继续游戏保留现有记录。
++
++## 接入点
++
++- GameSession：统一存档时执行规则；`enable_new_player_tasks()` 用于地图启用与旧档补判。
++- GameRoot：两个地图后端的首次进入；旧地图实际交互开始时记录抵达；连接完成反馈与列表刷新。
++- DeliveryMapBridge：复用已有已访问地点记录，并补充合法营地抵达记录。
++- GameUIController：阶段门禁、任务 ID 路由、简短完成提示。
++- TasksView：复用现有纸页、任务行和滚动容器。带任务 ID 的数据保留锁定与完成条目；不带 ID 的原型数据继续使用旧待办展示语义。
++
++## 验证
++
++在本工程目录使用 Godot 4.7.2 执行：
++
++```powershell
++godot --headless --path . --script res://Tests/Integration/ValidateNewPlayerTasks.gd
++godot --headless --path . --script res://Tests/Integration/ValidateNewPlayerTaskSession.gd
++godot --headless --path . --script res://Tests/Integration/ValidateNewPlayerTaskUI.gd
++```
++
++本次新增规则测试 42 项、真实会话与失败回滚测试 33 项、无窗口界面测试 41 项，全部通过。OpenGL 图形模式界面检查 53 项通过，并检查 1120×680、1280×720、1920×1080 三档截图。原有 ValidateGameSession、ValidateGameRoot、ValidateDeliveryApplication 回归通过，覆盖旧地图后端与真实交付地图／战斗往返。
++
++图形模式执行同一 UI 测试时，截图保存在 `Tests/.runtime/new_player_tasks_screenshots/`，包含未解锁、已探索、已编队和全部完成状态。测试存档使用 `Tests/.runtime/integration/` 内独立文件，不接触正常游戏存档。
+diff --git a/it-is-time/Modules/PaperUI/Scripts/UI/TasksView.gd b/it-is-time/Modules/PaperUI/Scripts/UI/TasksView.gd
+index 7b78e4b..f72ba21 100644
+--- a/it-is-time/Modules/PaperUI/Scripts/UI/TasksView.gd
++++ b/it-is-time/Modules/PaperUI/Scripts/UI/TasksView.gd
+@@ -7,18 +7,29 @@ func present_tasks(tasks: Array) -> void:
+ 			list.remove_child(child)
+ 			child.queue_free()
+ 	var pending := 0
++	var completed := 0
++	var persistent := tasks.any(func(task): return task.has("id"))
+ 	for task in tasks:
+ 		var done: bool = task.get("done",false)
+-		if done:
++		if done: completed += 1
++		if done and not persistent:
+ 			continue
+-		pending += 1
++		if not done: pending += 1
+ 		var row := Row.instantiate()
++		row.set_meta("task_id",task.get("id",""))
+ 		%PendingRows.add_child(row)
+ 		row.get_node("%Title").text = task.get("title", "")
+ 		row.get_node("%Description").text = task.get("description", "")
+-		row.get_node("%Status").text = "待办"
++		var locked: bool = task.get("locked",false)
++		row.get_node("%Status").text = "✓ 已完成" if done else ("未解锁" if locked else "待办")
++		for key: String in ["prerequisite_text","reward_text"]:
++			if not str(task.get(key,"")).is_empty():
++				row.get_node("%Description").text += "\n"+("奖励：" if key=="reward_text" else "")+str(task[key])
+ 		var action: String = task.get("action", "")
+ 		row.get_node("%Go").visible = not action.is_empty()
+-		row.get_node("%Go").pressed.connect(func(): action_requested.emit(action))
+-	%Summary.text = "待办 %d" % pending
++		row.get_node("%Go").disabled = done or locked
++		row.get_node("%Go").tooltip_text = "已完成" if done else (task.get("prerequisite_text","") if locked else "前往对应界面")
++		row.get_node("%Go").pressed.connect(func(): action_requested.emit(str(task.get("id",action))))
++	%Summary.text = "新手指引 %d / %d 已完成" % [completed,tasks.size()] if persistent else "待办 %d" % pending
++	%PendingEmpty.text = "新手指引已完成" if persistent else "当前事项均已完成"
+ 	%PendingEmpty.visible = pending == 0
+diff --git a/it-is-time/Scripts/Application/DeliveryMapBridge.gd b/it-is-time/Scripts/Application/DeliveryMapBridge.gd
+index 2d2d484..3b71c73 100644
+--- a/it-is-time/Scripts/Application/DeliveryMapBridge.gd
++++ b/it-is-time/Scripts/Application/DeliveryMapBridge.gd
+@@ -170,6 +170,8 @@ func roster_error(id: String, kind: String) -> String:
+ 	return application.delivery_battle_settings.availability_error(str(config.get("enemy_config_id",object.get("enemy_config_id",""))))
+ 
+ func open_location(object: Dictionary) -> void:
++	if runtime.interaction_error(object).is_empty() and not application.session.record_task_arrival(str(runtime.data.map_id),str(object.id)):
++		application.ui._notice(application.session.last_error)
+ 	_map_diagnostic("location_panel_opened",{"location_id":object.id,"roster_error":roster_error(object.id,"clear"),"can_enter_battle":not application.session.monsters("team").is_empty() and roster_error(object.id,"clear").is_empty()})
+ 	application.ui._modal(str(object.name),func(body):
+ 		var page: Control = application.ui._text_screen(body,"清理胜利将关闭这里的自动遭遇；范围遭遇胜利不会永久清理。")
+diff --git a/it-is-time/Scripts/Application/GameRoot.gd b/it-is-time/Scripts/Application/GameRoot.gd
+index 633132e..6e02e91 100644
+--- a/it-is-time/Scripts/Application/GameRoot.gd
++++ b/it-is-time/Scripts/Application/GameRoot.gd
+@@ -74,6 +74,7 @@ func _ready() -> void:
+ 	battle_container = _content_view("ScenarioView",true)
+ 	battle_viewport = battle_container.get_child(0)
+ 	session.changed.connect(_session_changed)
++	session.new_player_tasks_completed.connect(ui.queue_task_completion)
+ 	refresh_input_gate()
+ 
+ func _input(event: InputEvent) -> void:
+@@ -209,6 +210,7 @@ func _session_changed() -> void:
+ 	if not is_instance_valid(ui) or not ui.is_node_ready(): return
+ 	ui._refresh_sidebar()
+ 	ui._update_header()
++	ui.refresh_task_list()
+ 	if is_instance_valid(delivery_map): delivery_map.sync_party()
+ 
+ func location_name() -> String:
+@@ -279,6 +281,7 @@ func start_new_game() -> void:
+ 	var previous := session.data.duplicate(true)
+ 	session.reset()
+ 	if not session.save(): session.data = previous; ui._notice(session.last_error); return
++	ui._task_notifications.clear()
+ 	ui.rules.import_layout(session.data.layout)
+ 	ui._close_all()
+ 	ui._show("world")
+@@ -326,6 +329,7 @@ func enter_world() -> void:
+ 	map_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+ 	map_container.show()
+ 	ui._show("world")
++	if not session.enable_new_player_tasks(): ui._notice(session.last_error)
+ 	if session.data.battle.get("phase","") == "settlement":
+ 		_pending_result = session.data.battle.result.duplicate(true)
+ 		phase = "settlement"
+@@ -345,6 +349,7 @@ func _enter_delivery_world() -> void:
+ 	phase = "world"
+ 	ui._show("world")
+ 	if not delivery_map.save_progress(): return
++	if not session.enable_new_player_tasks(): ui._notice(session.last_error)
+ 	if session.data.battle.get("phase")=="settlement":
+ 		_pending_result = session.data.battle.result.duplicate(true)
+ 		phase = "settlement"
+@@ -412,6 +417,7 @@ func _interaction_started(id: StringName) -> void:
+ 	trace_map_event("interaction_arrived",{"location_id":str(id)})
+ 	if not is_instance_valid(ui) or phase not in ["world","loading_world"]: return
+ 	var location: WorldMapLocation = world_map.get_location(id)
++	if not session.record_task_arrival(str(world_map.definition.map_id),str(id)): ui._notice(session.last_error)
+ 	world_map.interaction.panel.hide()
+ 	ui.location = str(id)
+ 	ui._modal(location.definition.display_name,func(body):
+diff --git a/it-is-time/Scripts/Application/GameSession.gd b/it-is-time/Scripts/Application/GameSession.gd
+index 282f839..b720aed 100644
+--- a/it-is-time/Scripts/Application/GameSession.gd
++++ b/it-is-time/Scripts/Application/GameSession.gd
+@@ -2,6 +2,8 @@ extends "res://Modules/PaperUI/Scripts/PrototypeState.gd"
+ ## One slot owns economy, creatures, map sessions and committed battle receipts.
+ 
+ signal changed
++signal new_player_tasks_completed(task_ids: Array)
++const NEW_PLAYER_TASKS = preload("res://Scripts/Application/NewPlayerTasks.gd")
+ const FACTORY = preload("res://Scripts/Application/CreatureFactory.gd")
+ const SUPPORTED_RUNES := ["health","armor","attack","iron","bloodblade","vitality","fang","haste"]
+ const DELIVERY_RUNTIME = preload("res://Modules/FrontierDelivery/Scripts/Map/WorldMapRuntime.gd")
+@@ -10,12 +12,30 @@ var integration_logging := false
+ var pending_result: Dictionary = {}
+ var _recovered_backup := false
+ var _needs_schema_backup := false
++var task_definitions: Array = NEW_PLAYER_TASKS.DEFINITIONS.duplicate(true)
+ 
+ func reset() -> void:
+ 	super.reset()
+ 	data.merge({"schema_version":2,"worlds":{},"battle":{},"battle_results":{},"transactions":[],"day":1},true)
+ 
+ func save() -> bool:
++	# Apply task completion and rewards inside the same transaction as business data.
++	if not _valid_save(data):
++		last_error = "状态校验失败，未覆盖存档。"
++		return false
++	var before := data.duplicate(true)
++	var tasks: Dictionary = NEW_PLAYER_TASKS.reconcile(data,task_definitions)
++	if not tasks.ok:
++		data = before
++		last_error = tasks.error
++		return false
++	if not _save_session_file():
++		data = before
++		return false
++	if not tasks.completed.is_empty(): new_player_tasks_completed.emit(tasks.completed)
++	return true
++
++func _save_session_file() -> bool:
+ 	var directory := ProjectSettings.globalize_path(save_path.get_base_dir())
+ 	var error := DirAccess.make_dir_recursive_absolute(directory)
+ 	if error != OK:
+@@ -51,6 +71,7 @@ func load_save() -> bool:
+ 
+ func _valid_save(value: Variant) -> bool:
+ 	if not super._valid_save(value) or int(value.get("schema_version",0)) not in [1,2]: return false
++	if not NEW_PLAYER_TASKS.valid_progress(value): return false
+ 	for key: String in ["worlds","battle","battle_results"]:
+ 		if not value.get(key) is Dictionary: return false
+ 	if not value.get("transactions") is Array: return false
+@@ -91,6 +112,35 @@ func _valid_save(value: Variant) -> bool:
+ 		if not found: return false
+ 	return true
+ 
++func enable_new_player_tasks() -> bool:
++	var before := data.duplicate(true)
++	NEW_PLAYER_TASKS.ensure_progress(data).enabled = true
++	var probe := data.duplicate(true)
++	var result: Dictionary = NEW_PLAYER_TASKS.reconcile(probe,task_definitions)
++	if not result.ok:
++		data = before
++		last_error = result.error
++		return false
++	if probe==before: return true
++	if save(): return true
++	data = before
++	return false
++
++func record_task_arrival(map_id: String, location_id: String) -> bool:
++	var before := data.duplicate(true)
++	NEW_PLAYER_TASKS.record_location(data,map_id,location_id)
++	if save(): return true
++	data = before
++	return false
++
++func new_player_task_rows() -> Array:
++	return NEW_PLAYER_TASKS.rows(data,task_definitions)
++
++func new_player_task_action(task_id: String) -> String:
++	for row: Dictionary in new_player_task_rows():
++		if row.id==task_id and not row.done and not row.locked: return row.action
++	return ""
++
+ func _valid_result(value: Variant) -> bool:
+ 	if not value is Dictionary or not value.get("battle_id") is String or value.battle_id.is_empty(): return false
+ 	if value.get("outcome") not in ["victory","defeat","retreat"] or not value.get("parts") is Dictionary: return false
+diff --git a/it-is-time/Scripts/Application/GameUIController.gd b/it-is-time/Scripts/Application/GameUIController.gd
+index b1c1a10..c5f261a 100644
+--- a/it-is-time/Scripts/Application/GameUIController.gd
++++ b/it-is-time/Scripts/Application/GameUIController.gd
+@@ -8,6 +8,8 @@ var _main_menu_button: Button
+ var _portrait_renderer: Node
+ var visual_preset: Resource
+ var skin_binding: Node
++var _task_page: Control
++var _task_notifications: Array = []
+ 
+ func _request_creature_portrait(portrait: Control, monster: Dictionary) -> void:
+ 	if not is_instance_valid(_portrait_renderer):
+@@ -119,6 +121,7 @@ func _location_clicked(id: String, _kind: String) -> void:
+ 	application.world_map.select_location(StringName(id))
+ 
+ func _navigation_requested(action: String) -> void:
++	if action=="tasks" and not _tasks_available(): return
+ 	if application.phase in ["loading_world","loading_battle","settlement","returning"]: return
+ 	if action == "world" and application.phase == "scenario":
+ 		application._scenario_exit(&"return_to_map")
+@@ -215,10 +218,15 @@ func _term(title: String, content: String) -> void:
+ 	super._term(title,descriptions.get(title,content))
+ 
+ func _task_action(action: String) -> void:
+-	if action == "event":
+-		_close_all()
+-		_notice("前往大地图的事件地点；抵达后方可领取奖励。")
+-	else: super._task_action(action)
++	if not _tasks_available() or modal_stack.is_empty() or modal_stack.back().get("kind")!="tasks": return
++	var target: String = state.new_player_task_action(action)
++	if target.is_empty(): return
++	_close_all()
++	if not modal_stack.is_empty(): return
++	match target:
++		"world": _show("world")
++		"summon": _open_ritual()
++		"party": _warehouse("team")
+ 
+ func _skip_battle() -> void:
+ 	_notice("真实战斗不能跳过。")
+@@ -329,17 +337,36 @@ func _process(_delta: float) -> void:
+ 	view.set_process(modal_stack.is_empty() or modal_stack.back().get("kind","") != "settings")
+ 	if is_instance_valid(_main_menu_button): _main_menu_button.disabled = application.phase == "main" or application.returning_to_main_menu
+ 	if application != null: application.refresh_input_gate()
++	var task_button: Button = base.get_node("%Navigation").get_node("%Tasks")
++	task_button.disabled = not _tasks_available() or overlay.visible
++	task_button.tooltip_text = "查看新手任务" if _tasks_available() else "新手任务仅在大地图可用"
++	if not _task_notifications.is_empty() and _tasks_available() and modal_stack.is_empty():
++		_notice("新手任务已完成："+"、".join(_task_notifications))
++		_task_notifications.clear()
+ 
+ func _curtain(_raising: bool) -> void:
+ 	pass
+ 
+ func _tasks() -> void:
++	if not _tasks_available(): return
++	if not state.enable_new_player_tasks():
++		_notice(state.last_error)
++		return
+ 	_modal("待办事项",func(body):
+ 		var page := TasksPanel.instantiate()
+ 		body.add_child(page)
+-		page.present_tasks([
+-			{"title":"探索边境","description":"发现地点并沿真实路径抵达。","done":not state.data.worlds.is_empty(),"action":"world"},
+-			{"title":"召唤妖兽","description":"刻入已接入的符文并安置同一批实例。","done":state.data.serial>0,"action":"summon"},
+-			{"title":"准备出战队伍","description":"当前 %d / 6 队位。" % state.occupied_slots(),"done":state.occupied_slots()>0,"action":"party"}])
++		_task_page = page
++		page.present_tasks(state.new_player_task_rows())
+ 		page.action_requested.connect(_task_action),"tasks")
+ 
++func _tasks_available() -> bool:
++	return application!=null and application.phase=="world" and route=="world" and not _battle_cancel_needs_save()
++
++func refresh_task_list() -> void:
++	if is_instance_valid(_task_page) and not modal_stack.is_empty() and modal_stack.back().get("kind")=="tasks":
++		_task_page.present_tasks(state.new_player_task_rows())
++
++func queue_task_completion(task_ids: Array) -> void:
++	for task: Dictionary in state.task_definitions:
++		if task.id in task_ids and task.title not in _task_notifications: _task_notifications.append(task.title)
++
+diff --git a/it-is-time/Scripts/Application/NewPlayerTasks.gd b/it-is-time/Scripts/Application/NewPlayerTasks.gd
+new file mode 100644
+index 0000000..ee261ae
+--- /dev/null
++++ b/it-is-time/Scripts/Application/NewPlayerTasks.gd
+@@ -0,0 +1,198 @@
++extends RefCounted
++## Task data and reconciliation only. GameSession owns the atomic save and signals.
++const RULES = preload("res://Modules/PaperUI/Scripts/Ritual/RuneRules.gd")
++const SAVE_KEY := "new_player_tasks"
++const VERSION := 1
++const DEFINITIONS: Array = [
++	{
++		"id":"explore_frontier", "title":"探索边境",
++		"description":"实际抵达任意一个可交互地点。",
++		"prerequisites":[], "condition":{"type":"location_arrived", "count":1},
++		"action":"world", "reward":{"magic":0, "runes":[], "relics":[]}
++	},
++	{
++		"id":"complete_summon", "title":"完成召唤",
++		"description":"成功召唤至少一只妖兽，并将该批结果全部加入出战或存入仓库。",
++		"prerequisites":[], "condition":{"type":"summon_settled", "count":1},
++		"action":"summon", "reward":{"magic":0, "runes":[], "relics":[]}
++	},
++	{
++		"id":"prepare_party", "title":"准备出战",
++		"description":"将至少一只妖兽加入出战队伍。",
++		"prerequisites":["complete_summon"], "condition":{"type":"party_members", "count":1},
++		"action":"party", "reward":{"magic":0, "runes":[], "relics":[]}
++	},
++	{
++		"id":"win_battle", "title":"赢得一次战斗",
++		"description":"赢得一次真实战斗，并成功保存战斗结算。",
++		"prerequisites":["prepare_party"], "condition":{"type":"battle_victories", "count":1},
++		"action":"world", "reward":{"magic":0, "runes":[], "relics":[]}
++	}
++]
++const CONDITION_TYPES := ["location_arrived", "summon_settled", "party_members", "battle_victories"]
++const ACTIONS := ["world", "summon", "party"]
++
++static func initial_progress() -> Dictionary:
++	return {"version":VERSION, "enabled":false, "completed":{},
++		"facts":{"locations":[], "summon_batches":[], "party_size":0, "victories":[]}}
++
++static func ensure_progress(data: Dictionary) -> Dictionary:
++	if not data.has(SAVE_KEY): data[SAVE_KEY] = initial_progress()
++	return data[SAVE_KEY]
++
++static func _integer(value: Variant, minimum: int = 0) -> bool:
++	return (value is int or value is float) and is_finite(float(value)) and float(value)==floorf(float(value)) and float(value)>=minimum and float(value)<=2147483647.0
++
++static func _string_list(value: Variant) -> bool:
++	if not value is Array: return false
++	var seen := {}
++	for item: Variant in value:
++		if not item is String or item.is_empty() or seen.has(item): return false
++		seen[item] = true
++	return true
++
++static func _valid_reward(reward: Variant) -> bool:
++	if not reward is Dictionary or not _integer(reward.get("magic",0)): return false
++	for key: Variant in reward:
++		if key not in ["magic", "runes", "relics"]: return false
++	for pair: Array in [["runes",false], ["relics",true]]:
++		var ids: Variant = reward.get(pair[0],[])
++		if not _string_list(ids): return false
++		for id: String in ids:
++			if RULES.definition(id,pair[1]).is_empty(): return false
++	return true
++
++static func valid_progress(data: Dictionary) -> bool:
++	if not data.has(SAVE_KEY): return true # Additive migration; legacy saves stay readable.
++	var progress: Variant = data[SAVE_KEY]
++	if not progress is Dictionary or progress.get("version")!=VERSION or not progress.get("enabled") is bool: return false
++	if not progress.get("completed") is Dictionary or not progress.get("facts") is Dictionary: return false
++	for id: Variant in progress.completed:
++		var receipt: Variant = progress.completed[id]
++		if not id is String or id.is_empty() or not receipt is Dictionary or not _valid_reward(receipt.get("reward")): return false
++	var facts: Dictionary = progress.facts
++	return _string_list(facts.get("locations")) and _string_list(facts.get("summon_batches")) and _string_list(facts.get("victories")) and _integer(facts.get("party_size"))
++
++static func validate_definitions(definitions: Array) -> String:
++	var by_id := {}
++	for task: Variant in definitions:
++		if not task is Dictionary: return "任务配置必须是字典。"
++		var id: Variant = task.get("id")
++		if not id is String or id.is_empty() or by_id.has(id): return "任务 ID 缺失或重复。"
++		for key: String in ["title", "description"]:
++			if not task.get(key) is String or task[key].is_empty(): return "任务 %s 缺少%s。" % [id,key]
++		if not _string_list(task.get("prerequisites",[])): return "任务 %s 的前置列表无效。" % id
++		if task.get("action") not in ACTIONS: return "任务 %s 的跳转类型无效。" % id
++		var condition: Variant = task.get("condition")
++		if not condition is Dictionary or condition.get("type") not in CONDITION_TYPES or not _integer(condition.get("count",1),1): return "任务 %s 的完成条件无效。" % id
++		if not _valid_reward(task.get("reward",{})): return "任务 %s 的奖励配置无效。" % id
++		by_id[id] = task
++	for task: Dictionary in definitions:
++		for prerequisite: String in task.get("prerequisites",[]):
++			if not by_id.has(prerequisite): return "任务 %s 引用了不存在的前置任务 %s。" % [task.id,prerequisite]
++	# Topological elimination also detects self-dependencies and cycles.
++	var resolved := {}
++	for _pass: int in definitions.size():
++		for task: Dictionary in definitions:
++			if task.get("prerequisites",[]).all(func(id): return resolved.has(id)): resolved[task.id] = true
++	if resolved.size()!=definitions.size(): return "任务前置关系存在循环。"
++	return ""
++
++static func _append_unique(list: Array, value: String) -> void:
++	if not value.is_empty() and value not in list: list.append(value)
++
++static func record_location(data: Dictionary, map_id: String, location_id: String) -> void:
++	if not map_id.is_empty() and not location_id.is_empty():
++		_append_unique(ensure_progress(data).facts.locations,map_id+":"+location_id)
++
++static func _capture_reliable_facts(data: Dictionary, facts: Dictionary) -> void:
++	# A stored map alone, discovered markers, or a spawn position prove no arrival.
++	for map_id: String in data.get("worlds",{}):
++		var world: Dictionary = data.worlds[map_id]
++		if world.get("backend","")=="frontier_delivery_v1":
++			for location_id: String in world.get("visited",[]):
++				_append_unique(facts.locations,map_id+":"+location_id)
++		else:
++			for location_id: String in world.get("location_runtime_states",{}):
++				var location: Dictionary = world.location_runtime_states[location_id]
++				if _integer(location.get("visits",0),1): _append_unique(facts.locations,map_id+":"+location_id)
++	var report: Dictionary = data.get("last_summon",{})
++	if _integer(data.get("serial",0),1) and _integer(report.get("succeeded",0),1) and data.get("pending",[]).is_empty():
++		_append_unique(facts.summon_batches,"batch_%d" % int(data.serial))
++	var team_count := 0
++	var batches := {}
++	for monster: Dictionary in data.get("monsters",[]):
++		if monster.get("position")=="team": team_count += 1
++		var batch_id: String = str(monster.get("batch_id",""))
++		if batch_id.begins_with("batch_") and str(monster.get("id","")).begins_with("summon_") and monster.get("source_layout") is Dictionary:
++			batches[batch_id] = batches.get(batch_id,false) or monster.get("position")=="pending"
++	for batch_id: String in batches:
++		if not batches[batch_id]: _append_unique(facts.summon_batches,batch_id)
++	facts.party_size = maxi(int(facts.party_size),team_count)
++	for id: String in data.get("battle_results",{}):
++		if data.battle_results[id].get("outcome")=="victory": _append_unique(facts.victories,id)
++
++static func _condition_met(condition: Dictionary, facts: Dictionary) -> bool:
++	var count := int(condition.get("count",1))
++	match condition.type:
++		"location_arrived": return facts.locations.size()>=count
++		"summon_settled": return facts.summon_batches.size()>=count
++		"party_members": return int(facts.party_size)>=count
++		"battle_victories": return facts.victories.size()>=count
++	return false
++
++static func _apply_reward(data: Dictionary, reward: Dictionary) -> void:
++	data.magic += int(reward.get("magic",0))
++	for pair: Array in [["runes","known_runes",RULES.RUNES], ["relics","known_relics",RULES.RELICS]]:
++		var additions: Array = reward.get(pair[0],[])
++		if additions.is_empty(): continue
++		# Missing lists mean all references were already unlocked; preserve that policy.
++		if not data.has(pair[1]): data[pair[1]] = pair[2].map(func(item): return item.id)
++		for id: String in additions: _append_unique(data[pair[1]],id)
++
++static func reconcile(data: Dictionary, definitions: Array = DEFINITIONS) -> Dictionary:
++	var error := validate_definitions(definitions)
++	if not error.is_empty(): return {"ok":false, "error":error, "completed":[]}
++	if not valid_progress(data): return {"ok":false, "error":"新手任务存档无效。", "completed":[]}
++	var progress := ensure_progress(data)
++	_capture_reliable_facts(data,progress.facts)
++	var newly_completed: Array = []
++	if not progress.enabled: return {"ok":true, "completed":newly_completed}
++	# Repeat to allow out-of-order configuration and retroactive dependency chains.
++	for _pass: int in definitions.size():
++		var advanced := false
++		for task: Dictionary in definitions:
++			if progress.completed.has(task.id): continue
++			if not task.get("prerequisites",[]).all(func(id): return progress.completed.has(id)): continue
++			if not _condition_met(task.condition,progress.facts): continue
++			var reward: Dictionary = task.get("reward",{}).duplicate(true)
++			_apply_reward(data,reward)
++			progress.completed[task.id] = {"reward":reward}
++			newly_completed.append(task.id)
++			advanced = true
++		if not advanced: break
++	return {"ok":true, "completed":newly_completed}
++
++static func reward_text(reward: Dictionary) -> String:
++	var parts := PackedStringArray()
++	if int(reward.get("magic",0))>0: parts.append("魔力 +%d" % int(reward.magic))
++	for pair: Array in [["runes",false], ["relics",true]]:
++		for id: String in reward.get(pair[0],[]):
++			parts.append("解锁"+str(RULES.definition(id,pair[1]).get("name",id)))
++	return "、".join(parts)
++
++static func rows(data: Dictionary, definitions: Array = DEFINITIONS) -> Array:
++	var progress: Dictionary = data.get(SAVE_KEY,initial_progress())
++	var titles := {}
++	for task: Dictionary in definitions: titles[task.id] = task.title
++	var result: Array = []
++	for task: Dictionary in definitions:
++		var done: bool = progress.completed.has(task.id)
++		var missing := PackedStringArray()
++		for id: String in task.get("prerequisites",[]):
++			if not progress.completed.has(id): missing.append(str(titles.get(id,id)))
++		result.append({"id":task.id, "title":task.title, "description":task.description,
++			"action":task.action, "done":done, "locked":not progress.enabled or not missing.is_empty(),
++			"prerequisite_text":"前置："+"、".join(missing) if not missing.is_empty() else "",
++			"reward_text":reward_text(progress.completed[task.id].reward if done else task.get("reward",{}))})
++	return result
+diff --git a/it-is-time/Scripts/Application/NewPlayerTasks.gd.uid b/it-is-time/Scripts/Application/NewPlayerTasks.gd.uid
+new file mode 100644
+index 0000000..e8a8211
+--- /dev/null
++++ b/it-is-time/Scripts/Application/NewPlayerTasks.gd.uid
+@@ -0,0 +1 @@
++uid://0tf8387f148c
+diff --git a/it-is-time/Tests/Integration/ValidateNewPlayerTaskSession.gd b/it-is-time/Tests/Integration/ValidateNewPlayerTaskSession.gd
+new file mode 100644
+index 0000000..e5783cc
+--- /dev/null
++++ b/it-is-time/Tests/Integration/ValidateNewPlayerTaskSession.gd
+@@ -0,0 +1,93 @@
++extends SceneTree
++const SESSION = preload("res://Scripts/Application/GameSession.gd")
++const RULES = preload("res://Modules/PaperUI/Scripts/Ritual/RuneRules.gd")
++var checks := 0
++var failures := 0
++
++func check(value: bool, label: String) -> void:
++	checks += 1
++	if not value:
++		failures += 1
++		push_error("FAIL: "+label)
++
++func _initialize() -> void: call_deferred("run")
++
++func run() -> void:
++	var session := SESSION.new()
++	session.save_path = "res://Tests/.runtime/integration/new_player_tasks_%d.json" % Time.get_ticks_usec()
++	session.task_definitions[0].reward = {"magic":13,"runes":["iron"],"relics":["bone-die"]}
++	session.data.known_runes = ["armor"]
++	session.data.known_relics = []
++	var notifications := {"count":0}
++	session.new_player_tasks_completed.connect(func(ids): notifications.count += ids.size())
++	check(session.save(),"New session saves before tutorial activation")
++	check(not session.data.new_player_tasks.enabled,"Main-menu save does not activate tasks")
++	check(session.enable_new_player_tasks(),"First world entry activates and saves task state")
++	check(session.data.new_player_tasks.completed.is_empty(),"Activation fabricates no completed objectives")
++	var path: String = session.save_path
++	var before: Dictionary = session.data.duplicate(true)
++	session.save_path = path+"/blocked.json"
++	check(not session.record_task_arrival("frontier_layout","summoning_hut"),"Arrival reward save failure is propagated")
++	check(session.data==before and notifications.count==0,"Failed save rolls back facts, reward, completion and notification")
++	session.save_path = path
++	check(session.record_task_arrival("frontier_layout","summoning_hut"),"Actual arrival is committed")
++	check(session.data.magic==313 and session.data.known_runes.has("iron") and session.data.known_relics==["bone-die"],"Reward types commit with task completion")
++	check(notifications.count==1,"Notification is emitted only after successful save")
++	check(session.record_task_arrival("frontier_layout","summoning_hut") and session.data.magic==313 and notifications.count==1,"Repeated arrival never repeats reward or notification")
++	var rules := RULES.new()
++	rules.extend([0,0]); rules.extend([1,0]); rules.commit()
++	var rng := RandomNumberGenerator.new()
++	rng.seed = 1234
++	check(session.summon(rules,"frontier_layout","world",rng),"A real supported summon succeeds")
++	check(not session.data.new_player_tasks.completed.has("complete_summon"),"Generation alone does not complete settlement task")
++	var id: String = session.data.pending[0]
++	check(session.move_monster(id,"team"),"An actual generated unit can join the party")
++	check(not session.data.new_player_tasks.completed.has("prepare_party"),"Party objective remains locked until results are settled")
++	check(session.store_pending(),"Remaining actual results are stored")
++	check(session.data.new_player_tasks.completed.has("complete_summon") and session.data.new_player_tasks.completed.has("prepare_party"),"Settlement automatically unlocks and credits proved party setup")
++	check(session.move_monster(id,"warehouse") and session.data.new_player_tasks.completed.has("prepare_party"),"Emptying the party does not revoke completion")
++	check(session.move_monster(id,"team"),"Party can be restored for battle")
++	var world_state := WorldMapRuntimeState.new()
++	world_state.map_id = &"frontier"
++	world_state.pending_battle = {"map_id":"frontier","location_id":"bandits"}
++	var world := world_state.to_dict()
++	check(session.save_world(world),"A real session battle request captures party IDs")
++	var result := {"battle_id":session.data.battle.battle_id,"outcome":"victory","reward":20,"parts":{}}
++	world.pending_battle = {}
++	before = session.data.duplicate(true)
++	session.save_path = path+"/blocked.json"
++	check(not session.commit_battle(result,world) and session.data==before,"Failed settlement rolls back battle and task together")
++	session.save_path = path
++	check(session.commit_battle(result,world) and session.data.new_player_tasks.completed.has("win_battle"),"Persisted victory completes the final task")
++	check(session.data.new_player_tasks.completed.size()==4 and session.new_player_task_rows().size()==4,"All completed task rows remain visible")
++	var completed_magic: int = session.data.magic
++	check(session.commit_battle(result,world) and session.data.magic==completed_magic,"Duplicate battle receipt remains idempotent")
++	var reloaded := SESSION.new()
++	reloaded.save_path = path
++	check(reloaded.load_save() and reloaded.data.new_player_tasks.completed.size()==4,"Task receipts reload with the real session")
++	reloaded.task_definitions[0].reward.magic = 500
++	check(reloaded.enable_new_player_tasks() and reloaded.data.magic==completed_magic,"Reload and reward edits do not repay completed tasks")
++	check(reloaded.new_player_task_action("win_battle").is_empty(),"Completed task cannot execute an obsolete action")
++	# Produce a genuine pre-feature save from the same valid business records.
++	var legacy_path := path+".legacy.json"
++	var legacy_data: Dictionary = reloaded.data.duplicate(true)
++	legacy_data.erase("new_player_tasks")
++	var legacy_world: Dictionary = legacy_data.worlds.frontier
++	legacy_world.location_runtime_states["town"] = {"visits":1,"discovered":true,"lifecycle":0,"custom_data":{}}
++	var file := FileAccess.open(legacy_path,FileAccess.WRITE)
++	file.store_string(JSON.stringify(legacy_data)); file.close()
++	var legacy := SESSION.new()
++	legacy.save_path = legacy_path
++	legacy.task_definitions[0].reward.magic = 7
++	check(legacy.load_save() and not legacy.data.has("new_player_tasks"),"Old save loads without eagerly changing the file")
++	check(legacy.enable_new_player_tasks() and legacy.data.new_player_tasks.completed.size()==4,"Reliable old achievements are credited at activation")
++	check(legacy.data.magic==completed_magic+7,"Old save receives its configured reward once")
++	check(legacy.enable_new_player_tasks() and legacy.data.magic==completed_magic+7,"Repeated activation does not repay migration reward")
++	var corrupt: Dictionary = legacy.data.duplicate(true)
++	corrupt.new_player_tasks.completed.explore_frontier.reward.magic = -1
++	check(not legacy._valid_save(corrupt),"Malformed task receipts are rejected before load/save")
++	legacy.reset()
++	check(legacy.save() and legacy.data.new_player_tasks.completed.is_empty() and not legacy.data.new_player_tasks.enabled,"Starting a new session resets tasks and receipts")
++	check(legacy.data.magic==300 and not legacy.data.has("known_runes"),"New game preserves 300 magic and the default all-unlocked policy")
++	print("NEW_PLAYER_TASK_SESSION checks=",checks," failures=",failures)
++	quit(1 if failures else 0)
+diff --git a/it-is-time/Tests/Integration/ValidateNewPlayerTaskSession.gd.uid b/it-is-time/Tests/Integration/ValidateNewPlayerTaskSession.gd.uid
+new file mode 100644
+index 0000000..80005c0
+--- /dev/null
++++ b/it-is-time/Tests/Integration/ValidateNewPlayerTaskSession.gd.uid
+@@ -0,0 +1 @@
++uid://b05dclwdabumu
+diff --git a/it-is-time/Tests/Integration/ValidateNewPlayerTaskUI.gd b/it-is-time/Tests/Integration/ValidateNewPlayerTaskUI.gd
+new file mode 100644
+index 0000000..3808e5b
+--- /dev/null
++++ b/it-is-time/Tests/Integration/ValidateNewPlayerTaskUI.gd
+@@ -0,0 +1,138 @@
++extends SceneTree
++const ROOT_SCENE = preload("res://Scenes/Application/GameRoot.tscn")
++var checks := 0
++var failures := 0
++var app: Node
++
++func check(value: bool, label: String) -> void:
++	checks += 1
++	if not value:
++		failures += 1
++		push_error("FAIL: "+label)
++
++func _initialize() -> void:
++	create_timer(60.0).timeout.connect(func(): push_error("Task UI test timed out"); quit(1))
++	call_deferred("run")
++
++func frames(count := 3) -> void:
++	for _frame: int in count: await process_frame
++
++func wait_world() -> bool:
++	for _frame: int in 900:
++		if app.phase=="world": return true
++		await physics_frame
++	return false
++
++func task_row(id: String) -> Control:
++	for row: Control in app.ui._task_page.get_node("%PendingRows").get_children():
++		if row.get_meta("task_id","")==id: return row
++	return null
++
++func capture(name: String) -> void:
++	if DisplayServer.get_name()=="headless": return
++	await frames(5)
++	RenderingServer.force_draw()
++	var picture := root.get_texture().get_image()
++	check(picture!=null and not picture.is_empty(),"Rendered task viewport is available")
++	if picture==null or picture.is_empty(): return
++	var folder := "res://Tests/.runtime/new_player_tasks_screenshots"
++	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(folder))
++	check(picture.save_png(folder+"/"+name+".png")==OK,"Task screenshot saved: "+name)
++
++func run() -> void:
++	root.size = Vector2i(1280,720)
++	app = ROOT_SCENE.instantiate()
++	app.save_path = "res://Tests/.runtime/integration/task_ui_%d.json" % Time.get_ticks_usec()
++	app.display_settings_path = "res://Tests/.runtime/integration/task_ui_display_%d.cfg" % Time.get_ticks_usec()
++	root.add_child(app)
++	app.ui.animate_panels = false
++	app.ui.board_motion.enabled = false
++	await frames()
++	var button: Button = app.ui.base.get_node("%Navigation").get_node("%Tasks")
++	check(button.disabled,"Task entry is disabled at the main menu")
++	app.start_new_game()
++	check(await wait_world(),"New game enters the real delivery map")
++	await frames()
++	check(app.session.data.new_player_tasks.enabled and not button.disabled,"First world entry activates the guide and enables the entry")
++	check(app.session.data.new_player_tasks.completed.is_empty(),"Spawning and saving the map complete no task")
++	button.pressed.emit()
++	await frames()
++	check(app.ui.modal_stack.back().kind=="tasks" and app.ui._task_page.get_node("%PendingRows").get_child_count()==4,"Existing entry opens all four task rows")
++	check(task_row("prepare_party").get_node("%Go").disabled and task_row("prepare_party").get_node("%Description").text.contains("完成召唤"),"Locked task displays its prerequisite and disables action")
++	app.ui._task_action("prepare_party")
++	check(app.ui.modal_stack.back().kind=="tasks","A direct locked task request cannot bypass the guard")
++	await capture("01_initial_1280")
++	for size: Vector2i in [Vector2i(1120,680),Vector2i(1920,1080)]:
++		root.size = size
++		await frames()
++		check(app.ui._task_page.get_node("%PendingRows").get_child_count()==4,"Task rows survive resize: "+str(size.x))
++		await capture("initial_"+str(size.x))
++	root.size = Vector2i(1280,720)
++	task_row("explore_frontier").get_node("%Go").pressed.emit()
++	await frames()
++	check(app.ui.modal_stack.is_empty() and app.ui.route=="world" and app.phase=="world","Exploration action closes the paper and returns to the map")
++	app.ui._tasks()
++	task_row("complete_summon").get_node("%Go").pressed.emit()
++	await frames()
++	check(not app.ui.modal_stack.is_empty() and app.ui.modal_stack.back().title.begins_with("六相召唤阵"),"Summon task reuses the existing ritual route")
++	app.ui._close_all()
++	await frames()
++	# Click the actual summoning hut on the actual native map.
++	var point: Vector2 = app.delivery_map.get_global_transform_with_canvas()*app.delivery_map.world_to_screen(app.delivery_map.runtime.player())
++	for pressed: bool in [true,false]:
++		var event := InputEventMouseButton.new()
++		event.button_index = MOUSE_BUTTON_LEFT
++		event.position = point; event.global_position = point; event.pressed = pressed
++		root.push_input(event,true)
++		await process_frame
++	for _frame: int in 180:
++		if app.ui.overlay.visible: break
++		await physics_frame
++	check(app.session.data.new_player_tasks.completed.has("explore_frontier"),"Actual map click and hut arrival permanently complete exploration")
++	app.ui._close_all()
++	await frames()
++	app.ui._tasks()
++	check(task_row("explore_frontier").get_node("%Status").text.contains("已完成"),"Completed task remains visible with its checkmark")
++	check(task_row("explore_frontier").get_node("%Go").disabled,"Completed action is disabled")
++	await capture("02_explored_1280")
++	app.ui._close_all()
++	var rules = app.ui.Rules.new()
++	rules.extend([0,0]); rules.extend([1,0]); rules.commit()
++	var rng := RandomNumberGenerator.new(); rng.seed = 1234
++	check(app.session.summon(rules,"frontier_layout","world",rng),"Actual session generates a supported batch")
++	var id: String = app.session.data.pending[0]
++	check(app.session.move_monster(id,"team") and app.session.store_pending(),"Actual batch is assigned and stored")
++	app.ui._tasks()
++	check(not task_row("win_battle").get_node("%Go").disabled,"Party completion unlocks victory task")
++	await capture("03_ready_1280")
++	task_row("win_battle").get_node("%Go").pressed.emit()
++	await frames()
++	check(app.phase=="world" and app.ui.modal_stack.is_empty() and not is_instance_valid(app.battle),"Victory task returns to map without automatically starting combat")
++	# A valid persisted receipt is sufficient for the UI; combat itself is covered by delivery regression tests.
++	app.session.data.battle_results["ui_victory"] = {"battle_id":"ui_victory","outcome":"victory","reward":0,"parts":{}}
++	var saved: bool = app.session.save()
++	check(saved,"Victory receipt and task result save together: "+app.session.last_error)
++	if not saved: app.queue_free(); await frames(); quit(1); return
++	app.ui._tasks()
++	check(app.ui._task_page.get_node("%PendingRows").get_child_count()==4 and app.ui._task_page.get_node("%PendingEmpty").visible,"All completed rows and final summary are retained")
++	check(app.ui._task_page.get_node("%PendingRows").get_children().all(func(row): return row.get_node("%Status").text.contains("已完成")),"All four statuses show completion")
++	await capture("04_complete_1280")
++	app.ui._close_all()
++	for phase: String in ["loading_world","loading_battle","deployment","battle","settlement","returning","scenario","main"]:
++		app.phase = phase
++		app.ui._process(0.0)
++		check(button.disabled,"Task entry remains disabled in phase: "+phase)
++		app.ui._tasks()
++		check(app.ui.modal_stack.is_empty(),"Direct task opening is rejected in phase: "+phase)
++	app.phase = "world"
++	app.ui._process(0.0)
++	check(not button.disabled,"Returning to the map restores the task entry")
++	check(app.return_to_main_menu(),"Existing return-to-menu flow saves successfully")
++	app.start_new_game()
++	check(await wait_world(),"A second new game returns to the real map")
++	await frames()
++	check(app.session.data.new_player_tasks.enabled and app.session.data.new_player_tasks.completed.is_empty(),"A new game clears the prior tutorial while enabling the new one")
++	app.queue_free()
++	await frames()
++	print("NEW_PLAYER_TASK_UI checks=",checks," failures=",failures)
++	quit(1 if failures else 0)
+diff --git a/it-is-time/Tests/Integration/ValidateNewPlayerTaskUI.gd.uid b/it-is-time/Tests/Integration/ValidateNewPlayerTaskUI.gd.uid
+new file mode 100644
+index 0000000..ccf9f45
+--- /dev/null
++++ b/it-is-time/Tests/Integration/ValidateNewPlayerTaskUI.gd.uid
+@@ -0,0 +1 @@
++uid://cak3islwrtkuo
+diff --git a/it-is-time/Tests/Integration/ValidateNewPlayerTasks.gd b/it-is-time/Tests/Integration/ValidateNewPlayerTasks.gd
+new file mode 100644
+index 0000000..129ce25
+--- /dev/null
++++ b/it-is-time/Tests/Integration/ValidateNewPlayerTasks.gd
+@@ -0,0 +1,156 @@
++extends SceneTree
++const TASKS = preload("res://Scripts/Application/NewPlayerTasks.gd")
++var checks := 0
++var failures := 0
++
++func check(value: bool, label: String) -> void:
++	checks += 1
++	if not value:
++		failures += 1
++		push_error("FAIL: "+label)
++
++func fixture(enabled := true) -> Dictionary:
++	var data := {"magic":300, "serial":0, "last_summon":{}, "monsters":[], "pending":[], "worlds":{}, "battle_results":{}}
++	TASKS.ensure_progress(data).enabled = enabled
++	return data
++
++func done(data: Dictionary, id: String) -> bool:
++	return data.new_player_tasks.completed.has(id)
++
++func _initialize() -> void:
++	_test_unlocks_and_facts()
++	_test_history()
++	_test_rewards_and_validation()
++	print("NEW_PLAYER_TASKS checks=",checks," failures=",failures)
++	quit(1 if failures else 0)
++
++func _test_unlocks_and_facts() -> void:
++	var data := fixture(false)
++	check(TASKS.validate_definitions(TASKS.DEFINITIONS).is_empty(),"Default configuration is valid")
++	check(TASKS.reconcile(data).ok and data.new_player_tasks.completed.is_empty(),"Disabled guide awards nothing")
++	check(TASKS.rows(data).size()==4 and TASKS.rows(data).all(func(row): return row.locked),"All four tasks are visible before activation")
++	data.new_player_tasks.enabled = true
++	data.worlds.demo = {"backend":"frontier_delivery_v1", "visited":[], "discovered":["hut"]}
++	TASKS.reconcile(data)
++	check(not done(data,"explore_frontier"),"A saved map and discovered marker do not prove arrival")
++	TASKS.record_location(data,"demo","hut")
++	TASKS.reconcile(data)
++	check(done(data,"explore_frontier"),"An actual arrival completes exploration")
++	check(TASKS.rows(data)[0].done and TASKS.rows(data).size()==4,"Completed tasks remain in the list")
++	check(TASKS.rows(data)[2].locked and TASKS.rows(data)[2].prerequisite_text.contains("完成召唤"),"Locked task identifies its prerequisite")
++	data.monsters = [{"position":"team"}]
++	data.battle_results.battle_1 = {"outcome":"victory"}
++	TASKS.reconcile(data)
++	check(not done(data,"prepare_party") and not done(data,"win_battle"),"Facts do not bypass prerequisites")
++	data.monsters.clear()
++	data.battle_results.clear()
++	data.serial = 1
++	data.last_summon = {"succeeded":1}
++	data.pending = ["unit_1"]
++	TASKS.reconcile(data)
++	check(not done(data,"complete_summon"),"A successful summon with pending units is not settled")
++	data.pending.clear()
++	var result := TASKS.reconcile(data)
++	check(result.completed.size()==3,"Previously proved party and victory are credited after summon unlock")
++	check(done(data,"complete_summon") and done(data,"prepare_party") and done(data,"win_battle"),"Dependency chain settles automatically")
++	data.last_summon = {"succeeded":0}
++	data.serial = 0
++	TASKS.reconcile(data)
++	check(data.new_player_tasks.completed.size()==4,"Later state changes never revoke completed tasks")
++	check(data.magic==300,"Default tasks grant no reward")
++	check(TASKS.valid_progress(JSON.parse_string(JSON.stringify(data))),"Task receipts survive JSON save/load")
++	check(TASKS.reconcile(data).completed.is_empty(),"Repeated reconciliation is idempotent")
++	var old_batch := fixture()
++	old_batch.serial = 2
++	old_batch.last_summon = {"succeeded":0}
++	old_batch.monsters = [{"id":"summon_1_0","batch_id":"batch_1","source_layout":{},"position":"warehouse"}]
++	TASKS.reconcile(old_batch)
++	check(done(old_batch,"complete_summon"),"An older settled batch remains provable after a later all-failed summon")
++	old_batch.last_summon = {"succeeded":5}
++	old_batch.serial = 1
++	TASKS.reconcile(old_batch)
++	check(old_batch.new_player_tasks.facts.summon_batches.size()==1,"Report and creature evidence count the same batch only once")
++	var fresh := fixture()
++	fresh.serial = 2
++	fresh.last_summon = {"succeeded":0}
++	TASKS.reconcile(fresh)
++	check(not done(fresh,"complete_summon"),"All-failed summon does not complete summon task")
++	fresh.last_summon.clear()
++	TASKS.reconcile(fresh)
++	check(not done(fresh,"complete_summon"),"A serial alone does not prove successful settlement")
++	var reordered: Array = TASKS.DEFINITIONS.duplicate(true)
++	reordered.reverse()
++	data.new_player_tasks.completed.clear()
++	check(TASKS.reconcile(data,reordered).completed.size()==4,"Configuration order does not prevent dependency chaining")
++
++func _test_history() -> void:
++	var legacy := fixture()
++	legacy.erase(TASKS.SAVE_KEY)
++	legacy.worlds.map_1 = {"backend":"legacy_frontier", "location_runtime_states":{"town":{"visits":1}}}
++	legacy.serial = 3
++	legacy.last_summon = {"succeeded":2}
++	legacy.monsters = [{"position":"team"}]
++	legacy.battle_results.old_win = {"outcome":"victory"}
++	check(TASKS.valid_progress(legacy),"Saves without task fields are accepted")
++	TASKS.ensure_progress(legacy).enabled = true
++	check(TASKS.reconcile(legacy).completed.size()==4,"Reliable old world, summon, party and victory records are credited")
++	var delivery := fixture()
++	delivery.worlds.frontier_layout = {"backend":"frontier_delivery_v1", "visited":["hut"]}
++	TASKS.reconcile(delivery)
++	check(done(delivery,"explore_frontier"),"Delivery visited history proves arrival")
++	var unknown := fixture()
++	unknown.worlds.map_1 = {"backend":"legacy_frontier", "location_runtime_states":{"town":{"discovered":true,"visits":0}}}
++	unknown.battle_results.loss = {"outcome":"defeat"}
++	TASKS.reconcile(unknown)
++	check(unknown.new_player_tasks.completed.is_empty(),"Unproven legacy progress and defeats remain incomplete")
++	TASKS.record_location(delivery,"frontier_layout","hut")
++	TASKS.record_location(delivery,"frontier_layout","hut")
++	check(delivery.new_player_tasks.facts.locations.size()==1,"Arrival facts are deduplicated")
++	var counted: Array = TASKS.DEFINITIONS.duplicate(true)
++	counted[0].condition.count = 2
++	var counted_data := fixture()
++	TASKS.record_location(counted_data,"map","one")
++	TASKS.reconcile(counted_data,counted)
++	check(not done(counted_data,"explore_frontier"),"Configurable counts require sufficient distinct evidence")
++	TASKS.record_location(counted_data,"map","two")
++	TASKS.reconcile(counted_data,counted)
++	check(done(counted_data,"explore_frontier"),"Count threshold completes after sufficient evidence")
++
++func _test_rewards_and_validation() -> void:
++	var definitions: Array = TASKS.DEFINITIONS.duplicate(true)
++	definitions[0].reward = {"magic":17, "runes":["iron"], "relics":["bone-die"]}
++	var data := fixture()
++	data.known_runes = ["armor"]
++	data.known_relics = []
++	TASKS.record_location(data,"map","hut")
++	TASKS.reconcile(data,definitions)
++	check(data.magic==317 and "iron" in data.known_runes and "bone-die" in data.known_relics,"Configured magic and reference unlocks are granted")
++	check(data.new_player_tasks.completed.explore_frontier.reward.magic==17,"Completion contains the original reward receipt")
++	definitions[0].reward.magic = 99
++	TASKS.reconcile(data,definitions)
++	check(data.magic==317,"Editing reward configuration does not repay completed tasks")
++	var reloaded: Dictionary = JSON.parse_string(JSON.stringify(data))
++	TASKS.reconcile(reloaded,definitions)
++	check(reloaded.magic==317 and reloaded.known_runes.count("iron")==1,"Loading and rechecking do not duplicate rewards")
++	var all_unlocked := fixture()
++	TASKS.record_location(all_unlocked,"map","hut")
++	TASKS.reconcile(all_unlocked,definitions)
++	check(all_unlocked.known_runes.size()==TASKS.RULES.RUNES.size() and all_unlocked.known_relics.size()==TASKS.RULES.RELICS.size(),"Missing reference lists preserve the all-unlocked policy")
++	check(all_unlocked.magic==399,"Already-owned unlocks grant no compensation")
++	check(TASKS.reward_text(definitions[0].reward).contains("骨骰"),"Rewards have readable reference names")
++	for error_kind: String in ["duplicate", "missing", "cycle", "negative", "fraction", "unknown_rune", "unsupported_reward"]:
++		var invalid: Array = TASKS.DEFINITIONS.duplicate(true)
++		match error_kind:
++			"duplicate": invalid[1].id = invalid[0].id
++			"missing": invalid[0].prerequisites = ["missing_id"]
++			"cycle": invalid[0].prerequisites = ["explore_frontier"]
++			"negative": invalid[0].reward.magic = -1
++			"fraction": invalid[0].reward.magic = 1.5
++			"unknown_rune": invalid[0].reward.runes = ["not_a_rune"]
++			"unsupported_reward": invalid[0].reward.gold = 10
++		var unchanged := fixture()
++		var snapshot := unchanged.duplicate(true)
++		check(not TASKS.reconcile(unchanged,invalid).ok and unchanged==snapshot,"Invalid configuration is rejected without mutation: "+error_kind)
++	var corrupt := fixture()
++	corrupt.new_player_tasks.facts.locations = ["duplicate","duplicate"]
++	check(not TASKS.valid_progress(corrupt) and not TASKS.reconcile(corrupt).ok,"Corrupt task facts are rejected")
+diff --git a/it-is-time/Tests/Integration/ValidateNewPlayerTasks.gd.uid b/it-is-time/Tests/Integration/ValidateNewPlayerTasks.gd.uid
+new file mode 100644
+index 0000000..7e44b91
+--- /dev/null
++++ b/it-is-time/Tests/Integration/ValidateNewPlayerTasks.gd.uid
+@@ -0,0 +1 @@
++uid://bjfpf5moxl5v

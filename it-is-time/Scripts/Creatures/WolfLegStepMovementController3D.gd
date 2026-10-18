@@ -824,6 +824,7 @@ func _capture_chains() -> void:
 	var preset = get_parent().get("wolf_physics")
 	if preset == null or not preset.enabled: return
 	for foot: RigidBody3D in _chains:
+		if foot.has_meta(&"generated_module_id"): continue
 		if _has_body_tag(foot,LEG_TAG) and not _has_body_tag(foot,FORELEG_TAG) and preset.hind_lower_angle_limit_enabled and _chains[foot].joints.size()==4:
 			_configure_limb_bend_limit(_chains[foot],"wolf_hind_lower",deg_to_rad(180.0-preset.hind_lower_maximum_angle_degrees))
 		if not _has_body_tag(foot,FORELEG_TAG): continue
@@ -841,6 +842,7 @@ func _capture_chains() -> void:
 	var thigh_basis: Basis = reference_chain.bodies[top].global_basis.orthonormalized()
 	for foot: RigidBody3D in _chains:
 		if not _has_body_tag(foot,LEG_TAG) or _has_body_tag(foot,FORELEG_TAG): continue
+		if foot.has_meta(&"generated_module_id"): continue
 		var chain: Dictionary = _chains[foot]
 		if chain.bodies.size()!=5: continue
 		var root_body: RigidBody3D = chain.root

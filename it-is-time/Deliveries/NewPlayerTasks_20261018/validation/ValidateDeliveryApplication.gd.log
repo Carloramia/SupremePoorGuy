@@ -1,0 +1,206 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[auto_getlogs] enabled=true cooldown=30.0s debugger_attached=false
+[integration] event=route data={ "route": "main", "phase": "main" }
+[integration] event=route data={ "route": "world", "phase": "main" }
+DELIVERY_CHECK true Delivery world initializes
+DELIVERY_CHECK true Only the delivery map backend is active
+DELIVERY_CHECK true New game keeps empty inventory and 300 magic
+DELIVERY_CHECK true New game starts at summoning hut
+DELIVERY_CHECK true No duplicate preview battle viewport
+DELIVERY_CHECK true Inactive legacy viewport cannot cover the delivery map or its mouse input
+DELIVERY_CHECK true Actual mouse click on native summoning hut opens existing ritual UI
+DELIVERY_CHECK true Ritual UI lists the active summon pool
+DELIVERY_CHECK true Paper blocks map input
+DELIVERY_CHECK true Closing paper restores map input
+DELIVERY_CHECK true Wolf camp resolves
+DELIVERY_CHECK true Empty automatic encounter opens explicit party preparation
+DELIVERY_CHECK true Cancel preparation saves and restores exploration
+DELIVERY_CHECK true Empty party cannot manually enter battle
+DELIVERY_CHECK true Failed save cannot start combat
+[integration] event=route data={ "route": "battle", "phase": "loading_battle" }
+DELIVERY_CHECK true Battle request is committed
+[npc_equipment] character=/root/GameRoot/GameUI/GameDemo/AppShell/Layout/MainContent/Center/WorldView/ScenarioView/ScenarioViewViewport/BattleHost/Creature_test_human slot=0 holder=Arm_R weapon_scene=res://Scenes/Items/Weapons/Human/Human1Spear.tscn
+[integration] event=battle_start data={ "battle_id": "map_1792313696_1" }
+DELIVERY_CHECK true Native delivery battlefield deploys physical NPCs
+DELIVERY_CHECK true Location paper closes when entering actual battle
+DELIVERY_CHECK true Party and configured wolf roster deploy
+DELIVERY_CHECK true Actual allied actor deploys on the left facing right
+DELIVERY_CHECK true Actual enemy actor deploys on the right facing left
+DELIVERY_CHECK true Battle uses free cursor without Controller
+DELIVERY_CHECK true Battle physics is isolated
+DELIVERY_CHECK true Only real adapted ground is active
+[integration] event=pause data={ "reason": &"manual", "active": true }
+DELIVERY_CHECK true Space pause synchronizes actual physics
+[integration] event=pause data={ "reason": &"manual", "active": false }
+DELIVERY_CHECK true Space pause synchronizes actual physics
+DELIVERY_CHECK true Q toggles system mouse and camera input
+DELIVERY_CHECK true Q toggles system mouse and camera input
+DELIVERY_CHECK true Failed settlement leaves rewards untouched
+[integration] event=battle_commit data={ "battle_id": "map_1792313696_1", "outcome": "victory" }
+DELIVERY_CHECK true Clear victory commits reward and camp clear together
+DELIVERY_CHECK true Duplicate result never duplicates reward
+DELIVERY_CHECK true Settlement survives restart
+DELIVERY_CHECK true Runtime receipts derive from the one session ledger
+[integration] event=route data={ "route": "world", "phase": "world" }
+DELIVERY_CHECK true Settlement returns to existing delivery map
+DELIVERY_CHECK true Return clears the active request
+[integration] event=route data={ "route": "battle", "phase": "loading_battle" }
+[integration] event=route data={ "route": "world", "phase": "world" }
+DELIVERY_CHECK true Deployment failure cancels the committed request and returns to the map
+DELIVERY_CHECK true Persist loading fixture for cancellation recovery
+DELIVERY_CHECK true Cancellation save failure keeps request and a concrete retry action
+DELIVERY_CHECK true Escape cannot dismiss the only cancellation retry action
+DELIVERY_CHECK true Cancellation retry recovers the map
+DELIVERY_CHECK true Persist interrupted loading battle
+[npc_equipment] character=/root/GameRoot/GameUI/GameDemo/AppShell/Layout/MainContent/Center/WorldView/ScenarioView/ScenarioViewViewport/BattleHost/Creature_test_human slot=0 holder=Arm_R weapon_scene=res://Scenes/Items/Weapons/Human/Human1Spear.tscn
+DELIVERY_CHECK true Application restart resumes the same saved battle with real actors
+DELIVERY_CHECK true All five summoned species deploy into a real battlefield
+DELIVERY_CHECK true Explicitly finish deployment before testing combat
+DELIVERY_CHECK true Five allies and configured enemy spawn
+DELIVERY_CHECK true Saved creature has usable AI attack modules: Creature_pool_stump_beast
+DELIVERY_CHECK true Saved creature has usable AI attack modules: Creature_pool_wolf
+DELIVERY_CHECK true Saved creature has usable AI attack modules: Creature_pool_snake
+DELIVERY_CHECK true Saved creature has usable AI attack modules: Creature_pool_horned_beast
+DELIVERY_CHECK true Saved creature has usable AI attack modules: Creature_pool_spider
+DELIVERY_CHECK true Saved creature has usable AI attack modules: Creature_enemy_0
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Spider support resolves the isolated battle physics world
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_CHECK true Activated summoned physics remains finite
+DELIVERY_APPLICATION_PASSED

@@ -624,8 +624,10 @@ func _set_phase(value: StringName, reason: StringName = &"ready") -> void:
 	_positioning_update_elapsed = 0.0
 	_last_reason = reason
 	if value == &"lunging":
+		CombatAudio3D.play_at(head, &"attack")
 		_plan["launched"] = true
 		_origin = head.global_position
+	if value == &"closing": CombatAudio3D.play_at(head, &"bite")
 	if value == &"recovering":
 		if _attack_result == &"pending": _attack_result = reason if reason != &"ready" else &"no_damage"
 		_recovery_angles = _angles.duplicate()

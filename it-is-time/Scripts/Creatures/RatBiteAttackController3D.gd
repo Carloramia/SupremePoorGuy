@@ -213,6 +213,7 @@ func _physics_process(delta: float) -> void:
 			_weapon.setup(jaw,get_parent(),size*data.box_size_ratio,size*data.box_center_ratio,data.impulse_multiplier,data.hit_ragdoll_duration)
 			add_child(_weapon)
 			phase = Phase.STRIKING
+			CombatAudio3D.play_at(head, &"attack")
 			_phase_elapsed = 0.0
 			log_event(&"Bite",&"striking",get_diagnostics())
 	else:
@@ -220,6 +221,7 @@ func _physics_process(delta: float) -> void:
 		if _closing_elapsed<0.0 and head.global_position.distance_to(_locked_head_point)<=_body_length()*data.arrival_tolerance_ratio:
 			_arrived = true
 			_closing_elapsed = 0.0
+			CombatAudio3D.play_at(jaw, &"bite")
 			log_event(&"Bite",&"point_reached",get_diagnostics())
 		if _closing_elapsed>=0.0:
 			_closing_elapsed += delta

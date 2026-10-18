@@ -8,6 +8,8 @@ const SNAPSHOT = preload("res://Scripts/Creatures/Generators/ManualPartSnapshot.
 
 static func context(body: PhysicalBodyPart3D) -> Dictionary:
 	if not is_instance_valid(body) or not body.is_inside_tree() or not body.has_meta(&"generated_role"): return {}
+	# Module snapshots are separate from the generator's base PartSceneRules.
+	if body.has_meta(&"generated_module_id"): return {}
 	var container := body.get_parent()
 	var actor := container.get_parent() as CHARACTER
 	if actor == null or container.name != &"GeneratedParts": return {}

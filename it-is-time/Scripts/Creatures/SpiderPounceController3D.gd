@@ -394,6 +394,7 @@ func _launch() -> void:
 		row["hitbox"] = hitbox
 	_launch_origin = _movement._torso.global_position
 	_set_phase(Phase.LEAPING)
+	CombatAudio3D.play_at(_movement._torso, &"attack")
 
 func _flight_pose() -> void:
 	var progress := smoothstep(0.0, float(_plan.duration)*0.7, _elapsed)

@@ -1,0 +1,93 @@
+ItIsTime Windows 测试包与资源包
+日期：2026-10-18
+
+1. 产物与使用
+
+本轮输出目录：D:/GameJamWorkspace/Builds/ItIsTime/2026-10-18/
+Windows-x86_64/ItIsTime.exe：直接运行。保持整个目录中的 PCK、数据文件和附属文件完整。
+ItIsTime-Windows-x86_64.zip：可发给测试人员；完整解压后运行 ItIsTime.exe。
+ResourcePack/ItIsTime.pck：与程序旁的 PCK 内容相同，是完整游戏数据包，不是可单独启动的程序，也不是源码工程备份。
+manifest.json：文件尺寸、SHA-256 和引擎版本。export.log、smoke.log：本轮构建与自检证据。
+
+目标平台为 Windows x86_64，保留 Forward+ / Direct3D 12。无需安装 Godot 编辑器或 .NET。
+本轮不提供 Android、Web、Linux、macOS 包或安装器，也不新增 DLC/模组自动加载系统。
+
+2. 再次构建
+
+在项目根目录运行 PowerShell：
+  & .\Tools\Export\Build-Windows.ps1
+
+每次生成新的日期时间目录，避免覆盖上一版。
+也可以指定一个尚不存在的输出目录：
+  & .\Tools\Export\Build-Windows.ps1 -OutputRoot D:/GameJamWorkspace/Builds/ItIsTime/MyTestBuild
+
+构建会先导出 Release，再启动独立程序自检，成功后才复制独立资源包、生成 ZIP 和校验清单。
+若 Godot 退出码为 0 但日志存在 ERROR 或 SCRIPT ERROR，仍按失败处理。
+自检失败或超过 60 秒也会停止构建，不生成可交付 ZIP。
+
+本机标准引擎：
+  D:/GameJamWorkspace/BuildTools/Godot-4.7.2/editor/Godot_v4.7.2-stable_win64_console.exe
+模板目录：
+  D:/GameJamWorkspace/BuildTools/Godot-4.7.2/templates/
+
+预设使用相对于工程的模板路径，依赖以上工作区结构；更换机器时需要准备相同版本的标准引擎和模板。
+原来的 .NET 编辑器可以继续用于编辑；此构建脚本明确使用标准引擎，不调用遗留的 ItIsTime.csproj / .sln。
+没有删除这两个历史工程文件，但它们不会进入资源包。
+
+官方来源（下载后按 SHA512-SUMS.txt 校验）：
+  https://github.com/godotengine/godot-builds/releases/tag/4.7.2-stable
+  Godot_v4.7.2-stable_win64.exe.zip
+  Godot_v4.7.2-stable_export_templates.tpz
+仅解压 Windows x86_64 debug/release、控制台包装程序、ICU 数据和版本文件。
+标准引擎旁的 _sc_ 标记将编辑器配置放在 BuildTools 内，避免改动日常编辑器配置。
+
+3. 导出规则
+
+export_presets.cfg 中的 Windows Desktop 导出所有资源，并显式包含 JSON。
+这样可以保留通过字典、文件路径和目录动态加载的生物、地图、本地化、模型与贴图。
+保留 Tools/Integration 的地图运行时构建依赖。
+排除 Tests、Docs、Deliveries、编辑器插件、导出/测试工具、未处理原图、历史 .NET 工程和日志压缩包。
+Deliveries/.gdignore 仅阻止 Godot 扫描归档副本，避免重复脚本 UID；不删除交付文件。
+
+editor/export/convert_text_resources_to_binary=false：保留文本场景文件，确保 CreatureFactory 的场景哈希和生物存档校验可用。
+生成器和生成角色脚本仅在编辑器分支中动态获取 EditorInterface，避免正式模板解析不存在的编辑器类。
+没有调整生物的物理参数、移动或攻击数值。
+
+4. 存档与日志
+
+正式包：%APPDATA%/Godot/app_userdata/ItIsTime/
+存档：saves/slot_01.json
+运行日志：logs/
+控制台 getlogs 压缩包：log_archives/runtime_logs_*.zip；控制台会打印完整路径。
+在编辑器中运行时，getlogs 仍输出到工程根目录。
+不要把存档或日志写入 PCK 或程序安装目录。
+
+5. 独立包自检
+
+正式模板不开放外部 --script / --main-pack 参数，因此使用包内显式自检入口：
+  .\ItIsTime.exe --headless --log-file D:/GameJamWorkspace/Reports/export_verify.log -- --verify-export
+
+普通启动不执行自检。自检读取真实 PCK，验证本地化、全部地图 JSON、六种动态角色模板和场景哈希，
+然后进入主菜单、大地图，保存一只 Wolf，加载战场并部署两只物理生物、启动战斗，再验证 getlogs ZIP。
+测试存档使用 user://export_smoke/ 下的独立目录，不覆盖正式存档；成功结束时删除本次测试存档和 ZIP。
+成功标识为 EXPORTED_PACKAGE_PASSED。
+
+可选图形检查会保存三个阶段的 PNG：
+  .\ItIsTime.exe --log-file D:/GameJamWorkspace/Reports/export_graphics.log -- --verify-export --capture-dir=D:/GameJamWorkspace/Reports/ExportScreens
+
+自检是导出与短流程验证，不代表长期混战、所有生物和全部硬件已经通过稳定性验收。
+
+6. 本轮验证结果
+
+正式包 headless 自检：47 项通过，退出码 0，无 ERROR / SCRIPT ERROR。
+D3D12 / Forward+ / RTX 4090 图形自检：50 项通过，退出码 0；已检查主菜单、首次进入地图时的待办界面、战斗部署截图。
+独立资源包与程序旁 PCK 的 SHA-256 完全一致；ZIP 解压 CRC、ZIP 内 PCK 哈希及清单中的 6 个文件哈希均通过。
+Wolf 手动布局、内部模型与碰撞数据的保存/重生成测试通过；RuntimeConsole 日志 ZIP 测试通过。
+
+记录位置：D:/GameJamWorkspace/Reports/ExportPackage_2026-10-18/verification.json
+截图位置：同目录 Screens/
+早期失败尝试的日志保留在 EarlierAttempts/，对应不可用包体已删除。
+
+边界：Generate_Bird 不在本轮战斗部署验证中。另一次部件编辑器回归测试在 Bird 的 test_feather 中遇到空 Mesh 的
+get_aabb 异常（Tests/ValidateGeneratedPartEditor3D.gd:159），并有编辑器退出资源泄漏报告；该编辑器测试不能计作全部通过。
+此前混战中的物理稳定性、失效关节引用和原生崩溃问题也未在此次打包工作中统一修复。

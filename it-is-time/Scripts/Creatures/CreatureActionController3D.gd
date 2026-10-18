@@ -188,6 +188,7 @@ func _update_contact_shockwave(row: Dictionary) -> void:
 	var impulse: float = sample.get("impulse",0.0)
 	row["stomp_impulse"] = impulse
 	row["shockwave_triggered"] = true
+	CombatAudio3D.play_at(row.body, &"stomp", sample.get("position",pending.point))
 	_spawn_shockwave(sample.get("position",pending.point),pending.normal,impulse)
 
 func _reject(reason: StringName) -> bool:

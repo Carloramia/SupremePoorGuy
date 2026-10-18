@@ -101,6 +101,8 @@ func _set_phase(value: StringName) -> void:
 			if alive(row.body): row["recovery_start"] = row.body.global_position
 	_phase = value
 	_phase_time = 0.0
+	if value == &"lunging": CombatAudio3D.play_at(head, &"attack")
+	elif value == &"closing": CombatAudio3D.play_at(jaw, &"bite")
 	controller.log_event(name,value,{"retract":_retract,"advance":_advance,"crouch":_crouch,"charge_time":maxf(data.bite_retract_time,data.jaw_open_time),"torso_position":controller.torso.global_position,"torso_velocity":controller.torso.linear_velocity,"torso_advance":(controller.torso.global_position-_origin).dot(_forward)})
 
 func _spacing_for(next_target: PhysicalBodyPart3D) -> float:

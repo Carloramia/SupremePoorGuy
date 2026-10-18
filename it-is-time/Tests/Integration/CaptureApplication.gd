@@ -23,6 +23,8 @@ func run() -> void:
 		if app.phase=="world": break
 		await physics_frame
 	assert(app.phase=="world")
+	await capture("02_initial_tasks")
+	app.ui._close_all()
 	preload("res://Tests/Integration/ApplicationFixtures.gd").add_human(app.session)
 	await capture("02_world")
 	app.ui._warehouse("team")

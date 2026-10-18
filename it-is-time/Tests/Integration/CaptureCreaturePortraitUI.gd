@@ -26,6 +26,7 @@ func run() -> void:
 		if app.phase=="world": break
 		await physics_frame
 	check(app.phase=="world","Application world is ready")
+	app.ui._close_all()
 	for id: String in FACTORY.SUMMON_POOL:
 		var record := FACTORY.template(id)
 		record.merge({"id":"portrait_"+id,"position":"team" if id=="wolf" else "warehouse","traits":[]},true)

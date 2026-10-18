@@ -1168,6 +1168,7 @@ func _release_member(group_index: int, member_state: Dictionary) -> void:
 	_begin_damage_swing(member_state)
 	_apply_member_torque(member_state)
 	_log_member(group_index, member_state, "swing_started")
+	CombatAudio3D.play_at(body, &"attack")
 	if diagnostic_logging:
 		print("[swing_timing] arm=%s force_time=%.3f follow_time=%.3f direction_hold_time=%.3f recovery_time=%.3f sustained_torque=%.3f sustained_time=%.3f axis=%s" % [
 			body.name, member_state.attack_tuning.swing_time, member_state.attack_tuning.follow_time,

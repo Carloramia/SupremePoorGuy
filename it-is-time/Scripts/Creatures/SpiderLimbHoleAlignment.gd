@@ -15,6 +15,7 @@ static func align(container: Node3D) -> int:
 static func _pairs(container: Node3D) -> Dictionary:
 	var pairs: Dictionary = {}
 	for joint: Generic6DOFJoint3D in container.find_children("*", "Generic6DOFJoint3D", true, false):
+		if joint.has_meta(&"module_joint_settings"): continue
 		if joint.node_a.is_empty() or joint.node_b.is_empty(): continue
 		var a := joint.get_node_or_null(joint.node_a) as PhysicalBodyPart3D
 		var b := joint.get_node_or_null(joint.node_b) as PhysicalBodyPart3D

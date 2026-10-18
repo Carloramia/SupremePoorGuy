@@ -1,0 +1,27 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Characters/Generate_Beast.tscn" id="1_base"]
+[ext_resource type="Script" path="res://Scripts/Creatures/Modules/CreatureModuleAttachment.gd" id="2_attachment"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Modules/VisualModule.tscn" id="3_visual"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Modules/SinglePartModule.tscn" id="4_part"]
+
+[sub_resource type="Resource" id="Indicator"]
+resource_local_to_scene = true
+script = ExtResource("2_attachment")
+instance_id = &"indicator"
+module_scene = ExtResource("3_visual")
+host_part_key = "Torso"
+mount_offset = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+
+[sub_resource type="Resource" id="Pendant"]
+resource_local_to_scene = true
+script = ExtResource("2_attachment")
+instance_id = &"pendant"
+module_scene = ExtResource("4_part")
+host_part_key = "Torso"
+mount_offset = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.3)
+size_multiplier = 0.5
+
+[node name="Generate_ModularBeast" instance=ExtResource("1_base")]
+generate_on_ready = true
+module_attachments = Array[ExtResource("2_attachment")]([SubResource("Indicator"), SubResource("Pendant")])
