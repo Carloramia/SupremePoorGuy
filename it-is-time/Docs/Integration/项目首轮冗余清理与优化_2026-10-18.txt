@@ -1,0 +1,58 @@
+项目首轮冗余清理与优化
+
+本轮完成
+1. 删除 CharacterAnimationStateMachine.gd、CharacterFaceCamera.gd 及对应 .uid；删除前已核对场景、脚本、资源、UID 和工程引用。
+2. 删除没有调用入口的快速躯干速度驱动函数和简化姿态力矩函数；移除关联及其他共 13 个不参与实际控制的 Inspector 参数。未重新启用已废弃的施力。
+3. ItIsTime.csproj 移除 149 项 Content 引用：130 项 .godot 缓存、15 项 .idea 状态、4 项已删除的旧脚本及 UID。保留 .NET 工程和现有 SDK。
+4. 项目根的旧日志压缩包、Tests/.facing-motion.log、.idea/workspace.xml 已先备份到项目外再移除；.gitignore 增加相应规则。其他已跟踪的 IDE 共享配置未整体删除。
+5. 将光标与弧线指示器的重复地形探测整合到 Scripts/Geometry/TerrainProbe3D.gd；复用一次查询参数对象。保留各组件原来的射线、碰撞掩码、排除次数、地形组和性能计数。
+6. 修正 HornedBeast 尾部 metadata/source_png 中遗留的 HornFan 路径。只改来源信息，不改模型、碰撞箱、关节或布局。
+
+按需诊断计算
+- 保留原有支撑分配、支撑权重、质量/重心、segment.balanced 和体节推进逻辑。
+- 优化模式启用时，逐关节“理论承重力矩”只在 get_generated_movement_diagnostics / get_stance_support_diagnostics 被请求时计算。
+- 一次支撑分配版本只计算一遍；重复读取复用结果。插值使用距上次诊断采样累计的时间，不影响物理控制计时。
+- perfmode off 恢复原来的主动估算频率；切换不改变真实力和关节参数。
+- 控制台 trackmotion / tracknpcmotion / trackgenerated 沿用原有命令与输出字段。
+- trackcontrolperf 可看到新增计数 stance_allocation_updates、stance_joint_diagnostic_updates、stance_joint_diagnostic_joints。无人读取诊断时，后两项应为零或不出现。
+- 没有整体删除 _update_stance_allocation：它的 balanced 结果仍参与真实躯干推进。
+- 被动铰链、Spider 对齐等每帧物理计算及其现有轻量记录，本轮未整体改成低频，以免损失实际力矩采样。
+
+测试处理
+- ValidateStanceLegTorqueRelease3D：改为验证已取消的主动站姿施力不会重新作用于 Leg、ForeLeg 和 LegLimb。
+- ValidateZeroGravitySegments3D：显式开启零重力隔离模式；验证生成/已保存部件、控制器切换和原始重力恢复。去掉“默认无重力”与旧体节结构、旧直接输入的错误假设，不再访问可能为空的 springs[0]。
+- 对直接检查内部理论承重缓存的两份历史测试，增加公共诊断快照请求；这不代表它们的其余旧设计断言已全部现代化，也未将其纳入本次当前验收。
+- 新增 ValidateDemandDiagnostics3D、ValidateTerrainProbe3D。
+- 新增 Tools/Testing/RunOptimizationChecks.py，顺序执行本轮针对性检查，同时要求成功标记、零退出码和无 ERROR/SCRIPT ERROR，防止 Godot 脚本错误退出码为 0 的假通过。
+
+已通过的 9 项针对性检查
+ValidateDemandDiagnostics3D
+ValidateTerrainProbe3D
+ValidateStanceLegTorqueRelease3D
+ValidateZeroGravitySegments3D
+ValidatePerformanceOptimization
+ValidateControlledPartMotionTracking
+Integration/ValidateGameSession
+Integration/ValidateGameRoot
+Integration/ValidateQuests
+
+隔离计算样本
+8 个固定接触控制器，各执行 40 次支撑分配；两组都开启相同的性能模式，仅比较是否主动执行理论承重诊断。
+原主动估算：320 次真实分配、320 次诊断更新、640 次关节估算。
+按需模式：320 次真实分配、0 次未请求的诊断更新、0 次关节估算。
+已验证支撑权重及 balanced 一致；请求快照时仍能生成承重信息，读取不施加力。
+这是隔离的计算测试，不是 8 NPC 战斗帧率测试，也不能用其耗时比例推算全游戏 FPS。
+
+复测方式
+在项目根使用 Python 运行：
+python Tools/Testing/RunOptimizationChecks.py
+可用 --godot 指定 Godot 控制台程序，--output 指定项目外报告目录，--only 选择内置检查。
+默认日志：D:/GameJamWorkspace/Reports/ProjectOptimization_2026-10-18/Checks。
+
+备份与范围
+修改前文件位于 D:/GameJamWorkspace/Reports/ProjectOptimization_2026-10-18/Before。
+移出的本机文件位于同目录 Archived；cleanup.json 记录移除的工程条目和归档路径。
+本轮保留已有未提交改动，未执行 Git 暂存、提交或推送。
+未调整生物生成、移动、转向、攻击预设，未移动或去重正式贴图资源，未修改玩家实际存档。
+尚未实施：模板版本迁移、约 348 MB 重复资源的引用归并、各物种烘焙工具的进一步整合、独立原型归档。
+未执行全部历史测试、正式导出、.NET 构建或 50 NPC 压测；实际帧率改善仍需在图形运行环境中复测。

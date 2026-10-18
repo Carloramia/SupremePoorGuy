@@ -1,0 +1,112 @@
+任务系统基础接口
+
+本次范围
+- 已提供任务资源、前置解锁、接取、事件计数、完成锁存、领奖、持久化和变更信号。
+- 尚未替换现有“待办事项”页面，未默认启用新任务，也未自动采集地图/召唤/编队事件。
+- GameRoot 的 Quest Definitions 默认为空，不额外发放奖励。后续正式任务可逐项接入。
+
+一、资源与挂载
+1. Scripts/Quests/QuestDefinition.gd：Resource，任务 ID、标题/描述文本键、前置任务、自动接取、目标数组、奖励。
+2. Scripts/Quests/QuestObjectiveData.gd：Resource，目标 ID、描述文本键、事件键、可选目标 ID、所需数量、计数模式和历史事实开关。
+3. Scripts/Quests/QuestService.gd：内部纯逻辑服务，不需要挂载 Node 或注册 Autoload。
+4. 在 Scenes/Application/GameRoot.tscn 根节点的 Quest Definitions 数组中挂载 QuestDefinition 的 .tres。
+5. Resources/Quests/Examples/FirstVictory.tres 是一个可加载的配置示例：一次 battle.victory，奖励 20 魔力。示例中的 quest.example.* 文本键需在正式展示前补充本地化文案。
+
+GameSession 是 GameRoot.session，各系统应使用这个会话实例，不要另建一个实例来写当前玩家的任务。
+
+二、公共 API（Scripts/Application/GameSession.gd）
+configure_quests(definitions: Array) -> bool
+  注册任务资源。GameRoot 已在读取存档前调用。可用于独立测试。
+  校验重复 ID、空目标、非法计数、前置缺失/循环、无效符文/奇物奖励。
+  不立即写盘；不要在游戏运行中反复调用。资源被复制，外部修改不会改变本次会话配置。
+
+get_quest(id: StringName) -> Dictionary
+get_quests(states: PackedStringArray = []) -> Array[Dictionary]
+  未知 ID 返回空字典；空 states 返回全部已配置任务。
+  返回可供 UI 使用的独立快照：id/title_key/description_key/state/objectives/prerequisite_ids/reward_*。
+  objectives 每项包含 id/description_key/count/required_count，不暴露内部去重记录。
+  例如：session.get_quests(PackedStringArray(["active", "completed"]))。
+
+accept_quest(id: StringName) -> bool
+  仅 available 任务可以接取，成功后立即保存；保存失败回滚。
+
+record_quest_event(event_key: StringName, event_id: String,
+                   target_id: StringName = &"", amount: int = 1,
+                   historical: bool = false) -> bool
+record_quest_events(events: Array) -> bool
+  用于独立的任务进度提交。整批先校验再处理，不允许部分提交。
+  true 也可能是无变化：无匹配任务、事件已处理、任务尚未接取等。
+  返回 false 时可读取 session.last_error。
+
+claim_quest_reward(id: StringName) -> bool
+  仅 completed 可以领奖。魔力、符文/奇物解锁、claimed 状态和 quest:<ID> 奖励回执一起保存。
+  重复领取失败；保存失败全部回滚，允许重试。
+
+signal quests_changed
+  成功写盘且任务数据发生变化时触发；重复事件和失败提交不会触发。
+  供 UI 按需刷新，不需要逐帧轮询。配置/读档时直接读取初始快照。
+
+三、状态与计数语义
+locked -> available -> active -> completed -> claimed
+自动接取的任务解锁后直接 active。
+所有前置任务 completed 或 claimed 即可解锁；不要求先领奖。
+多个目标为 AND；同一目标内只匹配 event_key，以及非空的 target_id。
+同一 event_key + event_id 只消费一次，可同时推进所有已接取的匹配目标，不重放给之后才解锁的任务。
+仅记录实际推进进度的回执，已完成目标停止收集事件，进度不会倒退。
+一次事件不会同时完成它刚解锁的后续任务；批次中的下一条事件可以推进后续任务。
+COUNT：将 amount 累加到 required_count，默认 amount=1。
+MAXIMUM：记录 amount 的历史最大值，例如“有效出战单位数量”，不相加。
+historical=true 仅被 count_history=true 的目标接受，不会自动扫描旧存档补进度。
+只有 active 任务收事件；available/locked 不预存事件。后续补历史应在任务接取后显式回放可靠事实。
+
+四、事件格式与调用示例
+事件字典（普通字符串；amount 是非负整数；historical 是布尔值）：
+{
+  "event_key":"battle.victory",
+  "event_id":"battle_实际战斗ID",
+  "target_id":"bandit_camp",
+  "amount":1,
+  "historical":false
+}
+
+独立提交：
+if not session.record_quest_event(&"map.visited", "frontier:town", &"town"):
+    push_warning(session.last_error)
+
+事件键没有写死，可以约定 map.visited、summon.settled、party.ready、battle.victory、camp.cleared 等。
+event_id 必须来自真实业务回执；不要使用每帧时间戳、界面打开次数或按钮点击次数。
+同一地点用稳定地点 ID，召唤用批次 ID，战斗用 battle_id。是否重复计数由业务回执的含义决定。
+“召唤成功并安置”应在确有成功单位且同批 pending 全部安置后发送，不能单用 serial > 0。
+“探索地点”不能根据 worlds 非空判定；发现并实际到达后再发送。
+
+五、与业务操作同存档提交的接口
+save_world(snapshot: Dictionary, quest_events: Array = []) -> bool
+save_delivery_world(snapshot: Dictionary, request: Dictionary = {}, quest_events: Array = []) -> bool
+commit_battle(result: Dictionary, world_snapshot: Dictionary, quest_events: Array = []) -> bool
+
+以上保留旧调用方式。新增可选参数用于在同一次保存中提交地图/战斗与任务进度。
+例：由战斗结算调用方根据真实 outcome 构造事件：
+var events: Array = []
+if result.outcome == "victory":
+    events.append({"event_key":"battle.victory", "event_id":result.battle_id})
+if not session.commit_battle(result, snapshot, events):
+    # 调用方沿用原有世界状态回滚，不显示成功结算。
+    push_warning(session.last_error)
+
+不要先 commit_battle 成功、再独立 record_quest_event；那会拆成两次存档。
+重复战斗回执会直接返回，不补发新事件；要同步的事件必须随首次成功结算一起提交。
+召唤和编队的业务回调尚未接入；后续应在 GameSession/PrototypeState 的原有事务保存前应用事件，不能另起一次保存。
+不要将任务采集连接到 diagnostic_event：关闭诊断日志不应影响任务进度。
+
+六、存档兼容
+data.quests = {"version":1, "entries":{...}, "receipts":{...}}，与地图 schema_version 独立。
+旧存档没有 quests 时初始化空任务状态，不自动完成、不补发奖励。
+首次保存升级存档之前，保留 <save_path>.pre_quests_v1.bak；备份失败不覆盖旧存档。
+删除/暂时不挂载某个定义时保留其已存进度；恢复相同 ID 不会重领已领取奖励。
+已发布的任务 ID、目标 ID、事件 ID 语义应保持稳定。改目标/奖励不等于开始新任务；新任务使用新 ID。
+不支持重复领取的日常/循环任务、自动历史补算或任意物品奖励；这些不属于当前接口范围。
+
+七、验证
+Tests/Integration/ValidateQuests.gd：资源、目标 AND/过滤/MAXIMUM/历史开关、事件去重、前置、接取、完成锁存、领奖与回滚、读档、旧存档备份、错误输入、业务联合事务。
+Tests/Integration/ValidateGameSession.gd：原召唤、编队、存档、战斗奖励回归。
+Tests/Integration/ValidateGameRoot.gd：现有游戏入口、地图、战斗与结算回归。

@@ -1,0 +1,30 @@
+[gd_scene load_steps=4 format=3]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/_PhysicalSampleBodyParts.tscn" id="base"]
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/Bird/Scenes/Bird_1/Legs/BodyLinkLower.tscn" id="model"]
+[sub_resource type="ConvexPolygonShape3D" id="Shape"]
+resource_local_to_scene = true
+points = PackedVector3Array(-0.34470588, -1.46700000, -0.08000000, -0.28705882, -0.19100000, -0.08000000, -0.17176471, 0.09900000, -0.08000000, -0.11411765, 0.21500000, -0.08000000, -0.08529412, 0.24400000, -0.08000000, -0.05647059, 0.24400000, -0.08000000, 0.05882353, 0.21500000, -0.08000000, 0.14529412, 0.18600000, -0.08000000, 0.26058824, -0.04600000, -0.08000000, 0.28941176, -0.10400000, -0.08000000, 0.40470588, -0.88700000, -0.08000000, 0.40470588, -0.94500000, -0.08000000, 0.11647059, -1.72800000, -0.08000000, 0.03000000, -1.81500000, -0.08000000, -0.02764706, -1.84400000, -0.08000000, -0.17176471, -1.84400000, -0.08000000, -0.22941176, -1.81500000, -0.08000000, -0.25823529, -1.78600000, -0.08000000, -0.28705882, -1.72800000, -0.08000000, -0.31588235, -1.67000000, -0.08000000, -0.34470588, -1.52500000, -0.08000000, -0.34470588, -1.46700000, 0.08000000, -0.28705882, -0.19100000, 0.08000000, -0.17176471, 0.09900000, 0.08000000, -0.11411765, 0.21500000, 0.08000000, -0.08529412, 0.24400000, 0.08000000, -0.05647059, 0.24400000, 0.08000000, 0.05882353, 0.21500000, 0.08000000, 0.14529412, 0.18600000, 0.08000000, 0.26058824, -0.04600000, 0.08000000, 0.28941176, -0.10400000, 0.08000000, 0.40470588, -0.88700000, 0.08000000, 0.40470588, -0.94500000, 0.08000000, 0.11647059, -1.72800000, 0.08000000, 0.03000000, -1.81500000, 0.08000000, -0.02764706, -1.84400000, 0.08000000, -0.17176471, -1.84400000, 0.08000000, -0.22941176, -1.81500000, 0.08000000, -0.25823529, -1.78600000, 0.08000000, -0.28705882, -1.72800000, 0.08000000, -0.31588235, -1.67000000, 0.08000000, -0.34470588, -1.52500000, 0.08000000)
+metadata/body_part_collision_depth_multiplier = 2.0
+[node name="Bird1BodyLinkLower" instance=ExtResource("base")]
+mass = 0.1
+geometry_mode = 1
+custom_model_path = NodePath("Model")
+paper_volume_enabled = true
+paper_volume_thickness = 0.08
+sprite_visible = false
+mesh_visible = true
+tags = Array[int]([5])
+metadata/source_png = "res://Assets/2DResources/Bird/Separated/Bird_1/Legs/BodyLinkLower.png"
+metadata/anatomical_role = "Legs"
+metadata/part_key = "Bird_1/Legs/BodyLinkLower"
+metadata/pivot_is_initial_estimate = true
+[node name="CollisionShape3D" parent="." index="0"]
+position = Vector3(0, 0, 0)
+shape = SubResource("Shape")
+[node name="MeshInstance3D" parent="." index="2"]
+visible = false
+mesh = null
+[node name="Model" parent="." instance=ExtResource("model")]
+[node name="JointIn" type="Marker3D" parent="."]
+[node name="JointOut" type="Marker3D" parent="."]
+position = Vector3(-0.10000000, -1.66000000, 0.00000000)

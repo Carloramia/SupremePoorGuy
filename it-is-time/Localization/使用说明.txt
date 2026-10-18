@@ -1,0 +1,58 @@
+本地化资源使用说明
+
+目录
+config.json：默认语言、回退语言和各语言的文件清单。
+catalog.json：稳定文本键、原文、分类和来源位置。中文和英文原文都可能出现在清单中。
+zh_CN/：当前文案的完整默认包，按 ui、creatures、items、maps_events、console、editor 分类。
+en/：英文示例包，目前主要覆盖常用界面、物种名与操作提示。缺失项使用中文包。
+
+修改文字
+在 catalog.json 中搜索现有文字或来源文件，找到对应的键，再修改语言 JSON 的 messages[key]。
+不要修改键名，也不要修改原始数据中的节点路径、物种 ID、输入映射、控制台命令、存档标识。
+默认界面文字仍然可以保留原文，加载器会同时注册稳定键和原文别名；复杂动态文案通过 GameText 绑定。
+编辑语言 JSON 后重新运行游戏生效，不会改变生物结构、战斗参数或存档中的内部标识。
+
+增加文本
+新代码推荐使用有意义的键，例如 ui.main.start_game，先登记 catalog.json，再写入中文包。
+先在脚本中定义 const TEXT = preload("res://Scripts/Localization/GameText.gd")。
+普通文本：TEXT.text("ui.main.start_game")。
+命名参数：TEXT.text("party.count", {"count": 2, "capacity": 6})。
+需要在切换语言时即时刷新的控件：
+const TEXT = preload("res://Scripts/Localization/GameText.gd")
+TEXT.bind(label, &"text", func(): return TEXT.text("party.count", {"count": state.occupied_slots(), "capacity": 6}))
+单纯静态文本可写 TEXT.bind(button, &"text", "ui.main.start_game")。
+绑定会在控件离开树时自动注销，没有逐帧扫描整个场景树。
+构建表达式只应用于显示，不能执行交易、移动、生成、存档等操作。
+捕获已确定的文字/数据，不要在关闭后的隐藏控件中读取空的弹窗栈。
+
+文本规则
+% 格式参数的类型与顺序必须保持一致；推荐新增文案使用 {count} 这样的命名参数。
+BBCode 的标签和链接 ID（例如 [url=地区]）不能被翻译，标签内部的可见文字可以翻译。
+玩家改名按原样显示，新改名带 custom_name 标记；旧存档中与物种默认名不同的名字按自定义名处理。
+编辑器说明、历史演示和诊断原文也保留在候选清单中，但不会批量改写技术日志或内部查找键。
+图片本身已经绘制的文字不属于字符串翻译，需要独立替换图片。
+
+语言切换
+游戏中 ESC 打开设置，在“语言”下拉框切换。
+语言独立保存到 user://settings/language.cfg；显示设置和游戏存档不受影响。
+只有 config.json 列出的语言可以选择；英文缺失项回退中文。
+新增语言：建立同结构的语言目录，在 config.json.locales 登记语言代码、名称和文件清单。
+
+提取与验证（在项目目录执行）
+python Tools/Localization/build_catalog.py
+python Tools/Localization/validate_catalog.py
+提取保留已有键和手工翻译，不会把旧翻译覆盖为源文。
+扫描是候选收集，新增代码仍需在显示处调用 GameText 或使用原生可自动翻译的文本控件。
+验证检查 JSON 重复键、跨文件重复键、未知键、回退覆盖、格式占位符和 BBCode。
+
+导出
+addons/localization_export 已启用。导出插件按 config.json 将全部语言 JSON 和清单加入资源包，
+避免仅在编辑器可读取 JSON、导出后文件缺失。
+Tests/Integration/ValidateLocalizationPack.gd 使用同一文件清单制作独立 PCK；实际从此 PCK 启动的测试验证了读取和回退。
+本次未生成完整平台发行包，也未进行所有语言的画面排版验收。
+
+验证脚本
+Tests/Integration/ValidateLocalization.gd：真实设置窗口、动态刷新、自定义名、仓库筛选、法阵、语言保存、绑定释放。
+Tests/Integration/ValidateLocalizationPack.gd：资源包文件清单与打包准备。
+Tests/ValidateRuntimeConsole.gd、Tests/ValidateWorkshopRightPanel.gd、Tests/Integration/ValidateApplicationInput.gd、
+Tests/Integration/ValidateDeliveryApplication.gd：现有功能回归。

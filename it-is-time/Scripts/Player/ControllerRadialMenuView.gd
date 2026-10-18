@@ -1,4 +1,5 @@
 extends Node2D
+const L10N = preload("res://Scripts/Localization/GameText.gd")
 
 var menu: CanvasLayer
 
@@ -23,9 +24,13 @@ func _draw() -> void:
 		draw_arc(Vector2.ZERO, menu.outer_radius, start, start + span, subdivisions + 1, Color(1, 1, 1, 0.65), 1.5, true)
 		draw_line(Vector2.from_angle(start) * menu.inner_radius, Vector2.from_angle(start) * menu.outer_radius, Color(1, 1, 1, 0.4), 1.0, true)
 		var center: Vector2 = Vector2.from_angle(middle) * ((menu.inner_radius + menu.outer_radius) * 0.5)
-		var text_size := font.get_string_size(option.display_name, HORIZONTAL_ALIGNMENT_LEFT, -1, menu.font_size)
+		var caption := L10N.text(option.display_name)
+		var text_size := font.get_string_size(caption, HORIZONTAL_ALIGNMENT_LEFT, -1, menu.font_size)
 		var text_color: Color = menu.text_color
 		if not option.enabled: text_color.a *= 0.4
 		if option.icon != null:
 			draw_texture_rect(option.icon, Rect2(center - Vector2(16, 36), Vector2(32, 32)), false)
-		draw_string(font, center - Vector2(text_size.x * 0.5, -menu.font_size * 0.35), option.display_name, HORIZONTAL_ALIGNMENT_LEFT, -1, menu.font_size, text_color)
+		draw_string(font, center - Vector2(text_size.x * 0.5, -menu.font_size * 0.35), caption, HORIZONTAL_ALIGNMENT_LEFT, -1, menu.font_size, text_color)
+
+func _notification(what: int) -> void:
+	if what==NOTIFICATION_TRANSLATION_CHANGED: queue_redraw()

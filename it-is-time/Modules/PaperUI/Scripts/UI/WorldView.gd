@@ -1,5 +1,6 @@
 @tool
 extends Control
+const L10N = preload("res://Scripts/Localization/GameText.gd")
 const Style = preload("res://Modules/PaperUI/Scripts/UI/UIStyle.gd")
 const Portrait = preload("res://Modules/PaperUI/Scripts/UI/MonsterPortrait.gd")
 signal location_clicked(id: String, kind: String)
@@ -28,7 +29,7 @@ func _ready() -> void:
 	for i in LOCATIONS.size():
 		var place: Dictionary = LOCATIONS[i]
 		var button := get_node(["Grassland","Forest","Desert","Traveler"][i]) as Button
-		button.tooltip_text = "" if place.kind == "battle" else "查看事件"
+		L10N.bind(button,&"tooltip_text",func(): return L10N.text("" if place.kind == "battle" else L10N.text("ui.38222535250a")))
 		button.pressed.connect(func(): location_clicked.emit(place.id,place.kind))
 		if place.kind == "battle":
 			button.mouse_entered.connect(func(): show_location_hint(place.id,button))
@@ -63,8 +64,8 @@ func show_location_hint(id: String, marker: Button) -> void:
 	var info: Dictionary = location_previews.get(id,{})
 	for place in LOCATIONS:
 		if place.id == id:
-			card.get_node("%Title").text = place.name
-	card.get_node("%Summary").text = "%s\n怪物种类：%s\n数量概况：%s" % [info.get("tags",DEFAULT_TAGS.get(id,"")),info.get("types","待侦察"),info.get("abundance","待侦察")]
+			L10N.bind(card.get_node("%Title"),&"text",func(): return L10N.text(L10N.text(place.name)))
+	L10N.bind(card.get_node("%Summary"),&"text",func(): return L10N.text(L10N.text("ui.5172c48a19b2") % [info.get("tags",DEFAULT_TAGS.get(id,"")),info.get("types",L10N.text("ui.73e65fabdfef")),info.get("abundance",L10N.text("ui.73e65fabdfef"))]))
 	hovered_marker = marker
 	card.show()
 	card.reset_size()

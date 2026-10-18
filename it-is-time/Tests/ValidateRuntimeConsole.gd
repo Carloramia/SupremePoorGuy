@@ -10,7 +10,7 @@ func _validate() -> void:
 	assert(console.is_console_open())
 	console.set_console_open(false)
 	var help_text: String = console.execute_command("HELP")
-	assert(help_text.begins_with("Available commands:"))
+	assert(help_text.begins_with(preload("res://Scripts/Localization/GameText.gd").text("Available commands:")))
 	for command_name: String in ["help", "getlogs", "trackmotion", "trackperformance", "tracknpc", "trackdamage", "trackcollision", "trackswing", "trackturn"]:
 		assert(help_text.contains(command_name), "Help must list %s" % command_name)
 	assert(console.execute_command("unknown") == "Unknown command: unknown")

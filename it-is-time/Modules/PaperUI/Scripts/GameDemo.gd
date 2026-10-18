@@ -1,4 +1,5 @@
 extends Control
+const L10N = preload("res://Scripts/Localization/GameText.gd")
 ## Flow controller only. Visual structure belongs to Scenes/UI and Assets/UI.
 @export var animate_panels := true
 signal location_interaction_requested(location_id: String, kind: String)
@@ -150,18 +151,18 @@ func _show(next: String) -> void:
 	view.set_unavailable_events(_completed_final_events())
 	match next:
 		"main":
-			_btn(actions,"进入旅途",func(): _show("world"))
+			_btn(actions,"ui.154dead50beb",func(): _show("world"))
 			if not state.data.pending.is_empty():
-				_btn(actions,"安置上次召唤",_resume_pending)
-			status.text = "涌现　|　编织法阵，召唤你的妖兽。"
+				_btn(actions,"ui.c4b1cd8242b2",_resume_pending)
+			L10N.bind(status,&"text","ui.be1fff2a8108")
 		"world":
-			status.text = "点击地图标记查看事件或进入战斗；左侧书签打开召唤与仓库。"
+			L10N.bind(status,&"text","ui.938678639212")
 		"battle":
-			status.text = LOCATION_NAMES.get(location,location)+"  "+LOCATION_TAGS.get(location,"")+"　|　先管理队伍，再进行战斗。"
+			L10N.bind(status,&"text",func(): return L10N.text(LOCATION_NAMES.get(location,location)+"  "+LOCATION_TAGS.get(location,"")+L10N.text("ui.53c374037c07")))
 		"eruption":
 			view.erupt()
-			_btn(actions,"跳过召唤演出",func(): view.skip_eruption())
-			status.text = "法阵喷涌 · 妖兽正在显形"
+			_btn(actions,"ui.63ccfb01fdfc",func(): view.skip_eruption())
+			L10N.bind(status,&"text","ui.0d6a567ed2c0")
 	actions.visible = actions.get_child_count() > 0
 	main_content.visible = not _has_page_root()
 	status.visible = next != "main" and not _has_page_root()
@@ -174,17 +175,17 @@ func _show(next: String) -> void:
 		_block_base(base,true)
 
 func _update_header() -> void:
-	header.text = "%s　|　第 %d 天　|　魔力 %d　|　下次事件 %s" % [LOCATION_NAMES.get(location,location),day,state.data.magic,next_event_time]
-	header.tooltip_text = "地区来自原型地点；天数、天气和事件节点等待地图系统接入。"
+	L10N.bind(header,&"text",func(): return L10N.text(L10N.text("ui.8492901895ca") % [LOCATION_NAMES.get(location,location),day,state.data.magic,next_event_time]))
+	L10N.bind(header,&"tooltip_text","ui.3c1e43e814e3")
 
 func _refresh_sidebar() -> void:
 	_clear(sidebar)
-	party_panel.get_node("%Count").text = "%d / 6 队位 · %d 只妖兽" % [state.occupied_slots(),state.monsters("team").size()] if state.monsters("team").any(func(m): return m.has("mode")) else "%d / 6 只妖兽" % state.monsters("team").size()
+	L10N.bind(party_panel.get_node("%Count"),&"text",func(): return L10N.text(L10N.text("ui.2dd805a57885") % [state.occupied_slots(),state.monsters("team").size()] if state.monsters("team").any(func(m): return m.has("mode")) else L10N.text("ui.79133e67d708") % state.monsters("team").size()))
 	party_panel.get_node("%Empty").visible = state.monsters("team").is_empty()
-	party_panel.get_node("%StorageCount").text = "仓库 %d 只" % state.monsters("warehouse").size()
+	L10N.bind(party_panel.get_node("%StorageCount"),&"text",func(): return L10N.text(L10N.text("ui.c3c19bd51260") % state.monsters("warehouse").size()))
 	for monster in state.monsters("team"):
-		var b := _btn(sidebar,monster.name,func(): _detail(monster.id))
-		b.tooltip_text = "生命 %d · 攻击 %d · 护甲 %d\n%s" % [monster.hp,monster.attack,monster.armor," / ".join(monster.traits)]
+		var b := _btn(sidebar,func(): return L10N.creature_name(monster),func(): _detail(monster.id))
+		L10N.bind(b,&"tooltip_text",func(): return L10N.text(L10N.text("ui.bed813ff8615") % [monster.hp,monster.attack,monster.armor," / ".join(monster.traits.map(func(value): return L10N.text(value)))]))
 	if is_instance_valid(overlay) and overlay.visible:
 		_block_base(sidebar,true)
 
@@ -210,33 +211,33 @@ func _completed_final_events() -> Array:
 func _open_event(id: String) -> void:
 	if id in _completed_final_events():
 		view.set_unavailable_events(_completed_final_events())
-		_notice("该事件已结束。")
+		_notice("ui.a2b695380784")
 		return
 	_modal("旅人手记",func(body):
 		var page := EventPanel.instantiate()
 		body.add_child(page)
-		page.get_node("%Description").text = "草叶间压着一册被雨水浸湿的手记。\n\n“阵中的笔画并非装饰。让每条线找到它的位置，力量便会自行成形。”\n\n你收起夹在书页中的魔力结晶。"
-		var claim := _btn(page.get_node("%Commands"),"收下结晶 · 魔力 +20",func():
+		L10N.bind(page.get_node("%Description"),&"text","ui.31a5ee649fa0")
+		var claim := _btn(page.get_node("%Commands"),"ui.c4c7bf26e766",func():
 			if state.claim_once("event_"+id,20):
 				_close_all()
 				_show("world")
-				status.text = "已获得 20 魔力，旅人手记已记录。"
+				L10N.bind(status,&"text","ui.03bd4cf5fe4e")
 			else:
-				_notice(state.last_error))
+				_notice(func(): return L10N.text(state.last_error)))
 		claim.disabled = "event_"+id in state.data.completed
-		claim.tooltip_text = "已读 · 奖励已领取" if claim.disabled else "领取一次性测试奖励","event")
+		L10N.bind(claim,&"tooltip_text",func(): return L10N.text(L10N.text("ui.4f7a55e18781") if claim.disabled else L10N.text("ui.c9f1d8752b85"))),"event")
 
 func _skip_battle() -> void:
 	_modal("战斗胜利",func(body):
-		var page := _text_screen(body,LOCATION_NAMES.get(location,location)+" · 守卫已退去\n\n测试战斗已跳过，不产生虚构战斗统计。\n奖励：魔力 +20")
+		var page := _text_screen(body,func(): return L10N.text(LOCATION_NAMES.get(location,location)+L10N.text("ui.fde172be0ca4")))
 		var received: bool = "battle_"+location in state.data.completed
-		_btn(page.get_node("%Commands"),"返回大地图" if received else "领取奖励并返回",func():
+		_btn(page.get_node("%Commands"),func(): return L10N.text(L10N.text("ui.a479d4fcd248") if received else L10N.text("ui.666ed22cde42")),func():
 			if received or state.claim_once("battle_"+location,20):
 				_close_all()
 				_show("world")
-				status.text = "已返回大地图。" if received else "胜利奖励：魔力 +20。"
+				L10N.bind(status,&"text",func(): return L10N.text(L10N.text("ui.75e0b3321897") if received else L10N.text("ui.0b1a6d931377")))
 			else:
-				_notice(state.last_error)))
+				_notice(func(): return L10N.text(state.last_error))))
 
 func _open_ritual() -> void:
 	if curtain_busy:
@@ -256,7 +257,7 @@ func _build_ritual(body: VBoxContainer) -> void:
 	page.get_node("%TrialInfo").pressed.connect(func(): _term("召唤规则与配方",Experiment.trial_notes()+"\n\n定向配方：甲片(-2,0)→(-1,0)，血脉(-1,1)→(0,1)→(1,1)，锐牙(0,-1)→(0,0)→(1,-1)，骨骰(1,0)(2,0)。允许整体平移、旋转和镜像；不能有额外笔画。"))
 	close_button = page.get_node("%PageBack")
 	close_button.pressed.connect(_close_modal)
-	page.get_node("%PageTitle").tooltip_text = "六相召唤阵 · "+LOCATION_TAGS.get(location,"")
+	L10N.bind(page.get_node("%PageTitle"),&"tooltip_text",func(): return L10N.text(L10N.text("ui.1e1c21856d33")+LOCATION_TAGS.get(location,"")))
 	ritual_columns = page.get_node("%Columns")
 	ritual_left_scroll = page.get_node("%LeftScroll")
 	ritual_right_scroll = page.get_node("%RightScroll")
@@ -268,10 +269,10 @@ func _build_ritual(body: VBoxContainer) -> void:
 	page.get_node("%References").visible = rune_fold_open
 	page.get_node("%Relics").visible = relic_fold_open
 	var context: RichTextLabel = page.get_node("%Context")
-	context.text = "[b]当前环境[/b]\n[url=地区]%s[/url]\n[url=天气]天气：%s[/url]\n%s\n\n[b]召唤倾向[/b]\n[url=形态]人形 / 兽形 / 蛇形[/url]" % [LOCATION_NAMES.get(location,location).split(" · ")[0],weather,LOCATION_TAGS.get(location,"")]
+	L10N.bind(context,&"text",func(): return L10N.text(L10N.text("ui.116803817809") % [LOCATION_NAMES.get(location,location).split(" · ")[0],weather,LOCATION_TAGS.get(location,"")]))
 	context.meta_hover_started.connect(func(meta):
-		context.tooltip_text = {"地区":LOCATION_TAGS.get(location,""),"天气":"天气等待地图系统接入，不参与本原型生成权重。","形态":"目前三类形态随机生成；环境权重未接入。","词条":"地区标签用于说明；真实环境加成等待生成系统接入。"}.get(str(meta),""))
-	context.meta_hover_ended.connect(func(_meta): context.tooltip_text = "")
+		L10N.bind(context,&"tooltip_text",func(): return L10N.text({"地区":LOCATION_TAGS.get(location,""),"天气":L10N.text("ui.f275a950ca23"),"形态":L10N.text("ui.6c0cc8aeb11b"),"词条":L10N.text("ui.7ff366d4f703")}.get(str(meta),""))))
+	context.meta_hover_ended.connect(func(_meta): L10N.bind(context,&"tooltip_text",""))
 	board = page.get_node("%Board")
 	board.rules = rules
 	board.changed.connect(_refresh_ritual)
@@ -283,21 +284,21 @@ func _build_ritual(body: VBoxContainer) -> void:
 		row.get_node("%Preview").preview_path = relic.cells
 		var tile: Button = row.get_node("%Open")
 		tile.relic_id = relic.id
-		tile.text = relic.name+" · %d 格\n" % relic.cells.size()+{"tide-pump":"刻入回血 3%","prism-heart":"相邻符文 +12%","bone-die":"随机强化一种属性"}.get(relic.id,relic.effect)
-		tile.tooltip_text = relic.effect
+		L10N.bind(tile,&"text",func(): return L10N.text(L10N.text(relic.name)+L10N.text("ui.d733b9a0768f") % relic.cells.size()+{"tide-pump":L10N.text("ui.9f5549d5e61b"),"prism-heart":L10N.text("ui.6059872c31e7"),"bone-die":L10N.text("ui.3bdc5285d10a")}.get(relic.id,L10N.text(relic.effect))))
+		L10N.bind(tile,&"tooltip_text",func(): return L10N.text(L10N.text(relic.effect)))
 		tile.pressed.connect(func():
 			board.selected_relic = relic.id
 			board.queue_redraw()
-			_notice("已选择 "+relic.name+"，点击空闲蜂窝放置"))
+			_notice(func(): return L10N.text(L10N.text("ui.3b2ee82dd97c")+L10N.text(relic.name)+L10N.text("ui.b98433038799"))))
 		page.get_node("%Relics").add_child(row)
 	for rune in Rules.RUNES:
 		if rune.id not in state.known_references():
 			continue
 		var row := RuneReference.instantiate()
 		row.get_node("%Preview").preview_path = rune.cells
-		row.get_node("%Open").tooltip_text = rune.effect+"\n"+rune.detail
-		row.get_node("%Open").text = rune.name+" · %d 格\n" % rune.cells.size()+rune.effect
-		row.get_node("%Effect").text = rune.effect
+		L10N.bind(row.get_node("%Open"),&"tooltip_text",func(): return L10N.text(L10N.text(rune.effect)+"\n"+L10N.text(rune.detail)))
+		L10N.bind(row.get_node("%Open"),&"text",func(): return L10N.text(L10N.text(rune.name)+L10N.text("ui.d733b9a0768f") % rune.cells.size()+L10N.text(rune.effect)))
+		L10N.bind(row.get_node("%Effect"),&"text",func(): return L10N.text(L10N.text(rune.effect)))
 		row.get_node("%Open").pressed.connect(func(): _term(rune.name,rune.effect+"\n"+rune.detail))
 		page.get_node("%References").add_child(row)
 	# Both tabs share one width budget, including the permanently reserved gutter.
@@ -313,7 +314,7 @@ func _build_ritual(body: VBoxContainer) -> void:
 	page.get_node("%Cancel").pressed.connect(_cancel_rune)
 	page.get_node("%Freehand").toggled.connect(func(value): board.freehand = value)
 	page.get_node("%Save").pressed.connect(func():
-		_notice("法阵已保存" if state.save_layout(rules.export_layout()) else state.last_error))
+		_notice(func(): return L10N.text(L10N.text("ui.e60c1253782c") if state.save_layout(rules.export_layout()) else state.last_error)))
 	page.get_node("%Clear").pressed.connect(func(): _confirm("清空当前法阵？","删除所有符文、奇物和草稿；已保存的布局不会改变，直到再次保存。",func():
 		rules.import_layout({"version":3,"stage":state.data.array_stage,"placed":[],"placedRelics":[]})
 		_close_modal()))
@@ -321,7 +322,7 @@ func _build_ritual(body: VBoxContainer) -> void:
 
 func _commit_rune() -> void:
 	if not rules.commit():
-		_notice("笔画尚未形成已知符文，请继续绘制或撤回")
+		_notice("ui.463877f8b871")
 	_refresh_ritual()
 
 func _undo_rune() -> void:
@@ -347,7 +348,7 @@ func _refresh_ritual() -> void:
 		var row := ActiveRune.instantiate()
 		var d := Rules.definition(item.runeId)
 		var toggle: CheckButton = row.get_node("%Toggle")
-		toggle.text = d.name
+		L10N.bind(toggle,&"text",func(): return L10N.text(L10N.text(d.name)))
 		toggle.button_pressed = item.enabled
 		toggle.toggled.connect(func(value):
 			item.enabled = value
@@ -358,30 +359,30 @@ func _refresh_ritual() -> void:
 		active_list.add_child(row)
 	for item in rules.relics:
 		var d := Rules.definition(item.relicId,true)
-		_btn(active_list,"回收 · "+d.name,func():
+		_btn(active_list,func(): return L10N.text(L10N.text("ui.6a0a313797a0")+L10N.text(d.name)),func():
 			rules.remove(item.uid)
 			_refresh_ritual())
 	var preview := Experiment.preview(rules)
-	ritual_summary.text = "法阵 %d 阶 · %d 格\n魔力 %d · 消耗 %d\n预计 %d 段 · %d 只\n合计 %d 队位\n草稿 %d 格" % [rules.stage,Rules.cells(rules.stage).size(),state.data.magic,preview.cost,preview.tier,preview.count,preview.total_slots,rules.draft.size()]
-	summon_button.text = "确认召唤 · %d只%s" % [preview.count,"超巨化" if preview.mode=="ultra" else "定向" if preview.mode=="special" else ""]
+	L10N.bind(ritual_summary,&"text",func(): return L10N.text(L10N.text("ui.86a4ba85300a") % [rules.stage,Rules.cells(rules.stage).size(),state.data.magic,preview.cost,preview.tier,preview.count,preview.total_slots,rules.draft.size()]))
+	L10N.bind(summon_button,&"text",func(): return L10N.text(L10N.text("ui.19812bd6781a") % [preview.count,L10N.text("ui.0d64a436c66f") if preview.mode=="ultra" else L10N.text("ui.b3ad05dff665") if preview.mode=="special" else ""]))
 	summon_button.disabled = count == 0 or not rules.draft.is_empty() or preview.cost > state.data.magic or not preview.error.is_empty()
-	summon_button.tooltip_text = preview.error if not preview.error.is_empty() else "召唤确认时一次扣费。畸变失败不返费（试验口径）。"
+	L10N.bind(summon_button,&"tooltip_text",func(): return L10N.text(preview.error if not preview.error.is_empty() else L10N.text("ui.4ebd772c41b8")))
 	var risk: Label = ritual_page.get_node("%Risk")
 	risk.visible = not preview.sources.is_empty()
 	var sources: Array[String] = []
 	for source in preview.sources:
-		sources.append("%s ×%d / 门槛%d；独立风险%.0f%%" % [source.name,source.count,source.threshold,source.chance*100])
-	risk.text = "畸变风险：%.0f%%\n每只失败：%.0f%%\n失败不返费" % [preview.mutation_chance*100,preview.failure_chance*100]
-	risk.tooltip_text = "\n".join(sources)+"\n"+Experiment.trial_notes()
+		sources.append(L10N.text("ui.6b5e79d1fa5d") % [source.name,source.count,source.threshold,source.chance*100])
+	L10N.bind(risk,&"text",func(): return L10N.text(L10N.text("ui.67135d760d3c") % [preview.mutation_chance*100,preview.failure_chance*100]))
+	L10N.bind(risk,&"tooltip_text",func(): return L10N.text("\n".join(sources)+"\n"+Experiment.trial_notes()))
 
-	ritual_summary.tooltip_text = "符文与奇物每格同价；停用仍收费，但不计等段或畸变。\n"+Experiment.trial_notes()
+	L10N.bind(ritual_summary,&"tooltip_text",func(): return L10N.text(L10N.text("ui.6e0a2332db30")+Experiment.trial_notes()))
 	board.queue_redraw()
 
 
 func _summon() -> void:
 	var preview := Experiment.preview(rules)
 	if not preview.sources.is_empty():
-		_confirm("确认风险召唤","本次消耗 %d 魔力，尝试 %d 只；每只失败概率 %.0f%%（试验参数）。\n失败不返费；成功可能出现强化对应符文的畸变体。" % [preview.cost,preview.count,preview.failure_chance*100],_perform_summon)
+		_confirm("确认风险召唤",L10N.text("ui.0f991fbdea2b") % [preview.cost,preview.count,preview.failure_chance*100],_perform_summon)
 	else:
 		_perform_summon()
 
@@ -401,13 +402,13 @@ func _results() -> void:
 		var page := ResultsPanel.instantiate()
 		body.add_child(page)
 		var report: Dictionary = state.data.last_summon
-		page.get_node("Hint").text = "尝试 %d 只 · 成功 %d 只 · 失败 %d 只 · 消耗 %d 魔力\n选择出战或入库；关闭后将未安置者入库。" % [report.get("attempted",state.data.pending.size()),report.get("succeeded",state.data.pending.size()),report.get("failed",0),report.get("cost",0)]
-		page.get_node("%Empty").text = "本次召唤全部失败，未生成妖兽；消耗不返还。" if report.get("succeeded",-1)==0 else "所有妖兽均已安置。可返回继续旅途。"
+		L10N.bind(page.get_node("Hint"),&"text",func(): return L10N.text(L10N.text("ui.6bbe4f572f54") % [report.get("attempted",state.data.pending.size()),report.get("succeeded",state.data.pending.size()),report.get("failed",0),report.get("cost",0)]))
+		L10N.bind(page.get_node("%Empty"),&"text",func(): return L10N.text(L10N.text("ui.7aa496de9021") if report.get("succeeded",-1)==0 else L10N.text("ui.bfe1b464fe6f")))
 		var index := 0
 		for id in state.data.pending.duplicate():
 			_monster_card(page.get_node("%Cards"),state.monster_by_id(id),true)
 			var card: Control = page.get_node("%Cards").get_child(index)
-			card.tooltip_text = _monster_hint(state.monster_by_id(id))
+			L10N.bind(card,&"tooltip_text",func(): return L10N.text(_monster_hint(state.monster_by_id(id))))
 			if animate_panels:
 				card.modulate.a = 0
 				card.create_tween().tween_property(card,"modulate:a",1.0,0.25).set_delay(index*0.18)
@@ -418,7 +419,7 @@ func _results() -> void:
 				_close_all()
 				_show(route)
 			else:
-				_notice(state.last_error)))
+				_notice(func(): return L10N.text(state.last_error))))
 
 func _warehouse(filter: String = "warehouse") -> void:
 	if curtain_busy:
@@ -456,7 +457,7 @@ func _refresh_warehouse_filters(animate := true) -> void:
 		visible_units.append(monster)
 		var note := MonsterNote.instantiate()
 		warehouse_page.get_node("%Cards").add_child(note)
-		note.present(monster.id,monster.name,monster.form,{"team":"出战","warehouse":"仓库","pending":"待安置"}[monster.position],_monster_hint(monster))
+		note.present(monster.id,func(): return L10N.creature_name(monster),monster.form,{"team":"出战","warehouse":"仓库","pending":"待安置"}[monster.position],func(): return _monster_hint(monster))
 		note.selection_requested.connect(_select_monster)
 	warehouse_page.get_node("%Empty").visible = visible_units.is_empty()
 	if not visible_units.is_empty():
@@ -468,7 +469,7 @@ func _refresh_warehouse_filters(animate := true) -> void:
 		_clear(warehouse_page.get_node("%DetailBody"))
 		_clear(warehouse_page.get_node("%DetailCommands"))
 		var hint := Label.new()
-		hint.text = "暂无符合筛选的怪物\n可清空条件或切换右侧页签"
+		L10N.bind(hint,&"text","ui.a3b422931894")
 		hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		warehouse_page.get_node("%DetailBody").add_child(hint)
 
@@ -481,14 +482,14 @@ func _select_monster(id: String) -> void:
 	_clear(warehouse_page.get_node("%DetailCommands"))
 	_fill_detail(parent,id)
 	var monster: Dictionary = state.monster_by_id(id)
-	var move := _btn(warehouse_page.get_node("%DetailCommands"),"撤回仓库" if monster.position == "team" else "加入出战",func():
+	var move := _btn(warehouse_page.get_node("%DetailCommands"),func(): return L10N.text(L10N.text("ui.373cba3cd228") if monster.position == "team" else L10N.text("ui.b47e187ba5be")),func():
 		if state.move_monster(id,"warehouse" if monster.position == "team" else "team"):
 			_notify_party()
 			_render_modal()
 		else:
-			_notice(state.last_error))
+			_notice(func(): return L10N.text(state.last_error)))
 	move.disabled = monster.position != "team" and not state.can_join(monster.id)
-	_btn(warehouse_page.get_node("%DetailCommands"),"回收怪物",func(): _confirm("回收怪物？","永久移除这只怪物，不返还魔力。",func(): _recycle_monster(id)))
+	_btn(warehouse_page.get_node("%DetailCommands"),"ui.a709f287f5df",func(): _confirm("回收怪物？","永久移除这只怪物，不返还魔力。",func(): _recycle_monster(id)))
 
 func _notify_party() -> void:
 	party_changed.emit(state.monsters("team").map(func(m): return m.id))
@@ -505,7 +506,7 @@ func _recycle_monster(id: String) -> void:
 				target = card
 				break
 	if not state.recycle_monster(id):
-		_notice(state.last_error)
+		_notice(func(): return L10N.text(state.last_error))
 		return
 	_notify_party()
 	if animate_panels and is_instance_valid(target):
@@ -523,23 +524,23 @@ func _recycle_monster(id: String) -> void:
 		_render_modal()
 
 func _monster_hint(monster: Dictionary) -> String:
-	return "%s\n生命 %d · 攻击 %d · 护甲 %d · 移速 %.1f\n%s" % [monster.name,monster.hp,monster.attack,monster.armor,monster.speed," / ".join(monster.traits)]
+	return L10N.text("ui.73360541c042") % [L10N.creature_name(monster),monster.hp,monster.attack,monster.armor,monster.speed," / ".join(monster.traits.map(func(value): return L10N.text(value)))]
 
 func _monster_card(parent: Node, monster: Dictionary, result_card: bool) -> void:
 	var card := ResultCard.instantiate() if result_card else MonsterCard.instantiate()
 	parent.add_child(card)
 	card.get_node("%Portrait").form = monster.form
 	card.get_node("%Portrait").tint = Color(monster.color)
-	card.get_node("%Name").text = monster.name
-	card.get_node("%State").text = "%s　·　%s" % [monster.form,{"pending":"待安置","warehouse":"仓库","team":"出战"}[monster.position]]
+	L10N.bind(card.get_node("%Name"),&"text",func(): return L10N.creature_name(monster))
+	L10N.bind(card.get_node("%State"),&"text",func(): return L10N.text("%s　·　%s" % [L10N.text(monster.form),{"pending":L10N.text("ui.23a93c3ee12d"),"warehouse":L10N.text("ui.89b2ecbe1f09"),"team":L10N.text("ui.a7caf88fcaa9")}[monster.position]]))
 	for pair in [["生命",monster.hp],["攻击",monster.attack],["护甲",monster.armor],["移速",monster.speed]]:
-		_btn(card.get_node("%Stats"),"%s %s" % [pair[0],pair[1]],func(): _term(pair[0],TERMS[pair[0]]),StatButton)
+		_btn(card.get_node("%Stats"),func(): return L10N.text("%s %s" % [L10N.text(pair[0]),pair[1]]),func(): _term(pair[0],TERMS[pair[0]]),StatButton)
 	for ability_name in monster.traits:
-		_btn(card.get_node("%Traits"),"【%s】" % ability_name,func(): _trait(ability_name))
+		_btn(card.get_node("%Traits"),func(): return L10N.text("【%s】" % L10N.text(ability_name)),func(): _trait(ability_name))
 	card.get_node("%Detail").pressed.connect(func(): _detail(monster.id))
 	var to_team: bool = monster.position != "team"
 	var move: Button = card.get_node("%Move")
-	move.text = "加入出战" if to_team else "撤回仓库"
+	L10N.bind(move,&"text",func(): return L10N.text(L10N.text("ui.b47e187ba5be") if to_team else L10N.text("ui.373cba3cd228")))
 	move.pressed.connect(func():
 		if state.move_monster(monster.id,"team" if to_team else "warehouse"):
 			var ids: Array = []
@@ -556,17 +557,17 @@ func _monster_card(parent: Node, monster: Dictionary, result_card: bool) -> void
 			else:
 				_render_modal()
 		else:
-			_notice(state.last_error))
+			_notice(func(): return L10N.text(state.last_error)))
 	move.disabled = to_team and not state.can_join(monster.id)
-	move.tooltip_text = "出战队列已满，请先撤回一只" if move.disabled else ""
+	L10N.bind(move,&"tooltip_text",func(): return L10N.text(L10N.text("ui.fd89e6d30452") if move.disabled else ""))
 	if result_card:
-		card.get_node("%State").text = "%s · %d 段 · %s\n%s" % [monster.form,int(monster.get("tier",1)),"畸变" if not monster.get("mutation_sources",[]).is_empty() else "普通","同批整组占 1 队位" if monster.get("mode", "normal")=="tiny" else "%d 队位" % int(monster.get("slots",1))]
+		L10N.bind(card.get_node("%State"),&"text",func(): return L10N.text(L10N.text("ui.cb6f26a8d65f") % [L10N.text(monster.form),int(monster.get("tier",1)),L10N.text("ui.4277e3fec978") if not monster.get("mutation_sources",[]).is_empty() else L10N.text("ui.de907d10df98"),L10N.text("ui.3baa3dbc6639") if monster.get("mode", "normal")=="tiny" else L10N.text("ui.abea6c28c2ea") % int(monster.get("slots",1))]))
 		card.get_node("%Store").pressed.connect(func():
 			if state.move_monster(monster.id,"warehouse"):
 				_close_modal(false)
 				_results()
 			else:
-				_notice(state.last_error))
+				_notice(func(): return L10N.text(state.last_error)))
 
 func _detail(id: String) -> void:
 	_modal("妖兽详情",func(body): _fill_detail(body,id))
@@ -577,33 +578,36 @@ func _fill_detail(body: VBoxContainer, id: String) -> void:
 	body.add_child(page)
 	page.get_node("%Portrait").form = monster.form
 	page.get_node("%Portrait").tint = Color(monster.color)
-	page.get_node("%Name").text = monster.name
-	page.get_node("%Stats").text = "生命 %d　　攻击 %d\n护甲 %d　　移速 %.1f" % [monster.hp,monster.attack,monster.armor,monster.speed]
-	page.get_node("%Stats").tooltip_text = "来源："+LOCATION_NAMES.get(monster.get("source_location","grassland"),"未知地点")
+	L10N.bind(page.get_node("%Name"),&"text",func(): return L10N.creature_name(monster))
+	var base_stats := func(): return L10N.text(L10N.text("ui.dfae243744a3") % [monster.hp,monster.attack,monster.armor,monster.speed])
+	L10N.bind(page.get_node("%Stats"),&"text",base_stats)
+	L10N.bind(page.get_node("%Stats"),&"tooltip_text",func(): return L10N.text(L10N.text("ui.6181ed6f9734")+LOCATION_NAMES.get(monster.get("source_location","grassland"),L10N.text("ui.2e4e2c2dd17a"))))
 	if monster.has("mode") and not modal_stack.is_empty() and modal_stack[0].title.begins_with("召唤完成"):
 		var sources: Array[String] = []
 		for source in monster.mutation_sources:
 			sources.append(Rules.definition(source).name)
-		page.get_node("%Stats").text += "\n%d 段 · 攻击周期 %.2f 秒\n%s · %s\n畸变来源：%s\n分身 %d · 召唤消耗 %d\n部位耐久：头 %d / 核心 %d / 肢体 %d" % [monster.tier,monster.interval,{"normal":"普通","giant":"巨化","ultra":"超巨化","multiply":"增殖","tiny":"缩小","special":"定向"}.get(monster.mode,monster.mode),"同批整组占 1 队位" if monster.mode=="tiny" else "%d 队位" % monster.slots,"、".join(sources) if not sources.is_empty() else "无",monster.clone_count,monster.source_cost,monster.part_hp["头部"],monster.part_hp["核心"],monster.part_hp["肢体"]]
+		L10N.bind(page.get_node("%Stats"),&"text",func(): return String(base_stats.call())+L10N.text("ui.e9da5a00414b") % [monster.tier,monster.interval,{"normal":"普通","giant":"巨化","ultra":"超巨化","multiply":"增殖","tiny":"缩小","special":"定向"}.get(monster.mode,monster.mode),"同批整组占 1 队位" if monster.mode=="tiny" else L10N.text("ui.abea6c28c2ea") % monster.slots,"、".join(sources) if not sources.is_empty() else "无",monster.clone_count,monster.source_cost,monster.part_hp["头部"],monster.part_hp["核心"],monster.part_hp["肢体"]])
 	var name_input: LineEdit = page.get_node("%NameInput")
+	name_input.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	L10N.bind(name_input,&"placeholder_text",name_input.placeholder_text)
 	name_input.text = monster.name
 	page.get_node("%Save").pressed.connect(func():
 		if state.rename_monster(id,name_input.text):
 			_refresh_sidebar()
 			_render_modal()
 		else:
-			_notice(state.last_error if not state.last_error.is_empty() else "名称不能为空"))
+			_notice(func(): return L10N.text(state.last_error if not state.last_error.is_empty() else L10N.text("ui.e83654164a44"))))
 	for ability_name in monster.traits:
-		_btn(page.get_node("%Traits"),"【%s】" % ability_name,func(): _trait(ability_name))
+		_btn(page.get_node("%Traits"),func(): return L10N.text("【%s】" % L10N.text(ability_name)),func(): _trait(ability_name))
 
 
 func _book() -> void:
 	_modal("符文辞典",func(body):
-		var page := _text_screen(body,"验证版：七枚符文全部开放。未收录符文隐藏机制不在本轮范围。")
+		var page := _text_screen(body,"ui.a78e12998f1a")
 		for rune in Rules.LEGACY_RUNES:
-			_btn(page.get_node("%Commands"),rune.name+" / "+rune.effect,func(): _term(rune.name,rune.detail))
+			_btn(page.get_node("%Commands"),func(): return L10N.text(L10N.text(rune.name)+" / "+L10N.text(rune.effect)),func(): _term(rune.name,rune.detail))
 		for term in TERMS:
-			_btn(page.get_node("%Terms"),term,func(): _term(term,TERMS[term])))
+			_btn(page.get_node("%Terms"),func(): return L10N.text(term),func(): _term(term,TERMS[term])))
 
 func _trait(name_text: String) -> void:
 	for rune in Rules.RUNES + Rules.LEGACY_RUNES:
@@ -613,18 +617,18 @@ func _trait(name_text: String) -> void:
 
 func _term(title: String, content: String) -> void:
 	_modal(title,func(body):
-		var page := _text_screen(body,content)
+		var page := _text_screen(body,func(): return L10N.prose(content))
 		for term in TERMS:
 			if term != title and term in content:
-				_btn(page.get_node("%Terms"),"解释 · "+term,func(): _term(term,TERMS[term])))
+				_btn(page.get_node("%Terms"),func(): return L10N.text(L10N.text("ui.f528e1124175")+term),func(): _term(term,TERMS[term])))
 
 func _help() -> void:
 	_term("旅途指南","大地图上点击战斗或事件图标。右下角书本打开召唤法典。\n召唤：照符文书在相邻蜂窝描画，刻入后点击确认召唤。\n喷涌结束后，将妖兽加入出战队列或仓库。队列最多 6 只。\n战斗场景中先管理队伍，再跳过战斗并领取测试奖励。\n\nEsc 返回最上层。法阵内 Esc 优先取消笔画；Enter 刻入，Backspace 撤回。\n怪物与奖励自动保存在此独立原型的用户目录，不读取正式项目存档。")
 
 func _confirm(title: String, text: String, callback: Callable) -> void:
 	_modal(title,func(body):
-		var page := _text_screen(body,text)
-		_btn(page.get_node("%Commands"),"确认",callback))
+		var page := _text_screen(body,func(): return L10N.text(text))
+		_btn(page.get_node("%Commands"),"ui.36f33adaf094",callback))
 
 func _modal(title: String, builder: Callable, kind := "dialog") -> void:
 	view.hide_location_hint()
@@ -678,7 +682,7 @@ func _render_modal() -> void:
 	var event: bool = modal_stack.back().get("kind", "dialog") == "event"
 	var tasks: bool = modal_stack.back().get("kind", "dialog") == "tasks"
 	var reading := event or tasks
-	close_button.text = "离开 / Esc" if event else ("关闭 / Esc" if tasks else "返回 / Esc")
+	L10N.bind(close_button,&"text",func(): return L10N.text(L10N.text("ui.95f69693f3c1") if event else (L10N.text("ui.977d03d89573") if tasks else L10N.text("ui.67a940be6b93"))))
 	var content_page := ritual or warehouse or results
 	var fixed_content := content_page or reading
 	board_motion.horizontal = content_page
@@ -703,8 +707,8 @@ func _render_modal() -> void:
 	modal_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED if fixed_content else ScrollContainer.SCROLL_MODE_RESERVE
 	modal_box.size_flags_vertical = Control.SIZE_EXPAND_FILL if fixed_content else Control.SIZE_FILL
 	modal_scroll.scroll_vertical = 0
-	modal_feedback.text = ""
-	modal_title.text = modal_stack.back().title
+	L10N.bind(modal_feedback,&"text",func(): return L10N.text(""))
+	L10N.bind(modal_title,&"text",modal_stack.back().title)
 	modal_stack.back().build.call(modal_box)
 	close_button.grab_focus()
 
@@ -713,7 +717,7 @@ func _close_modal(store_results: bool = true) -> void:
 		return
 	if store_results and modal_stack.back().title.begins_with("召唤完成") and not state.data.pending.is_empty():
 		if not state.store_pending():
-			_notice(state.last_error)
+			_notice(func(): return L10N.text(state.last_error))
 			return
 	modal_stack.pop_back()
 	if modal_stack.is_empty() and store_results and animate_panels:
@@ -775,20 +779,20 @@ func _unhandled_key_input(event: InputEvent) -> void:
 		return
 	get_viewport().set_input_as_handled()
 
-func _notice(text: String) -> void:
-	status.text = text
+func _notice(text: Variant) -> void:
+	L10N.bind(status,&"text",text)
 	if not modal_stack.is_empty():
-		modal_feedback.text = text
+		L10N.bind(modal_feedback,&"text",text)
 
-func _text_screen(parent: Node, text: String) -> VBoxContainer:
+func _text_screen(parent: Node, text: Variant) -> VBoxContainer:
 	var page := TextPanel.instantiate()
 	parent.add_child(page)
-	page.get_node("%Description").text = text
+	L10N.bind(page.get_node("%Description"),&"text",text)
 	return page
 
-func _btn(parent: Node, text: String, callback: Callable, component: PackedScene = ActionButton) -> Button:
+func _btn(parent: Node, text: Variant, callback: Callable, component: PackedScene = ActionButton) -> Button:
 	var button := component.instantiate()
-	button.text = text
+	L10N.bind(button,&"text",text)
 	if component == ActionButton:
 		button.theme_type_variation = &"SecondaryButton"
 	button.pressed.connect(callback)
@@ -810,7 +814,7 @@ func _tasks() -> void:
 		page.present_tasks([
 			{"title":"旅人手记","description":"已收下手记中的魔力结晶。" if done else "阅读旅人留下的手记，收下魔力结晶。","done":done,"action":"event"},
 			{"title":"完成一次召唤","description":"已完成首次召唤。" if summoned else "在召唤阵刻入符文，召唤你的妖兽。","done":summoned,"action":"summon"},
-			{"title":"准备出战队伍","description":"当前出战 %d / %d；至少安排一只妖兽。" % [team_count,State.TEAM_LIMIT],"done":team_count>0,"action":"party"}
+			{"title":"准备出战队伍","description":L10N.text("ui.222af74d3be3") % [team_count,State.TEAM_LIMIT],"done":team_count>0,"action":"party"}
 		])
 		page.action_requested.connect(_task_action),"tasks")
 
@@ -825,20 +829,20 @@ func _settings() -> void:
 	if board_motion.busy:
 		return
 	_modal("设置 / 保存 / 退出",func(body):
-		var page := _text_screen(body,"原型设置")
-		var toggle := _btn(page.get_node("%Commands"),"动效：开启" if animate_panels else "动效：简化",func():
+		var page := _text_screen(body,"ui.22bb36ae7f50")
+		var toggle := _btn(page.get_node("%Commands"),func(): return L10N.text(L10N.text("ui.c66e646390a9") if animate_panels else L10N.text("ui.6827b4782982")),func():
 			animate_panels = not animate_panels
 			board_motion.enabled = animate_panels
 			_update_motion_status()
 			_render_modal())
-		toggle.tooltip_text = "关闭页面、幕布与逐张显示动效"
+		L10N.bind(toggle,&"tooltip_text","ui.a78503e1696e")
 		var resolution := OptionButton.new()
 		resolution.name = "WindowSize"
 		resolution.custom_minimum_size.y = 42
-		resolution.tooltip_text = "窗口尺寸；文字保持原生字号，不随整个画面缩小"
+		L10N.bind(resolution,&"tooltip_text","ui.df26663efad4")
 		var presets: Array[Vector2i] = [Vector2i(1120,680),Vector2i(1280,720),Vector2i(1440,810),Vector2i(1600,900),Vector2i(1920,1080)]
 		for preset in presets:
-			resolution.add_item("窗口 %d × %d" % [preset.x,preset.y])
+			resolution.add_item(L10N.text("ui.1b5462d24a94") % [preset.x,preset.y])
 		resolution.select(presets.find(get_window().size))
 		resolution.item_selected.connect(func(index):
 			var area := DisplayServer.screen_get_usable_rect()
@@ -848,12 +852,12 @@ func _settings() -> void:
 			get_window().mode = Window.MODE_WINDOWED
 			get_window().size = desired)
 		page.get_node("%Commands").add_child(resolution)
-		_btn(page.get_node("%Commands"),"保存",func(): _notice("已保存" if state.save() else state.last_error))
-		_btn(page.get_node("%Commands"),"退出游戏",func(): _confirm("退出游戏？","退出前保存本原型进度。",func():
+		_btn(page.get_node("%Commands"),"ui.a3030bf8f16d",func(): _notice(func(): return L10N.text(L10N.text("ui.1bd91a7d0c53") if state.save() else state.last_error)))
+		_btn(page.get_node("%Commands"),"ui.dbc0fe120d31",func(): _confirm("退出游戏？","退出前保存本原型进度。",func():
 			if state.save():
 				get_tree().quit()
 			else:
-				_notice(state.last_error))))
+				_notice(func(): return L10N.text(state.last_error)))))
 
 func _fold(content: Control, rune_tab: bool) -> void:
 	var other: Control = content.get_parent().get_node("Relics" if rune_tab else "References")
@@ -955,7 +959,7 @@ func _start_new() -> void:
 	state.reset()
 	if not state.save():
 		state.data = before
-		_notice(state.last_error)
+		_notice(func(): return L10N.text(state.last_error))
 		return
 	rules.import_layout(state.data.layout)
 	_close_all()
@@ -971,16 +975,16 @@ func _perform_summon() -> void:
 			scene_requested.emit("summon",location)
 			_show("eruption")
 	else:
-		_notice(state.last_error)
+		_notice(func(): return L10N.text(state.last_error))
 
 
 func _upgrade_stage() -> void:
 	if state.unlock_next_stage(rules.export_layout()):
 		rules.stage = state.data.array_stage
 		_render_modal()
-		_notice("已模拟剧情/Boss事件，法阵扩至%d格；没有额外消耗魔力。" % Rules.cells(rules.stage).size())
+		_notice(func(): return L10N.text(L10N.text("ui.c82f0b8d483a") % Rules.cells(rules.stage).size()))
 	else:
-		_notice(state.last_error)
+		_notice(func(): return L10N.text(state.last_error))
 
 
 func _load_example(index: int) -> void:
@@ -988,7 +992,7 @@ func _load_example(index: int) -> void:
 		return
 	var minimum_stage: int = [1,1,2,1,3,2,2,2][index]
 	if rules.stage < minimum_stage:
-		_notice("该测试构筑需要%d格，请先使用模拟剧情解锁按钮。" % Rules.cells(minimum_stage).size())
+		_notice(func(): return L10N.text(L10N.text("ui.c46af0106de4") % Rules.cells(minimum_stage).size()))
 		return
 	_confirm("载入测试构筑？","将替换当前未保存的符文、奇物与草稿，不扣费。召唤和保存仍需自己确认。",func():
 		var sample = Rules.new()
@@ -1004,11 +1008,11 @@ func _load_example(index: int) -> void:
 			var copies: int = 4 if index==2 else 2 if index==4 else 1
 			for i in copies:
 				if not _place_sample_rune(sample,id):
-					_notice("测试图形无法放入当前法阵")
+					_notice("ui.acb765af04be")
 					return
 		rules.import_layout(sample.export_layout())
 		_close_modal()
-		_notice("测试构筑已载入，可继续修改或确认召唤。"))
+		_notice("ui.3cf9f3d54567"))
 
 
 func _place_sample_rune(sample, id: String) -> bool:

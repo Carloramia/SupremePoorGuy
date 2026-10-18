@@ -56,12 +56,14 @@ func run() -> void:
 	torso.freeze = false
 	controller._last_torso_response_force = Vector3.ZERO
 	controller._update_stance_allocation(1.0)
+	controller.get_generated_movement_diagnostics()
 	var distal_load: Vector3 = controller._stance_joint_loads[chain.joints[0]]
 	var total_share := 0.0
 	for share: float in controller._stance_support_weights.values(): total_share += share
 	check(absf(total_share - 1.0) < 0.001, "Limb contacts must not duplicate a chain's weight share")
 	controller._last_torso_response_force = -controller._gravity_acceleration() * controller._stance_total_mass
 	controller._update_stance_allocation(1.0)
+	controller.get_generated_movement_diagnostics()
 	check(controller._stance_joint_loads[chain.joints[0]].distance_to(distal_load) < 0.001, "A joint distal to knee contact must not carry the ground reaction")
 	controller._last_torso_response_force = Vector3.ZERO
 	torso.freeze = true

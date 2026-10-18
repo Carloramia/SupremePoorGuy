@@ -1,4 +1,5 @@
 extends Control
+const L10N = preload("res://Scripts/Localization/GameText.gd")
 ## Standalone wireframe shell. No dependency on the game or event project.
 const TITLES = {
 	&"main": "涌现 · 主菜单", &"world": "大地图", &"local": "探索小地图",
@@ -97,7 +98,7 @@ func _build_shell() -> void:
 
 func _show_screen(route: StringName, _context: Dictionary) -> void:
 	_clear(page)
-	route_label.text = "UI FLOW / %s · 独立占位原型" % route
+	L10N.bind(route_label,&"text",func(): return L10N.text(L10N.text("ui.5f917fd905cd") % route))
 	page.add_child(_label(TITLES[route], 32))
 	page.add_child(_label(DESCRIPTIONS[route], 20))
 	var actions := HFlowContainer.new()
@@ -173,7 +174,7 @@ func _request(parent: Node, title: String, action: StringName) -> void:
 	_button(parent, title, func(): router.request_action(action))
 
 func _on_action(action: StringName, _context: Dictionary) -> void:
-	status.text = "已发送接口请求：%s（占位：尚未执行真实功能）" % action
+	L10N.bind(status,&"text",func(): return L10N.text(L10N.text("ui.e9f333023eb5") % action))
 
 func _update_back() -> void:
 	if is_instance_valid(back_button):
@@ -187,7 +188,7 @@ func _set_buttons_enabled(node: Node, enabled: bool) -> void:
 
 func _button(parent: Node, title: String, callback: Callable) -> Button:
 	var button := Button.new()
-	button.text = title
+	L10N.bind(button,&"text",func(): return L10N.text(title))
 	button.custom_minimum_size = Vector2(160, 48)
 	button.add_theme_font_size_override("font_size", 18)
 	button.pressed.connect(callback)
@@ -196,7 +197,7 @@ func _button(parent: Node, title: String, callback: Callable) -> Button:
 
 func _label(value: String, size: int) -> Label:
 	var label := Label.new()
-	label.text = value
+	L10N.bind(label,&"text",func(): return L10N.text(value))
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	label.add_theme_font_size_override("font_size", size)
 	return label

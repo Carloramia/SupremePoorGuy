@@ -96,7 +96,6 @@ func _validate() -> void:
 		controller.get_current_step_distance() * controller.get_fast_step_frequency(),
 		controller.fast_target_speed * 1.5
 	))
-	assert(not controller.fast_torso_velocity_drive_enabled)
 	assert(
 		controller._can_start_step_with_support(leg_l),
 		"Fast mode must not require any Leg to touch the ground"

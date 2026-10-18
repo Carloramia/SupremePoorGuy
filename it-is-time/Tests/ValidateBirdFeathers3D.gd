@@ -14,8 +14,12 @@ func feather_parts(container: Node) -> Array[Node]:
 func run() -> void:
 	var actor := BIRD.instantiate()
 	actor.generate_on_ready = false
+	actor.mass_limits_enabled = true
 	root.add_child(actor)
 	var generator := actor.get_node("BirdGenerator")
+	# This exercises procedural feathers; the shipping Bird uses calibrated paper assets.
+	generator.use_manual_layout = false
+	generator.part_scene_rules.clear()
 	generator.wing_count = 3
 	generator.unsymmetrie = 0.0
 	generator.inhomogeneity = 0.0

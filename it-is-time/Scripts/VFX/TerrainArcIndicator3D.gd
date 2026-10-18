@@ -2,6 +2,7 @@ class_name TerrainArcIndicator3D
 extends Node3D
 
 var _control_perf := preload("res://Scripts/Debug/ControlPerformanceStats.gd").new()
+const TERRAIN_PROBE = preload("res://Scripts/Geometry/TerrainProbe3D.gd")
 
 const PLAYER_CONTEXT = preload("res://Scripts/Player/PlayerControlContext.gd")
 
@@ -153,31 +154,8 @@ func _find_terrain_hit(ray_from: Vector3, ray_to: Vector3) -> Dictionary:
 	return result
 
 func _perf_impl__find_terrain_hit(ray_from: Vector3, ray_to: Vector3) -> Dictionary:
-	var excluded: Array[RID] = []
-	for _attempt: int in range(maximum_probe_exclusions):
-		var query := PhysicsRayQueryParameters3D.create(
-			ray_from,
-			ray_to,
-			terrain_collision_mask,
-			excluded
-		)
-		query.collide_with_areas = false
-		query.collide_with_bodies = true
-		_control_perf.count(&"terrain_ray_queries")
-		var result := get_world_3d().direct_space_state.intersect_ray(query)
-		if result.is_empty():
-			return {}
-		var collider := result.get(&"collider") as Node
-		if (
-			collider is StaticBody3D
-			or (collider != null and not terrain_group.is_empty() and collider.is_in_group(terrain_group))
-		):
-			return result
-		if collider is CollisionObject3D:
-			excluded.append((collider as CollisionObject3D).get_rid())
-		else:
-			return {}
-	return {}
+	return TERRAIN_PROBE.intersect(get_world_3d().direct_space_state, ray_from, ray_to,
+		terrain_collision_mask, terrain_group, maximum_probe_exclusions, _control_perf)
 
 func _resolve_targets() -> void:
 	if PLAYER_CONTEXT.controller(self) != null:

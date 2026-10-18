@@ -1,4 +1,5 @@
 extends "res://Modules/FrontierDelivery/Scripts/Map/FrontierMapView.gd"
+const L10N = preload("res://Scripts/Localization/GameText.gd")
 
 var application: Node
 var active_location_id := ""
@@ -21,7 +22,7 @@ func _ready() -> void:
 	interaction_requested.connect(_arrived)
 	feedback.connect(func(message):
 		_last_travel_feedback = message
-		application.ui.status.text = message
+		L10N.bind(application.ui.status,&"text",func(): return L10N.text(message))
 		_map_diagnostic("map_feedback",{"reason":message}))
 	progress_changed.connect(func():
 		if _travel_pending and path.is_empty():
@@ -91,7 +92,7 @@ func save_progress() -> bool:
 	runtime.data = _last_saved.duplicate(true)
 	stop_moving()
 	reset_runtime(runtime)
-	application.ui._notice(application.session.last_error)
+	application.ui._notice(func(): return L10N.text(application.session.last_error))
 	return false
 
 func set_enabled(value: bool) -> void:
@@ -110,8 +111,8 @@ func _hovered(id: String, point: Vector2) -> void:
 	var object := Catalog.location(id)
 	if object.is_empty() or object.type!="camp" or not input_enabled: return
 	var card: Control = ui.view.get_node("LocationHint")
-	card.get_node("%Title").text = object.name
-	card.get_node("%Summary").text = "探索到地点后可交互\n当前出战：%d / 6" % application.session.occupied_slots()
+	L10N.bind(card.get_node("%Title"),&"text",func(): return L10N.text(L10N.text(object.name)))
+	L10N.bind(card.get_node("%Summary"),&"text",func(): return L10N.text(L10N.text("ui.c8827e970138") % application.session.occupied_slots()))
 	card.show()
 	card.reset_size()
 	card.position = (point+Vector2(24,0)).clamp(Vector2.ZERO,(size-card.size).max(Vector2.ZERO))
@@ -132,7 +133,7 @@ func _arrived(id: String, kind: String) -> void:
 		if not runtime.destroy_obstacle(id):
 			var reason: String = runtime.interaction_error(object)
 			_map_diagnostic("interaction_rejected",{"location_id":id,"reason":reason if not reason.is_empty() else "路障不可破坏或超出有效范围。","owned_count":runtime.party_count})
-			application.ui._notice("请先持有妖兽并靠近路障。")
+			application.ui._notice("ui.cb9081b24ad0")
 			return
 		if not save_progress(): runtime.data = before
 		else: _map_diagnostic("obstacle_destroyed",{"location_id":id})
@@ -140,7 +141,7 @@ func _arrived(id: String, kind: String) -> void:
 		return
 	if kind=="encounter":
 		var error := roster_error(id,kind)
-		if not error.is_empty(): _map_diagnostic("battle_rejected",{"location_id":id,"kind":kind,"reason":error}); application.ui._notice(error); return
+		if not error.is_empty(): _map_diagnostic("battle_rejected",{"location_id":id,"kind":kind,"reason":error}); application.ui._notice(func(): return L10N.text(error)); return
 		if application.session.monsters("team").is_empty():
 			runtime.data.pending_battle_setup = {"location_id":id,"kind":kind}
 			if save_progress():
@@ -152,7 +153,7 @@ func _arrived(id: String, kind: String) -> void:
 		open_location(object)
 		return
 	var error: String = runtime.interaction_error(object)
-	if not error.is_empty(): _map_diagnostic("interaction_rejected",{"location_id":id,"reason":error}); application.ui._notice(error); return
+	if not error.is_empty(): _map_diagnostic("interaction_rejected",{"location_id":id,"reason":error}); application.ui._notice(func(): return L10N.text(error)); return
 	if id not in runtime.data.visited: runtime.data.visited.append(id)
 	if not save_progress(): return
 	if object.get("location_id","")=="summoning_hut":
@@ -161,8 +162,8 @@ func _arrived(id: String, kind: String) -> void:
 	else:
 		_map_diagnostic("event_unavailable",{"location_id":id,"reason":"此地点暂无已接入的事件。"})
 		application.ui._modal(str(object.name),func(body):
-			var page: Control = application.ui._text_screen(body,"此地点暂无已接入的事件。")
-			application.ui._btn(page.get_node("%Commands"),"返回地图",func(): application.ui._close_modal()))
+			var page: Control = application.ui._text_screen(body,"ui.a7b6d7d13745")
+			application.ui._btn(page.get_node("%Commands"),"ui.a56e8056bd25",func(): application.ui._close_modal()))
 
 func roster_error(id: String, kind: String) -> String:
 	var object := Catalog.location(id)
@@ -172,13 +173,13 @@ func roster_error(id: String, kind: String) -> String:
 func open_location(object: Dictionary) -> void:
 	_map_diagnostic("location_panel_opened",{"location_id":object.id,"roster_error":roster_error(object.id,"clear"),"can_enter_battle":not application.session.monsters("team").is_empty() and roster_error(object.id,"clear").is_empty()})
 	application.ui._modal(str(object.name),func(body):
-		var page: Control = application.ui._text_screen(body,"清理胜利将关闭这里的自动遭遇；范围遭遇胜利不会永久清理。")
-		var button: Button = application.ui._btn(page.get_node("%Commands"),"进入战斗",func(): begin_battle(object.id,"clear"))
+		var page: Control = application.ui._text_screen(body,"ui.aaef0121bd42")
+		var button: Button = application.ui._btn(page.get_node("%Commands"),"ui.e62745dce172",func(): begin_battle(object.id,"clear"))
 		button.name = "EnterBattle"
 		var error := roster_error(object.id,"clear")
 		button.disabled = application.session.monsters("team").is_empty() or not error.is_empty()
-		button.tooltip_text = error if not error.is_empty() else "请先将妖兽加入出战队列。" if button.disabled else "部署当前出战队伍。"
-		application.ui._btn(page.get_node("%Commands"),"返回地图",func(): application.ui._close_modal()),"delivery_location")
+		L10N.bind(button,&"tooltip_text",func(): return L10N.text(error if not error.is_empty() else L10N.text("ui.d16f235099df") if button.disabled else L10N.text("ui.b368f63f4b31")))
+		application.ui._btn(page.get_node("%Commands"),"ui.a56e8056bd25",func(): application.ui._close_modal()),"delivery_location")
 
 func open_setup() -> void:
 	application.ui._warehouse("warehouse")
@@ -201,7 +202,7 @@ func begin_battle(id: String, kind: String) -> bool:
 		_map_diagnostic("battle_rejected",{"location_id":id,"kind":kind,"reason":"当前阶段不能开战或出战队列为空。"})
 		return false
 	var error := roster_error(id,kind)
-	if not error.is_empty(): _map_diagnostic("battle_rejected",{"location_id":id,"kind":kind,"reason":error}); application.ui._notice(error); return false
+	if not error.is_empty(): _map_diagnostic("battle_rejected",{"location_id":id,"kind":kind,"reason":error}); application.ui._notice(func(): return L10N.text(error)); return false
 	var before: Dictionary = runtime.snapshot()
 	runtime.data.pending_battle_setup = {}
 	var ids: Array = application.session.monsters("team").map(func(unit):return unit.id)
@@ -210,13 +211,13 @@ func begin_battle(id: String, kind: String) -> bool:
 		runtime.data = before
 		var reason: String = runtime.interaction_error(Catalog.location(id))
 		_map_diagnostic("battle_rejected",{"location_id":id,"kind":kind,"reason":reason if not reason.is_empty() else "运行时拒绝：检查入口路障和战场配置。"})
-		application.ui._notice("当前地点不能开始战斗。")
+		application.ui._notice("ui.afe977112fa3")
 		return false
 	if not application.session.save_delivery_world(runtime.snapshot(),request):
 		runtime.data = before
 		runtime.busy = false
 		_map_diagnostic("battle_request_save_failed",{"location_id":id,"reason":application.session.last_error})
-		application.ui._notice(application.session.last_error)
+		application.ui._notice(func(): return L10N.text(application.session.last_error))
 		return false
 	_last_saved = runtime.snapshot()
 	_map_diagnostic("battle_request_committed",request)

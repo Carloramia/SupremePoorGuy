@@ -115,10 +115,6 @@ var _walk_start_bypasses := 0
 @export_range(0.0, 10.0, 0.01, "or_greater") var fast_step_height: float = 0.6
 ## Maximum rate at which the expected horizontal velocity changes.
 @export_range(0.01, 1000.0, 0.1, "or_greater") var fast_velocity_response: float = 30.0
-## Converts horizontal velocity error into Torso acceleration.
-@export var fast_torso_velocity_drive_enabled: bool = false
-@export_range(0.0, 100.0, 0.1, "or_greater") var fast_torso_velocity_gain: float = 8.0
-@export_range(0.0, 10000.0, 1.0, "or_greater") var fast_maximum_torso_drive_force: float = 500.0
 
 @export_group("Movement Scale Response")
 ## Maximum scaled height of the parabolic step arc.
@@ -699,25 +695,6 @@ func _finish_fast_gait_phase() -> void:
 	if not _legs.is_empty():
 		_next_leg_index = (_next_leg_index + 1) % _legs.size()
 	cancel_step(&"fast_phase_replaced")
-
-func _apply_fast_torso_velocity_drive() -> void:
-	if (
-		not fast_torso_velocity_drive_enabled
-		or not is_instance_valid(_torso)
-		or not has_torso_movement_force_support(true)
-	):
-		return
-	var actual_velocity := _torso.linear_velocity
-	actual_velocity.y = 0.0
-	var velocity_error := _desired_fast_velocity - actual_velocity
-	velocity_error.y = 0.0
-	var force := velocity_error * _torso.mass * fast_torso_velocity_gain
-	if fast_maximum_torso_drive_force > 0.0:
-		force = force.limit_length(fast_maximum_torso_drive_force)
-	if force.is_zero_approx():
-		return
-	_torso.sleeping = false
-	_torso.apply_central_force(force)
 
 ## Starts the next leg in the stable alternating order when it has a valid landing point.
 var _last_shared_step_start: float = -INF

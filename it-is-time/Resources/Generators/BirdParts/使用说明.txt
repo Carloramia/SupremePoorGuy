@@ -1,0 +1,65 @@
+Generate_Bird / Bird_1 接入设置
+=============================
+
+Generate_Bird 主体使用 Bird_1 鹰形资源，羽毛使用 Bird_3 的独立 FlightLeft01/02、FlightRight01/02。
+Leg 和 Head 采用场景中当前 Part Scene Rules 的手动设置；本次保留用户已修改的引用及尺寸倍率。
+当前 Leg_1 使用 Bird_3/Feet/Claw02，Leg_2 使用 Bird_3/Feet/Claw01；两者 Size Multiplier 均为 2.0，Head 为 1.3。
+Generate_Bird_NPC 通过原有继承同步使用。
+本次没有增加其他素材套装的切换接口。
+
+结构
+----
+1 个 Torso、2 个 SubTorso、2 个 Leg、4 个 LegLimb、1 个 Head、6 个 Wing、18 个翼羽和 5 个尾羽。
+共 39 个物理部件、38 个关节，全部 741 对角色内部碰撞相互忽略。
+已移除 Neck，Head 在原有头部连接点直接连接 Torso，沿用现有直接连接头部的支撑和阻尼机制。
+此次迁移以当前实际部件为准捕获内部模型/碰撞箱快照；所有保留部件的位置、旋转、尺寸和引用不变。
+完整躯干图片只使用一次，避免重复显示完整躯干。
+两翼各保留 Root / Middle / Tip 三个物理段，分别沿翼段连接 2 / 3 / 4 根独立受控羽毛。
+两种羽毛交替排列，连接孔作为羽根，等比拟合羽毛长度，保留原始纹理的宽高比。
+展开长度和角度采用现有连续羽缘算法，最末端羽毛与翼尖对齐；收拢时统一朝向角色后方。
+羽毛之间使用小幅 Z 分层，避免重合表面闪烁，原有整组羽扇资源保留但不再接入本角色。
+尾羽 TailFeather_001～005 位于躯干后方，使用 TailFlight01/02 交替引用 Bird_3 的单片 FlightLeft01/02。
+5 片尾羽朝局部 -X 形成 48° 的扇簇，中心长度为体长的 55%，外侧逐渐缩短到 42.5%；XY 保持等比。
+尾羽同时带 Feather 与 Tail 标签，采用轻量羽毛密度，通过 5 个 Tail 弹性关节分别连接 Torso。
+尾羽只使用 Tail 关节的 Z 轴回正弹簧，X/Y 旋转与三轴位移受限，不接入翅膀羽毛的收展控制。
+关节参数在角色根节点 Tail Joints 组中调节；单片引用和尺寸倍率在 BirdGenerator 的同名 Part Scene Rule 中调节。
+纸片厚度始终使用 PartWidth * OverallScale，碰撞厚度保持视觉厚度的两倍。
+
+文件
+----
+Bird1Layout.tres：基准尺度的框架、部件姿态和关节连接点。
+其余同名 .tres：每个部件的 GeneratedPartSceneRule，可指定 Part Scene 和尺寸匹配方式。
+Scenes/Creatures/Bodyparts/Bird/Calibrated/Bird_1/：接入用的继承部件，校准朝向、连接点和标签；原始 80 套素材不变。
+Assets/3DResources/Creatures/Bird/Metadata/generator_part_mapping.json：部件引用对照表。
+Assets/3DResources/Creatures/Bird/Previews/Bird1Assembly.png：Godot 正交渲染预览。
+
+编辑与重新生成
+--------------
+打开 Scenes/Creatures/Characters/Generate_Bird.tscn，选择 BirdGenerator。
+Manual Layout / Use Manual Layout 默认开启，Manual Layout 指向本目录的 Bird1Layout.tres。
+Physical Part Scenes / Part Scene Rules 保存 39 个精确 PartKey 对应的部件设置。
+点击角色根节点的“生成框架与物理角色”，会重新解析这些场景引用并保持当前校准姿态。
+也可沿用已有的便捷部件编辑、自动对齐连接点和“将当前部件姿态写入生成器”功能来保存后续调整。
+
+此模式使用已校准的手动布局，程序化生成器的数量、随机轮廓、翼段长度等设置不直接重规划该布局。
+OverallScale 和 PartWidth 仍然生效。原有 BirdGenerator.tscn 继续保留程序化生成能力。
+不要在需要保持当前纸片姿态时清除手动布局。
+各部件的尺寸模式默认 FIT_UNIFORM，纸片 XY 比例保持等比，Z 厚度独立拟合。
+
+控制与检查
+----------
+沿用原有地面移动、腿部收拢、飞行、收展翅、鸟类 NPC 和俯冲控制器。
+校准羽毛只保留 Feather 标签，翅骨只使用 Wing / WingLimb，避免同一物体被两种姿态控制重复驱动。
+SubTorso 使用支撑标签，不保留源腿片的 LegLimb 标签。
+Head 直接接入 Torso，使用原 Head 连接点，不移动模型或碰撞箱；Neck Segment Count 为 0。
+BirdDensity.tres 的羽毛密度为 0.001。独立羽毛数量增加后，总羽毛质量约为原整组羽扇的 39%，
+减小翼端负载，避免收翅瞄准因物理姿态偏差超时；未放宽俯冲的收翅容差或瞄准条件。
+
+本次已验证：与添加尾羽前场景逐部件比对、保存后重载/重新生成的根节点及内部模型/碰撞箱一致、
+引用和尺寸倍率保留、1.5 倍整体缩放、直接 Head/Torso 连接、全部内部碰撞例外、
+两条腿的步行/飞行链识别、18 根独立翼羽的物理展开/收拢、5 根尾羽在重力下的关节连接和被动姿态维持。
+此前版本已通过飞行/落地和 NPC 俯冲测试，本次没有重新进行完整飞行/攻击测试。
+尚未进行长时间、多角色混战压力测试。
+
+Tools/ConnectBirdParts.gd 是一次性初始化工具，会覆盖手动布局和场景设置；不要用它保存本次之后的手动编辑。
+日常编辑请使用上面的 Inspector 流程。移除 Neck 的迁移没有重新运行此初始化工具。

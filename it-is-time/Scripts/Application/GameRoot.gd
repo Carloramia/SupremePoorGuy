@@ -1,6 +1,8 @@
 extends Node
+const L10N = preload("res://Scripts/Localization/GameText.gd")
 
 const SESSION = preload("res://Scripts/Application/GameSession.gd")
+const QUEST_DEFINITION = preload("res://Scripts/Quests/QuestDefinition.gd")
 const UI = preload("res://Scripts/Application/GameUIController.gd")
 const VIEW = preload("res://Scripts/Application/GameWorldView.gd")
 const WORLD_SAVE = preload("res://Scripts/Application/WorldMapSessionSave.gd")
@@ -12,6 +14,7 @@ const MAP_CATALOG = preload("res://Modules/FrontierDelivery/Scripts/Map/MapCatal
 @export var delivery_battle_settings: DeliveryBattleSettings = preload("res://Resources/Application/FrontierDeliveryBattle.tres")
 @export var world_scene: PackedScene = preload("res://Modules/Frontier/world_map/demo/WorldMapDemo.tscn")
 @export var integration_logging := false
+@export var quest_definitions: Array[QUEST_DEFINITION] = []
 @export var ui_skin_preset: Resource = preload("res://Modules/PaperUI/TA/Presets/medium.tres")
 @export var battle_definitions: Dictionary = {}
 @export var default_battle_definition: SceneDefinition
@@ -55,6 +58,9 @@ func _ready() -> void:
 	get_window().close_requested.connect(_window_close_requested)
 	session.save_path = save_path
 	session.integration_logging = integration_logging
+	if not session.configure_quests(quest_definitions):
+		_load_failed = true
+		push_warning(session.last_error)
 	if session.has_save() and not session.load_save(): _load_failed = true; push_warning(session.last_error)
 	if not session.data.battle.is_empty() and session.data.battle.get("map_id","")!="frontier_layout": use_delivery_map = false
 	var layer := CanvasLayer.new()
@@ -106,16 +112,16 @@ func return_to_main_menu() -> bool:
 	# Let awaited loading/baking/tweens finish before freeing their nodes.
 	if phase in ["loading_world","loading_battle","returning"]:
 		returning_to_main_menu = true
-		ui._notice("正在完成当前载入或转场，随后保存并返回主菜单…")
+		ui._notice("ui.10a992a5b7be")
 		return false
 	returning_to_main_menu = false
 	if phase == "settlement" and session.data.battle.get("phase") != "settlement":
 		_finalize_battle()
 		if session.data.battle.get("phase") != "settlement": return false
 	if _delivery_cancel_save_pending:
-		if not delivery_map.cancel_battle(): ui._notice(session.last_error); return false
+		if not delivery_map.cancel_battle(): ui._notice(func(): return L10N.text(session.last_error)); return false
 		_delivery_cancel_save_pending = false
-	if not save_session(): ui._notice(session.last_error); return false
+	if not save_session(): ui._notice(func(): return L10N.text(session.last_error)); return false
 	trace_map_event("return_to_main_menu")
 	phase = "main"
 	_cleanup_battle()
@@ -278,7 +284,7 @@ func start_new_game() -> void:
 	if phase != "main": return
 	var previous := session.data.duplicate(true)
 	session.reset()
-	if not session.save(): session.data = previous; ui._notice(session.last_error); return
+	if not session.save(): session.data = previous; ui._notice(func(): return L10N.text(session.last_error)); return
 	ui.rules.import_layout(session.data.layout)
 	ui._close_all()
 	ui._show("world")
@@ -289,14 +295,14 @@ func enter_world() -> void:
 		_enter_delivery_world()
 		return
 	phase = "loading_world"
-	ui.status.text = "正在准备地图导航…"
+	L10N.bind(ui.status,&"text","ui.98b041d181ea")
 	world_map = world_scene.instantiate() as WorldMapController
-	if world_map == null: phase = "main"; ui._notice("地图场景无效。"); return
+	if world_map == null: phase = "main"; ui._notice("ui.f24ad31ddca6"); return
 	var content_error := _world_content_error()
 	if not content_error.is_empty():
 		world_map.free(); world_map = null; phase = "main"
 		ui._show("main")
-		ui._notice(content_error)
+		ui._notice(func(): return L10N.text(content_error))
 		return
 	for title: String in ["FakeBattleAdapter","ScenarioOverlay"]:
 		var demo := world_map.get_node_or_null(title)
@@ -322,7 +328,7 @@ func enter_world() -> void:
 	phase = "world"
 	var snapshot: Dictionary = session.data.worlds.get(str(world_map.definition.map_id),{})
 	if not snapshot.is_empty() and not world_map.import_session(snapshot,true):
-		ui._notice("地图存档校验失败；未覆盖原存档。")
+		ui._notice("ui.97930b186fb4")
 	map_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	map_container.show()
 	ui._show("world")
@@ -335,7 +341,7 @@ func enter_world() -> void:
 
 func _enter_delivery_world() -> void:
 	phase = "loading_world"
-	ui.status.text = "正在准备边境地图…"
+	L10N.bind(ui.status,&"text","ui.4fceef44bb5b")
 	delivery_map = preload("res://Scripts/Application/DeliveryMapBridge.gd").new()
 	delivery_map.application = self
 	delivery_map.name = "FrontierDeliveryMap"
@@ -386,8 +392,8 @@ func _cancel_failed_delivery_battle(message: String) -> void:
 	if not delivery_map.cancel_battle():
 		_delivery_cancel_save_pending = true
 		ui._modal("战场取消尚未保存",func(body):
-			var page: Control = ui._text_screen(body,session.last_error+"\n原战斗请求已保留，可重试保存。")
-			ui._btn(page.get_node("%Commands"),"重试返回地图",func(): _cancel_failed_delivery_battle(message)))
+			var page: Control = ui._text_screen(body,func(): return L10N.text(session.last_error+L10N.text("ui.3d153ad4e99c")))
+			ui._btn(page.get_node("%Commands"),"ui.6dbd4db34d80",func(): _cancel_failed_delivery_battle(message)))
 		ui.close_button.disabled = true
 		return
 	_delivery_cancel_save_pending = false
@@ -396,7 +402,7 @@ func _cancel_failed_delivery_battle(message: String) -> void:
 	phase = "world"
 	delivery_map.returned()
 	ui._show("world")
-	ui._notice("战场加载失败："+message)
+	ui._notice(func(): return L10N.text(L10N.text("ui.178f114f7e8e")+message))
 
 func _world_content_error() -> String:
 	var editor: Dictionary = world_map.definition.editor_data
@@ -415,25 +421,25 @@ func _interaction_started(id: StringName) -> void:
 	world_map.interaction.panel.hide()
 	ui.location = str(id)
 	ui._modal(location.definition.display_name,func(body):
-		var page: Control = ui._text_screen(body,location.definition.short_description)
+		var page: Control = ui._text_screen(body,func(): return L10N.text(location.definition.short_description))
 		var commands: Node = page.get_node("%Commands")
 		match str(location.definition.type_id):
 			"battle","monster":
-				var button: Button = ui._btn(commands,"进入战斗",func(): world_map.interaction.request_battle())
+				var button: Button = ui._btn(commands,"ui.e62745dce172",func(): world_map.interaction.request_battle())
 				button.name = "EnterBattle"
 				button.disabled = session.monsters("team").is_empty()
-				button.tooltip_text = "请先召唤妖兽并加入出战队列。" if button.disabled else "使用当前出战队列进入战斗。"
+				L10N.bind(button,&"tooltip_text",func(): return L10N.text(L10N.text("ui.28a35e3196b4") if button.disabled else L10N.text("ui.da25e15c0ec0")))
 			"settlement":
 				if location.definition.scenario_scene != null:
-					ui._btn(commands,"进入场景",func(): world_map.interaction.request_scenario())
-				ui._btn(commands,"结束访问",func(): _resolve_location({"success":true,"complete_location":false,"action":"visit"}))
+					ui._btn(commands,"ui.9b2631033e6e",func(): world_map.interaction.request_scenario())
+				ui._btn(commands,"ui.cf2683df7949",func(): _resolve_location({"success":true,"complete_location":false,"action":"visit"}))
 			"event":
-				ui._btn(commands,"研读手记 · 魔力 +20",func(): _resolve_location({"success":true,"complete_location":true,"action":"study","reward":20}))
+				ui._btn(commands,"ui.472e546d2df4",func(): _resolve_location({"success":true,"complete_location":true,"action":"study","reward":20}))
 			"resource":
-				ui._btn(commands,"收集 · 魔力 +10",func(): _resolve_location({"success":true,"complete_location":true,"action":"collect","reward":10}))
+				ui._btn(commands,"ui.46f879af6c36",func(): _resolve_location({"success":true,"complete_location":true,"action":"collect","reward":10}))
 			_:
-				ui._notice("该地点类型尚未接入。")
-		ui._btn(commands,"返回地图",func(): _resolve_location({"success":false,"complete_location":false,"action":"leave"})),"event")
+				ui._notice("ui.a9aea74d047c")
+		ui._btn(commands,"ui.a56e8056bd25",func(): _resolve_location({"success":false,"complete_location":false,"action":"leave"})),"event")
 
 func _resolve_location(result: Dictionary) -> void:
 	if world_map.interaction.active_location == null: return
@@ -445,7 +451,7 @@ func _resolve_location(result: Dictionary) -> void:
 		session.data.completed.append(reward_id)
 	if not world_map.resolve_location_interaction(id,result):
 		session.data = before
-		ui._notice(session.last_error)
+		ui._notice(func(): return L10N.text(session.last_error))
 		return
 	ui._close_all()
 	ui._show("world")
@@ -457,11 +463,11 @@ func _interaction_completed(_id: StringName, _result: Dictionary) -> void:
 
 func open_event(_id: String) -> void:
 	trace_map_event("event_rejected",{"event_id":_id,"reason":"需要先抵达地图事件地点。"})
-	ui._notice("请先前往大地图上的事件地点。")
+	ui._notice("ui.18115ec65d4b")
 
 func _battle_requested(_request: Dictionary) -> void:
 	if phase != "world" or is_instance_valid(battle): return
-	if session.monsters("team").is_empty(): ui._notice("出战队伍为空。"); return
+	if session.monsters("team").is_empty(): ui._notice("ui.973f1034ced9"); return
 	phase = "loading_battle"
 	ui._close_all()
 	world_map.set_world_map_paused(true)
@@ -477,7 +483,7 @@ func _battle_requested(_request: Dictionary) -> void:
 		if not battle_definitions.get(map_id) is SceneDefinition:
 			battle.free(); battle = null; phase = "world"
 			_resolve_location({"success":false,"complete_location":false,"action":"load_failed"})
-			ui._notice("战场 %s 尚未在 GameRoot 的 Battle Definitions 中指定。" % map_id)
+			ui._notice(func(): return L10N.text(L10N.text("ui.57e6afcc668b") % map_id))
 			return
 		battle.definition = battle_definitions[map_id]
 	battle.monster_config_definitions = monster_config_definitions.duplicate()
@@ -494,7 +500,7 @@ func _battle_requested(_request: Dictionary) -> void:
 		_cleanup_battle()
 		phase = "world"
 		_resolve_location({"success":false,"complete_location":false,"action":"load_failed"})
-		ui._notice("战场部署失败；原地图和队伍已保留。"+deployment_error)
+		ui._notice(func(): return L10N.text(L10N.text("ui.a32f22d2304b")+deployment_error))
 		return
 	_begin_deployment()
 
@@ -535,8 +541,8 @@ func _finalize_battle() -> void:
 		session.pending_result = {}
 	if not success:
 		ui._modal("结算保存失败",func(body):
-			var page: Control = ui._text_screen(body,session.last_error+"\n战斗已停止，奖励尚未提交。")
-			ui._btn(page.get_node("%Commands"),"重试保存",_finalize_battle))
+			var page: Control = ui._text_screen(body,func(): return L10N.text(session.last_error+L10N.text("ui.409bcbc6c652")))
+			ui._btn(page.get_node("%Commands"),"ui.917e75040547",_finalize_battle))
 		return
 	_show_settlement()
 
@@ -544,22 +550,22 @@ func _show_settlement() -> void:
 	trace_map_event("settlement_opened",{"outcome":_pending_result.outcome,"reward":_pending_result.reward,"post_battle_options":_pending_result.get("post_battle_options",[])})
 	ui._close_all()
 	ui._modal("战斗结算",func(body):
-		var page: Control = ui._text_screen(body,"结果：%s\n魔力奖励：%d\n部位战损已记录。本轮采用战后恢复，不永久删除库存生物。" % [_pending_result.outcome,int(_pending_result.reward)])
-		ui._btn(page.get_node("%Commands"),"返回大地图",return_to_world)
+		var page: Control = ui._text_screen(body,func(): return L10N.text(L10N.text("ui.bfdf1e0847a2") % [_pending_result.outcome,int(_pending_result.reward)]))
+		ui._btn(page.get_node("%Commands"),"ui.a479d4fcd248",return_to_world)
 		if "summon" in _pending_result.get("post_battle_options",[]):
-			ui._btn(page.get_node("%Commands"),"战后召唤",func():
+			ui._btn(page.get_node("%Commands"),"ui.090d52efc8f6",func():
 				trace_map_event("event_requested",{"event_id":"summon","source":"post_battle"})
 				await return_to_world()
 				ui._open_ritual())
 		if "upgrade" in _pending_result.get("post_battle_options",[]):
-			ui._btn(page.get_node("%Commands"),"升级法阵",func():
+			ui._btn(page.get_node("%Commands"),"ui.7f21817c7190",func():
 				trace_map_event("event_requested",{"event_id":"upgrade","source":"post_battle"})
 				if session.unlock_next_stage(ui.rules.export_layout()):
 					ui.rules.import_layout(session.data.layout)
 					trace_map_event("event_completed",{"event_id":"upgrade","stage":session.data.array_stage})
 				else:
 					trace_map_event("event_rejected",{"event_id":"upgrade","reason":session.last_error})
-					ui._notice(session.last_error)))
+					ui._notice(func(): return L10N.text(session.last_error))))
 	ui.close_button.disabled = true
 
 func request_retreat() -> void:
@@ -572,7 +578,7 @@ func return_to_world() -> void:
 	if not session.save():
 		session.data.battle = before
 		trace_map_event("return_save_failed",{"reason":session.last_error})
-		ui._notice(session.last_error)
+		ui._notice(func(): return L10N.text(session.last_error))
 		return
 	phase = "returning"
 	ui.close_button.disabled = false
@@ -615,7 +621,7 @@ func _cleanup_battle() -> void:
 func _scenario_requested(_id: StringName, packed: PackedScene) -> void:
 	if phase != "world" or scenario != null: return
 	var instance := packed.instantiate()
-	if not instance is ScenarioController: instance.free(); ui._notice("场景根节点必须是ScenarioController。"); return
+	if not instance is ScenarioController: instance.free(); ui._notice("ui.738fdf63606e"); return
 	scenario = instance
 	var demo_ui := scenario.get_node_or_null("DemoUI")
 	if demo_ui != null: scenario.remove_child(demo_ui); demo_ui.free()
@@ -629,18 +635,18 @@ func _scenario_requested(_id: StringName, packed: PackedScene) -> void:
 		scenario.queue_free(); scenario = null; phase = "world"
 		ui._show("world")
 		map_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
-		ui._notice("场景控制器未完整配置。")
+		ui._notice("ui.cea2b3209ff2")
 		return
 	scenario.scenario_exit_requested.connect(_scenario_exit)
 	ui._show("battle")
 	battle_container.show()
 	battle_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
-	ui._btn(ui.actions,"返回大地图",func(): scenario.request_scenario_exit(&"return_to_map"))
+	ui._btn(ui.actions,"ui.a479d4fcd248",func(): scenario.request_scenario_exit(&"return_to_map"))
 	ui.actions.show()
 
 func _scenario_exit(_reason: StringName) -> void:
 	if scenario == null: return
-	if not world_map.resolve_location_interaction(world_map.interaction.active_location.location_id,{"success":true,"complete_location":false,"action":"scenario_exit"}): ui._notice(session.last_error); return
+	if not world_map.resolve_location_interaction(world_map.interaction.active_location.location_id,{"success":true,"complete_location":false,"action":"scenario_exit"}): ui._notice(func(): return L10N.text(session.last_error)); return
 	battle_viewport.remove_child(scenario)
 	scenario.queue_free()
 	scenario = null
@@ -711,7 +717,7 @@ func save_session() -> bool:
 
 func _window_close_requested() -> void:
 	if save_session(): get_tree().quit()
-	else: ui._notice(session.last_error)
+	else: ui._notice(func(): return L10N.text(session.last_error))
 
 func _exit_tree() -> void:
 	if _owned_pause: get_tree().paused = _previous_pause

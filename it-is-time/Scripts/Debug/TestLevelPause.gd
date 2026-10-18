@@ -1,4 +1,5 @@
 extends CanvasLayer
+const L10N = preload("res://Scripts/Localization/GameText.gd")
 ## Standalone test scenes do not have GameRoot's battle pause handler.
 var _paused_by_space := false
 var _hint: Label
@@ -7,7 +8,7 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_hint = Label.new()
 	_hint.name = "PauseHint"
-	_hint.text = "测试已暂停 · 按 Space 继续"
+	L10N.bind(_hint,&"text","console.3b6e827f7aea")
 	_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_hint.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_hint.add_theme_font_size_override("font_size",26)

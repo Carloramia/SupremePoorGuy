@@ -17,6 +17,7 @@ config/icon="res://icon.svg"
 
 [autoload]
 
+GameLocalization="*res://Scripts/Localization/GameText.gd"
 DamageService="*res://Scripts/Damage/DamageService.gd"
 WorkshopUIController="*res://Scripts/UI/WorkshopUIController.gd"
 RuntimeConsole="*res://Scenes/Debug/RuntimeConsole.tscn"
@@ -35,9 +36,13 @@ window/stretch/aspect="expand"
 
 project/assembly_name="ItIsTime"
 
+[internationalization]
+
+locale/fallback="zh_CN"
+
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/weapon_workshop/plugin.cfg", "res://addons/creature_part_editor/plugin.cfg", "res://addons/runtime_log_archive/plugin.cfg")
+enabled=PackedStringArray("res://addons/weapon_workshop/plugin.cfg", "res://addons/creature_part_editor/plugin.cfg", "res://addons/runtime_log_archive/plugin.cfg", "res://addons/localization_export/plugin.cfg")
 
 [input]
 

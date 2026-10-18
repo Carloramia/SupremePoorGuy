@@ -43,6 +43,9 @@ var _object_refresh_elapsed := 0.0
 var _fog_origin:=Vector2.ZERO
 var _fog_step:=Vector2.ONE
 
+func _notification(what: int) -> void:
+	if what==NOTIFICATION_TRANSLATION_CHANGED and is_instance_valid(hud): hud.queue_redraw()
+
 func _ready() -> void:
 	clip_contents=true
 	mouse_filter=Control.MOUSE_FILTER_STOP
@@ -484,7 +487,7 @@ func _draw_hud() -> void:
 		if object.get("name_label",{}).get("style","")=="paper":continue
 		if object.get("hide_name_label",false):
 			if object.id!=hovered_id:continue
-		var label:=str(object.name)
+		var label:=preload("res://Scripts/Localization/GameText.gd").text(str(object.name))
 		var p:=world_to_screen(Catalog.v(object.position))+Vector2(0,20)
 		if p.x<0 or p.x>size.x or p.y<0 or p.y>size.y:continue
 		var width:=font.get_string_size(label,HORIZONTAL_ALIGNMENT_LEFT,-1,18).x

@@ -84,6 +84,7 @@ func _validate() -> void:
 	check(leg_count > 0 and foreleg_count > 0, "Test must cover Leg and ForeLeg")
 	check(controller._stance_chain_can_support(foot), "Grounded idle leg should support")
 	controller._update_stance_allocation(1.0)
+	controller.get_generated_movement_diagnostics()
 	var total_share := 0.0
 	for share: float in controller._stance_support_weights.values(): total_share += share
 	check(absf(total_share - 1.0) < 0.001, "Actual support forces must preserve total weight")
@@ -98,11 +99,13 @@ func _validate() -> void:
 	controller.support_load_smoothing_time = 0.0
 	controller._last_torso_response_force = total_weight
 	controller._update_stance_allocation(1.0)
+	controller.get_generated_movement_diagnostics()
 	var expected_delta := (contact - tested_joint.global_position).cross(total_weight * share)
 	check((controller._stance_joint_loads[tested_joint] - original_load).distance_to(expected_delta) < 0.001, "Existing Torso support must not be counted twice in joint load estimates")
 	controller.support_load_smoothing_time = smoothing_time
 	controller._last_torso_response_force = Vector3.ZERO
 	controller._update_stance_allocation(1.0)
+	controller.get_generated_movement_diagnostics()
 	controller._apply_stance_stabilization(0.05)
 	check(float(chain.stance_weight) > 0.0 and float(chain.stance_weight) < 1.0, "Landing must fade in")
 	controller._active_leg = foot

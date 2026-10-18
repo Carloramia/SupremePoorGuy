@@ -1,4 +1,5 @@
 extends Control
+const L10N = preload("res://Scripts/Localization/GameText.gd")
 
 const TEST_MATERIAL: Resource = preload("res://Resources/Materials/TestMaterial.tres")
 
@@ -22,7 +23,7 @@ var _transition: Tween
 var _holder_buttons: Array[Button] = []
 
 func _ready() -> void:
-	_test_material_button.text = TEST_MATERIAL.display_name
+	L10N.bind(_test_material_button,&"text",func(): return L10N.text(TEST_MATERIAL.display_name))
 	_test_material_button.icon = TEST_MATERIAL.icon
 	_tab_button.pressed.connect(toggle_panel)
 	_test_material_button.pressed.connect(_select_test_material)
@@ -42,7 +43,7 @@ func configure_holders(holders: Array[Dictionary]) -> void:
 		var button := Button.new()
 		button.custom_minimum_size = Vector2(0.0, 64.0)
 		button.toggle_mode = true
-		button.text = "连接点：%s" % String(holder.get(&"name", &"Arm_R"))
+		L10N.bind(button,&"text",func(): return L10N.text(L10N.text("items.de80b546f292") % String(holder.get(&"name", &"Arm_R"))))
 		button.icon = holder.get(&"texture") as Texture2D
 		button.add_theme_constant_override("icon_max_width", 44)
 		button.alignment = HORIZONTAL_ALIGNMENT_LEFT

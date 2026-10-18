@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="QuestDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Quests/QuestDefinition.gd" id="1"]
+[ext_resource type="Script" path="res://Scripts/Quests/QuestObjectiveData.gd" id="2"]
+
+[sub_resource type="Resource" id="Objective"]
+script = ExtResource("2")
+id = &"win"
+description_key = "quest.example.first_victory.objective"
+event_key = &"battle.victory"
+required_count = 1
+
+[resource]
+script = ExtResource("1")
+id = &"example_first_victory"
+title_key = "quest.example.first_victory.title"
+description_key = "quest.example.first_victory.description"
+objectives = Array[ExtResource("2")]([SubResource("Objective")])
+reward_magic = 20

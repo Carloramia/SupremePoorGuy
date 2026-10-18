@@ -1,4 +1,5 @@
 extends RefCounted
+const L10N = preload("res://Scripts/Localization/GameText.gd")
 const Rules = preload("res://Modules/PaperUI/Scripts/Ritual/RuneRules.gd")
 const Experiment = preload("res://Modules/PaperUI/Scripts/SummonExperiment.gd")
 const TEAM_LIMIT = 6
@@ -27,7 +28,7 @@ func save() -> bool:
 				return false
 	var f := FileAccess.open(save_path + ".tmp", FileAccess.WRITE)
 	if f == null:
-		last_error = "无法写入存档：%s" % error_string(FileAccess.get_open_error())
+		last_error = L10N.text("ui.af3b38a8fcd5") % error_string(FileAccess.get_open_error())
 		return false
 	f.store_string(JSON.stringify(data,"",true,true))
 	f.flush()
@@ -43,7 +44,7 @@ func save() -> bool:
 			return false
 	var error := DirAccess.rename_absolute(path + ".tmp", path)
 	if error != OK:
-		last_error = "无法替换存档：%s" % error_string(error)
+		last_error = L10N.text("ui.ae2a11140767") % error_string(error)
 	return error == OK
 
 func load_save() -> bool:
@@ -137,7 +138,7 @@ func move_monster(id: String, position: String) -> bool:
 		last_error = "妖兽或目标位置无效"
 		return false
 	if position == "team" and not can_join(id):
-		last_error = "队位不足：加入后 %d / %d；缩小单位按同批整组操作" % [slots_after_join(id),TEAM_LIMIT]
+		last_error = L10N.text("ui.aaa1643bd504") % [slots_after_join(id),TEAM_LIMIT]
 		return false
 	var before := data.duplicate(true)
 	for unit_id in transfer_ids(id):
@@ -155,6 +156,7 @@ func rename_monster(id: String, new_name: String) -> bool:
 		return false
 	var before := data.duplicate(true)
 	monster.name = new_name
+	monster.custom_name = true
 	if not save():
 		data = before
 		return false
@@ -201,7 +203,7 @@ func summon(rules, location: String, return_route: String, test_rng: RandomNumbe
 		last_error = preview.error
 		return false
 	if data.magic < preview.cost:
-		last_error = "魔力不足，还需 %d" % (preview.cost-data.magic)
+		last_error = L10N.text("ui.1fd297d92c86") % (preview.cost-data.magic)
 		return false
 	var before := data.duplicate(true)
 	data.magic -= preview.cost

@@ -1,4 +1,5 @@
 extends CanvasLayer
+const L10N = preload("res://Scripts/Localization/GameText.gd")
 
 const MOTION_PLAYER_CONTEXT = preload("res://Scripts/Player/PlayerControlContext.gd")
 const PERF = preload("res://Scripts/Debug/ControlPerformanceStats.gd")
@@ -491,9 +492,9 @@ func execute_command(command: String) -> String:
 			return "Unknown command: %s" % command.strip_edges()
 
 func _get_help_text() -> String:
-	var lines: Array[String] = ["Available commands:"]
+	var lines: Array[String] = [L10N.text("Available commands:")]
 	for entry: Dictionary in COMMAND_HELP:
-		lines.append("  %-16s %s" % [entry.name, entry.description])
+		lines.append("  %-16s %s" % [entry.name, L10N.text(entry.description)])
 	return "\n".join(lines)
 
 func is_map_tracking_enabled() -> bool:

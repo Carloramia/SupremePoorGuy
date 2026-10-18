@@ -1,0 +1,30 @@
+[gd_scene load_steps=4 format=3]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/_PhysicalSampleBodyParts.tscn" id="base"]
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/Bird/Scenes/Bird_3/Feathers/FlightRight02.tscn" id="model"]
+[sub_resource type="ConvexPolygonShape3D" id="Shape"]
+resource_local_to_scene = true
+points = PackedVector3Array(-0.22350000, 0.41852158, -0.08000000, -0.16525000, 0.53641632, -0.08000000, -0.04875000, 0.59536369, -0.08000000, 0.35900000, 0.59536369, -0.08000000, 3.32975000, 0.30062685, -0.08000000, 3.73750000, 0.24167948, -0.08000000, 3.97050000, 0.18273211, -0.08000000, 4.20350000, 0.06483737, -0.08000000, 4.20350000, 0.00589001, -0.08000000, 4.14525000, -0.05305736, -0.08000000, 3.91225000, -0.17095210, -0.08000000, 3.73750000, -0.22989947, -0.08000000, 3.44625000, -0.28884684, -0.08000000, 2.39775000, -0.28884684, -0.08000000, 1.93175000, -0.22989947, -0.08000000, 0.24250000, 0.00589001, -0.08000000, 0.00950000, 0.06483737, -0.08000000, -0.16525000, 0.12378474, -0.08000000, -0.22350000, 0.24167948, -0.08000000, -0.22350000, 0.41852158, 0.08000000, -0.16525000, 0.53641632, 0.08000000, -0.04875000, 0.59536369, 0.08000000, 0.35900000, 0.59536369, 0.08000000, 3.32975000, 0.30062685, 0.08000000, 3.73750000, 0.24167948, 0.08000000, 3.97050000, 0.18273211, 0.08000000, 4.20350000, 0.06483737, 0.08000000, 4.20350000, 0.00589001, 0.08000000, 4.14525000, -0.05305736, 0.08000000, 3.91225000, -0.17095210, 0.08000000, 3.73750000, -0.22989947, 0.08000000, 3.44625000, -0.28884684, 0.08000000, 2.39775000, -0.28884684, 0.08000000, 1.93175000, -0.22989947, 0.08000000, 0.24250000, 0.00589001, 0.08000000, 0.00950000, 0.06483737, 0.08000000, -0.16525000, 0.12378474, 0.08000000, -0.22350000, 0.24167948, 0.08000000)
+metadata/body_part_collision_depth_multiplier = 2.0
+[node name="Bird3FlightRight02" instance=ExtResource("base")]
+mass = 0.1
+geometry_mode = 1
+custom_model_path = NodePath("Model")
+paper_volume_enabled = true
+paper_volume_thickness = 0.08
+sprite_visible = false
+mesh_visible = true
+tags = Array[int]([9])
+metadata/source_png = "res://Assets/2DResources/Bird/Separated/Bird_3/Feathers/FlightRight02.png"
+metadata/anatomical_role = "Feathers"
+metadata/part_key = "Bird_3/Feathers/FlightRight02"
+metadata/pivot_is_initial_estimate = true
+[node name="CollisionShape3D" parent="." index="0"]
+position = Vector3(0, 0, 0)
+shape = SubResource("Shape")
+[node name="MeshInstance3D" parent="." index="2"]
+visible = false
+mesh = null
+[node name="Model" parent="." instance=ExtResource("model")]
+[node name="JointIn" type="Marker3D" parent="."]
+[node name="JointOut" type="Marker3D" parent="."]
+position = Vector3(4.02000000, 0.07910112, 0.00000000)

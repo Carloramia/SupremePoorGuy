@@ -1,0 +1,58 @@
+Bird 三套素材资源
+================
+
+本次新增 80 套对应资源：Bird_1 为 28 套，Bird_2 为 31 套，Bird_3 为 21 套。
+原始三张图片及 Unprocessed 目录均未覆盖。
+
+目录
+----
+Originals/                    原图的校验副本。
+Separated/Bird_1～Bird_3/      可直接引用的透明 PNG，按 Head、Torso、Wings、Feathers、Legs、Feet、Tail、Decorations 分类。
+RawEdits/                     内置 image_gen 的补全原始输出；.gdignore 避免导入中间文件。
+SourceCrops/                  像素提取与补画输入；.gdignore 避免导入中间文件。
+Metadata/                     分组预览、处理提示词、修复记录与坐标辅助图。
+Separated/asset_manifest.json  每个部件的原图区域、像素锚点、来源和 SHA256。
+
+3D 资源位置：Assets/3DResources/Creatures/Bird/
+物理部件位置：Scenes/Creatures/Bodyparts/Bird/Bird_1～Bird_3/
+烘焙网格位置：Resources/Meshes/Bird/
+
+处理方式
+--------
+完整可分离部分采用原像素提取、透明背景/红黄杂边清理；躯干、叠压羽扇、部分脚爪和羽片根部采用内置 image_gen 补全。
+补画结果按原图目标部件的可见宽度重新等比标定，然后清理透明边缘。AI 补全部分并非逐像素复刻。
+提示词集保存在 Metadata/generation_jobs.json、refinement_prompts.json、small_repair_prompts.json。
+深度叠压的短羽片保留为 Fan 羽扇组件；独立长羽片另存。每排相同铆钉保存一个代表件。
+Legs 中的 Variant 是原图提供的备选肢体段，不代表需要将它们全部安装在同一只鸟上。
+不额外镜像正视/侧视图，部件保留各自原有朝向。
+
+模型和物理设置
+--------------
+XY 为图片平面，+Z 为正面，厚度沿局部 Z。
+统一标定为 100 原图像素 = 1 Godot 单位；补画资源在标定后采用同一比例。
+默认视觉厚度 0.08。物理碰撞厚度遵循现有 PhysicalBodyParts 基类，等于视觉厚度的 2 倍，即 0.16。
+正反面均使用同一 PNG，侧面按透明轮廓和孔洞烘焙；侧面轮廓采样上限 256，原始正反面纹理不降到此分辨率。
+碰撞采用凸轮廓，按既有流程不挖穿连接孔或羽片间凹槽。
+PhysicalPart 场景继承 _PhysicalSampleBodyParts，配置 CUSTOM_MODEL、标签、JointIn 和 JointOut。
+JointIn 位于根原点，JointOut 按原图连接孔/肢体方向初步标定；铆钉等单点装饰两者重合。
+这些标记用于后续组装起点，尚未针对某个实际生成器进行关节姿态和运动范围校准。
+
+预览入口
+--------
+Assets/3DResources/Creatures/Bird/Previews/Bird1PartsPreview.tscn
+Assets/3DResources/Creatures/Bird/Previews/Bird2PartsPreview.tscn
+Assets/3DResources/Creatures/Bird/Previews/Bird3PartsPreview.tscn
+预览中的物理部件已冻结并关闭碰撞层，仅用于查看资源。
+
+重建流程（从项目根目录运行）
+--------------------------
+1. python Assets/3DResources/Creatures/Bird/Tools/prepare_assets.py
+2. python Assets/3DResources/Creatures/Bird/Tools/build_models.py
+3. Godot 编辑器导入新增/修改 PNG。
+4. godot --headless --path . --script res://Tools/BakeBirdVolumes.gd --log-file <绝对日志路径>
+5. python Assets/3DResources/Creatures/Bird/Tools/build_models.py --physical
+6. godot --headless --path . --script res://Tests/ValidateBirdAssets.gd --log-file <绝对日志路径>
+
+prepare_assets 会重建派生 PNG；bake 会重建模型场景、GLB 与烘焙网格。不要直接编辑这些派生模型后再次运行重建。
+已有物理部件与预览场景不会被 build_models.py 覆盖，以保留手动调整的连接点和碰撞设置。
+Bird_1 后续已接入 Generate_Bird 和其 NPC 继承场景；接入与编辑说明见 Resources/Generators/BirdParts/使用说明.txt。

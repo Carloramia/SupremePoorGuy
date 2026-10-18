@@ -1,0 +1,415 @@
+[gd_scene format=3]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Bird/Bird_2/Head/HeadMain.tscn" id="0"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Bird/Bird_2/Torso/TorsoMain.tscn" id="1"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Bird/Bird_2/Wings/RootLeft.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Bird/Bird_2/Wings/RootRight.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Bird/Bird_2/Wings/FanLeft.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Bird/Bird_2/Wings/FanRight.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Bird/Bird_2/Feathers/CovertsLeft.tscn" id="6"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Bird/Bird_2/Feathers/CovertsRight.tscn" id="7"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Bird/Bird_2/Feathers/FlightLeft01.tscn" id="8"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Bird/Bird_2/Feathers/FlightLeft02.tscn" id="9"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Bird/Bird_2/Feathers/FlightRight01.tscn" id="10"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Bird/Bird_2/Feathers/FlightRight02.tscn" id="11"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Bird/Bird_2/Legs/Variant01Upper.tscn" id="12"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Bird/Bird_2/Legs/Variant02Upper.tscn" id="13"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Bird/Bird_2/Legs/Variant03Upper.tscn" id="14"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Bird/Bird_2/Legs/Variant04Upper.tscn" id="15"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Bird/Bird_2/Legs/Variant05Upper.tscn" id="16"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Bird/Bird_2/Legs/Variant06Upper.tscn" id="17"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Bird/Bird_2/Legs/Variant07Upper.tscn" id="18"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Bird/Bird_2/Legs/Variant08Upper.tscn" id="19"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Bird/Bird_2/Legs/Variant01Lower.tscn" id="20"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Bird/Bird_2/Legs/Variant02Lower.tscn" id="21"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Bird/Bird_2/Legs/Variant03Lower.tscn" id="22"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Bird/Bird_2/Legs/Variant04Lower.tscn" id="23"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Bird/Bird_2/Legs/Variant05Lower.tscn" id="24"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Bird/Bird_2/Legs/Variant06Lower.tscn" id="25"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Bird/Bird_2/Legs/Variant07Lower.tscn" id="26"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Bird/Bird_2/Legs/Variant08Lower.tscn" id="27"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Bird/Bird_2/Feet/ClawLeft.tscn" id="28"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Bird/Bird_2/Feet/ClawRight.tscn" id="29"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/Bird/Bird_2/Decorations/Rivet.tscn" id="30"]
+[sub_resource type="Environment" id="Env"]
+background_mode = 1
+background_color = Color(0.93, 0.93, 0.93, 1)
+[node name="Bird2PartsPreview" type="Node3D"]
+[node name="Camera3D" type="Camera3D" parent="."]
+position = Vector3(0, 0, 80)
+projection = 1
+size = 37
+current = true
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Env")
+[node name="Part0" parent="." instance=ExtResource("0")]
+position = Vector3(-13.98, 13.795, 0)
+scale = Vector3(1, 1, 1)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label0" type="Label3D" parent="."]
+position = Vector3(-14, 12.8, 1)
+text = "Head/HeadMain"
+font_size = 28
+pixel_size = 0.006
+modulate = Color(0.1, 0.1, 0.1, 1)
+[node name="Part1" parent="." instance=ExtResource("1")]
+position = Vector3(-6.995, 13.41, 0)
+scale = Vector3(1, 1, 1)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label1" type="Label3D" parent="."]
+position = Vector3(-7, 12.8, 1)
+text = "Torso/TorsoMain"
+font_size = 28
+pixel_size = 0.006
+modulate = Color(0.1, 0.1, 0.1, 1)
+[node name="Part2" parent="." instance=ExtResource("2")]
+position = Vector3(1.205, 13.82, 0)
+scale = Vector3(1, 1, 1)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label2" type="Label3D" parent="."]
+position = Vector3(0, 12.8, 1)
+text = "Wings/RootLeft"
+font_size = 28
+pixel_size = 0.006
+modulate = Color(0.1, 0.1, 0.1, 1)
+[node name="Part3" parent="." instance=ExtResource("3")]
+position = Vector3(5.78, 13.82, 0)
+scale = Vector3(1, 1, 1)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label3" type="Label3D" parent="."]
+position = Vector3(7, 12.8, 1)
+text = "Wings/RootRight"
+font_size = 28
+pixel_size = 0.006
+modulate = Color(0.1, 0.1, 0.1, 1)
+[node name="Part4" parent="." instance=ExtResource("4")]
+position = Vector3(14.729185185185186, 16.263037037037037, 0)
+scale = Vector3(1, 1, 1)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label4" type="Label3D" parent="."]
+position = Vector3(14, 12.8, 1)
+text = "Wings/FanLeft"
+font_size = 28
+pixel_size = 0.006
+modulate = Color(0.1, 0.1, 0.1, 1)
+[node name="Part5" parent="." instance=ExtResource("5")]
+position = Vector3(-14.808333333333334, 10.878947368421052, 0)
+scale = Vector3(1, 1, 1)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label5" type="Label3D" parent="."]
+position = Vector3(-14, 7.8, 1)
+text = "Wings/FanRight"
+font_size = 28
+pixel_size = 0.006
+modulate = Color(0.1, 0.1, 0.1, 1)
+[node name="Part6" parent="." instance=ExtResource("6")]
+position = Vector3(-6.405, 10.425, 0)
+scale = Vector3(1, 1, 1)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label6" type="Label3D" parent="."]
+position = Vector3(-7, 7.8, 1)
+text = "Feathers/CovertsLeft"
+font_size = 28
+pixel_size = 0.006
+modulate = Color(0.1, 0.1, 0.1, 1)
+[node name="Part7" parent="." instance=ExtResource("7")]
+position = Vector3(-0.5650000000000001, 10.435, 0)
+scale = Vector3(1, 1, 1)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label7" type="Label3D" parent="."]
+position = Vector3(0, 7.8, 1)
+text = "Feathers/CovertsRight"
+font_size = 28
+pixel_size = 0.006
+modulate = Color(0.1, 0.1, 0.1, 1)
+[node name="Part8" parent="." instance=ExtResource("8")]
+position = Vector3(8.46, 9.84, 0)
+scale = Vector3(1, 1, 1)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label8" type="Label3D" parent="."]
+position = Vector3(7, 7.8, 1)
+text = "Feathers/FlightLeft01"
+font_size = 28
+pixel_size = 0.006
+modulate = Color(0.1, 0.1, 0.1, 1)
+[node name="Part9" parent="." instance=ExtResource("9")]
+position = Vector3(15.545, 10.175, 0)
+scale = Vector3(1, 1, 1)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label9" type="Label3D" parent="."]
+position = Vector3(14, 7.8, 1)
+text = "Feathers/FlightLeft02"
+font_size = 28
+pixel_size = 0.006
+modulate = Color(0.1, 0.1, 0.1, 1)
+[node name="Part10" parent="." instance=ExtResource("10")]
+position = Vector3(-15.49, 4.84, 0)
+scale = Vector3(1, 1, 1)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label10" type="Label3D" parent="."]
+position = Vector3(-14, 2.8, 1)
+text = "Feathers/FlightRight01"
+font_size = 28
+pixel_size = 0.006
+modulate = Color(0.1, 0.1, 0.1, 1)
+[node name="Part11" parent="." instance=ExtResource("11")]
+position = Vector3(-8.6, 5.185, 0)
+scale = Vector3(1, 1, 1)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label11" type="Label3D" parent="."]
+position = Vector3(-7, 2.8, 1)
+text = "Feathers/FlightRight02"
+font_size = 28
+pixel_size = 0.006
+modulate = Color(0.1, 0.1, 0.1, 1)
+[node name="Part12" parent="." instance=ExtResource("12")]
+position = Vector3(0.62, 5.58, 0)
+scale = Vector3(1, 1, 1)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label12" type="Label3D" parent="."]
+position = Vector3(0, 2.8, 1)
+text = "Legs/Variant01Upper"
+font_size = 28
+pixel_size = 0.006
+modulate = Color(0.1, 0.1, 0.1, 1)
+[node name="Part13" parent="." instance=ExtResource("13")]
+position = Vector3(7.465, 5.495, 0)
+scale = Vector3(1, 1, 1)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label13" type="Label3D" parent="."]
+position = Vector3(7, 2.8, 1)
+text = "Legs/Variant02Upper"
+font_size = 28
+pixel_size = 0.006
+modulate = Color(0.1, 0.1, 0.1, 1)
+[node name="Part14" parent="." instance=ExtResource("14")]
+position = Vector3(14.395, 5.54, 0)
+scale = Vector3(1, 1, 1)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label14" type="Label3D" parent="."]
+position = Vector3(14, 2.8, 1)
+text = "Legs/Variant03Upper"
+font_size = 28
+pixel_size = 0.006
+modulate = Color(0.1, 0.1, 0.1, 1)
+[node name="Part15" parent="." instance=ExtResource("15")]
+position = Vector3(-13.535, 0.365, 0)
+scale = Vector3(1, 1, 1)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label15" type="Label3D" parent="."]
+position = Vector3(-14, -2.2, 1)
+text = "Legs/Variant04Upper"
+font_size = 28
+pixel_size = 0.006
+modulate = Color(0.1, 0.1, 0.1, 1)
+[node name="Part16" parent="." instance=ExtResource("16")]
+position = Vector3(-7.475, 0.365, 0)
+scale = Vector3(1, 1, 1)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label16" type="Label3D" parent="."]
+position = Vector3(-7, -2.2, 1)
+text = "Legs/Variant05Upper"
+font_size = 28
+pixel_size = 0.006
+modulate = Color(0.1, 0.1, 0.1, 1)
+[node name="Part17" parent="." instance=ExtResource("17")]
+position = Vector3(-0.37, 0.55, 0)
+scale = Vector3(1, 1, 1)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label17" type="Label3D" parent="."]
+position = Vector3(0, -2.2, 1)
+text = "Legs/Variant06Upper"
+font_size = 28
+pixel_size = 0.006
+modulate = Color(0.1, 0.1, 0.1, 1)
+[node name="Part18" parent="." instance=ExtResource("18")]
+position = Vector3(6.53, 0.5, 0)
+scale = Vector3(1, 1, 1)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label18" type="Label3D" parent="."]
+position = Vector3(7, -2.2, 1)
+text = "Legs/Variant07Upper"
+font_size = 28
+pixel_size = 0.006
+modulate = Color(0.1, 0.1, 0.1, 1)
+[node name="Part19" parent="." instance=ExtResource("19")]
+position = Vector3(13.4, 0.59, 0)
+scale = Vector3(1, 1, 1)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label19" type="Label3D" parent="."]
+position = Vector3(14, -2.2, 1)
+text = "Legs/Variant08Upper"
+font_size = 28
+pixel_size = 0.006
+modulate = Color(0.1, 0.1, 0.1, 1)
+[node name="Part20" parent="." instance=ExtResource("20")]
+position = Vector3(-13.725, -3.8899999999999997, 0)
+scale = Vector3(1, 1, 1)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label20" type="Label3D" parent="."]
+position = Vector3(-14, -7.2, 1)
+text = "Legs/Variant01Lower"
+font_size = 28
+pixel_size = 0.006
+modulate = Color(0.1, 0.1, 0.1, 1)
+[node name="Part21" parent="." instance=ExtResource("21")]
+position = Vector3(-6.96, -3.87, 0)
+scale = Vector3(1, 1, 1)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label21" type="Label3D" parent="."]
+position = Vector3(-7, -7.2, 1)
+text = "Legs/Variant02Lower"
+font_size = 28
+pixel_size = 0.006
+modulate = Color(0.1, 0.1, 0.1, 1)
+[node name="Part22" parent="." instance=ExtResource("22")]
+position = Vector3(-0.155, -4.145, 0)
+scale = Vector3(1, 1, 1)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label22" type="Label3D" parent="."]
+position = Vector3(0, -7.2, 1)
+text = "Legs/Variant03Lower"
+font_size = 28
+pixel_size = 0.006
+modulate = Color(0.1, 0.1, 0.1, 1)
+[node name="Part23" parent="." instance=ExtResource("23")]
+position = Vector3(6.785, -4.335, 0)
+scale = Vector3(1, 1, 1)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label23" type="Label3D" parent="."]
+position = Vector3(7, -7.2, 1)
+text = "Legs/Variant04Lower"
+font_size = 28
+pixel_size = 0.006
+modulate = Color(0.1, 0.1, 0.1, 1)
+[node name="Part24" parent="." instance=ExtResource("24")]
+position = Vector3(14.27, -4.335, 0)
+scale = Vector3(1, 1, 1)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label24" type="Label3D" parent="."]
+position = Vector3(14, -7.2, 1)
+text = "Legs/Variant05Lower"
+font_size = 28
+pixel_size = 0.006
+modulate = Color(0.1, 0.1, 0.1, 1)
+[node name="Part25" parent="." instance=ExtResource("25")]
+position = Vector3(-13.815, -9.14, 0)
+scale = Vector3(1, 1, 1)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label25" type="Label3D" parent="."]
+position = Vector3(-14, -12.2, 1)
+text = "Legs/Variant06Lower"
+font_size = 28
+pixel_size = 0.006
+modulate = Color(0.1, 0.1, 0.1, 1)
+[node name="Part26" parent="." instance=ExtResource("26")]
+position = Vector3(-7.05, -8.87, 0)
+scale = Vector3(1, 1, 1)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label26" type="Label3D" parent="."]
+position = Vector3(-7, -12.2, 1)
+text = "Legs/Variant07Lower"
+font_size = 28
+pixel_size = 0.006
+modulate = Color(0.1, 0.1, 0.1, 1)
+[node name="Part27" parent="." instance=ExtResource("27")]
+position = Vector3(-0.31, -8.895, 0)
+scale = Vector3(1, 1, 1)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label27" type="Label3D" parent="."]
+position = Vector3(0, -12.2, 1)
+text = "Legs/Variant08Lower"
+font_size = 28
+pixel_size = 0.006
+modulate = Color(0.1, 0.1, 0.1, 1)
+[node name="Part28" parent="." instance=ExtResource("28")]
+position = Vector3(7.475, -9.435, 0)
+scale = Vector3(1, 1, 1)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label28" type="Label3D" parent="."]
+position = Vector3(7, -12.2, 1)
+text = "Feet/ClawLeft"
+font_size = 28
+pixel_size = 0.006
+modulate = Color(0.1, 0.1, 0.1, 1)
+[node name="Part29" parent="." instance=ExtResource("29")]
+position = Vector3(13.565, -9.365, 0)
+scale = Vector3(1, 1, 1)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label29" type="Label3D" parent="."]
+position = Vector3(14, -12.2, 1)
+text = "Feet/ClawRight"
+font_size = 28
+pixel_size = 0.006
+modulate = Color(0.1, 0.1, 0.1, 1)
+[node name="Part30" parent="." instance=ExtResource("30")]
+position = Vector3(-14.005, -15.015, 0)
+scale = Vector3(1, 1, 1)
+freeze = true
+collision_layer = 0
+collision_mask = 0
+[node name="Label30" type="Label3D" parent="."]
+position = Vector3(-14, -17.2, 1)
+text = "Decorations/Rivet"
+font_size = 28
+pixel_size = 0.006
+modulate = Color(0.1, 0.1, 0.1, 1)

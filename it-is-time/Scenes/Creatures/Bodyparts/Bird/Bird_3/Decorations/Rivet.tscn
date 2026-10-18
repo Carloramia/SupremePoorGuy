@@ -1,0 +1,30 @@
+[gd_scene load_steps=4 format=3]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/_PhysicalSampleBodyParts.tscn" id="base"]
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/Bird/Scenes/Bird_3/Decorations/Rivet.tscn" id="model"]
+[sub_resource type="ConvexPolygonShape3D" id="Shape"]
+resource_local_to_scene = true
+points = PackedVector3Array(-0.17000000, 0.07000000, -0.08000000, -0.16000000, 0.10000000, -0.08000000, -0.09000000, 0.17000000, -0.08000000, -0.06000000, 0.18000000, -0.08000000, 0.06000000, 0.18000000, -0.08000000, 0.10000000, 0.16000000, -0.08000000, 0.13000000, 0.13000000, -0.08000000, 0.15000000, 0.10000000, -0.08000000, 0.16000000, 0.08000000, -0.08000000, 0.16000000, -0.04000000, -0.08000000, 0.15000000, -0.07000000, -0.08000000, 0.14000000, -0.09000000, -0.08000000, 0.10000000, -0.13000000, -0.08000000, 0.06000000, -0.15000000, -0.08000000, 0.02000000, -0.16000000, -0.08000000, -0.03000000, -0.16000000, -0.08000000, -0.07000000, -0.15000000, -0.08000000, -0.11000000, -0.13000000, -0.08000000, -0.14000000, -0.10000000, -0.08000000, -0.16000000, -0.07000000, -0.08000000, -0.17000000, -0.04000000, -0.08000000, -0.17000000, 0.07000000, 0.08000000, -0.16000000, 0.10000000, 0.08000000, -0.09000000, 0.17000000, 0.08000000, -0.06000000, 0.18000000, 0.08000000, 0.06000000, 0.18000000, 0.08000000, 0.10000000, 0.16000000, 0.08000000, 0.13000000, 0.13000000, 0.08000000, 0.15000000, 0.10000000, 0.08000000, 0.16000000, 0.08000000, 0.08000000, 0.16000000, -0.04000000, 0.08000000, 0.15000000, -0.07000000, 0.08000000, 0.14000000, -0.09000000, 0.08000000, 0.10000000, -0.13000000, 0.08000000, 0.06000000, -0.15000000, 0.08000000, 0.02000000, -0.16000000, 0.08000000, -0.03000000, -0.16000000, 0.08000000, -0.07000000, -0.15000000, 0.08000000, -0.11000000, -0.13000000, 0.08000000, -0.14000000, -0.10000000, 0.08000000, -0.16000000, -0.07000000, 0.08000000, -0.17000000, -0.04000000, 0.08000000)
+metadata/body_part_collision_depth_multiplier = 2.0
+[node name="Bird3Rivet" instance=ExtResource("base")]
+mass = 0.1
+geometry_mode = 1
+custom_model_path = NodePath("Model")
+paper_volume_enabled = true
+paper_volume_thickness = 0.08
+sprite_visible = false
+mesh_visible = true
+tags = Array[int]([])
+metadata/source_png = "res://Assets/2DResources/Bird/Separated/Bird_3/Decorations/Rivet.png"
+metadata/anatomical_role = "Decorations"
+metadata/part_key = "Bird_3/Decorations/Rivet"
+metadata/pivot_is_initial_estimate = true
+[node name="CollisionShape3D" parent="." index="0"]
+position = Vector3(0, 0, 0)
+shape = SubResource("Shape")
+[node name="MeshInstance3D" parent="." index="2"]
+visible = false
+mesh = null
+[node name="Model" parent="." instance=ExtResource("model")]
+[node name="JointIn" type="Marker3D" parent="."]
+[node name="JointOut" type="Marker3D" parent="."]
+position = Vector3(0.00000000, 0.00000000, 0.00000000)

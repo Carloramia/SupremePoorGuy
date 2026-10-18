@@ -1,5 +1,6 @@
 @tool
 extends CanvasLayer
+const L10N = preload("res://Scripts/Localization/GameText.gd")
 
 const PLAYER_CONTEXT = preload("res://Scripts/Player/PlayerControlContext.gd")
 
@@ -365,7 +366,7 @@ func _update_attachment_preview_transform() -> void:
 	)
 
 func _set_status(message: String, is_error: bool) -> void:
-	_status_label.text = message
+	L10N.bind(_status_label,&"text",func(): return L10N.text(message))
 	_status_label.modulate = Color(1.0, 0.55, 0.55) if is_error else Color.WHITE
 
 func _get_holder_options() -> Array[Dictionary]:

@@ -1,0 +1,30 @@
+[gd_scene load_steps=4 format=3]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Bodyparts/_PhysicalSampleBodyParts.tscn" id="base"]
+[ext_resource type="PackedScene" path="res://Assets/3DResources/Creatures/Bird/Scenes/Bird_2/Legs/Variant06Lower.tscn" id="model"]
+[sub_resource type="ConvexPolygonShape3D" id="Shape"]
+resource_local_to_scene = true
+points = PackedVector3Array(-0.52969697, -0.74900000, -0.08000000, -0.50212121, -0.47150000, -0.08000000, -0.30909091, 0.08350000, -0.08000000, -0.28151515, 0.11125000, -0.08000000, 0.10454545, 0.11125000, -0.08000000, 0.13212121, 0.08350000, -0.08000000, 0.15969697, 0.02800000, -0.08000000, 0.15969697, -0.02750000, -0.08000000, -0.33666667, -1.77575000, -0.08000000, -0.36424242, -1.83125000, -0.08000000, -0.44696970, -1.83125000, -0.08000000, -0.47454545, -1.63700000, -0.08000000, -0.52969697, -0.83225000, -0.08000000, -0.52969697, -0.74900000, 0.08000000, -0.50212121, -0.47150000, 0.08000000, -0.30909091, 0.08350000, 0.08000000, -0.28151515, 0.11125000, 0.08000000, 0.10454545, 0.11125000, 0.08000000, 0.13212121, 0.08350000, 0.08000000, 0.15969697, 0.02800000, 0.08000000, 0.15969697, -0.02750000, 0.08000000, -0.33666667, -1.77575000, 0.08000000, -0.36424242, -1.83125000, 0.08000000, -0.44696970, -1.83125000, 0.08000000, -0.47454545, -1.63700000, 0.08000000, -0.52969697, -0.83225000, 0.08000000)
+metadata/body_part_collision_depth_multiplier = 2.0
+[node name="Bird2Variant06Lower" instance=ExtResource("base")]
+mass = 0.1
+geometry_mode = 1
+custom_model_path = NodePath("Model")
+paper_volume_enabled = true
+paper_volume_thickness = 0.08
+sprite_visible = false
+mesh_visible = true
+tags = Array[int]([5])
+metadata/source_png = "res://Assets/2DResources/Bird/Separated/Bird_2/Legs/Variant06Lower.png"
+metadata/anatomical_role = "Legs"
+metadata/part_key = "Bird_2/Legs/Variant06Lower"
+metadata/pivot_is_initial_estimate = true
+[node name="CollisionShape3D" parent="." index="0"]
+position = Vector3(0, 0, 0)
+shape = SubResource("Shape")
+[node name="MeshInstance3D" parent="." index="2"]
+visible = false
+mesh = null
+[node name="Model" parent="." instance=ExtResource("model")]
+[node name="JointIn" type="Marker3D" parent="."]
+[node name="JointOut" type="Marker3D" parent="."]
+position = Vector3(-0.38000000, -1.71000000, 0.00000000)

@@ -5,11 +5,6 @@ const LEG_LIMB_TAG: int = 5
 const SUB_TORSO_TAG: int = 6
 
 var simplified_physics_mode: bool = false
-@export_group("Zero Gravity Pose")
-@export_range(0.0, 50.0, 0.1) var simple_pose_strength: float = 8.0
-@export_range(0.0, 30.0, 0.1) var simple_pose_damping: float = 6.0
-@export_range(0.0, 100.0, 0.1) var simple_pose_acceleration_limit: float = 20.0
-@export_range(0.0, 10000.0, 1.0) var simple_pose_torque_limit: float = 500.0
 
 @export_group("Planar Movement")
 ## Independent physical stepping; no inter-part Joint3D transmits force.
@@ -98,7 +93,6 @@ var _startup_status: StringName = &"idle"
 @export_range(0.0, 0.5, 0.01) var grounded_stance_travel_ratio: float = 0.0
 @export_group("Grounded Movement Feedback")
 @export_range(0.0, 30.0, 0.1) var maximum_grounded_drive_acceleration: float = 4.0
-@export var grounded_directional_feedback: bool = true
 @export_range(0.0, 1.0, 0.05) var unbalanced_movement_multiplier: float = 0.25
 
 @export_group("Generated Ground Contact")
@@ -197,9 +191,6 @@ var _last_step_failure: StringName = &""
 @export var turn_rate_integral_enabled: bool = false
 @export_range(1.0, 30.0, 0.5) var segment_layout_heading_tolerance_degrees: float = 10.0
 @export_range(1.0, 45.0, 1.0) var segment_layout_step_angle_degrees: float = 10.0
-@export_range(0.0, 30.0, 0.1) var turn_leg_traction_gain: float = 8.0
-@export_range(0.0, 20.0, 0.1) var turn_leg_traction_damping: float = 4.0
-@export_range(0.0, 20.0, 0.1) var turn_leg_traction_maximum_acceleration: float = 4.0
 @export_range(0.0, 30.0, 0.1) var turn_leg_yaw_gain: float = 16.0
 @export_range(0.0, 20.0, 0.1) var turn_leg_yaw_damping: float = 5.0
 @export_range(0.0, 10000.0, 1.0, "or_greater") var turn_leg_yaw_torque_limit: float = 1500.0
@@ -253,7 +244,6 @@ var _segment_layout_initialized: bool = false
 @export_range(0.0, 500.0, 0.1) var segment_z_balance_strength: float = 300.0
 @export_range(0.0, 100.0, 0.1) var segment_z_angular_damping: float = 40.0
 @export_range(0.0, 500.0, 0.1) var segment_x_balance_strength: float = 80.0
-@export_range(0.0, 500.0, 0.1) var segment_y_balance_strength: float = 80.0
 @export_range(0.0, 2.0, 0.05) var segment_balance_damping_ratio: float = 1.0
 @export_range(0.0, 500.0, 0.1) var segment_balance_acceleration_limit: float = 400.0
 @export_range(0.0, 100000.0, 1.0) var segment_balance_torque_limit: float = 30000.0
@@ -277,7 +267,6 @@ var _turn_rate_integral: float = 0.0
 @export_range(0.0, 1000.0, 0.1, "or_greater") var maximum_stance_acceleration: float = 400.0
 ## Final torque cap per joint, after accounting for both bodies' inertia.
 @export_range(0.0, 10000.0, 0.1, "or_greater") var maximum_stance_torque: float = 10000.0
-@export_range(0.0, 2.0, 0.01) var stance_recovery_duration: float = 0.2
 
 @export_group("Automatic Stance Allocation")
 @export var auto_allocate_stance_torque: bool = true
@@ -295,6 +284,9 @@ var _turn_rate_integral: float = 0.0
 
 var _stance_support_weights: Dictionary = {}
 var _stance_joint_loads: Dictionary = {}
+var _stance_allocation_revision: int = 0
+var _stance_joint_load_revision: int = -1
+var _stance_joint_sample_elapsed: float = 0.0
 var _stance_allocation_elapsed: float = 0.0
 var _stance_support_signature: Array[int] = []
 var _stance_total_mass: float = 0.0
@@ -587,6 +579,8 @@ func refresh_physics_query_cache() -> void:
 	_last_touchdown_leg = &""
 	_stance_support_weights.clear()
 	_stance_joint_loads.clear()
+	_stance_joint_load_revision = -1
+	_stance_joint_sample_elapsed = 0.0
 	_stance_support_signature.clear()
 	_stance_allocation_elapsed = 0.0
 	_stance_total_mass = 0.0
@@ -2084,19 +2078,6 @@ func _apply_passive_limb_damping() -> void:
 func uses_passive_limb_links() -> bool:
 	return true
 
-func _calculate_simple_pose_torque(child: RigidBody3D, parent_body: RigidBody3D, rest: Quaternion, joint: Generic6DOFJoint3D) -> Vector3:
-	var error := _stance_rotation_error(child, parent_body, rest)
-	var velocity := child.angular_velocity - parent_body.angular_velocity
-	var acceleration := error * simple_pose_strength - velocity * simple_pose_damping
-	if _has_body_tag(child, LEG_LIMB_TAG) and _has_body_tag(parent_body, LEG_LIMB_TAG):
-		var axis := joint.global_basis.z.normalized()
-		acceleration = axis * acceleration.dot(axis)
-	acceleration = acceleration.limit_length(simple_pose_acceleration_limit)
-	var a := _stance_inverse_inertia(child)
-	var b := _stance_inverse_inertia(parent_body)
-	var inverse := Basis(a.x + b.x, a.y + b.y, a.z + b.z)
-	return (inverse.inverse() * acceleration).limit_length(simple_pose_torque_limit) if absf(inverse.determinant()) > 1e-18 else Vector3.ZERO
-
 func _stance_leg_side_released(body: RigidBody3D, other: RigidBody3D) -> bool:
 	return (_has_body_tag(body, LEG_TAG) or _has_body_tag(body, FORELEG_TAG)) and _has_body_tag(other, LEG_LIMB_TAG)
 
@@ -2113,6 +2094,7 @@ func _gravity_acceleration() -> Vector3:
 	return direction.normalized() * float(ProjectSettings.get_setting("physics/3d/default_gravity", 9.8))
 
 func _update_stance_allocation(delta: float) -> void:
+	_stance_joint_sample_elapsed += delta
 	if not auto_allocate_stance_torque:
 		_stance_support_weights.clear()
 		_stance_joint_loads.clear()
@@ -2130,13 +2112,12 @@ func _update_stance_allocation(delta: float) -> void:
 			signature.append(int(_get_stance_chain_contact(foot).body.get_instance_id()))
 	_stance_allocation_elapsed += delta
 	if signature == _stance_support_signature and _stance_allocation_elapsed < stance_allocation_interval: return
-	var allocation_delta := _stance_allocation_elapsed
-	var previous_loads := _stance_joint_loads.duplicate()
+	_stance_allocation_revision += 1
+	_movement_perf.count(&"stance_allocation_updates")
 	_stance_allocation_elapsed = 0.0
 	_stance_last_allocation_frame = Engine.get_physics_frames()
 	_stance_support_signature = signature
 	_stance_support_weights.clear()
-	_stance_joint_loads.clear()
 	_stance_total_mass = 0.0
 	_stance_center_of_mass = Vector3.ZERO
 	# Include equipped bodies underneath the character, but not frozen inventory items.
@@ -2149,7 +2130,9 @@ func _update_stance_allocation(delta: float) -> void:
 	_stance_support_balanced = false
 	_stance_balance_error = 0.0
 	for id: int in _segments: _segments[id].balanced = false
-	if supports.is_empty(): return
+	if supports.is_empty():
+		_stance_joint_loads.clear()
+		return
 	var gravity := _gravity_acceleration()
 	var up := -gravity.normalized() if not gravity.is_zero_approx() else Vector3.UP
 	var contacts: Array[Vector3] = []
@@ -2176,7 +2159,6 @@ func _update_stance_allocation(delta: float) -> void:
 		groups[owner].auxiliary += segment.auxiliary_force
 	var known_mass := 0.0
 	for id: int in groups: known_mass += groups[id].mass
-	var total_reaction := maxf(0.0, _stance_total_mass * gravity.length() - (_last_torso_response_force + _last_auxiliary_support_force).dot(up))
 	var reaction_sum := 0.0
 	_stance_support_balanced = true
 	for id: int in groups:
@@ -2199,22 +2181,41 @@ func _update_stance_allocation(delta: float) -> void:
 	for index: int in range(supports.size()):
 		var foot: RigidBody3D = supports[index]
 		_stance_support_weights[foot] = weights[index]
+	if not _performance_mode.enabled: _sample_stance_joint_loads()
+
+func _sample_stance_joint_loads() -> void:
+	if not auto_allocate_stance_torque:
+		_stance_joint_loads.clear()
+		return
+	if _stance_joint_load_revision == _stance_allocation_revision: return
+	_stance_joint_load_revision = _stance_allocation_revision
+	var previous_loads := _stance_joint_loads
+	_stance_joint_loads = {}
+	var delta := _stance_joint_sample_elapsed
+	_stance_joint_sample_elapsed = 0.0
+	var gravity := _gravity_acceleration()
+	var up := -gravity.normalized() if not gravity.is_zero_approx() else Vector3.UP
+	var reaction := maxf(0.0, _stance_total_mass * gravity.length() - (_last_torso_response_force + _last_auxiliary_support_force).dot(up))
+	_movement_perf.count(&"stance_joint_diagnostic_updates")
+	for foot: RigidBody3D in _stance_support_weights:
+		if not _chain_is_intact(foot): continue
+		var contact := _get_stance_chain_contact(foot)
+		if contact.is_empty(): continue
 		# Torso feedback already carries part of the body's weight. Estimating
 		# full weight again would command excessive ankle/hip compensation.
-		var reaction := total_reaction
-		var force := up * reaction * weights[index]
+		var force := up * reaction * float(_stance_support_weights[foot])
 		var chain: Dictionary = _chains[foot]
 		for joint_index: int in range(chain.joints.size()):
 			var joint: Generic6DOFJoint3D = chain.joints[joint_index]
-			var contact_index: int = _get_stance_chain_contact(foot).index
 			# Only joints between the contact and Torso carry the ground reaction.
-			var external := (contacts[index] - joint.global_position).cross(force) if joint_index >= contact_index else Vector3.ZERO
+			var external := (Vector3(contact.position) - joint.global_position).cross(force) if joint_index >= int(contact.index) else Vector3.ZERO
 			for body_index: int in range(joint_index + 1):
 				var body: RigidBody3D = chain.bodies[body_index]
 				external += (_stance_body_center(body) - joint.global_position).cross(gravity * body.mass)
 			var desired_load := -external
-			var blend := 1.0 if support_load_smoothing_time <= 0.0 else 1.0 - exp(-allocation_delta / support_load_smoothing_time)
+			var blend := 1.0 if support_load_smoothing_time <= 0.0 else 1.0 - exp(-delta / support_load_smoothing_time)
 			_stance_joint_loads[joint] = Vector3(previous_loads.get(joint, desired_load)).lerp(desired_load, blend)
+			_movement_perf.count(&"stance_joint_diagnostic_joints")
 
 ## Constrained least-squares COM projection; weights stay nonnegative and sum to one.
 ## Vertical reactions approximate standable terrain, not a full friction-cone solver.
@@ -2797,6 +2798,7 @@ func _apply_torso_tilt_stabilization() -> void:
 		body.apply_torque(body.global_basis * (local_acceleration * inertia))
 
 func get_generated_movement_diagnostics() -> Dictionary:
+	_sample_stance_joint_loads()
 	var recovery := get_parent().get_node_or_null("CreatureRecoveryStateMachine3D")
 	var feet: Array[Dictionary] = []
 	var support_count := 0
@@ -2815,6 +2817,7 @@ func get_generated_movement_diagnostics() -> Dictionary:
 ## Sampled by trackmotion only. These are controller-commanded torques, not the
 ## physics engine's constraint reaction torques or a guarantee of dynamic stability.
 func get_stance_support_diagnostics() -> Dictionary:
+	_sample_stance_joint_loads()
 	var torso_mass := 0.0
 	for body: RigidBody3D in get_torso_parts(): torso_mass += body.mass
 	var gravity := _gravity_acceleration()
