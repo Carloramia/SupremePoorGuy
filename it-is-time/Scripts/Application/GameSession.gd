@@ -2,6 +2,8 @@ extends "res://Modules/PaperUI/Scripts/PrototypeState.gd"
 ## One slot owns economy, creatures, map sessions and committed battle receipts.
 
 signal changed
+signal new_player_tasks_completed(task_ids: Array)
+const NEW_PLAYER_TASKS = preload("res://Scripts/Application/NewPlayerTasks.gd")
 const FACTORY = preload("res://Scripts/Application/CreatureFactory.gd")
 const SUPPORTED_RUNES := ["health","armor","attack","iron","bloodblade","vitality","fang","haste"]
 const DELIVERY_RUNTIME = preload("res://Modules/FrontierDelivery/Scripts/Map/WorldMapRuntime.gd")
@@ -10,12 +12,30 @@ var integration_logging := false
 var pending_result: Dictionary = {}
 var _recovered_backup := false
 var _needs_schema_backup := false
+var task_definitions: Array = NEW_PLAYER_TASKS.DEFINITIONS.duplicate(true)
 
 func reset() -> void:
 	super.reset()
 	data.merge({"schema_version":2,"worlds":{},"battle":{},"battle_results":{},"transactions":[],"day":1},true)
 
 func save() -> bool:
+	# Apply task completion and rewards inside the same transaction as business data.
+	if not _valid_save(data):
+		last_error = "状态校验失败，未覆盖存档。"
+		return false
+	var before := data.duplicate(true)
+	var tasks: Dictionary = NEW_PLAYER_TASKS.reconcile(data,task_definitions)
+	if not tasks.ok:
+		data = before
+		last_error = tasks.error
+		return false
+	if not _save_session_file():
+		data = before
+		return false
+	if not tasks.completed.is_empty(): new_player_tasks_completed.emit(tasks.completed)
+	return true
+
+func _save_session_file() -> bool:
 	var directory := ProjectSettings.globalize_path(save_path.get_base_dir())
 	var error := DirAccess.make_dir_recursive_absolute(directory)
 	if error != OK:
@@ -51,6 +71,7 @@ func load_save() -> bool:
 
 func _valid_save(value: Variant) -> bool:
 	if not super._valid_save(value) or int(value.get("schema_version",0)) not in [1,2]: return false
+	if not NEW_PLAYER_TASKS.valid_progress(value): return false
 	for key: String in ["worlds","battle","battle_results"]:
 		if not value.get(key) is Dictionary: return false
 	if not value.get("transactions") is Array: return false
@@ -90,6 +111,35 @@ func _valid_save(value: Variant) -> bool:
 			if creature.id==id: found=true
 		if not found: return false
 	return true
+
+func enable_new_player_tasks() -> bool:
+	var before := data.duplicate(true)
+	NEW_PLAYER_TASKS.ensure_progress(data).enabled = true
+	var probe := data.duplicate(true)
+	var result: Dictionary = NEW_PLAYER_TASKS.reconcile(probe,task_definitions)
+	if not result.ok:
+		data = before
+		last_error = result.error
+		return false
+	if probe==before: return true
+	if save(): return true
+	data = before
+	return false
+
+func record_task_arrival(map_id: String, location_id: String) -> bool:
+	var before := data.duplicate(true)
+	NEW_PLAYER_TASKS.record_location(data,map_id,location_id)
+	if save(): return true
+	data = before
+	return false
+
+func new_player_task_rows() -> Array:
+	return NEW_PLAYER_TASKS.rows(data,task_definitions)
+
+func new_player_task_action(task_id: String) -> String:
+	for row: Dictionary in new_player_task_rows():
+		if row.id==task_id and not row.done and not row.locked: return row.action
+	return ""
 
 func _valid_result(value: Variant) -> bool:
 	if not value is Dictionary or not value.get("battle_id") is String or value.battle_id.is_empty(): return false

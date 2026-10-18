@@ -170,6 +170,8 @@ func roster_error(id: String, kind: String) -> String:
 	return application.delivery_battle_settings.availability_error(str(config.get("enemy_config_id",object.get("enemy_config_id",""))))
 
 func open_location(object: Dictionary) -> void:
+	if runtime.interaction_error(object).is_empty() and not application.session.record_task_arrival(str(runtime.data.map_id),str(object.id)):
+		application.ui._notice(application.session.last_error)
 	_map_diagnostic("location_panel_opened",{"location_id":object.id,"roster_error":roster_error(object.id,"clear"),"can_enter_battle":not application.session.monsters("team").is_empty() and roster_error(object.id,"clear").is_empty()})
 	application.ui._modal(str(object.name),func(body):
 		var page: Control = application.ui._text_screen(body,"清理胜利将关闭这里的自动遭遇；范围遭遇胜利不会永久清理。")

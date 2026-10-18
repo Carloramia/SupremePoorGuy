@@ -74,6 +74,7 @@ func _ready() -> void:
 	battle_container = _content_view("ScenarioView",true)
 	battle_viewport = battle_container.get_child(0)
 	session.changed.connect(_session_changed)
+	session.new_player_tasks_completed.connect(ui.queue_task_completion)
 	refresh_input_gate()
 
 func _input(event: InputEvent) -> void:
@@ -209,6 +210,7 @@ func _session_changed() -> void:
 	if not is_instance_valid(ui) or not ui.is_node_ready(): return
 	ui._refresh_sidebar()
 	ui._update_header()
+	ui.refresh_task_list()
 	if is_instance_valid(delivery_map): delivery_map.sync_party()
 
 func location_name() -> String:
@@ -279,6 +281,7 @@ func start_new_game() -> void:
 	var previous := session.data.duplicate(true)
 	session.reset()
 	if not session.save(): session.data = previous; ui._notice(session.last_error); return
+	ui._task_notifications.clear()
 	ui.rules.import_layout(session.data.layout)
 	ui._close_all()
 	ui._show("world")
@@ -326,6 +329,7 @@ func enter_world() -> void:
 	map_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	map_container.show()
 	ui._show("world")
+	if not session.enable_new_player_tasks(): ui._notice(session.last_error)
 	if session.data.battle.get("phase","") == "settlement":
 		_pending_result = session.data.battle.result.duplicate(true)
 		phase = "settlement"
@@ -345,6 +349,7 @@ func _enter_delivery_world() -> void:
 	phase = "world"
 	ui._show("world")
 	if not delivery_map.save_progress(): return
+	if not session.enable_new_player_tasks(): ui._notice(session.last_error)
 	if session.data.battle.get("phase")=="settlement":
 		_pending_result = session.data.battle.result.duplicate(true)
 		phase = "settlement"
@@ -412,6 +417,7 @@ func _interaction_started(id: StringName) -> void:
 	trace_map_event("interaction_arrived",{"location_id":str(id)})
 	if not is_instance_valid(ui) or phase not in ["world","loading_world"]: return
 	var location: WorldMapLocation = world_map.get_location(id)
+	if not session.record_task_arrival(str(world_map.definition.map_id),str(id)): ui._notice(session.last_error)
 	world_map.interaction.panel.hide()
 	ui.location = str(id)
 	ui._modal(location.definition.display_name,func(body):

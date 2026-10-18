@@ -8,6 +8,8 @@ var _main_menu_button: Button
 var _portrait_renderer: Node
 var visual_preset: Resource
 var skin_binding: Node
+var _task_page: Control
+var _task_notifications: Array = []
 
 func _request_creature_portrait(portrait: Control, monster: Dictionary) -> void:
 	if not is_instance_valid(_portrait_renderer):
@@ -119,6 +121,7 @@ func _location_clicked(id: String, _kind: String) -> void:
 	application.world_map.select_location(StringName(id))
 
 func _navigation_requested(action: String) -> void:
+	if action=="tasks" and not _tasks_available(): return
 	if application.phase in ["loading_world","loading_battle","settlement","returning"]: return
 	if action == "world" and application.phase == "scenario":
 		application._scenario_exit(&"return_to_map")
@@ -215,10 +218,15 @@ func _term(title: String, content: String) -> void:
 	super._term(title,descriptions.get(title,content))
 
 func _task_action(action: String) -> void:
-	if action == "event":
-		_close_all()
-		_notice("前往大地图的事件地点；抵达后方可领取奖励。")
-	else: super._task_action(action)
+	if not _tasks_available() or modal_stack.is_empty() or modal_stack.back().get("kind")!="tasks": return
+	var target: String = state.new_player_task_action(action)
+	if target.is_empty(): return
+	_close_all()
+	if not modal_stack.is_empty(): return
+	match target:
+		"world": _show("world")
+		"summon": _open_ritual()
+		"party": _warehouse("team")
 
 func _skip_battle() -> void:
 	_notice("真实战斗不能跳过。")
@@ -329,17 +337,36 @@ func _process(_delta: float) -> void:
 	view.set_process(modal_stack.is_empty() or modal_stack.back().get("kind","") != "settings")
 	if is_instance_valid(_main_menu_button): _main_menu_button.disabled = application.phase == "main" or application.returning_to_main_menu
 	if application != null: application.refresh_input_gate()
+	var task_button: Button = base.get_node("%Navigation").get_node("%Tasks")
+	task_button.disabled = not _tasks_available() or overlay.visible
+	task_button.tooltip_text = "查看新手任务" if _tasks_available() else "新手任务仅在大地图可用"
+	if not _task_notifications.is_empty() and _tasks_available() and modal_stack.is_empty():
+		_notice("新手任务已完成："+"、".join(_task_notifications))
+		_task_notifications.clear()
 
 func _curtain(_raising: bool) -> void:
 	pass
 
 func _tasks() -> void:
+	if not _tasks_available(): return
+	if not state.enable_new_player_tasks():
+		_notice(state.last_error)
+		return
 	_modal("待办事项",func(body):
 		var page := TasksPanel.instantiate()
 		body.add_child(page)
-		page.present_tasks([
-			{"title":"探索边境","description":"发现地点并沿真实路径抵达。","done":not state.data.worlds.is_empty(),"action":"world"},
-			{"title":"召唤妖兽","description":"刻入已接入的符文并安置同一批实例。","done":state.data.serial>0,"action":"summon"},
-			{"title":"准备出战队伍","description":"当前 %d / 6 队位。" % state.occupied_slots(),"done":state.occupied_slots()>0,"action":"party"}])
+		_task_page = page
+		page.present_tasks(state.new_player_task_rows())
 		page.action_requested.connect(_task_action),"tasks")
+
+func _tasks_available() -> bool:
+	return application!=null and application.phase=="world" and route=="world" and not _battle_cancel_needs_save()
+
+func refresh_task_list() -> void:
+	if is_instance_valid(_task_page) and not modal_stack.is_empty() and modal_stack.back().get("kind")=="tasks":
+		_task_page.present_tasks(state.new_player_task_rows())
+
+func queue_task_completion(task_ids: Array) -> void:
+	for task: Dictionary in state.task_definitions:
+		if task.id in task_ids and task.title not in _task_notifications: _task_notifications.append(task.title)
 
