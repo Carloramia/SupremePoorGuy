@@ -2,6 +2,12 @@
 
 更新：2026-10-20。对应目录版本 `SummonContent.VERSION = 4`。
 
+### 文件回退后的复核
+
+2026-10-20按当前工作区重新检查：回退后的工程仍保留v4主体接入，不需要用旧文件整包覆盖。已把用户确认的`swarm_count=5`、`extra_limb_pairs=1`显式写入`DefaultSummonGameplay.tres`，并增加配置检查；后续在Inspector中调整这份资源，不只修改脚本默认值。
+
+地图`Source/Exports`中的事件目录和内嵌Markdown仍含旧14符文、“概率魔眼”等历史描述，属于原始导出，不作为当前规则来源。本轮未覆盖这些原始文件，也未动新的地图补丁。正式奖励/效果以本页、`SummonContent.gd`及其运行时实现为准；事件负责人迁移导出内容时须按本页奖励表重绑定，不能直接沿用历史奖励。
+
 本轮把确认后的9类符文、8件奇物接入正式 Godot 工程。不是最终平衡版本，也不代表20个剧情事件已经全部可玩。
 
 ## 策划确认与测试参数
@@ -135,7 +141,7 @@ if not ok:
 
 本轮实际通过：
 
-- `ValidateCurrentSummoning.gd`：274项，目录、格形旋转/镜像、发奖覆盖、幂等/回滚、旧存档备份、额外完整肢体分支部署及短时物理有限性。
+- `ValidateCurrentSummoning.gd`：276项，确认配置、目录、格形旋转/镜像、发奖覆盖、幂等/回滚、旧存档备份、额外完整肢体分支部署及短时物理有限性。
 - `ValidateSummonCombatEffects.gd`：25项，真实受击、射线、治疗、护盾、灼烧不按部位叠加、光环、嘲讽时限、复起和断肢保留。
 - `ValidateSummonContentLab.gd`：13项，原生召唤UI、独立解锁、5只大群整组转移与1队位、仓库及详情。
 - 既有 `ValidateGameSession`、`ValidateGameRoot`、`ValidateNewPlayerTaskSession`（33项）、`ValidateWorldTime`（45项）、`ValidateSummonAssembly`（146项）回归通过。

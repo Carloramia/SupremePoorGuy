@@ -4,6 +4,7 @@ const CONTENT = preload("res://Scripts/Summoning/SummonContent.gd")
 const EXPERIMENT = preload("res://Modules/PaperUI/Scripts/SummonExperiment.gd")
 const SESSION = preload("res://Scripts/Application/GameSession.gd")
 const FACTORY = preload("res://Scripts/Application/CreatureFactory.gd")
+const SETTINGS = preload("res://Resources/Application/DefaultSummonGameplay.tres")
 var checks := 0
 var failures := 0
 
@@ -29,6 +30,8 @@ func equivalent(a: Variant, b: Variant) -> bool:
 
 func run() -> void:
 	check(CONTENT.RUNES.size()==9 and CONTENT.RELICS.size()==8,"Current catalogue counts")
+	check(SETTINGS.swarm_count==5,"Confirmed first-pass swarm count is explicitly five")
+	check(SETTINGS.extra_limb_pairs==1,"Confirmed first-pass spiral idol adds exactly one pair")
 	var rules := RULES.new()
 	rules.stage=4
 	for rune: Dictionary in CONTENT.RUNES:

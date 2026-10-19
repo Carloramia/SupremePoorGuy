@@ -1,0 +1,40 @@
+战场容量、增援和永久死亡 — 2026-10-19
+
+已实现规则
+- 友方和敌方独立计算在场存活生物的容量，默认各50。候补、未调用的仓库生物、已判定死亡的单位不占在场容量。
+- 原有战前队位规则保留；容量上限不再阻止准备队伍名单，超过首发容量的成员作为候补。仓库增援不需要先占用战前队位。
+- 敌方按编队顺序派出能容纳的成员，其余暂不实例化。战斗中每3秒尝试投入一个能容纳的候补；无合法位置时等待。
+- 战斗画面右下角有“增援”按钮。Q切换自由鼠标后点击，可选择仓库或未上场队员。选取和放置期间暂停战斗，在蓝色部署区内放置后确认；取消不登记、不消耗单位。
+- 放置检查地面、部署边界、坑洞、危险地形、其他生物和有效障碍。增援不能拖动已有战斗单位；原有手动暂停状态会保留。
+- 每个生物本场只能投入一次。仓库增援会保存其参战身份，防止回收或再次调用同一个个体。
+- 整只生物被现有战斗系统判定死亡或跌出战场后，立即从玩家生物总表移除并保存，因此队伍和仓库都会同步移除。暂时倒地/布娃娃、单个部位断裂本身不会额外触发死亡。
+- 阵亡保存失败时停止战斗并提供不可直接关闭的重试界面；保存成功前不推进增援和结算。重复死亡通知不会重复结算。
+- 有可投入的候补时，场上全灭不会直接失败，玩家会收到增援界面。敌方场上单位及可用候补均耗尽后才会判胜。
+- 死亡信息进入战斗回执。存活生物沿用原有战后部位战损处理，本轮没有重做伤害、攻击和行走算法。
+
+配置与实现入口
+- Resources/Application/DefaultBattleCapacity.tres：默认各阵营容量50；其脚本 BattleCapacitySettings.gd 的 Enemy Reinforcement Interval 默认3秒。
+- BattleHost.gd：首发选择、独立容量、候补、死亡采集、增援生命周期和胜负判定。
+- GameSession.gd：仓库增援登记、永久死亡事务、保存失败回滚及新旧存档校验。
+- BattleDeployment3D.gd / DeliveryBattleEnvironmentAdapter.gd：放置检查和区域适配。
+- GameRoot.gd / GameUIController.gd：增援按钮、暂停、确认取消、保存重试和结算提示。
+- Localization/zh_CN/ui.json、en/ui.json、catalog.json：新增增援文案与双方容量显示。
+- 已接入现有集成/地图追踪日志：battle_unit_deployed、battle_unit_dead、reinforcement_preview、reinforcement_cancelled；会话事务日志包含 battle_permanent_deaths。
+
+验证结果
+- ValidateBattleReinforcements：54项断言通过。覆盖敌方候补、仓库调用、重复部署拒绝、容量约束、取消、手动暂停、真实头部破坏、永久移除、失败重试、幂等、读档、结算和正式六边形地图。
+- ValidateBattleCapacity：通过，包括双方开战时重新检查容量。
+- ValidateBattleDeployment：通过，原有蓝色部署区/拖放/光标/暂停不受影响。
+- ValidateHexBattleDeployment：31个可用营地通过，按容量筛选敌方首发。
+- ValidateGameSession、ValidateGameRoot：通过，会话存档、战斗回执和地图往返兼容。
+- 新增增援文案的独立中英文运行校验通过。
+- 已渲染并检查候补选择与增援放置两张截图。
+
+保留问题与验证边界
+- 未执行长时间混战或40个生物的性能压力测试。
+- 专用集成测试退出时仍出现17个ObjectDB实例/10个脚本资源释放警告。功能断言全部通过，但此警告未宣称修复，完整日志保留在验证目录。
+- 旧 ValidateLocalization 设置页测试因找不到 Language 节点中止。设置页代码与本次修改前一致；新增增援文案改用独立中英文运行校验验证。
+
+备份及完整日志
+D:/GameJamWorkspace/RuntimeChecks/BattleReinforcements_20261019
+其中 Before 为修改前文件，summary.json 为检查结果和变更后哈希，reserves.png / placement.png 为截图。

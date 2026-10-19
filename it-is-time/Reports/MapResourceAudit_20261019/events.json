@@ -1,0 +1,537 @@
+{
+  "map_version": "20261019",
+  "source_event_count": 23,
+  "runtime_event_count": 23,
+  "missing_imports": [],
+  "entry_count": 25,
+  "missing_entry_objects": [],
+  "bound_events": [
+    {
+      "id": "QST_MAIN_001_001",
+      "name": "火速任命",
+      "auxiliary": false,
+      "status": "bound",
+      "runtime_handler": "opening_appointment",
+      "source_execution_graph": null,
+      "unconfigured_parameters": [],
+      "unresolved": "开局触发点；特令物品ID及功能；结束确认方式",
+      "entries": [
+        {
+          "location_id": "layout_summoning_hut",
+          "location_name": "召唤小屋",
+          "mode": "on_game_start",
+          "role": "opening"
+        }
+      ]
+    }
+  ],
+  "pending_events": [
+    {
+      "id": "QST_GRASS_002",
+      "name": "小树守卫",
+      "auxiliary": false,
+      "status": "pending_binding",
+      "runtime_handler": null,
+      "source_execution_graph": null,
+      "unconfigured_parameters": [
+        "magic_reward",
+        "enemy_health_multiplier",
+        "enemy_attack_multiplier"
+      ],
+      "unresolved": "开战确认还是自动；卡洛德敌军配置；战后文本与奖励",
+      "entries": [
+        {
+          "location_id": "layout_wolf_den_001",
+          "location_name": "小树守卫克劳德",
+          "mode": "interact",
+          "role": ""
+        }
+      ]
+    },
+    {
+      "id": "QST_SIDE_001_001",
+      "name": "图书馆开门日",
+      "auxiliary": false,
+      "status": "pending_binding",
+      "runtime_handler": null,
+      "source_execution_graph": null,
+      "unconfigured_parameters": [
+        "private_money_magic"
+      ],
+      "unresolved": "3枚基础符文为本轮配置选择，见符文表；私房钱资源/数量；常驻入口启用条件",
+      "entries": [
+        {
+          "location_id": "layout_foster_town",
+          "location_name": "福斯特镇",
+          "mode": "interact",
+          "role": "library"
+        }
+      ]
+    },
+    {
+      "id": "QST_SIDE_002_001",
+      "name": "防卫预算",
+      "auxiliary": false,
+      "status": "pending_binding",
+      "runtime_handler": null,
+      "source_execution_graph": null,
+      "unconfigured_parameters": [
+        "enemy_count",
+        "enemy_health_multiplier",
+        "enemy_attack_multiplier"
+      ],
+      "unresolved": "清剿目标、地点和数量；关联战斗ID；奇物ID；回访入口",
+      "entries": [
+        {
+          "location_id": "layout_sargate_city",
+          "location_name": "萨尔格特城",
+          "mode": "interact",
+          "role": "city_center"
+        }
+      ]
+    },
+    {
+      "id": "QST_GRASS_005",
+      "name": "浑浊的大地",
+      "auxiliary": false,
+      "status": "pending_binding",
+      "runtime_handler": null,
+      "source_execution_graph": null,
+      "unconfigured_parameters": [],
+      "unresolved": "地图位置；结束按钮；是否写入东南线索任务",
+      "entries": [
+        {
+          "location_id": "event_shepherd",
+          "location_name": "浑浊的大地 · 牧羊人",
+          "mode": "interact",
+          "role": ""
+        }
+      ]
+    },
+    {
+      "id": "QST_GRASS_006",
+      "name": "狼来了",
+      "auxiliary": false,
+      "status": "pending_binding",
+      "runtime_handler": null,
+      "source_execution_graph": null,
+      "unconfigured_parameters": [
+        "enemy_count",
+        "extra_magic_reward",
+        "enemy_health_multiplier",
+        "enemy_attack_multiplier"
+      ],
+      "unresolved": "物品内容/正式ID暂搁置，不填默认物品；甲狼/草狼组成、数量；战后文本；失败后事件状态",
+      "entries": [
+        {
+          "location_id": "event_stone_tower",
+          "location_name": "狼来了 · 石塔遗物",
+          "mode": "interact",
+          "role": ""
+        }
+      ]
+    },
+    {
+      "id": "QST_GRASS_007",
+      "name": "年迈的驴子",
+      "auxiliary": false,
+      "status": "pending_binding",
+      "runtime_handler": null,
+      "source_execution_graph": null,
+      "unconfigured_parameters": [],
+      "unresolved": "两节点位置与交互ID；两件奇物具体内容；共用归还对话结束与发奖回执；不做实际护送",
+      "entries": [
+        {
+          "location_id": "event_donkey",
+          "location_name": "年迈的驴子 · 路中老驴",
+          "mode": "interact",
+          "role": "donkey"
+        },
+        {
+          "location_id": "event_donkey_merchant",
+          "location_name": "年迈的驴子 · 石旁商人",
+          "mode": "interact",
+          "role": "merchant"
+        }
+      ]
+    },
+    {
+      "id": "QST_GRASS_008",
+      "name": "超大型巨人",
+      "auxiliary": false,
+      "status": "pending_binding",
+      "runtime_handler": null,
+      "source_execution_graph": null,
+      "unconfigured_parameters": [
+        "enemy_health_multiplier",
+        "enemy_attack_multiplier"
+      ],
+      "unresolved": "三倍大拱兽的实际敌军预设；战后对白；奇物ID/池",
+      "entries": [
+        {
+          "location_id": "layout_forest_wolf_den_001",
+          "location_name": "普通森林 · 巨型拱兽 01",
+          "mode": "interact",
+          "role": "giant_beast"
+        }
+      ]
+    },
+    {
+      "id": "QST_GRASS_009",
+      "name": "不对名单",
+      "auxiliary": false,
+      "status": "pending_binding",
+      "runtime_handler": null,
+      "source_execution_graph": null,
+      "unconfigured_parameters": [
+        "magic_reward"
+      ],
+      "unresolved": "魔力数量；纸条结束/领取按钮；地点ID",
+      "entries": [
+        {
+          "location_id": "event_abandoned_cart",
+          "location_name": "不对名单 · 遗弃货车",
+          "mode": "interact",
+          "role": "cart"
+        }
+      ]
+    },
+    {
+      "id": "QST_GRASS_010",
+      "name": "甲壳圣堂",
+      "auxiliary": false,
+      "status": "pending_binding",
+      "runtime_handler": null,
+      "source_execution_graph": null,
+      "unconfigured_parameters": [
+        "attack_threshold",
+        "magic_reward",
+        "action_magic_cost"
+      ],
+      "unresolved": "攻击阈值与正式攻击字段口径；读取仓库和出战的持有怪物快照；是否有出击成本；奖励数值",
+      "entries": [
+        {
+          "location_id": "layout_abandoned_church",
+          "location_name": "废弃圣堂",
+          "mode": "interact",
+          "role": ""
+        }
+      ]
+    },
+    {
+      "id": "QST_GRASS_011",
+      "name": "废弃矿井",
+      "auxiliary": false,
+      "status": "pending_binding",
+      "runtime_handler": null,
+      "source_execution_graph": null,
+      "unconfigured_parameters": [
+        "enemy_count",
+        "rune_unlock_count",
+        "enemy_health_multiplier",
+        "enemy_attack_multiplier"
+      ],
+      "unresolved": "大型标签字段；鼠群预设/数量；可出战队伍不能为空；符文ID",
+      "entries": [
+        {
+          "location_id": "layout_forgotten_mine",
+          "location_name": "被遗忘的矿洞",
+          "mode": "interact",
+          "role": ""
+        }
+      ]
+    },
+    {
+      "id": "QST_GRASS_012",
+      "name": "过分敬业",
+      "auxiliary": false,
+      "status": "pending_binding",
+      "runtime_handler": null,
+      "source_execution_graph": null,
+      "unconfigured_parameters": [
+        "direct_magic_reward",
+        "enchanter_magic_reward",
+        "enemy_count",
+        "enemy_health_multiplier",
+        "enemy_attack_multiplier"
+      ],
+      "unresolved": "两档奖励数值；稻草人敌军资源；城市附魔师入口；衣服统一为刚毕业学生的旧衣服",
+      "entries": [
+        {
+          "location_id": "layout_sargate_city",
+          "location_name": "萨尔格特城",
+          "mode": "interact",
+          "role": "return_city_enchanter"
+        },
+        {
+          "location_id": "event_diligent_farm",
+          "location_name": "过分敬业 · 北桥东岸农田",
+          "mode": "interact",
+          "role": "farm"
+        }
+      ]
+    },
+    {
+      "id": "QST_GRASS_013",
+      "name": "群星之底",
+      "auxiliary": false,
+      "status": "pending_binding",
+      "runtime_handler": null,
+      "source_execution_graph": null,
+      "unconfigured_parameters": [
+        "magic_reward"
+      ],
+      "unresolved": "魔力数量；地点ID",
+      "entries": [
+        {
+          "location_id": "event_star_well",
+          "location_name": "群星之底 · 星图井",
+          "mode": "interact",
+          "role": ""
+        }
+      ]
+    },
+    {
+      "id": "QST_GRASS_014",
+      "name": "不便携式魔力扩充引擎",
+      "auxiliary": false,
+      "status": "pending_binding",
+      "runtime_handler": null,
+      "source_execution_graph": null,
+      "unconfigured_parameters": [
+        "maximum_array_stage"
+      ],
+      "unresolved": "正式升级接口/级别上限；满级处理；扣费扩圈及购买时间统一保存；游戏时间服务",
+      "entries": [
+        {
+          "location_id": "layout_sargate_city",
+          "location_name": "萨尔格特城",
+          "mode": "interact",
+          "role": "engine_merchant"
+        }
+      ]
+    },
+    {
+      "id": "QST_GRASS_015",
+      "name": "外行魔法师",
+      "auxiliary": false,
+      "status": "pending_binding",
+      "runtime_handler": null,
+      "source_execution_graph": null,
+      "unconfigured_parameters": [
+        "rune_unlock_count"
+      ],
+      "unresolved": "正式游戏时间和安全演出入口；符文ID/数量；卡罗拉后续不在本批；不以现实时间计时",
+      "entries": [
+        {
+          "location_id": "layout_sargate_city",
+          "location_name": "萨尔格特城",
+          "mode": "on_game_time",
+          "role": "engine_ghost"
+        }
+      ]
+    },
+    {
+      "id": "QST_GRASS_016",
+      "name": "看一眼不要钱",
+      "auxiliary": false,
+      "status": "pending_binding",
+      "runtime_handler": null,
+      "source_execution_graph": null,
+      "unconfigured_parameters": [
+        "enemy_count",
+        "magic_eye_probability",
+        "enemy_health_multiplier",
+        "enemy_attack_multiplier"
+      ],
+      "unresolved": "魔眼拱兽战斗预设；眼球ID；概率/适用生成范围；退避后入口状态",
+      "entries": [
+        {
+          "location_id": "event_circus",
+          "location_name": "看一眼不要钱 · 观光棚",
+          "mode": "interact",
+          "role": ""
+        }
+      ]
+    },
+    {
+      "id": "QST_GRASS_017",
+      "name": "富含矿物质",
+      "auxiliary": false,
+      "status": "pending_binding",
+      "runtime_handler": null,
+      "source_execution_graph": null,
+      "unconfigured_parameters": [
+        "enemy_count",
+        "fight_magic_reward",
+        "wood_magic_reward",
+        "enemy_health_multiplier",
+        "enemy_attack_multiplier"
+      ],
+      "unresolved": "食矿鸟阵容/数量；两路奖励数值；木桥表现资源",
+      "entries": [
+        {
+          "location_id": "event_north_bridge",
+          "location_name": "北桥 · 富含矿物质",
+          "mode": "interact",
+          "role": ""
+        }
+      ]
+    },
+    {
+      "id": "QST_SIDE_003_001",
+      "name": "血祭日",
+      "auxiliary": false,
+      "status": "pending_binding",
+      "runtime_handler": null,
+      "source_execution_graph": null,
+      "unconfigured_parameters": [
+        "first_magic_reward",
+        "second_rune_unlock_count",
+        "third_rune_unlock_count",
+        "first_blood_rain_game_days",
+        "second_blood_rain_game_days",
+        "blood_rain_radius_cells",
+        "blood_rain_effect_strength"
+      ],
+      "unresolved": "正式皮毛/飞行/蛇类及手足字段；可回收与锁定规则；奖励ID/量；血雨作用/范围/时长/覆盖待定，不套默认天气",
+      "entries": [
+        {
+          "location_id": "layout_red_altar",
+          "location_name": "红祭坛",
+          "mode": "interact",
+          "role": ""
+        }
+      ]
+    },
+    {
+      "id": "QST_GRASS_019",
+      "name": "谁会赢？",
+      "auxiliary": false,
+      "status": "pending_binding",
+      "runtime_handler": null,
+      "source_execution_graph": null,
+      "unconfigured_parameters": [
+        "watch_magic_reward",
+        "wolf_side_count",
+        "beast_side_count",
+        "enemy_health_multiplier",
+        "enemy_attack_multiplier"
+      ],
+      "unresolved": "双方阵容/数量；奖励强化预设；库存与队伍容量安置；真实观战回执及平局处理；魔力数量",
+      "entries": [
+        {
+          "location_id": "layout_forest_cave_001",
+          "location_name": "谁会赢？ · 圣堂旁洞穴",
+          "mode": "interact",
+          "role": "cave_duel"
+        }
+      ]
+    },
+    {
+      "id": "QST_GRASS_020",
+      "name": "谁会输？",
+      "auxiliary": false,
+      "status": "pending_binding",
+      "runtime_handler": null,
+      "source_execution_graph": null,
+      "unconfigured_parameters": [
+        "enemy_health_multiplier",
+        "enemy_attack_multiplier",
+        "round_1_a_count",
+        "round_1_b_count",
+        "round_2_a_count",
+        "round_2_b_count",
+        "round_3_a_count",
+        "round_3_b_count",
+        "round_4_a_count",
+        "round_4_b_count"
+      ],
+      "unresolved": "四轮双方怪物阵容由策划手填，不随机；失败扣款、平局/中止；战斗预设；下注请求及已结算次数持久化",
+      "entries": [
+        {
+          "location_id": "event_knight_bet",
+          "location_name": "谁会输？ · 杜波骑士",
+          "mode": "interact",
+          "role": ""
+        }
+      ]
+    },
+    {
+      "id": "AUX_GRASS_FOSTER",
+      "name": "福斯特镇",
+      "auxiliary": true,
+      "status": "pending_binding",
+      "runtime_handler": null,
+      "source_execution_graph": null,
+      "unconfigured_parameters": [],
+      "unresolved": "待绑定：正式地点/图书馆交互ID",
+      "entries": [
+        {
+          "location_id": "layout_foster_town",
+          "location_name": "福斯特镇",
+          "mode": "interact",
+          "role": ""
+        }
+      ]
+    },
+    {
+      "id": "AUX_GRASS_SALGERT",
+      "name": "萨尔格特城",
+      "auxiliary": true,
+      "status": "pending_binding",
+      "runtime_handler": null,
+      "source_execution_graph": null,
+      "unconfigured_parameters": [],
+      "unresolved": "待绑定：正式地点/城中心/附魔师交互ID",
+      "entries": [
+        {
+          "location_id": "layout_sargate_city",
+          "location_name": "萨尔格特城",
+          "mode": "interact",
+          "role": ""
+        }
+      ]
+    },
+    {
+      "id": "AUX_GRASS_ROVA",
+      "name": "罗瓦常驻",
+      "auxiliary": true,
+      "status": "pending_binding",
+      "runtime_handler": null,
+      "source_execution_graph": null,
+      "unconfigured_parameters": [],
+      "unresolved": "待绑定：启用条件",
+      "entries": [
+        {
+          "location_id": "layout_foster_town",
+          "location_name": "福斯特镇",
+          "mode": "interact",
+          "role": "rova"
+        }
+      ]
+    }
+  ],
+  "evidence": {
+    "source_catalog": "Content/Maps/FrontierEditor_20261019/Source/Exports/事件目录完整内容.json",
+    "source_parameters": "Content/Maps/FrontierEditor_20261019/Source/Exports/事件参数与待绑定.json",
+    "source_entries": "Content/Maps/FrontierEditor_20261019/Source/Exports/事件入口绑定.json",
+    "runtime_catalog": "Content/Maps/FrontierEditor_20261019/Runtime/Maps/frontier_layout.json",
+    "pending_ui": "Scripts/Application/DeliveryMapBridge.gd::_arrived",
+    "opening": "Resources/Application/OpeningAppointment.json"
+  },
+  "notes": [
+    "23 个源事件/辅助条目的元数据均已迁入，没有漏拷贝的事件ID。",
+    "开局火速任命通过项目独立处理器执行；源包 execution_graph 仍为空，不能以其判断开局未实现。",
+    "其余 22 项没有执行处理器，地点交互显示禁用的待接入按钮；无法通过等待或改变触发距离解锁。",
+    "外行魔法师虽然配置游戏经过4天触发，但尚未绑定时间触发执行流程。",
+    "源包流程为草稿；不可将全部故事和奖励简单串行执行。"
+  ],
+  "summary": {
+    "imported": 23,
+    "bound": 1,
+    "pending": 22,
+    "pending_story_events": 19,
+    "pending_auxiliary_entries": 3
+  }
+}

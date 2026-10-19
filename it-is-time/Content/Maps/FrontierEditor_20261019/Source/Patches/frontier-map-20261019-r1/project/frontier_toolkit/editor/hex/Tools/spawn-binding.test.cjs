@@ -1,0 +1,13 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
+const web=path.resolve(process.argv[2]||path.join(__dirname,'hex-planner')),M=require(path.join(web,'model.js')),O=require(path.join(web,'obstacle-edit.js')),P=require(path.join(web,'playtest-model.js'));
+const source=JSON.parse(fs.readFileSync(path.resolve(web,'../../Data/Maps/hex_layout.json')));
+const origin=d=>M.spawnPosition?M.spawnPosition(d):d.spawn;
+const expected=d=>{const h=d.sites.find(s=>s.id==='layout_summoning_hut'),a=d.assets.find(a=>a.id===h.visual.asset_id);const entry=d.spawn_site_anchor,base=h.visual.anchor||a.anchor||[.5,1];return [h.position[0]+(entry[0]-base[0])*h.visual.width,h.position[1]+(entry[1]-base[1])*h.visual.width*a.height/a.width];};
+let failed=0;
+function check(name,fn){try{fn();console.log('PASS '+name);}catch(e){failed++;console.log('FAIL '+name+': '+e.message);}}
+check('initial sight resolves to the hut-relative authored starting point, not the stale spawn coordinate',()=>{const d=structuredClone(source),hut=d.sites.find(s=>s.id==='layout_summoning_hut');hut.position=[hut.position[0]+255,hut.position[1]+80];assert.deepEqual(origin(d),expected(d));});
+check('moving the hut updates the saved spawn in the same operation',()=>{const d=structuredClone(source),hut=d.sites.find(s=>s.id==='layout_summoning_hut'),target=[hut.position[0]+510,hut.position[1]];assert.equal(O.move(d,hut,target),true);assert.deepEqual(d.spawn,expected(d));});
+check('new playtest starts at the moved hut starting point',()=>{const d=structuredClone(source),hut=d.sites.find(s=>s.id==='layout_summoning_hut');hut.position=[hut.position[0]+510,hut.position[1]];const session=new P.Session(d);assert.deepEqual(session.position,M.axial(d.grid,expected(d)));});
+check('undo and redo keep the hut and initial vision together, radius stays 630',()=>{const d=structuredClone(source),h=new M.History(d),first=h.doc.sites.find(s=>s.id==='layout_summoning_hut').position.slice(),target=[first[0]+255,first[1]];h.change(x=>O.move(x,x.sites.find(s=>s.id==='layout_summoning_hut'),target));assert.deepEqual(origin(h.doc),expected(h.doc));h.undo();assert.deepEqual(h.doc.sites.find(s=>s.id==='layout_summoning_hut').position,first);assert.deepEqual(origin(h.doc),expected(h.doc));h.redo();assert.deepEqual(origin(h.doc),expected(h.doc));assert.equal(h.doc.vision_radius,630);});
+check('resizing hut artwork keeps the authored initial opening attached',()=>{const h=new M.History(source);h.change(d=>d.sites.find(s=>s.id==='layout_summoning_hut').visual.width*=1.5);assert.deepEqual(h.doc.spawn,expected(h.doc));assert.equal(h.doc.vision_radius,630);});
+process.exitCode=failed?1:0;
