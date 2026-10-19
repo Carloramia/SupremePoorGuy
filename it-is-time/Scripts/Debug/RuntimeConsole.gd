@@ -906,6 +906,7 @@ func _collect_leg_motion_lines(controller: Node) -> Array[String]:
 				landing_force.length(),
 			]
 		)
+		if not leg_step.get("plan",{}).is_empty(): message += " step_plan=%s" % leg_step.plan
 		if controller.has_method("get_support_foot_diagnostics"):
 			var support: Dictionary = controller.call("get_support_foot_diagnostics", leg)
 			message += " foot_locked=%s foot_anchor=%s foot_drift=%.3f foot_speed=%.3f support_force=%s brake_force=%s expected_speed=%.3f" % [
@@ -1004,7 +1005,7 @@ func _emit_performance_snapshot() -> void:
 	)
 	_append_log_output(
 		("[trackperformance] navigation_agents=%d navigation_total_ms=%.3f navigation_max_ms=%.3f "
-		+ "navigation_frames=%d target_refreshes=%d repaths=%d map_projections=%d") % [
+		+ "navigation_frames=%d target_refreshes=%d repaths=%d map_projections=%d planning_decisions=%d") % [
 			navigation_stats.components,
 			float(navigation_stats.total_usec) / 1000.0,
 			float(navigation_stats.max_usec) / 1000.0,
@@ -1012,6 +1013,7 @@ func _emit_performance_snapshot() -> void:
 			navigation_stats.target_refreshes,
 			navigation_stats.repaths,
 			navigation_stats.map_projections,
+			navigation_stats.planning_decisions,
 		]
 	)
 
@@ -1029,6 +1031,7 @@ func _consume_group_performance(group_name: StringName) -> Dictionary:
 		&"target_refreshes": 0,
 		&"repaths": 0,
 		&"map_projections": 0,
+		&"planning_decisions": 0,
 		&"total_usec": 0,
 		&"max_usec": 0,
 	}

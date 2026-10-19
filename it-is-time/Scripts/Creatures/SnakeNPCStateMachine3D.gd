@@ -66,6 +66,7 @@ func _update_combat(delta: float) -> void:
 			_clear_reposition()
 	# A killed/despawned victim must not interrupt the physical recovery pose halfway through.
 	if current_state == State.ATTACK and _active_attack != null and is_instance_valid(_attack_receiver) and _attack_receiver.is_npc_attack_active():
+		_advance_combat_timers(delta)
 		_lane_alignment_active = false
 		if not _lane_alignment.is_empty(): _lane_alignment["aligning"] = false
 		_advance_active_attack(delta)

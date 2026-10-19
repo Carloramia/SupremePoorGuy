@@ -60,7 +60,8 @@ func run() -> void:
 	ai.behavior = behavior
 	ai.navigation_origin_path = ^""
 	npc.add_child(ai)
-	for frame: int in range(5): await physics_frame
+	# A staggered first plan may wait one full 0.1-second interval.
+	for frame: int in range(8): await physics_frame
 	check(ai._enemy == enemy and receiver.target == enemy,"Must choose the closest enemy and ignore a closer ally")
 	check(ai.current_state == ai.State.ATTACK and receiver.starts == 1,"A successful attack must enter ATTACK exactly once")
 	receiver.active = false

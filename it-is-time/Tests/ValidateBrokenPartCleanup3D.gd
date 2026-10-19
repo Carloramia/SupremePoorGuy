@@ -6,6 +6,12 @@ var capture := preload("res://Scripts/Debug/RuntimeErrorLogCapture.gd").new()
 var failed := false
 var checks := 0
 
+class MovementCommand:
+	extends Node
+	func get_movement_direction() -> Vector3: return Vector3.RIGHT
+	func is_fast_movement_requested() -> bool: return false
+	func is_jump_requested() -> bool: return false
+
 func _initialize() -> void: run.call_deferred()
 
 func check(ok: bool, message: String) -> void:
@@ -61,7 +67,7 @@ func pause_and_disabled_parent() -> void:
 	await frames(20)
 	check(is_instance_valid(part) and part.get_node("MeshInstance3D").transparency==0.0,"Battle pause also pauses corpse lifetime and fading")
 	paused = false
-	await frames(20)
+	await create_timer(0.35).timeout
 	check(not is_instance_valid(part),"Cleanup resumes when the game resumes")
 	var disabled := Node3D.new()
 	disabled.process_mode = Node.PROCESS_MODE_DISABLED
@@ -179,6 +185,53 @@ func controller_cleanup_smoke() -> void:
 		actors[index].queue_free()
 	await frames(3)
 
+func moving_wolf_chain_cleanup() -> void:
+	for scene: String in ["Generate_Wolf", "Generate_Wolf_NPC"]:
+		for removal: String in ["broken_foot", "broken_limb", "removed_foot", "removed_joint", "queued_root"]:
+			var actor: Node3D = load("res://Scenes/Creatures/Characters/"+scene+".tscn").instantiate()
+			actor.generate_on_ready = false
+			root.add_child(actor)
+			actor.process_mode = Node.PROCESS_MODE_DISABLED
+			for body: PhysicalBodyPart3D in actor._get_physical_body_parts(): body.freeze = true
+			var movement = actor.get_node("GeneratedLegStepMovementController3D")
+			movement.input_enabled = true
+			movement.recovery_control_active = false
+			var command := MovementCommand.new()
+			actor.add_child(command)
+			movement.command_source = command
+			var foot: Variant = movement._legs[0]
+			var foot_id: int = foot.get_instance_id()
+			var chain: Dictionary = movement._chains[foot]
+			var healthy: RigidBody3D = movement._legs[1]
+			var healthy_chain: Dictionary = movement._chains[healthy]
+			var caches: Array[Dictionary] = [movement._wolf_traction, movement._wolf_step_times, movement._wolf_profiles, movement._wolf_recovery_steps, movement._wolf_last_landings, movement._wolf_foot_lock_timers]
+			for cache: Dictionary in caches: cache[foot] = {}
+			var target: Variant = foot
+			if removal=="broken_limb": target = chain.bodies[1]
+			elif removal=="removed_joint": target = chain.joints[0]
+			elif removal=="queued_root": target = chain.bodies[-2]
+			if removal.begins_with("broken_"):
+				target.break_part()
+				target._broken_cleanup_tween.pause()
+				target._broken_cleanup_tween.custom_step(11.1)
+				await frames(2)
+			elif removal=="queued_root":
+				target.queue_free()
+			else:
+				target.free()
+			# Private update runs before the parent update; logs can also be requested first.
+			movement._update_wolf_traction(1.0/60.0)
+			movement.get_stance_support_diagnostics()
+			check(not movement._chains.has(foot) and movement._legs.all(func(leg): return leg.get_instance_id()!=foot_id),scene+" removes invalid chain: "+removal)
+			var caches_cleared := true
+			for cache: Dictionary in caches: caches_cleared = caches_cleared and not cache.has(foot)
+			check(caches_cleared,"All Wolf foot caches release the same chain: "+removal)
+			check(movement._chains.get(healthy,{})==healthy_chain,"Healthy chain retains its authored reference: "+removal)
+			movement._physics_process(1.0/60.0)
+			root.get_node("RuntimeConsole")._collect_motion_snapshot(actor)
+			actor.queue_free()
+			await frames(3)
+
 func run() -> void:
 	root.get_node("RuntimeConsole").auto_getlogs_enabled = false
 	var audio := root.get_node("CombatAudio")
@@ -190,6 +243,7 @@ func run() -> void:
 	await outline()
 	await damage_receipt()
 	await controller_cleanup_smoke()
+	await moving_wolf_chain_cleanup()
 	var error := capture.take_error()
 	check(error.is_empty(),"No runtime errors or freed references: "+str(error))
 	OS.remove_logger(capture)

@@ -704,7 +704,7 @@ func _chain_is_intact(foot: Variant) -> bool:
 func _check_chain_is_intact(foot: RigidBody3D) -> bool:
 	if not _chains.has(foot): return false
 	for body in _chains[foot].bodies:
-		if not is_instance_valid(body) or _is_body_broken(body): return false
+		if not is_instance_valid(body) or body.is_queued_for_deletion() or _is_body_broken(body): return false
 	for joint in _chains[foot].joints:
 		if not is_instance_valid(joint) or joint.is_queued_for_deletion(): return false
 	return true
@@ -712,6 +712,12 @@ func _check_chain_is_intact(foot: RigidBody3D) -> bool:
 func _remove_invalid_legs() -> void:
 	super._remove_invalid_legs()
 	if not _chains_ready: return
+	# Chain keys outlive Broken bodies unless explicitly removed before typed iteration.
+	for foot: Variant in _chains.keys():
+		if _chain_is_intact(foot): continue
+		if foot == _active_leg: cancel_step(&"limb_chain_broken")
+		_chains.erase(foot)
+		_batch_intact_chains.erase(foot)
 	for index: int in range(_legs.size() - 1, -1, -1):
 		if not _chain_is_intact(_legs[index]):
 			if _legs[index] == _active_leg: cancel_step(&"limb_chain_broken")
@@ -2815,6 +2821,7 @@ func get_generated_movement_diagnostics() -> Dictionary:
 ## Sampled by trackmotion only. These are controller-commanded torques, not the
 ## physics engine's constraint reaction torques or a guarantee of dynamic stability.
 func get_stance_support_diagnostics() -> Dictionary:
+	_remove_invalid_legs()
 	_sample_stance_joint_loads()
 	var torso_mass := 0.0
 	for body: RigidBody3D in get_torso_parts(): torso_mass += body.mass

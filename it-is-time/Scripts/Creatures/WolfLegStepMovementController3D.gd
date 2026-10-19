@@ -105,6 +105,7 @@ func _update_foot_heading_constraints() -> void:
 
 func refresh_physics_query_cache() -> void:
 	_release_wolf_rotation_locks()
+	_wolf_traction.clear()
 	_wolf_step_times.clear()
 	_wolf_profiles.clear()
 	_wolf_profiles_frame = -1
@@ -121,6 +122,12 @@ func refresh_physics_query_cache() -> void:
 	_wolf_turn_resume_blend = 1.0
 	super.refresh_physics_query_cache()
 	_cache_wolf_plane_links()
+
+func _remove_invalid_legs() -> void:
+	super._remove_invalid_legs()
+	for cache: Dictionary in [_wolf_traction, _wolf_step_times, _wolf_profiles, _wolf_recovery_steps, _wolf_last_landings, _wolf_foot_lock_timers]:
+		for foot: Variant in cache.keys():
+			if not _chains.has(foot): cache.erase(foot)
 
 func _cache_wolf_plane_links() -> void:
 	_wolf_plane_links.clear()
@@ -878,8 +885,8 @@ func get_stance_support_diagnostics() -> Dictionary:
 	result["wolf_heading"] = {"deliberate_turn": _wolf_heading_turn_active(), "recovering_drift": _wolf_heading_recovery, "error_degrees": rad_to_deg(wrapf(_segment_goal_yaw - _get_physical_heading_yaw(), -PI, PI)), "maximum_error_degrees": rad_to_deg(_get_maximum_heading_error(_segment_goal_yaw)), "stable_seconds": _wolf_turn_stable_elapsed, "plane_restore_blend": _wolf_plane_blend, "walk_resume_blend": _wolf_turn_resume_blend, "entry_degrees": _get_gait_data().deliberate_turn_entry_degrees, "exit_degrees": _get_gait_data().deliberate_turn_exit_degrees, "retained_flight_support": not _gallop_active() and _airborne_height_support_authorized()}
 	result["wolf_flight_height_support"] = {"carries_limb_weight": _height_support_carries_limb_weight(), "gravity_weight_share": _height_support_weight_share(), "maximum_airborne_weight_share": _airborne_height_support_limit(1.0), "real_ground_lease_required": true}
 	var references: Array[Dictionary] = []
-	for foot: RigidBody3D in _chains:
-		if _chains[foot].has("wolf_natural_pose"):
+	for foot: Variant in _chains:
+		if _chain_is_intact(foot) and _chains[foot].has("wolf_natural_pose"):
 			var row: Dictionary = _chains[foot].wolf_natural_pose.duplicate()
 			row["foot"] = foot.name
 			row["hinge_damping"] = _get_passive_limb_damping(foot)
@@ -890,6 +897,7 @@ func get_stance_support_diagnostics() -> Dictionary:
 	return result
 
 func _physics_process(delta: float) -> void:
+	_remove_invalid_legs()
 	var attacks := get_parent().get_node_or_null("WolfAttackController3D")
 	if attacks != null and attacks.blocks_locomotion():
 		_wolf_deliberate_turn = false
@@ -910,7 +918,8 @@ func _update_wolf_traction(delta: float) -> void:
 		return
 	for old_foot in _wolf_traction.keys():
 		if not is_instance_valid(old_foot) or not _chains.has(old_foot): _wolf_traction.erase(old_foot)
-	for foot: RigidBody3D in _chains:
+	for foot: Variant in _chains:
+		if not _chain_is_intact(foot): continue
 		var previous: Dictionary = _wolf_traction.get(foot,{})
 		var cooldown := maxf(float(previous.get("cooldown",0.0))-delta,0.0)
 		var data = _get_gait_data()

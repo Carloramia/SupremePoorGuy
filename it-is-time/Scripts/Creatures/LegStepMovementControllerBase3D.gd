@@ -494,8 +494,9 @@ func get_leg_step_diagnostics(leg: RigidBody3D) -> Dictionary:
 			return {"sequence": motion.sequence, "state": StepState.keys()[motion.state], "target": motion.target, "normal": motion.normal,
 				"distance": (motion.target - leg.global_position).slide(Vector3.UP).length(),
 				"timeout": maxf(float(motion.extra.get("landing_timeout", landing_timeout)) - motion.landing_elapsed, 0.0) if motion.state == StepState.LANDING else -1.0,
+				"plan": {"direction":motion.direction,"next_direction":motion.extra.get("next_direction",motion.direction),"age":_physics_elapsed-float(motion.extra.get("plan_started_at",_physics_elapsed)),"deferred_replans":motion.extra.get("deferred_replans",0)},
 				"extra": motion.extra.duplicate()}
-	return {"sequence": 0, "state": "IDLE", "target": Vector3.ZERO, "normal": Vector3.ZERO, "distance": 0.0, "timeout": -1.0, "extra": {}}
+	return {"sequence": 0, "state": "IDLE", "target": Vector3.ZERO, "normal": Vector3.ZERO, "distance": 0.0, "timeout": -1.0, "plan":{},"extra": {}}
 
 func _resource_turn_blending_enabled() -> bool:
 	return false
@@ -802,7 +803,7 @@ func try_start_turn_step(leg: RigidBody3D, sample_position: Vector3, duration: f
 func get_turn_step_rejection_reason() -> StringName:
 	return _last_landing_rejection_reason
 
-## Keeps the same moving leg, but replaces its old target with one based on the new input.
+## Direction changes belong to the next step; restarting this one can prevent touchdown forever.
 func replan_active_step(new_direction: Vector3) -> bool:
 	if _step_state == StepState.IDLE or not is_instance_valid(_active_leg):
 		return false
@@ -810,43 +811,25 @@ func replan_active_step(new_direction: Vector3) -> bool:
 	if new_direction.is_zero_approx():
 		return false
 	new_direction = new_direction.normalized()
-	var landing := find_landing_point(_active_leg, new_direction)
-	if landing.is_empty():
-		var rejection_reason := StringName("replan_%s" % (
-			_last_landing_rejection_reason
-			if not _last_landing_rejection_reason.is_empty()
-			else &"no_landing_point"
-		))
-		_log_gait_event(&"step_rejected", _active_leg, rejection_reason, new_direction)
-		return false
-	_log_gait_event(
-		&"step_replanned",
-		_active_leg,
-		&"input_changed",
-		new_direction,
-		_body_position_for_ground_contact(_active_leg, landing[&"position"])
-	)
-	_begin_leg_motion(
-		_active_leg,
-		_body_position_for_ground_contact(_active_leg, landing[&"position"]),
-		landing[&"normal"],
-		new_direction
-	)
+	_current_step.extra["next_direction"] = new_direction
+	_current_step.extra["deferred_replans"] = int(_current_step.extra.get("deferred_replans",0))+1
 	_last_replan_time = _physics_elapsed
-	return true
+	return false
 
 func _should_replan_active_step_direction(new_direction: Vector3) -> bool:
 	new_direction.y = 0.0
 	if new_direction.is_zero_approx():
 		return false
 	new_direction = new_direction.normalized()
-	var planned_direction := _active_step_input_direction
+	var queued: Vector3 = _current_step.extra.get("next_direction",Vector3.ZERO)
+	if queued.dot(new_direction) >= cos(deg_to_rad(replan_direction_angle_degrees)): return false
+	var planned_direction := queued if not queued.is_zero_approx() else _active_step_input_direction
 	planned_direction.y = 0.0
 	if planned_direction.is_zero_approx():
 		return true
 	planned_direction = planned_direction.normalized()
 	var direction_dot := clampf(planned_direction.dot(new_direction), -1.0, 1.0)
-	# A reversal must react immediately even if the ordinary replan cooldown is active.
+	# Record reversals immediately without restarting the committed landing.
 	if direction_dot < 0.0:
 		return true
 	if _physics_elapsed - _last_replan_time < _motion_setting("replan_cooldown", replan_cooldown):
@@ -1600,6 +1583,9 @@ func _begin_leg_motion(
 	_step_state = StepState.MOVING
 	_active_leg.sleeping = false
 	if starts_new_step:
+		_current_step.extra["plan_started_at"] = _physics_elapsed
+		_current_step.extra.erase("next_direction")
+		_current_step.extra["deferred_replans"] = 0
 		if not input_direction.is_zero_approx(): _record_walk_start(leg)
 		_last_shared_step_start = _physics_elapsed
 		_last_replan_time = _physics_elapsed

@@ -7,6 +7,19 @@ var _performance_mode: Resource = preload("res://Resources/Settings/PerformanceO
 var _combat_decision_elapsed: float = 1.0
 var _movement_direction_frame: int = -1
 var _cached_movement_direction: Vector3 = Vector3.ZERO
+static var _next_planning_slot: int = 0
+var _planning_slot: int = 0
+var _planning_interval: float = -1.0
+var _planning_staggered: bool = true
+var _planning_remaining: float = 0.0
+var _planning_revision: int = 0
+var _planning_age: float = 0.0
+var _motion_plan_ready: bool = false
+var _planning_in_progress: bool = false
+var _planned_direction: Vector3 = Vector3.ZERO
+var _planned_facing: Vector3 = Vector3.ZERO
+var _planned_facing_dx: float = 0.0
+var _performance_decisions: int = 0
 
 signal state_changed(previous_state: State, current_state: State)
 ## Passive lifecycle telemetry; observers do not participate in attack decisions.
@@ -109,6 +122,8 @@ var _performance_max_usec: int = 0
 @onready var navigation_agent: NavigationAgent3D = $NavigationAgent3D
 
 func _ready() -> void:
+	_planning_slot = _next_planning_slot
+	_next_planning_slot += 1
 	_navigation_arrival_distance = navigation_agent.target_desired_distance
 	add_to_group(&"npc_state_machines")
 	var runtime_console := get_tree().root.get_node_or_null("RuntimeConsole")
@@ -130,17 +145,18 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	_movement_direction_frame = -1
 	if not enabled or not _character_enabled or PLAYER_CONTEXT.controlled_character(self) == get_parent():
+		_invalidate_motion_plan()
 		_cancel_attack()
 		change_state(State.IDLE)
 		return
 	var started_usec := Time.get_ticks_usec() if _performance_tracking_enabled else 0
-	_update_friendly_neighbors(delta)
 	if behavior != null and not _manual_command:
 		_update_combat(delta)
 	elif auto_find_target_by_group and target_path.is_empty() and PLAYER_CONTEXT.controller(self) != null:
 		var player_anchor := PLAYER_CONTEXT.anchor(self)
 		if player_anchor != _target: move_to_node(player_anchor)
-	_sync_navigation_origin()
+	if behavior == null or _manual_command: _update_friendly_neighbors(delta)
+	if behavior == null or _manual_command or not _performance_mode.enabled or not _motion_plan_ready: _sync_navigation_origin()
 	_update_debug_log(delta)
 	if current_state == State.MOVE_TO_TARGET:
 		if is_instance_valid(_target) and refresh_target_each_physics_frame and (behavior == null or _manual_command):
@@ -199,9 +215,50 @@ func get_state_diagnostics() -> Dictionary:
 	elif not _character_enabled: disabled_reason = "character_disabled"
 	elif PLAYER_CONTEXT.controlled_character(self) == get_parent(): disabled_reason = "player_controlled"
 	var nav_ready := _navigation_map_is_ready()
-	return {"npc_path":str(get_parent().get_path()),"npc_id":get_parent().get_instance_id(),"state_machine_path":str(get_path()),"state":State.keys()[current_state],"disabled_reason":disabled_reason,"manual_command":_manual_command,"enemy":str(_enemy.get_path()) if is_instance_valid(_enemy) else "none","has_requested_target":_has_requested_target,"position":_get_navigation_origin_position(),"target":_requested_target_position,"navigation_ready":nav_ready,"path_points":navigation_agent.get_current_navigation_path().size(),"navigation_finished":navigation_agent.is_navigation_finished() if nav_ready else true,"target_reachable":navigation_agent.is_target_reachable() if nav_ready else false,"active_attack":_active_attack.action_id if _active_attack != null else &"none","attack_elapsed":_attack_elapsed,"attack_block_reason":_attack_block_reason,"cooldowns":cooldowns,"target_switch_remaining":_target_switch_remaining,"generated_x_axis_facing":generated_x_axis_facing,"axis_combat_positioning":_uses_axis_positioning(),"facing_side":_generated_facing_side,"facing_candidate":_generated_facing_candidate,"facing_confirmation_elapsed":_generated_facing_elapsed,"prediction_distance_sample":_prediction_distance_sample}
+	return {"npc_path":str(get_parent().get_path()),"npc_id":get_parent().get_instance_id(),"state_machine_path":str(get_path()),"state":State.keys()[current_state],"disabled_reason":disabled_reason,"manual_command":_manual_command,"enemy":str(_enemy.get_path()) if is_instance_valid(_enemy) else "none","has_requested_target":_has_requested_target,"position":_get_navigation_origin_position(),"target":_requested_target_position,"navigation_ready":nav_ready,"path_points":navigation_agent.get_current_navigation_path().size(),"navigation_finished":navigation_agent.is_navigation_finished() if nav_ready else true,"target_reachable":navigation_agent.is_target_reachable() if nav_ready else false,"active_attack":_active_attack.action_id if _active_attack != null else &"none","attack_elapsed":_attack_elapsed,"attack_block_reason":_attack_block_reason,"cooldowns":cooldowns,"target_switch_remaining":_target_switch_remaining,"generated_x_axis_facing":generated_x_axis_facing,"axis_combat_positioning":_uses_axis_positioning(),"facing_side":_generated_facing_side,"facing_candidate":_generated_facing_candidate,"facing_confirmation_elapsed":_generated_facing_elapsed,"prediction_distance_sample":_prediction_distance_sample,"motion_plan":get_motion_plan_diagnostics()}
+
+func get_motion_plan_diagnostics() -> Dictionary:
+	return {"enabled":_performance_mode.enabled and behavior != null and not _manual_command,"ready":_motion_plan_ready,"revision":_planning_revision,"age":_planning_age,"next_in":maxf(_planning_remaining,0.0),"interval":_performance_mode.ai_decision_interval,"slot":_planning_slot,"staggered":_performance_mode.stagger_ai_planning,"direction":_planned_direction,"facing":_planned_facing,"goal":_requested_target_position}
+
+func _invalidate_motion_plan() -> void:
+	_motion_plan_ready = false
+	_planned_direction = Vector3.ZERO
+	_planned_facing = Vector3.ZERO
+	_planned_facing_dx = 0.0
+	_movement_direction_frame = -1
+
+func _planning_due(delta: float) -> bool:
+	_planning_age += delta
+	if not _performance_mode.enabled:
+		_planning_interval = -1.0
+		return true
+	var interval: float = maxf(_performance_mode.ai_decision_interval,0.001)
+	if not is_equal_approx(interval,_planning_interval) or _planning_staggered != _performance_mode.stagger_ai_planning:
+		_planning_interval = interval
+		_planning_staggered = _performance_mode.stagger_ai_planning
+		var slots := maxi(ceili(interval*Engine.physics_ticks_per_second),1)
+		var phase := posmod(_planning_slot-int(Engine.get_physics_frames()),slots)
+		_planning_remaining = interval*float(phase+1)/slots if _planning_staggered else 0.0
+	_planning_remaining -= delta
+	if _planning_remaining > 0.000001: return false
+	# Keep the assigned phase, but never replay missed plans after a stall.
+	_planning_remaining = maxf(fposmod(_planning_remaining,interval),0.0)
+	if _planning_remaining < 0.000001: _planning_remaining = interval
+	return true
+
+func _commit_motion_plan() -> void:
+	_sync_navigation_origin()
+	_planned_direction = _calculate_movement_direction() if current_state == State.MOVE_TO_TARGET or (current_state == State.ATTACK and _attack_allows_movement()) else Vector3.ZERO
+	var facing_offset := (_enemy_position(_enemy)-_get_navigation_origin_position()).slide(Vector3.UP) if _is_enemy(_enemy) else Vector3.ZERO
+	_planned_facing = facing_offset.normalized()
+	_planned_facing_dx = facing_offset.x
+	_motion_plan_ready = true
+	_planning_age = 0.0
+	_planning_revision += 1
+	if _performance_tracking_enabled: _performance_decisions += 1
 
 func move_to_node(target: Node3D) -> void:
+	_invalidate_motion_plan()
 	_cancel_attack()
 	_manual_command = true
 	_target = target
@@ -210,6 +267,7 @@ func move_to_node(target: Node3D) -> void:
 		change_state(State.MOVE_TO_TARGET)
 
 func move_to_position(target_position: Vector3) -> void:
+	_invalidate_motion_plan()
 	_cancel_attack()
 	_manual_command = true
 	_target = null
@@ -217,6 +275,7 @@ func move_to_position(target_position: Vector3) -> void:
 	change_state(State.MOVE_TO_TARGET)
 
 func stop() -> void:
+	_invalidate_motion_plan()
 	_cancel_attack()
 	_manual_command = true
 	_enemy = null
@@ -224,6 +283,8 @@ func stop() -> void:
 	change_state(State.IDLE)
 
 func resume_autonomous() -> void:
+	_invalidate_motion_plan()
+	_planning_interval = -1.0
 	_manual_command = false
 	_scan_elapsed = 0.0
 
@@ -240,6 +301,9 @@ func get_movement_direction() -> Vector3:
 	if walking_attack and _distance_attack != null and absf(_distance_error) <= _attack_distance_tolerance(_distance_attack): return Vector3.ZERO
 	if (current_state != State.MOVE_TO_TARGET and not walking_attack) or not _has_requested_target:
 		return Vector3.ZERO
+	if _performance_mode.enabled and not _manual_command and behavior != null:
+		if not _motion_plan_ready or not _is_enemy(_enemy) or not is_instance_valid(_target) or _target.get("is_broken") == true: return Vector3.ZERO
+		return _planned_direction
 	var frame := Engine.get_physics_frames()
 	if _performance_mode.enabled and _movement_direction_frame == frame: return _cached_movement_direction
 	_cached_movement_direction = _calculate_movement_direction()
@@ -381,6 +445,7 @@ func _sync_navigation_origin() -> void:
 func set_character_control_enabled(value: bool) -> void:
 	_character_enabled = value
 	if not value:
+		_invalidate_motion_plan()
 		_cancel_attack()
 		change_state(State.IDLE)
 
@@ -398,7 +463,7 @@ func get_generated_facing_direction(_delta: float) -> Vector3:
 	if _uses_axis_positioning():
 		# Stomping keeps its starting heading; a moving enemy must not turn the raised body.
 		if current_state == State.ATTACK: return Vector3.RIGHT * _generated_facing_side
-		var dx := _enemy_position(_enemy).x - _get_navigation_origin_position().x
+		var dx := _planned_facing_dx if _performance_mode.enabled and _motion_plan_ready and not _manual_command and not _planning_in_progress else _enemy_position(_enemy).x - _get_navigation_origin_position().x
 		var side := signf(dx) if absf(dx) > facing_x_dead_zone else _generated_facing_side
 		if _delta > 0.0 and _generated_facing_frame != Engine.get_physics_frames():
 			_generated_facing_frame = Engine.get_physics_frames()
@@ -409,13 +474,15 @@ func get_generated_facing_direction(_delta: float) -> Vector3:
 			if _generated_facing_elapsed >= generated_facing_confirmation_time:
 				_generated_facing_side = side
 		return Vector3.RIGHT * _generated_facing_side
-	return (_enemy_position(_enemy)-_get_navigation_origin_position()).slide(Vector3.UP).normalized()
+	return _planned_facing if _performance_mode.enabled and _motion_plan_ready and not _manual_command and not _planning_in_progress else (_enemy_position(_enemy)-_get_navigation_origin_position()).slide(Vector3.UP).normalized()
 
 func get_npc_body_facing_direction() -> Vector3:
 	var charge := get_parent().get_node_or_null("ChargeAttackController3D")
 	if charge != null and charge.owns_velocity(): return Vector3(charge._direction,0,0)
 	if not humanoid_xz_positioning: return get_generated_facing_direction(0.0)
 	if not enabled or not _character_enabled or not _is_enemy(_enemy): return Vector3.ZERO
+	if _performance_mode.enabled and _motion_plan_ready and not _manual_command and not _planning_in_progress:
+		return Vector3.RIGHT*signf(_planned_facing_dx) if absf(_planned_facing_dx)>facing_x_dead_zone else Vector3.ZERO
 	var target := _target if is_instance_valid(_target) and _target.get("is_broken") != true else _enemy_torso(_enemy)
 	var dx := target.global_position.x - _get_navigation_origin_position().x
 	return Vector3.RIGHT * signf(dx) if absf(dx) > facing_x_dead_zone else Vector3.ZERO
@@ -665,28 +732,44 @@ func _visible(actor: Node3D, target_part: Node3D = null) -> bool:
 	var query := PhysicsRayQueryParameters3D.create(_get_navigation_origin_position(), point, behavior.obstacle_mask, excluded)
 	return get_world_3d().direct_space_state.intersect_ray(query).is_empty()
 
-func _update_combat(delta: float) -> void:
+func _advance_combat_timers(delta: float) -> bool:
 	_combat_decision_elapsed += delta
 	_target_switch_remaining = maxf(0.0, _target_switch_remaining - delta)
 	for key in _cooldowns: _cooldowns[key] = maxf(float(_cooldowns[key])-delta, 0.0)
 	_attack_retry = maxf(_attack_retry-delta,0.0)
 	_scan_elapsed -= delta
+	return _planning_due(delta)
+
+func _update_combat(delta: float) -> void:
+	var planning_due := _advance_combat_timers(delta)
 	if not _is_enemy(_enemy):
+		if _enemy != null: _scan_elapsed = 0.0
 		if is_instance_valid(_enemy): _log_state_event(&"target_lost",{"target":str(_enemy.get_path()),"reason":"dead_friendly_removed_or_other_world"})
 		_cancel_attack()
+		change_state(State.IDLE)
 		_enemy = null
 		_prediction_distance_sample = -1
 		_attack_predictions.clear()
 		_target = null
 		_has_requested_target = false
-	if _performance_mode.enabled:
-		# Finish/cancel attacks on the real physics tick; do not delay their timers or controls.
-		if current_state == State.ATTACK and _active_attack != null and is_instance_valid(_target) and _target.get("is_broken") != true and (not _attack_allows_movement() or _combat_decision_elapsed < _performance_mode.ai_decision_interval):
+		_invalidate_motion_plan()
+	if current_state == State.ATTACK and _active_attack != null:
+		if not is_instance_valid(_target) or _target.get("is_broken") == true:
+			_cancel_attack()
+			change_state(State.WAITING)
+			_invalidate_motion_plan()
+		else:
 			_advance_active_attack(delta)
-			return
-		if _combat_decision_elapsed < _performance_mode.ai_decision_interval and _scan_elapsed > 0.0 and is_instance_valid(_target) and _target.get("is_broken") != true:
-			return
+			if current_state == State.ATTACK and not _attack_allows_movement(): return
+	if not planning_due: return
+	_update_friendly_neighbors(_combat_decision_elapsed)
 	_combat_decision_elapsed = 0.0
+	_planning_in_progress = true
+	_plan_combat()
+	_commit_motion_plan()
+	_planning_in_progress = false
+
+func _plan_combat() -> void:
 	if _scan_elapsed <= 0.0:
 		_scan_elapsed = maxf(behavior.scan_interval,0.05)
 		if current_state != State.ATTACK and behavior.auto_find_enemies:
@@ -731,7 +814,6 @@ func _update_combat(delta: float) -> void:
 	var attacks := _available_attacks()
 	var reposition := _plan_attack_distance(distance, attacks)
 	if current_state == State.ATTACK:
-		_advance_active_attack(delta)
 		return
 	if _attack_retry <= 0.0:
 		if _try_attack(distance): return
@@ -922,6 +1004,7 @@ func consume_performance_stats() -> Dictionary:
 		&"target_refreshes": _performance_target_refreshes,
 		&"repaths": _performance_repaths,
 		&"map_projections": _performance_map_projections,
+		&"planning_decisions": _performance_decisions,
 		&"total_usec": _performance_total_usec,
 		&"max_usec": _performance_max_usec,
 	}
@@ -929,6 +1012,7 @@ func consume_performance_stats() -> Dictionary:
 	return result
 
 func _reset_performance_stats() -> void:
+	_performance_decisions = 0
 	_performance_physics_frames = 0
 	_performance_target_refreshes = 0
 	_performance_repaths = 0

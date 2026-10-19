@@ -237,8 +237,11 @@ func _validate() -> void:
 		"The stepping leg must not receive surface adhesion"
 	)
 	assert(controller.get_leg_adhesion_surface_normal(leg_r).is_equal_approx(Vector3.UP))
-	assert(controller.replan_active_step(Vector3.FORWARD), "A direction change must find a replacement target")
-	assert(controller.get_active_leg() == leg_l, "Direction changes must replan the same active leg")
+	var committed_target: Vector3 = controller.get_step_target()
+	assert(not controller.replan_active_step(Vector3.FORWARD), "A direction change must wait for the current step to finish")
+	assert(controller.get_step_target().is_equal_approx(committed_target), "Replanning must retain the committed landing")
+	assert(controller.get_leg_step_diagnostics(leg_l).plan.next_direction == Vector3.FORWARD)
+	assert(controller.get_active_leg() == leg_l, "Direction changes must not replace the active leg")
 	controller.cancel_step()
 	torso.freeze = true
 	leg_l.freeze = true

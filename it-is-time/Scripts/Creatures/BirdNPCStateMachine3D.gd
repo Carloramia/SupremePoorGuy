@@ -139,8 +139,8 @@ func get_npc_flight_vertical_speed() -> float:
 	var dive := get_parent().get_node_or_null("BirdDiveAttackController3D")
 	if flight == null or (dive != null and dive.is_active()): return 0.0
 	if not flight.is_airborne(): return flight.ascent_speed if automatic_takeoff else 0.0
-	var target := _enemy_torso(_enemy)
-	_update_attack_goal(target)
+	if not _performance_mode.enabled or not _motion_plan_ready:
+		_update_attack_goal(_enemy_torso(_enemy))
 	var target_height := _flight_goal.y
 	var hit := _flight_route_hit()
 	_route_blocked = not hit.is_empty()
@@ -149,8 +149,8 @@ func get_npc_flight_vertical_speed() -> float:
 	if absf(error) <= altitude_tolerance: return 0.0
 	return clampf(error, -flight.descent_speed, flight.ascent_speed)
 
-func get_movement_direction() -> Vector3:
-	var direction := super.get_movement_direction()
+func _calculate_movement_direction() -> Vector3:
+	var direction := super._calculate_movement_direction()
 	var flight := get_parent().get_node_or_null("BirdFlightController3D")
 	if not _autonomous_flight_allowed() or flight == null or not flight.is_airborne() or direction.is_zero_approx(): return direction
 	if not _flight_route_hit().is_empty():
