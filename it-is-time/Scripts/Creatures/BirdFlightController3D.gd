@@ -1,14 +1,16 @@
 extends Node3D
 ## Flight forces are mass-scaled and distributed across living parts, without teleporting.
 const PLAYER_CONTEXT = preload("res://Scripts/Player/PlayerControlContext.gd")
+const AXIS_MOVEMENT = preload("res://Scripts/Creatures/AxisMovement3D.gd")
 enum State { GROUNDED, AIRBORNE }
 signal state_changed(previous: int, current: int)
 @export var enabled: bool = true
 @export var ascend_action: StringName = &"Space"
 @export var descend_action: StringName = &"Ctrl"
 @export_group("Flight Motion")
-## Airborne horizontal target speed, independent of the walking controller gait preset.
+## Airborne world X target speed, independent of the walking controller gait preset.
 @export_range(0.0, 30.0, 0.1, "or_greater") var horizontal_speed: float = 5.0
+@export_range(0.0, 30.0, 0.1, "or_greater") var target_z_speed: float = 2.0
 @export_range(0.0, 30.0, 0.1) var ascent_speed: float = 3.0
 @export_range(0.0, 30.0, 0.1) var descent_speed: float = 3.0
 @export_range(0.1, 30.0, 0.1) var velocity_response: float = 5.0
@@ -199,6 +201,9 @@ func _ground_clearance(use_rest_pose: bool = true) -> float:
 		if not hit.is_empty() and Vector3(hit.normal).dot(Vector3.UP)>0.5: clearance = minf(clearance,sole.y-Vector3(hit.position).y)
 	return clearance
 
+func get_horizontal_target_velocity(direction: Vector3) -> Vector3:
+	return AXIS_MOVEMENT.target_velocity(direction, horizontal_speed, target_z_speed)
+
 func _physics_process(delta: float) -> void:
 	if not enabled or not _character_enabled or not _alive(_torso) or get_parent().is_planar_mode_active():
 		if state == State.AIRBORNE: _set_state(State.GROUNDED)
@@ -232,7 +237,7 @@ func _physics_process(delta: float) -> void:
 		_fold_ratio = 0.0
 		return
 	var direction: Vector3 = _movement.get_input_movement_direction() if is_instance_valid(_movement) else Vector3.ZERO
-	var target_velocity := direction.slide(Vector3.UP).limit_length(1.0)*horizontal_speed
+	var target_velocity := get_horizontal_target_velocity(direction)
 	target_velocity.y = ascent_speed if ascend else (-descent_speed if descend else 0.0)
 	if not is_zero_approx(npc_vertical_speed): target_velocity.y = npc_vertical_speed
 	var structure := _flight_structure()
@@ -472,7 +477,7 @@ func get_flight_diagnostics() -> Dictionary:
 	for binding: Dictionary in _joints:
 		if not is_instance_valid(binding.joint) or not _alive(binding.a) or not _alive(binding.b): continue
 		joints.append({"joint":str(binding.joint.name),"a":str(binding.a.name),"b":str(binding.b.name),"visual_position":binding.joint.global_position,"distance_to_a":binding.joint.global_position.distance_to(binding.a.global_position),"distance_to_b":binding.joint.global_position.distance_to(binding.b.global_position),"z_lower":binding.joint.get_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_LOWER_LIMIT),"z_upper":binding.joint.get_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_UPPER_LIMIT)})
-	return {"state":State.keys()[state],"horizontal_target_speed":horizontal_speed,"airborne":is_airborne(),"enabled":enabled,"character_enabled":_character_enabled,"elapsed":_elapsed,"fold_ratio":_fold_ratio,"standing_contact_elapsed":_standing_contact_elapsed,"landing_transition":_landing_transition,"landing_elapsed":_landing_elapsed,"ground_control_blend":get_ground_control_blend(),"contact_confirmation_required":standing_contact_confirmation_time,"gait_paused_by_flight":is_airborne(),"recovery_paused_by_flight":is_airborne(),"standing_contacts":has_standing_leg_contacts(),"minimum_standing_ratio":minimum_standing_leg_ratio,"raw_space":InputMap.has_action(ascend_action) and Input.is_action_pressed(ascend_action),"raw_ctrl":InputMap.has_action(descend_action) and Input.is_action_pressed(descend_action),"gated_space":InputMap.has_action(ascend_action) and PLAYER_CONTEXT.action_pressed(self,ascend_action),"gated_ctrl":InputMap.has_action(descend_action) and PLAYER_CONTEXT.action_pressed(self,descend_action),"force_semantics":"submitted commands, not solver impulses; only active in AIRBORNE","last_command":_last_command,"command_age_frames":Engine.get_physics_frames()-int(_last_command.get("frame",Engine.get_physics_frames())),"legs":rows,"joints":joints}
+	return {"state":State.keys()[state],"horizontal_target_speed":horizontal_speed,"target_z_speed":target_z_speed,"airborne":is_airborne(),"enabled":enabled,"character_enabled":_character_enabled,"elapsed":_elapsed,"fold_ratio":_fold_ratio,"standing_contact_elapsed":_standing_contact_elapsed,"landing_transition":_landing_transition,"landing_elapsed":_landing_elapsed,"ground_control_blend":get_ground_control_blend(),"contact_confirmation_required":standing_contact_confirmation_time,"gait_paused_by_flight":is_airborne(),"recovery_paused_by_flight":is_airborne(),"standing_contacts":has_standing_leg_contacts(),"minimum_standing_ratio":minimum_standing_leg_ratio,"raw_space":InputMap.has_action(ascend_action) and Input.is_action_pressed(ascend_action),"raw_ctrl":InputMap.has_action(descend_action) and Input.is_action_pressed(descend_action),"gated_space":InputMap.has_action(ascend_action) and PLAYER_CONTEXT.action_pressed(self,ascend_action),"gated_ctrl":InputMap.has_action(descend_action) and PLAYER_CONTEXT.action_pressed(self,descend_action),"force_semantics":"submitted commands, not solver impulses; only active in AIRBORNE","last_command":_last_command,"command_age_frames":Engine.get_physics_frames()-int(_last_command.get("frame",Engine.get_physics_frames())),"legs":rows,"joints":joints}
 
 func get_ground_control_blend() -> float:
 	if not enabled or not _character_enabled or get_parent().is_planar_mode_active(): return 1.0

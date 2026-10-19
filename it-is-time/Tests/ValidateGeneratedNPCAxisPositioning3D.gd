@@ -76,9 +76,6 @@ func run() -> void:
 	attack.prediction_enabled = true
 	brain.behavior.attacks.assign([attack])
 	brain.current_state = brain.State.MOVE_TO_TARGET
-	var diagonal := Vector3(1,0,1).normalized()
-	var steered: Vector3 = brain._axis_approach_direction(diagonal)*brain._approach_direction_speed_scale
-	check(is_equal_approx(steered.x,diagonal.x) and is_equal_approx(steered.z,diagonal.z*brain.lateral_approach_speed_ratio), "Lateral approach limiting must preserve the forward velocity component")
 	for side: float in [-1.0, 1.0]:
 		target.position = Vector3(side*6.0, 0.0, 30.0)
 		check(brain._plan_attack_distance(target.position.length(), brain._available_attacks()), "A large Z offset must request lane alignment")

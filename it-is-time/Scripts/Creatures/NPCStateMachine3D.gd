@@ -7,7 +7,6 @@ var _performance_mode: Resource = preload("res://Resources/Settings/PerformanceO
 var _combat_decision_elapsed: float = 1.0
 var _movement_direction_frame: int = -1
 var _cached_movement_direction: Vector3 = Vector3.ZERO
-var _approach_direction_speed_scale: float = 1.0
 
 signal state_changed(previous_state: State, current_state: State)
 ## Passive lifecycle telemetry; observers do not participate in attack decisions.
@@ -65,8 +64,6 @@ var _collision_stop_distance := 0.0
 @export_range(0.01, 5.0, 0.01) var predicted_attack_z_tolerance: float = 1.5
 @export_range(0.1, 10.0, 0.1) var approach_slowdown_distance: float = 2.0
 @export_range(0.1, 50.0, 0.1) var approach_braking_acceleration: float = 8.0
-## Grounded sidestepping has less structural reach than forward walking; X speed is unchanged.
-@export_range(0.1, 1.0, 0.05) var lateral_approach_speed_ratio: float = 0.35
 
 @export_group("Friendly Avoidance")
 @export var friendly_avoidance_enabled: bool = true
@@ -250,7 +247,6 @@ func get_movement_direction() -> Vector3:
 	return _cached_movement_direction
 
 func _calculate_movement_direction() -> Vector3:
-	_approach_direction_speed_scale = 1.0
 	var flight := get_parent().get_node_or_null("BirdFlightController3D")
 	if flight != null and flight.is_airborne():
 		# Airborne navigation follows the combat destination on XZ, not ground mesh paths.
@@ -264,14 +260,7 @@ func _calculate_movement_direction() -> Vector3:
 	if direction.is_zero_approx():
 		direction = _requested_target_position - origin
 		direction.y = 0.0
-	return _axis_approach_direction(_apply_friendly_avoidance(direction.normalized())) if not direction.is_zero_approx() else Vector3.ZERO
-
-func _axis_approach_direction(direction: Vector3) -> Vector3:
-	_approach_direction_speed_scale = 1.0
-	if _manual_command or not _uses_axis_positioning() or current_state != State.MOVE_TO_TARGET: return direction
-	var adjusted := Vector3(direction.x, 0.0, direction.z * lateral_approach_speed_ratio)
-	_approach_direction_speed_scale = adjusted.length()
-	return adjusted.normalized()
+	return _apply_friendly_avoidance(direction.normalized()) if not direction.is_zero_approx() else Vector3.ZERO
 
 func _is_friendly(actor: Variant) -> bool:
 	if not is_instance_valid(actor) or not actor is Node3D or not actor.is_inside_tree() or actor.is_queued_for_deletion() or actor == get_parent(): return false
@@ -349,7 +338,7 @@ func get_npc_movement_speed_scale(full_speed: float) -> float:
 	var remaining := (_requested_target_position-_get_navigation_origin_position()).slide(Vector3.UP).length()
 	var braking_speed := sqrt(2.0 * approach_braking_acceleration * remaining)
 	get_movement_direction()
-	return clampf(minf(remaining / approach_slowdown_distance, braking_speed / maxf(full_speed,0.001)),0.0,1.0) * _approach_direction_speed_scale
+	return clampf(minf(remaining / approach_slowdown_distance, braking_speed / maxf(full_speed,0.001)),0.0,1.0)
 
 func set_diagnostic_logging_enabled(enabled: bool) -> void:
 	debug_logging_enabled = enabled

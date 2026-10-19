@@ -9,6 +9,8 @@ extends Resource
 ## With Gallop enabled, manual Gallop numbers are fallback values for legacy gait.
 @export var speed_based_gait: bool = true
 @export_range(0.0, 30.0, 0.05, "or_greater") var target_speed: float = 1.5
+## World Z locomotion speed; target_speed retains the existing world X preset.
+@export_range(0.0, 30.0, 0.05, "or_greater") var target_z_speed: float = 2.0
 ## Desired whole-character turn rate, degrees per second; physical support can reduce it.
 @export_range(0.0, 180.0, 0.5, "or_greater") var turning_speed_degrees: float = 10.0
 ## Reference total step frequency for generated automatic speed-based walking.
@@ -69,6 +71,7 @@ extends Resource
 @export_range(0.01, 5.0, 0.01) var landing_timeout: float = 1.0
 
 func is_valid() -> bool:
+	if not is_finite(target_z_speed) or target_z_speed < 0.0: return false
 	if not is_finite(touchdown_pin_transition_time) or touchdown_pin_transition_time < 0.0 or not is_finite(touchdown_pin_initial_slack) or touchdown_pin_initial_slack < 0.0: return false
 	if not is_finite(touchdown_stop_time) or touchdown_stop_time < 0.01 or not is_finite(touchdown_maximum_braking_acceleration) or touchdown_maximum_braking_acceleration <= 0.0: return false
 	if not is_finite(maximum_stepping_ratio) or maximum_stepping_ratio < 0.0 or maximum_stepping_ratio > 1.0 or maximum_simultaneous_steps < 0 or minimum_support_feet < 0: return false
@@ -99,7 +102,8 @@ func calculate_gallop_capacity(foot_count: int, airborne_window: bool = false) -
 	return mini(ceili(foot_count*gallop_maximum_stepping_ratio),available)
 
 ## Pure calculation: never mutate shared resources for a particular creature.
-func calculate_motion_profile(length: float, radius: float, foot_count: int, shared_length: float = -1.0) -> Dictionary:
+func calculate_motion_profile(length: float, radius: float, foot_count: int, shared_length: float = -1.0, speed_override: float = -1.0) -> Dictionary:
+	var speed := target_speed if speed_override < 0.0 else maxf(speed_override, 0.0)
 	length = maxf(length, 0.1)
 	radius = maxf(radius, length * 0.25)
 	var count := maxi(foot_count, 1)
@@ -110,10 +114,10 @@ func calculate_motion_profile(length: float, radius: float, foot_count: int, sha
 	var preferred_stride := reference * 0.4
 	var minimum_swing := 0.06
 	var landing_reserve := 0.02
-	var cycle := preferred_stride / maxf(target_speed, 0.01)
+	var cycle := preferred_stride / maxf(speed, 0.01)
 	if maximum_step_frequency > 0.0: cycle = maxf(cycle, count / maximum_step_frequency)
 	cycle = maxf(cycle, count * (minimum_swing + landing_reserve) / maxf(support_capacity, 1.0))
-	var stride := minf(target_speed * cycle, maximum_stride)
+	var stride := minf(speed * cycle, maximum_stride)
 	var effective_speed := stride / cycle if support_capacity > 0 else 0.0
 	# Leave 20% of concurrent occupancy for contact confirmation and scheduling jitter.
 	var available := cycle * float(support_capacity) / count
@@ -128,12 +132,12 @@ func calculate_motion_profile(length: float, radius: float, foot_count: int, sha
 	if maximum_step_frequency > 0.0:
 		angle = clampf(turning_speed_degrees / maximum_step_frequency, angle, 20.0)
 	var turn_duration := clampf(angle / maxf(turning_speed_degrees * maxi(foot_count, 1), 0.01), 0.12, 0.6)
-	return {"length": length, "radius": radius, "target_speed": target_speed, "turning_speed_degrees": turning_speed_degrees, "maximum_step_frequency": maximum_step_frequency,
-		"reachable_speed": effective_speed, "speed_limited": effective_speed + 0.001 < target_speed, "planning_reference_length": reference, "maximum_stride": maximum_stride, "support_capacity": support_capacity, "landing_reserve": landing_reserve, "total_frequency": count / cycle if target_speed > 0.0 and support_capacity > 0 else 0.0, "limiting_reason": "cadence_or_stride_limit" if effective_speed + 0.001 < target_speed else "none", "stride": stride, "cycle": cycle, "frequency": 1.0 / cycle if target_speed > 0.0 and support_capacity > 0 else 0.0, "swing_duration": swing, "lift": lift,
+	return {"length": length, "radius": radius, "target_speed": speed, "turning_speed_degrees": turning_speed_degrees, "maximum_step_frequency": maximum_step_frequency,
+		"reachable_speed": effective_speed, "speed_limited": effective_speed + 0.001 < speed, "planning_reference_length": reference, "maximum_stride": maximum_stride, "support_capacity": support_capacity, "landing_reserve": landing_reserve, "total_frequency": count / cycle if speed > 0.0 and support_capacity > 0 else 0.0, "limiting_reason": "cadence_or_stride_limit" if effective_speed + 0.001 < speed else "none", "stride": stride, "cycle": cycle, "frequency": 1.0 / cycle if speed > 0.0 and support_capacity > 0 else 0.0, "swing_duration": swing, "lift": lift,
 		"landing_tolerance": clampf(length * 0.015, 0.03, 0.15), "landing_timeout": maxf(0.2, swing * 2.0),
 		"position_gain": gain, "velocity_gain": 2.0 * sqrt(gain),
 		"step_acceleration": acceleration, "required_step_acceleration": required_acceleration, "drive_acceleration_limited": required_acceleration > acceleration,
-		"contact_gain": clampf(2.0 + target_speed, 2.0, 12.0), "contact_acceleration": clampf(target_speed * 2.0, 2.0, 12.0),
+		"contact_gain": clampf(2.0 + speed, 2.0, 12.0), "contact_acceleration": clampf(speed * 2.0, 2.0, 12.0),
 		"turn_step_angle": angle, "turn_step_duration": turn_duration, "turn_lift": lift,
 		"turn_lead": angle, "turn_timeout": maxf(30.0, 720.0 / maxf(turning_speed_degrees, 1.0)),
 		"turn_gain": clampf(16.0 * omega / maxf(deg_to_rad(30.0), 0.01), 4.0, 64.0),
@@ -169,17 +173,18 @@ func calculate_speed_gait_profile(length: float, foot_count: int, actual_speed: 
 
 ## Automatic flight budget uses only speed/cadence, measured geometry and velocity.
 ## capacity is a safety ceiling, not the manual stepping ratio.
-func calculate_adaptive_flight_profile(length: float, foot_count: int, actual_speed: float, support_distance: float, capacity: int, observed_landing_time: float = 0.0) -> Dictionary:
-	if target_speed<=0 or foot_count<=0 or capacity<=0: return {"enabled": false}
+func calculate_adaptive_flight_profile(length: float, foot_count: int, actual_speed: float, support_distance: float, capacity: int, observed_landing_time: float = 0.0, speed_override: float = -1.0) -> Dictionary:
+	var speed := target_speed if speed_override < 0.0 else maxf(speed_override, 0.0)
+	if speed<=0 or foot_count<=0 or capacity<=0: return {"enabled": false}
 	length = maxf(length,0.1)
 	var count := maxi(foot_count,1)
-	var desired_frequency := count*target_speed/maxf(length*0.4,0.05)
+	var desired_frequency := count*speed/maxf(length*0.4,0.05)
 	if maximum_step_frequency>0: desired_frequency = minf(desired_frequency,maximum_step_frequency)
 	var nominal_cycle := count/maxf(desired_frequency,0.001)
 	var confirmation := clampf(0.25/maxf(desired_frequency,0.01),0.03,0.08)
 	# Preserve measured landing time; a stuck foot cannot make the budget grow without bound.
 	var reserve := maxf(confirmation,clampf(observed_landing_time,0.0,2.0))
-	var budget_speed := maxf(actual_speed,target_speed)
+	var budget_speed := maxf(actual_speed,speed)
 	var stance := maxf(support_distance,0.0)/maxf(budget_speed,0.05)
 	# Reference cadence sizes the swing. Measured landing latency is diagnostic;
 	# it must never squeeze the next swing into a violent catch-up motion.
@@ -192,20 +197,20 @@ func calculate_adaptive_flight_profile(length: float, foot_count: int, actual_sp
 	var frequency := desired_frequency
 	var cycle := count/maxf(frequency,0.001)
 	var required_capacity := clampi(ceili(frequency*(air+confirmation+0.02)-0.000001),1,capacity)
-	var drive_acceleration := clampf(target_speed*2.0,2.0,12.0)
+	var drive_acceleration := clampf(speed*2.0,2.0,12.0)
 	var prediction_speed := minf(budget_speed,maxf(actual_speed,0.0)+drive_acceleration*air*0.5)
 	# Clearance depends on geometry and speed, not the square of flight duration.
 	# These are controlled swings, not ballistic jumps.
-	var speed_ratio := clampf(target_speed/sqrt(9.8*length),0.0,1.0)
+	var speed_ratio := clampf(speed/sqrt(9.8*length),0.0,1.0)
 	var lift := length*lerpf(0.045,0.12,speed_ratio)
 	var covered := maxf(support_distance,0.0)+budget_speed*air
-	return {"enabled": true,"automatic_flight": true,"total_frequency": frequency,"cycle": cycle,"required_stride": target_speed*cycle,
+	return {"enabled": true,"automatic_flight": true,"total_frequency": frequency,"cycle": cycle,"required_stride": speed*cycle,
 		"nominal_frequency": desired_frequency,"nominal_cycle": nominal_cycle,
 		"actual_speed": actual_speed,"planning_speed": prediction_speed,"budget_speed": budget_speed,"support_distance": support_distance,
 		"raw_stance_time": stance,"stance_duration": maxf(cycle-air-reserve,0),"base_air_duration": base_air,"air_margin": added_air,
 		"air_duration": air,"requested_air_duration": requested_air,
 		"landing_reserve": reserve,"landing_confirmation": confirmation,"observed_landing_time": observed_landing_time,"air_duration_limited": requested_air>geometric_air_limit+0.001,"walking_stride_limit": length*0.5,
-		"requires_flight": target_speed*cycle>length*0.5,"required_capacity": required_capacity,"maximum_capacity": capacity,
-		"covered_stride": covered,"distance_deficit": maxf(target_speed*cycle-covered,0.0),"lift": lift,
+		"requires_flight": speed*cycle>length*0.5,"required_capacity": required_capacity,"maximum_capacity": capacity,
+		"covered_stride": covered,"distance_deficit": maxf(speed*cycle-covered,0.0),"lift": lift,
 		"lease_duration": minf(2.0,air+confirmation+0.12),"brake_time": touchdown_stop_time,
-		"touchdown_speed_limit": clampf(target_speed*0.15,0.3,1.5)}
+		"touchdown_speed_limit": clampf(speed*0.15,0.3,1.5)}

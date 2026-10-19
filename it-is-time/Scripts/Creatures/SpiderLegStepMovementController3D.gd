@@ -212,7 +212,7 @@ func _ensure_spider_profile_cache() -> void:
 		_segment_goal_yaw, _segment_heading_initialized, _action_feet.size(), recovery_control_active,
 		simplified_physics_mode, _adhesion_release_time_remaining > 0.0, structural_stride_enabled,
 		structural_stride_safety_ratio, structural_landing_forward_ratio, touchdown_confirmation_time,
-		data.target_speed if data != null else 0.0, data.maximum_step_frequency if data != null else 0.0,
+		_get_requested_movement_speed() if data != null else 0.0, data.maximum_step_frequency if data != null else 0.0,
 		data.automatic_motion if data != null else false, data.gallop_enabled if data != null else false,
 		_planar_mode_active()]
 	if context == _spider_profile_context: return
@@ -229,7 +229,7 @@ func _get_expected_horizontal_speed() -> float:
 	if not _spider_motion_summary.has("speed"):
 		_spider_motion_summary.speed = super._get_expected_horizontal_speed()
 		if _automatic_motion_enabled() and _foot_heading_turn_active():
-			_spider_motion_summary.speed = minf(float(_spider_motion_summary.speed), _get_gait_data().target_speed * 0.5)
+			_spider_motion_summary.speed = minf(float(_spider_motion_summary.speed), _get_requested_movement_speed() * 0.5)
 		# Resume from the turn's actual planning speed instead of jumping back
 		# to a stale pre-turn walking budget while the feet are still settling.
 		_spider_budget_speed = float(_spider_motion_summary.speed)
@@ -255,14 +255,14 @@ func _ensure_spider_motion_budget() -> void:
 			return
 		profiles.append(get_leg_motion_profile(foot))
 	var data := _get_gait_data()
-	var budget := calculate_spider_motion_budget(profiles, data.target_speed, get_maximum_stepping_feet(), data.maximum_step_frequency)
+	var budget := calculate_spider_motion_budget(profiles, _get_requested_movement_speed(), get_maximum_stepping_feet(), data.maximum_step_frequency)
 	# Observations already adapt gradually; smooth the remaining budget change
 	# once per physics time, including queries made by logging and the AI.
 	if _spider_budget_speed < 0.0: _spider_budget_speed = budget.speed
 	var elapsed := maxf(_physics_elapsed - _spider_budget_time, 0.0)
 	_spider_budget_speed = lerpf(_spider_budget_speed, float(budget.speed), 1.0 - exp(-3.0 * elapsed))
 	_spider_budget_time = _physics_elapsed
-	_spider_budget_speed = minf(_spider_budget_speed, maxf(data.target_speed, 0.0))
+	_spider_budget_speed = minf(_spider_budget_speed, maxf(_get_requested_movement_speed(), 0.0))
 	var usage := _spider_budget_usage(profiles, _spider_budget_speed)
 	budget["planned_speed"] = _spider_budget_speed
 	budget["planned_occupied_slots"] = usage.x
@@ -275,7 +275,7 @@ func _ensure_spider_motion_budget() -> void:
 		profile.frequency = 1.0 / profile.cycle if _spider_budget_speed > 0.0 else 0.0
 		profile.total_frequency = usage.y
 		profile.reachable_speed = _spider_budget_speed
-		profile.speed_limited = _spider_budget_speed + 0.001 < data.target_speed
+		profile.speed_limited = _spider_budget_speed + 0.001 < _get_requested_movement_speed()
 		profile.limiting_reason = budget.limiting_reason
 		profile["average_slot_usage"] = float(profile.occupied_step_duration) * float(profile.frequency)
 		profile.cycle_travel = _spider_budget_speed * float(profile.cycle)

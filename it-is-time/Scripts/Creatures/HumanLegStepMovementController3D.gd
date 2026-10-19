@@ -101,7 +101,7 @@ func _begin_leg_motion(leg: RigidBody3D, target: Vector3, normal: Vector3 = Vect
 	super._begin_leg_motion(leg, target, normal, direction)
 	var data := _get_gait_data()
 	if data == null or not data.automatic_motion or _gallop_active(): return
-	_active_step_duration = maxf(_active_step_duration, (target-leg.global_position).slide(Vector3.UP).length()/maxf(data.target_speed*3.0,1.0))
+	_active_step_duration = maxf(_active_step_duration, (target-leg.global_position).slide(Vector3.UP).length()/maxf(_get_requested_movement_speed()*3.0,1.0))
 	var profile: Dictionary = _current_step.extra.get("automatic_profile",{})
 	if profile.is_empty(): return
 	profile.position_gain = clampf(16.0/(_active_step_duration*_active_step_duration),20.0,4000.0)
@@ -219,7 +219,7 @@ func try_start_turn_step(leg: RigidBody3D, sample_position: Vector3, duration: f
 			sample_position.z = clipped.z
 	# Long source poses must not chase a multi-unit turn arc in 0.167 seconds.
 	var data := _get_gait_data()
-	if is_instance_valid(leg) and data != null: duration = maxf(duration, (sample_position-leg.global_position).slide(Vector3.UP).length()/maxf(data.target_speed*3.0, 1.0))
+	if is_instance_valid(leg) and data != null: duration = maxf(duration, (sample_position-leg.global_position).slide(Vector3.UP).length()/maxf(_get_requested_movement_speed()*3.0, 1.0))
 	return super.try_start_turn_step(leg,sample_position,duration,height)
 
 func _apply_torso_response() -> void:

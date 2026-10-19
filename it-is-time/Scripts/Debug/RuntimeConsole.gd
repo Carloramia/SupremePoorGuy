@@ -755,8 +755,8 @@ func _collect_motion_summary(character: Node3D) -> Array[String]:
 				"stepping": controller.is_leg_stepping(foot), "slipping": controller.is_leg_slipping(foot)})
 		for torso: RigidBody3D in controller.get_torso_parts():
 			torsos.append({"body": torso.name, "position": torso.global_position, "velocity": torso.linear_velocity})
-		messages.append("[trackmotion] character=%s requested_speed=%.3f planned_speed=%.3f stepping=%d torso_motion=%s leg_profiles=%s feet=%s" % [
-			character.name, automatic.requested_speed, automatic.target_speed, controller._active_steps.size(), torsos, legs, feet])
+		messages.append("[trackmotion] character=%s requested_speed=%.3f planned_speed=%.3f target_z_speed=%.3f target_velocity=%s stepping=%d torso_motion=%s leg_profiles=%s feet=%s" % [
+			character.name, automatic.requested_speed, automatic.target_speed, automatic.target_z_speed, automatic.target_velocity, controller._active_steps.size(), torsos, legs, feet])
 		if automatic.has("wolf_auto_gallop"):
 			messages.append("[trackmotion] character=%s wolf_auto_gallop=%s" % [character.name, automatic.wolf_auto_gallop])
 		if automatic.has("spider_motion_budget"):

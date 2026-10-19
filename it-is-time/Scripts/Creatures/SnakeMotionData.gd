@@ -3,7 +3,9 @@ class_name SnakeMotionData
 extends Resource
 
 @export_group("Movement")
+## World X target speed; world Z uses its own target below.
 @export_range(0.0, 50.0, 0.1, "or_greater") var target_speed: float = 5.0
+@export_range(0.0, 50.0, 0.1, "or_greater") var target_z_speed: float = 2.0
 @export_range(0.05, 2.0, 0.01) var velocity_response_time: float = 0.35
 @export_range(0.0, 100.0, 0.1, "or_greater") var maximum_acceleration: float = 18.0
 
@@ -70,7 +72,7 @@ extends Resource
 @export_range(0.0, 2.0, 0.01) var sway_stop_speed: float = 0.15
 
 func is_valid() -> bool:
-	for value: float in [target_speed, maximum_acceleration,
+	for value: float in [target_speed, target_z_speed, maximum_acceleration,
 		raised_pose_strength, raised_pose_damping, maximum_pose_acceleration,
 		maximum_angular_acceleration, maximum_pose_torque, support_release_time, turn_speed_degrees,
 		sway_stop_speed, trajectory_follow_delay, head_orbit_radius_widths]:
