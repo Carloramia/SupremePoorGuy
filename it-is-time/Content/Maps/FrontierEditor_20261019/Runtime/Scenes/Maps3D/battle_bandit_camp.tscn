@@ -1,4 +1,4 @@
-[gd_scene load_steps=167 format=3]
+[gd_scene load_steps=234 format=3]
 
 [ext_resource type="Script" path="res://Modules/FrontierDelivery/Scripts/Map/BattleMap3D.gd" id="BattleScript"]
 [ext_resource type="Shader" path="res://Modules/FrontierDelivery/Scripts/Map/BattleGround.gdshader" id="GroundShader"]
@@ -9,39 +9,35 @@
 [ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/602770b268be2f93cdb6ad7b.png" id="Texture_3"]
 [ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/d49de230f58be456c6382069.png" id="Texture_4"]
 [ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/1986bb39e0d9af20dcc4c3c0.png" id="Texture_5"]
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/360d732820bc29d798b4e37d.svg" id="SourceArt_battle_dry_patch"]
-
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/58908ba1a1cea84e384726d7.png" id="SourceArt_art1018_11_016"]
-
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/a5bebf1f88ea1c2bce2d23ab.png" id="SourceArt_art1018_11_018"]
-
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/602770b268be2f93cdb6ad7b.png" id="SourceArt_art1018_03_025"]
-
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/c025a08d754497a712639f1e.png" id="SourceArt_art1018_03_012"]
-
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/7ad4a7b14785d9c2b8d91d58.png" id="SourceArt_art1018_08_021"]
-
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/552deeb2351511e8b75ab494.png" id="SourceArt_art1018_09_020"]
-
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/9e866c7f796b13fc3192985d.png" id="SourceArt_art1018_05_014"]
-
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/1986bb39e0d9af20dcc4c3c0.png" id="SourceArt_art1018_09_001"]
-
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/d49de230f58be456c6382069.png" id="SourceArt_art1018_09_003"]
-
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/67bda0daff55c798104dddff.png" id="SourceArt_art1018_04_004"]
-
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/6c1278d92e58601f96e9cbd1.png" id="SourceArt_art1018_04_007"]
-
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/066892831d03ded0c62bdc96.png" id="SourceArt_art1018_03_021"]
-
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/88b8a1f1dfab6b3c084bb55b.png" id="SourceArt_art1018_08_019"]
-
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/9d3513708fcafc4adf8397fb.png" id="SourceArt_art1018_09_026"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/battle_dry_patch.tscn" id="Part_0"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_11_016.tscn" id="Part_1"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_11_018.tscn" id="Part_2"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_03_025.tscn" id="Part_3"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/demo_thorn_large.tscn" id="Part_4"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_08_021.tscn" id="Part_5"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_09_020.tscn" id="Part_6"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_05_014.tscn" id="Part_7"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_09_001.tscn" id="Part_8"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_09_003.tscn" id="Part_9"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/58908ba1a1cea84e384726d7.png" id="Texture_6"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/a5bebf1f88ea1c2bce2d23ab.png" id="Texture_7"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/67bda0daff55c798104dddff.png" id="Texture_8"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/602770b268be2f93cdb6ad7b.png" id="Texture_9"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/d49de230f58be456c6382069.png" id="Texture_10"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/1986bb39e0d9af20dcc4c3c0.png" id="Texture_11"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_04_007.tscn" id="Part_10"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_03_021.tscn" id="Part_11"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_08_019.tscn" id="Part_12"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/demo_barricade_broken.tscn" id="Part_13"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/demo_wood_fragment.tscn" id="Part_14"]
 
 [sub_resource type="StandardMaterial3D" id="R0"]
 shading_mode = 0
 albedo_color = Color(0.57254902, 0.607843137, 0.4, 1)
+
+[sub_resource type="PrismMesh" id="R1"]
+left_to_right = 0.5
+size = Vector3(1, 1, 1)
 
 [sub_resource type="ShaderMaterial" id="R2"]
 shader = ExtResource("GroundShader")
@@ -539,6 +535,336 @@ points = PackedVector3Array(24.2, 0, 3.81051178, 24.2, 2, 3.81051178, 23.65, 0, 
 [sub_resource type="ConvexPolygonShape3D" id="R133"]
 points = PackedVector3Array(25.85, 0, 4.76313972, 25.85, 2, 4.76313972, 25.3, 0, 5.71576766, 25.3, 2, 5.71576766, 24.2, 0, 5.71576766, 24.2, 2, 5.71576766, 23.65, 0, 4.76313972, 23.65, 2, 4.76313972, 24.2, 0, 3.81051178, 24.2, 2, 3.81051178, 25.3, 0, 3.81051178, 25.3, 2, 3.81051178)
 
+[sub_resource type="StandardMaterial3D" id="R134"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_6")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R135"]
+size = Vector2(2.7, 2.64653465)
+
+[sub_resource type="StandardMaterial3D" id="R136"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_7")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R137"]
+size = Vector2(2.7, 2.38846154)
+
+[sub_resource type="StandardMaterial3D" id="R138"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_8")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R139"]
+size = Vector2(4.5, 4.97596154)
+
+[sub_resource type="StandardMaterial3D" id="R140"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_6")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R141"]
+size = Vector2(2.7, 2.64653465)
+
+[sub_resource type="StandardMaterial3D" id="R142"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_7")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R143"]
+size = Vector2(2.7, 2.38846154)
+
+[sub_resource type="StandardMaterial3D" id="R144"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_7")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R145"]
+size = Vector2(2.7, 2.38846154)
+
+[sub_resource type="StandardMaterial3D" id="R146"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_9")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R147"]
+size = Vector2(2.7, 3.3893617)
+
+[sub_resource type="StandardMaterial3D" id="R148"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_6")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R149"]
+size = Vector2(2.7, 2.64653465)
+
+[sub_resource type="StandardMaterial3D" id="R150"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_7")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R151"]
+size = Vector2(2.7, 2.38846154)
+
+[sub_resource type="StandardMaterial3D" id="R152"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_9")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R153"]
+size = Vector2(2.7, 3.3893617)
+
+[sub_resource type="StandardMaterial3D" id="R154"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_9")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R155"]
+size = Vector2(2.7, 3.3893617)
+
+[sub_resource type="StandardMaterial3D" id="R156"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_6")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R157"]
+size = Vector2(2.7, 2.64653465)
+
+[sub_resource type="StandardMaterial3D" id="R158"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_10")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R159"]
+size = Vector2(4.5, 5.58333333)
+
+[sub_resource type="StandardMaterial3D" id="R160"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_9")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R161"]
+size = Vector2(2.7, 3.3893617)
+
+[sub_resource type="StandardMaterial3D" id="R162"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_6")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R163"]
+size = Vector2(2.7, 2.64653465)
+
+[sub_resource type="StandardMaterial3D" id="R164"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_6")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R165"]
+size = Vector2(2.7, 2.64653465)
+
+[sub_resource type="StandardMaterial3D" id="R166"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_7")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R167"]
+size = Vector2(2.7, 2.38846154)
+
+[sub_resource type="StandardMaterial3D" id="R168"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_9")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R169"]
+size = Vector2(2.7, 3.3893617)
+
+[sub_resource type="StandardMaterial3D" id="R170"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_6")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R171"]
+size = Vector2(2.7, 2.64653465)
+
+[sub_resource type="StandardMaterial3D" id="R172"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_7")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R173"]
+size = Vector2(2.7, 2.38846154)
+
+[sub_resource type="StandardMaterial3D" id="R174"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_7")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R175"]
+size = Vector2(2.7, 2.38846154)
+
+[sub_resource type="StandardMaterial3D" id="R176"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_9")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R177"]
+size = Vector2(2.7, 3.3893617)
+
+[sub_resource type="StandardMaterial3D" id="R178"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_11")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R179"]
+size = Vector2(4.5, 4.41640867)
+
+[sub_resource type="StandardMaterial3D" id="R180"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_7")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R181"]
+size = Vector2(2.7, 2.38846154)
+
+[sub_resource type="StandardMaterial3D" id="R182"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_9")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R183"]
+size = Vector2(2.7, 3.3893617)
+
+[sub_resource type="StandardMaterial3D" id="R184"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_9")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R185"]
+size = Vector2(2.7, 3.3893617)
+
+[sub_resource type="StandardMaterial3D" id="R186"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_6")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R187"]
+size = Vector2(2.7, 2.64653465)
+
+[sub_resource type="StandardMaterial3D" id="R188"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_7")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R189"]
+size = Vector2(2.7, 2.38846154)
+
+[sub_resource type="StandardMaterial3D" id="R190"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_9")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R191"]
+size = Vector2(2.7, 3.3893617)
+
+[sub_resource type="StandardMaterial3D" id="R192"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_6")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R193"]
+size = Vector2(2.7, 2.64653465)
+
 [sub_resource type="ConvexPolygonShape3D" id="R194"]
 points = PackedVector3Array(1.056, 0, 0, 1.056, 2.6, 0, 1.03570926, 0, 0.170606487, 1.03570926, 2.6, 0.170606487, 0.975616786, 0, 0.334656662, 0.975616786, 2.6, 0.334656662, 0.878031911, 0, 0.485846169, 0.878031911, 2.6, 0.485846169, 0.746704761, 0, 0.61836488, 0.746704761, 2.6, 0.61836488, 0.586682166, 0, 0.727120176, 0.586682166, 2.6, 0.727120176, 0.404113705, 0, 0.807932651, 0.404113705, 2.6, 0.807932651, 0.20601538, 0, 0.857696728, 0.20601538, 2.6, 0.857696728, 6.4661351e-17, 0, 0.8745, 6.4661351e-17, 2.6, 0.8745, -0.20601538, 0, 0.857696728, -0.20601538, 2.6, 0.857696728, -0.404113705, 0, 0.807932651, -0.404113705, 2.6, 0.807932651, -0.586682166, 0, 0.727120176, -0.586682166, 2.6, 0.727120176, -0.746704761, 0, 0.61836488, -0.746704761, 2.6, 0.61836488, -0.878031911, 0, 0.485846169, -0.878031911, 2.6, 0.485846169, -0.975616786, 0, 0.334656662, -0.975616786, 2.6, 0.334656662, -1.03570926, 0, 0.170606487, -1.03570926, 2.6, 0.170606487, -1.056, 0, 1.07095363e-16, -1.056, 2.6, 1.07095363e-16, -1.03570926, 0, -0.170606487, -1.03570926, 2.6, -0.170606487, -0.975616786, 0, -0.334656662, -0.975616786, 2.6, -0.334656662, -0.878031911, 0, -0.485846169, -0.878031911, 2.6, -0.485846169, -0.746704761, 0, -0.61836488, -0.746704761, 2.6, -0.61836488, -0.586682166, 0, -0.727120176, -0.586682166, 2.6, -0.727120176, -0.404113705, 0, -0.807932651, -0.404113705, 2.6, -0.807932651, -0.20601538, 0, -0.857696728, -0.20601538, 2.6, -0.857696728, -1.93984053e-16, 0, -0.8745, -1.93984053e-16, 2.6, -0.8745, 0.20601538, 0, -0.857696728, 0.20601538, 2.6, -0.857696728, 0.404113705, 0, -0.807932651, 0.404113705, 2.6, -0.807932651, 0.586682166, 0, -0.727120176, 0.586682166, 2.6, -0.727120176, 0.746704761, 0, -0.61836488, 0.746704761, 2.6, -0.61836488, 0.878031911, 0, -0.485846169, 0.878031911, 2.6, -0.485846169, 0.975616786, 0, -0.334656662, 0.975616786, 2.6, -0.334656662, 1.03570926, 0, -0.170606487, 1.03570926, 2.6, -0.170606487)
 
@@ -814,559 +1140,311 @@ position = Vector3(-7.7, 0, -8.36)
 rotation = Vector3(0, 0.261336328, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_001"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp_decoration_001"]
-transform = Transform3D(0.0337333333, 0, 0, 0, 0, 1, 0, -0.0366666667, 0, 0, 0.031, 0)
-texture = ExtResource("SourceArt_battle_dry_patch")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "ground"
-metadata/tilt_from_ground = 0
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_001" instance=ExtResource("Part_0")]
+position = Vector3(0, 2.555, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(10.12, 5.06, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_bandit_camp_decoration_002" type="Node3D" parent="Objects"]
 position = Vector3(7.48, 0, 7.04)
 rotation = Vector3(0, -0.190469558, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_002"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp_decoration_002"]
-transform = Transform3D(0.0337333333, 8.67361738e-19, 0, 0, 0, 1, 0, -0.0366666667, 0, 0, 0.031, 0)
-texture = ExtResource("SourceArt_battle_dry_patch")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "ground"
-metadata/tilt_from_ground = 0
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_002" instance=ExtResource("Part_0")]
+position = Vector3(0, 2.555, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(10.12, 5.06, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_bandit_camp_decoration_003" type="Node3D" parent="Objects"]
 position = Vector3(-9.9, 0, 2.64)
 rotation = Vector3(0, 0.06105088, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_003"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp_decoration_003"]
-transform = Transform3D(0.0337333333, 0, 0, 0, 0, 1, 4.33680869e-19, -0.0366666667, 0, 0, 0.031, 0)
-texture = ExtResource("SourceArt_battle_dry_patch")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "ground"
-metadata/tilt_from_ground = 0
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_003" instance=ExtResource("Part_0")]
+position = Vector3(0, 2.555, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(10.12, 5.06, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_bandit_camp_decoration_004" type="Node3D" parent="Objects"]
 position = Vector3(8.8, 0, -5.28)
 rotation = Vector3(0, -0.171460225, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_004"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp_decoration_004"]
-transform = Transform3D(0.0337333333, 8.67361738e-19, 0, 0, 0, 1, -8.67361738e-19, -0.0366666667, 0, 0, 0.031, 0)
-texture = ExtResource("SourceArt_battle_dry_patch")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "ground"
-metadata/tilt_from_ground = 0
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_004" instance=ExtResource("Part_0")]
+position = Vector3(0, 2.555, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(10.12, 5.06, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_bandit_camp_decoration_005" type="Node3D" parent="Objects"]
 position = Vector3(0.44, 0, 12.76)
 rotation = Vector3(0, 0.155667053, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_005"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp_decoration_005"]
-transform = Transform3D(0.0337333333, 8.67361738e-19, 0, 0, 0, 1, 0, -0.0366666667, 0, 0, 0.031, 0)
-texture = ExtResource("SourceArt_battle_dry_patch")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "ground"
-metadata/tilt_from_ground = 0
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_005" instance=ExtResource("Part_0")]
+position = Vector3(0, 2.555, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(10.12, 5.06, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_bandit_camp_decoration_006" type="Node3D" parent="Objects"]
 position = Vector3(7.999, 0, -5.464)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_006"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp_decoration_006"]
-transform = Transform3D(0.00643564356, 0, 0, 0, 0.00557343082, 0.5, 0, -0.00321782178, 0.866025404, 0, 0.307884825, -0.159282178)
-texture = ExtResource("SourceArt_art1018_11_016")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.727928252)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_006" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.343564356, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.637128713, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_bandit_camp_decoration_007" type="Node3D" parent="Objects"]
 position = Vector3(8.596, 0, 3.573)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_007"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp_decoration_007"]
-transform = Transform3D(0.00833333333, 0, 0, 0, 0.00721687836, 0.5, 0, -0.00416666667, 0.866025404, 0, 0.280982304, -0.14375)
-texture = ExtResource("SourceArt_art1018_11_018")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.633933689)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_007" instance=ExtResource("Part_2")]
+position = Vector3(0, 0.3125, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.575, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_bandit_camp_decoration_008" type="Node3D" parent="Objects"]
 position = Vector3(6.404, 0, 11.853)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_008"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp_decoration_008"]
-transform = Transform3D(0.0138297872, 0, 0, 0, 0.0119769471, 0.5, 0, -0.00691489362, 0.866025404, 0, 0.385319939, -0.203989362)
-texture = ExtResource("SourceArt_art1018_03_025")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.776662122)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_008" instance=ExtResource("Part_3")]
+position = Vector3(0, 0.432978723, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.815957447, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_bandit_camp_decoration_009" type="Node3D" parent="Objects"]
 position = Vector3(-15.142, 0, 10.577)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_009"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp_decoration_009"]
-transform = Transform3D(0.00643564356, 0, 0, 0, 0.00557343082, 0.5, 0, -0.00321782178, 0.866025404, 0, 0.307884825, -0.159282178)
-texture = ExtResource("SourceArt_art1018_11_016")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.7599701)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_009" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.343564356, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.637128713, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_bandit_camp_decoration_010" type="Node3D" parent="Objects"]
 position = Vector3(12.207, 0, -5.169)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_010"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp_decoration_010"]
-transform = Transform3D(0.00833333333, 0, 0, 0, 0.00721687836, 0.5, 0, -0.00416666667, 0.866025404, 0, 0.280982304, -0.14375)
-texture = ExtResource("SourceArt_art1018_11_018")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.68829321)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_010" instance=ExtResource("Part_2")]
+position = Vector3(0, 0.3125, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.575, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_bandit_camp_decoration_011" type="Node3D" parent="Objects"]
 position = Vector3(-10.695, 0, 3.128)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_011"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp_decoration_011"]
-transform = Transform3D(0.0138297872, 0, 0, 0, 0.0119769471, 0.5, 0, -0.00691489362, 0.866025404, 0, 0.385319939, -0.203989362)
-texture = ExtResource("SourceArt_art1018_03_025")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.688590161)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_011" instance=ExtResource("Part_3")]
+position = Vector3(0, 0.432978723, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.815957447, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_bandit_camp_decoration_012" type="Node3D" parent="Objects"]
 position = Vector3(-11.902, 0, 3.471)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_012"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp_decoration_012"]
-transform = Transform3D(0.00643564356, 0, 0, 0, 0.00557343082, 0.5, 0, -0.00321782178, 0.866025404, 0, 0.307884825, -0.159282178)
-texture = ExtResource("SourceArt_art1018_11_016")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.685737967)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_012" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.343564356, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.637128713, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_bandit_camp_decoration_013" type="Node3D" parent="Objects"]
 position = Vector3(-3.563, 0, 11.667)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_013"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp_decoration_013"]
-transform = Transform3D(0.00833333333, 0, 0, 0, 0.00721687836, 0.5, 0, -0.00416666667, 0.866025404, 0, 0.280982304, -0.14375)
-texture = ExtResource("SourceArt_art1018_11_018")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.551981831)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_013" instance=ExtResource("Part_2")]
+position = Vector3(0, 0.3125, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.575, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_bandit_camp_decoration_014" type="Node3D" parent="Objects"]
 position = Vector3(-8.76, 0, 10.878)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_014"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp_decoration_014"]
-transform = Transform3D(0.0138297872, 0, 0, 0, 0.0119769471, 0.5, 0, -0.00691489362, 0.866025404, 0, 0.385319939, -0.203989362)
-texture = ExtResource("SourceArt_art1018_03_025")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.582094621)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_014" instance=ExtResource("Part_3")]
+position = Vector3(0, 0.432978723, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.815957447, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_bandit_camp_decoration_015" type="Node3D" parent="Objects"]
 position = Vector3(5.187, 0, -4.054)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_015"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp_decoration_015"]
-transform = Transform3D(0.00643564356, 0, 0, 0, 0.00557343082, 0.5, 0, -0.00321782178, 0.866025404, 0, 0.307884825, -0.159282178)
-texture = ExtResource("SourceArt_art1018_11_016")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.59431324)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_015" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.343564356, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.637128713, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_bandit_camp_decoration_016" type="Node3D" parent="Objects"]
 position = Vector3(-13.515, 0, -0.352)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_016"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp_decoration_016"]
-transform = Transform3D(0.00833333333, 0, 0, 0, 0.00721687836, 0.5, 0, -0.00416666667, 0.866025404, 0, 0.280982304, -0.14375)
-texture = ExtResource("SourceArt_art1018_11_018")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.668596228)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_016" instance=ExtResource("Part_2")]
+position = Vector3(0, 0.3125, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.575, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_bandit_camp_decoration_017" type="Node3D" parent="Objects"]
 position = Vector3(16.078, 0, -6.437)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_017"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp_decoration_017"]
-transform = Transform3D(0.0138297872, 0, 0, 0, 0.0119769471, 0.5, 0, -0.00691489362, 0.866025404, 0, 0.385319939, -0.203989362)
-texture = ExtResource("SourceArt_art1018_03_025")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.778848518)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_017" instance=ExtResource("Part_3")]
+position = Vector3(0, 0.432978723, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.815957447, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_bandit_camp_decoration_018" type="Node3D" parent="Objects"]
 position = Vector3(-15.57, 0, 4.771)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_018"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp_decoration_018"]
-transform = Transform3D(0.00643564356, 0, 0, 0, 0.00557343082, 0.5, 0, -0.00321782178, 0.866025404, 0, 0.307884825, -0.159282178)
-texture = ExtResource("SourceArt_art1018_11_016")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.582302338)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_018" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.343564356, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.637128713, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_bandit_camp_decoration_019" type="Node3D" parent="Objects"]
 position = Vector3(4.013, 0, -8.509)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_019"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp_decoration_019"]
-transform = Transform3D(0.00833333333, 0, 0, 0, 0.00721687836, 0.5, 0, -0.00416666667, 0.866025404, 0, 0.280982304, -0.14375)
-texture = ExtResource("SourceArt_art1018_11_018")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.643680786)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_019" instance=ExtResource("Part_2")]
+position = Vector3(0, 0.3125, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.575, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_bandit_camp_decoration_020" type="Node3D" parent="Objects"]
 position = Vector3(15.573, 0, 9.392)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_020"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp_decoration_020"]
-transform = Transform3D(0.0138297872, 0, 0, 0, 0.0119769471, 0.5, 0, -0.00691489362, 0.866025404, 0, 0.385319939, -0.203989362)
-texture = ExtResource("SourceArt_art1018_03_025")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.62862221)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_020" instance=ExtResource("Part_3")]
+position = Vector3(0, 0.432978723, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.815957447, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_bandit_camp_decoration_021" type="Node3D" parent="Objects"]
 position = Vector3(3.759, 0, 14.366)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_021"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp_decoration_021"]
-transform = Transform3D(0.00643564356, 0, 0, 0, 0.00557343082, 0.5, 0, -0.00321782178, 0.866025404, 0, 0.307884825, -0.159282178)
-texture = ExtResource("SourceArt_art1018_11_016")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.767127751)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_021" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.343564356, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.637128713, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_bandit_camp_decoration_022" type="Node3D" parent="Objects"]
 position = Vector3(-14.372, 0, 2.879)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_022"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp_decoration_022"]
-transform = Transform3D(0.00833333333, 0, 0, 0, 0.00721687836, 0.5, 0, -0.00416666667, 0.866025404, 0, 0.280982304, -0.14375)
-texture = ExtResource("SourceArt_art1018_11_018")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.753828412)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_022" instance=ExtResource("Part_2")]
+position = Vector3(0, 0.3125, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.575, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_bandit_camp_decoration_023" type="Node3D" parent="Objects"]
 position = Vector3(15.723, 0, -1.926)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_023"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp_decoration_023"]
-transform = Transform3D(0.0138297872, 0, 0, 0, 0.0119769471, 0.5, 0, -0.00691489362, 0.866025404, 0, 0.385319939, -0.203989362)
-texture = ExtResource("SourceArt_art1018_03_025")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.735128871)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_023" instance=ExtResource("Part_3")]
+position = Vector3(0, 0.432978723, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.815957447, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_bandit_camp_decoration_024" type="Node3D" parent="Objects"]
 position = Vector3(11.344, 0, -8.144)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_024"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp_decoration_024"]
-transform = Transform3D(0.00643564356, 0, 0, 0, 0.00557343082, 0.5, 0, -0.00321782178, 0.866025404, 0, 0.307884825, -0.159282178)
-texture = ExtResource("SourceArt_art1018_11_016")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.552771777)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_024" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.343564356, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.637128713, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_bandit_camp_decoration_025" type="Node3D" parent="Objects"]
 position = Vector3(-5.247, 0, -13.344)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_025"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp_decoration_025"]
-transform = Transform3D(0.00833333333, 0, 0, 0, 0.00721687836, 0.5, 0, -0.00416666667, 0.866025404, 0, 0.280982304, -0.14375)
-texture = ExtResource("SourceArt_art1018_11_018")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.672639665)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_025" instance=ExtResource("Part_2")]
+position = Vector3(0, 0.3125, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.575, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_bandit_camp_decoration_026" type="Node3D" parent="Objects"]
 position = Vector3(10.539, 0, -12.642)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_026"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp_decoration_026"]
-transform = Transform3D(0.0138297872, 0, 0, 0, 0.0119769471, 0.5, 0, -0.00691489362, 0.866025404, 0, 0.385319939, -0.203989362)
-texture = ExtResource("SourceArt_art1018_03_025")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.61320428)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_026" instance=ExtResource("Part_3")]
+position = Vector3(0, 0.432978723, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.815957447, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_bandit_camp_decoration_027" type="Node3D" parent="Objects"]
 position = Vector3(-13.287, 0, -4.941)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_027"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp_decoration_027"]
-transform = Transform3D(0.00643564356, 0, 0, 0, 0.00557343082, 0.5, 0, -0.00321782178, 0.866025404, 0, 0.307884825, -0.159282178)
-texture = ExtResource("SourceArt_art1018_11_016")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.694975428)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_027" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.343564356, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.637128713, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_bandit_camp_decoration_028" type="Node3D" parent="Objects"]
 position = Vector3(-3.034, 0, -5.636)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_028"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp_decoration_028"]
-transform = Transform3D(0.00833333333, 0, 0, 0, 0.00721687836, 0.5, 0, -0.00416666667, 0.866025404, 0, 0.280982304, -0.14375)
-texture = ExtResource("SourceArt_art1018_11_018")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.615342736)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_028" instance=ExtResource("Part_2")]
+position = Vector3(0, 0.3125, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.575, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_bandit_camp_decoration_029" type="Node3D" parent="Objects"]
 position = Vector3(11.928, 0, -0.523)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_029"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp_decoration_029"]
-transform = Transform3D(0.0138297872, 0, 0, 0, 0.0119769471, 0.5, 0, -0.00691489362, 0.866025404, 0, 0.385319939, -0.203989362)
-texture = ExtResource("SourceArt_art1018_03_025")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.632683696)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_029" instance=ExtResource("Part_3")]
+position = Vector3(0, 0.432978723, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.815957447, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_bandit_camp_decoration_030" type="Node3D" parent="Objects"]
 position = Vector3(5.263, 0, -13.332)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_030"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp_decoration_030"]
-transform = Transform3D(0.00643564356, 0, 0, 0, 0.00557343082, 0.5, 0, -0.00321782178, 0.866025404, 0, 0.307884825, -0.159282178)
-texture = ExtResource("SourceArt_art1018_11_016")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.558278446)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_030" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.343564356, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.637128713, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_bandit_camp_thorns_159" type="Node3D" parent="Objects"]
 position = Vector3(-9, 0, -0.8)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_thorns_159"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp_thorns_159"]
-transform = Transform3D(0.00812864486, 0, 0, 0, 0.00703961294, 0.5, 0, -0.00406432243, 0.866025404, 0, 0.977908134, -0.544619205)
-texture = ExtResource("SourceArt_art1018_03_012")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_thorns_159" instance=ExtResource("Part_4")]
+position = Vector3(0, 0.025, 0)
+rotation = Vector3(-1.57079633, 0, 0)
+scale = Vector3(4.3, 2.17847682, 0.025)
+metadata/decoration_collision_enabled = false
 [node name="region" type="Area3D" parent="Objects/battle_bandit_camp_thorns_159"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -1379,19 +1457,11 @@ position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_post_battle_149"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp_post_battle_149"]
-transform = Transform3D(0.0150289017, 0, 0, 0, 0, 1, 0, -0.0150289017, 0, 0, 0.0348, 0)
-texture = ExtResource("SourceArt_art1018_08_021")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "ground"
-metadata/tilt_from_ground = 0
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_post_battle_149" instance=ExtResource("Part_5")]
+position = Vector3(0, 1.06199422, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(5.2, 2.07398844, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="click_area" type="Area3D" parent="Objects/battle_bandit_camp_post_battle_149"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -1400,7 +1470,7 @@ collision_mask = 1
 [node name="Shape" type="CollisionShape3D" parent="Objects/battle_bandit_camp_post_battle_149/click_area"]
 shape = SubResource("R68")
 [node name="battle_bandit_camp_deployment_145" type="Node3D" parent="Objects"]
-position = Vector3(-13.5158591, 0, 0.273109954)
+position = Vector3(5.82635, 0, 12.81796)
 rotation = Vector3(0, -2.71496524, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_deployment_145"
@@ -1416,19 +1486,11 @@ position = Vector3(-4.95, 0, -2.85788383)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "collision_damage_1"
-[node name="Visual" type="Sprite3D" parent="Objects/collision_damage_1"]
-transform = Transform3D(0.0205357143, 0, 0, 0, 0.0177844503, 0.5, 0, -0.0102678571, 0.866025404, 0, 0.648563534, -0.354241071)
-texture = ExtResource("SourceArt_art1018_09_020")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/collision_damage_1" instance=ExtResource("Part_6")]
+position = Vector3(0, 0.733482143, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(2.3, 1.41696429, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="collision" type="StaticBody3D" parent="Objects/collision_damage_1"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -1453,19 +1515,11 @@ position = Vector3(4.95, 0, 4.76313972)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "collision_damage_2"
-[node name="Visual" type="Sprite3D" parent="Objects/collision_damage_2"]
-transform = Transform3D(0.012568306, 0, 0, 0, 0.0108844723, 0.5, 0, -0.00628415301, 0.866025404, 0, 0.677183865, -0.370765027)
-texture = ExtResource("SourceArt_art1018_05_014")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/collision_damage_2" instance=ExtResource("Part_7")]
+position = Vector3(0, 0.766530055, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(2.3, 1.48306011, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="collision" type="StaticBody3D" parent="Objects/collision_damage_2"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -1502,19 +1556,11 @@ position = Vector3(-4.95, 0, -4.76313972)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "collision_damage_3"
-[node name="Visual" type="Sprite3D" parent="Objects/collision_damage_3"]
-transform = Transform3D(0.0205357143, 0, 0, 0, 0.0177844503, 0.5, 0, -0.0102678571, 0.866025404, 0, 0.648563534, -0.354241071)
-texture = ExtResource("SourceArt_art1018_09_020")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/collision_damage_3" instance=ExtResource("Part_6")]
+position = Vector3(0, 0.733482143, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(2.3, 1.41696429, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="collision" type="StaticBody3D" parent="Objects/collision_damage_3"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -1527,19 +1573,11 @@ position = Vector3(-11.55, 0, -16.1946751)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "tree_1"
-[node name="Visual" type="Sprite3D" parent="Objects/tree_1"]
-transform = Transform3D(0.0105263158, 0, 0, 0, 0.00911605688, 0.5, 0, -0.00526315789, 0.866025404, 0, 1.47989502, -0.834210526)
-texture = ExtResource("SourceArt_art1018_09_001")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/tree_1" instance=ExtResource("Part_8")]
+position = Vector3(0, 1.69342105, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(3.4, 3.33684211, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="collision" type="StaticBody3D" parent="Objects/tree_1"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -1924,19 +1962,11 @@ position = Vector3(-11.55, 0, -18.0999309)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "tree_2"
-[node name="Visual" type="Sprite3D" parent="Objects/tree_2"]
-transform = Transform3D(0.0157407407, 0, 0, 0, 0.0136318814, 0.5, 0, -0.00787037037, 0.866025404, 0, 1.8616721, -1.05462963)
-texture = ExtResource("SourceArt_art1018_09_003")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/tree_2" instance=ExtResource("Part_9")]
+position = Vector3(0, 2.13425926, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(3.4, 4.21851852, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="collision" type="StaticBody3D" parent="Objects/tree_2"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -2245,22 +2275,22 @@ collision_mask = 0
 [node name="Shape" type="CollisionShape3D" parent="Objects/tree_2__hex_25/collision"]
 shape = SubResource("R133")
 [node name="battle_bandit_camp__enemy_1" type="Node3D" parent="Objects"]
-position = Vector3(9.7075, 0, -0.714470958)
+position = Vector3(-3.3, 0, -7.62102355)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp__enemy_1"
 [node name="battle_bandit_camp__enemy_2" type="Node3D" parent="Objects"]
-position = Vector3(11.3575, 0, 2.14341287)
+position = Vector3(-1.65, 0, -4.76313972)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp__enemy_2"
 [node name="battle_bandit_camp__enemy_3" type="Node3D" parent="Objects"]
-position = Vector3(13.0075, 0, -0.714470958)
+position = Vector3(0, 0, -7.62102355)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp__enemy_3"
 [node name="battle_bandit_camp__enemy_4" type="Node3D" parent="Objects"]
-position = Vector3(6.4075, 0, -0.714470958)
+position = Vector3(-6.6, 0, -7.62102355)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp__enemy_4"
@@ -2269,685 +2299,411 @@ position = Vector3(-10.78, 0, -7.7)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp__art_031"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp__art_031"]
-transform = Transform3D(0.0168316832, 0, 0, 0, 0.0145766652, 0.5, 0, -0.00841584158, 0.866025404, 0, 0.756544928, -0.416584158)
-texture = ExtResource("SourceArt_art1018_11_016")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp__art_031" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.858168317, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(1.7, 1.66633663, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_bandit_camp__art_032" type="Node3D" parent="Objects"]
 position = Vector3(1.32, 0, -14.3)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp__art_032"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp__art_032"]
-transform = Transform3D(0.0217948718, 0, 0, 0, 0.0188749126, 0.5, 0, -0.0108974359, 0.866025404, 0, 0.686184486, -0.375961538)
-texture = ExtResource("SourceArt_art1018_11_018")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp__art_032" instance=ExtResource("Part_2")]
+position = Vector3(0, 0.776923077, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(1.7, 1.50384615, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_bandit_camp__art_033" type="Node3D" parent="Objects"]
 position = Vector3(12.76, 0, 1.76)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp__art_033"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp__art_033"]
-transform = Transform3D(0.0361702128, 0, 0, 0, 0.0313243231, 0.5, 0, -0.0180851064, 0.866025404, 0, 0.959067532, -0.533510638)
-texture = ExtResource("SourceArt_art1018_03_025")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp__art_033" instance=ExtResource("Part_3")]
+position = Vector3(0, 1.09202128, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(1.7, 2.13404255, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_bandit_camp__art_034" type="Node3D" parent="Objects"]
 position = Vector3(-3.96, 0, 13.64)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp__art_034"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp__art_034"]
-transform = Transform3D(0.0168316832, 0, 0, 0, 0.0145766652, 0.5, 0, -0.00841584158, 0.866025404, 0, 0.756544928, -0.416584158)
-texture = ExtResource("SourceArt_art1018_11_016")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp__art_034" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.858168317, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(1.7, 1.66633663, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_bandit_camp__art_035" type="Node3D" parent="Objects"]
 position = Vector3(-13.86, 0, 0.88)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp__art_035"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp__art_035"]
-transform = Transform3D(0.0217948718, 0, 0, 0, 0.0188749126, 0.5, 0, -0.0108974359, 0.866025404, 0, 0.686184486, -0.375961538)
-texture = ExtResource("SourceArt_art1018_11_018")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp__art_035" instance=ExtResource("Part_2")]
+position = Vector3(0, 0.776923077, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(1.7, 1.50384615, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_bandit_camp__art_001" type="Node3D" parent="Objects"]
 position = Vector3(18.983, 0, 1.567)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp__art_001"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp__art_001"]
-transform = Transform3D(0.0267326733, 0, 0, 0, 0.0231511742, 0.5, 0, -0.0133663366, 0.866025404, 0, 1.18198312, -0.661633663)
-texture = ExtResource("SourceArt_art1018_11_016")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp__art_001"]
+position = Vector3(0, 0.338, 0)
+mesh = SubResource("R135")
+material_override = SubResource("R134")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_bandit_camp__art_002" type="Node3D" parent="Objects"]
 position = Vector3(16.948, 0, 5.55)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp__art_002"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp__art_002"]
-transform = Transform3D(0.0346153846, 0, 0, 0, 0.0299778024, 0.5, 0, -0.0173076923, 0.866025404, 0, 1.07023418, -0.597115385)
-texture = ExtResource("SourceArt_art1018_11_018")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp__art_002"]
+position = Vector3(0, 0.341, 0)
+mesh = SubResource("R137")
+material_override = SubResource("R136")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_bandit_camp__art_003" type="Node3D" parent="Objects"]
 position = Vector3(14.52, 0, 8.383)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp__art_003"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp__art_003"]
-transform = Transform3D(0.0216346154, 0, 0, 0, 0.0187361265, 0.5, 0, -0.0108173077, 0.866025404, 0, 2.19065455, -1.24399038)
-texture = ExtResource("SourceArt_art1018_04_004")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp__art_003"]
+position = Vector3(0, 0.344, 0)
+mesh = SubResource("R139")
+material_override = SubResource("R138")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_bandit_camp__art_004" type="Node3D" parent="Objects"]
 position = Vector3(12.932, 0, 11.591)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp__art_004"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp__art_004"]
-transform = Transform3D(0.0267326733, 0, 0, 0, 0.0231511742, 0.5, 0, -0.0133663366, 0.866025404, 0, 1.18198312, -0.661633663)
-texture = ExtResource("SourceArt_art1018_11_016")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp__art_004"]
+position = Vector3(0, 0.347, 0)
+mesh = SubResource("R141")
+material_override = SubResource("R140")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_bandit_camp__art_005" type="Node3D" parent="Objects"]
 position = Vector3(10.849, 0, 15.656)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp__art_005"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp__art_005"]
-transform = Transform3D(0.0346153846, 0, 0, 0, 0.0299778024, 0.5, 0, -0.0173076923, 0.866025404, 0, 1.07023418, -0.597115385)
-texture = ExtResource("SourceArt_art1018_11_018")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp__art_005"]
+position = Vector3(0, 0.35, 0)
+mesh = SubResource("R143")
+material_override = SubResource("R142")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_bandit_camp__art_006" type="Node3D" parent="Objects"]
 position = Vector3(7.85, 0, 16.995)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp__art_006"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp__art_006"]
-transform = Transform3D(0.0346153846, 0, 0, 0, 0.0299778024, 0.5, 0, -0.0173076923, 0.866025404, 0, 1.07023418, -0.597115385)
-texture = ExtResource("SourceArt_art1018_11_018")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp__art_006"]
+position = Vector3(0, 0.353, 0)
+mesh = SubResource("R145")
+material_override = SubResource("R144")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_bandit_camp__art_007" type="Node3D" parent="Objects"]
 position = Vector3(4.336, 0, 17.224)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp__art_007"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp__art_007"]
-transform = Transform3D(0.0574468085, 0, 0, 0, 0.0497503955, 0.5, 0, -0.0287234043, 0.866025404, 0, 1.50363667, -0.847340426)
-texture = ExtResource("SourceArt_art1018_03_025")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp__art_007"]
+position = Vector3(0, 0.356, 0)
+mesh = SubResource("R147")
+material_override = SubResource("R146")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_bandit_camp__art_008" type="Node3D" parent="Objects"]
 position = Vector3(-0.181, 0, 17.452)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp__art_008"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp__art_008"]
-transform = Transform3D(0.0267326733, 0, 0, 0, 0.0231511742, 0.5, 0, -0.0133663366, 0.866025404, 0, 1.18198312, -0.661633663)
-texture = ExtResource("SourceArt_art1018_11_016")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp__art_008"]
+position = Vector3(0, 0.359, 0)
+mesh = SubResource("R149")
+material_override = SubResource("R148")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_bandit_camp__art_009" type="Node3D" parent="Objects"]
 position = Vector3(-3.698, 0, 16.766)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp__art_009"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp__art_009"]
-transform = Transform3D(0.0346153846, 0, 0, 0, 0.0299778024, 0.5, 0, -0.0173076923, 0.866025404, 0, 1.07023418, -0.597115385)
-texture = ExtResource("SourceArt_art1018_11_018")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp__art_009"]
+position = Vector3(0, 0.362, 0)
+mesh = SubResource("R151")
+material_override = SubResource("R150")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_bandit_camp__art_010" type="Node3D" parent="Objects"]
 position = Vector3(-8.203, 0, 16.995)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp__art_010"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp__art_010"]
-transform = Transform3D(0.0574468085, 0, 0, 0, 0.0497503955, 0.5, 0, -0.0287234043, 0.866025404, 0, 1.50363667, -0.847340426)
-texture = ExtResource("SourceArt_art1018_03_025")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp__art_010"]
+position = Vector3(0, 0.365, 0)
+mesh = SubResource("R153")
+material_override = SubResource("R152")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_bandit_camp__art_011" type="Node3D" parent="Objects"]
 position = Vector3(-10.735, 0, 14.939)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp__art_011"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp__art_011"]
-transform = Transform3D(0.0574468085, 0, 0, 0, 0.0497503955, 0.5, 0, -0.0287234043, 0.866025404, 0, 1.50363667, -0.847340426)
-texture = ExtResource("SourceArt_art1018_03_025")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp__art_011"]
+position = Vector3(0, 0.368, 0)
+mesh = SubResource("R155")
+material_override = SubResource("R154")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_bandit_camp__art_012" type="Node3D" parent="Objects"]
 position = Vector3(-12.667, 0, 12.049)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp__art_012"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp__art_012"]
-transform = Transform3D(0.0267326733, 0, 0, 0, 0.0231511742, 0.5, 0, -0.0133663366, 0.866025404, 0, 1.18198312, -0.661633663)
-texture = ExtResource("SourceArt_art1018_11_016")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp__art_012"]
+position = Vector3(0, 0.371, 0)
+mesh = SubResource("R157")
+material_override = SubResource("R156")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_bandit_camp__art_013" type="Node3D" parent="Objects"]
 position = Vector3(-15.095, 0, 8.302)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp__art_013"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp__art_013"]
-transform = Transform3D(0.0208333333, 0, 0, 0, 0.0180421959, 0.5, 0, -0.0104166667, 0.866025404, 0, 2.45365425, -1.39583333)
-texture = ExtResource("SourceArt_art1018_09_003")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp__art_013"]
+position = Vector3(0, 0.374, 0)
+mesh = SubResource("R159")
+material_override = SubResource("R158")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_bandit_camp__art_014" type="Node3D" parent="Objects"]
 position = Vector3(-17.129, 0, 5.236)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp__art_014"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp__art_014"]
-transform = Transform3D(0.0574468085, 0, 0, 0, 0.0497503955, 0.5, 0, -0.0287234043, 0.866025404, 0, 1.50363667, -0.847340426)
-texture = ExtResource("SourceArt_art1018_03_025")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp__art_014"]
+position = Vector3(0, 0.377, 0)
+mesh = SubResource("R161")
+material_override = SubResource("R160")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_bandit_camp__art_015" type="Node3D" parent="Objects"]
 position = Vector3(-18.218, 0, 1.978)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp__art_015"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp__art_015"]
-transform = Transform3D(0.0267326733, 0, 0, 0, 0.0231511742, 0.5, 0, -0.0133663366, 0.866025404, 0, 1.18198312, -0.661633663)
-texture = ExtResource("SourceArt_art1018_11_016")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp__art_015"]
+position = Vector3(0, 0.38, 0)
+mesh = SubResource("R163")
+material_override = SubResource("R162")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_bandit_camp__art_016" type="Node3D" parent="Objects"]
 position = Vector3(-18.963, 0, -2.059)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp__art_016"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp__art_016"]
-transform = Transform3D(0.0267326733, 0, 0, 0, 0.0231511742, 0.5, 0, -0.0133663366, 0.866025404, 0, 1.18198312, -0.661633663)
-texture = ExtResource("SourceArt_art1018_11_016")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp__art_016"]
+position = Vector3(0, 0.383, 0)
+mesh = SubResource("R165")
+material_override = SubResource("R164")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_bandit_camp__art_017" type="Node3D" parent="Objects"]
 position = Vector3(-16.456, 0, -5.03)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp__art_017"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp__art_017"]
-transform = Transform3D(0.0346153846, 0, 0, 0, 0.0299778024, 0.5, 0, -0.0173076923, 0.866025404, 0, 1.07023418, -0.597115385)
-texture = ExtResource("SourceArt_art1018_11_018")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp__art_017"]
+position = Vector3(0, 0.386, 0)
+mesh = SubResource("R167")
+material_override = SubResource("R166")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_bandit_camp__art_018" type="Node3D" parent="Objects"]
 position = Vector3(-14.895, 0, -8.192)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp__art_018"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp__art_018"]
-transform = Transform3D(0.0574468085, 0, 0, 0, 0.0497503955, 0.5, 0, -0.0287234043, 0.866025404, 0, 1.50363667, -0.847340426)
-texture = ExtResource("SourceArt_art1018_03_025")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp__art_018"]
+position = Vector3(0, 0.389, 0)
+mesh = SubResource("R169")
+material_override = SubResource("R168")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_bandit_camp__art_019" type="Node3D" parent="Objects"]
 position = Vector3(-12.838, 0, -12.211)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp__art_019"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp__art_019"]
-transform = Transform3D(0.0267326733, 0, 0, 0, 0.0231511742, 0.5, 0, -0.0133663366, 0.866025404, 0, 1.18198312, -0.661633663)
-texture = ExtResource("SourceArt_art1018_11_016")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp__art_019"]
+position = Vector3(0, 0.392, 0)
+mesh = SubResource("R171")
+material_override = SubResource("R170")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_bandit_camp__art_020" type="Node3D" parent="Objects"]
 position = Vector3(-11.174, 0, -15.55)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp__art_020"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp__art_020"]
-transform = Transform3D(0.0346153846, 0, 0, 0, 0.0299778024, 0.5, 0, -0.0173076923, 0.866025404, 0, 1.07023418, -0.597115385)
-texture = ExtResource("SourceArt_art1018_11_018")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp__art_020"]
+position = Vector3(0, 0.395, 0)
+mesh = SubResource("R173")
+material_override = SubResource("R172")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_bandit_camp__art_021" type="Node3D" parent="Objects"]
 position = Vector3(-8.313, 0, -17.224)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp__art_021"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp__art_021"]
-transform = Transform3D(0.0346153846, 0, 0, 0, 0.0299778024, 0.5, 0, -0.0173076923, 0.866025404, 0, 1.07023418, -0.597115385)
-texture = ExtResource("SourceArt_art1018_11_018")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp__art_021"]
+position = Vector3(0, 0.398, 0)
+mesh = SubResource("R175")
+material_override = SubResource("R174")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_bandit_camp__art_022" type="Node3D" parent="Objects"]
 position = Vector3(-3.849, 0, -17.452)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp__art_022"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp__art_022"]
-transform = Transform3D(0.0574468085, 0, 0, 0, 0.0497503955, 0.5, 0, -0.0287234043, 0.866025404, 0, 1.50363667, -0.847340426)
-texture = ExtResource("SourceArt_art1018_03_025")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp__art_022"]
+position = Vector3(0, 0.401, 0)
+mesh = SubResource("R177")
+material_override = SubResource("R176")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_bandit_camp__art_023" type="Node3D" parent="Objects"]
 position = Vector3(-0.174, 0, -16.766)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp__art_023"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp__art_023"]
-transform = Transform3D(0.0139318885, 0, 0, 0, 0.0120653694, 0.5, 0, -0.00696594427, 0.866025404, 0, 1.94836105, -1.10410217)
-texture = ExtResource("SourceArt_art1018_09_001")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp__art_023"]
+position = Vector3(0, 0.404, 0)
+mesh = SubResource("R179")
+material_override = SubResource("R178")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_bandit_camp__art_024" type="Node3D" parent="Objects"]
 position = Vector3(4.278, 0, -16.995)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp__art_024"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp__art_024"]
-transform = Transform3D(0.0346153846, 0, 0, 0, 0.0299778024, 0.5, 0, -0.0173076923, 0.866025404, 0, 1.07023418, -0.597115385)
-texture = ExtResource("SourceArt_art1018_11_018")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp__art_024"]
+position = Vector3(0, 0.407, 0)
+mesh = SubResource("R181")
+material_override = SubResource("R180")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_bandit_camp__art_025" type="Node3D" parent="Objects"]
 position = Vector3(7.955, 0, -17.224)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp__art_025"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp__art_025"]
-transform = Transform3D(0.0574468085, 0, 0, 0, 0.0497503955, 0.5, 0, -0.0287234043, 0.866025404, 0, 1.50363667, -0.847340426)
-texture = ExtResource("SourceArt_art1018_03_025")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp__art_025"]
+position = Vector3(0, 0.41, 0)
+mesh = SubResource("R183")
+material_override = SubResource("R182")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_bandit_camp__art_026" type="Node3D" parent="Objects"]
 position = Vector3(10.705, 0, -15.448)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp__art_026"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp__art_026"]
-transform = Transform3D(0.0574468085, 0, 0, 0, 0.0497503955, 0.5, 0, -0.0287234043, 0.866025404, 0, 1.50363667, -0.847340426)
-texture = ExtResource("SourceArt_art1018_03_025")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp__art_026"]
+position = Vector3(0, 0.413, 0)
+mesh = SubResource("R185")
+material_override = SubResource("R184")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_bandit_camp__art_027" type="Node3D" parent="Objects"]
 position = Vector3(13.106, 0, -11.746)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp__art_027"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp__art_027"]
-transform = Transform3D(0.0267326733, 0, 0, 0, 0.0231511742, 0.5, 0, -0.0133663366, 0.866025404, 0, 1.18198312, -0.661633663)
-texture = ExtResource("SourceArt_art1018_11_016")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp__art_027"]
+position = Vector3(0, 0.416, 0)
+mesh = SubResource("R187")
+material_override = SubResource("R186")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_bandit_camp__art_028" type="Node3D" parent="Objects"]
 position = Vector3(15.114, 0, -8.726)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp__art_028"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp__art_028"]
-transform = Transform3D(0.0346153846, 0, 0, 0, 0.0299778024, 0.5, 0, -0.0173076923, 0.866025404, 0, 1.07023418, -0.597115385)
-texture = ExtResource("SourceArt_art1018_11_018")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp__art_028"]
+position = Vector3(0, 0.419, 0)
+mesh = SubResource("R189")
+material_override = SubResource("R188")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_bandit_camp__art_029" type="Node3D" parent="Objects"]
 position = Vector3(16.282, 0, -5.332)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp__art_029"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp__art_029"]
-transform = Transform3D(0.0574468085, 0, 0, 0, 0.0497503955, 0.5, 0, -0.0287234043, 0.866025404, 0, 1.50363667, -0.847340426)
-texture = ExtResource("SourceArt_art1018_03_025")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp__art_029"]
+position = Vector3(0, 0.422, 0)
+mesh = SubResource("R191")
+material_override = SubResource("R190")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_bandit_camp__art_030" type="Node3D" parent="Objects"]
 position = Vector3(18.731, 0, -1.547)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp__art_030"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp__art_030"]
-transform = Transform3D(0.0267326733, 0, 0, 0, 0.0231511742, 0.5, 0, -0.0133663366, 0.866025404, 0, 1.18198312, -0.661633663)
-texture = ExtResource("SourceArt_art1018_11_016")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp__art_030"]
+position = Vector3(0, 0.425, 0)
+mesh = SubResource("R193")
+material_override = SubResource("R192")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_bandit_camp_decoration_153" type="Node3D" parent="Objects"]
 position = Vector3(0, 0, -13.42)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_153"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp_decoration_153"]
-transform = Transform3D(0.0167420814, 0, 0, 0, 0.0144990678, 0.5, 0, -0.00837104072, 0.866025404, 0, 2.26905645, -1.28914027)
-texture = ExtResource("SourceArt_art1018_04_007")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_153" instance=ExtResource("Part_10")]
+position = Vector3(0, 2.60328054, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(7.4, 5.15656109, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_bandit_camp_decoration_154" type="Node3D" parent="Objects"]
 position = Vector3(12.54, 0, -7.26)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_154"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp_decoration_154"]
-transform = Transform3D(0.0268571429, 0, 0, 0, 0.023258968, 0.5, 0, -0.0134285714, 0.866025404, 0, 1.88528795, -1.06757143)
-texture = ExtResource("SourceArt_art1018_03_021")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_154" instance=ExtResource("Part_11")]
+position = Vector3(0, 2.16014286, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(4.7, 4.27028571, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_bandit_camp_collision_damage_155" type="Node3D" parent="Objects"]
 position = Vector3(-4, 0, -3.7)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_collision_damage_155"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp_collision_damage_155"]
-transform = Transform3D(0.0180327869, 0, 0, 0, 0.0156168515, 0.5, 0, -0.00901639344, 0.866025404, 0, 0.957994241, -0.531967213)
-texture = ExtResource("SourceArt_art1018_05_014")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_collision_damage_155" instance=ExtResource("Part_7")]
+position = Vector3(0, 1.08893443, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(3.3, 2.12786885, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="collision" type="StaticBody3D" parent="Objects/battle_bandit_camp_collision_damage_155"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -2960,19 +2716,11 @@ position = Vector3(6, 0, 5.6)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_collision_damage_156"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp_collision_damage_156"]
-transform = Transform3D(0.0276785714, 0, 0, 0, 0.023970346, 0.5, 0, -0.0138392857, 0.866025404, 0, 0.863576937, -0.477455357)
-texture = ExtResource("SourceArt_art1018_09_020")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_collision_damage_156" instance=ExtResource("Part_6")]
+position = Vector3(0, 0.979910714, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(3.1, 1.90982143, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="collision" type="StaticBody3D" parent="Objects/battle_bandit_camp_collision_damage_156"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -2985,37 +2733,21 @@ position = Vector3(-6, 0, -5.2)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_157"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp_decoration_157"]
-transform = Transform3D(0.0333333333, 0, 0, 0, 0.0288675135, 0.5, 0, -0.0166666667, 0.866025404, 0, 1.19150054, -0.666666667)
-texture = ExtResource("SourceArt_art1018_08_019")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_157" instance=ExtResource("Part_12")]
+position = Vector3(0, 1.35833333, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(2.4, 2.66666667, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_bandit_camp_decoration_158" type="Node3D" parent="Objects"]
 position = Vector3(8, 0, 1.8)
 rotation = Vector3(0, -0.157079633, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_158"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp_decoration_158"]
-transform = Transform3D(0.0288075766, -0.00228133595, 0.135476221, 0, 0.0252590743, 0.5, -0.0045626719, -0.0144037883, 0.855363194, -0.0912534379, 1.04716297, -0.576151532)
-texture = ExtResource("SourceArt_art1018_08_019")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_158" instance=ExtResource("Part_12")]
+position = Vector3(0, 1.19166667, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(2.1, 2.33333333, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_bandit_camp_biome_edge_01" type="Node3D" parent="Objects"]
 position = Vector3(18.1593262, 0, 4.445795)
 rotation = Vector3(0, -0, 0)
@@ -3076,37 +2808,21 @@ position = Vector3(8.22724, 0, 18.09993)
 rotation = Vector3(0, 0.42662741, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_broken_barricade_143"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp_broken_barricade_143"]
-transform = Transform3D(0.0228070175, 0, 0, 0, 0, 1, 0, -0.0228070175, 0, 0, 0.0382, 0)
-texture = ExtResource("SourceArt_art1018_09_026")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "ground"
-metadata/tilt_from_ground = 0
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_broken_barricade_143" instance=ExtResource("Part_13")]
+position = Vector3(0, 0.025, 0)
+rotation = Vector3(-1.57079633, 0, 0)
+scale = Vector3(5.2, 3.46311475, 0.025)
+metadata/decoration_collision_enabled = false
 [node name="battle_bandit_camp_decoration_144" type="Node3D" parent="Objects"]
 position = Vector3(7.1577, 0, 15.74694)
 rotation = Vector3(0, 0.653520212, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_144"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_bandit_camp_decoration_144"]
-transform = Transform3D(0.00834782609, 0, 0, 0, 0, 1, 0, -0.00834782609, 0, 0, 0.0384, 0)
-texture = ExtResource("SourceArt_art1018_09_026")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "ground"
-metadata/tilt_from_ground = 0
-
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_144" instance=ExtResource("Part_14")]
+position = Vector3(0, 0.505, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(2.18482759, 0.96, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="Boundary0" type="StaticBody3D" parent="."]
 position = Vector3(16.5, 6, 9.52627944)
 rotation = Vector3(0, -2.0943951, 0)

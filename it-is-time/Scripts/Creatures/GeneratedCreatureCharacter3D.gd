@@ -177,7 +177,6 @@ func build_manual_layout(use_live_joint_anchors: bool = false) -> Resource:
 	var connections: Array[Dictionary] = []
 	var joints := container.get_node_or_null("Joints")
 	if joints == null: return null
-	var wing_links: Dictionary = {}
 	for joint: Node in joints.get_children():
 		if joint.has_meta(&"segment_rotation_constraint") or joint.has_meta(&"generated_module_id"): continue
 		if not joint is Joint3D and not joint is SEGMENT_SPRING: continue
@@ -199,26 +198,13 @@ func build_manual_layout(use_live_joint_anchors: bool = false) -> Resource:
 		var kind := str(joint.get_meta(&"generated_connection_kind", str(joint.name).get_slice("_", 2)))
 		connections.append({"a": indices[a], "b": indices[b], "anchor": (to_generator * ((anchor_a + anchor_b) * 0.5)) / multiplier, "basis": (to_generator.basis * joint.global_basis).orthonormalized(), "kind": kind})
 		if kind == "Wing":
-			wing_links[indices[b]] = {"parent": indices[a], "relative": joint.get_meta(&"wing_open_relative_a", Quaternion.IDENTITY)}
+			parts[indices[b]]["wing_open_basis"] = parts[indices[a]].transform.basis * Basis(joint.get_meta(&"wing_open_relative_a", Quaternion.IDENTITY))
 		if kind == "Feather":
 			parts[indices[b]]["feather_open_basis"] = parts[indices[a]].transform.basis * Basis(joint.get_meta(&"feather_open_relative_a", Quaternion.IDENTITY))
-	var opened: Dictionary = {}
-	for index: int in wing_links:
-		parts[index]["wing_open_basis"] = _captured_wing_open_basis(index, parts, wing_links, opened)
 	var captured := preload("res://Scripts/Creatures/Generators/CreatureManualLayout.gd").new()
 	captured.resource_local_to_scene = true
 	captured.blueprint = {"parts": parts, "connections": connections}
 	return captured
-
-func _captured_wing_open_basis(index: int, parts: Array[Dictionary], links: Dictionary, opened: Dictionary) -> Basis:
-	if opened.has(index): return opened[index]
-	var basis: Basis = parts[index].transform.basis
-	if links.has(index):
-		var link: Dictionary = links[index]
-		# Wing targets are relative to the parent's unfolded pose, regardless of joint order.
-		basis = _captured_wing_open_basis(link.parent, parts, links, opened) * Basis(link.relative)
-	opened[index] = basis
-	return basis
 
 func _capture_joint_anchor(body: PhysicalBodyPart3D, joint: Joint3D, frame_key: StringName) -> Vector3:
 	for child: Node in body.get_children():

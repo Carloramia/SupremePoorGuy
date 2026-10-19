@@ -1,5 +1,4 @@
 extends Node
-const L10N = preload("res://Scripts/Localization/GameText.gd")
 
 const SESSION = preload("res://Scripts/Application/GameSession.gd")
 const UI = preload("res://Scripts/Application/GameUIController.gd")
@@ -15,7 +14,6 @@ const MAP_CATALOG = preload("res://Modules/FrontierDelivery/Scripts/Map/MapCatal
 @export var world_scene: PackedScene = preload("res://Modules/Frontier/world_map/demo/WorldMapDemo.tscn")
 @export var integration_logging := false
 @export var world_time_settings: WorldTimeSettings = preload("res://Resources/Application/DefaultWorldTime.tres")
-@export var battle_capacity_settings: Resource = preload("res://Resources/Application/DefaultBattleCapacity.tres")
 @export var world_time_hud_scene: PackedScene = preload("res://Scenes/Application/WorldTimeHUD.tscn")
 @export var summon_animation_settings: SummonAnimationSettings = preload("res://Resources/Application/DefaultSummonAnimation.tres")
 @export var ui_skin_preset: Resource = preload("res://Modules/PaperUI/TA/Presets/medium.tres")
@@ -27,6 +25,7 @@ var ui: Control
 var world_time_hud: Control
 var world_map: WorldMapController
 var delivery_map
+var story_controller: Node
 var battle: Node3D
 var scenario: ScenarioController
 var phase := "main"
@@ -45,6 +44,7 @@ var _previous_auto_quit := true
 var _last_ui_route := ""
 var _load_failed := false
 var _delivery_cancel_save_pending := false
+var _open_tasks_on_world_entry := false
 var free_mouse_enabled := false
 var display_error := ""
 var returning_to_main_menu := false
@@ -65,8 +65,6 @@ func _ready() -> void:
 	session.save_path = save_path
 	session.integration_logging = integration_logging
 	session.world_time_settings = world_time_settings if world_time_settings != null else session.DEFAULT_WORLD_TIME
-	if battle_capacity_settings == null: battle_capacity_settings = preload("res://Resources/Application/DefaultBattleCapacity.tres")
-	session.battle_capacity_settings = battle_capacity_settings
 	session.reset()
 	if session.has_save() and not session.load_save(): _load_failed = true; push_warning(session.last_error)
 	if session.data.worlds.has(SESSION.DELIVERY_MAP): use_delivery_map=true
@@ -97,6 +95,10 @@ func _ready() -> void:
 	session.changed.connect(_session_changed)
 	session.world_time_changed.connect(ui._update_header)
 	session.new_player_tasks_completed.connect(ui.queue_task_completion)
+	story_controller=preload("res://Scripts/Events/StoryController.gd").new()
+	story_controller.application=self
+	story_controller.name="StoryEvents"
+	add_child(story_controller)
 	refresh_input_gate()
 	if "--verify-export" in OS.get_cmdline_user_args(): _verify_export.call_deferred()
 
@@ -111,7 +113,7 @@ func _input(event: InputEvent) -> void:
 		ui.toggle_settings()
 		get_viewport().set_input_as_handled()
 		return
-	if phase not in ["deployment","battle","reinforcement"] or event.is_echo() or not is_instance_valid(battle): return
+	if phase not in ["deployment","battle"] or event.is_echo() or not is_instance_valid(battle): return
 	var console := get_tree().root.get_node_or_null("RuntimeConsole")
 	if ui.overlay.visible or ui.route!="battle" or (console!=null and console.is_console_open()): return
 	if event.is_action_pressed(&"QPressed"):
@@ -127,7 +129,6 @@ func is_battle_manually_paused() -> bool:
 	return _pause_reasons.has(&"manual")
 
 func _process(_delta: float) -> void:
-	if _pause_reasons.has(&"reinforcements_waiting") and not ui.overlay.visible: open_reinforcements.call_deferred()
 	if returning_to_main_menu and phase not in ["loading_world","loading_battle","returning"]:
 		return_to_main_menu()
 
@@ -138,6 +139,7 @@ func return_to_main_menu() -> bool:
 		ui._notice("正在完成当前载入或转场，随后保存并返回主菜单…")
 		return false
 	returning_to_main_menu = false
+	_open_tasks_on_world_entry = false
 	if phase == "settlement" and session.data.battle.get("phase") != "settlement":
 		_finalize_battle()
 		if session.data.battle.get("phase") != "settlement": return false
@@ -313,14 +315,20 @@ func ui_route_changed(next: String) -> void:
 
 func start_new_game() -> void:
 	if phase != "main": return
+	if _configured_delivery_map and use_hex_map_for_new_games:
+		var story_error: String = session.STORIES.CATALOG.validate()
+		if not story_error.is_empty(): ui._notice("事件配置校验失败："+story_error); return
 	var previous := session.data.duplicate(true)
 	var previous_backend := use_delivery_map
 	# Continuing a legacy backend must not change the configured new-game default.
 	use_delivery_map=_configured_delivery_map
 	session.reset()
-	if use_delivery_map and use_hex_map_for_new_games: session.data.delivery_map_version="20261019"
-	session.prepare_opening_event()
+	if use_delivery_map and use_hex_map_for_new_games:
+		session.data.delivery_map_version="20261019"
+		session.STORIES.prepare_new_game(session.data)
 	if not session.save(): session.data = previous; use_delivery_map=previous_backend; ui._notice(session.last_error); return
+	story_controller.reset_for_new_game()
+	_open_tasks_on_world_entry = true
 	ui._task_notifications.clear()
 	ui.rules.import_layout(session.data.layout)
 	ui._close_all()
@@ -330,7 +338,17 @@ func _enable_world_tasks() -> void:
 	if not session.enable_new_player_tasks():
 		ui._notice(session.last_error)
 		return
-	if session.opening_event_pending() and not returning_to_main_menu and ui.modal_stack.is_empty(): ui._opening_event()
+	var opening: Dictionary = session.STORIES.entry(session.data,session.STORIES.OPENING)
+	if not opening.is_empty() and not opening.completed: return
+	var guide_pending: bool = not opening.is_empty() and not opening.flags.get("guide_shown",false)
+	if not _open_tasks_on_world_entry and not guide_pending: return
+	if returning_to_main_menu or not ui.modal_stack.is_empty(): return
+	if guide_pending:
+		var before: Dictionary = session.data.duplicate(true)
+		opening.flags.guide_shown=true
+		if not session.save(): session.data=before; ui._notice(session.last_error); return
+	_open_tasks_on_world_entry=false
+	ui._tasks()
 
 func enter_world() -> void:
 	if phase != "main": return
@@ -418,27 +436,33 @@ func _delivery_battle_requested(request: Dictionary) -> void:
 	battle = BATTLE.new()
 	battle.name = "BattleHost"
 	battle.application = self
-	battle.capacity_settings = battle_capacity_settings
 	battle.delivery_request = request.duplicate(true)
 	battle.delivery_settings = get_delivery_battle_settings()
 	battle.finished.connect(_battle_finished)
-	battle.reinforcements_required.connect(func(): open_reinforcements.call_deferred())
 	battle_viewport.add_child(battle)
 	ui._show("battle")
 	battle_container.show()
 	battle_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	var records: Array = []
-	for id: String in session.data.battle.party_ids:
-		var record := session.monster_by_id(id)
-		if not record.is_empty(): records.append(record)
-	if records.is_empty(): records = session.monsters("warehouse")
+	for id: String in session.data.battle.party_ids: records.append(session.monster_by_id(id))
+	if request.get("combat_mode")=="spectator":
+		var definitions: Array = request.get("side_a_definitions_snapshot",[])
+		for index: int in definitions.size():
+			var record: Dictionary = battle.FACTORY.template(definitions[index])
+			record.id="story_ai_a_"+str(index)
+			records.append(record)
 	if not await battle.deploy(records,str(session.data.battle.battle_id)):
 		var message: String = battle.last_error
 		trace_map_event("battle_load_failed",{"reason":message})
 		_cleanup_battle()
 		_cancel_failed_delivery_battle(message)
 		return
-	_begin_deployment()
+	if request.get("combat_mode")=="spectator":
+		if not battle.start_combat(): _cleanup_battle(); _cancel_failed_delivery_battle("观战阵容未准备完成。"); return
+		phase="battle"
+		free_mouse_enabled=true
+		refresh_input_gate()
+	else: _begin_deployment()
 
 func get_delivery_battle_settings() -> DeliveryBattleSettings:
 	if session.delivery_version()=="20261019":
@@ -485,12 +509,8 @@ func _interaction_started(id: StringName) -> void:
 			"battle","monster":
 				var button: Button = ui._btn(commands,"进入战斗",func(): world_map.interaction.request_battle())
 				button.name = "EnterBattle"
-				var budget := legacy_capacity_status({"encounter_data":location.definition.encounter_data})
-				button.disabled = session.monsters("team").is_empty() or not budget.error.is_empty()
-				button.tooltip_text = budget.error if not budget.error.is_empty() else "请先召唤妖兽并加入出战队列。" if button.disabled else "使用当前出战队列进入战斗。"
-				var capacity_label := Label.new()
-				page.get_node("%Commands").add_child(capacity_label)
-				L10N.bind(capacity_label,&"text",func(): return battle_capacity_settings.summary(budget))
+				button.disabled = session.monsters("team").is_empty()
+				button.tooltip_text = "请先召唤妖兽并加入出战队列。" if button.disabled else "使用当前出战队列进入战斗。"
 			"settlement":
 				if location.definition.scenario_scene != null:
 					ui._btn(commands,"进入场景",func(): world_map.interaction.request_scenario())
@@ -525,6 +545,9 @@ func _interaction_completed(_id: StringName, _result: Dictionary) -> void:
 	refresh_input_gate.call_deferred()
 
 func open_event(_id: String) -> void:
+	if phase=="world" and is_instance_valid(delivery_map):
+		for row: Dictionary in story_controller.location_events(delivery_map.active_location_id):
+			if row.id==_id: story_controller.open_event(_id,row.context); return
 	trace_map_event("event_rejected",{"event_id":_id,"reason":"需要先抵达地图事件地点。"})
 	ui._notice("请先前往大地图上的事件地点。")
 
@@ -539,7 +562,6 @@ func _battle_requested(_request: Dictionary) -> void:
 	battle = BATTLE.new()
 	battle.name = "BattleHost"
 	battle.application = self
-	battle.capacity_settings = battle_capacity_settings
 	battle.definition = default_battle_definition
 	var editor: Dictionary = _request.get("encounter_data",{}).get("editor_object",{})
 	var map_id: String = editor.get("battle_map_id","")
@@ -552,17 +574,13 @@ func _battle_requested(_request: Dictionary) -> void:
 		battle.definition = battle_definitions[map_id]
 	battle.monster_config_definitions = monster_config_definitions.duplicate()
 	battle.finished.connect(_battle_finished)
-	battle.reinforcements_required.connect(func(): open_reinforcements.call_deferred())
 	battle_viewport.add_child(battle)
 	ui._show("battle")
 	battle_container.show()
 	battle_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	session.trace("battle_load",session.data.battle)
 	var records: Array = []
-	for id: String in session.data.battle.get("party_ids",[]):
-		var record := session.monster_by_id(id)
-		if not record.is_empty(): records.append(record)
-	if records.is_empty(): records = session.monsters("warehouse")
+	for id: String in session.data.battle.get("party_ids",[]): records.append(session.monster_by_id(id))
 	if not await battle.deploy(records,str(session.data.battle.get("battle_id",""))):
 		var deployment_error: String = battle.last_error
 		_cleanup_battle()
@@ -571,9 +589,6 @@ func _battle_requested(_request: Dictionary) -> void:
 		ui._notice("战场部署失败；原地图和队伍已保留。"+deployment_error)
 		return
 	_begin_deployment()
-
-func legacy_capacity_status(_request: Dictionary) -> Dictionary:
-	return session.initial_party_capacity()
 
 func _begin_deployment() -> void:
 	phase = "deployment"
@@ -593,60 +608,8 @@ func start_battle() -> void:
 	session.trace("battle_start",{"battle_id":battle.battle_id})
 	trace_map_event("battle_started",battle.delivery_request)
 
-func open_reinforcements() -> void:
-	if phase != "battle" or not is_instance_valid(battle) or battle.ended: return
-	if _pause_reasons.has(&"battle_save"): return
-	if not battle.flush_deaths(): battle_save_failed(); return
-	if ui.overlay.visible:
-		if battle._awaiting_allies: set_pause_reason(&"reinforcements_waiting",true)
-		return
-	set_pause_reason(&"reinforcements_waiting",false)
-	set_pause_reason(&"reinforcement",true)
-	ui.show_reinforcements()
-
-func begin_reinforcement(id: String) -> void:
-	if phase != "battle" or not is_instance_valid(battle): return
-	if not battle.begin_reinforcement(id): ui._notice(battle.last_error); return
-	set_pause_reason(&"reinforcement",true)
-	phase = "reinforcement"
-	free_mouse_enabled = false
-	ui._close_all()
-	battle.deployment.changed.connect(refresh_input_gate)
-	refresh_input_gate()
-
-func confirm_reinforcement() -> void:
-	if phase != "reinforcement" or ui.overlay.visible: return
-	if not battle.confirm_reinforcement(): ui._notice(battle.last_error); return
-	phase = "battle"
-	set_pause_reason(&"reinforcement",false)
-	refresh_input_gate()
-
-func cancel_reinforcement() -> void:
-	if phase != "reinforcement": return
-	battle.cancel_reinforcement()
-	phase = "battle"
-	set_pause_reason(&"reinforcement",false)
-	refresh_input_gate()
-
-func reinforcement_selection_closed() -> void:
-	if phase == "battle":
-		set_pause_reason(&"reinforcement",false)
-		refresh_input_gate()
-
-func battle_save_failed() -> void:
-	if _pause_reasons.has(&"battle_save"): return
-	set_pause_reason(&"battle_save",true)
-	ui._modal("阵亡记录保存失败",func(body):
-		var page: Control = ui._text_screen(body,session.last_error+"\n战斗已暂停；保存成功后才能继续，阵亡单位不会被重新投入。")
-		var retry: Button = ui._btn(page.get_node("%Commands"),"重试保存",func():
-			if not battle.flush_deaths(): ui._notice(session.last_error); return
-			set_pause_reason(&"battle_save",false)
-			ui._close_all()
-			refresh_input_gate())
-		retry.name = "RetryBattleDeathSave","battle_save_error")
-
 func _battle_finished(result: Dictionary) -> void:
-	if phase not in ["deployment","battle","reinforcement"]: return
+	if phase not in ["deployment","battle"]: return
 	_pending_result = result.duplicate(true)
 	_finalize_battle()
 
@@ -654,8 +617,6 @@ func _finalize_battle() -> void:
 	phase = "settlement"
 	free_mouse_enabled = false
 	_pause_reasons.erase(&"manual")
-	_pause_reasons.erase(&"reinforcement")
-	_pause_reasons.erase(&"reinforcements_waiting")
 	refresh_input_gate()
 	var success := false
 	if is_instance_valid(delivery_map): success = delivery_map.commit_result(_pending_result)
@@ -675,7 +636,8 @@ func _show_settlement() -> void:
 	trace_map_event("settlement_opened",{"outcome":_pending_result.outcome,"reward":_pending_result.reward,"post_battle_options":_pending_result.get("post_battle_options",[])})
 	ui._close_all()
 	ui._modal("战斗结算",func(body):
-		var page: Control = ui._text_screen(body,"结果：%s\n魔力奖励：%d\n阵亡 %d 只，已永久移出队伍和仓库；存活生物的部位战损已记录。" % [_pending_result.outcome,int(_pending_result.reward),_pending_result.get("casualties",[]).size()])
+		var magic_text: String = "待配置（将按怪物等级计算，当前不发放）" if _pending_result.get("magic_reward_pending",false) else str(int(_pending_result.reward))
+		var page: Control = ui._text_screen(body,"结果：%s\n战斗魔力奖励：%s\n事件固定报酬由对应事件单独领取。\n部位战损已记录。本轮采用战后恢复，不永久删除库存生物。" % [_pending_result.outcome,magic_text])
 		ui._btn(page.get_node("%Commands"),"返回大地图",return_to_world)
 		if "summon" in _pending_result.get("post_battle_options",[]):
 			ui._btn(page.get_node("%Commands"),"战后召唤",func():
@@ -694,7 +656,7 @@ func _show_settlement() -> void:
 	ui.close_button.disabled = true
 
 func request_retreat() -> void:
-	if phase in ["deployment","battle","reinforcement"] and is_instance_valid(battle): battle.finish("retreat")
+	if phase in ["deployment","battle"] and is_instance_valid(battle): battle.finish("retreat")
 
 func return_to_world() -> void:
 	if phase != "settlement": return
@@ -736,7 +698,6 @@ func return_to_world() -> void:
 func _cleanup_battle() -> void:
 	free_mouse_enabled = false
 	_pause_reasons.erase(&"manual")
-	for reason: StringName in [&"reinforcement",&"reinforcements_waiting",&"battle_save"]: _pause_reasons.erase(reason)
 	if is_instance_valid(battle):
 		battle_viewport.remove_child(battle)
 		battle.queue_free()
@@ -792,7 +753,6 @@ func get_active_level() -> Node:
 
 func is_gameplay_blocked() -> bool:
 	var console := get_tree().root.get_node_or_null("RuntimeConsole")
-	if phase == "reinforcement": return free_mouse_enabled or ui.overlay.visible or (console!=null and console.is_console_open())
 	return phase not in ["deployment","battle"] or free_mouse_enabled or not _pause_reasons.is_empty() or (ui!=null and (ui.overlay.visible or ui.route=="eruption")) or (console!=null and console.is_console_open())
 
 func allow_workshop() -> bool:
@@ -808,7 +768,7 @@ func set_pause_reason(reason: StringName, active: bool) -> void:
 func refresh_input_gate() -> void:
 	if ui == null or not ui.is_node_ready() or ui.overlay == null: return
 	var paper_blocked: bool = ui.overlay.visible or ui.route == "eruption"
-	if phase in ["deployment","battle","reinforcement","scenario","settlement","returning"]: _pause_reasons[&"paper"] = paper_blocked or phase not in ["deployment","battle","reinforcement","scenario"]
+	if phase in ["deployment","battle","scenario","settlement","returning"]: _pause_reasons[&"paper"] = paper_blocked or phase not in ["deployment","battle","scenario"]
 	else: _pause_reasons.erase(&"paper")
 	if _pause_reasons.get(&"paper") == false: _pause_reasons.erase(&"paper")
 	_apply_pause()
@@ -826,10 +786,7 @@ func refresh_input_gate() -> void:
 	if scenario != null: scenario.set_camera_input_enabled(not paper_blocked)
 	ui.update_battle_controls(phase=="battle",is_battle_manually_paused(),free_mouse_enabled)
 	var deploying := phase == "deployment" and is_instance_valid(battle) and is_instance_valid(battle.deployment)
-	var capacity_error: String = battle.capacity_status().error if deploying else ""
-	if deploying and capacity_error.is_empty(): capacity_error = battle.capacity_status(1).error
-	ui.update_deployment_controls(deploying,deploying and battle.deployment.can_start() and capacity_error.is_empty(),capacity_error if not capacity_error.is_empty() else battle.deployment.placement_error if deploying else "")
-	ui.update_reinforcement_controls()
+	ui.update_deployment_controls(deploying,deploying and battle.deployment.can_start(),battle.deployment.placement_error if deploying else "")
 
 func _apply_pause() -> void:
 	var should_pause := not _pause_reasons.is_empty()
@@ -842,7 +799,6 @@ func _apply_pause() -> void:
 		_owned_pause = false
 
 func save_session() -> bool:
-	if is_instance_valid(battle) and battle.ready_for_combat and not battle.ended and not battle.flush_deaths(): return false
 	if is_instance_valid(delivery_map): return delivery_map.save_progress()
 	return world_map.save_world_map() if world_map != null and world_map.is_initialized else session.save()
 

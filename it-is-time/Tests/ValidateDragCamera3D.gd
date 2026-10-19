@@ -12,10 +12,6 @@ func _validate() -> void:
 	root.add_child(rig)
 	await process_frame
 	assert(rig.get_camera() is Camera3D)
-	var camera: Camera3D = rig.get_camera()
-	assert(camera.projection == Camera3D.PROJECTION_ORTHOGONAL)
-	assert(camera.project_ray_normal(Vector2.ZERO).is_equal_approx(camera.project_ray_normal(Vector2(100,100))))
-	assert(not camera.project_ray_origin(Vector2.ZERO).is_equal_approx(camera.project_ray_origin(Vector2(100,100))))
 	assert(rig.global_position.is_equal_approx(target.global_position))
 	target.global_position = Vector3(-5.0, 1.5, 8.0)
 	rig._process(0.0)
@@ -27,11 +23,6 @@ func _validate() -> void:
 	rig.set_distance(5000.0)
 	assert(is_equal_approx(rig.get_distance(), rig.maximum_distance))
 	rig.set_distance(10.0)
-	var original_size := camera.size
-	rig._zoom(-1.0)
-	assert(camera.size < original_size)
-	rig.set_distance(10.0)
-	assert(is_equal_approx(camera.size,original_size))
 	var start_rotation: Vector3 = rig.rotation
 	rig._orbit(Vector2.ONE)
 	assert(not rig.rotation.is_equal_approx(start_rotation))

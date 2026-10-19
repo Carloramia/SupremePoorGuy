@@ -58,7 +58,7 @@ func run() -> void:
 	app.ui._perform_summon()
 	check(rows("event_rejected").back().event_id=="summon" and not rows("event_rejected").back().reason.is_empty(),"Rejected summon does not claim successful execution")
 	app.ui._close_all()
-	check(app.ui.rules.import_layout({"version":3,"stage":1,"placed":[{"uid":"logging","runeId":"health","cells":[[-1,0],[0,0],[1,0]],"enabled":true}],"placedRelics":[]}),"Prepare actual summon")
+	check(app.ui.rules.import_layout({"version":4,"stage":1,"placed":[{"uid":"logging","runeId":"health","cells":[[-1,0],[0,0],[1,0]],"enabled":true}],"placedRelics":[]}),"Prepare actual summon")
 	app.ui._perform_summon()
 	check(rows("event_completed").back().event_id=="summon" and rows("event_completed").back().pending_ids.size()==5,"Successful summon records committed IDs and cost state")
 	app.ui.view.skip_eruption()

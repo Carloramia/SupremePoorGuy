@@ -30,7 +30,6 @@ var _distance: float = 10.0
 var _pitch_radians: float = 0.0
 
 func _ready() -> void:
-	_camera.projection = Camera3D.PROJECTION_ORTHOGONAL
 	_distance = clampf(_camera.position.z, minimum_distance, maximum_distance)
 	_pitch_radians = _pitch_pivot.rotation.x
 	_update_follow_position()
@@ -38,10 +37,6 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	_update_follow_position()
-
-func set_pitch_degrees(value: float) -> void:
-	_pitch_radians=deg_to_rad(clampf(value,minimum_pitch_degrees,maximum_pitch_degrees))
-	_pitch_pivot.rotation.x=_pitch_radians
 
 func _unhandled_input(event: InputEvent) -> void:
 	if preload("res://Scripts/Player/PlayerControlContext.gd").interface_open(self):
@@ -88,8 +83,6 @@ func _zoom(direction: float) -> void:
 
 func _apply_camera_transform() -> void:
 	_camera.position.z = _distance
-	# Preserve existing distance presets and wheel sensitivity as orthographic zoom.
-	_camera.size = 2.0 * _distance * tan(deg_to_rad(_camera.fov) * 0.5)
 
 func _update_follow_position() -> void:
 	if is_instance_valid(follow_target):

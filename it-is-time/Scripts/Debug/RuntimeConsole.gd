@@ -579,6 +579,12 @@ func create_logs_archive(output_directory: String = "", log_directory: String = 
 		writer.write_file(FileAccess.get_file_as_bytes(log_path))
 		writer.close_file()
 
+	# Include this process's buffered console output even when --log-file redirects the
+	# engine log outside user://logs. It also captures the event immediately before getlogs.
+	if writer.start_file("logs/runtime_console_snapshot.log") == OK:
+		writer.write_file(("\n".join(_output_lines)+"\n").to_utf8_buffer())
+		writer.close_file()
+
 	var manifest := (
 		"Project: %s\nCreated: %s\nLog source: %s\nFiles: %d\n"
 		% [ProjectSettings.get_setting("application/config/name", ""), timestamp, ProjectSettings.globalize_path(log_root), log_files.size()]
@@ -755,8 +761,8 @@ func _collect_motion_summary(character: Node3D) -> Array[String]:
 				"stepping": controller.is_leg_stepping(foot), "slipping": controller.is_leg_slipping(foot)})
 		for torso: RigidBody3D in controller.get_torso_parts():
 			torsos.append({"body": torso.name, "position": torso.global_position, "velocity": torso.linear_velocity})
-		messages.append("[trackmotion] character=%s requested_speed=%.3f planned_speed=%.3f target_z_speed=%.3f target_velocity=%s stepping=%d torso_motion=%s leg_profiles=%s feet=%s" % [
-			character.name, automatic.requested_speed, automatic.target_speed, automatic.target_z_speed, automatic.target_velocity, controller._active_steps.size(), torsos, legs, feet])
+		messages.append("[trackmotion] character=%s requested_speed=%.3f planned_speed=%.3f stepping=%d torso_motion=%s leg_profiles=%s feet=%s" % [
+			character.name, automatic.requested_speed, automatic.target_speed, controller._active_steps.size(), torsos, legs, feet])
 		if automatic.has("wolf_auto_gallop"):
 			messages.append("[trackmotion] character=%s wolf_auto_gallop=%s" % [character.name, automatic.wolf_auto_gallop])
 		if automatic.has("spider_motion_budget"):

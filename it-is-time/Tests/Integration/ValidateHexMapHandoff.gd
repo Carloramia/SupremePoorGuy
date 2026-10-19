@@ -21,7 +21,7 @@ func run() -> void:
 	var manifest := read(BASE+"Migration/files.json")
 	check(manifest.status=="staged_not_active","original migration provenance retained")
 	for path: String in manifest.protected_runtime_files:
-		if FileAccess.file_exists(BASE+"Runtime/integration.json") and path in ["Modules/FrontierDelivery/Scripts/Map/MapCatalog.gd","Scripts/Application/CreatureFactory.gd"]: continue
+		if FileAccess.file_exists(BASE+"Runtime/integration.json") and path=="Modules/FrontierDelivery/Scripts/Map/MapCatalog.gd": continue
 		check(FileAccess.get_sha256("res://"+path)==manifest.protected_runtime_files[path],"active file unchanged: "+path)
 	var paths := read(BASE+"Migration/asset_paths.json")
 	for uri: String in paths.values():

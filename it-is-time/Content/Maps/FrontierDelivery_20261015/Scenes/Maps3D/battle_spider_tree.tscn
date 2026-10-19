@@ -1,4 +1,24 @@
-[gd_scene load_steps=184 format=3]
+[gd_scene load_steps=106 format=3]
+
+[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/Props/BrokenStump.tscn" id="Part_BrokenStump"]
+
+[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/Props/DeadTree.tscn" id="Part_DeadTree"]
+
+[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/GroundDecorations/GrassTuft.tscn" id="Part_GrassTuft"]
+
+[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/Props/LargeRock.tscn" id="Part_LargeRock"]
+
+[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/GroundDecorations/LeafLitter.tscn" id="Part_LeafLitter"]
+
+[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/GroundEffects/Mud.tscn" id="Part_Mud"]
+
+[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/Props/RootFan.tscn" id="Part_RootFan"]
+
+[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/GroundDecorations/SummoningArray.tscn" id="Part_SummoningArray"]
+
+[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/GroundEffects/Thorns.tscn" id="Part_Thorns"]
+
+[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/GroundEffects/Web.tscn" id="Part_Web"]
 
 [ext_resource type="Script" path="res://Modules/FrontierDelivery/Scripts/Map/BattleMap3D.gd" id="BattleScript"]
 [ext_resource type="Shader" path="res://Modules/FrontierDelivery/Scripts/Map/BattleGround.gdshader" id="GroundShader"]
@@ -28,16 +48,6 @@
 [ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/0da32f06426863edd5cdcf4e.svg" id="Texture_32"]
 [ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/17791636e20ea071080a2c74.svg" id="Texture_33"]
 
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/c444f8cb10e52e41bd6f8afd.svg" id="Source_Texture_12"]
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/e7d739cab1a9dc214a6e832e.png" id="Source_Texture_13"]
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/abb79c7b6ca43284e4b8bbc8.svg" id="Source_Texture_14"]
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/d8649aa7c7e0d9503ffa1aa6.svg" id="Source_Texture_15"]
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/1c7023eabb8afa18070342d8.png" id="Source_Texture_16"]
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/ff90ec506af73e568f154784.png" id="Source_Texture_17"]
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/439c5d486a2bd2f40fee2be9.svg" id="Source_Texture_18"]
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/a8e3e71cc86a1bb953cfa3fa.svg" id="Source_Texture_19"]
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/ca04f1063e71e29082cde977.svg" id="Source_Texture_20"]
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/e9e45c44bd0772cb1d39f1ae.png" id="Source_Texture_21"]
 [sub_resource type="StandardMaterial3D" id="R0"]
 shading_mode = 0
 albedo_color = Color(0.454901961, 0.501960784, 0.392156863, 1)
@@ -353,435 +363,6 @@ ambient_light_source = 3
 ambient_light_color = Color(1,1,1,1)
 ambient_light_energy = 0.8
 
-[sub_resource type="StandardMaterial3D" id="Source_R31"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_12")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R32"]
-size = Vector2(9.2, 4.90666667)
-
-[sub_resource type="StandardMaterial3D" id="Source_R33"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_12")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R34"]
-size = Vector2(9.2, 4.90666667)
-
-[sub_resource type="StandardMaterial3D" id="Source_R35"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_12")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R36"]
-size = Vector2(9.2, 4.90666667)
-
-[sub_resource type="StandardMaterial3D" id="Source_R37"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_12")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R38"]
-size = Vector2(9.2, 4.90666667)
-
-[sub_resource type="StandardMaterial3D" id="Source_R39"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_12")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R40"]
-size = Vector2(9.2, 4.90666667)
-
-[sub_resource type="StandardMaterial3D" id="Source_R41"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.762469384)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R42"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R43"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.599925379)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R44"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R45"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.63837368)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R46"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R47"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.575372564)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R48"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R49"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.67092426)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R50"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R51"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.582683589)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R52"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R53"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.578022856)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R54"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R55"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.637984404)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R56"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R57"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.783302462)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R58"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R59"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.649985701)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R60"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R61"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.642954284)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R62"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R63"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.790692976)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R64"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R65"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.568878998)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R66"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R67"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.617141914)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R68"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R69"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.632976587)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R70"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R71"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.566030017)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R72"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R73"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.58779961)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R74"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R75"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.598296465)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R76"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R77"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.784680198)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R78"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R79"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.726071216)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R80"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R81"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.750272701)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R82"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R83"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.692147049)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R84"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R85"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.710072968)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R86"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R87"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.61876388)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R88"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R89"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.727460259)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R90"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R91"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_14")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R92"]
-size = Vector2(4.4, 4)
-
-[sub_resource type="StandardMaterial3D" id="Source_R94"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_14")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R95"]
-size = Vector2(4.2, 3.7)
-
-[sub_resource type="StandardMaterial3D" id="Source_R97"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_15")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R98"]
-size = Vector2(5.4, 3.2)
-
-[sub_resource type="StandardMaterial3D" id="Source_R100"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_16")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R101"]
-size = Vector2(3.4, 1.72251656)
-
-[sub_resource type="StandardMaterial3D" id="Source_R103"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_17")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R104"]
-size = Vector2(5.2, 2.82033898)
-
-[sub_resource type="StandardMaterial3D" id="Source_R107"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_18")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R108"]
-size = Vector2(10.9913043, 7.9)
-
-[sub_resource type="StandardMaterial3D" id="Source_R109"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_19")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R110"]
-size = Vector2(3.17647059, 3)
-
-[sub_resource type="StandardMaterial3D" id="Source_R111"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_20")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R112"]
-size = Vector2(6.8, 8.568)
-
-[sub_resource type="StandardMaterial3D" id="Source_R113"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_21")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R114"]
-size = Vector2(2.6, 2.26296296)
-
 [node name="battle_spider_tree" type="Node3D"]
 script = ExtResource("BattleScript")
 map_id = "battle_spider_tree"
@@ -900,342 +481,404 @@ position = Vector3(-7, 0, -7.6)
 rotation = Vector3(0, 0.261401894, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_001"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_decoration_001"]
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_001" instance=ExtResource("Part_LeafLitter")]
 position = Vector3(0, 0.02, 0)
-mesh = SubResource("Source_R32")
-material_override = SubResource("Source_R31")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(3.06666666667, 3.06666666875)
+opacity = 1
+metadata/source_asset_id = "battle_leaf_litter"
+
 [node name="battle_spider_tree_decoration_002" type="Node3D" parent="Objects"]
 position = Vector3(6.8, 0, 6.4)
 rotation = Vector3(0, -0.135698712, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_002"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_decoration_002"]
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_002" instance=ExtResource("Part_LeafLitter")]
 position = Vector3(0, 0.023, 0)
-mesh = SubResource("Source_R34")
-material_override = SubResource("Source_R33")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(3.06666666667, 3.06666666875)
+opacity = 1
+metadata/source_asset_id = "battle_leaf_litter"
+
 [node name="battle_spider_tree_decoration_003" type="Node3D" parent="Objects"]
 position = Vector3(-9, 0, 2.4)
 rotation = Vector3(0, 0.108009917, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_003"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_decoration_003"]
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_003" instance=ExtResource("Part_LeafLitter")]
 position = Vector3(0, 0.026, 0)
-mesh = SubResource("Source_R36")
-material_override = SubResource("Source_R35")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(3.06666666667, 3.06666666875)
+opacity = 1
+metadata/source_asset_id = "battle_leaf_litter"
+
 [node name="battle_spider_tree_decoration_004" type="Node3D" parent="Objects"]
 position = Vector3(8, 0, -4.8)
 rotation = Vector3(0, 0.00572670632, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_004"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_decoration_004"]
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_004" instance=ExtResource("Part_LeafLitter")]
 position = Vector3(0, 0.029, 0)
-mesh = SubResource("Source_R38")
-material_override = SubResource("Source_R37")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(3.06666666667, 3.06666666875)
+opacity = 1
+metadata/source_asset_id = "battle_leaf_litter"
+
 [node name="battle_spider_tree_decoration_005" type="Node3D" parent="Objects"]
 position = Vector3(0.4, 0, 11.6)
 rotation = Vector3(0, -0.0934215559, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_005"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_decoration_005"]
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_005" instance=ExtResource("Part_LeafLitter")]
 position = Vector3(0, 0.032, 0)
-mesh = SubResource("Source_R40")
-material_override = SubResource("Source_R39")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(3.06666666667, 3.06666666875)
+opacity = 1
+metadata/source_asset_id = "battle_leaf_litter"
+
 [node name="battle_spider_tree_decoration_006" type="Node3D" parent="Objects"]
 position = Vector3(-7.829, 0, 1.71)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_006"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_decoration_006"]
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_006" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.035, 0)
-mesh = SubResource("Source_R42")
-material_override = SubResource("Source_R41")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.762469384057
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_spider_tree_decoration_007" type="Node3D" parent="Objects"]
 position = Vector3(11.753, 0, 4.461)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_007"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_decoration_007"]
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_007" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.038, 0)
-mesh = SubResource("Source_R44")
-material_override = SubResource("Source_R43")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.599925379129
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_spider_tree_decoration_008" type="Node3D" parent="Objects"]
 position = Vector3(-3.498, 0, 2.798)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_008"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_decoration_008"]
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_008" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.041, 0)
-mesh = SubResource("Source_R46")
-material_override = SubResource("Source_R45")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.638373680291
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_spider_tree_decoration_009" type="Node3D" parent="Objects"]
 position = Vector3(-9.427, 0, -3.215)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_009"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_decoration_009"]
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_009" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.044, 0)
-mesh = SubResource("Source_R48")
-material_override = SubResource("Source_R47")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.575372563873
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_spider_tree_decoration_010" type="Node3D" parent="Objects"]
 position = Vector3(7.402, 0, -8.334)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_010"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_decoration_010"]
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_010" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.047, 0)
-mesh = SubResource("Source_R50")
-material_override = SubResource("Source_R49")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.670924259825
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_spider_tree_decoration_011" type="Node3D" parent="Objects"]
 position = Vector3(-0.116, 0, 3.158)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_011"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_decoration_011"]
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_011" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.05, 0)
-mesh = SubResource("Source_R52")
-material_override = SubResource("Source_R51")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.582683589278
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_spider_tree_decoration_012" type="Node3D" parent="Objects"]
 position = Vector3(-7.43, 0, -11.389)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_012"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_decoration_012"]
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_012" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.053, 0)
-mesh = SubResource("Source_R54")
-material_override = SubResource("Source_R53")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.578022856465
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_spider_tree_decoration_013" type="Node3D" parent="Objects"]
 position = Vector3(12.618, 0, -1.886)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_013"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_decoration_013"]
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_013" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.056, 0)
-mesh = SubResource("Source_R56")
-material_override = SubResource("Source_R55")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.637984403636
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_spider_tree_decoration_014" type="Node3D" parent="Objects"]
 position = Vector3(-14.535, 0, -5.37)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_014"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_decoration_014"]
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_014" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.059, 0)
-mesh = SubResource("Source_R58")
-material_override = SubResource("Source_R57")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.783302462373
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_spider_tree_decoration_015" type="Node3D" parent="Objects"]
 position = Vector3(-1.262, 0, 2.81)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_015"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_decoration_015"]
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_015" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.062, 0)
-mesh = SubResource("Source_R60")
-material_override = SubResource("Source_R59")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.649985701195
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_spider_tree_decoration_016" type="Node3D" parent="Objects"]
 position = Vector3(10.162, 0, -3.62)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_016"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_decoration_016"]
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_016" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.065, 0)
-mesh = SubResource("Source_R62")
-material_override = SubResource("Source_R61")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.642954284322
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_spider_tree_decoration_017" type="Node3D" parent="Objects"]
 position = Vector3(-11.081, 0, -1.678)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_017"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_decoration_017"]
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_017" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.068, 0)
-mesh = SubResource("Source_R64")
-material_override = SubResource("Source_R63")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.79069297581
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_spider_tree_decoration_018" type="Node3D" parent="Objects"]
 position = Vector3(-5.779, 0, -10.852)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_018"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_decoration_018"]
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_018" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.071, 0)
-mesh = SubResource("Source_R66")
-material_override = SubResource("Source_R65")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.56887899836
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_spider_tree_decoration_019" type="Node3D" parent="Objects"]
 position = Vector3(-9.081, 0, -12.136)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_019"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_decoration_019"]
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_019" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.074, 0)
-mesh = SubResource("Source_R68")
-material_override = SubResource("Source_R67")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.617141913957
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_spider_tree_decoration_020" type="Node3D" parent="Objects"]
 position = Vector3(9.498, 0, -1.273)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_020"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_decoration_020"]
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_020" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.077, 0)
-mesh = SubResource("Source_R70")
-material_override = SubResource("Source_R69")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.632976587039
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_spider_tree_decoration_021" type="Node3D" parent="Objects"]
 position = Vector3(-4.5, 0, -4.321)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_021"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_decoration_021"]
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_021" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.08, 0)
-mesh = SubResource("Source_R72")
-material_override = SubResource("Source_R71")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.566030016712
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_spider_tree_decoration_022" type="Node3D" parent="Objects"]
 position = Vector3(4.979, 0, 9.415)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_022"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_decoration_022"]
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_022" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.083, 0)
-mesh = SubResource("Source_R74")
-material_override = SubResource("Source_R73")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.587799610075
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_spider_tree_decoration_023" type="Node3D" parent="Objects"]
 position = Vector3(-9.234, 0, -11.538)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_023"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_decoration_023"]
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_023" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.086, 0)
-mesh = SubResource("Source_R76")
-material_override = SubResource("Source_R75")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.598296464862
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_spider_tree_decoration_024" type="Node3D" parent="Objects"]
 position = Vector3(11.242, 0, 6.786)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_024"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_decoration_024"]
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_024" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.089, 0)
-mesh = SubResource("Source_R78")
-material_override = SubResource("Source_R77")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.784680197544
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_spider_tree_decoration_025" type="Node3D" parent="Objects"]
 position = Vector3(-12.59, 0, 12.047)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_025"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_decoration_025"]
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_025" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.092, 0)
-mesh = SubResource("Source_R80")
-material_override = SubResource("Source_R79")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.726071216434
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_spider_tree_decoration_026" type="Node3D" parent="Objects"]
 position = Vector3(12.472, 0, 8.532)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_026"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_decoration_026"]
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_026" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.095, 0)
-mesh = SubResource("Source_R82")
-material_override = SubResource("Source_R81")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.750272700843
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_spider_tree_decoration_027" type="Node3D" parent="Objects"]
 position = Vector3(12.994, 0, -9.351)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_027"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_decoration_027"]
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_027" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.098, 0)
-mesh = SubResource("Source_R84")
-material_override = SubResource("Source_R83")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.692147048676
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_spider_tree_decoration_028" type="Node3D" parent="Objects"]
 position = Vector3(-7.146, 0, 10.177)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_028"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_decoration_028"]
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_028" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.101, 0)
-mesh = SubResource("Source_R86")
-material_override = SubResource("Source_R85")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.710072968067
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_spider_tree_decoration_029" type="Node3D" parent="Objects"]
 position = Vector3(-3.435, 0, -12.116)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_029"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_decoration_029"]
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_029" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.104, 0)
-mesh = SubResource("Source_R88")
-material_override = SubResource("Source_R87")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.618763880324
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_spider_tree_decoration_030" type="Node3D" parent="Objects"]
 position = Vector3(10.744, 0, 9.906)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_030"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_decoration_030"]
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_030" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.107, 0)
-mesh = SubResource("Source_R90")
-material_override = SubResource("Source_R89")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.727460258793
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_spider_tree_web_148" type="Node3D" parent="Objects"]
 position = Vector3(-7, 0, -0.5)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_web_148"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_web_148"]
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_web_148" instance=ExtResource("Part_Web")]
 position = Vector3(0, 0.11, 0)
-mesh = SubResource("Source_R92")
-material_override = SubResource("Source_R91")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(3.4375, 3.125)
+opacity = 1
+metadata/source_asset_id = "web"
+
 [node name="region" type="Area3D" parent="Objects/battle_spider_tree_web_148"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -1248,12 +891,14 @@ position = Vector3(7, 0, -3)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_web_149"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_web_149"]
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_web_149" instance=ExtResource("Part_Web")]
 position = Vector3(0, 0.113, 0)
-mesh = SubResource("Source_R95")
-material_override = SubResource("Source_R94")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(3.28125, 2.890625)
+opacity = 1
+metadata/source_asset_id = "web"
+
 [node name="region" type="Area3D" parent="Objects/battle_spider_tree_web_149"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -1266,12 +911,14 @@ position = Vector3(1.3, 0, 5.7)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_mud_150"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_mud_150"]
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_mud_150" instance=ExtResource("Part_Mud")]
 position = Vector3(0, 0.116, 0)
-mesh = SubResource("Source_R98")
-material_override = SubResource("Source_R97")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(4.21875, 2.5)
+opacity = 1
+metadata/source_asset_id = "mud"
+
 [node name="region" type="Area3D" parent="Objects/battle_spider_tree_mud_150"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -1284,12 +931,14 @@ position = Vector3(-3, 0, -5.4)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_thorns_151"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_thorns_151"]
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_thorns_151" instance=ExtResource("Part_Thorns")]
 position = Vector3(0, 0.119, 0)
-mesh = SubResource("Source_R101")
-material_override = SubResource("Source_R100")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12582781457, 1.12582781699)
+opacity = 1
+metadata/source_asset_id = "thorns"
+
 [node name="region" type="Area3D" parent="Objects/battle_spider_tree_thorns_151"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -1302,12 +951,14 @@ position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_post_battle_140"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_post_battle_140"]
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_post_battle_140" instance=ExtResource("Part_SummoningArray")]
 position = Vector3(0, 0.122, 0)
-mesh = SubResource("Source_R104")
-material_override = SubResource("Source_R103")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.10169491525, 1.10169491406)
+opacity = 1
+metadata/source_asset_id = "demo_summoning_array_idle"
+
 [node name="click_area" type="Area3D" parent="Objects/battle_spider_tree_post_battle_140"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -1332,45 +983,53 @@ position = Vector3(0, 0, -9.6)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_144"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_decoration_144"]
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_144" instance=ExtResource("Part_RootFan")]
 position = Vector3(0, 0.128, 0)
-mesh = SubResource("Source_R108")
-material_override = SubResource("Source_R107")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(3.43478259375, 3.4347826087)
+opacity = 1
+metadata/source_asset_id = "battle_root_fan"
+
 [node name="battle_spider_tree_decoration_146" type="Node3D" parent="Objects"]
 position = Vector3(-6.5, 0, -3.5)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_146"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_decoration_146"]
-position = Vector3(0, 0.131, 0)
-mesh = SubResource("Source_R110")
-material_override = SubResource("Source_R109")
-cast_shadow = 0
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_146" instance=ExtResource("Part_BrokenStump")]
+position = Vector3(0.0176470588333, 0.131, 0)
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.76470588333, 1.76470588235)
+opacity = 1
+metadata/source_asset_id = "battle_broken_stump"
+
 [node name="battle_spider_tree_tree_145" type="Node3D" parent="Objects"]
 position = Vector3(0, 0, -12.4)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_tree_145"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_tree_145"]
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_tree_145" instance=ExtResource("Part_DeadTree")]
 position = Vector3(0, 0.134, 0)
-mesh = SubResource("Source_R112")
-material_override = SubResource("Source_R111")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(13.6, 13.6)
+opacity = 1
+metadata/source_asset_id = "frontier_dead"
+
 [node name="battle_spider_tree_collision_damage_147" type="Node3D" parent="Objects"]
 position = Vector3(7, 0, 4.5)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_collision_damage_147"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_collision_damage_147"]
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_collision_damage_147" instance=ExtResource("Part_LargeRock")]
 position = Vector3(0, 0.137, 0)
-mesh = SubResource("Source_R114")
-material_override = SubResource("Source_R113")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(0.962962962963, 0.962962961702)
+opacity = 1
+metadata/source_asset_id = "demo_rock_large"
+
 [node name="collision" type="StaticBody3D" parent="Objects/battle_spider_tree_collision_damage_147"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)

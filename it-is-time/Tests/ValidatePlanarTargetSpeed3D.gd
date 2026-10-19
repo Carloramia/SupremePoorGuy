@@ -14,7 +14,6 @@ func velocity(movement: Node) -> float:
 		mass += body.mass
 	return total/maxf(mass,0.001)
 func run() -> void:
-	root.get_node("RuntimeConsole").auto_getlogs_enabled = false
 	var ground := StaticBody3D.new()
 	var shape_node := CollisionShape3D.new()
 	var box := BoxShape3D.new()
@@ -29,17 +28,13 @@ func run() -> void:
 	root.add_child(actor)
 	var generator = actor.get_node("CreatureGenerator")
 	generator.unsymmetrie = 0.0
-	generator.neck_number = 1
+	generator.neck_number = 0
 	generator._random.seed = 43
 	check(actor.generate_creature(),"Slide fixture must generate")
 	var movement = actor.get_node("GeneratedLegStepMovementController3D")
-	var commands := preload("res://Tests/InputMovementCommandSource.gd").new()
-	actor.add_child(commands)
-	movement.command_source = commands
 	var data = movement.slow_gait_data.duplicate()
 	movement.slow_gait_data = data
 	for frame in range(180): await physics_frame
-	check(actor.is_combat_alive(),"Planar fixture must retain a connected Head and Torso")
 	for target: float in [1.0,3.0,5.0]:
 		data.target_speed = target
 		data.gallop_enabled = target != 1.0
@@ -56,10 +51,9 @@ func run() -> void:
 						sum += (body.linear_velocity.z if action in ["Down","Up"] else body.linear_velocity.x)*body.mass
 						mass += body.mass
 					mean += sum/maxf(mass,0.001)/60.0
-			var axis_speed: float = data.target_z_speed if action in ["Down","Up"] else target
-			var expected := axis_speed if action in ["Down","Right"] else -axis_speed
-			check(absf(mean-expected) <= maxf(axis_speed*0.12,0.12),"Slide speed must track its axis target action=%s target=%s actual=%s" % [action,expected,mean])
-			check(is_equal_approx(float(movement._contact_drive_diagnostics.target_velocity.z if action in ["Down","Up"] else movement._contact_drive_diagnostics.target_velocity.x),expected),"Desired slide speed must use independent axis targets in walking/manual/gallop modes")
+			var expected := target if action in ["Down","Right"] else -target
+			check(absf(mean-expected) <= maxf(target*0.12,0.12),"Slide speed must track TargetSpeed action=%s target=%s actual=%s" % [action,expected,mean])
+			check(is_equal_approx(float(movement._contact_drive_diagnostics.target_velocity.z if action in ["Down","Up"] else movement._contact_drive_diagnostics.target_velocity.x),expected),"Desired slide speed must use TargetSpeed in walking/manual/gallop modes")
 			check(movement._active_steps.is_empty(),"Planar movement must never start physical stepping")
 			var animated := false
 			for row: Dictionary in actor.get_node("PlanarConstraints").part_diagnostics:

@@ -6,9 +6,8 @@
 [ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/NavigationNPCSpawner3D.tscn" id="5_npc_spawner"]
 [ext_resource type="PackedScene" path="res://Scenes/Input/TerrainCursor3D.tscn" id="6_terrain_cursor"]
 [ext_resource type="PackedScene" path="res://Scenes/VFX/TerrainArcIndicator3D.tscn" id="7_terrain_arc"]
-[ext_resource type="Script" uid="uid://dw288em073ls0" path="res://Scripts/Creatures/Modules/CreatureModuleAttachment.gd" id="9_cuare"]
-[ext_resource type="PackedScene" uid="uid://kqb762mb5qvy" path="res://Scenes/Creatures/Characters/Generate_Bird_NPC.tscn" id="9_qhub5"]
-[ext_resource type="PackedScene" uid="uid://dstgtopkigikh" path="res://Scenes/Creatures/Characters/Character_Test_NPC.tscn" id="10_cuare"]
+[ext_resource type="PackedScene" uid="uid://dstgtopkigikh" path="res://Scenes/Creatures/Characters/Character_Test_NPC.tscn" id="9_a7u0l"]
+[ext_resource type="PackedScene" path="res://Scenes/Creatures/Characters/Human/Armed/Generate_Human_Spear1_NPC.tscn" id="9_qhub5"]
 [ext_resource type="Script" uid="uid://bubsk21aew8vp" path="res://Scripts/Debug/TestLevelPause.gd" id="10_pause"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_flat_ground"]
@@ -56,10 +55,20 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 43.19173, 0)
 light_energy = 5.0
 omni_range = 500.0
 
-[node name="CharacterTestNPC" parent="." unique_id=418755916 instance=ExtResource("10_cuare")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 47.01738, 1.38, -31.027832)
+[node name="CharacterTestNPC" parent="." unique_id=418755916 instance=ExtResource("9_a7u0l")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58.964508, 1.3799922, -5.9358826)
 faction_id = 2
 
-[node name="Generate_Bird_NPC" parent="." unique_id=46177130 instance=ExtResource("9_qhub5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.142578, 1.1611009, -21.62915)
-module_attachments = Array[ExtResource("9_cuare")]([])
+[node name="GenerateHumanSpear1NPC" parent="." unique_id=1956982806 instance=ExtResource("9_qhub5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2487106, 1.7423835, -5.593872)
+module_attachments = null
+show_framework = Callable()
+planar_constraints_enabled = null
+neck_linear_springs_enabled = 0.0
+neck_joint_linear_slack = 0.0
+neck_linear_spring_stiffness = null
+neck_linear_spring_damping = false
+limb_joint_linear_slack = 80.0
+segment_rotation_constraints_enabled = 0.0
+segment_transverse_constraints_enabled = null
+segment_transverse_slack = false

@@ -192,8 +192,7 @@ func run() -> void:
 		var actual_spacing_low := INF
 		var actual_spacing_high := -INF
 		var initial: Vector3 = m.get_control_anchor().global_position
-		var expected_speed := preload("res://Scripts/Creatures/AxisMovement3D.gd").target_velocity(command.direction,m.motion_data.target_speed,m.motion_data.target_z_speed).dot(command.direction.normalized())
-		var duration := ceili((m._belly.size()*1.5*scenario.x+30.0)/maxf(expected_speed,0.1)*60.0)
+		var duration := ceili((m._belly.size()*1.5*scenario.x/5.0+6.0)*60.0)
 		for tick: int in duration:
 			await physics_frame
 			if not m._path_ready: continue
@@ -237,7 +236,7 @@ func run() -> void:
 		check(debug.points.size() == 128 and debug.excludes.size() == m._parts.size()+1,"Bounded debug snapshot includes the route and excludes every owned body")
 		distance = Vector3(m.get_control_anchor().global_position-initial).dot(command.direction)/2.0
 		print("SNAKE_WORLD_ROUTE scale=",scenario.x," yaw=",scenario.y," speed=",distance," max_error=",max_error," cross_track=",max_cross_track," permitted_cross_track=",max_target_cross_track," marker_crossings=",crossed.size()," max_slip=",max_slip," head_height=",head.global_position.y," rest_height=",height," diag=",m.get_snake_motion_diagnostics(false))
-		check(distance > expected_speed*0.8 and distance < expected_speed*1.2,"World route must preserve the target for its world movement axis")
+		check(distance > 4.0 and distance < 6.0,"World route preserves approximately 5 units/s forward travel")
 		check(max_error < .2*scenario.x,"Ground segments accurately follow the shared route")
 		check(max_cross_track < max_target_cross_track+.05*scenario.x,"Physical segments follow the S curve plus the permitted local-axis overlay")
 		if scenario.x == 1.0: check(crossed.size() == m._belly.size(),"Every ground part passes the leader's marked route position")

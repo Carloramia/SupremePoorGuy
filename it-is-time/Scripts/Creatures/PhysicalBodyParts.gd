@@ -393,11 +393,18 @@ func apply_damage(amount: float, source: Node = null) -> float:
 ## Final HP settlement for an already calculated share; bypasses further redistribution.
 func apply_local_damage(amount: float, source: Node = null) -> float:
 	if get_meta(&"summon_presentation",false): return 0.0
-	if is_broken or amount <= 0.0:
+	if is_broken or not is_finite(amount) or amount <= 0.0:
 		return 0.0
+	var owner := _summon_owner(self)
+	var defense: Node = owner.get_meta(&"summon_effects",null) if owner != null else null
+	if is_instance_valid(defense): amount=defense.filter_damage(self,amount)
+	if amount<=0.0: return 0.0
 	var applied := minf(amount, current_hp)
 	current_hp = maxf(current_hp - applied, 0.0)
 	damaged.emit(applied, current_hp, source)
+	var attacker := _summon_owner(source)
+	var effects: Node = attacker.get_meta(&"summon_effects",null) if attacker != null else null
+	if is_instance_valid(effects): effects.on_dealt_damage(self,applied,source==effects)
 	if applied > 0.0: CombatAudio3D.play_at(self, &"hit")
 	if is_inside_tree():
 		call_deferred("_spawn_damage_number", applied, global_position)
@@ -409,6 +416,15 @@ func apply_local_damage(amount: float, source: Node = null) -> float:
 	if is_zero_approx(current_hp):
 		break_part(source)
 	return applied
+
+static func _summon_owner(source: Node) -> Node3D:
+	if not is_instance_valid(source): return null
+	if source is SampleWeapon3D and is_instance_valid(source.wielder_character): return source.wielder_character
+	var node := source
+	while node!=null:
+		if node.has_method("get_faction_id") and node.has_method("is_combat_alive"): return node as Node3D
+		node=node.get_parent()
+	return null
 
 func _spawn_damage_number(amount: float, hit_position: Vector3) -> void:
 	if amount <= 0.0 or not is_inside_tree():
@@ -443,6 +459,9 @@ func break_part(source: Node = null) -> void:
 	if get_meta(&"summon_presentation",false): return
 	if is_broken:
 		return
+	var actor := _summon_owner(self)
+	var effects: Node = actor.get_meta(&"summon_effects",null) if actor!=null else null
+	if is_instance_valid(effects): effects.capture_living_losses()
 	current_hp = 0.0
 	is_broken = true
 	_start_broken_cleanup()

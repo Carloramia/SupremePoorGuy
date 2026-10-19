@@ -1,4 +1,16 @@
-[gd_scene load_steps=171 format=3]
+[gd_scene load_steps=101 format=3]
+
+[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/Props/CaveMouth.tscn" id="Part_CaveMouth"]
+
+[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/GroundDecorations/DryGrassPatch.tscn" id="Part_DryGrassPatch"]
+
+[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/GroundDecorations/GrassTuft.tscn" id="Part_GrassTuft"]
+
+[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/Props/LargeRock.tscn" id="Part_LargeRock"]
+
+[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/GroundDecorations/SummoningArray.tscn" id="Part_SummoningArray"]
+
+[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/GroundEffects/Thorns.tscn" id="Part_Thorns"]
 
 [ext_resource type="Script" path="res://Modules/FrontierDelivery/Scripts/Map/BattleMap3D.gd" id="BattleScript"]
 [ext_resource type="Shader" path="res://Modules/FrontierDelivery/Scripts/Map/BattleGround.gdshader" id="GroundShader"]
@@ -28,12 +40,6 @@
 [ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/ce3579ee7a71ce4eefe94629.svg" id="Texture_28"]
 [ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/ef3ada7d4132def235064a5e.svg" id="Texture_29"]
 
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/360d732820bc29d798b4e37d.svg" id="Source_Texture_12"]
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/e7d739cab1a9dc214a6e832e.png" id="Source_Texture_13"]
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/1c7023eabb8afa18070342d8.png" id="Source_Texture_14"]
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/ff90ec506af73e568f154784.png" id="Source_Texture_15"]
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/95be016ab82e0eca2fb2dfb5.svg" id="Source_Texture_16"]
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/e9e45c44bd0772cb1d39f1ae.png" id="Source_Texture_17"]
 [sub_resource type="StandardMaterial3D" id="R0"]
 shading_mode = 0
 albedo_color = Color(0.576470588, 0.568627451, 0.415686275, 1)
@@ -346,391 +352,6 @@ ambient_light_source = 3
 ambient_light_color = Color(1,1,1,1)
 ambient_light_energy = 0.8
 
-[sub_resource type="StandardMaterial3D" id="Source_R31"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_12")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R32"]
-size = Vector2(9.2, 4.6)
-
-[sub_resource type="StandardMaterial3D" id="Source_R33"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_12")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R34"]
-size = Vector2(9.2, 4.6)
-
-[sub_resource type="StandardMaterial3D" id="Source_R35"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_12")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R36"]
-size = Vector2(9.2, 4.6)
-
-[sub_resource type="StandardMaterial3D" id="Source_R37"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_12")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R38"]
-size = Vector2(9.2, 4.6)
-
-[sub_resource type="StandardMaterial3D" id="Source_R39"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_12")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R40"]
-size = Vector2(9.2, 4.6)
-
-[sub_resource type="StandardMaterial3D" id="Source_R41"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.561201556)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R42"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R43"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.739981432)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R44"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R45"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.655176498)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R46"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R47"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.771471293)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R48"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R49"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.622488521)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R50"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R51"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.607793401)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R52"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R53"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.617871958)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R54"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R55"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.604986436)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R56"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R57"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.667849981)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R58"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R59"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.702948901)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R60"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R61"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.631374698)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R62"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R63"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.650618106)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R64"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R65"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.613315593)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R66"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R67"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.663502242)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R68"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R69"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.752421179)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R70"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R71"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.58430359)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R72"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R73"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.756836221)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R74"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R75"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.561061466)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R76"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R77"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.772505294)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R78"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R79"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.612619931)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R80"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R81"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.621555333)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R82"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R83"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.697383952)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R84"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R85"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.649455143)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R86"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R87"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_13")
-albedo_color = Color(1,1,1,0.701735532)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R88"]
-size = Vector2(0.35, 0.39516129)
-
-[sub_resource type="StandardMaterial3D" id="Source_R89"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_14")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R90"]
-size = Vector2(4.4, 2.22913907)
-
-[sub_resource type="StandardMaterial3D" id="Source_R92"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_15")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R93"]
-size = Vector2(5.2, 2.82033898)
-
-[sub_resource type="StandardMaterial3D" id="Source_R96"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_16")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R97"]
-size = Vector2(7.3, 5.246875)
-
-[sub_resource type="StandardMaterial3D" id="Source_R98"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_17")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R99"]
-size = Vector2(3.4, 2.95925926)
-
-[sub_resource type="StandardMaterial3D" id="Source_R101"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_17")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R102"]
-size = Vector2(2.7, 2.35)
-
-[sub_resource type="StandardMaterial3D" id="Source_R104"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Source_Texture_17")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="Source_R105"]
-size = Vector2(2.5, 2.17592593)
-
 [node name="battle_wolf_savanna_site_2" type="Node3D"]
 script = ExtResource("BattleScript")
 map_id = "battle_wolf_savanna_site_2"
@@ -849,331 +470,391 @@ position = Vector3(-7, 0, -7.6)
 rotation = Vector3(0, 0.261672354, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_site_2_object_001"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna_site_2_object_001"]
+[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_site_2_object_001" instance=ExtResource("Part_DryGrassPatch")]
 position = Vector3(0, 0.02, 0)
-mesh = SubResource("Source_R32")
-material_override = SubResource("Source_R31")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(3.06666666667, 3.06666666667)
+opacity = 1
+metadata/source_asset_id = "battle_dry_patch"
+
 [node name="battle_wolf_savanna_site_2_object_002" type="Node3D" parent="Objects"]
 position = Vector3(6.8, 0, 6.4)
 rotation = Vector3(0, 0.221130721, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_site_2_object_002"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna_site_2_object_002"]
+[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_site_2_object_002" instance=ExtResource("Part_DryGrassPatch")]
 position = Vector3(0, 0.023, 0)
-mesh = SubResource("Source_R34")
-material_override = SubResource("Source_R33")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(3.06666666667, 3.06666666667)
+opacity = 1
+metadata/source_asset_id = "battle_dry_patch"
+
 [node name="battle_wolf_savanna_site_2_object_003" type="Node3D" parent="Objects"]
 position = Vector3(-9, 0, 2.4)
 rotation = Vector3(0, 0.0399165589, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_site_2_object_003"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna_site_2_object_003"]
+[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_site_2_object_003" instance=ExtResource("Part_DryGrassPatch")]
 position = Vector3(0, 0.026, 0)
-mesh = SubResource("Source_R36")
-material_override = SubResource("Source_R35")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(3.06666666667, 3.06666666667)
+opacity = 1
+metadata/source_asset_id = "battle_dry_patch"
+
 [node name="battle_wolf_savanna_site_2_object_004" type="Node3D" parent="Objects"]
 position = Vector3(8, 0, -4.8)
 rotation = Vector3(0, 0.147574174, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_site_2_object_004"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna_site_2_object_004"]
+[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_site_2_object_004" instance=ExtResource("Part_DryGrassPatch")]
 position = Vector3(0, 0.029, 0)
-mesh = SubResource("Source_R38")
-material_override = SubResource("Source_R37")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(3.06666666667, 3.06666666667)
+opacity = 1
+metadata/source_asset_id = "battle_dry_patch"
+
 [node name="battle_wolf_savanna_site_2_object_005" type="Node3D" parent="Objects"]
 position = Vector3(0.4, 0, 11.6)
 rotation = Vector3(0, -0.00826467145, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_site_2_object_005"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna_site_2_object_005"]
+[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_site_2_object_005" instance=ExtResource("Part_DryGrassPatch")]
 position = Vector3(0, 0.032, 0)
-mesh = SubResource("Source_R40")
-material_override = SubResource("Source_R39")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(3.06666666667, 3.06666666667)
+opacity = 1
+metadata/source_asset_id = "battle_dry_patch"
+
 [node name="battle_wolf_savanna_site_2_object_006" type="Node3D" parent="Objects"]
 position = Vector3(8.632, 0, -1.124)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_site_2_object_006"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna_site_2_object_006"]
+[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_site_2_object_006" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.035, 0)
-mesh = SubResource("Source_R42")
-material_override = SubResource("Source_R41")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.561201555729
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_wolf_savanna_site_2_object_007" type="Node3D" parent="Objects"]
 position = Vector3(11.657, 0, -10.748)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_site_2_object_007"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna_site_2_object_007"]
+[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_site_2_object_007" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.038, 0)
-mesh = SubResource("Source_R44")
-material_override = SubResource("Source_R43")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.739981432371
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_wolf_savanna_site_2_object_008" type="Node3D" parent="Objects"]
 position = Vector3(-12.848, 0, 4.247)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_site_2_object_008"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna_site_2_object_008"]
+[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_site_2_object_008" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.041, 0)
-mesh = SubResource("Source_R46")
-material_override = SubResource("Source_R45")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.655176498348
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_wolf_savanna_site_2_object_009" type="Node3D" parent="Objects"]
 position = Vector3(9.169, 0, -7.057)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_site_2_object_009"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna_site_2_object_009"]
+[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_site_2_object_009" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.044, 0)
-mesh = SubResource("Source_R48")
-material_override = SubResource("Source_R47")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.77147129335
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_wolf_savanna_site_2_object_010" type="Node3D" parent="Objects"]
 position = Vector3(-12.837, 0, 11.936)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_site_2_object_010"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna_site_2_object_010"]
+[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_site_2_object_010" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.047, 0)
-mesh = SubResource("Source_R50")
-material_override = SubResource("Source_R49")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.622488520794
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_wolf_savanna_site_2_object_011" type="Node3D" parent="Objects"]
 position = Vector3(-7.252, 0, 9.275)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_site_2_object_011"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna_site_2_object_011"]
+[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_site_2_object_011" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.05, 0)
-mesh = SubResource("Source_R52")
-material_override = SubResource("Source_R51")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.607793401441
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_wolf_savanna_site_2_object_012" type="Node3D" parent="Objects"]
 position = Vector3(-4.956, 0, 9.475)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_site_2_object_012"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna_site_2_object_012"]
+[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_site_2_object_012" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.053, 0)
-mesh = SubResource("Source_R54")
-material_override = SubResource("Source_R53")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.617871957816
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_wolf_savanna_site_2_object_013" type="Node3D" parent="Objects"]
 position = Vector3(11.879, 0, 6.397)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_site_2_object_013"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna_site_2_object_013"]
+[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_site_2_object_013" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.056, 0)
-mesh = SubResource("Source_R56")
-material_override = SubResource("Source_R55")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.604986436295
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_wolf_savanna_site_2_object_014" type="Node3D" parent="Objects"]
 position = Vector3(3.844, 0, -9.827)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_site_2_object_014"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna_site_2_object_014"]
+[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_site_2_object_014" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.059, 0)
-mesh = SubResource("Source_R58")
-material_override = SubResource("Source_R57")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.667849981234
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_wolf_savanna_site_2_object_015" type="Node3D" parent="Objects"]
 position = Vector3(9.556, 0, -8.768)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_site_2_object_015"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna_site_2_object_015"]
+[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_site_2_object_015" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.062, 0)
-mesh = SubResource("Source_R60")
-material_override = SubResource("Source_R59")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.702948901128
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_wolf_savanna_site_2_object_016" type="Node3D" parent="Objects"]
 position = Vector3(-1.538, 0, 5.998)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_site_2_object_016"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna_site_2_object_016"]
+[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_site_2_object_016" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.065, 0)
-mesh = SubResource("Source_R62")
-material_override = SubResource("Source_R61")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.631374698124
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_wolf_savanna_site_2_object_017" type="Node3D" parent="Objects"]
 position = Vector3(4.746, 0, -1.105)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_site_2_object_017"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna_site_2_object_017"]
+[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_site_2_object_017" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.068, 0)
-mesh = SubResource("Source_R64")
-material_override = SubResource("Source_R63")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.650618106011
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_wolf_savanna_site_2_object_018" type="Node3D" parent="Objects"]
 position = Vector3(-4.379, 0, -8.179)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_site_2_object_018"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna_site_2_object_018"]
+[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_site_2_object_018" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.071, 0)
-mesh = SubResource("Source_R66")
-material_override = SubResource("Source_R65")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.613315592852
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_wolf_savanna_site_2_object_019" type="Node3D" parent="Objects"]
 position = Vector3(2.42, 0, -2)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_site_2_object_019"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna_site_2_object_019"]
+[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_site_2_object_019" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.074, 0)
-mesh = SubResource("Source_R68")
-material_override = SubResource("Source_R67")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.663502242422
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_wolf_savanna_site_2_object_020" type="Node3D" parent="Objects"]
 position = Vector3(0.863, 0, 7.056)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_site_2_object_020"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna_site_2_object_020"]
+[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_site_2_object_020" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.077, 0)
-mesh = SubResource("Source_R70")
-material_override = SubResource("Source_R69")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.752421178786
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_wolf_savanna_site_2_object_021" type="Node3D" parent="Objects"]
 position = Vector3(-3.87, 0, 0.597)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_site_2_object_021"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna_site_2_object_021"]
+[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_site_2_object_021" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.08, 0)
-mesh = SubResource("Source_R72")
-material_override = SubResource("Source_R71")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.584303589624
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_wolf_savanna_site_2_object_022" type="Node3D" parent="Objects"]
 position = Vector3(-10.148, 0, -11.285)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_site_2_object_022"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna_site_2_object_022"]
+[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_site_2_object_022" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.083, 0)
-mesh = SubResource("Source_R74")
-material_override = SubResource("Source_R73")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.756836220788
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_wolf_savanna_site_2_object_023" type="Node3D" parent="Objects"]
 position = Vector3(-9.436, 0, 10.192)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_site_2_object_023"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna_site_2_object_023"]
+[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_site_2_object_023" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.086, 0)
-mesh = SubResource("Source_R76")
-material_override = SubResource("Source_R75")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.561061465606
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_wolf_savanna_site_2_object_024" type="Node3D" parent="Objects"]
 position = Vector3(4.206, 0, -13.364)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_site_2_object_024"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna_site_2_object_024"]
+[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_site_2_object_024" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.089, 0)
-mesh = SubResource("Source_R78")
-material_override = SubResource("Source_R77")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.772505294007
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_wolf_savanna_site_2_object_025" type="Node3D" parent="Objects"]
 position = Vector3(2.577, 0, -5.042)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_site_2_object_025"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna_site_2_object_025"]
+[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_site_2_object_025" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.092, 0)
-mesh = SubResource("Source_R80")
-material_override = SubResource("Source_R79")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.612619930977
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_wolf_savanna_site_2_object_026" type="Node3D" parent="Objects"]
 position = Vector3(9.382, 0, -3.221)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_site_2_object_026"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna_site_2_object_026"]
+[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_site_2_object_026" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.095, 0)
-mesh = SubResource("Source_R82")
-material_override = SubResource("Source_R81")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.621555332896
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_wolf_savanna_site_2_object_027" type="Node3D" parent="Objects"]
 position = Vector3(0.658, 0, 11.027)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_site_2_object_027"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna_site_2_object_027"]
+[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_site_2_object_027" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.098, 0)
-mesh = SubResource("Source_R84")
-material_override = SubResource("Source_R83")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.697383952233
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_wolf_savanna_site_2_object_028" type="Node3D" parent="Objects"]
 position = Vector3(-5.15, 0, -2.101)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_site_2_object_028"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna_site_2_object_028"]
+[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_site_2_object_028" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.101, 0)
-mesh = SubResource("Source_R86")
-material_override = SubResource("Source_R85")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.649455143371
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_wolf_savanna_site_2_object_029" type="Node3D" parent="Objects"]
 position = Vector3(-9.889, 0, 1.42)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_site_2_object_029"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna_site_2_object_029"]
+[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_site_2_object_029" instance=ExtResource("Part_GrassTuft")]
 position = Vector3(0, 0.104, 0)
-mesh = SubResource("Source_R88")
-material_override = SubResource("Source_R87")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.12903225806, 1.12903225714)
+opacity = 0.701735531935
+metadata/source_asset_id = "demo_grass_tuft"
+
 [node name="battle_wolf_savanna_site_2_object_050" type="Node3D" parent="Objects"]
 position = Vector3(-8, 0, -3)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_site_2_object_050"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna_site_2_object_050"]
+[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_site_2_object_050" instance=ExtResource("Part_Thorns")]
 position = Vector3(0, 0.107, 0)
-mesh = SubResource("Source_R90")
-material_override = SubResource("Source_R89")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.45695364238, 1.45695364052)
+opacity = 1
+metadata/source_asset_id = "thorns"
+
 [node name="region" type="Area3D" parent="Objects/battle_wolf_savanna_site_2_object_050"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -1186,12 +867,14 @@ position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_site_2_object_045"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna_site_2_object_045"]
+[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_site_2_object_045" instance=ExtResource("Part_SummoningArray")]
 position = Vector3(0, 0.11, 0)
-mesh = SubResource("Source_R93")
-material_override = SubResource("Source_R92")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.10169491525, 1.10169491406)
+opacity = 1
+metadata/source_asset_id = "demo_summoning_array_idle"
+
 [node name="click_area" type="Area3D" parent="Objects/battle_wolf_savanna_site_2_object_045"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -1216,23 +899,27 @@ position = Vector3(2, 0, -12.2)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_site_2_object_046"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna_site_2_object_046"]
-position = Vector3(0, 0.116, 0)
-mesh = SubResource("Source_R97")
-material_override = SubResource("Source_R96")
-cast_shadow = 0
+[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_site_2_object_046" instance=ExtResource("Part_CaveMouth")]
+position = Vector3(-0.0684375, 0.116, 0)
 visible = true
+collision_enabled = false
+image_scale = Vector2(2.28125, 2.28125)
+opacity = 1
+metadata/source_asset_id = "battle_cave_mouth"
+
 [node name="battle_wolf_savanna_site_2_object_047" type="Node3D" parent="Objects"]
 position = Vector3(-3.5, 0, -3.9)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_site_2_object_047"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna_site_2_object_047"]
+[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_site_2_object_047" instance=ExtResource("Part_LargeRock")]
 position = Vector3(0, 0.119, 0)
-mesh = SubResource("Source_R99")
-material_override = SubResource("Source_R98")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1.25925925926, 1.25925925957)
+opacity = 1
+metadata/source_asset_id = "demo_rock_large"
+
 [node name="collision" type="StaticBody3D" parent="Objects/battle_wolf_savanna_site_2_object_047"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -1247,12 +934,14 @@ position = Vector3(5, 0, 4.5)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_site_2_object_048"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna_site_2_object_048"]
+[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_site_2_object_048" instance=ExtResource("Part_LargeRock")]
 position = Vector3(0, 0.122, 0)
-mesh = SubResource("Source_R102")
-material_override = SubResource("Source_R101")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(1, 1)
+opacity = 1
+metadata/source_asset_id = "demo_rock_large"
+
 [node name="collision" type="StaticBody3D" parent="Objects/battle_wolf_savanna_site_2_object_048"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -1267,12 +956,14 @@ position = Vector3(8.6, 0, 1.6)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_site_2_object_049"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna_site_2_object_049"]
+[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_site_2_object_049" instance=ExtResource("Part_LargeRock")]
 position = Vector3(0, 0.125, 0)
-mesh = SubResource("Source_R105")
-material_override = SubResource("Source_R104")
-cast_shadow = 0
 visible = true
+collision_enabled = false
+image_scale = Vector2(0.925925925926, 0.92592592766)
+opacity = 1
+metadata/source_asset_id = "demo_rock_large"
+
 [node name="collision" type="StaticBody3D" parent="Objects/battle_wolf_savanna_site_2_object_049"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)

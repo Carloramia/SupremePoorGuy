@@ -15,7 +15,7 @@ var world_canvas: Control
 var battle_scene: Node3D
 var battle_container: SubViewportContainer
 var battle_viewport: SubViewport
-var fog_rect: Control
+var fog_rect: ColorRect
 var fog_material: ShaderMaterial
 var fog_image: Image
 var fog_texture: ImageTexture
@@ -144,7 +144,6 @@ func _layout() -> void:
 		fog_material.set_shader_parameter("view_size",size)
 		fog_material.set_shader_parameter("camera",camera)
 		fog_material.set_shader_parameter("zoom",zoom)
-	if _hex_fog!=null: _hex_fog.resize()
 	hud.queue_redraw()
 
 func fit_map() -> void:
@@ -176,8 +175,7 @@ func _gui_input(event: InputEvent) -> void:
 			var point:=screen_to_world(event.position)
 			var object:=pick(point)
 			if not object.is_empty():
-				var entry := Catalog.world_point(object,Catalog.v(object.get("interaction_offset",[0,0])))
-				if runtime.visibility(entry)!="visible":
+				if runtime.visibility(Catalog.v(object.position))!="visible":
 					feedback.emit("已知地点需要探索到当前视野内才能交互。")
 				elif object.type=="destructible":request_obstacle(object.id)
 				else:request_location(object.id)
@@ -471,7 +469,7 @@ func _refresh_objects() -> void:
 			if not _remembered_nodes.has(object.id):
 				var copy := world_scene.get_node("Objects/"+str(object.id)).duplicate() as Node2D
 				copy.z_index=0
-				copy.modulate=Color(0.93,0.93,0.93,0.94)
+				copy.modulate=Color(0.65,0.65,0.65,0.8)
 				known_markers.add_child(copy)
 				_remembered_nodes[object.id]=copy
 			_remembered_nodes[object.id].visible=true

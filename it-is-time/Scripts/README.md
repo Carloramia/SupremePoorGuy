@@ -3,6 +3,7 @@
 | 目录 | 主要职责 | 系统说明 |
 |---|---|---|
 | [Application](Application) | 应用宿主、会话、Factory、头像、地图/战斗适配、部署、新手待办 | [应用](../Docs/Systems/Application/README.md) |
+| [Events](Events) | 剧情目录、纯逻辑事务和现有UI适配；不另建玩家槽位 | [剧情事件](../Docs/Systems/StoryEvents/README.md) |
 | [Creatures](Creatures) | 身体、生成、密度、连接、物种控制、AI、恢复与攻击 | [生物](../Docs/Systems/Creatures/README.md)、[运动与 AI](../Docs/Systems/MovementAI/README.md) |
 | [Combat](Combat) | Arm 控制组、挥舞、持武器姿态与 Bow 射击 | [战斗](../Docs/Systems/Combat/README.md) |
 | [Damage](Damage) | 全局伤害数据与 Autoload 服务 | [伤害链](../Docs/Systems/Combat/README.md) |

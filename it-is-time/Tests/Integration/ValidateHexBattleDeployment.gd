@@ -25,7 +25,7 @@ func run() -> void:
 		var adapter := ADAPTER.new()
 		var built: bool=adapter.build(host,party)
 		if not built: failures.append(str(camp.id)+": "+str(host.last_error))
-		elif host._deployment.size()!=4 or host._enemy_positions.size()!=host._enemy_initial.size() or host.capacity_status(1).used>host.capacity_settings.total_capacity: failures.append(str(camp.id)+": slot count mismatch")
+		elif host._deployment.size()!=4 or host._enemy_positions.size()!=int(camp.enemy_count): failures.append(str(camp.id)+": slot count mismatch")
 		print("HEX_BATTLE_PLACEMENT ",camp.id," ",built," enemies=",host._enemy_positions.size()," reason=",host.last_error)
 		if is_instance_valid(host._geometry): host._geometry.free(); host._geometry=null
 		host.free()

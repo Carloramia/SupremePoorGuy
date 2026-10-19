@@ -7,9 +7,10 @@ signal new_player_tasks_completed(task_ids: Array)
 const DEFAULT_WORLD_TIME = preload("res://Resources/Application/DefaultWorldTime.tres")
 const NEW_PLAYER_TASKS = preload("res://Scripts/Application/NewPlayerTasks.gd")
 const FACTORY = preload("res://Scripts/Application/CreatureFactory.gd")
-const OPENING_EVENT_ID := "QST_MAIN_001_001"
-static var _opening_definition: Dictionary = {}
-const SUPPORTED_RUNES := ["health","armor","attack","iron","bloodblade","vitality","fang","haste"]
+const CONTENT = preload("res://Scripts/Summoning/SummonContent.gd")
+const STORIES = preload("res://Scripts/Events/StoryService.gd")
+var story_parameters: Dictionary = {}
+const SUPPORTED_RUNES := ["health","armor","attack","bloodblade","haste","burn","limb-fortitude","giant","multiply"]
 const DELIVERY_RUNTIME = preload("res://Modules/FrontierDelivery/Scripts/Map/WorldMapRuntime.gd")
 const DELIVERY_MAP := "frontier_layout"
 var integration_logging := false
@@ -19,90 +20,15 @@ var _needs_schema_backup := false
 var _needs_damage_backup := false
 var task_definitions: Array = NEW_PLAYER_TASKS.DEFINITIONS.duplicate(true)
 var world_time_settings: Resource = DEFAULT_WORLD_TIME
-var battle_capacity_settings: Resource = preload("res://Resources/Application/DefaultBattleCapacity.tres")
 var _saved_world_time: Dictionary = {}
-
-static func opening_event_definition() -> Dictionary:
-	if _opening_definition.is_empty():
-		var parsed: Variant=JSON.parse_string(FileAccess.get_file_as_string("res://Resources/Application/OpeningAppointment.json"))
-		if parsed is Dictionary: _opening_definition=parsed
-	return _opening_definition
-
-func prepare_opening_event() -> void:
-	# The new-game transaction saves this before loading the map, so interrupted entries resume.
-	data.opening_event={"id":OPENING_EVENT_ID,"line":0,"completed":false}
-
-func opening_event_pending() -> bool:
-	return data.has("opening_event") and not data.opening_event.completed
-
-func advance_opening_event() -> bool:
-	if not opening_event_pending(): return false
-	var before := data.duplicate(true)
-	var event := opening_event_definition()
-	if int(data.opening_event.line)<event.lines.size()-1:
-		data.opening_event.line+=1
-	else:
-		data.opening_event.completed=true
-		data.opening_event.credential=event.credential.duplicate(true)
-	if save(): return true
-	data=before
-	return false
-
-static func _valid_opening_event(value: Dictionary) -> bool:
-	if not value.has("opening_event"): return true
-	var progress: Variant=value.opening_event
-	if not progress is Dictionary or progress.get("id")!=OPENING_EVENT_ID or not progress.get("completed") is bool: return false
-	var line: Variant=progress.get("line")
-	if not (line is int or line is float) or not is_finite(float(line)) or float(line)!=floorf(float(line)): return false
-	var event := opening_event_definition()
-	if event.is_empty() or line<0 or line>=event.lines.size(): return false
-	if progress.completed: return int(line)==event.lines.size()-1 and progress.get("credential")==event.credential
-	return not progress.has("credential")
-
-func party_capacity() -> Dictionary:
-	return battle_capacity_settings.evaluate(monsters("team"))
-
-func initial_party_capacity() -> Dictionary:
-	var selected: Dictionary = battle_capacity_settings.initial_roster(monsters("team"))
-	var result: Dictionary = battle_capacity_settings.evaluate(selected.records)
-	if not selected.error.is_empty(): result.error = selected.error
-	elif selected.records.is_empty(): result.error = "队伍中没有可在容量上限内出战的生物。"
-	return result
-
-func register_battle_reinforcement(battle_id: String, id: String) -> bool:
-	if data.battle.get("battle_id") != battle_id or data.battle.get("phase") != "loading":
-		last_error = "增援与当前战斗不匹配。"; return false
-	var creature := monster_by_id(id)
-	if creature.is_empty() or creature.position not in ["team","warehouse"]:
-		last_error = "增援生物已不存在或不可调用。"; return false
-	if id in data.battle.party_ids: return true
-	var before := data.duplicate(true)
-	data.battle.party_ids.append(id)
-	if save(): return true
-	data = before
-	return false
-
-func record_battle_deaths(battle_id: String, ids: Array) -> bool:
-	if ids.is_empty(): return true
-	if data.battle.get("battle_id") != battle_id or data.battle.get("phase") != "loading":
-		last_error = "阵亡记录与当前战斗不匹配。"; return false
-	var dead: Array = data.battle.get("casualties",[]).duplicate()
-	for id: Variant in ids:
-		if not id is String or id not in data.battle.party_ids:
-			last_error = "阵亡记录包含未参战生物。"; return false
-		if id not in dead: dead.append(id)
-	if dead == data.battle.get("casualties",[]): return true
-	var before := data.duplicate(true)
-	data.battle.casualties = dead
-	data.monsters = data.monsters.filter(func(creature): return creature.id not in dead)
-	data.pending = data.pending.filter(func(id): return id not in dead)
-	if not save(): data = before; return false
-	trace("battle_permanent_deaths",{"battle_id":battle_id,"ids":ids})
-	return true
 
 func reset() -> void:
 	super.reset()
 	data.merge({"schema_version":2,"worlds":{},"battle":{},"battle_results":{},"transactions":[],"day":1},true)
+	data.known_runes=["health"]
+	data.known_relics=[]
+	data.catalogue_version=CONTENT.VERSION
+	STORIES.ensure(data)
 	_ensure_world_time()
 	if _saved_world_time.is_empty(): _saved_world_time = data.world_time.duplicate()
 
@@ -181,6 +107,11 @@ func _save_session_file() -> bool:
 	if not _valid_save(data):
 		last_error = "状态校验失败，未覆盖存档。"
 		return false
+	if data.has("legacy_rune_layout_v3") and FileAccess.file_exists(save_path) and not FileAccess.file_exists(save_path+".pre_summon_v4.bak"):
+		var source := save_path+".bak" if _recovered_backup else save_path
+		if DirAccess.copy_absolute(ProjectSettings.globalize_path(source),ProjectSettings.globalize_path(save_path+".pre_summon_v4.bak"))!=OK:
+			last_error="无法保留符文升级前的存档备份。"
+			return false
 	if _needs_schema_backup:
 		var source_path := save_path+".bak" if _recovered_backup else save_path
 		var backup_path := save_path+".pre_delivery_v2.bak"
@@ -222,7 +153,21 @@ func load_save() -> bool:
 func _valid_save(value: Variant) -> bool:
 	if not super._valid_save(value) or int(value.get("schema_version",0)) not in [1,2]: return false
 	if not NEW_PLAYER_TASKS.valid_progress(value): return false
-	if not _valid_opening_event(value): return false
+	if not STORIES.valid(value): return false
+	if value.has("event_items"):
+		if not value.event_items is Dictionary: return false
+		for key: Variant in value.event_items:
+			var count: Variant = value.event_items[key]
+			if not key is String or key.is_empty() or not (count is float or count is int) or not is_finite(float(count)) or float(count)<0 or floor(float(count))!=float(count): return false
+	for key: String in ["known_runes","known_relics"]:
+		if value.has(key):
+			if not value[key] is Array: return false
+			for id: Variant in value[key]:
+				if not id is String: return false
+	if value.has("content_reward_receipts"):
+		if not value.content_reward_receipts is Dictionary: return false
+		for key: Variant in value.content_reward_receipts:
+			if not key is String or not CONTENT.EVENT_REWARDS.has(key) or not value.content_reward_receipts[key] is String: return false
 	if value.has("world_time") and not _valid_world_time(value.world_time): return false
 	if value.get("delivery_map_version","20261015") not in ["20261015","20261019"]: return false
 	var day: Variant = value.get("day",1)
@@ -251,7 +196,11 @@ func _valid_save(value: Variant) -> bool:
 	if not pending.get("battle_id") is String or pending.battle_id.is_empty(): return false
 	if pending.get("phase")=="settlement":
 		return _valid_result(pending.get("result")) and pending.result.battle_id==pending.battle_id and value.battle_results.has(pending.battle_id)
-	if pending.get("phase")!="loading" or not pending.get("party_ids") is Array or pending.party_ids.is_empty(): return false
+	if pending.get("phase")!="loading" or not pending.get("party_ids") is Array: return false
+	if pending.get("kind")=="story":
+		var current: Dictionary = STORIES.entry(value,str(pending.get("event_id","")))
+		if not current.get("flags",{}).get("await_battle",false) or current.flags.get("pending_battle_id")!=pending.battle_id: return false
+	if pending.party_ids.is_empty() and not (pending.get("kind")=="story" and pending.get("combat_mode")=="spectator"): return false
 	if not pending.get("map_id") is String or not pending.get("location_id") is String or not value.worlds.has(pending.map_id): return false
 	if pending.map_id==DELIVERY_MAP:
 		var probe: Dictionary = value.worlds[pending.map_id].duplicate(true)
@@ -259,21 +208,13 @@ func _valid_save(value: Variant) -> bool:
 		if pending.get("request_id")!=pending.battle_id or not DELIVERY_RUNTIME.valid_snapshot(probe): return false
 	elif value.worlds[pending.map_id].pending_battle.get("location_id")!=pending.location_id: return false
 	var seen := {}
-	var casualties: Variant = pending.get("casualties",[])
-	if not casualties is Array: return false
-	var dead := {}
-	for id: Variant in casualties:
-		if not id is String or id.is_empty() or dead.has(id) or id not in pending.party_ids: return false
-		dead[id] = true
-		for creature: Dictionary in value.monsters:
-			if creature.id == id: return false
 	for id: Variant in pending.party_ids:
 		if not id is String or seen.has(id): return false
 		seen[id] = true
 		var found := false
 		for creature: Dictionary in value.monsters:
 			if creature.id==id: found=true
-		if not found and not dead.has(id): return false
+		if not found: return false
 	return true
 
 func enable_new_player_tasks() -> bool:
@@ -308,24 +249,52 @@ func new_player_task_action(task_id: String) -> String:
 
 func _valid_result(value: Variant) -> bool:
 	if not value is Dictionary or not value.get("battle_id") is String or value.battle_id.is_empty(): return false
-	if value.get("outcome") not in ["victory","defeat","retreat"] or not value.get("parts") is Dictionary: return false
-	var casualties: Variant = value.get("casualties",[])
-	if not casualties is Array: return false
-	var seen := {}
-	for id: Variant in casualties:
-		if not id is String or id.is_empty() or seen.has(id): return false
-		seen[id] = true
+	if value.get("outcome") not in ["victory","defeat","retreat","draw"] or not value.get("parts") is Dictionary: return false
+	if value.outcome=="draw" and value.get("combat_mode")!="spectator": return false
+	if not value.get("content_source","") is String or value.get("combat_mode","party") not in ["party","spectator"]: return false
 	var reward: Variant = value.get("reward")
+	if not value.get("magic_reward_pending",false) is bool: return false
+	if value.get("magic_reward_pending",false) and (reward!=0 or value.get("reward_basis")!="monster_level"): return false
 	return (reward is int or reward is float) and is_finite(float(reward)) and float(reward)>=0
 
 func supported_layout(rules) -> String:
 	var preview := Experiment.preview(rules)
-	if preview.mode != "normal": return "当前接入仅开放普通结构；该结构的真实物理能力尚未接入。"
+	if int(rules.layout_version)<CONTENT.VERSION: return "旧布局不能按新规则使用；请重新绘制，旧记录不会被覆盖。"
+	if not preview.error.is_empty(): return preview.error
 	for item: Dictionary in rules.placed:
 		if item.enabled and item.runeId not in SUPPORTED_RUNES: return "符文“%s”的真实战斗效果尚未接入，不会扣费。" % Rules.definition(item.runeId).name
+		if item.enabled and item.runeId not in known_references(): return "该符文尚未获得，不会扣费。"
 	for relic: Dictionary in rules.relics:
-		if relic.relicId!="bone-die": return "该奇物的实际效果尚未接入，不会扣费。"
+		if Rules.current_definition(relic.relicId,true).is_empty(): return "该奇物已停用，不会扣费。"
+		if relic.relicId not in known_references(true): return "该奇物尚未获得，不会扣费。"
 	return ""
+
+func claim_content_reward(key: String, receipt_id: String, facts: Dictionary) -> bool:
+	var before := data.duplicate(true)
+	last_error=preload("res://Scripts/Summoning/SummonRewardBindings.gd").apply(data,key,receipt_id,facts)
+	if not last_error.is_empty(): data=before; return false
+	if save(): return true
+	data=before
+	return false
+
+func event_parameters() -> Dictionary:
+	return story_parameters if not story_parameters.is_empty() else STORIES.CATALOG.parameters()
+
+func open_story_event(id: String, context: Dictionary) -> bool:
+	var before := data.duplicate(true)
+	last_error=STORIES.open(data,id,context,event_parameters())
+	if not last_error.is_empty(): data=before; return false
+	if save(): return true
+	data=before
+	return false
+
+func advance_story_event(id: String, choice: String, revision: int, selected_ids: Array = []) -> bool:
+	var before := data.duplicate(true)
+	last_error=STORIES.advance(data,event_parameters(),id,choice,revision,selected_ids)
+	if not last_error.is_empty(): data=before; return false
+	if save(): return true
+	data=before
+	return false
 
 func summon(rules, at: String, back: String, test_rng: RandomNumberGenerator = null) -> bool:
 	last_error = supported_layout(rules)
@@ -348,23 +317,28 @@ func summon(rules, at: String, back: String, test_rng: RandomNumberGenerator = n
 	var seed_value := rng.seed
 	var generated := Experiment.generate(rules,int(data.serial)+1,at,rng)
 	for unit: Dictionary in generated.units:
-		var id: String = FACTORY.SUMMON_POOL[rng.randi_range(0,FACTORY.SUMMON_POOL.size()-1)]
-		var real := FACTORY.template(id)
-		if real.is_empty(): last_error = "物种模板无法加载。"; return false
+		var pool: Array = []
+		for candidate: String in FACTORY.SUMMON_POOL:
+			if not FACTORY.template(candidate,unit.anatomy).is_empty(): pool.append(candidate)
+		if pool.is_empty(): data=before; last_error="没有适配本次身体结构的物种，不扣费。"; return false
+		var id: String = pool[rng.randi_range(0,pool.size()-1)]
+		var real := FACTORY.template(id,unit.anatomy)
+		if real.is_empty(): data=before; last_error = "物种模板无法加载。"; return false
 		var hp_ratio := float(unit.hp)/maxf(float(unit.base_stats.hp),1.0)
 		var armor_ratio := float(unit.armor)/maxf(float(unit.base_stats.armor),1.0)
 		var attack_ratio := float(unit.attack)/maxf(float(unit.base_stats.attack),1.0)
 		var interval_ratio := float(unit.interval)/1.5
 		var speed_ratio := float(unit.speed)/3.0
+		var anatomy_scale: float = unit.anatomy.get("scale",1.0)
 		unit.merge(real,true)
 		unit.hp = 0.0
 		for part: Dictionary in unit.parts.values():
-			part.hp *= hp_ratio
+			part.hp *= hp_ratio/pow(anatomy_scale,3.0)
 			part.armor *= armor_ratio
 			unit.hp += part.hp
 		unit.armor *= armor_ratio
-		unit.attack *= attack_ratio
-		unit.damage_multiplier = attack_ratio
+		unit.attack *= attack_ratio/anatomy_scale
+		unit.damage_multiplier = attack_ratio/anatomy_scale
 		unit.interval_multiplier = interval_ratio
 		unit.interval = 1.5*interval_ratio
 		unit.speed_multiplier = speed_ratio
@@ -417,13 +391,20 @@ func commit_battle(result: Dictionary, world_snapshot: Dictionary) -> bool:
 	var id: String = result.battle_id
 	if data.battle_results.has(id): return true
 	if data.battle.get("battle_id","") != id: last_error = "战斗回执与待处理战斗不匹配。"; return false
+	if data.battle.get("kind")=="story" and float(result.get("reward",0))!=0.0: last_error="事件奖励由事件结算，战斗不得附带默认魔力。"; return false
 	var before := data.duplicate(true)
 	data.magic += int(result.get("reward",0))
 	data.battle_results[id] = result.duplicate(true)
 	data.battle_results[id].map_id = world_snapshot.map_id
+	# Reward provenance comes from the committed battle request, not a display name or result payload.
+	data.battle_results[id].content_source = str(data.battle.get("event_id",data.battle.get("content_source","")))
+	data.battle_results[id].combat_mode = str(data.battle.get("combat_mode","party"))
+	if data.battle.get("kind")=="story": data.battle_results[id].winner_faction=0 if result.outcome=="victory" else 1 if result.outcome=="defeat" else -1
+	last_error=STORIES.battle_result(data,data.battle,data.battle_results[id])
+	if not last_error.is_empty(): data=before; return false
 	var backend := "frontier_delivery_v1" if world_snapshot.map_id==DELIVERY_MAP else "legacy_frontier"
 	data.worlds[str(world_snapshot.map_id)] = tagged_world(world_snapshot,backend)
-	data.battle = {"battle_id":id,"map_id":world_snapshot.map_id,"phase":"settlement","result":result.duplicate(true)}
+	data.battle = {"battle_id":id,"map_id":world_snapshot.map_id,"phase":"settlement","result":data.battle_results[id].duplicate(true)}
 	spend_world_action("battle")
 	if not save(): data = before; return false
 	trace("battle_commit",{"battle_id":id,"outcome":result.outcome})

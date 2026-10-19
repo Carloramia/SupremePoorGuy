@@ -3,7 +3,6 @@ extends Node3D
 signal changed
 
 var host: Node3D
-var allowed_actor: Node3D
 var dragged: Node3D
 var placement_error := ""
 var _drag_origin := Vector3.ZERO
@@ -17,7 +16,7 @@ var _moved: Array[Node3D] = []
 var _ground_rids: Array[RID] = []
 var _probe_exclusions: Array[RID] = []
 
-func begin(battle: Node3D, reinforcement: bool = false) -> void:
+func begin(battle: Node3D) -> void:
 	host = battle
 	name = "Deployment"
 	for actor: Node3D in host.actors:
@@ -26,21 +25,15 @@ func begin(battle: Node3D, reinforcement: bool = false) -> void:
 				_process_modes[node] = node.process_mode
 				node.process_mode = Node.PROCESS_MODE_INHERIT
 			if node is RigidBody3D:
-				if reinforcement and actor != allowed_actor: continue
 				_body_freeze[node] = node.freeze
 				node.freeze = true
 				node.linear_velocity = Vector3.ZERO
 				node.angular_velocity = Vector3.ZERO
-	cache_ground()
-	host.cursor.set_deployment_mode(true)
-	_draw_boundary()
-
-func cache_ground() -> void:
-	_ground_rids.clear()
-	_probe_exclusions.clear()
 	for body: CollisionObject3D in host.find_children("*", "CollisionObject3D", true, false):
 		if body.is_in_group(&"scenario_ground"): _ground_rids.append(body.get_rid())
 		else: _probe_exclusions.append(body.get_rid())
+	host.cursor.set_deployment_mode(true)
+	_draw_boundary()
 
 func _physics_process(_delta: float) -> void:
 	if not is_instance_valid(dragged) or not host.cursor.is_gameplay_cursor_active(): return
@@ -54,7 +47,6 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func pick_up(actor: Node3D) -> bool:
 	if is_instance_valid(dragged) or not is_instance_valid(actor) or actor not in host.actors or actor.get_faction_id() != 0: return false
-	if is_instance_valid(allowed_actor) and actor != allowed_actor: return false
 	dragged = actor
 	_drag_origin = actor.global_position
 	_drag_pointer = host.cursor.get_mouse_ground_position()
@@ -115,7 +107,6 @@ func complete() -> void:
 	set_physics_process(false)
 	set_process_unhandled_input(false)
 	host.cursor.set_deployment_mode(false)
-	host.cursor.set_deployment_drag_target(null)
 	# Controllers cached world-space foot anchors/path samples before deployment.
 	for actor: Node3D in _moved:
 		for node: Node in actor.find_children("*", "", true, false):
@@ -141,7 +132,7 @@ func _drag_bounds(offset: Vector3) -> AABB:
 			found = true
 	return bounds
 
-func validate_placement(actor: Node3D, region: PackedVector2Array = PackedVector2Array()) -> String:
+func validate_placement(actor: Node3D) -> String:
 	var footprint := PackedVector2Array()
 	var collisions: Array[CollisionShape3D] = []
 	var exclude: Array[RID] = _ground_rids.duplicate()
@@ -160,8 +151,7 @@ func validate_placement(actor: Node3D, region: PackedVector2Array = PackedVector
 			footprint.append(Vector2(point.x,point.z))
 	if not found: return "生物没有可用的碰撞体。"
 	footprint = Geometry2D.convex_hull(footprint)
-	if region.is_empty(): region = host.deployment_polygon
-	if not Geometry2D.clip_polygons(footprint,region).is_empty(): return "完整生物必须位于部署区内。"
+	if not Geometry2D.clip_polygons(footprint,host.deployment_polygon).is_empty(): return "完整生物必须位于蓝色友方部署区内。"
 	if not Geometry2D.clip_polygons(footprint,host._floor_polygon).is_empty(): return "不能放置到战场外。"
 	if host.delivery_adapter != null:
 		for pit: Dictionary in host.delivery_adapter.pits:

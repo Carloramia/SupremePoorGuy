@@ -1023,30 +1023,6 @@
       "sha256": "a5bebf1f88ea1c2bce2d23ab9cc807502ea096beb09eb1e9f27d2a0842b891cc",
       "godot_path": "res://Content/Maps/FrontierEditor_20261019/Assets/HexPlanner/1018/sheet_11/sprite_018.png"
     },
-    "birth_left_boulder_completion_20261019": {
-      "id": "birth_left_boulder_completion_20261019",
-      "name": "召唤小屋左上岩石 · 缺损补全",
-      "category": "图8·黑色山石",
-      "path": "res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/c542ad87206450248db7788f.png",
-      "width": 1319,
-      "height": 1192,
-      "anchor": [
-        0.5,
-        1
-      ],
-      "sha256": "c542ad87206450248db7788fc7be5dc379d6b6e05438fdcc56e85cfa0e23255b",
-      "alpha_render": "smooth",
-      "repair_scope": "upper_left_boulder_only",
-      "generation_method": "built_in_imagegen",
-      "source_reference": "map8_exact_birth_curve",
-      "source_sheet": "left_boulder_completion.png",
-      "source_rect": [
-        0,
-        0,
-        1319,
-        1192
-      ]
-    },
     "map8_exact_birth_curve": {
       "id": "map8_exact_birth_curve",
       "name": "山石 birth_curve",
@@ -6184,50 +6160,6 @@
       "sha256": "13051448c840c6988b94af1eb5810d8b1bfcdb0bf71edd4720e730287c1b8c18",
       "godot_path": "res://Content/Maps/FrontierEditor_20261019/Assets/HexPlanner/1018/sheet_05/sprite_015.png"
     },
-    "art1018_07_004": {
-      "id": "art1018_07_004",
-      "name": "紫幻森林纸雕道具图集 04",
-      "category": "紫幻森林纸雕道具图集",
-      "path": "res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/dbc1cd6fb2e3de72ffa60d59.png",
-      "width": 229,
-      "height": 252,
-      "anchor": [
-        0.5,
-        1
-      ],
-      "source_sheet": "紫幻森林纸雕道具图集.png",
-      "source_rect": [
-        1241,
-        242,
-        221,
-        244
-      ],
-      "extraction": "alpha_component",
-      "sha256": "dbc1cd6fb2e3de72ffa60d5935df004ce64232b7e833fbdfbfd7252d59cef847",
-      "godot_path": "res://Content/Maps/FrontierEditor_20261019/Assets/HexPlanner/1018/sheet_07/sprite_004.png"
-    },
-    "art1018_07_005": {
-      "id": "art1018_07_005",
-      "name": "紫幻森林纸雕道具图集 05",
-      "category": "紫幻森林纸雕道具图集",
-      "path": "res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/2a33766c168bf16d4d4f96f2.png",
-      "width": 168,
-      "height": 281,
-      "anchor": [
-        0.5,
-        1
-      ],
-      "source_sheet": "紫幻森林纸雕道具图集.png",
-      "source_rect": [
-        1474,
-        274,
-        160,
-        273
-      ],
-      "extraction": "alpha_component",
-      "sha256": "2a33766c168bf16d4d4f96f261914f3c0ffcaa93024d12a2ae5cac8ece39f8a4",
-      "godot_path": "res://Content/Maps/FrontierEditor_20261019/Assets/HexPlanner/1018/sheet_07/sprite_005.png"
-    },
     "art1018_07_013": {
       "id": "art1018_07_013",
       "name": "紫幻森林纸雕道具图集 13",
@@ -6646,28 +6578,6 @@
       "sha256": "225b0044aa0b0f0fb57ed9b2c6ea380d73ed19652f863c845aef9127346d8f62",
       "godot_path": "res://Content/Maps/FrontierEditor_20261019/Assets/HexPlanner/1018/sheet_09/sprite_025.png"
     },
-    "art1018_09_026": {
-      "id": "art1018_09_026",
-      "name": "纸艺游戏地图道具图集 26",
-      "category": "纸艺游戏地图道具图集",
-      "path": "res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/9d3513708fcafc4adf8397fb.png",
-      "width": 228,
-      "height": 115,
-      "anchor": [
-        0.5,
-        1
-      ],
-      "source_sheet": "纸艺游戏地图道具图集.png",
-      "source_rect": [
-        1418,
-        770,
-        220,
-        107
-      ],
-      "extraction": "alpha_component",
-      "sha256": "9d3513708fcafc4adf8397fbd98665b3d52ed902a666a809476b1558426b15c1",
-      "godot_path": "res://Content/Maps/FrontierEditor_20261019/Assets/HexPlanner/1018/sheet_09/sprite_026.png"
-    },
     "art1018_10_008": {
       "id": "art1018_10_008",
       "name": "纸雕地图道具透明图集 08",
@@ -6876,6 +6786,76 @@
       "path": "res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/9cfd411321b55abafc78e0b9.svg",
       "sha256": "9cfd411321b55abafc78e0b9540898c8fc8f5fd2135cd015e7f75417dd29979c",
       "browser_path": "res://Content/Maps/FrontierEditor_20261019/Assets/HexPlanner/battle-environment/9cfd411321b55abafc78e0b9.svg"
+    },
+    "demo_barricade_broken": {
+      "id": "demo_barricade_broken",
+      "name": "Demo·地标 / 破损路障与残骸",
+      "category": "Demo·地标",
+      "width": 488,
+      "height": 325,
+      "demo_art": true,
+      "source": "sprites/landmarks/barricade_broken.png",
+      "pivotPixels": [
+        244,
+        142
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.436923
+      ],
+      "path": "res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/6432de71fa8e2551ff78442a.png",
+      "sha256": "6432de71fa8e2551ff78442a939ddc03ef922019f421f0acdde37644004b615e",
+      "browser_path": "res://Content/Maps/FrontierEditor_20261019/Assets/HexPlanner/battle-environment/6432de71fa8e2551ff78442a.png"
+    },
+    "demo_thorn_large": {
+      "id": "demo_thorn_large",
+      "name": "Demo·环境 / 荆棘 / large",
+      "category": "Demo·环境",
+      "width": 604,
+      "height": 306,
+      "demo_art": true,
+      "source": "sprites/environment/thorn_large.png",
+      "pivotPixels": [
+        158,
+        80
+      ],
+      "pivotNormalized": [
+        0.523179,
+        0.522876
+      ],
+      "art_return": {
+        "date": "2026-10-14",
+        "source": "其余需求/抠图/ComfyUI_01176_.png",
+        "source_sha256": "24d7c8576f59c5f3ef06871718a338d72ceac5c62c7099f36e9828d22a5c3275",
+        "prepared_canvas": [
+          604,
+          306
+        ],
+        "fit": "contain-original-visible-bounds-bottom-center"
+      },
+      "path": "res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/b681a1b0b93cc8fe45d425bd.png",
+      "sha256": "b681a1b0b93cc8fe45d425bd7a9c459a09f0133899e65a9e84964b3ea5119ab6",
+      "browser_path": "res://Content/Maps/FrontierEditor_20261019/Assets/HexPlanner/battle-environment/b681a1b0b93cc8fe45d425bd.png"
+    },
+    "demo_wood_fragment": {
+      "id": "demo_wood_fragment",
+      "name": "Demo·环境 / 路障碎木",
+      "category": "Demo·环境",
+      "width": 132,
+      "height": 58,
+      "demo_art": true,
+      "source": "sprites/environment/wood_fragment.png",
+      "pivotPixels": [
+        66,
+        29
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.5
+      ],
+      "path": "res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/0234336476ea2fb49b203923.png",
+      "sha256": "0234336476ea2fb49b203923767bdfa4ee5ba0c33731321acfb983185c4cf058",
+      "browser_path": "res://Content/Maps/FrontierEditor_20261019/Assets/HexPlanner/battle-environment/0234336476ea2fb49b203923.png"
     },
     "mud": {
       "id": "mud",

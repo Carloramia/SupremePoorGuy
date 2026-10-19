@@ -32,7 +32,7 @@ func run() -> void:
 	for coordinate: Vector2i in graph.cells:
 		check(graph.axial(graph.centre(coordinate))==coordinate,"hex coordinate round trip "+str(coordinate))
 		var cell: Dictionary=graph.cells[coordinate]
-		if cell.get("control")=="outside" or cell.get("feature")=="river" or (cell.get("feature")=="wall" and not graph.art_cells.has(coordinate)):
+		if cell.get("control")=="outside" or cell.get("feature") in ["wall","river"]:
 			check(not graph.can_pass(coordinate),"permanent barriers stay closed")
 	check(not runtime.blocked(runtime.player()),"authored spawn is walkable")
 	var hut := CATALOG.location("layout_summoning_hut")
@@ -87,12 +87,13 @@ func run() -> void:
 		var instance := scene.instantiate()
 		for title: String in ["Ground","GroundVisual","ExteriorBackground","Objects","Camera","WorldEnvironment","Party"]:
 			check(instance.has_node(title),"battle adapter contract "+id+"/"+title)
-		for node: Node in instance.find_children("Visual","Sprite3D",true,false):
-			check(node.get_child_count()==0 and node.texture!=null,"source sprite scenery has no decoration collision")
+		for node: Node in instance.find_children("PhysicalPart","",true,false):
+			var mesh := node.get_node("Visual") as MeshInstance3D
+			check(mesh.mesh.get_surface_count()==3 and node.get_child_count()==1,"thick paper scenery has no decoration collision")
 			parts+=1
 		instance.free()
 		count+=1
-	check(count==41 and parts>500,"all battles and source scenery are available")
+	check(count==41 and parts>500,"all battles and thick scenery are available")
 	print("HEX_WORLD_INTEGRATION checks=",checks," failures=",failures.size()," battles=",count," paper_instances=",parts)
 	if failures.is_empty(): print("HEX_WORLD_INTEGRATION_PASSED")
 	CATALOG.select_version("20261015")
@@ -100,7 +101,6 @@ func run() -> void:
 
 func _test_constraints(world: Dictionary) -> void:
 	var synthetic := world.duplicate(false)
-	synthetic.mountain_surfaces=[]
 	synthetic.hex_cells=[{"q":0,"r":0,"region":"grass"},{"q":1,"r":0,"region":"grass","feature":"breakable","control":"breakable","obstacle_ids":["a","b"]},
 		{"q":2,"r":0,"region":"grass","feature":"wall","obstacle_ids":["a"]}]
 	var nav := NAV.new(synthetic)

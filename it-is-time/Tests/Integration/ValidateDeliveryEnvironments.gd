@@ -3,12 +3,16 @@ const CATALOG = preload("res://Modules/FrontierDelivery/Scripts/Map/MapCatalog.g
 const FACTORY = preload("res://Scripts/Application/CreatureFactory.gd")
 const ADAPTER = preload("res://Scripts/Application/DeliveryBattleEnvironmentAdapter.gd")
 var failed := false
+var part_records := {}
 func _initialize() -> void: call_deferred("run")
 func check(ok: bool, message: String) -> void:
 	print("ENVIRONMENT_CHECK ",ok," ",message)
 	if not ok: failed=true; push_error(message)
 func run() -> void:
 	var count := 0
+	var manifest: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://Assets/3DResources/Environment/FrontierBattle/Metadata/model_manifest.json"))
+	for record: Dictionary in manifest.models:
+		for asset_id: String in record.asset_ids: part_records[asset_id] = record
 	for id: String in CATALOG.index().maps:
 		if CATALOG.map_data(id).kind!="battle": continue
 		var host := preload("res://Scripts/Application/BattleHost.gd").new()
@@ -100,26 +104,30 @@ func _check_parts(environment: Node3D, definition: Dictionary) -> void:
 			continue
 		if str(object.visual.asset).is_empty(): continue
 		var id: String = CATALOG.index().battle_art.object_assets.get(definition.id,{}).get(object.id,object.visual.asset)
-		var part := origin.get_node_or_null("Visual") as MeshInstance3D
-		if part == null: check(false,object.id+" missing source visual"); ok=false; continue
-		ok = ok and origin.get_node_or_null("PhysicalPart") == null and part.mesh is PlaneMesh
+		var record: Dictionary = part_records[id]
+		var part := origin.get_node_or_null("PhysicalPart") as StaticBody3D
+		if part == null: check(false,object.id+" missing physical part"); ok=false; continue
+		var collision := part.get_node("CollisionShape3D") as CollisionShape3D
+		ok = ok and origin.get_node_or_null("Visual") == null and part.scene_file_path == record.physical_scene
+		ok = ok and not part.collision_enabled and collision.disabled and collision.shape == null
 		ok = ok and origin.position.is_equal_approx(Vector3(object.position[0],object.get("height",0),object.position[1]))
 		ok = ok and is_equal_approx(origin.rotation.y,-deg_to_rad(float(object.rotation)))
-		var material := part.material_override as StandardMaterial3D
-		ok = ok and is_equal_approx(material.albedo_color.a,object.visual.opacity)
+		ok = ok and is_equal_approx(part.opacity,object.visual.opacity)
 		ok = ok and part.visible == (object.visual.visible and not object.get("layout_review_only",false))
 		var size := CATALOG.v(object.visual.size)
 		var art: Dictionary = CATALOG.index().battle_art.assets[id]
 		if art.get("demo_art",false):
 			var fit := minf(size.x/float(art.width),size.y/float(art.height))
 			size = Vector2(art.width,art.height)*fit
-		ok = ok and part.mesh.size.is_equal_approx(size)
-		ok = ok and material.albedo_texture.resource_path == art.get("render_path",art.path)
-		ok = ok and part.global_basis.y.normalized().dot(Vector3.UP)>0.999
+		var expected := size/(Vector2(record.texture_size[0],record.texture_size[1])*float(record.units_per_pixel))
+		ok = ok and part.image_scale.is_equal_approx(expected)
+		var visual := part.get_node("Model/Visual") as MeshInstance3D
+		var up := visual.global_basis.z if record.ground else visual.global_basis.y
+		ok = ok and up.normalized().dot(Vector3.UP)>0.999
 		var legacy := origin.get_node_or_null("collision") as StaticBody3D
 		if legacy != null:
 			ok = ok and legacy.collision_layer == 0
 			for shape: CollisionShape3D in legacy.find_children("*","CollisionShape3D",true,false): ok = ok and shape.disabled
 		count += 1
-	check(ok,definition.id+" source references, dimensions, opacity, orientation and disabled collisions")
-	print("BATTLE_SOURCE_SCENERY ",definition.id," count=",count)
+	check(ok,definition.id+" physical references, dimensions, opacity, orientation and disabled collisions")
+	print("BATTLE_PHYSICAL_PARTS ",definition.id," count=",count)

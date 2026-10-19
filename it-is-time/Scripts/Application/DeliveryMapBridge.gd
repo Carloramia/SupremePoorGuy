@@ -86,6 +86,9 @@ func _process(delta: float) -> void:
 
 func sync_party() -> void:
 	runtime.party_count = application.session.monsters().size()
+	runtime.completed_story_ids.clear()
+	for id: String in application.session.data.get("story_events",{}).get("entries",{}):
+		if application.session.data.story_events.entries[id].completed: runtime.completed_story_ids.append(id)
 
 func save_progress(action: String = "") -> bool:
 	_save_elapsed = 0.0
@@ -168,6 +171,7 @@ func _arrived(id: String, kind: String) -> void:
 		else: begin_battle(id,kind)
 		return
 	if kind=="clear":
+		if runtime.interaction_error(object).is_empty() and application.story_controller.show_location(object): return
 		open_location(object)
 		return
 	var error: String = runtime.interaction_error(object)
@@ -178,6 +182,7 @@ func _arrived(id: String, kind: String) -> void:
 		_map_diagnostic("event_routed",{"location_id":id,"event_id":"summon","source":"summoning_hut"})
 		application.ui._open_ritual()
 	else:
+		if application.story_controller.show_location(object): return
 		_map_diagnostic("event_unavailable",{"location_id":id,"reason":"此地点暂无已接入的事件。"})
 		application.ui._modal(str(object.name),func(body):
 			var pending: Array=[]
@@ -227,13 +232,7 @@ func _destroy_hex_obstacle(object: Dictionary) -> void:
 func roster_error(id: String, kind: String) -> String:
 	var object := Catalog.location(id)
 	var config: Dictionary = object.get("encounter",{}) if kind=="encounter" else object
-	var settings: DeliveryBattleSettings = application.get_delivery_battle_settings()
-	var roster_id := str(config.get("enemy_config_id",object.get("enemy_config_id","")))
-	var error := settings.availability_error(roster_id)
-	return error if not error.is_empty() else capacity_status(id,kind).error
-
-func capacity_status(_id: String, _kind: String) -> Dictionary:
-	return application.session.initial_party_capacity()
+	return application.get_delivery_battle_settings().availability_error(str(config.get("enemy_config_id",object.get("enemy_config_id",""))))
 
 func open_location(object: Dictionary) -> void:
 	if runtime.interaction_error(object).is_empty() and not application.session.record_task_arrival(str(runtime.data.map_id),str(object.id)):
@@ -243,7 +242,6 @@ func open_location(object: Dictionary) -> void:
 		var message := "ui.aaef0121bd42"
 		if Catalog.is_hex():
 			message="敌方数量：%d\n%s" % [int(object.get("enemy_count",0)),roster_error(object.id,"clear")]
-		message = L10N.text(message)+"\n"+application.battle_capacity_settings.summary(capacity_status(object.id,"clear"))
 		var page: Control = application.ui._text_screen(body,message)
 		var button: Button = application.ui._btn(page.get_node("%Commands"),"ui.e62745dce172",func(): begin_battle(object.id,"clear"))
 		button.name = "EnterBattle"
@@ -300,6 +298,7 @@ func cancel_battle() -> bool:
 	var before: Dictionary = session.data.duplicate(true)
 	var snapshot: Dictionary = runtime.snapshot()
 	runtime.cancel_battle()
+	session.STORIES.cancel_battle(session.data,session.data.battle)
 	session.data.battle = {}
 	if session.save_delivery_world(runtime.snapshot()):
 		_last_saved = runtime.snapshot()

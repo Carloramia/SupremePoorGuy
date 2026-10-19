@@ -98,11 +98,12 @@ func run() -> void:
 	check(app.session.data.magic==magic and not app.session.data.battle_results.has(battle_id),"Failed settlement leaves rewards untouched")
 	app.session.save_path = real_path
 	app._finalize_battle()
-	check(app.session.data.magic==magic+20 and camp.id in app.delivery_map.runtime.data.cleared,"Clear victory commits reward and camp clear together")
-	check(app.delivery_map.commit_result(app._pending_result) and app.session.data.magic==magic+20,"Duplicate result never duplicates reward")
+	check(app.session.data.magic==magic and app._pending_result.reward==0 and app._pending_result.magic_reward_pending and camp.id in app.delivery_map.runtime.data.cleared,"Clear victory commits pending level reward and camp clear together, without default magic")
+	check(app.delivery_map.commit_result(app._pending_result) and app.session.data.magic==magic,"Duplicate result never invents a pending level reward")
 	var recovered = preload("res://Scripts/Application/GameSession.gd").new()
 	recovered.save_path = real_path
 	check(recovered.load_save() and recovered.data.battle.phase=="settlement","Settlement survives restart")
+	check(recovered.data.battle_results[battle_id].magic_reward_pending,"Unconfigured reward status survives restart")
 	check(recovered.delivery_snapshot().battle_receipts.has(battle_id),"Runtime receipts derive from the one session ledger")
 	app.return_to_world()
 	check(await wait_phase(app,"world"),"Settlement returns to existing delivery map")

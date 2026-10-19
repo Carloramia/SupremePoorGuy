@@ -1,7 +1,5 @@
 extends Node3D
 
-const AXIS_MOVEMENT = preload("res://Scripts/Creatures/AxisMovement3D.gd")
-
 const GEOMETRY = preload("res://Scripts/Creatures/Generators/GeneratedPartGeometry.gd")
 @export var enabled: bool = true
 ## Disable travel and turning without disabling gravity compensation or pose support.
@@ -743,13 +741,6 @@ func _physics_process(delta: float) -> void:
 	_tick(delta)
 	_control_perf.finish(&"snake_motion", started)
 
-func get_expected_horizontal_velocity() -> Vector3:
-	if motion_data == null or not locomotion_enabled: return Vector3.ZERO
-	var velocity := AXIS_MOVEMENT.target_velocity(get_input_movement_direction(), motion_data.target_speed, motion_data.target_z_speed)
-	var source := _source()
-	if source != null and source.has_method("get_npc_movement_speed_scale"): velocity *= source.get_npc_movement_speed_scale(maxf(velocity.length(), 0.001))
-	return velocity
-
 func _tick(delta: float) -> void:
 	_drive_force = Vector3.ZERO
 	_contact_count = 0
@@ -771,11 +762,7 @@ func _tick(delta: float) -> void:
 	var source := _source() if locomotion_enabled else null
 	var speed := motion_data.target_speed
 	if source != null and source.has_method("get_npc_movement_speed_scale"): speed *= source.get_npc_movement_speed_scale(speed)
-	var target_velocity := get_expected_horizontal_velocity() if not _connection_recovery_active else Vector3.ZERO
-	if not target_velocity.is_zero_approx() and not is_instance_valid(_attack_owner):
-		# The path advances along the same velocity vector as the physical drive.
-		_direction = target_velocity.normalized()
-		speed = target_velocity.length()
+	var target_velocity := _direction * speed
 	if not _connection_recovery_active and not _direction.is_zero_approx() and not is_instance_valid(_attack_owner) and not _idle_ground_poses.is_empty():
 		_idle_ground_poses.clear()
 		_attack_slide_release_pending = false
@@ -1744,8 +1731,6 @@ func get_snake_motion_diagnostics(include_parts: bool = true) -> Dictionary:
 			detail.merge({"surface_normal": contact.get("normal", Vector3.ZERO)})
 		rows.append(detail)
 	return {"enabled": enabled and _character_enabled and can_process(), "requested_speed": motion_data.target_speed if motion_data != null and locomotion_enabled else 0.0,
-		"target_z_speed": motion_data.target_z_speed if motion_data != null else 0.0,
-		"target_velocity": get_expected_horizontal_velocity(),
 		"connection_recovery":_connection_diagnostics,"connection_recovering":_connection_recovery_active,"idle_shape_hold":not _idle_ground_poses.is_empty(),"held_heading":_held_heading,
 		"attack_support_locked":is_attack_support_locked(),"attack_ground_error":_attack_ground_error,
 		"locomotion_enabled": locomotion_enabled, "sway_enabled": motion_data != null and motion_data.sway_enabled,

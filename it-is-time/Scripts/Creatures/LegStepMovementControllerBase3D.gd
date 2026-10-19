@@ -5,7 +5,6 @@ var _convex_foot_cache: Dictionary = {}
 var _convex_foot_cache_frame: int = -1
 
 const PLAYER_CONTEXT = preload("res://Scripts/Player/PlayerControlContext.gd")
-const AXIS_MOVEMENT = preload("res://Scripts/Creatures/AxisMovement3D.gd")
 var _performance_mode: Resource = preload("res://Resources/Settings/PerformanceOptimization.tres")
 
 const LEG_TAG: int = 1
@@ -65,8 +64,6 @@ var _walk_start_bypasses := 0
 
 @export_group("Control")
 @export var input_enabled: bool = true
-## Fallback when no gait resource is assigned; a gait's target_z_speed takes precedence.
-@export_range(0.0, 30.0, 0.05, "or_greater") var target_z_speed: float = 2.0
 ## Player input is supplied by a separate Controller; NPCs may keep their state-machine source.
 @export var command_source: Node
 
@@ -305,28 +302,6 @@ func set_turn_movement_multiplier(multiplier: float) -> void:
 func get_expected_horizontal_speed() -> float:
 	return _get_expected_horizontal_speed() * _turn_movement_multiplier
 
-func get_target_z_speed() -> float:
-	var data := _get_gait_data()
-	return maxf(data.target_z_speed if data != null else target_z_speed, 0.0)
-
-func _get_requested_movement_speed() -> float:
-	var data := _get_gait_data()
-	if data == null: return _get_expected_horizontal_speed()
-	var charge := get_parent().get_node_or_null("ChargeAttackController3D")
-	if charge != null and charge.owns_velocity(): return data.target_speed
-	var direction := get_input_movement_direction()
-	return data.target_speed if direction.is_zero_approx() else AXIS_MOVEMENT.target_velocity(direction, data.target_speed, data.target_z_speed).length()
-
-func get_expected_horizontal_velocity() -> Vector3:
-	var direction := get_input_movement_direction() if input_enabled else Vector3.ZERO
-	var velocity := AXIS_MOVEMENT.target_velocity(direction, get_expected_horizontal_speed(), get_target_z_speed() * _turn_movement_multiplier)
-	var source := get_player_command_source()
-	if source == null: source = get_parent().get_node_or_null("NPCStateMachine3D")
-	# Preserve NPC arrival braking on Z without reapplying its existing X speed scale.
-	if source != null and source.has_method("get_npc_movement_speed_scale"):
-		velocity.z *= source.get_npc_movement_speed_scale(maxf(velocity.length(), 0.001))
-	return velocity
-
 var _last_input_direction: Vector3 = Vector3.ZERO
 var _active_step_input_direction: Vector3:
 	get: return _current_step.direction
@@ -421,7 +396,7 @@ func get_leg_motion_profile(leg: RigidBody3D) -> Dictionary:
 		_automatic_profiles.clear()
 		_automatic_profiles_frame = Engine.get_physics_frames()
 	if not _automatic_profiles.has(leg):
-		_automatic_profiles[leg] = _get_gait_data().calculate_motion_profile(_get_leg_reference_length(leg), _get_leg_turn_radius(leg), _legs.size(), _get_gait_reference_length(), _get_requested_movement_speed())
+		_automatic_profiles[leg] = _get_gait_data().calculate_motion_profile(_get_leg_reference_length(leg), _get_leg_turn_radius(leg), _legs.size(), _get_gait_reference_length())
 	return _automatic_profiles[leg]
 
 func get_automatic_motion_diagnostics() -> Dictionary:
@@ -430,7 +405,7 @@ func get_automatic_motion_diagnostics() -> Dictionary:
 	for leg: RigidBody3D in _legs:
 		var profile := get_leg_motion_profile(leg).duplicate()
 		if not profile.is_empty(): profile["foot"] = leg.name; legs.append(profile)
-	return {"enabled": _automatic_motion_enabled(), "requested_speed": _get_gait_data().target_speed if _automatic_motion_enabled() else get_expected_horizontal_speed(), "target_speed": get_expected_horizontal_speed(), "target_z_speed": get_target_z_speed(), "target_velocity": get_expected_horizontal_velocity(), "total_step_frequency": get_planned_step_frequency(), "legs": legs}
+	return {"enabled": _automatic_motion_enabled(), "requested_speed": _get_gait_data().target_speed if _automatic_motion_enabled() else get_expected_horizontal_speed(), "target_speed": get_expected_horizontal_speed(), "total_step_frequency": get_planned_step_frequency(), "legs": legs}
 
 func _step_motion_setting(key: String, fallback: float) -> float:
 	var profile: Dictionary = _current_step.extra.get("automatic_profile", {})
@@ -687,7 +662,7 @@ func _update_fast_velocity_gait(
 	_fast_step_interval = 1.0 / maxf(_fast_step_frequency, MIN_STEP_TIME)
 	var planned_speed := _get_gait_step_distance() * get_planned_step_frequency() if _get_gait_data() != null else fast_target_speed * scale
 	_fast_computed_step_distance = maxf(planned_speed / _fast_step_frequency, minimum_step_distance)
-	var target_velocity := AXIS_MOVEMENT.target_velocity(input_direction, planned_speed, get_target_z_speed()) if fast_speed_active else Vector3.ZERO
+	var target_velocity := input_direction * planned_speed if fast_speed_active else Vector3.ZERO
 	_desired_fast_velocity = _desired_fast_velocity.move_toward(
 		target_velocity,
 		fast_velocity_response * delta
@@ -1200,7 +1175,12 @@ func _apply_ground_movement_brake(direction: Vector3) -> void:
 	if not has_torso_movement_force_support(is_fast_speed_active()):
 		return
 	var velocity := _torso.linear_velocity.slide(Vector3.UP)
-	var correction := AXIS_MOVEMENT.braking_correction(velocity, get_expected_horizontal_velocity() if not direction.is_zero_approx() else Vector3.ZERO)
+	var correction := -velocity
+	if not direction.is_zero_approx():
+		var forward := direction.slide(Vector3.UP).normalized()
+		var along := velocity.dot(forward)
+		# Do not propel the Torso: Leg displacement remains the movement source.
+		correction = -velocity.slide(forward) - forward * maxf(along - get_expected_horizontal_speed(), 0.0)
 	var controlled_mass := 0.0
 	for body: RigidBody3D in _character_body_cache:
 		if is_instance_valid(body) and not _is_body_broken(body):
@@ -1493,7 +1473,8 @@ func _contact_drive_supports(feet: Array) -> Array[RigidBody3D]:
 func _contact_velocity_force(velocity: Vector3, mass: float, up: Vector3) -> Vector3:
 	var charge := get_parent().get_node_or_null("ChargeAttackController3D")
 	if charge != null and charge.owns_velocity(): return Vector3.ZERO
-	var target := get_expected_horizontal_velocity().slide(up) * _walk_start_drive_scale()
+	var direction := get_input_movement_direction().slide(up) if input_enabled else Vector3.ZERO
+	var target := direction.limit_length(1.0) * get_expected_horizontal_speed() * _walk_start_drive_scale()
 	_contact_drive_diagnostics["target_velocity"] = target
 	_contact_drive_diagnostics["actual_velocity"] = velocity.slide(up)
 	return ((target - velocity.slide(up)) * _motion_setting("contact_gain", contact_velocity_gain)).limit_length(_motion_setting("contact_acceleration", contact_maximum_acceleration)) * mass
@@ -2157,7 +2138,7 @@ func _apply_torso_response() -> void:
 		if is_instance_valid(body) and not _is_body_broken(body): mass += body.mass
 	mass = maxf(mass, _torso.mass)
 	var requested := (_contact_velocity_force(_torso.linear_velocity, mass, Vector3.UP) + _contact_extra_force).limit_length(maximum_contact_drive_force)
-	_contact_drive_diagnostics["target_velocity"] = get_expected_horizontal_velocity()
+	_contact_drive_diagnostics["target_velocity"] = (get_input_movement_direction() if input_enabled else Vector3.ZERO).limit_length(1.0) * get_expected_horizontal_speed()
 	_apply_contact_drive(get_leg_parts(), requested, mass, Vector3.UP)
 
 func _capture_leg_initial_positions() -> void:

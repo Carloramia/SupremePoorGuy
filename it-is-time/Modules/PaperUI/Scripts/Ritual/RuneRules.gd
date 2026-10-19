@@ -1,6 +1,9 @@
 extends RefCounted
 ## Independent summon experiment; legacy web rules remain untouched.
-const RUNES = [
+const CONTENT = preload("res://Scripts/Summoning/SummonContent.gd")
+const RUNES = CONTENT.RUNES
+const RELICS = CONTENT.RELICS
+const PREVIOUS_RUNES = [
 	{
 		"id": "armor",
 		"name": "甲片",
@@ -449,7 +452,7 @@ const LEGACY_RUNES = [
 	{"id":"cycle", "name":"回环", "effect":"缩短召唤技能冷却", "detail":"围绕空心蜂窝形成未闭合回路，冷却缩短 12%。", "color":"f0a85b", "cells":[[1,0],[1,-1],[0,-1],[-1,0],[-1,1],[0,1]]},
 	{"id":"twin-peak", "name":"双峰", "effect":"强化两个相邻符文", "detail":"两侧最近的启用符文获得 15% 强度加成。", "color":"ef7bc0", "cells":[[-2,1],[-3,1],[-2,0],[-1,0],[-1,1],[0,1],[1,1],[2,0],[2,-1]]}
 ]
-const RELICS = [
+const PREVIOUS_RELICS = [
 	{"id":"tide-pump", "name":"潮汐泵", "effect":"刻入符文时恢复 3% 生命", "color":"52d0c8", "cells":[[0,0],[1,0],[0,1]]},
 	{"id":"prism-heart", "name":"棱镜心脏", "effect":"相邻符文强度提高 12%", "color":"e886ff", "cells":[[0,0],[1,0],[0,1],[-1,1]]},
 	{"id":"bone-die", "name":"骨骰", "effect":"召唤完成时强化一种属性", "color":"e4d6b0", "cells":[[0,0],[1,0]]}
@@ -459,6 +462,7 @@ var draft: Array = []
 var placed: Array = []
 var relics: Array = []
 var serial: int = 0
+var layout_version: int = CONTENT.VERSION
 
 static func cell_key(cell: Array) -> String:
 	return "%d,%d" % [cell[0], cell[1]]
@@ -478,6 +482,14 @@ static func definition(id: String, is_relic: bool = false) -> Dictionary:
 	for item in RELICS if is_relic else RUNES:
 		if item.id == id:
 			return item
+	# Compatibility only: old creatures and layouts are not relabelled or reinterpreted.
+	for item in PREVIOUS_RELICS if is_relic else PREVIOUS_RUNES + LEGACY_RUNES:
+		if item.id == id: return item
+	return {}
+
+static func current_definition(id: String, is_relic: bool = false) -> Dictionary:
+	for item in RELICS if is_relic else RUNES:
+		if item.id == id: return item
 	return {}
 
 static func transformed(path: Array, rotations: int, mirror: bool) -> Array:
@@ -504,16 +516,15 @@ static func same_shape(path: Array, pattern: Array) -> bool:
 			return false
 	return true
 
-func recognize(path: Array) -> Dictionary:
-	for rune in RUNES:
-		for mirror in [false, true]:
-			for turn in 6:
-				var shape := transformed(rune.cells, turn, mirror)
-				if same_shape(path, shape):
-					return rune
-				shape.reverse()
-				if same_shape(path, shape):
-					return rune
+func recognize(path: Array, legacy: bool = false) -> Dictionary:
+	for rune: Dictionary in PREVIOUS_RUNES if legacy else RUNES:
+		for pattern: Array in [rune.cells] if legacy else CONTENT.patterns(rune):
+			for mirror in [false, true]:
+				for turn in 6:
+					var shape := transformed(pattern, turn, mirror)
+					if same_shape(path, shape): return rune
+					shape.reverse()
+					if same_shape(path, shape): return rune
 	return {}
 
 func owner_at(cell: Array) -> Dictionary:
@@ -577,11 +588,12 @@ func remove(uid: String) -> void:
 				list.remove_at(i)
 
 func export_layout() -> Dictionary:
-	return {"version":3, "stage":stage, "placed":placed.duplicate(true), "placedRelics":relics.duplicate(true)}
+	return {"version":layout_version, "stage":stage, "placed":placed.duplicate(true), "placedRelics":relics.duplicate(true)}
 
 func import_layout(data: Dictionary) -> bool:
-	if int(data.get("version", 0)) not in [1,2,3] or not data.get("placed") is Array:
+	if int(data.get("version", 0)) not in [1,2,3,4] or not data.get("placed") is Array:
 		return false
+	layout_version = int(data.version)
 	var loaded_stage := int(data.get("stage",stage))
 	if loaded_stage < 1 or loaded_stage > 4:
 		return false
@@ -597,7 +609,7 @@ func import_layout(data: Dictionary) -> bool:
 		var safe := _valid_shape(shape)
 		if not safe:
 			continue
-		var identified := recognize(shape)
+		var identified := recognize(shape,layout_version<CONTENT.VERSION)
 		if identified.get("id", "") != item.get("runeId", ""):
 			continue
 		serial += 1
@@ -605,7 +617,11 @@ func import_layout(data: Dictionary) -> bool:
 	for item in data.get("placedRelics", []):
 		if not item is Dictionary or not item.get("cells") is Array:
 			continue
-		var d := definition(str(item.get("relicId","")), true)
+		var relic_id := str(item.get("relicId",""))
+		var d := current_definition(relic_id,true) if layout_version>=CONTENT.VERSION else {}
+		if layout_version<CONTENT.VERSION:
+			for old: Dictionary in PREVIOUS_RELICS:
+				if old.id==relic_id: d=old
 		if d.is_empty() or not _valid_shape(item.cells) or not _relic_shape_matches(item.cells, d.cells):
 			continue
 		var duplicate_relic := false

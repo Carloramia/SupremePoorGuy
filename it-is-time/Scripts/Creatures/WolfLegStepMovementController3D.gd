@@ -288,7 +288,7 @@ func _update_wolf_heading_state(delta: float) -> void:
 		_wolf_heading_recovery = false
 		_wolf_turn_stable_elapsed = 0.0
 		_wolf_plane_blend = 0.0
-		_wolf_turn_resume_speed = minf(super._get_expected_horizontal_speed(), _get_requested_movement_speed())
+		_wolf_turn_resume_speed = minf(super._get_expected_horizontal_speed(), data.target_speed)
 		_wolf_turn_resume_blend = 0.0
 
 func _update_layout_turn_steps(delta: float) -> void:
@@ -337,7 +337,7 @@ func _update_automatic_wolf_gallop(delta: float) -> void:
 		_wolf_walking_speed = 0.0
 		_wolf_gallop_reason = "inactive"
 		return
-	_wolf_walking_speed = _get_requested_movement_speed()
+	_wolf_walking_speed = data.target_speed
 	var support := false
 	var count := 0
 	for foot: RigidBody3D in _legs:
@@ -346,7 +346,7 @@ func _update_automatic_wolf_gallop(delta: float) -> void:
 		support = support or is_leg_grounded(foot)
 		var original := super.get_leg_motion_profile(foot)
 		if not original.is_empty(): _wolf_walking_speed = minf(_wolf_walking_speed, float(_get_wolf_walking_profile(foot, original).reachable_speed))
-	if count == 0 or _get_requested_movement_speed() <= 0.0:
+	if count == 0 or data.target_speed <= 0.0:
 		_wolf_auto_gallop = false
 		_wolf_gallop_timer = 0.0
 		_wolf_relief_remaining = 0.0
@@ -364,7 +364,7 @@ func _update_automatic_wolf_gallop(delta: float) -> void:
 		_wolf_gallop_reason = "traction_or_extension_relief"
 		_update_gallop_contacts()
 		return
-	var deficit: float = maxf(1.0 - _wolf_walking_speed / _get_requested_movement_speed(), 0.0)
+	var deficit: float = maxf(1.0 - _wolf_walking_speed / data.target_speed, 0.0)
 	var requested: bool = deficit <= minf(data.gallop_exit_speed_deficit, data.gallop_entry_speed_deficit * 0.5) if _wolf_auto_gallop else deficit >= data.gallop_entry_speed_deficit and support
 	var confirmation: float = data.gallop_exit_confirmation if _wolf_auto_gallop else data.gallop_entry_confirmation
 	_wolf_gallop_timer = _wolf_gallop_timer + delta if requested else 0.0
@@ -388,11 +388,11 @@ func _gallop_intensity() -> float:
 	if _wolf_auto_gallop and _gallop_active():
 		var data = _get_gait_data()
 		var minimum: float = maxf(data.minimum_automatic_gallop_intensity, data.traction_gallop_intensity if _wolf_relief_remaining > 0.0 else 0.0)
-		return clampf(maxf(minimum, _get_requested_movement_speed() / maxf(_wolf_walking_speed, 0.01) - 1.0), 0.0, 1.0)
+		return clampf(maxf(minimum, data.target_speed / maxf(_wolf_walking_speed, 0.01) - 1.0), 0.0, 1.0)
 	return super._gallop_intensity()
 
 func _get_expected_horizontal_speed() -> float:
-	if _wolf_auto_gallop and _gallop_active() and not _charge_gait_active(): return lerpf(_wolf_turn_resume_speed, _get_requested_movement_speed(), smoothstep(0.0, 1.0, _wolf_turn_resume_blend))
+	if _wolf_auto_gallop and _gallop_active() and not _charge_gait_active(): return lerpf(_wolf_turn_resume_speed, _get_gait_data().target_speed, smoothstep(0.0, 1.0, _wolf_turn_resume_blend))
 	return super._get_expected_horizontal_speed()
 
 func _height_support_carries_limb_weight() -> bool:
@@ -418,7 +418,7 @@ func _airborne_height_support_limit(weight: float) -> float:
 
 func get_automatic_motion_diagnostics() -> Dictionary:
 	var result := super.get_automatic_motion_diagnostics()
-	result["wolf_auto_gallop"] = {"enabled": _get_gait_data().automatic_gallop_enabled, "active": _wolf_auto_gallop, "walking_speed": _wolf_walking_speed, "target_speed": _get_requested_movement_speed(), "confirmation_elapsed": _wolf_gallop_timer, "reason": _wolf_gallop_reason}
+	result["wolf_auto_gallop"] = {"enabled": _get_gait_data().automatic_gallop_enabled, "active": _wolf_auto_gallop, "walking_speed": _wolf_walking_speed, "target_speed": _get_gait_data().target_speed, "confirmation_elapsed": _wolf_gallop_timer, "reason": _wolf_gallop_reason}
 	result.wolf_auto_gallop["support_relief_remaining"] = _wolf_relief_remaining
 	if _gallop_active():
 		result.speed_based_gait = true
@@ -1030,7 +1030,7 @@ func _get_projected_landing_rest_position(leg: RigidBody3D, direction: Vector3) 
 	var profile := get_leg_motion_profile(leg)
 	var data = _get_gait_data()
 	# Recenter every landing on the torso; a rearward foot must not drag the next target back.
-	var forward := maxf(get_leg_step_distance(leg) * 0.5, _get_requested_movement_speed() * float(profile.swing_duration))
+	var forward := maxf(get_leg_step_distance(leg) * 0.5, data.target_speed * float(profile.swing_duration))
 	var attempts := int(_wolf_recovery_steps.get(leg, 0))
 	forward = clampf(forward * data.recovery_stride_scale(attempts), 0.0, float(bounds.radius) * 0.8)
 	# The shared sampler still adds the unscaled step distance.

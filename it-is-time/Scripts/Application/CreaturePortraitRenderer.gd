@@ -19,7 +19,7 @@ func request(portrait: Control, record: Dictionary) -> void:
 		var image := Image.create(IMAGE_SIZE.x,IMAGE_SIZE.y,false,Image.FORMAT_RGBA8)
 		image.fill(Color.WHITE)
 		_placeholder = ImageTexture.create_from_image(image)
-	var key := "%s:%s:%s" % [record.definition_id,record.get("template_hash",""),hash(record.get("poses",{}))]
+	var key := "%s:%s:%s:%s" % [record.definition_id,record.get("template_hash",""),hash(record.get("poses",{})),record.get("magic_eye",false)]
 	portrait.set_meta(&"creature_portrait_key",key)
 	artwork.texture = _cache.get(key,_placeholder)
 	portrait.use_reference_examples = false
@@ -54,6 +54,8 @@ func _build_preview(record: Dictionary) -> Dictionary:
 	var scene := load(FACTORY.DEFINITIONS[record.definition_id].scene) as PackedScene
 	if scene == null: return result
 	var actor := scene.instantiate()
+	actor.generate_on_ready=false
+	if not FACTORY.ANATOMY.apply(actor,record.get("anatomy",{})): actor.free(); return result
 	for node: Node in actor.find_children("*","",true,false):
 		if node is PhysicalBodyPart3D:
 			var collider := node.get_node_or_null("CollisionShape3D") as CollisionShape3D
@@ -63,6 +65,7 @@ func _build_preview(record: Dictionary) -> Dictionary:
 	for path: String in record.get("poses",{}):
 		var node := actor.get_node_or_null(NodePath(path)) as Node3D
 		if node != null: node.transform = FACTORY.unpack_transform(record.poses[path])
+	if record.get("magic_eye",false): preload("res://Scripts/Summoning/SummonCombatEffects3D.gd").add_eye_visual(actor)
 	for node: Node in actor.find_children("*","",true,false):
 		if not (node is MeshInstance3D or node is Sprite3D): continue
 		if node is MeshInstance3D and node.mesh == null: continue

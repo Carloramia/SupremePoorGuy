@@ -82,7 +82,6 @@ func safe_swing_time(distance: float, height: float, nominal: float) -> float:
 
 func stabilize_profile(original: Dictionary, stance_distance: float, foot_count: int, observed: float) -> Dictionary:
 	var profile := original.duplicate()
-	var requested_speed: float = profile.target_speed
 	var stride := minf(float(profile.stride), maxf(stance_distance, 0.01))
 	var swing := safe_swing_time(stride, float(profile.lift), float(profile.swing_duration))
 	var occupied := maxf(swing + 0.12 + contact_brake_time + 0.04, observed * 1.1)
@@ -90,8 +89,8 @@ func stabilize_profile(original: Dictionary, stance_distance: float, foot_count:
 	var cycle := maxf(float(profile.cycle), foot_count * occupied / capacity)
 	var stance_time := maxf(cycle - occupied, 0.01)
 	# Only the planted part of the cycle consumes the structural stance interval.
-	profile.reachable_speed = minf(requested_speed, stance_distance / stance_time)
-	profile.speed_limited = float(profile.reachable_speed) + 0.001 < requested_speed
+	profile.reachable_speed = minf(target_speed, stance_distance / stance_time)
+	profile.speed_limited = float(profile.reachable_speed) + 0.001 < target_speed
 	profile.limiting_reason = "wolf_safe_step_and_support_budget" if profile.speed_limited else "none"
 	profile.stride = stride
 	profile.cycle = cycle

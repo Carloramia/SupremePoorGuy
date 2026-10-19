@@ -5,49 +5,7 @@ import xml.etree.ElementTree as ET
 from copy import deepcopy
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2]
-
-
-def sprite_pose(o, texture_width, texture_height, default_tilt):
-    """The source's bottom-pivot pose, compensated for the object's yaw and X/Z scale."""
-    v = o['visual']; mode = v.get('surface_mode', 'auto')
-    if mode == 'auto':
-        mode = 'ground' if o['type'] in ['mud', 'pit', 'post_battle', 'broken_barricade'] or v['asset'] in ['battle_leaf_litter', 'battle_dry_patch', 'battle_shale_patch', 'demo_wood_fragment'] else 'tilted' if o['type'] in ['tree', 'decoration', 'edge_decoration', 'web', 'thorns', 'indestructible', 'destructible', 'traversable', 'collision_damage'] else 'actor'
-    theta = math.radians(max(0, min(90, v.get('tilt_degrees', default_tilt))))
-    width, height = v['size'][0]*o['scale'][0], v['size'][1]*o['scale'][1]
-    yaw = -math.radians(o['rotation']); c, s = math.cos(yaw), math.sin(yaw)
-    # Inverse of the host's rotation*scale, applied to a camera-facing paper basis.
-    def inverse(v):
-        x, y, z = v
-        return [(c*x-s*z)/o['scale'][0], y, (s*x+c*z)/o['scale'][1]]
-    lift = max(.015, .035+v.get('z_index', 0)*.0002)
-    if mode == 'ground':
-        columns = [[width/texture_width,0,0], [0,0,-height/texture_height], [0,1,0]]
-        # Ground artwork retains its authored planar yaw.
-        columns = [[c*x+s*z,y,-s*x+c*z] for x,y,z in columns]
-        origin = [0,lift,0]
-    elif mode == 'tilted':
-        columns = [[width/texture_width,0,0], [0,height*math.sin(theta)/texture_height,-height*math.cos(theta)/texture_height], [0,math.cos(theta),math.sin(theta)]]
-        origin = [0,height*.5*math.sin(theta)+lift,-height*.5*math.cos(theta)]
-    else:
-        columns = [[width/texture_width,0,0], [0,height/texture_height,0], [0,0,1]]
-        origin = [0,height*.5,0]
-    local_columns = [inverse(col) for col in columns]
-    # TSCN's Transform3D constructor serializes the basis by rows.
-    values = [x for row in zip(*local_columns) for x in row] + inverse(origin)
-    return 'Transform3D('+', '.join(n(x) for x in values)+')', mode
-
-
-def scenery_sprite(o, asset, texture, parent, default_tilt):
-    """Bake the source preview's Sprite3D pose; no per-frame layout script is needed."""
-    pose, mode = sprite_pose(o, asset['width'], asset['height'], default_tilt)
-    return ['[node name="Visual" type="Sprite3D" parent='+q(parent)+']',
-        'transform = '+pose, 'texture = '+texture, 'pixel_size = 1.0',
-        'modulate = Color(1, 1, 1, '+n(o['visual']['opacity'])+')',
-        'texture_filter = 3', 'alpha_cut = 2', 'cast_shadow = 0',
-        'billboard = '+('2' if mode == 'actor' else '0'),
-        'visible = '+str(o['visual'].get('visible', True) and not o.get('layout_review_only', False)).lower(),
-        'metadata/surface_mode = '+q(mode),
-        'metadata/tilt_from_ground = '+n(max(0, min(90, o['visual'].get('tilt_degrees', default_tilt))) if mode == 'tilted' else 0)]
+PAPER_PARTS={}
 
 def q(value):
     return json.dumps(value, ensure_ascii=False)
@@ -83,7 +41,7 @@ def shape_points(shape):
 def convert_battle_3d(m,assets,object_assets=None):
     """Author native X/Z art planes, separate solid collision/effect areas and hex walls."""
     exts=['[ext_resource type="Script" path="res://Scripts/Map/BattleMap3D.gd" id="BattleScript"]','[ext_resource type="Shader" path="res://Scripts/Map/BattleGround.gdshader" id="GroundShader"]','[ext_resource type="Shader" path="res://Scripts/Map/BattleExterior.gdshader" id="ExteriorShader"]']
-    subs=[]; nodes=[]; textures={}
+    subs=[]; nodes=[]; textures={}; part_resources={}
     def tex(a,background=False):
         key=a+(':background' if background else '')
         if key not in textures:
@@ -126,14 +84,18 @@ def convert_battle_3d(m,assets,object_assets=None):
         nodes += ['[node name='+q(oid)+' type="Node3D" parent="Objects"]','position = '+vec([o['position'][0],o.get('height',0),o['position'][1]],'Vector3'),'rotation = '+vec([0,-math.radians(o['rotation']),0],'Vector3'),'scale = '+vec([o['scale'][0],1,o['scale'][1]],'Vector3'),'metadata/source_id = '+q(oid)]
         if v['asset'] and v.get('visible',True) and o['type'] not in ['deployment','reveal_area']:
             a=assets[v['asset']];w,h=v['size']
-            if a.get('demo_art') and 'presentation' not in m:
+            if a.get('demo_art'):
                 f=min(w/a['width'],h/a['height']);w,h=a['width']*f,a['height']*f
-            if 'presentation' in m:
-                nodes += scenery_sprite({**o, 'visual': v}, a, tex(v['asset']), p, m['presentation'].get('scenery_tilt_degrees',60))
+            if v['asset'] in PAPER_PARTS and o['type']!='edge_decoration':
+                if v['asset'] not in part_resources:
+                    part_resources[v['asset']]='Part_'+str(len(part_resources))
+                    exts.append('[ext_resource type="PackedScene" path='+q(PAPER_PARTS[v['asset']])+' id='+q(part_resources[v['asset']])+']')
+                ground=o['type'] in ['mud','web','thorns','pit','broken_barricade']
+                nodes += ['[node name="PhysicalPart" parent='+q(p)+' instance=ExtResource('+q(part_resources[v['asset']])+')]','position = '+vec([0,.025 if ground else h/2+.025,0],'Vector3'),'rotation = '+vec([-math.pi/2 if ground else 0,0,0],'Vector3'),'scale = '+vec([w,h,.025 if ground else .08],'Vector3'),'metadata/decoration_collision_enabled = false']
             else:
                 mat=sub('StandardMaterial3D',['transparency = 1','shading_mode = 0','cull_mode = 2','albedo_texture = '+tex(v['asset']),'albedo_color = Color(1,1,1,'+n(v['opacity'])+')','texture_filter = 1'])
-                mesh=sub('PlaneMesh',['size = '+vec([w,h])]);placement=['position = '+vec([0,.02+order*.003,0],'Vector3')]
-                nodes += ['[node name="Visual" type="MeshInstance3D" parent='+q(p)+']',*placement,'mesh = '+mesh,'material_override = '+mat,'cast_shadow = 0','visible = '+str(v['visible'] and not o.get('layout_review_only',False)).lower()]
+                mesh=sub('PlaneMesh',['size = '+vec([w,h])])
+                nodes += ['[node name="Visual" type="MeshInstance3D" parent='+q(p)+']','position = '+vec([0,.02+order*.003,0],'Vector3'),'mesh = '+mesh,'material_override = '+mat,'cast_shadow = 0','visible = '+str(v['visible'] and not o.get('layout_review_only',False)).lower()]
         for key,body_type in [('collision','StaticBody3D'),('region','Area3D'),('click_area','Area3D')]:
             shape=o.get(key,{})
             if not shape.get('enabled'):continue

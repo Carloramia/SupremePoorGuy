@@ -18,6 +18,8 @@ GameSession 继承 [PrototypeState](../../../Modules/PaperUI/Scripts/PrototypeSt
 
 地图与战斗结果通过 `battle_id/request_id` 和回执避免重复提交。修改存档结构前同时检查 `_valid_save()`、读档恢复、结算和备份处理。不要把测试临时存档写进真实槽位。
 
+2026-10-20 Demo经济更新：真实BattleHost不再默认胜利+20魔力。按怪物等级的胜利奖励公式/表尚未配置，暂以`reward=0`和`magic_reward_pending=true / reward_basis="monster_level"`保留状态；结算页显示待配置，尚不实际发放。GameSession拒绝待配置标志与非零金额同时出现，但仍兼容旧回执及独立测试里明确传入的奖励金额。未来接入等级奖励时须校准真实敌人等级、持久化与重复回执，不自动追补历史结果。事件固定10/20魔力由[事件系统](../StoryEvents/README.md#固定魔力报酬与战斗掉落分开)另行处理，不能与战斗掉落混成一笔。
+
 ## 角色定义与召唤池
 
 `CreatureFactory.DEFINITIONS` 当前登记 `human`、`stump_beast`、`wolf`、`snake`、`horned_beast`、`spider`；其中 `human` 指向持矛人形 NPC。当前随机召唤池仅为：

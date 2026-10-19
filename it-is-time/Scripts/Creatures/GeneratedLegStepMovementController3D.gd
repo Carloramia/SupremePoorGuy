@@ -952,7 +952,7 @@ func _get_speed_leg_plan(leg: RigidBody3D) -> Dictionary:
 		var distance := maxf(relative.dot(direction)+forward_reach-margin,0.0)
 		geometry[foot] = {"distance": distance,"reach": maxf(forward_reach-margin,0.05)}
 	for foot: RigidBody3D in geometry:
-		var plan := _get_gait_data().calculate_adaptive_flight_profile(reference,_legs.size(),actual_speed,float(geometry[foot].distance),capacity,float(_landing_time_estimates.get(foot,0.0)),_get_requested_movement_speed())
+		var plan := _get_gait_data().calculate_adaptive_flight_profile(reference,_legs.size(),actual_speed,float(geometry[foot].distance),capacity,float(_landing_time_estimates.get(foot,0.0)))
 		if not plan.get("enabled",false): continue
 		if _charge_all_air_enabled():
 			# Fill the stride budget with air time instead of forcing a longer
@@ -1027,7 +1027,7 @@ func _automatic_flight_capacity() -> int:
 
 func _extension_gait_enabled() -> bool:
 	var data := _get_gait_data()
-	return data != null and data.automatic_motion and data.speed_based_gait and _get_requested_movement_speed() > 0.0 and input_enabled and not get_input_movement_direction().is_zero_approx() and not _planar_mode_active() and not recovery_control_active and not simplified_physics_mode and _adhesion_release_time_remaining <= 0.0
+	return data != null and data.automatic_motion and data.speed_based_gait and data.target_speed > 0.0 and input_enabled and not get_input_movement_direction().is_zero_approx() and not _planar_mode_active() and not recovery_control_active and not simplified_physics_mode and _adhesion_release_time_remaining <= 0.0
 
 func _automatic_step_cadence_allows() -> bool:
 	return true if _extension_gait_enabled() or _gallop_starting_batch else super._automatic_step_cadence_allows()
@@ -1128,7 +1128,7 @@ func _get_bounded_stance_demand(foot: RigidBody3D, travel: Vector3, attachment: 
 	var threshold := budget * 0.2
 	# A stopped body can still exhaust a bent chain before its outer sphere.
 	# Target-speed preview is capped and requires real rearward stance travel.
-	var preview := minf(maxf(approach, _get_requested_movement_speed()) * lead, budget * 0.7)
+	var preview := minf(maxf(approach, _get_gait_data().target_speed) * lead, budget * 0.7)
 	result.policy = "bounded_stance"
 	result.remaining_distance = remaining
 	result.approach_speed = approach
@@ -1160,7 +1160,7 @@ func _get_charge_extension_demand(foot: RigidBody3D, travel: Vector3, attachment
 	var stance_offset := (foot.global_position-_get_leg_rest_world_position(foot)).dot(travel)
 	var remaining := maxf(minf(geometric_remaining,stance_offset+budget),0.0)
 	var threshold := maxf(budget*0.2,0.01)
-	var prediction_speed := maxf(actual_approach,_get_requested_movement_speed())
+	var prediction_speed := maxf(actual_approach,_get_gait_data().target_speed)
 	var lead := clampf(float(plan.get("air_duration",0.3))*0.35,0.1,0.25)
 	# Require some real rearward stance travel; high target speed alone cannot
 	# immediately repeat a step on a foot that landed ahead of its rest pose.
@@ -1308,9 +1308,9 @@ func _update_resource_gait(delta: float, direction: Vector3) -> void:
 
 func _gallop_intensity() -> float:
 	if not _automatic_motion_enabled() or _legs.is_empty(): return 0.0
-	var walking_speed := _get_requested_movement_speed()
+	var walking_speed := _get_gait_data().target_speed
 	for foot: RigidBody3D in _legs: walking_speed = minf(walking_speed,float(get_leg_motion_profile(foot).reachable_speed))
-	return clampf(_get_requested_movement_speed() / maxf(walking_speed,0.01) - 1.0,0.0,1.0)
+	return clampf(_get_gait_data().target_speed / maxf(walking_speed,0.01) - 1.0,0.0,1.0)
 
 func _gallop_window() -> float:
 	if _automatic_motion_enabled() and _get_gait_data().speed_based_gait and not _legs.is_empty():
@@ -1394,7 +1394,7 @@ func _update_gallop_contacts() -> void:
 	for foot in _gallop_contacts.keys():
 		if not is_instance_valid(foot) or not _chain_is_intact(foot) or _physics_elapsed - float(_gallop_contacts[foot].time) >= _gallop_contact_duration(foot):
 			_gallop_contacts.erase(foot)
-	_gallop_diagnostics = {"active": true, "target_speed": _get_requested_movement_speed(), "window": _gallop_window(), "maximum_lease_duration": float(_get_speed_leg_plan(_legs[0]).get("lease_duration",_get_gait_data().gallop_maximum_airborne_duration)), "intensity": _gallop_intensity(), "walking_speed_limit": float(get_leg_motion_profile(_legs[0]).reachable_speed), "total_step_frequency": get_planned_step_frequency(), "remembered_contacts": _gallop_contacts.size(), "takeoffs": _gallop_takeoffs, "group_sequence": _gallop_group_sequence, "group_size": get_maximum_stepping_feet() if _get_gait_data().speed_based_gait else _get_gait_data().gallop_step_group_size, "stepping_capacity": get_maximum_stepping_feet(), "cadence_controls_admission": not _extension_gait_enabled(), "actual_starts_last_second": _extension_start_times.filter(func(time): return _physics_elapsed-time < 1.0).size(), "next_group_in": maxf(_gallop_next_group_time-_physics_elapsed,0.0), "phase": "flight" if _physics_elapsed < _gallop_pin_release_until else "landing_or_support", "pin_release_remaining": maxf(_gallop_pin_release_until - _physics_elapsed,0.0), "airborne_force": Vector3.ZERO, "airborne_support": Vector3.ZERO, "segments": []}
+	_gallop_diagnostics = {"active": true, "target_speed": _get_gait_data().target_speed, "window": _gallop_window(), "maximum_lease_duration": float(_get_speed_leg_plan(_legs[0]).get("lease_duration",_get_gait_data().gallop_maximum_airborne_duration)), "intensity": _gallop_intensity(), "walking_speed_limit": float(get_leg_motion_profile(_legs[0]).reachable_speed), "total_step_frequency": get_planned_step_frequency(), "remembered_contacts": _gallop_contacts.size(), "takeoffs": _gallop_takeoffs, "group_sequence": _gallop_group_sequence, "group_size": get_maximum_stepping_feet() if _get_gait_data().speed_based_gait else _get_gait_data().gallop_step_group_size, "stepping_capacity": get_maximum_stepping_feet(), "cadence_controls_admission": not _extension_gait_enabled(), "actual_starts_last_second": _extension_start_times.filter(func(time): return _physics_elapsed-time < 1.0).size(), "next_group_in": maxf(_gallop_next_group_time-_physics_elapsed,0.0), "phase": "flight" if _physics_elapsed < _gallop_pin_release_until else "landing_or_support", "pin_release_remaining": maxf(_gallop_pin_release_until - _physics_elapsed,0.0), "airborne_force": Vector3.ZERO, "airborne_support": Vector3.ZERO, "segments": []}
 
 func _confirm_charge_support_contact(foot: RigidBody3D, contact: Dictionary, motion: StepMotion) -> bool:
 	var valid: bool = motion.state == StepState.LANDING and motion.extra.get("_step_has_lifted",false) and not contact.is_empty() and is_leg_grounded(foot)
@@ -1547,7 +1547,7 @@ func _planar_target_velocity() -> Vector3:
 	var direction := get_input_movement_direction() if input_enabled else Vector3.ZERO
 	var data := _get_gait_data()
 	var speed := maxf(data.target_speed,0.0) if data != null else get_expected_horizontal_speed()
-	return AXIS_MOVEMENT.target_velocity(direction, speed, get_target_z_speed())
+	return direction * speed
 
 func _update_planar_motion(delta: float) -> void:
 	var performance_started: int = _movement_perf.start()
@@ -1816,8 +1816,14 @@ func _apply_ground_movement_brake(direction: Vector3) -> void:
 		velocity += body.linear_velocity * body.mass
 	if mass <= 0.0: return
 	velocity = (velocity / mass).slide(Vector3.UP)
-	var target := _planar_target_velocity() if _planar_mode_active() else (get_expected_horizontal_velocity() if not direction.is_zero_approx() else Vector3.ZERO)
-	var correction := AXIS_MOVEMENT.braking_correction(velocity, target)
+	var correction := -velocity
+	if _planar_mode_active():
+		var target := _planar_target_velocity()
+		for axis: int in [0,2]:
+			if not is_zero_approx(target[axis]): correction[axis] = -signf(target[axis])*maxf(velocity[axis]*signf(target[axis])-absf(target[axis]),0.0)
+	elif not direction.is_zero_approx():
+		var forward := direction.slide(Vector3.UP).normalized()
+		correction = -velocity.slide(forward) - forward * maxf(velocity.dot(forward) - get_expected_horizontal_speed(), 0.0)
 	var controlled_mass := 0.0
 	for body: RigidBody3D in _character_body_cache:
 		if is_instance_valid(body) and not _is_body_broken(body): controlled_mass += body.mass
@@ -2623,7 +2629,7 @@ func _get_expected_horizontal_speed() -> float:
 	if _planar_mode_active() and _get_gait_data() != null:
 		var direction := get_input_movement_direction()
 		if is_zero_approx(direction.x) and not is_zero_approx(direction.z): return maxf(_get_gait_data().target_speed,0.0)
-	if _gallop_active(): return _get_requested_movement_speed()
+	if _gallop_active(): return _get_gait_data().target_speed
 	# Turning changes the shared event rate, not the configured walking speed.
 	if _layout_turn_owned and _get_gait_data() != null and not _automatic_motion_enabled():
 		return _get_gait_step_distance() * super.get_planned_step_frequency()

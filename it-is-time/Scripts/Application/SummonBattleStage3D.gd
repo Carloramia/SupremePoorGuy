@@ -53,15 +53,13 @@ func _resize_arena() -> void:
 func _fit_ground_to_camera(camera: Camera3D) -> void:
 	var drift_margin: float = maxf(settings.horizontal_speed*settings.free_motion_duration,settings.part_spawn_radius)+6.0
 	var next_size: Vector3 = (Vector3.ONE*2.0*(emission_radius+drift_margin)+_largest).max(Vector3(120,1,80))
+	var tangent := tan(deg_to_rad(camera.fov)*0.5)
 	# Extend the ground past the four view rays, independently of the activity framing.
-	var viewport_size := camera.get_viewport().get_visible_rect().size
-	for x: float in [0.0,viewport_size.x]:
-		for y: float in [0.0,viewport_size.y]:
-			var pixel := Vector2(x,y)
-			var origin := camera.project_ray_origin(pixel)
-			var ray := camera.project_ray_normal(pixel)
+	for x: float in [-1.0,1.0]:
+		for y: float in [-1.0,1.0]:
+			var ray := camera.global_basis*Vector3(x*tangent*_aspect,y*tangent,-1.0)
 			if ray.y >= -0.01: continue # Sky-facing rays blend into the black background instead of a finite floor.
-			var point := origin-ray*(origin.y/ray.y)
+			var point := camera.global_position-ray*(camera.global_position.y/ray.y)
 			next_size.x = maxf(next_size.x,(absf(point.x)+8.0)*2.0)
 			next_size.z = maxf(next_size.z,(absf(point.z)+8.0)*2.0)
 	next_size.y = 1.0
@@ -102,8 +100,7 @@ func frame_camera(aspect: float) -> void:
 		for corner: int in 8: points.append(bounds.get_endpoint(corner))
 	for point: Vector3 in points:
 		var projected: Vector3 = inverse*(point-center)
-		# Orthographic framing is independent of depth; retain enough camera setback for clipping.
-		distance = maxf(distance,maxf(projected.z+camera.near+1.0,maxf(absf(projected.x)/(tangent*_aspect),absf(projected.y)/tangent)))
+		distance = maxf(distance,projected.z+maxf(absf(projected.x)/(tangent*_aspect),absf(projected.y)/tangent))
 	rig.maximum_distance = maxf(50.0,distance*2.0)
 	rig.set_distance(distance*1.05)
 	camera.far = maxf(2000.0,rig.maximum_distance*2.0)

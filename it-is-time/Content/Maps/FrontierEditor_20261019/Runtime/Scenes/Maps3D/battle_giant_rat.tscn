@@ -1,4 +1,4 @@
-[gd_scene load_steps=108 format=3]
+[gd_scene load_steps=172 format=3]
 
 [ext_resource type="Script" path="res://Modules/FrontierDelivery/Scripts/Map/BattleMap3D.gd" id="BattleScript"]
 [ext_resource type="Shader" path="res://Modules/FrontierDelivery/Scripts/Map/BattleGround.gdshader" id="GroundShader"]
@@ -9,37 +9,31 @@
 [ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/602770b268be2f93cdb6ad7b.png" id="Texture_3"]
 [ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/7e6c8d56a797c223fdc8a600.png" id="Texture_4"]
 [ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/d49de230f58be456c6382069.png" id="Texture_5"]
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/9cfd411321b55abafc78e0b9.svg" id="SourceArt_battle_shale_patch"]
-
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/6e16757eb49b88a0204094f6.png" id="SourceArt_art1018_09_021"]
-
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/1caeb7bef9be15c39fae8c5f.png" id="SourceArt_art1018_10_019"]
-
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/d8649aa7c7e0d9503ffa1aa6.svg" id="SourceArt_mud"]
-
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/7ad4a7b14785d9c2b8d91d58.png" id="SourceArt_art1018_08_021"]
-
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/a5bebf1f88ea1c2bce2d23ab.png" id="SourceArt_art1018_11_018"]
-
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/225b0044aa0b0f0fb57ed9b2.png" id="SourceArt_art1018_09_025"]
-
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/602770b268be2f93cdb6ad7b.png" id="SourceArt_art1018_03_025"]
-
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/cff2b8732defa110f3524191.png" id="SourceArt_art1018_11_011"]
-
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/7e6c8d56a797c223fdc8a600.png" id="SourceArt_art1018_09_006"]
-
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/d49de230f58be456c6382069.png" id="SourceArt_art1018_09_003"]
-
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/ebe68d84d53c182a52f5d0d3.png" id="SourceArt_art1018_03_027"]
-
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/376ee7ee544cd057b8ea4201.png" id="SourceArt_art1018_08_022"]
-
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/13051448c840c6988b94af1e.png" id="SourceArt_art1018_05_015"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/battle_shale_patch.tscn" id="Part_0"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_09_021.tscn" id="Part_1"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_10_019.tscn" id="Part_2"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/mud.tscn" id="Part_3"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_08_021.tscn" id="Part_4"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_11_018.tscn" id="Part_5"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_09_025.tscn" id="Part_6"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_03_025.tscn" id="Part_7"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/a5bebf1f88ea1c2bce2d23ab.png" id="Texture_6"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/225b0044aa0b0f0fb57ed9b2.png" id="Texture_7"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/cff2b8732defa110f3524191.png" id="Texture_8"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/602770b268be2f93cdb6ad7b.png" id="Texture_9"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/7e6c8d56a797c223fdc8a600.png" id="Texture_10"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/d49de230f58be456c6382069.png" id="Texture_11"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_03_027.tscn" id="Part_8"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_08_022.tscn" id="Part_9"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_05_015.tscn" id="Part_10"]
 
 [sub_resource type="StandardMaterial3D" id="R0"]
 shading_mode = 0
 albedo_color = Color(0.62745098, 0.631372549, 0.431372549, 1)
+
+[sub_resource type="PrismMesh" id="R1"]
+left_to_right = 0.5
+size = Vector3(1, 1, 1)
 
 [sub_resource type="ShaderMaterial" id="R2"]
 shader = ExtResource("GroundShader")
@@ -363,6 +357,336 @@ points = PackedVector3Array(4.4, 0, 1.90525589, 4.4, 2, 1.90525589, 3.85, 0, 2.8
 [sub_resource type="ConvexPolygonShape3D" id="R75"]
 points = PackedVector3Array(2.75, 0, 2.85788383, 2.75, 2, 2.85788383, 2.2, 0, 3.81051178, 2.2, 2, 3.81051178, 1.1, 0, 3.81051178, 1.1, 2, 3.81051178, 0.55, 0, 2.85788383, 0.55, 2, 2.85788383, 1.1, 0, 1.90525589, 1.1, 2, 1.90525589, 2.2, 0, 1.90525589, 2.2, 2, 1.90525589)
 
+[sub_resource type="StandardMaterial3D" id="R76"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_6")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R77"]
+size = Vector2(2.7, 2.38846154)
+
+[sub_resource type="StandardMaterial3D" id="R78"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_7")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R79"]
+size = Vector2(2.7, 1.57281553)
+
+[sub_resource type="StandardMaterial3D" id="R80"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_8")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R81"]
+size = Vector2(4.5, 5.97761194)
+
+[sub_resource type="StandardMaterial3D" id="R82"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_6")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R83"]
+size = Vector2(2.7, 2.38846154)
+
+[sub_resource type="StandardMaterial3D" id="R84"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_7")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R85"]
+size = Vector2(2.7, 1.57281553)
+
+[sub_resource type="StandardMaterial3D" id="R86"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_7")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R87"]
+size = Vector2(2.7, 1.57281553)
+
+[sub_resource type="StandardMaterial3D" id="R88"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_9")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R89"]
+size = Vector2(2.7, 3.3893617)
+
+[sub_resource type="StandardMaterial3D" id="R90"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_6")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R91"]
+size = Vector2(2.7, 2.38846154)
+
+[sub_resource type="StandardMaterial3D" id="R92"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_7")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R93"]
+size = Vector2(2.7, 1.57281553)
+
+[sub_resource type="StandardMaterial3D" id="R94"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_9")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R95"]
+size = Vector2(2.7, 3.3893617)
+
+[sub_resource type="StandardMaterial3D" id="R96"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_9")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R97"]
+size = Vector2(2.7, 3.3893617)
+
+[sub_resource type="StandardMaterial3D" id="R98"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_6")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R99"]
+size = Vector2(2.7, 2.38846154)
+
+[sub_resource type="StandardMaterial3D" id="R100"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_10")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R101"]
+size = Vector2(4.5, 6.4125)
+
+[sub_resource type="StandardMaterial3D" id="R102"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_9")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R103"]
+size = Vector2(2.7, 3.3893617)
+
+[sub_resource type="StandardMaterial3D" id="R104"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_6")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R105"]
+size = Vector2(2.7, 2.38846154)
+
+[sub_resource type="StandardMaterial3D" id="R106"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_6")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R107"]
+size = Vector2(2.7, 2.38846154)
+
+[sub_resource type="StandardMaterial3D" id="R108"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_7")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R109"]
+size = Vector2(2.7, 1.57281553)
+
+[sub_resource type="StandardMaterial3D" id="R110"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_9")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R111"]
+size = Vector2(2.7, 3.3893617)
+
+[sub_resource type="StandardMaterial3D" id="R112"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_6")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R113"]
+size = Vector2(2.7, 2.38846154)
+
+[sub_resource type="StandardMaterial3D" id="R114"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_7")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R115"]
+size = Vector2(2.7, 1.57281553)
+
+[sub_resource type="StandardMaterial3D" id="R116"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_7")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R117"]
+size = Vector2(2.7, 1.57281553)
+
+[sub_resource type="StandardMaterial3D" id="R118"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_9")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R119"]
+size = Vector2(2.7, 3.3893617)
+
+[sub_resource type="StandardMaterial3D" id="R120"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_11")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R121"]
+size = Vector2(4.5, 5.58333333)
+
+[sub_resource type="StandardMaterial3D" id="R122"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_7")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R123"]
+size = Vector2(2.7, 1.57281553)
+
+[sub_resource type="StandardMaterial3D" id="R124"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_9")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R125"]
+size = Vector2(2.7, 3.3893617)
+
+[sub_resource type="StandardMaterial3D" id="R126"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_9")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R127"]
+size = Vector2(2.7, 3.3893617)
+
+[sub_resource type="StandardMaterial3D" id="R128"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_6")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R129"]
+size = Vector2(2.7, 2.38846154)
+
+[sub_resource type="StandardMaterial3D" id="R130"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_7")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R131"]
+size = Vector2(2.7, 1.57281553)
+
+[sub_resource type="StandardMaterial3D" id="R132"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_9")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R133"]
+size = Vector2(2.7, 3.3893617)
+
+[sub_resource type="StandardMaterial3D" id="R134"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_6")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R135"]
+size = Vector2(2.7, 2.38846154)
+
 [sub_resource type="ConvexPolygonShape3D" id="R136"]
 points = PackedVector3Array(0.896, 0, 0, 0.896, 2.6, 0, 0.878783611, 0, 0.144757019, 0.878783611, 2.6, 0.144757019, 0.827796061, 0, 0.283951107, 0.827796061, 2.6, 0.283951107, 0.744996773, 0, 0.412233113, 0.744996773, 2.6, 0.412233113, 0.633567676, 0, 0.524673232, 0.633567676, 2.6, 0.524673232, 0.497790929, 0, 0.616950452, 0.497790929, 2.6, 0.616950452, 0.342884355, 0, 0.685518613, 0.342884355, 2.6, 0.685518613, 0.174800929, 0, 0.727742678, 0.174800929, 2.6, 0.727742678, 5.48641766e-17, 0, 0.742, 5.48641766e-17, 2.6, 0.742, -0.174800929, 0, 0.727742678, -0.174800929, 2.6, 0.727742678, -0.342884355, 0, 0.685518613, -0.342884355, 2.6, 0.685518613, -0.497790929, 0, 0.616950452, -0.497790929, 2.6, 0.616950452, -0.633567676, 0, 0.524673232, -0.633567676, 2.6, 0.524673232, -0.744996773, 0, 0.412233113, -0.744996773, 2.6, 0.412233113, -0.827796061, 0, 0.283951107, -0.827796061, 2.6, 0.283951107, -0.878783611, 0, 0.144757019, -0.878783611, 2.6, 0.144757019, -0.896, 0, 9.08687925e-17, -0.896, 2.6, 9.08687925e-17, -0.878783611, 0, -0.144757019, -0.878783611, 2.6, -0.144757019, -0.827796061, 0, -0.283951107, -0.827796061, 2.6, -0.283951107, -0.744996773, 0, -0.412233113, -0.744996773, 2.6, -0.412233113, -0.633567676, 0, -0.524673232, -0.633567676, 2.6, -0.524673232, -0.497790929, 0, -0.616950452, -0.497790929, 2.6, -0.616950452, -0.342884355, 0, -0.685518613, -0.342884355, 2.6, -0.685518613, -0.174800929, 0, -0.727742678, -0.174800929, 2.6, -0.727742678, -1.6459253e-16, 0, -0.742, -1.6459253e-16, 2.6, -0.742, 0.174800929, 0, -0.727742678, 0.174800929, 2.6, -0.727742678, 0.342884355, 0, -0.685518613, 0.342884355, 2.6, -0.685518613, 0.497790929, 0, -0.616950452, 0.497790929, 2.6, -0.616950452, 0.633567676, 0, -0.524673232, 0.633567676, 2.6, -0.524673232, 0.744996773, 0, -0.412233113, 0.744996773, 2.6, -0.412233113, 0.827796061, 0, -0.283951107, 0.827796061, 2.6, -0.283951107, 0.878783611, 0, -0.144757019, 0.878783611, 2.6, -0.144757019)
 
@@ -638,523 +962,291 @@ position = Vector3(-5.95, 0, -6.46)
 rotation = Vector3(0, 0.2615822, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat_decoration_001"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat_decoration_001"]
-transform = Transform3D(0.0260666667, 0, 0, 0, 0, 1, 0, -0.025, 0, 0, 0.031, 0)
-texture = ExtResource("SourceArt_battle_shale_patch")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "ground"
-metadata/tilt_from_ground = 0
-
+[node name="PhysicalPart" parent="Objects/battle_giant_rat_decoration_001" instance=ExtResource("Part_0")]
+position = Vector3(0, 2.15, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(7.5, 4.25, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_giant_rat_decoration_002" type="Node3D" parent="Objects"]
 position = Vector3(5.78, 0, 5.44)
 rotation = Vector3(0, -0.246878274, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat_decoration_002"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat_decoration_002"]
-transform = Transform3D(0.0260666667, 0, 0, 0, 0, 1, 0, -0.025, 0, 0, 0.031, 0)
-texture = ExtResource("SourceArt_battle_shale_patch")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "ground"
-metadata/tilt_from_ground = 0
-
+[node name="PhysicalPart" parent="Objects/battle_giant_rat_decoration_002" instance=ExtResource("Part_0")]
+position = Vector3(0, 2.15, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(7.5, 4.25, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_giant_rat_decoration_003" type="Node3D" parent="Objects"]
 position = Vector3(-7.65, 0, 2.04)
 rotation = Vector3(0, 0.23714727, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat_decoration_003"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat_decoration_003"]
-transform = Transform3D(0.0260666667, 0, 0, 0, 0, 1, 0, -0.025, 0, 0, 0.031, 0)
-texture = ExtResource("SourceArt_battle_shale_patch")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "ground"
-metadata/tilt_from_ground = 0
-
+[node name="PhysicalPart" parent="Objects/battle_giant_rat_decoration_003" instance=ExtResource("Part_0")]
+position = Vector3(0, 2.15, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(7.5, 4.25, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_giant_rat_decoration_004" type="Node3D" parent="Objects"]
 position = Vector3(6.8, 0, -4.08)
 rotation = Vector3(0, 0.100291684, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat_decoration_004"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat_decoration_004"]
-transform = Transform3D(0.0260666667, 0, 0, 0, 0, 1, 0, -0.025, 0, 0, 0.031, 0)
-texture = ExtResource("SourceArt_battle_shale_patch")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "ground"
-metadata/tilt_from_ground = 0
-
+[node name="PhysicalPart" parent="Objects/battle_giant_rat_decoration_004" instance=ExtResource("Part_0")]
+position = Vector3(0, 2.15, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(7.5, 4.25, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_giant_rat_decoration_005" type="Node3D" parent="Objects"]
 position = Vector3(0.34, 0, 9.86)
 rotation = Vector3(0, 0.137882626, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat_decoration_005"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat_decoration_005"]
-transform = Transform3D(0.0260666667, -4.33680869e-19, 0, 0, 0, 1, -4.33680869e-19, -0.025, 0, 0, 0.031, 0)
-texture = ExtResource("SourceArt_battle_shale_patch")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "ground"
-metadata/tilt_from_ground = 0
-
+[node name="PhysicalPart" parent="Objects/battle_giant_rat_decoration_005" instance=ExtResource("Part_0")]
+position = Vector3(0, 2.15, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(7.5, 4.25, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_giant_rat_decoration_006" type="Node3D" parent="Objects"]
 position = Vector3(0.987, 0, -4.002)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat_decoration_006"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat_decoration_006"]
-transform = Transform3D(0.0101351351, 0, 0, 0, 0.0087772845, 0.5, 0, -0.00506756757, 0.866025404, 0, 0.255820755, -0.129222973)
-texture = ExtResource("SourceArt_art1018_09_021")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.68226693)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_giant_rat_decoration_006" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.283445946, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.75, 0.516891892, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_giant_rat_decoration_007" type="Node3D" parent="Objects"]
 position = Vector3(-11.7, 0, 7.627)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat_decoration_007"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat_decoration_007"]
-transform = Transform3D(0.0101351351, 0, 0, 0, 0.0087772845, 0.5, 0, -0.00506756757, 0.866025404, 0, 0.255820755, -0.129222973)
-texture = ExtResource("SourceArt_art1018_09_021")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.758366664)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_giant_rat_decoration_007" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.283445946, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.75, 0.516891892, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_giant_rat_decoration_008" type="Node3D" parent="Objects"]
 position = Vector3(-10.86, 0, 1.628)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat_decoration_008"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat_decoration_008"]
-transform = Transform3D(0.0101351351, 0, 0, 0, 0.0087772845, 0.5, 0, -0.00506756757, 0.866025404, 0, 0.255820755, -0.129222973)
-texture = ExtResource("SourceArt_art1018_09_021")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.652000967)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_giant_rat_decoration_008" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.283445946, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.75, 0.516891892, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_giant_rat_decoration_009" type="Node3D" parent="Objects"]
 position = Vector3(-4.564, 0, 0.979)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat_decoration_009"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat_decoration_009"]
-transform = Transform3D(0.0101351351, 0, 0, 0, 0.0087772845, 0.5, 0, -0.00506756757, 0.866025404, 0, 0.255820755, -0.129222973)
-texture = ExtResource("SourceArt_art1018_09_021")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.581689162)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_giant_rat_decoration_009" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.283445946, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.75, 0.516891892, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_giant_rat_decoration_010" type="Node3D" parent="Objects"]
 position = Vector3(-2.577, 0, -6.523)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat_decoration_010"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat_decoration_010"]
-transform = Transform3D(0.0101351351, 0, 0, 0, 0.0087772845, 0.5, 0, -0.00506756757, 0.866025404, 0, 0.255820755, -0.129222973)
-texture = ExtResource("SourceArt_art1018_09_021")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.628283555)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_giant_rat_decoration_010" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.283445946, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.75, 0.516891892, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_giant_rat_decoration_011" type="Node3D" parent="Objects"]
 position = Vector3(8.845, 0, 9.805)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat_decoration_011"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat_decoration_011"]
-transform = Transform3D(0.0101351351, 0, 0, 0, 0.0087772845, 0.5, 0, -0.00506756757, 0.866025404, 0, 0.255820755, -0.129222973)
-texture = ExtResource("SourceArt_art1018_09_021")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.768534803)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_giant_rat_decoration_011" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.283445946, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.75, 0.516891892, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_giant_rat_decoration_012" type="Node3D" parent="Objects"]
 position = Vector3(4.021, 0, -10.374)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat_decoration_012"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat_decoration_012"]
-transform = Transform3D(0.0101351351, 0, 0, 0, 0.0087772845, 0.5, 0, -0.00506756757, 0.866025404, 0, 0.255820755, -0.129222973)
-texture = ExtResource("SourceArt_art1018_09_021")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.590775376)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_giant_rat_decoration_012" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.283445946, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.75, 0.516891892, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_giant_rat_decoration_013" type="Node3D" parent="Objects"]
 position = Vector3(-6.451, 0, -2.375)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat_decoration_013"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat_decoration_013"]
-transform = Transform3D(0.0101351351, 0, 0, 0, 0.0087772845, 0.5, 0, -0.00506756757, 0.866025404, 0, 0.255820755, -0.129222973)
-texture = ExtResource("SourceArt_art1018_09_021")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.777502166)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_giant_rat_decoration_013" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.283445946, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.75, 0.516891892, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_giant_rat_decoration_014" type="Node3D" parent="Objects"]
 position = Vector3(0.398, 0, -11.192)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat_decoration_014"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat_decoration_014"]
-transform = Transform3D(0.0101351351, 0, 0, 0, 0.0087772845, 0.5, 0, -0.00506756757, 0.866025404, 0, 0.255820755, -0.129222973)
-texture = ExtResource("SourceArt_art1018_09_021")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.649103496)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_giant_rat_decoration_014" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.283445946, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.75, 0.516891892, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_giant_rat_decoration_015" type="Node3D" parent="Objects"]
 position = Vector3(0.761, 0, -9.415)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat_decoration_015"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat_decoration_015"]
-transform = Transform3D(0.0101351351, 0, 0, 0, 0.0087772845, 0.5, 0, -0.00506756757, 0.866025404, 0, 0.255820755, -0.129222973)
-texture = ExtResource("SourceArt_art1018_09_021")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.681245358)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_giant_rat_decoration_015" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.283445946, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.75, 0.516891892, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_giant_rat_decoration_016" type="Node3D" parent="Objects"]
 position = Vector3(-3.495, 0, -9.339)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat_decoration_016"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat_decoration_016"]
-transform = Transform3D(0.0101351351, 0, 0, 0, 0.0087772845, 0.5, 0, -0.00506756757, 0.866025404, 0, 0.255820755, -0.129222973)
-texture = ExtResource("SourceArt_art1018_09_021")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.568791292)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_giant_rat_decoration_016" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.283445946, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.75, 0.516891892, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_giant_rat_decoration_017" type="Node3D" parent="Objects"]
 position = Vector3(-5.074, 0, 9.819)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat_decoration_017"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat_decoration_017"]
-transform = Transform3D(0.0101351351, 0, 0, 0, 0.0087772845, 0.5, 0, -0.00506756757, 0.866025404, 0, 0.255820755, -0.129222973)
-texture = ExtResource("SourceArt_art1018_09_021")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.682621115)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_giant_rat_decoration_017" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.283445946, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.75, 0.516891892, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_giant_rat_decoration_018" type="Node3D" parent="Objects"]
 position = Vector3(8.985, 0, -0.536)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat_decoration_018"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat_decoration_018"]
-transform = Transform3D(0.0101351351, 0, 0, 0, 0.0087772845, 0.5, 0, -0.00506756757, 0.866025404, 0, 0.255820755, -0.129222973)
-texture = ExtResource("SourceArt_art1018_09_021")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.772369454)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_giant_rat_decoration_018" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.283445946, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.75, 0.516891892, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_giant_rat_decoration_019" type="Node3D" parent="Objects"]
 position = Vector3(-1.182, 0, -8.496)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat_decoration_019"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat_decoration_019"]
-transform = Transform3D(0.0101351351, 0, 0, 0, 0.0087772845, 0.5, 0, -0.00506756757, 0.866025404, 0, 0.255820755, -0.129222973)
-texture = ExtResource("SourceArt_art1018_09_021")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.706055807)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_giant_rat_decoration_019" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.283445946, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.75, 0.516891892, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_giant_rat_decoration_020" type="Node3D" parent="Objects"]
 position = Vector3(-4.596, 0, 2.342)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat_decoration_020"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat_decoration_020"]
-transform = Transform3D(0.0101351351, 0, 0, 0, 0.0087772845, 0.5, 0, -0.00506756757, 0.866025404, 0, 0.255820755, -0.129222973)
-texture = ExtResource("SourceArt_art1018_09_021")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.692515634)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_giant_rat_decoration_020" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.283445946, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.75, 0.516891892, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_giant_rat_decoration_021" type="Node3D" parent="Objects"]
 position = Vector3(-11.703, 0, 7.456)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat_decoration_021"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat_decoration_021"]
-transform = Transform3D(0.0101351351, 0, 0, 0, 0.0087772845, 0.5, 0, -0.00506756757, 0.866025404, 0, 0.255820755, -0.129222973)
-texture = ExtResource("SourceArt_art1018_09_021")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.746355325)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_giant_rat_decoration_021" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.283445946, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.75, 0.516891892, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_giant_rat_decoration_022" type="Node3D" parent="Objects"]
 position = Vector3(1.932, 0, -7.16)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat_decoration_022"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat_decoration_022"]
-transform = Transform3D(0.0101351351, 0, 0, 0, 0.0087772845, 0.5, 0, -0.00506756757, 0.866025404, 0, 0.255820755, -0.129222973)
-texture = ExtResource("SourceArt_art1018_09_021")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.60247734)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_giant_rat_decoration_022" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.283445946, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.75, 0.516891892, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_giant_rat_decoration_023" type="Node3D" parent="Objects"]
 position = Vector3(11.389, 0, 5.501)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat_decoration_023"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat_decoration_023"]
-transform = Transform3D(0.0101351351, 0, 0, 0, 0.0087772845, 0.5, 0, -0.00506756757, 0.866025404, 0, 0.255820755, -0.129222973)
-texture = ExtResource("SourceArt_art1018_09_021")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.640868518)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_giant_rat_decoration_023" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.283445946, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.75, 0.516891892, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_giant_rat_decoration_024" type="Node3D" parent="Objects"]
 position = Vector3(10.423, 0, -4.773)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat_decoration_024"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat_decoration_024"]
-transform = Transform3D(0.0101351351, 0, 0, 0, 0.0087772845, 0.5, 0, -0.00506756757, 0.866025404, 0, 0.255820755, -0.129222973)
-texture = ExtResource("SourceArt_art1018_09_021")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.595191076)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_giant_rat_decoration_024" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.283445946, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.75, 0.516891892, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_giant_rat_decoration_025" type="Node3D" parent="Objects"]
 position = Vector3(-10.056, 0, 7.088)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat_decoration_025"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat_decoration_025"]
-transform = Transform3D(0.0101351351, 0, 0, 0, 0.0087772845, 0.5, 0, -0.00506756757, 0.866025404, 0, 0.255820755, -0.129222973)
-texture = ExtResource("SourceArt_art1018_09_021")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.607876312)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_giant_rat_decoration_025" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.283445946, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.75, 0.516891892, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_giant_rat_decoration_026" type="Node3D" parent="Objects"]
 position = Vector3(10.422, 0, 0.86)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat_decoration_026"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat_decoration_026"]
-transform = Transform3D(0.0101351351, 0, 0, 0, 0.0087772845, 0.5, 0, -0.00506756757, 0.866025404, 0, 0.255820755, -0.129222973)
-texture = ExtResource("SourceArt_art1018_09_021")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.639883461)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_giant_rat_decoration_026" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.283445946, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.75, 0.516891892, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_giant_rat_decoration_027" type="Node3D" parent="Objects"]
 position = Vector3(4.726, 0, -1.553)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat_decoration_027"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat_decoration_027"]
-transform = Transform3D(0.0101351351, 0, 0, 0, 0.0087772845, 0.5, 0, -0.00506756757, 0.866025404, 0, 0.255820755, -0.129222973)
-texture = ExtResource("SourceArt_art1018_09_021")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.569152966)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_giant_rat_decoration_027" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.283445946, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.75, 0.516891892, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_giant_rat_decoration_028" type="Node3D" parent="Objects"]
 position = Vector3(2.949, 0, 8.536)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat_decoration_028"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat_decoration_028"]
-transform = Transform3D(0.0101351351, 0, 0, 0, 0.0087772845, 0.5, 0, -0.00506756757, 0.866025404, 0, 0.255820755, -0.129222973)
-texture = ExtResource("SourceArt_art1018_09_021")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 0.713612784)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_giant_rat_decoration_028" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.283445946, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.75, 0.516891892, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_giant_rat_pit_134" type="Node3D" parent="Objects"]
 position = Vector3(-8, 0, -0.1)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat_pit_134"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat_pit_134"]
-transform = Transform3D(0.00409638554, 0, 0, 0, 0, 1, 0, -0.00409638554, 0, 0, 0.0346, 0)
-texture = ExtResource("SourceArt_art1018_10_019")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "ground"
-metadata/tilt_from_ground = 0
-
+[node name="PhysicalPart" parent="Objects/battle_giant_rat_pit_134" instance=ExtResource("Part_2")]
+position = Vector3(0, 0.025, 0)
+rotation = Vector3(-1.57079633, 0, 0)
+scale = Vector3(3.4, 2.41686747, 0.025)
+metadata/decoration_collision_enabled = false
 [node name="region" type="Area3D" parent="Objects/battle_giant_rat_pit_134"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -1167,19 +1259,11 @@ position = Vector3(7.7, 0, -4.7)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat_pit_135"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat_pit_135"]
-transform = Transform3D(0.00385542169, 0, 0, 0, 0, 1, 0, -0.00385542169, 0, 0, 0.0346, 0)
-texture = ExtResource("SourceArt_art1018_10_019")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "ground"
-metadata/tilt_from_ground = 0
-
+[node name="PhysicalPart" parent="Objects/battle_giant_rat_pit_135" instance=ExtResource("Part_2")]
+position = Vector3(0, 0.025, 0)
+rotation = Vector3(-1.57079633, 0, 0)
+scale = Vector3(3.2, 2.2746988, 0.025)
+metadata/decoration_collision_enabled = false
 [node name="region" type="Area3D" parent="Objects/battle_giant_rat_pit_135"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -1192,19 +1276,11 @@ position = Vector3(0.8, 0, 4.6)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat_mud_136"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat_mud_136"]
-transform = Transform3D(0.03359375, 0, 0, 0, 0, 1, 0, -0.021875, 0, 0, 0.0346, 0)
-texture = ExtResource("SourceArt_mud")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "ground"
-metadata/tilt_from_ground = 0
-
+[node name="PhysicalPart" parent="Objects/battle_giant_rat_mud_136" instance=ExtResource("Part_3")]
+position = Vector3(0, 0.025, 0)
+rotation = Vector3(-1.57079633, 0, 0)
+scale = Vector3(4.3, 2.8, 0.025)
+metadata/decoration_collision_enabled = false
 [node name="region" type="Area3D" parent="Objects/battle_giant_rat_mud_136"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -1217,19 +1293,11 @@ position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat_post_battle_127"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat_post_battle_127"]
-transform = Transform3D(0.0150289017, 0, 0, 0, 0, 1, 0, -0.0150289017, 0, 0, 0.0348, 0)
-texture = ExtResource("SourceArt_art1018_08_021")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "ground"
-metadata/tilt_from_ground = 0
-
+[node name="PhysicalPart" parent="Objects/battle_giant_rat_post_battle_127" instance=ExtResource("Part_4")]
+position = Vector3(0, 1.06199422, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(5.2, 2.07398844, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="click_area" type="Area3D" parent="Objects/battle_giant_rat_post_battle_127"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -1238,7 +1306,7 @@ collision_mask = 1
 [node name="Shape" type="CollisionShape3D" parent="Objects/battle_giant_rat_post_battle_127/click_area"]
 shape = SubResource("R70")
 [node name="battle_giant_rat_deployment_123" type="Node3D" parent="Objects"]
-position = Vector3(-3.46977779, 0, 0.969692833)
+position = Vector3(6.43129, 0, -3.10131)
 rotation = Vector3(0, -1.12147178, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat_deployment_123"
@@ -1254,19 +1322,11 @@ position = Vector3(8.25, 0, -6.66839561)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "pit_1"
-[node name="Visual" type="Sprite3D" parent="Objects/pit_1"]
-transform = Transform3D(0.00265060241, 0, 0, 0, 0, 1, 0, -0.00265060241, 0, 0, 0.035, 0)
-texture = ExtResource("SourceArt_art1018_10_019")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "ground"
-metadata/tilt_from_ground = 0
-
+[node name="PhysicalPart" parent="Objects/pit_1" instance=ExtResource("Part_2")]
+position = Vector3(0, 0.025, 0)
+rotation = Vector3(-1.57079633, 0, 0)
+scale = Vector3(2.2, 1.56385542, 0.025)
+metadata/decoration_collision_enabled = false
 [node name="region" type="Area3D" parent="Objects/pit_1"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -1311,22 +1371,22 @@ collision_mask = 1
 [node name="Shape" type="CollisionShape3D" parent="Objects/pit_1__hex_3/region"]
 shape = SubResource("R75")
 [node name="battle_giant_rat__enemy_1" type="Node3D" parent="Objects"]
-position = Vector3(8.645, 0, 1.1)
+position = Vector3(-4.95, 0, 2.85788383)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat__enemy_1"
 [node name="battle_giant_rat__enemy_2" type="Node3D" parent="Objects"]
-position = Vector3(5.345, 0, 1.1)
+position = Vector3(-8.25, 0, 2.85788383)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat__enemy_2"
 [node name="battle_giant_rat__enemy_3" type="Node3D" parent="Objects"]
-position = Vector3(10.295, 0, -1.75788383)
+position = Vector3(-3.3, 0, 0)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat__enemy_3"
 [node name="battle_giant_rat__enemy_4" type="Node3D" parent="Objects"]
-position = Vector3(6.995, 0, 3.95788383)
+position = Vector3(-6.6, 0, 5.71576766)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat__enemy_4"
@@ -1335,667 +1395,401 @@ position = Vector3(-8.33, 0, -5.95)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat__art_031"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat__art_031"]
-transform = Transform3D(0.0217948718, 0, 0, 0, 0.0188749126, 0.5, 0, -0.0108974359, 0.866025404, 0, 0.686184486, -0.375961538)
-texture = ExtResource("SourceArt_art1018_11_018")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_giant_rat__art_031" instance=ExtResource("Part_5")]
+position = Vector3(0, 0.776923077, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(1.7, 1.50384615, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_giant_rat__art_032" type="Node3D" parent="Objects"]
 position = Vector3(1.02, 0, -11.05)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat__art_032"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat__art_032"]
-transform = Transform3D(0.0165048544, 0, 0, 0, 0.0142936232, 0.5, 0, -0.00825242718, 0.866025404, 0, 0.463808695, -0.247572816)
-texture = ExtResource("SourceArt_art1018_09_025")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_giant_rat__art_032" instance=ExtResource("Part_6")]
+position = Vector3(0, 0.520145631, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(1.7, 0.990291262, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_giant_rat__art_033" type="Node3D" parent="Objects"]
 position = Vector3(9.86, 0, 1.36)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat__art_033"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat__art_033"]
-transform = Transform3D(0.0361702128, 0, 0, 0, 0.0313243231, 0.5, 0, -0.0180851064, 0.866025404, 0, 0.959067532, -0.533510638)
-texture = ExtResource("SourceArt_art1018_03_025")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_giant_rat__art_033" instance=ExtResource("Part_7")]
+position = Vector3(0, 1.09202128, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(1.7, 2.13404255, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_giant_rat__art_034" type="Node3D" parent="Objects"]
 position = Vector3(-3.06, 0, 10.54)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat__art_034"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat__art_034"]
-transform = Transform3D(0.0217948718, 0, 0, 0, 0.0188749126, 0.5, 0, -0.0108974359, 0.866025404, 0, 0.686184486, -0.375961538)
-texture = ExtResource("SourceArt_art1018_11_018")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_giant_rat__art_034" instance=ExtResource("Part_5")]
+position = Vector3(0, 0.776923077, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(1.7, 1.50384615, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_giant_rat__art_035" type="Node3D" parent="Objects"]
 position = Vector3(5.95, 0, 7.99)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat__art_035"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat__art_035"]
-transform = Transform3D(0.0165048544, 0, 0, 0, 0.0142936232, 0.5, 0, -0.00825242718, 0.866025404, 0, 0.463808695, -0.247572816)
-texture = ExtResource("SourceArt_art1018_09_025")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_giant_rat__art_035" instance=ExtResource("Part_6")]
+position = Vector3(0, 0.520145631, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(1.7, 0.990291262, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_giant_rat__art_001" type="Node3D" parent="Objects"]
 position = Vector3(14.406, 0, 1.313)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat__art_001"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat__art_001"]
-transform = Transform3D(0.0346153846, 0, 0, 0, 0.0299778024, 0.5, 0, -0.0173076923, 0.866025404, 0, 1.07023418, -0.597115385)
-texture = ExtResource("SourceArt_art1018_11_018")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_giant_rat__art_001"]
+position = Vector3(0, 0.158, 0)
+mesh = SubResource("R77")
+material_override = SubResource("R76")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_giant_rat__art_002" type="Node3D" parent="Objects"]
 position = Vector3(13.201, 0, 3.753)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat__art_002"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat__art_002"]
-transform = Transform3D(0.0262135922, 0, 0, 0, 0.0227016368, 0.5, 0, -0.0131067961, 0.866025404, 0, 0.717049104, -0.393203883)
-texture = ExtResource("SourceArt_art1018_09_025")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_giant_rat__art_002"]
+position = Vector3(0, 0.161, 0)
+mesh = SubResource("R79")
+material_override = SubResource("R78")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_giant_rat__art_003" type="Node3D" parent="Objects"]
 position = Vector3(11.609, 0, 6.864)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat__art_003"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat__art_003"]
-transform = Transform3D(0.0223880597, 0, 0, 0, 0.0193886284, 0.5, 0, -0.0111940299, 0.866025404, 0, 2.6243819, -1.49440299)
-texture = ExtResource("SourceArt_art1018_11_011")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_giant_rat__art_003"]
+position = Vector3(0, 0.164, 0)
+mesh = SubResource("R81")
+material_override = SubResource("R80")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_giant_rat__art_004" type="Node3D" parent="Objects"]
 position = Vector3(9.791, 0, 8.952)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat__art_004"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat__art_004"]
-transform = Transform3D(0.0346153846, 0, 0, 0, 0.0299778024, 0.5, 0, -0.0173076923, 0.866025404, 0, 1.07023418, -0.597115385)
-texture = ExtResource("SourceArt_art1018_11_018")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_giant_rat__art_004"]
+position = Vector3(0, 0.167, 0)
+mesh = SubResource("R83")
+material_override = SubResource("R82")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_giant_rat__art_005" type="Node3D" parent="Objects"]
 position = Vector3(8.204, 0, 12.056)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat__art_005"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat__art_005"]
-transform = Transform3D(0.0262135922, 0, 0, 0, 0.0227016368, 0.5, 0, -0.0131067961, 0.866025404, 0, 0.717049104, -0.393203883)
-texture = ExtResource("SourceArt_art1018_09_025")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_giant_rat__art_005"]
+position = Vector3(0, 0.17, 0)
+mesh = SubResource("R85")
+material_override = SubResource("R84")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_giant_rat__art_006" type="Node3D" parent="Objects"]
 position = Vector3(5.849, 0, 12.956)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat__art_006"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat__art_006"]
-transform = Transform3D(0.0262135922, 0, 0, 0, 0.0227016368, 0.5, 0, -0.0131067961, 0.866025404, 0, 0.717049104, -0.393203883)
-texture = ExtResource("SourceArt_art1018_09_025")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_giant_rat__art_006"]
+position = Vector3(0, 0.173, 0)
+mesh = SubResource("R87")
+material_override = SubResource("R86")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_giant_rat__art_007" type="Node3D" parent="Objects"]
 position = Vector3(3.169, 0, 13.132)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat__art_007"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat__art_007"]
-transform = Transform3D(0.0574468085, 0, 0, 0, 0.0497503955, 0.5, 0, -0.0287234043, 0.866025404, 0, 1.50363667, -0.847340426)
-texture = ExtResource("SourceArt_art1018_03_025")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_giant_rat__art_007"]
+position = Vector3(0, 0.176, 0)
+mesh = SubResource("R89")
+material_override = SubResource("R88")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_giant_rat__art_008" type="Node3D" parent="Objects"]
 position = Vector3(-0.277, 0, 13.309)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat__art_008"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat__art_008"]
-transform = Transform3D(0.0346153846, 0, 0, 0, 0.0299778024, 0.5, 0, -0.0173076923, 0.866025404, 0, 1.07023418, -0.597115385)
-texture = ExtResource("SourceArt_art1018_11_018")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_giant_rat__art_008"]
+position = Vector3(0, 0.179, 0)
+mesh = SubResource("R91")
+material_override = SubResource("R90")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_giant_rat__art_009" type="Node3D" parent="Objects"]
 position = Vector3(-3.114, 0, 13.486)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat__art_009"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat__art_009"]
-transform = Transform3D(0.0262135922, 0, 0, 0, 0.0227016368, 0.5, 0, -0.0131067961, 0.866025404, 0, 0.717049104, -0.393203883)
-texture = ExtResource("SourceArt_art1018_09_025")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_giant_rat__art_009"]
+position = Vector3(0, 0.182, 0)
+mesh = SubResource("R93")
+material_override = SubResource("R92")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_giant_rat__art_010" type="Node3D" parent="Objects"]
 position = Vector3(-5.715, 0, 12.956)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat__art_010"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat__art_010"]
-transform = Transform3D(0.0574468085, 0, 0, 0, 0.0497503955, 0.5, 0, -0.0287234043, 0.866025404, 0, 1.50363667, -0.847340426)
-texture = ExtResource("SourceArt_art1018_03_025")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_giant_rat__art_010"]
+position = Vector3(0, 0.185, 0)
+mesh = SubResource("R95")
+material_override = SubResource("R94")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_giant_rat__art_011" type="Node3D" parent="Objects"]
 position = Vector3(-8.705, 0, 11.894)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat__art_011"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat__art_011"]
-transform = Transform3D(0.0574468085, 0, 0, 0, 0.0497503955, 0.5, 0, -0.0287234043, 0.866025404, 0, 1.50363667, -0.847340426)
-texture = ExtResource("SourceArt_art1018_03_025")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_giant_rat__art_011"]
+position = Vector3(0, 0.188, 0)
+mesh = SubResource("R97")
+material_override = SubResource("R96")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_giant_rat__art_012" type="Node3D" parent="Objects"]
 position = Vector3(-9.724, 0, 9.069)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat__art_012"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat__art_012"]
-transform = Transform3D(0.0346153846, 0, 0, 0, 0.0299778024, 0.5, 0, -0.0173076923, 0.866025404, 0, 1.07023418, -0.597115385)
-texture = ExtResource("SourceArt_art1018_11_018")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_giant_rat__art_012"]
+position = Vector3(0, 0.191, 0)
+mesh = SubResource("R99")
+material_override = SubResource("R98")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_giant_rat__art_013" type="Node3D" parent="Objects"]
 position = Vector3(-11.237, 0, 6.803)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat__art_013"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat__art_013"]
-transform = Transform3D(0.0375, 0, 0, 0, 0.0324759526, 0.5, 0, -0.01875, 0.866025404, 0, 2.81269395, -1.603125)
-texture = ExtResource("SourceArt_art1018_09_006")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_giant_rat__art_013"]
+position = Vector3(0, 0.194, 0)
+mesh = SubResource("R101")
+material_override = SubResource("R100")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_giant_rat__art_014" type="Node3D" parent="Objects"]
 position = Vector3(-13.132, 0, 3.873)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat__art_014"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat__art_014"]
-transform = Transform3D(0.0574468085, 0, 0, 0, 0.0497503955, 0.5, 0, -0.0287234043, 0.866025404, 0, 1.50363667, -0.847340426)
-texture = ExtResource("SourceArt_art1018_03_025")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_giant_rat__art_014"]
+position = Vector3(0, 0.197, 0)
+mesh = SubResource("R103")
+material_override = SubResource("R102")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_giant_rat__art_015" type="Node3D" parent="Objects"]
 position = Vector3(-14.723, 0, 1.47)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat__art_015"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat__art_015"]
-transform = Transform3D(0.0346153846, 0, 0, 0, 0.0299778024, 0.5, 0, -0.0173076923, 0.866025404, 0, 1.07023418, -0.597115385)
-texture = ExtResource("SourceArt_art1018_11_018")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_giant_rat__art_015"]
+position = Vector3(0, 0.2, 0)
+mesh = SubResource("R105")
+material_override = SubResource("R104")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_giant_rat__art_016" type="Node3D" parent="Objects"]
 position = Vector3(-14.738, 0, -1.091)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat__art_016"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat__art_016"]
-transform = Transform3D(0.0346153846, 0, 0, 0, 0.0299778024, 0.5, 0, -0.0173076923, 0.866025404, 0, 1.07023418, -0.597115385)
-texture = ExtResource("SourceArt_art1018_11_018")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_giant_rat__art_016"]
+position = Vector3(0, 0.203, 0)
+mesh = SubResource("R107")
+material_override = SubResource("R106")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_giant_rat__art_017" type="Node3D" parent="Objects"]
 position = Vector3(-13.166, 0, -4.167)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat__art_017"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat__art_017"]
-transform = Transform3D(0.0262135922, 0, 0, 0, 0.0227016368, 0.5, 0, -0.0131067961, 0.866025404, 0, 0.717049104, -0.393203883)
-texture = ExtResource("SourceArt_art1018_09_025")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_giant_rat__art_017"]
+position = Vector3(0, 0.206, 0)
+mesh = SubResource("R109")
+material_override = SubResource("R108")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_giant_rat__art_018" type="Node3D" parent="Objects"]
 position = Vector3(-11.287, 0, -6.361)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat__art_018"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat__art_018"]
-transform = Transform3D(0.0574468085, 0, 0, 0, 0.0497503955, 0.5, 0, -0.0287234043, 0.866025404, 0, 1.50363667, -0.847340426)
-texture = ExtResource("SourceArt_art1018_03_025")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_giant_rat__art_018"]
+position = Vector3(0, 0.209, 0)
+mesh = SubResource("R111")
+material_override = SubResource("R110")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_giant_rat__art_019" type="Node3D" parent="Objects"]
 position = Vector3(-9.72, 0, -9.429)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat__art_019"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat__art_019"]
-transform = Transform3D(0.0346153846, 0, 0, 0, 0.0299778024, 0.5, 0, -0.0173076923, 0.866025404, 0, 1.07023418, -0.597115385)
-texture = ExtResource("SourceArt_art1018_11_018")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_giant_rat__art_019"]
+position = Vector3(0, 0.212, 0)
+mesh = SubResource("R113")
+material_override = SubResource("R112")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_giant_rat__art_020" type="Node3D" parent="Objects"]
 position = Vector3(-8.452, 0, -11.978)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat__art_020"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat__art_020"]
-transform = Transform3D(0.0262135922, 0, 0, 0, 0.0227016368, 0.5, 0, -0.0131067961, 0.866025404, 0, 0.717049104, -0.393203883)
-texture = ExtResource("SourceArt_art1018_09_025")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_giant_rat__art_020"]
+position = Vector3(0, 0.215, 0)
+mesh = SubResource("R115")
+material_override = SubResource("R114")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_giant_rat__art_021" type="Node3D" parent="Objects"]
 position = Vector3(-6.202, 0, -13.132)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat__art_021"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat__art_021"]
-transform = Transform3D(0.0262135922, 0, 0, 0, 0.0227016368, 0.5, 0, -0.0131067961, 0.866025404, 0, 0.717049104, -0.393203883)
-texture = ExtResource("SourceArt_art1018_09_025")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_giant_rat__art_021"]
+position = Vector3(0, 0.218, 0)
+mesh = SubResource("R117")
+material_override = SubResource("R116")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_giant_rat__art_022" type="Node3D" parent="Objects"]
 position = Vector3(-2.797, 0, -13.309)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat__art_022"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat__art_022"]
-transform = Transform3D(0.0574468085, 0, 0, 0, 0.0497503955, 0.5, 0, -0.0287234043, 0.866025404, 0, 1.50363667, -0.847340426)
-texture = ExtResource("SourceArt_art1018_03_025")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_giant_rat__art_022"]
+position = Vector3(0, 0.221, 0)
+mesh = SubResource("R119")
+material_override = SubResource("R118")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_giant_rat__art_023" type="Node3D" parent="Objects"]
 position = Vector3(0, 0, -13.486)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat__art_023"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat__art_023"]
-transform = Transform3D(0.0208333333, 0, 0, 0, 0.0180421959, 0.5, 0, -0.0104166667, 0.866025404, 0, 2.45365425, -1.39583333)
-texture = ExtResource("SourceArt_art1018_09_003")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_giant_rat__art_023"]
+position = Vector3(0, 0.224, 0)
+mesh = SubResource("R121")
+material_override = SubResource("R120")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_giant_rat__art_024" type="Node3D" parent="Objects"]
 position = Vector3(2.723, 0, -12.956)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat__art_024"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat__art_024"]
-transform = Transform3D(0.0262135922, 0, 0, 0, 0.0227016368, 0.5, 0, -0.0131067961, 0.866025404, 0, 0.717049104, -0.393203883)
-texture = ExtResource("SourceArt_art1018_09_025")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_giant_rat__art_024"]
+position = Vector3(0, 0.227, 0)
+mesh = SubResource("R123")
+material_override = SubResource("R122")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_giant_rat__art_025" type="Node3D" parent="Objects"]
 position = Vector3(6.202, 0, -13.132)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat__art_025"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat__art_025"]
-transform = Transform3D(0.0574468085, 0, 0, 0, 0.0497503955, 0.5, 0, -0.0287234043, 0.866025404, 0, 1.50363667, -0.847340426)
-texture = ExtResource("SourceArt_art1018_03_025")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_giant_rat__art_025"]
+position = Vector3(0, 0.23, 0)
+mesh = SubResource("R125")
+material_override = SubResource("R124")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_giant_rat__art_026" type="Node3D" parent="Objects"]
 position = Vector3(8.228, 0, -11.66)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat__art_026"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat__art_026"]
-transform = Transform3D(0.0574468085, 0, 0, 0, 0.0497503955, 0.5, 0, -0.0287234043, 0.866025404, 0, 1.50363667, -0.847340426)
-texture = ExtResource("SourceArt_art1018_03_025")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_giant_rat__art_026"]
+position = Vector3(0, 0.233, 0)
+mesh = SubResource("R127")
+material_override = SubResource("R126")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_giant_rat__art_027" type="Node3D" parent="Objects"]
 position = Vector3(9.72, 0, -9.429)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat__art_027"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat__art_027"]
-transform = Transform3D(0.0346153846, 0, 0, 0, 0.0299778024, 0.5, 0, -0.0173076923, 0.866025404, 0, 1.07023418, -0.597115385)
-texture = ExtResource("SourceArt_art1018_11_018")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_giant_rat__art_027"]
+position = Vector3(0, 0.236, 0)
+mesh = SubResource("R129")
+material_override = SubResource("R128")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_giant_rat__art_028" type="Node3D" parent="Objects"]
 position = Vector3(11.595, 0, -6.535)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat__art_028"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat__art_028"]
-transform = Transform3D(0.0262135922, 0, 0, 0, 0.0227016368, 0.5, 0, -0.0131067961, 0.866025404, 0, 0.717049104, -0.393203883)
-texture = ExtResource("SourceArt_art1018_09_025")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_giant_rat__art_028"]
+position = Vector3(0, 0.239, 0)
+mesh = SubResource("R131")
+material_override = SubResource("R130")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_giant_rat__art_029" type="Node3D" parent="Objects"]
 position = Vector3(13.166, 0, -4.167)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat__art_029"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat__art_029"]
-transform = Transform3D(0.0574468085, 0, 0, 0, 0.0497503955, 0.5, 0, -0.0287234043, 0.866025404, 0, 1.50363667, -0.847340426)
-texture = ExtResource("SourceArt_art1018_03_025")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_giant_rat__art_029"]
+position = Vector3(0, 0.242, 0)
+mesh = SubResource("R133")
+material_override = SubResource("R132")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_giant_rat__art_030" type="Node3D" parent="Objects"]
 position = Vector3(14.347, 0, -1.062)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat__art_030"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat__art_030"]
-transform = Transform3D(0.0346153846, 0, 0, 0, 0.0299778024, 0.5, 0, -0.0173076923, 0.866025404, 0, 1.07023418, -0.597115385)
-texture = ExtResource("SourceArt_art1018_11_018")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_giant_rat__art_030"]
+position = Vector3(0, 0.245, 0)
+mesh = SubResource("R135")
+material_override = SubResource("R134")
 cast_shadow = 0
-billboard = 0
 visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
 [node name="battle_giant_rat_decoration_131" type="Node3D" parent="Objects"]
 position = Vector3(0, 0, -10.2)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat_decoration_131"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat_decoration_131"]
-transform = Transform3D(0.0337777778, 0, 0, 0, 0.0292524136, 0.5, 0, -0.0168888889, 0.866025404, 0, 2.06924275, -1.17377778)
-texture = ExtResource("SourceArt_art1018_03_027")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_giant_rat_decoration_131" instance=ExtResource("Part_8")]
+position = Vector3(0, 2.37255556, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(7.6, 4.69511111, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="battle_giant_rat_collision_damage_132" type="Node3D" parent="Objects"]
 position = Vector3(-5, 0, -3)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat_collision_damage_132"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat_collision_damage_132"]
-transform = Transform3D(0.035443038, 0, 0, 0, 0.0306945713, 0.5, 0, -0.017721519, 0.866025404, 0, 1.03417357, -0.575949367)
-texture = ExtResource("SourceArt_art1018_08_022")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_giant_rat_collision_damage_132" instance=ExtResource("Part_9")]
+position = Vector3(0, 1.17689873, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(2.8, 2.30379747, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="collision" type="StaticBody3D" parent="Objects/battle_giant_rat_collision_damage_132"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -2008,19 +1802,11 @@ position = Vector3(6, 0, 4)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_giant_rat_collision_damage_133"
-[node name="Visual" type="Sprite3D" parent="Objects/battle_giant_rat_collision_damage_133"]
-transform = Transform3D(0.0125, 0, 0, 0, 0.0108253175, 0.5, 0, -0.00625, 0.866025404, 0, 0.680706394, -0.371875)
-texture = ExtResource("SourceArt_art1018_05_015")
-pixel_size = 1.0
-modulate = Color(1, 1, 1, 1)
-texture_filter = 3
-alpha_cut = 2
-cast_shadow = 0
-billboard = 0
-visible = true
-metadata/surface_mode = "tilted"
-metadata/tilt_from_ground = 60
-
+[node name="PhysicalPart" parent="Objects/battle_giant_rat_collision_damage_133" instance=ExtResource("Part_10")]
+position = Vector3(0, 0.76875, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(2.6, 1.4875, 0.08)
+metadata/decoration_collision_enabled = false
 [node name="collision" type="StaticBody3D" parent="Objects/battle_giant_rat_collision_damage_133"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)

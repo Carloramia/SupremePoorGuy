@@ -15,12 +15,11 @@ func build(host: Node3D, records: Array) -> bool:
 	scale = host.delivery_settings.unit_scale
 	if not is_finite(scale) or scale<=0.0: host.last_error = "战场单位倍率无效。"; return false
 	var request: Dictionary = host.delivery_request
-	var error: String = host.delivery_settings.availability_error(str(request.get("enemy_config_id","")))
+	var frozen: Array = request.get("enemy_definitions_snapshot",[])
+	var error: String = "" if not frozen.is_empty() else host.delivery_settings.availability_error(str(request.get("enemy_config_id","")))
 	if not error.is_empty(): host.last_error = error; return false
 	layout = CATALOG.map_data(str(request.get("battle_map_id","")))
 	if layout.get("kind")!="battle": host.last_error = "战场ID无效。"; return false
-	if layout.has("presentation"):
-		host.camera.set_pitch_degrees(float(layout.presentation.get("camera_pitch_degrees",-50)))
 	var packed := load(CATALOG.index().maps[layout.id].scene_3d) as PackedScene
 	if packed==null: host.last_error = "战场资源无法加载。"; return false
 	var scene: Node3D = packed.instantiate()
@@ -58,25 +57,24 @@ func build(host: Node3D, records: Array) -> bool:
 		var placed := place(record,false)
 		if placed.is_empty(): host.last_error = "地图中部左侧无法安全放入出战队伍，请减少队伍或调整战场单位倍率。"; return false
 		host._deployment.append(placed)
-	var roster: EnemyRosterData = host.delivery_settings.enemy_rosters[request.enemy_config_id]
-	host.enemy_definitions.assign(roster.definitions)
-	if not host.configure_enemy_roster(): return false
-	var enemies: Array = host._enemy_initial
+	if not frozen.is_empty(): host.enemy_definitions.assign(frozen)
+	else: host.enemy_definitions.assign(host.delivery_settings.enemy_rosters[request.enemy_config_id].definitions)
 	var order: Array[int] = []
 	var areas := {}
-	for index: int in enemies.size():
+	for index: int in host.enemy_definitions.size():
 		order.append(index)
-		var bounds := FACTORY.local_bounds(enemies[index])
+		var bounds := FACTORY.local_bounds(FACTORY.template(host.enemy_definitions[index],request.get("enemy_anatomy",{})))
 		areas[index]=bounds.size.x*bounds.size.z
 	if CATALOG.is_hex():
 		# Place large bodies before small ones; preserve roster/actor indices in the result.
 		order.sort_custom(func(a,b): return a<b if is_equal_approx(areas[a],areas[b]) else areas[a]>areas[b])
 	var positions := {}
 	for index: int in order:
-		var placed := place(enemies[index],true)
+		var species: String=host.enemy_definitions[index]
+		var placed := place(FACTORY.template(species,request.get("enemy_anatomy",{})),true)
 		if placed.is_empty(): host.last_error = "地图中部右侧没有足够的合法敌方部署位置。"; return false
 		positions[index]=placed
-	for index: int in enemies.size(): host._enemy_positions.append(positions[index])
+	for index: int in host.enemy_definitions.size(): host._enemy_positions.append(positions[index])
 	for title: String in ["Ground"]: host.get_node(title).free()
 	return true
 
@@ -133,7 +131,7 @@ func _triangles(polygon: PackedVector2Array, y: float, faces: PackedVector3Array
 		# Godot front faces use clockwise winding when viewed from above.
 		faces.append_array(PackedVector3Array([Vector3(a.x,y,a.y),Vector3(b.x,y,b.y),Vector3(c.x,y,c.y)]))
 
-func place(record: Dictionary, enemy: bool, region: PackedVector2Array = PackedVector2Array()) -> Dictionary:
+func place(record: Dictionary, enemy: bool) -> Dictionary:
 	var bounds := FACTORY.local_bounds(record)
 	var facing := PI if enemy else 0.0
 	var basis := Basis(Vector3.UP,facing)
@@ -143,11 +141,6 @@ func place(record: Dictionary, enemy: bool, region: PackedVector2Array = PackedV
 	# Fit the whole body in a central half, including asymmetrical saved snake poses.
 	var minimum := Vector2(centre_gap if enemy else -radius*DEPLOYMENT_X_RATIO,-radius*DEPLOYMENT_Z_RATIO)+Vector2(rotated.size.x,rotated.size.z)*0.5
 	var maximum := Vector2(radius*DEPLOYMENT_X_RATIO if enemy else -centre_gap,radius*DEPLOYMENT_Z_RATIO)-Vector2(rotated.size.x,rotated.size.z)*0.5
-	if not region.is_empty():
-		var area := Rect2(region[0],Vector2.ZERO)
-		for point: Vector2 in region: area = area.expand(point)
-		minimum = area.position+Vector2(rotated.size.x,rotated.size.z)*0.5
-		maximum = area.end-Vector2(rotated.size.x,rotated.size.z)*0.5
 	if minimum.x>maximum.x or minimum.y>maximum.y: return {}
 	var preferred := Vector2(radius*DEPLOYMENT_OFFSET_RATIO*(1.0 if enemy else -1.0),0.0).clamp(minimum,maximum)
 	var xs := _deployment_axis(minimum.x,maximum.x,preferred.x,maxf(2.0,scale*0.5))
@@ -165,7 +158,6 @@ func place(record: Dictionary, enemy: bool, region: PackedVector2Array = PackedV
 			if not Geometry2D.is_point_in_polygon(Vector2(point.x,point.z),floor_polygon): legal=false; break
 		if not legal: continue
 		var rectangle := PackedVector2Array([Vector2(world.position.x,world.position.z),Vector2(world.end.x,world.position.z),Vector2(world.end.x,world.end.z),Vector2(world.position.x,world.end.z)])
-		if not region.is_empty() and not Geometry2D.clip_polygons(rectangle,region).is_empty(): continue
 		for pit: Dictionary in pits:
 			if not Geometry2D.intersect_polygons(rectangle,pit.polygon).is_empty(): legal=false; break
 		if not legal: continue

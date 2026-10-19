@@ -29,7 +29,7 @@ func run() -> void:
 	root.get_node("RuntimeConsole").auto_getlogs_enabled=false
 	root.size=Vector2i(1280,720)
 	var app := preload("res://Scenes/Application/GameRoot.tscn").instantiate()
-	app.save_path="D:/GameJamWorkspace/RuntimeChecks/HexMapIntegration/app_"+str(Time.get_ticks_usec())+".json"
+	app.save_path="res://Tests/.runtime/integration/hex_app_"+str(Time.get_ticks_usec())+".json"
 	app.display_settings_path=app.save_path+".display.cfg"
 	root.add_child(app)
 	app.ui.animate_panels=false
@@ -38,8 +38,14 @@ func run() -> void:
 	if app.delivery_map==null: quit(1); return
 	var map: Control=app.delivery_map
 	check(app.session.delivery_version()=="20261019" and map.runtime.hex!=null,"new game selects native hex navigation")
-	check(not app.ui.modal_stack.is_empty() and app.ui.modal_stack.back().kind=="opening_event","new game opens the appointment instead of tasks")
-	preload("res://Tests/Integration/ApplicationFixtures.gd").complete_opening(app)
+	app.story_controller._process(0.3)
+	check(not app.ui.modal_stack.is_empty() and app.ui.modal_stack.back().kind=="story","new-game opening precedes tutorial guide")
+	var opening: String = app.session.STORIES.OPENING
+	for step: int in 8:
+		app.story_controller._choose(opening,"next",int(app.session.STORIES.entry(app.session.data,opening).revision))
+	app.story_controller._choose(opening,"confirm",int(app.session.STORIES.entry(app.session.data,opening).revision))
+	check(not app.ui.modal_stack.is_empty() and app.ui.modal_stack.back().kind=="tasks","tutorial guide opens after opening credential commits")
+	app.ui._close_all()
 	await process_frame
 	await capture("world_spawn")
 	check(map.input_enabled and not map.runtime.busy,"closing guide permits travel")

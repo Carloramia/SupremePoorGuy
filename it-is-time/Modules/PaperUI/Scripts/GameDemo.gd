@@ -254,7 +254,10 @@ func _build_ritual(body: VBoxContainer) -> void:
 	page.get_node("%Upgrade").pressed.connect(_upgrade_stage)
 	page.get_node("%Upgrade").disabled = rules.stage >= 4
 	page.get_node("%Examples").item_selected.connect(_load_example)
-	page.get_node("%TrialInfo").pressed.connect(func(): _term("召唤规则与配方",Experiment.trial_notes()+"\n\n定向配方：甲片(-2,0)→(-1,0)，血脉(-1,1)→(0,1)→(1,1)，锐牙(0,-1)→(0,0)→(1,-1)，骨骰(1,0)(2,0)。允许整体平移、旋转和镜像；不能有额外笔画。"))
+	var examples: OptionButton = page.get_node("%Examples")
+	examples.clear()
+	for label: String in ["选择构筑示例","生命","防御","巨化","超巨化（风险）","大群","血肉顽强","生命＋结晶化眼球"]: examples.add_item(label)
+	page.get_node("%TrialInfo").pressed.connect(func(): _term("召唤规则",Experiment.trial_notes()))
 	close_button = page.get_node("%PageBack")
 	close_button.pressed.connect(_close_modal)
 	L10N.bind(page.get_node("%PageTitle"),&"tooltip_text",func(): return L10N.text(L10N.text("ui.1e1c21856d33")+LOCATION_TAGS.get(location,"")))
@@ -316,7 +319,7 @@ func _build_ritual(body: VBoxContainer) -> void:
 	page.get_node("%Save").pressed.connect(func():
 		_notice(func(): return L10N.text(L10N.text("ui.e60c1253782c") if state.save_layout(rules.export_layout()) else state.last_error)))
 	page.get_node("%Clear").pressed.connect(func(): _confirm("清空当前法阵？","删除所有符文、奇物和草稿；已保存的布局不会改变，直到再次保存。",func():
-		rules.import_layout({"version":3,"stage":state.data.array_stage,"placed":[],"placedRelics":[]})
+		rules.import_layout({"version":4,"stage":state.data.array_stage,"placed":[],"placedRelics":[]})
 		_close_modal()))
 	_refresh_ritual()
 
@@ -364,6 +367,7 @@ func _refresh_ritual() -> void:
 			_refresh_ritual())
 	var preview := Experiment.preview(rules)
 	L10N.bind(ritual_summary,&"text",func(): return L10N.text(L10N.text("ui.86a4ba85300a") % [rules.stage,Rules.cells(rules.stage).size(),state.data.magic,preview.cost,preview.tier,preview.count,preview.total_slots,rules.draft.size()]))
+	ritual_summary.tooltip_text="基准 %d + 符文占格 %d + 奇物 %d = %d 魔力" % [preview.base_cost,preview.rune_cost,preview.relic_cost,preview.cost] if preview.cost_rule=="demo" else "非Demo测试阶数：沿用旧实验计费，未设定正式基准。"
 	L10N.bind(summon_button,&"text",func(): return L10N.text(L10N.text("ui.19812bd6781a") % [preview.count,L10N.text("ui.0d64a436c66f") if preview.mode=="ultra" else L10N.text("ui.b3ad05dff665") if preview.mode=="special" else ""]))
 	summon_button.disabled = count == 0 or not rules.draft.is_empty() or preview.cost > state.data.magic or not preview.error.is_empty()
 	L10N.bind(summon_button,&"tooltip_text",func(): return L10N.text(preview.error if not preview.error.is_empty() else L10N.text("ui.4ebd772c41b8")))
@@ -561,7 +565,7 @@ func _monster_card(parent: Node, monster: Dictionary, result_card: bool) -> void
 	move.disabled = to_team and not state.can_join(monster.id)
 	L10N.bind(move,&"tooltip_text",func(): return L10N.text(L10N.text("ui.fd89e6d30452") if move.disabled else ""))
 	if result_card:
-		L10N.bind(card.get_node("%State"),&"text",func(): return L10N.text(L10N.text("ui.cb6f26a8d65f") % [L10N.text(monster.form),int(monster.get("tier",1)),L10N.text("ui.4277e3fec978") if not monster.get("mutation_sources",[]).is_empty() else L10N.text("ui.de907d10df98"),L10N.text("ui.3baa3dbc6639") if monster.get("mode", "normal")=="tiny" else L10N.text("ui.abea6c28c2ea") % int(monster.get("slots",1))]))
+		L10N.bind(card.get_node("%State"),&"text",func(): return L10N.text(L10N.text("ui.cb6f26a8d65f") % [L10N.text(monster.form),int(monster.get("tier",1)),L10N.text("ui.4277e3fec978") if not monster.get("mutation_sources",[]).is_empty() else L10N.text("ui.de907d10df98"),L10N.text("ui.3baa3dbc6639") if monster.get("mode", "normal") in ["tiny","swarm"] else L10N.text("ui.abea6c28c2ea") % int(monster.get("slots",1))]))
 		card.get_node("%Store").pressed.connect(func():
 			if state.move_monster(monster.id,"warehouse"):
 				_close_modal(false)
@@ -656,7 +660,7 @@ func _capture_modal_backdrop() -> Texture2D:
 	return ImageTexture.create_from_image(frame.get_region(region)) if region.has_area() else null
 
 func _resize_event() -> void:
-	if modal_stack.is_empty() or modal_stack.back().get("kind", "dialog") not in ["event","opening_event","tasks"]:
+	if modal_stack.is_empty() or modal_stack.back().get("kind", "dialog") not in ["event","story","tasks"]:
 		return
 	var margin: MarginContainer = overlay.get_node("BoardMotion/MotionRoot/Margin")
 	var side := maxi(48,int(size.x * (0.12 if modal_stack.back().kind == "tasks" else 0.1)))
@@ -679,9 +683,11 @@ func _render_modal() -> void:
 	var ritual: bool = modal_stack.back().title.begins_with("六相召唤阵")
 	var warehouse: bool = modal_stack.back().title.begins_with("妖兽仓库")
 	var results: bool = modal_stack.back().title.begins_with("召唤完成")
-	var event: bool = modal_stack.back().get("kind", "dialog") in ["event","opening_event"]
+	var event: bool = modal_stack.back().get("kind", "dialog") == "event"
 	var tasks: bool = modal_stack.back().get("kind", "dialog") == "tasks"
-	var reading := event or tasks
+	# Story uses the same full reading sheet as event menus, even for a short line.
+	# Otherwise the outer scroll shrink-wraps Body and collapses DescriptionScroll.
+	var reading: bool = event or tasks or modal_stack.back().get("kind", "dialog")=="story"
 	L10N.bind(close_button,&"text",func(): return L10N.text(L10N.text("ui.95f69693f3c1") if event else (L10N.text("ui.977d03d89573") if tasks else L10N.text("ui.67a940be6b93"))))
 	var content_page := ritual or warehouse or results
 	var fixed_content := content_page or reading
@@ -990,7 +996,8 @@ func _upgrade_stage() -> void:
 func _load_example(index: int) -> void:
 	if index == 0:
 		return
-	var minimum_stage: int = [1,1,2,1,3,2,2,2][index]
+	if index<1 or index>7: return
+	var minimum_stage: int = [1,1,1,2,3,2,1,2][index]
 	if rules.stage < minimum_stage:
 		_notice(func(): return L10N.text(L10N.text("ui.c46af0106de4") % Rules.cells(minimum_stage).size()))
 		return
@@ -998,14 +1005,12 @@ func _load_example(index: int) -> void:
 		var sample = Rules.new()
 		sample.stage = rules.stage
 		if index == 7:
-			for item in Experiment.RECIPE.runes:
-				for c in item.cells:
-					sample.extend(c)
-				sample.commit()
-			sample.place_relic("bone-die",[1,0])
+			_place_sample_rune(sample,"health")
+			for anchor: Array in Rules.cells(sample.stage):
+				if sample.place_relic("crystal-eye",anchor): break
 		else:
-			var id: String = ["","health","armor","giant","giant","multiply","tiny"][index]
-			var copies: int = 4 if index==2 else 2 if index==4 else 1
+			var id: String = ["","health","armor","giant","giant","multiply","limb-fortitude"][index]
+			var copies: int = 2 if index==4 else 1
 			for i in copies:
 				if not _place_sample_rune(sample,id):
 					_notice("ui.acb765af04be")

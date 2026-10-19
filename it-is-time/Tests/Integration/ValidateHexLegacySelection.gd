@@ -9,7 +9,7 @@ func check(ok: bool, message: String) -> void:
 func run() -> void:
 	root.get_node("RuntimeConsole").auto_getlogs_enabled=false
 	var session := preload("res://Scripts/Application/GameSession.gd").new()
-	session.save_path="D:/GameJamWorkspace/RuntimeChecks/HexMapIntegration/legacy_backend_"+str(Time.get_ticks_usec())+".json"
+	session.save_path="res://Tests/.runtime/integration/legacy_backend_"+str(Time.get_ticks_usec())+".json"
 	var world := WorldMapRuntimeState.new()
 	world.map_id=&"frontier"
 	check(session.save_world(world.to_dict()),"legacy Frontier fixture saves")
