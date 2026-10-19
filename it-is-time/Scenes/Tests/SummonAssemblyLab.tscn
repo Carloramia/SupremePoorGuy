@@ -1,0 +1,326 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://Scripts/VFX/SummonAssemblyLab.gd" id="1"]
+[ext_resource type="PackedScene" path="res://Scenes/VFX/SummonAssembly3D.tscn" id="2"]
+[ext_resource type="Script" path="res://Scripts/VFX/SummonSelectionOverlay.gd" id="3"]
+
+[sub_resource type="Environment" id="Environment_lab"]
+background_mode = 1
+background_color = Color(0.09, 0.14, 0.15, 1)
+ambient_light_source = 3
+ambient_light_color = Color(1, 0.96, 0.88, 1)
+ambient_light_energy = 0.85
+tonemap_mode = 0
+
+[sub_resource type="StandardMaterial3D" id="Material_ground"]
+shading_mode = 0
+albedo_color = Color(0.65, 0.62, 0.49, 1)
+
+[sub_resource type="PlaneMesh" id="Mesh_ground"]
+material = SubResource("Material_ground")
+size = Vector2(42, 28)
+
+[sub_resource type="StyleBoxFlat" id="Panel"]
+bg_color = Color(0.075, 0.12, 0.13, 0.96)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.35, 0.42, 0.37, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_left = 12
+corner_radius_bottom_right = 12
+
+[sub_resource type="StandardMaterial3D" id="Material_ring"]
+shading_mode = 0
+transparency = 1
+albedo_color = Color(0.38, 0.74, 0.69, 0.7)
+
+[sub_resource type="TorusMesh" id="Mesh_ring"]
+material = SubResource("Material_ring")
+inner_radius = 2.72
+outer_radius = 2.77
+rings = 64
+ring_segments = 6
+
+[node name="SummonAssemblyLab" type="Node3D"]
+script = ExtResource("1")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_lab")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-40, -25, 0)
+light_energy = 1.1
+
+[node name="Camera3D" type="Camera3D" parent="."]
+position = Vector3(-4, 28, 28)
+rotation_degrees = Vector3(-45, 0, 0)
+current = true
+fov = 46.0
+near = 0.1
+far = 150.0
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+position = Vector3(0, -0.08, 0)
+mesh = SubResource("Mesh_ground")
+
+[node name="SummonRing" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.01, 0)
+mesh = SubResource("Mesh_ring")
+
+[node name="SummonAssembly3D" parent="." instance=ExtResource("2")]
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="SelectionOverlay" type="Control" parent="UI"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("3")
+
+[node name="Header" type="VBoxContainer" parent="UI"]
+offset_left = 320.0
+offset_top = 24.0
+offset_right = 1330.0
+offset_bottom = 90.0
+
+[node name="Title" type="Label" parent="UI/Header"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.93, 0.85, 0.68, 1)
+theme_override_font_sizes/font_size = 28
+text = "涌现 · 部件喷射与吸附组装测试"
+
+[node name="Subtitle" type="Label" parent="UI/Header"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "真实素材 / 落地即吸附 / 可变数量与体型"
+
+[node name="Settings" type="ScrollContainer" parent="UI"]
+anchor_bottom = 1.0
+offset_left = 18.0
+offset_top = 18.0
+offset_right = 294.0
+offset_bottom = -18.0
+horizontal_scroll_mode = 0
+theme_override_styles/panel = SubResource("Panel")
+
+[node name="Margin" type="MarginContainer" parent="UI/Settings"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 12
+
+[node name="Controls" type="VBoxContainer" parent="UI/Settings/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 7
+
+[node name="Title" type="Label" parent="UI/Settings/Margin/Controls"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "召唤实验台"
+
+[node name="ScrollHint" type="Label" parent="UI/Settings/Margin/Controls"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "下方参数与播放控制可滚动查看"
+
+[node name="Pacing" type="OptionButton" parent="UI/Settings/Margin/Controls"]
+layout_mode = 2
+tooltip_text = "自动模式：开始召唤/N 为新抽，第二次起加速；R 与数量预设保留当前节奏便于比较。"
+
+[node name="PacingHint" type="Label" parent="UI/Settings/Margin/Controls"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "全程4秒；阶段按比例分配；R 重播"
+
+[node name="PresetGiant" type="Button" parent="UI/Settings/Margin/Controls"]
+layout_mode = 2
+text = "1  少量 · 2 只（保持体型）"
+
+[node name="PresetNormal" type="Button" parent="UI/Settings/Margin/Controls"]
+layout_mode = 2
+text = "2  常规 · 5 只（保持体型）"
+
+[node name="PresetSmall" type="Button" parent="UI/Settings/Margin/Controls"]
+layout_mode = 2
+text = "3  多量 · 12 只（保持体型）"
+
+[node name="PresetCrowd" type="Button" parent="UI/Settings/Margin/Controls"]
+layout_mode = 2
+text = "4  密集 · 20 只（保持体型）"
+
+[node name="Species" type="OptionButton" parent="UI/Settings/Margin/Controls"]
+layout_mode = 2
+
+[node name="Count" type="HBoxContainer" parent="UI/Settings/Margin/Controls"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UI/Settings/Margin/Controls/Count"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "怪物数量"
+
+[node name="Value" type="SpinBox" parent="UI/Settings/Margin/Controls/Count"]
+layout_mode = 2
+min_value = 1.0
+max_value = 30.0
+value = 12.0
+
+[node name="Size" type="HBoxContainer" parent="UI/Settings/Margin/Controls"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UI/Settings/Margin/Controls/Size"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "目标体型"
+
+[node name="Value" type="SpinBox" parent="UI/Settings/Margin/Controls/Size"]
+layout_mode = 2
+min_value = 0.5
+max_value = 8.0
+step = 0.1
+value = 3.2
+
+[node name="AutoCount" type="CheckButton" parent="UI/Settings/Margin/Controls"]
+layout_mode = 2
+button_pressed = false
+text = "按体型自动建议数量"
+
+[node name="Seed" type="HBoxContainer" parent="UI/Settings/Margin/Controls"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UI/Settings/Margin/Controls/Seed"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "随机种子"
+
+[node name="Value" type="SpinBox" parent="UI/Settings/Margin/Controls/Seed"]
+layout_mode = 2
+max_value = 999999.0
+value = 5169.0
+
+[node name="BurstLabel" type="Label" parent="UI/Settings/Margin/Controls"]
+layout_mode = 2
+text = "喷射高度（1–16）"
+
+[node name="Burst" type="HSlider" parent="UI/Settings/Margin/Controls"]
+layout_mode = 2
+min_value = 1.0
+max_value = 16.0
+step = 0.25
+value = 9.0
+
+[node name="SpreadLabel" type="Label" parent="UI/Settings/Margin/Controls"]
+layout_mode = 2
+text = "随机散布半径（4–16）"
+
+[node name="Spread" type="HSlider" parent="UI/Settings/Margin/Controls"]
+layout_mode = 2
+min_value = 4.0
+max_value = 16.0
+step = 0.25
+value = 9.75
+
+[node name="LandingPauseLabel" type="Label" parent="UI/Settings/Margin/Controls"]
+layout_mode = 2
+text = "落地停顿：0.16s"
+
+[node name="LandingPause" type="HSlider" parent="UI/Settings/Margin/Controls"]
+layout_mode = 2
+max_value = 1.5
+step = 0.01
+value = 0.16
+
+[node name="AttractionLabel" type="Label" parent="UI/Settings/Margin/Controls"]
+layout_mode = 2
+text = "吸附耗时：0.48s（从慢到快）"
+
+[node name="Attraction" type="HSlider" parent="UI/Settings/Margin/Controls"]
+layout_mode = 2
+min_value = 0.1
+max_value = 3.0
+step = 0.01
+value = 0.48
+
+[node name="SpeedLabel" type="Label" parent="UI/Settings/Margin/Controls"]
+layout_mode = 2
+text = "播放速度（0.1–2 倍）"
+
+[node name="Speed" type="HSlider" parent="UI/Settings/Margin/Controls"]
+layout_mode = 2
+min_value = 0.1
+max_value = 2.0
+step = 0.1
+value = 1.0
+
+[node name="Play" type="Button" parent="UI/Settings/Margin/Controls"]
+layout_mode = 2
+text = "开始召唤 / 下一抽"
+
+[node name="Replay" type="Button" parent="UI/Settings/Margin/Controls"]
+layout_mode = 2
+text = "相同种子重播  [R]"
+
+[node name="Reroll" type="Button" parent="UI/Settings/Margin/Controls"]
+layout_mode = 2
+text = "新种子重播  [N]"
+
+[node name="Pause" type="Button" parent="UI/Settings/Margin/Controls"]
+layout_mode = 2
+text = "暂停 / 继续  [空格]"
+
+[node name="Actions" type="HBoxContainer" parent="UI/Settings/Margin/Controls"]
+layout_mode = 2
+
+[node name="Skip" type="Button" parent="UI/Settings/Margin/Controls/Actions"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "跳过  [Enter]"
+
+[node name="Clear" type="Button" parent="UI/Settings/Margin/Controls/Actions"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "清空  [Esc]"
+
+[node name="Loop" type="CheckButton" parent="UI/Settings/Margin/Controls"]
+layout_mode = 2
+text = "循环观察"
+
+[node name="Bottom" type="PanelContainer" parent="UI"]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 314.0
+offset_top = -78.0
+offset_right = -18.0
+offset_bottom = -18.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/panel = SubResource("Panel")
+
+[node name="Margin" type="MarginContainer" parent="UI/Bottom"]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 8
+
+[node name="Info" type="VBoxContainer" parent="UI/Bottom/Margin"]
+layout_mode = 2
+
+[node name="Status" type="Label" parent="UI/Bottom/Margin/Info"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "加载真实怪物素材……"
+
+[node name="Timeline" type="HSlider" parent="UI/Bottom/Margin/Info"]
+layout_mode = 2
+step = 0.001
+max_value = 4.0
