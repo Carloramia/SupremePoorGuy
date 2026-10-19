@@ -7,6 +7,8 @@ signal new_player_tasks_completed(task_ids: Array)
 const DEFAULT_WORLD_TIME = preload("res://Resources/Application/DefaultWorldTime.tres")
 const NEW_PLAYER_TASKS = preload("res://Scripts/Application/NewPlayerTasks.gd")
 const FACTORY = preload("res://Scripts/Application/CreatureFactory.gd")
+const OPENING_EVENT_ID := "QST_MAIN_001_001"
+static var _opening_definition: Dictionary = {}
 const SUPPORTED_RUNES := ["health","armor","attack","iron","bloodblade","vitality","fang","haste"]
 const DELIVERY_RUNTIME = preload("res://Modules/FrontierDelivery/Scripts/Map/WorldMapRuntime.gd")
 const DELIVERY_MAP := "frontier_layout"
@@ -17,7 +19,86 @@ var _needs_schema_backup := false
 var _needs_damage_backup := false
 var task_definitions: Array = NEW_PLAYER_TASKS.DEFINITIONS.duplicate(true)
 var world_time_settings: Resource = DEFAULT_WORLD_TIME
+var battle_capacity_settings: Resource = preload("res://Resources/Application/DefaultBattleCapacity.tres")
 var _saved_world_time: Dictionary = {}
+
+static func opening_event_definition() -> Dictionary:
+	if _opening_definition.is_empty():
+		var parsed: Variant=JSON.parse_string(FileAccess.get_file_as_string("res://Resources/Application/OpeningAppointment.json"))
+		if parsed is Dictionary: _opening_definition=parsed
+	return _opening_definition
+
+func prepare_opening_event() -> void:
+	# The new-game transaction saves this before loading the map, so interrupted entries resume.
+	data.opening_event={"id":OPENING_EVENT_ID,"line":0,"completed":false}
+
+func opening_event_pending() -> bool:
+	return data.has("opening_event") and not data.opening_event.completed
+
+func advance_opening_event() -> bool:
+	if not opening_event_pending(): return false
+	var before := data.duplicate(true)
+	var event := opening_event_definition()
+	if int(data.opening_event.line)<event.lines.size()-1:
+		data.opening_event.line+=1
+	else:
+		data.opening_event.completed=true
+		data.opening_event.credential=event.credential.duplicate(true)
+	if save(): return true
+	data=before
+	return false
+
+static func _valid_opening_event(value: Dictionary) -> bool:
+	if not value.has("opening_event"): return true
+	var progress: Variant=value.opening_event
+	if not progress is Dictionary or progress.get("id")!=OPENING_EVENT_ID or not progress.get("completed") is bool: return false
+	var line: Variant=progress.get("line")
+	if not (line is int or line is float) or not is_finite(float(line)) or float(line)!=floorf(float(line)): return false
+	var event := opening_event_definition()
+	if event.is_empty() or line<0 or line>=event.lines.size(): return false
+	if progress.completed: return int(line)==event.lines.size()-1 and progress.get("credential")==event.credential
+	return not progress.has("credential")
+
+func party_capacity() -> Dictionary:
+	return battle_capacity_settings.evaluate(monsters("team"))
+
+func initial_party_capacity() -> Dictionary:
+	var selected: Dictionary = battle_capacity_settings.initial_roster(monsters("team"))
+	var result: Dictionary = battle_capacity_settings.evaluate(selected.records)
+	if not selected.error.is_empty(): result.error = selected.error
+	elif selected.records.is_empty(): result.error = "队伍中没有可在容量上限内出战的生物。"
+	return result
+
+func register_battle_reinforcement(battle_id: String, id: String) -> bool:
+	if data.battle.get("battle_id") != battle_id or data.battle.get("phase") != "loading":
+		last_error = "增援与当前战斗不匹配。"; return false
+	var creature := monster_by_id(id)
+	if creature.is_empty() or creature.position not in ["team","warehouse"]:
+		last_error = "增援生物已不存在或不可调用。"; return false
+	if id in data.battle.party_ids: return true
+	var before := data.duplicate(true)
+	data.battle.party_ids.append(id)
+	if save(): return true
+	data = before
+	return false
+
+func record_battle_deaths(battle_id: String, ids: Array) -> bool:
+	if ids.is_empty(): return true
+	if data.battle.get("battle_id") != battle_id or data.battle.get("phase") != "loading":
+		last_error = "阵亡记录与当前战斗不匹配。"; return false
+	var dead: Array = data.battle.get("casualties",[]).duplicate()
+	for id: Variant in ids:
+		if not id is String or id not in data.battle.party_ids:
+			last_error = "阵亡记录包含未参战生物。"; return false
+		if id not in dead: dead.append(id)
+	if dead == data.battle.get("casualties",[]): return true
+	var before := data.duplicate(true)
+	data.battle.casualties = dead
+	data.monsters = data.monsters.filter(func(creature): return creature.id not in dead)
+	data.pending = data.pending.filter(func(id): return id not in dead)
+	if not save(): data = before; return false
+	trace("battle_permanent_deaths",{"battle_id":battle_id,"ids":ids})
+	return true
 
 func reset() -> void:
 	super.reset()
@@ -141,6 +222,7 @@ func load_save() -> bool:
 func _valid_save(value: Variant) -> bool:
 	if not super._valid_save(value) or int(value.get("schema_version",0)) not in [1,2]: return false
 	if not NEW_PLAYER_TASKS.valid_progress(value): return false
+	if not _valid_opening_event(value): return false
 	if value.has("world_time") and not _valid_world_time(value.world_time): return false
 	if value.get("delivery_map_version","20261015") not in ["20261015","20261019"]: return false
 	var day: Variant = value.get("day",1)
@@ -177,13 +259,21 @@ func _valid_save(value: Variant) -> bool:
 		if pending.get("request_id")!=pending.battle_id or not DELIVERY_RUNTIME.valid_snapshot(probe): return false
 	elif value.worlds[pending.map_id].pending_battle.get("location_id")!=pending.location_id: return false
 	var seen := {}
+	var casualties: Variant = pending.get("casualties",[])
+	if not casualties is Array: return false
+	var dead := {}
+	for id: Variant in casualties:
+		if not id is String or id.is_empty() or dead.has(id) or id not in pending.party_ids: return false
+		dead[id] = true
+		for creature: Dictionary in value.monsters:
+			if creature.id == id: return false
 	for id: Variant in pending.party_ids:
 		if not id is String or seen.has(id): return false
 		seen[id] = true
 		var found := false
 		for creature: Dictionary in value.monsters:
 			if creature.id==id: found=true
-		if not found: return false
+		if not found and not dead.has(id): return false
 	return true
 
 func enable_new_player_tasks() -> bool:
@@ -219,6 +309,12 @@ func new_player_task_action(task_id: String) -> String:
 func _valid_result(value: Variant) -> bool:
 	if not value is Dictionary or not value.get("battle_id") is String or value.battle_id.is_empty(): return false
 	if value.get("outcome") not in ["victory","defeat","retreat"] or not value.get("parts") is Dictionary: return false
+	var casualties: Variant = value.get("casualties",[])
+	if not casualties is Array: return false
+	var seen := {}
+	for id: Variant in casualties:
+		if not id is String or id.is_empty() or seen.has(id): return false
+		seen[id] = true
 	var reward: Variant = value.get("reward")
 	return (reward is int or reward is float) and is_finite(float(reward)) and float(reward)>=0
 

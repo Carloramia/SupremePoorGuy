@@ -1,4 +1,4 @@
-[gd_scene load_steps=201 format=3]
+[gd_scene load_steps=124 format=3]
 
 [ext_resource type="Script" path="res://Modules/FrontierDelivery/Scripts/Map/BattleMap3D.gd" id="BattleScript"]
 [ext_resource type="Shader" path="res://Modules/FrontierDelivery/Scripts/Map/BattleGround.gdshader" id="GroundShader"]
@@ -10,33 +10,39 @@
 [ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/3b03ce4131ca22683e5304b3.png" id="Texture_4"]
 [ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/ab9c81065282fdeff6da9f81.png" id="Texture_5"]
 [ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/c025a08d754497a712639f1e.png" id="Texture_6"]
-[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/battle_leaf_litter.tscn" id="Part_0"]
-[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_07_013.tscn" id="Part_1"]
-[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_07_014.tscn" id="Part_2"]
-[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_02_024.tscn" id="Part_3"]
-[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/web.tscn" id="Part_4"]
-[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/mud.tscn" id="Part_5"]
-[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/demo_thorn_large.tscn" id="Part_6"]
-[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_08_021.tscn" id="Part_7"]
-[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_08_022.tscn" id="Part_8"]
-[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_09_020.tscn" id="Part_9"]
-[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_03_004.tscn" id="Part_10"]
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/e199aeb0bd0e555a4164e384.png" id="Texture_7"]
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/8cd45c95370edb05239b822a.png" id="Texture_8"]
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/7c0ae5bd2d528b6b36bf837c.png" id="Texture_9"]
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/642ec382fd8c506ec02bdd89.png" id="Texture_10"]
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/3b03ce4131ca22683e5304b3.png" id="Texture_11"]
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/ab9c81065282fdeff6da9f81.png" id="Texture_12"]
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/c025a08d754497a712639f1e.png" id="Texture_13"]
-[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_03_012.tscn" id="Part_11"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/c444f8cb10e52e41bd6f8afd.svg" id="SourceArt_battle_leaf_litter"]
+
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/642ec382fd8c506ec02bdd89.png" id="SourceArt_art1018_07_013"]
+
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/8cd45c95370edb05239b822a.png" id="SourceArt_art1018_07_014"]
+
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/3b03ce4131ca22683e5304b3.png" id="SourceArt_art1018_02_024"]
+
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/abb79c7b6ca43284e4b8bbc8.svg" id="SourceArt_web"]
+
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/d8649aa7c7e0d9503ffa1aa6.svg" id="SourceArt_mud"]
+
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/dbc1cd6fb2e3de72ffa60d59.png" id="SourceArt_art1018_07_004"]
+
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/7ad4a7b14785d9c2b8d91d58.png" id="SourceArt_art1018_08_021"]
+
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/2a33766c168bf16d4d4f96f2.png" id="SourceArt_art1018_07_005"]
+
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/376ee7ee544cd057b8ea4201.png" id="SourceArt_art1018_08_022"]
+
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/552deeb2351511e8b75ab494.png" id="SourceArt_art1018_09_020"]
+
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/7c0ae5bd2d528b6b36bf837c.png" id="SourceArt_art1018_03_004"]
+
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/e199aeb0bd0e555a4164e384.png" id="SourceArt_art1018_03_015"]
+
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/ab9c81065282fdeff6da9f81.png" id="SourceArt_art1018_03_006"]
+
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/c025a08d754497a712639f1e.png" id="SourceArt_art1018_03_012"]
 
 [sub_resource type="StandardMaterial3D" id="R0"]
 shading_mode = 0
 albedo_color = Color(0.380392157, 0.466666667, 0.411764706, 1)
-
-[sub_resource type="PrismMesh" id="R1"]
-left_to_right = 0.5
-size = Vector3(1, 1, 1)
 
 [sub_resource type="ShaderMaterial" id="R2"]
 shader = ExtResource("GroundShader")
@@ -423,402 +429,6 @@ points = PackedVector3Array(1.1, 0, 0, 1.1, 3, 0, 0.55, 0, 0.952627944, 0.55, 3,
 [sub_resource type="ConvexPolygonShape3D" id="R90"]
 points = PackedVector3Array(1.1, 0, 0, 1.1, 3, 0, 0.55, 0, 0.952627944, 0.55, 3, 0.952627944, -0.55, 0, 0.952627944, -0.55, 3, 0.952627944, -1.1, 0, 1.34711148e-16, -1.1, 3, 1.34711148e-16, -0.55, 0, -0.952627944, -0.55, 3, -0.952627944, 0.55, 0, -0.952627944, 0.55, 3, -0.952627944)
 
-[sub_resource type="StandardMaterial3D" id="R91"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_7")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R92"]
-size = Vector2(4.95, 4.80112782)
-
-[sub_resource type="StandardMaterial3D" id="R93"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_8")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R94"]
-size = Vector2(2.5, 2.45614035)
-
-[sub_resource type="StandardMaterial3D" id="R95"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_9")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R96"]
-size = Vector2(4.6, 5.60363636)
-
-[sub_resource type="StandardMaterial3D" id="R97"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_10")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R98"]
-size = Vector2(2.5, 2.71929825)
-
-[sub_resource type="StandardMaterial3D" id="R99"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_7")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R100"]
-size = Vector2(5.3, 5.1406015)
-
-[sub_resource type="StandardMaterial3D" id="R101"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_11")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R102"]
-size = Vector2(2.5, 1.90972222)
-
-[sub_resource type="StandardMaterial3D" id="R103"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_12")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R104"]
-size = Vector2(5.3, 6.57931034)
-
-[sub_resource type="StandardMaterial3D" id="R105"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_11")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R106"]
-size = Vector2(2.5, 1.90972222)
-
-[sub_resource type="StandardMaterial3D" id="R107"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_10")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R108"]
-size = Vector2(2.5, 2.71929825)
-
-[sub_resource type="StandardMaterial3D" id="R109"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_8")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R110"]
-size = Vector2(2.5, 2.45614035)
-
-[sub_resource type="StandardMaterial3D" id="R111"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_12")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R112"]
-size = Vector2(4.6, 5.71034483)
-
-[sub_resource type="StandardMaterial3D" id="R113"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_10")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R114"]
-size = Vector2(2.5, 2.71929825)
-
-[sub_resource type="StandardMaterial3D" id="R115"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_9")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R116"]
-size = Vector2(4.6, 5.60363636)
-
-[sub_resource type="StandardMaterial3D" id="R117"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_10")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R118"]
-size = Vector2(2.5, 2.71929825)
-
-[sub_resource type="StandardMaterial3D" id="R119"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_7")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R120"]
-size = Vector2(5.3, 5.1406015)
-
-[sub_resource type="StandardMaterial3D" id="R121"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_11")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R122"]
-size = Vector2(2.5, 1.90972222)
-
-[sub_resource type="StandardMaterial3D" id="R123"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_9")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R124"]
-size = Vector2(4.95, 6.03)
-
-[sub_resource type="StandardMaterial3D" id="R125"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_8")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R126"]
-size = Vector2(2.5, 2.45614035)
-
-[sub_resource type="StandardMaterial3D" id="R127"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_13")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R128"]
-size = Vector2(4.95, 4.65473684)
-
-[sub_resource type="StandardMaterial3D" id="R129"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_8")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R130"]
-size = Vector2(2.5, 2.45614035)
-
-[sub_resource type="StandardMaterial3D" id="R131"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_12")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R132"]
-size = Vector2(4.6, 5.71034483)
-
-[sub_resource type="StandardMaterial3D" id="R133"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_10")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R134"]
-size = Vector2(2.5, 2.71929825)
-
-[sub_resource type="StandardMaterial3D" id="R135"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_13")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R136"]
-size = Vector2(5.3, 4.98385965)
-
-[sub_resource type="StandardMaterial3D" id="R137"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_11")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R138"]
-size = Vector2(2.5, 1.90972222)
-
-[sub_resource type="StandardMaterial3D" id="R139"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_7")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R140"]
-size = Vector2(5.3, 5.1406015)
-
-[sub_resource type="StandardMaterial3D" id="R141"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_11")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R142"]
-size = Vector2(2.5, 1.90972222)
-
-[sub_resource type="StandardMaterial3D" id="R143"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_9")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R144"]
-size = Vector2(4.95, 6.03)
-
-[sub_resource type="StandardMaterial3D" id="R145"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_8")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R146"]
-size = Vector2(2.5, 2.45614035)
-
-[sub_resource type="StandardMaterial3D" id="R147"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_7")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R148"]
-size = Vector2(4.6, 4.46165414)
-
-[sub_resource type="StandardMaterial3D" id="R149"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_10")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R150"]
-size = Vector2(2.5, 2.71929825)
-
-[sub_resource type="StandardMaterial3D" id="R151"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_12")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R152"]
-size = Vector2(4.6, 5.71034483)
-
-[sub_resource type="StandardMaterial3D" id="R153"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_10")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R154"]
-size = Vector2(2.5, 2.71929825)
-
-[sub_resource type="StandardMaterial3D" id="R155"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_13")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R156"]
-size = Vector2(5.3, 4.98385965)
-
-[sub_resource type="StandardMaterial3D" id="R157"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_11")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R158"]
-size = Vector2(2.5, 1.90972222)
-
-[sub_resource type="StandardMaterial3D" id="R159"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_12")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R160"]
-size = Vector2(4.95, 6.14482759)
-
-[sub_resource type="StandardMaterial3D" id="R161"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_8")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R162"]
-size = Vector2(2.5, 2.45614035)
-
 [sub_resource type="ConvexPolygonShape3D" id="R163"]
 points = PackedVector3Array(0.832, 0, 0, 0.832, 2.6, 0, 0.816013353, 0, 0.134417232, 0.816013353, 2.6, 0.134417232, 0.768667771, 0, 0.263668885, 0.768667771, 2.6, 0.263668885, 0.691782717, 0, 0.382787891, 0.691782717, 2.6, 0.382787891, 0.588312842, 0, 0.487196572, 0.588312842, 2.6, 0.487196572, 0.462234434, 0, 0.572882563, 0.462234434, 2.6, 0.572882563, 0.318392616, 0, 0.636552998, 0.318392616, 2.6, 0.636552998, 0.162315148, 0, 0.675761058, 0.162315148, 2.6, 0.675761058, 5.09453068e-17, 0, 0.689, 5.09453068e-17, 2.6, 0.689, -0.162315148, 0, 0.675761058, -0.162315148, 2.6, 0.675761058, -0.318392616, 0, 0.636552998, -0.318392616, 2.6, 0.636552998, -0.462234434, 0, 0.572882563, -0.462234434, 2.6, 0.572882563, -0.588312842, 0, 0.487196572, -0.588312842, 2.6, 0.487196572, -0.691782717, 0, 0.382787891, -0.691782717, 2.6, 0.382787891, -0.768667771, 0, 0.263668885, -0.768667771, 2.6, 0.263668885, -0.816013353, 0, 0.134417232, -0.816013353, 2.6, 0.134417232, -0.832, 0, 8.43781645e-17, -0.832, 2.6, 8.43781645e-17, -0.816013353, 0, -0.134417232, -0.816013353, 2.6, -0.134417232, -0.768667771, 0, -0.263668885, -0.768667771, 2.6, -0.263668885, -0.691782717, 0, -0.382787891, -0.691782717, 2.6, -0.382787891, -0.588312842, 0, -0.487196572, -0.588312842, 2.6, -0.487196572, -0.462234434, 0, -0.572882563, -0.462234434, 2.6, -0.572882563, -0.318392616, 0, -0.636552998, -0.318392616, 2.6, -0.636552998, -0.162315148, 0, -0.675761058, -0.162315148, 2.6, -0.675761058, -1.52835921e-16, 0, -0.689, -1.52835921e-16, 2.6, -0.689, 0.162315148, 0, -0.675761058, 0.162315148, 2.6, -0.675761058, 0.318392616, 0, -0.636552998, 0.318392616, 2.6, -0.636552998, 0.462234434, 0, -0.572882563, 0.462234434, 2.6, -0.572882563, 0.588312842, 0, -0.487196572, 0.588312842, 2.6, -0.487196572, 0.691782717, 0, -0.382787891, 0.691782717, 2.6, -0.382787891, 0.768667771, 0, -0.263668885, 0.768667771, 2.6, -0.263668885, 0.816013353, 0, -0.134417232, 0.816013353, 2.6, -0.134417232)
 
@@ -1133,311 +743,559 @@ position = Vector3(-7, 0, -7.6)
 rotation = Vector3(0, 0.261401894, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_001"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_001" instance=ExtResource("Part_0")]
-position = Vector3(0, 2.47833333, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(9.2, 4.90666667, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree_decoration_001"]
+transform = Transform3D(0.0306666667, 0, 0, 0, 0, 1, 0, -0.03125, 0, 0, 0.031, 0)
+texture = ExtResource("SourceArt_battle_leaf_litter")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "ground"
+metadata/tilt_from_ground = 0
+
 [node name="battle_spider_tree_decoration_002" type="Node3D" parent="Objects"]
 position = Vector3(6.8, 0, 6.4)
 rotation = Vector3(0, -0.135698712, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_002"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_002" instance=ExtResource("Part_0")]
-position = Vector3(0, 2.47833333, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(9.2, 4.90666667, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree_decoration_002"]
+transform = Transform3D(0.0306666667, 0, 0, 0, 0, 1, -8.67361738e-19, -0.03125, 0, 0, 0.031, 0)
+texture = ExtResource("SourceArt_battle_leaf_litter")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "ground"
+metadata/tilt_from_ground = 0
+
 [node name="battle_spider_tree_decoration_003" type="Node3D" parent="Objects"]
 position = Vector3(-9, 0, 2.4)
 rotation = Vector3(0, 0.108009917, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_003"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_003" instance=ExtResource("Part_0")]
-position = Vector3(0, 2.47833333, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(9.2, 4.90666667, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree_decoration_003"]
+transform = Transform3D(0.0306666667, 0, 0, 0, 0, 1, 0, -0.03125, 0, 0, 0.031, 0)
+texture = ExtResource("SourceArt_battle_leaf_litter")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "ground"
+metadata/tilt_from_ground = 0
+
 [node name="battle_spider_tree_decoration_004" type="Node3D" parent="Objects"]
 position = Vector3(8, 0, -4.8)
 rotation = Vector3(0, 0.00572670632, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_004"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_004" instance=ExtResource("Part_0")]
-position = Vector3(0, 2.47833333, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(9.2, 4.90666667, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree_decoration_004"]
+transform = Transform3D(0.0306666667, 0, 0, 0, 0, 1, 0, -0.03125, 0, 0, 0.031, 0)
+texture = ExtResource("SourceArt_battle_leaf_litter")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "ground"
+metadata/tilt_from_ground = 0
+
 [node name="battle_spider_tree_decoration_005" type="Node3D" parent="Objects"]
 position = Vector3(0.4, 0, 11.6)
 rotation = Vector3(0, -0.0934215559, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_005"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_005" instance=ExtResource("Part_0")]
-position = Vector3(0, 2.47833333, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(9.2, 4.90666667, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree_decoration_005"]
+transform = Transform3D(0.0306666667, 0, 0, 0, 0, 1, -4.33680869e-19, -0.03125, 0, 0, 0.031, 0)
+texture = ExtResource("SourceArt_battle_leaf_litter")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "ground"
+metadata/tilt_from_ground = 0
+
 [node name="battle_spider_tree_decoration_006" type="Node3D" parent="Objects"]
 position = Vector3(-7.829, 0, 1.71)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_006"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_006" instance=ExtResource("Part_1")]
-position = Vector3(0, 0.378508772, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.707017544, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree_decoration_006"]
+transform = Transform3D(0.0114035088, 0, 0, 0, 0.00987572829, 0.5, 0, -0.00570175439, 0.866025404, 0, 0.338147577, -0.176754386)
+texture = ExtResource("SourceArt_art1018_07_013")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.762469384)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree_decoration_007" type="Node3D" parent="Objects"]
 position = Vector3(11.753, 0, 4.461)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_007"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_007" instance=ExtResource("Part_2")]
-position = Vector3(0, 0.344298246, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.638596491, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree_decoration_007"]
+transform = Transform3D(0.0114035088, 0, 0, 0, 0.00987572829, 0.5, 0, -0.00570175439, 0.866025404, 0, 0.308520392, -0.159649123)
+texture = ExtResource("SourceArt_art1018_07_014")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.599925379)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree_decoration_008" type="Node3D" parent="Objects"]
 position = Vector3(-3.498, 0, 2.798)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_008"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_008" instance=ExtResource("Part_3")]
-position = Vector3(0, 0.273263889, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.496527778, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree_decoration_008"]
+transform = Transform3D(0.00902777778, 0, 0, 0, 0.0078182849, 0.5, 0, -0.00451388889, 0.866025404, 0, 0.247002835, -0.124131944)
+texture = ExtResource("SourceArt_art1018_02_024")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.63837368)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree_decoration_009" type="Node3D" parent="Objects"]
 position = Vector3(-9.427, 0, -3.215)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_009"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_009" instance=ExtResource("Part_1")]
-position = Vector3(0, 0.378508772, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.707017544, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree_decoration_009"]
+transform = Transform3D(0.0114035088, 0, 0, 0, 0.00987572829, 0.5, 0, -0.00570175439, 0.866025404, 0, 0.338147577, -0.176754386)
+texture = ExtResource("SourceArt_art1018_07_013")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.575372564)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree_decoration_010" type="Node3D" parent="Objects"]
 position = Vector3(7.402, 0, -8.334)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_010"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_010" instance=ExtResource("Part_2")]
-position = Vector3(0, 0.344298246, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.638596491, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree_decoration_010"]
+transform = Transform3D(0.0114035088, 0, 0, 0, 0.00987572829, 0.5, 0, -0.00570175439, 0.866025404, 0, 0.308520392, -0.159649123)
+texture = ExtResource("SourceArt_art1018_07_014")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.67092426)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree_decoration_011" type="Node3D" parent="Objects"]
 position = Vector3(-0.116, 0, 3.158)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_011"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_011" instance=ExtResource("Part_3")]
-position = Vector3(0, 0.273263889, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.496527778, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree_decoration_011"]
+transform = Transform3D(0.00902777778, 0, 0, 0, 0.0078182849, 0.5, 0, -0.00451388889, 0.866025404, 0, 0.247002835, -0.124131944)
+texture = ExtResource("SourceArt_art1018_02_024")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.582683589)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree_decoration_012" type="Node3D" parent="Objects"]
 position = Vector3(-7.43, 0, -11.389)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_012"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_012" instance=ExtResource("Part_1")]
-position = Vector3(0, 0.378508772, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.707017544, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree_decoration_012"]
+transform = Transform3D(0.0114035088, 0, 0, 0, 0.00987572829, 0.5, 0, -0.00570175439, 0.866025404, 0, 0.338147577, -0.176754386)
+texture = ExtResource("SourceArt_art1018_07_013")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.578022856)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree_decoration_013" type="Node3D" parent="Objects"]
 position = Vector3(12.618, 0, -1.886)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_013"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_013" instance=ExtResource("Part_2")]
-position = Vector3(0, 0.344298246, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.638596491, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree_decoration_013"]
+transform = Transform3D(0.0114035088, 0, 0, 0, 0.00987572829, 0.5, 0, -0.00570175439, 0.866025404, 0, 0.308520392, -0.159649123)
+texture = ExtResource("SourceArt_art1018_07_014")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.637984404)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree_decoration_014" type="Node3D" parent="Objects"]
 position = Vector3(-14.535, 0, -5.37)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_014"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_014" instance=ExtResource("Part_3")]
-position = Vector3(0, 0.273263889, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.496527778, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree_decoration_014"]
+transform = Transform3D(0.00902777778, 0, 0, 0, 0.0078182849, 0.5, 0, -0.00451388889, 0.866025404, 0, 0.247002835, -0.124131944)
+texture = ExtResource("SourceArt_art1018_02_024")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.783302462)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree_decoration_015" type="Node3D" parent="Objects"]
 position = Vector3(-1.262, 0, 2.81)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_015"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_015" instance=ExtResource("Part_1")]
-position = Vector3(0, 0.378508772, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.707017544, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree_decoration_015"]
+transform = Transform3D(0.0114035088, 0, 0, 0, 0.00987572829, 0.5, 0, -0.00570175439, 0.866025404, 0, 0.338147577, -0.176754386)
+texture = ExtResource("SourceArt_art1018_07_013")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.649985701)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree_decoration_016" type="Node3D" parent="Objects"]
 position = Vector3(10.162, 0, -3.62)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_016"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_016" instance=ExtResource("Part_2")]
-position = Vector3(0, 0.344298246, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.638596491, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree_decoration_016"]
+transform = Transform3D(0.0114035088, 0, 0, 0, 0.00987572829, 0.5, 0, -0.00570175439, 0.866025404, 0, 0.308520392, -0.159649123)
+texture = ExtResource("SourceArt_art1018_07_014")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.642954284)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree_decoration_017" type="Node3D" parent="Objects"]
 position = Vector3(-11.081, 0, -1.678)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_017"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_017" instance=ExtResource("Part_3")]
-position = Vector3(0, 0.273263889, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.496527778, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree_decoration_017"]
+transform = Transform3D(0.00902777778, 0, 0, 0, 0.0078182849, 0.5, 0, -0.00451388889, 0.866025404, 0, 0.247002835, -0.124131944)
+texture = ExtResource("SourceArt_art1018_02_024")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.790692976)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree_decoration_018" type="Node3D" parent="Objects"]
 position = Vector3(-5.779, 0, -10.852)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_018"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_018" instance=ExtResource("Part_1")]
-position = Vector3(0, 0.378508772, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.707017544, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree_decoration_018"]
+transform = Transform3D(0.0114035088, 0, 0, 0, 0.00987572829, 0.5, 0, -0.00570175439, 0.866025404, 0, 0.338147577, -0.176754386)
+texture = ExtResource("SourceArt_art1018_07_013")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.568878998)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree_decoration_019" type="Node3D" parent="Objects"]
 position = Vector3(-9.081, 0, -12.136)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_019"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_019" instance=ExtResource("Part_2")]
-position = Vector3(0, 0.344298246, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.638596491, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree_decoration_019"]
+transform = Transform3D(0.0114035088, 0, 0, 0, 0.00987572829, 0.5, 0, -0.00570175439, 0.866025404, 0, 0.308520392, -0.159649123)
+texture = ExtResource("SourceArt_art1018_07_014")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.617141914)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree_decoration_020" type="Node3D" parent="Objects"]
 position = Vector3(9.498, 0, -1.273)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_020"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_020" instance=ExtResource("Part_3")]
-position = Vector3(0, 0.273263889, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.496527778, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree_decoration_020"]
+transform = Transform3D(0.00902777778, 0, 0, 0, 0.0078182849, 0.5, 0, -0.00451388889, 0.866025404, 0, 0.247002835, -0.124131944)
+texture = ExtResource("SourceArt_art1018_02_024")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.632976587)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree_decoration_021" type="Node3D" parent="Objects"]
 position = Vector3(-4.5, 0, -4.321)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_021"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_021" instance=ExtResource("Part_1")]
-position = Vector3(0, 0.378508772, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.707017544, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree_decoration_021"]
+transform = Transform3D(0.0114035088, 0, 0, 0, 0.00987572829, 0.5, 0, -0.00570175439, 0.866025404, 0, 0.338147577, -0.176754386)
+texture = ExtResource("SourceArt_art1018_07_013")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.566030017)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree_decoration_022" type="Node3D" parent="Objects"]
 position = Vector3(4.979, 0, 9.415)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_022"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_022" instance=ExtResource("Part_2")]
-position = Vector3(0, 0.344298246, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.638596491, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree_decoration_022"]
+transform = Transform3D(0.0114035088, 0, 0, 0, 0.00987572829, 0.5, 0, -0.00570175439, 0.866025404, 0, 0.308520392, -0.159649123)
+texture = ExtResource("SourceArt_art1018_07_014")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.58779961)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree_decoration_023" type="Node3D" parent="Objects"]
 position = Vector3(-9.234, 0, -11.538)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_023"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_023" instance=ExtResource("Part_3")]
-position = Vector3(0, 0.273263889, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.496527778, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree_decoration_023"]
+transform = Transform3D(0.00902777778, 0, 0, 0, 0.0078182849, 0.5, 0, -0.00451388889, 0.866025404, 0, 0.247002835, -0.124131944)
+texture = ExtResource("SourceArt_art1018_02_024")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.598296465)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree_decoration_024" type="Node3D" parent="Objects"]
 position = Vector3(11.242, 0, 6.786)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_024"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_024" instance=ExtResource("Part_1")]
-position = Vector3(0, 0.378508772, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.707017544, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree_decoration_024"]
+transform = Transform3D(0.0114035088, 0, 0, 0, 0.00987572829, 0.5, 0, -0.00570175439, 0.866025404, 0, 0.338147577, -0.176754386)
+texture = ExtResource("SourceArt_art1018_07_013")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.784680198)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree_decoration_025" type="Node3D" parent="Objects"]
 position = Vector3(-12.59, 0, 12.047)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_025"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_025" instance=ExtResource("Part_2")]
-position = Vector3(0, 0.344298246, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.638596491, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree_decoration_025"]
+transform = Transform3D(0.0114035088, 0, 0, 0, 0.00987572829, 0.5, 0, -0.00570175439, 0.866025404, 0, 0.308520392, -0.159649123)
+texture = ExtResource("SourceArt_art1018_07_014")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.726071216)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree_decoration_026" type="Node3D" parent="Objects"]
 position = Vector3(12.472, 0, 8.532)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_026"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_026" instance=ExtResource("Part_3")]
-position = Vector3(0, 0.273263889, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.496527778, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree_decoration_026"]
+transform = Transform3D(0.00902777778, 0, 0, 0, 0.0078182849, 0.5, 0, -0.00451388889, 0.866025404, 0, 0.247002835, -0.124131944)
+texture = ExtResource("SourceArt_art1018_02_024")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.750272701)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree_decoration_027" type="Node3D" parent="Objects"]
 position = Vector3(12.994, 0, -9.351)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_027"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_027" instance=ExtResource("Part_1")]
-position = Vector3(0, 0.378508772, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.707017544, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree_decoration_027"]
+transform = Transform3D(0.0114035088, 0, 0, 0, 0.00987572829, 0.5, 0, -0.00570175439, 0.866025404, 0, 0.338147577, -0.176754386)
+texture = ExtResource("SourceArt_art1018_07_013")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.692147049)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree_decoration_028" type="Node3D" parent="Objects"]
 position = Vector3(-7.146, 0, 10.177)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_028"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_028" instance=ExtResource("Part_2")]
-position = Vector3(0, 0.344298246, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.638596491, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree_decoration_028"]
+transform = Transform3D(0.0114035088, 0, 0, 0, 0.00987572829, 0.5, 0, -0.00570175439, 0.866025404, 0, 0.308520392, -0.159649123)
+texture = ExtResource("SourceArt_art1018_07_014")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.710072968)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree_decoration_029" type="Node3D" parent="Objects"]
 position = Vector3(-3.435, 0, -12.116)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_029"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_029" instance=ExtResource("Part_3")]
-position = Vector3(0, 0.273263889, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.496527778, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree_decoration_029"]
+transform = Transform3D(0.00902777778, 0, 0, 0, 0.0078182849, 0.5, 0, -0.00451388889, 0.866025404, 0, 0.247002835, -0.124131944)
+texture = ExtResource("SourceArt_art1018_02_024")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.61876388)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree_decoration_030" type="Node3D" parent="Objects"]
 position = Vector3(10.744, 0, 9.906)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_030"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_030" instance=ExtResource("Part_1")]
-position = Vector3(0, 0.378508772, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.707017544, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree_decoration_030"]
+transform = Transform3D(0.0114035088, 0, 0, 0, 0.00987572829, 0.5, 0, -0.00570175439, 0.866025404, 0, 0.338147577, -0.176754386)
+texture = ExtResource("SourceArt_art1018_07_013")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.727460259)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree_web_148" type="Node3D" parent="Objects"]
 position = Vector3(-7, 0, -0.5)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_web_148"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree_web_148" instance=ExtResource("Part_4")]
-position = Vector3(0, 0.025, 0)
-rotation = Vector3(-1.57079633, 0, 0)
-scale = Vector3(4.4, 4, 0.025)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree_web_148"]
+transform = Transform3D(0.034375, 0, 0, 0, 0.0270632939, 0.5, 0, -0.015625, 0.866025404, 0, 1.76665081, -1)
+texture = ExtResource("SourceArt_web")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="region" type="Area3D" parent="Objects/battle_spider_tree_web_148"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -1450,11 +1308,19 @@ position = Vector3(7, 0, -3)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_web_149"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree_web_149" instance=ExtResource("Part_4")]
-position = Vector3(0, 0.025, 0)
-rotation = Vector3(-1.57079633, 0, 0)
-scale = Vector3(4.2, 3.7, 0.025)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree_web_149"]
+transform = Transform3D(0.0328125, 0, 0, 0, 0.0250335468, 0.5, 0, -0.014453125, 0.866025404, 0, 1.636747, -0.925)
+texture = ExtResource("SourceArt_web")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="region" type="Area3D" parent="Objects/battle_spider_tree_web_149"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -1467,11 +1333,19 @@ position = Vector3(1.3, 0, 5.7)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_mud_150"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree_mud_150" instance=ExtResource("Part_5")]
-position = Vector3(0, 0.025, 0)
-rotation = Vector3(-1.57079633, 0, 0)
-scale = Vector3(5.4, 3.2, 0.025)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree_mud_150"]
+transform = Transform3D(0.0421875, 0, 0, 0, 0, 1, 0, -0.025, 0, 0, 0.0346, 0)
+texture = ExtResource("SourceArt_mud")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "ground"
+metadata/tilt_from_ground = 0
+
 [node name="region" type="Area3D" parent="Objects/battle_spider_tree_mud_150"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -1484,11 +1358,19 @@ position = Vector3(-3, 0, -5.4)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_thorns_151"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree_thorns_151" instance=ExtResource("Part_6")]
-position = Vector3(0, 0.025, 0)
-rotation = Vector3(-1.57079633, 0, 0)
-scale = Vector3(3.4, 1.72251656, 0.025)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree_thorns_151"]
+transform = Transform3D(0.00683538316, 0, 0, 0, 0.00591961546, 0.5, 0, -0.00341769158, 0.866025404, 0, 0.780471548, -0.430629139)
+texture = ExtResource("SourceArt_art1018_07_004")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="region" type="Area3D" parent="Objects/battle_spider_tree_thorns_151"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -1501,11 +1383,19 @@ position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_post_battle_140"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree_post_battle_140" instance=ExtResource("Part_7")]
-position = Vector3(0, 1.06199422, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(5.2, 2.07398844, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree_post_battle_140"]
+transform = Transform3D(0.0150289017, 0, 0, 0, 0, 1, 0, -0.0150289017, 0, 0, 0.0348, 0)
+texture = ExtResource("SourceArt_art1018_08_021")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "ground"
+metadata/tilt_from_ground = 0
+
 [node name="click_area" type="Area3D" parent="Objects/battle_spider_tree_post_battle_140"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -1514,7 +1404,7 @@ collision_mask = 1
 [node name="Shape" type="CollisionShape3D" parent="Objects/battle_spider_tree_post_battle_140/click_area"]
 shape = SubResource("R83")
 [node name="battle_spider_tree_deployment_136" type="Node3D" parent="Objects"]
-position = Vector3(1.74659, 0, 12.68028)
+position = Vector3(-12.3590642, 0, 0.297193977)
 rotation = Vector3(0, -3.00471294, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_deployment_136"
@@ -1530,11 +1420,19 @@ position = Vector3(-4.95, 0, -4.76313972)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "thorns_1"
-[node name="PhysicalPart" parent="Objects/thorns_1" instance=ExtResource("Part_6")]
-position = Vector3(0, 0.025, 0)
-rotation = Vector3(-1.57079633, 0, 0)
-scale = Vector3(2.2, 1.11456954, 0.025)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/thorns_1"]
+transform = Transform3D(0.00396643963, 0, 0, 0, 0.00343503748, 0.5, 0, -0.00198321982, 0.866025404, 0, 0.517622766, -0.278642384)
+texture = ExtResource("SourceArt_art1018_07_005")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="region" type="Area3D" parent="Objects/thorns_1"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -1583,11 +1481,19 @@ position = Vector3(6.6, 0, 3.81051178)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "collision_damage_11"
-[node name="PhysicalPart" parent="Objects/collision_damage_11" instance=ExtResource("Part_8")]
-position = Vector3(0, 0.971202532, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(2.3, 1.89240506, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/collision_damage_11"]
+transform = Transform3D(0.0291139241, 0, 0, 0, 0.0252133978, 0.5, 0, -0.014556962, 0.866025404, 0, 0.85443543, -0.473101266)
+texture = ExtResource("SourceArt_art1018_08_022")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="collision" type="StaticBody3D" parent="Objects/collision_damage_11"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -1600,11 +1506,19 @@ position = Vector3(8.25, 0, 4.76313972)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "collision_damage_12"
-[node name="PhysicalPart" parent="Objects/collision_damage_12" instance=ExtResource("Part_9")]
-position = Vector3(0, 0.733482143, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(2.3, 1.41696429, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/collision_damage_12"]
+transform = Transform3D(0.0205357143, 0, 0, 0, 0.0177844503, 0.5, 0, -0.0102678571, 0.866025404, 0, 0.648563534, -0.354241071)
+texture = ExtResource("SourceArt_art1018_09_020")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="collision" type="StaticBody3D" parent="Objects/collision_damage_12"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -1613,42 +1527,42 @@ collision_mask = 0
 [node name="Shape" type="CollisionShape3D" parent="Objects/collision_damage_12/collision"]
 shape = SubResource("R90")
 [node name="battle_spider_tree__enemy_1" type="Node3D" parent="Objects"]
-position = Vector3(-1.65, 0, -6.66839561)
+position = Vector3(11.78125, 0, 0.357235479)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__enemy_1"
 [node name="battle_spider_tree__enemy_2" type="Node3D" parent="Objects"]
-position = Vector3(1.65, 0, -6.66839561)
+position = Vector3(15.08125, 0, 0.357235479)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__enemy_2"
 [node name="battle_spider_tree__enemy_3" type="Node3D" parent="Objects"]
-position = Vector3(0, 0, -9.52627944)
+position = Vector3(13.43125, 0, -2.50064835)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__enemy_3"
 [node name="battle_spider_tree__enemy_4" type="Node3D" parent="Objects"]
-position = Vector3(0, 0, -3.81051178)
+position = Vector3(13.43125, 0, 3.21511931)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__enemy_4"
 [node name="battle_spider_tree__enemy_5" type="Node3D" parent="Objects"]
-position = Vector3(-3.3, 0, -9.52627944)
+position = Vector3(10.13125, 0, -2.50064835)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__enemy_5"
 [node name="battle_spider_tree__enemy_6" type="Node3D" parent="Objects"]
-position = Vector3(-3.3, 0, -3.81051178)
+position = Vector3(10.13125, 0, 3.21511931)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__enemy_6"
 [node name="battle_spider_tree__enemy_7" type="Node3D" parent="Objects"]
-position = Vector3(-4.95, 0, -6.66839561)
+position = Vector3(8.48125, 0, 0.357235479)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__enemy_7"
 [node name="battle_spider_tree__enemy_8" type="Node3D" parent="Objects"]
-position = Vector3(3.3, 0, -9.52627944)
+position = Vector3(16.73125, 0, -2.50064835)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__enemy_8"
@@ -1657,487 +1571,811 @@ position = Vector3(-9.8, 0, -7)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__art_037"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree__art_037" instance=ExtResource("Part_1")]
-position = Vector3(0, 0.949561404, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(1.7, 1.84912281, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree__art_037"]
+transform = Transform3D(0.0298245614, 0, 0, 0, 0.0258288278, 0.5, 0, -0.0149122807, 0.866025404, 0, 0.835693663, -0.462280702)
+texture = ExtResource("SourceArt_art1018_07_013")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree__art_038" type="Node3D" parent="Objects"]
 position = Vector3(11.6, 0, 1.6)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__art_038"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree__art_038" instance=ExtResource("Part_2")]
-position = Vector3(0, 0.860087719, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(1.7, 1.67017544, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree__art_038"]
+transform = Transform3D(0.0298245614, 0, 0, 0, 0.0258288278, 0.5, 0, -0.0149122807, 0.866025404, 0, 0.758207179, -0.41754386)
+texture = ExtResource("SourceArt_art1018_07_014")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree__art_039" type="Node3D" parent="Objects"]
 position = Vector3(-3.6, 0, 12.4)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__art_039"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree__art_039" instance=ExtResource("Part_3")]
-position = Vector3(0, 0.674305556, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(1.7, 1.29861111, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree__art_039"]
+transform = Transform3D(0.0236111111, 0, 0, 0, 0.020447822, 0.5, 0, -0.0118055556, 0.866025404, 0, 0.597315106, -0.324652778)
+texture = ExtResource("SourceArt_art1018_02_024")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree__art_040" type="Node3D" parent="Objects"]
 position = Vector3(7, 0, 9.4)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__art_040"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree__art_040" instance=ExtResource("Part_1")]
-position = Vector3(0, 0.949561404, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(1.7, 1.84912281, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree__art_040"]
+transform = Transform3D(0.0298245614, 0, 0, 0, 0.0258288278, 0.5, 0, -0.0149122807, 0.866025404, 0, 0.835693663, -0.462280702)
+texture = ExtResource("SourceArt_art1018_07_013")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree__art_041" type="Node3D" parent="Objects"]
 position = Vector3(-12.6, 0, 0.8)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__art_041"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree__art_041" instance=ExtResource("Part_2")]
-position = Vector3(0, 0.860087719, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(1.7, 1.67017544, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree__art_041"]
+transform = Transform3D(0.0298245614, 0, 0, 0, 0.0258288278, 0.5, 0, -0.0149122807, 0.866025404, 0, 0.758207179, -0.41754386)
+texture = ExtResource("SourceArt_art1018_07_014")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree_decoration_144" type="Node3D" parent="Objects"]
 position = Vector3(0, 0, -9.6)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_144"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_144" instance=ExtResource("Part_10")]
-position = Vector3(0, 3.92318182, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(6.4, 7.79636364, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree_decoration_144"]
+transform = Transform3D(0.0387878788, 0, 0, 0, 0.0335912884, 0.5, 0, -0.0193939394, 0.866025404, 0, 3.41112448, -1.94909091)
+texture = ExtResource("SourceArt_art1018_03_004")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree__art_001" type="Node3D" parent="Objects"]
 position = Vector3(17.259, 0, 1.422)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__art_001"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree__art_001"]
-position = Vector3(0, 0.188, 0)
-mesh = SubResource("R92")
-material_override = SubResource("R91")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree__art_001"]
+transform = Transform3D(0.012406015, 0, 0, 0, 0.0107439242, 0.5, 0, -0.00620300752, 0.866025404, 0, 2.11494933, -1.20028195)
+texture = ExtResource("SourceArt_art1018_03_015")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree__art_002" type="Node3D" parent="Objects"]
 position = Vector3(16.099, 0, 3.847)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__art_002"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree__art_002"]
-position = Vector3(0, 0.191, 0)
-mesh = SubResource("R94")
-material_override = SubResource("R93")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree__art_002"]
+transform = Transform3D(0.0438596491, 0, 0, 0, 0.0379835703, 0.5, 0, -0.0219298246, 0.866025404, 0, 1.09953997, -0.614035088)
+texture = ExtResource("SourceArt_art1018_07_014")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree__art_003" type="Node3D" parent="Objects"]
 position = Vector3(13.801, 0, 6.579)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__art_003"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree__art_003"]
-position = Vector3(0, 0.194, 0)
-mesh = SubResource("R96")
-material_override = SubResource("R95")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree__art_003"]
+transform = Transform3D(0.0278787879, 0, 0, 0, 0.0241437385, 0.5, 0, -0.0139393939, 0.866025404, 0, 2.46244572, -1.40090909)
+texture = ExtResource("SourceArt_art1018_03_004")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree__art_004" type="Node3D" parent="Objects"]
 position = Vector3(12.637, 0, 9.012)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__art_004"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree__art_004"]
-position = Vector3(0, 0.197, 0)
-mesh = SubResource("R98")
-material_override = SubResource("R97")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree__art_004"]
+transform = Transform3D(0.0438596491, 0, 0, 0, 0.0379835703, 0.5, 0, -0.0219298246, 0.866025404, 0, 1.21349068, -0.679824561)
+texture = ExtResource("SourceArt_art1018_07_013")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree__art_005" type="Node3D" parent="Objects"]
 position = Vector3(11.436, 0, 11.508)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__art_005"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree__art_005"]
-position = Vector3(0, 0.2, 0)
-mesh = SubResource("R100")
-material_override = SubResource("R99")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree__art_005"]
+transform = Transform3D(0.013283208, 0, 0, 0, 0.0115035956, 0.5, 0, -0.00664160401, 0.866025404, 0, 2.26194575, -1.28515038)
+texture = ExtResource("SourceArt_art1018_03_015")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree__art_006" type="Node3D" parent="Objects"]
 position = Vector3(9.855, 0, 14.662)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__art_006"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree__art_006"]
-position = Vector3(0, 0.203, 0)
-mesh = SubResource("R102")
-material_override = SubResource("R101")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree__art_006"]
+transform = Transform3D(0.0347222222, 0, 0, 0, 0.0300703265, 0.5, 0, -0.0173611111, 0.866025404, 0, 0.862933979, -0.477430556)
+texture = ExtResource("SourceArt_art1018_02_024")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree__art_007" type="Node3D" parent="Objects"]
 position = Vector3(7.166, 0, 15.45)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__art_007"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree__art_007"]
-position = Vector3(0, 0.206, 0)
-mesh = SubResource("R104")
-material_override = SubResource("R103")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree__art_007"]
+transform = Transform3D(0.0456896552, 0, 0, 0, 0.0395684021, 0.5, 0, -0.0228448276, 0.866025404, 0, 2.88492495, -1.64482759)
+texture = ExtResource("SourceArt_art1018_03_006")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree__art_008" type="Node3D" parent="Objects"]
 position = Vector3(4.52, 0, 15.658)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__art_008"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree__art_008"]
-position = Vector3(0, 0.209, 0)
-mesh = SubResource("R106")
-material_override = SubResource("R105")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree__art_008"]
+transform = Transform3D(0.0347222222, 0, 0, 0, 0.0300703265, 0.5, 0, -0.0173611111, 0.866025404, 0, 0.862933979, -0.477430556)
+texture = ExtResource("SourceArt_art1018_02_024")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree__art_009" type="Node3D" parent="Objects"]
 position = Vector3(1.801, 0, 15.866)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__art_009"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree__art_009"]
-position = Vector3(0, 0.212, 0)
-mesh = SubResource("R108")
-material_override = SubResource("R107")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree__art_009"]
+transform = Transform3D(0.0438596491, 0, 0, 0, 0.0379835703, 0.5, 0, -0.0219298246, 0.866025404, 0, 1.21349068, -0.679824561)
+texture = ExtResource("SourceArt_art1018_07_013")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree__art_010" type="Node3D" parent="Objects"]
 position = Vector3(-1.599, 0, 15.242)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__art_010"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree__art_010"]
-position = Vector3(0, 0.215, 0)
-mesh = SubResource("R110")
-material_override = SubResource("R109")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree__art_010"]
+transform = Transform3D(0.0438596491, 0, 0, 0, 0.0379835703, 0.5, 0, -0.0219298246, 0.866025404, 0, 1.09953997, -0.614035088)
+texture = ExtResource("SourceArt_art1018_07_014")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree__art_011" type="Node3D" parent="Objects"]
 position = Vector3(-4.326, 0, 15.45)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__art_011"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree__art_011"]
-position = Vector3(0, 0.218, 0)
-mesh = SubResource("R112")
-material_override = SubResource("R111")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree__art_011"]
+transform = Transform3D(0.0396551724, 0, 0, 0, 0.0343423867, 0.5, 0, -0.0198275862, 0.866025404, 0, 2.50865184, -1.42758621)
+texture = ExtResource("SourceArt_art1018_03_006")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree__art_012" type="Node3D" parent="Objects"]
 position = Vector3(-7.805, 0, 15.658)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__art_012"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree__art_012"]
-position = Vector3(0, 0.221, 0)
-mesh = SubResource("R114")
-material_override = SubResource("R113")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree__art_012"]
+transform = Transform3D(0.0438596491, 0, 0, 0, 0.0379835703, 0.5, 0, -0.0219298246, 0.866025404, 0, 1.21349068, -0.679824561)
+texture = ExtResource("SourceArt_art1018_07_013")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree__art_013" type="Node3D" parent="Objects"]
 position = Vector3(-9.401, 0, 14.201)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__art_013"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree__art_013"]
-position = Vector3(0, 0.224, 0)
-mesh = SubResource("R116")
-material_override = SubResource("R115")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree__art_013"]
+transform = Transform3D(0.0278787879, 0, 0, 0, 0.0241437385, 0.5, 0, -0.0139393939, 0.866025404, 0, 2.46244572, -1.40090909)
+texture = ExtResource("SourceArt_art1018_03_004")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree__art_014" type="Node3D" parent="Objects"]
 position = Vector3(-11.217, 0, 11.472)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__art_014"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree__art_014"]
-position = Vector3(0, 0.227, 0)
-mesh = SubResource("R118")
-material_override = SubResource("R117")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree__art_014"]
+transform = Transform3D(0.0438596491, 0, 0, 0, 0.0379835703, 0.5, 0, -0.0219298246, 0.866025404, 0, 1.21349068, -0.679824561)
+texture = ExtResource("SourceArt_art1018_07_013")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree__art_015" type="Node3D" parent="Objects"]
 position = Vector3(-12.739, 0, 9.251)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__art_015"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree__art_015"]
-position = Vector3(0, 0.23, 0)
-mesh = SubResource("R120")
-material_override = SubResource("R119")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree__art_015"]
+transform = Transform3D(0.013283208, 0, 0, 0, 0.0115035956, 0.5, 0, -0.00664160401, 0.866025404, 0, 2.26194575, -1.28515038)
+texture = ExtResource("SourceArt_art1018_03_015")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree__art_016" type="Node3D" parent="Objects"]
 position = Vector3(-14.641, 0, 6.373)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__art_016"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree__art_016"]
-position = Vector3(0, 0.233, 0)
-mesh = SubResource("R122")
-material_override = SubResource("R121")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree__art_016"]
+transform = Transform3D(0.0347222222, 0, 0, 0, 0.0300703265, 0.5, 0, -0.0173611111, 0.866025404, 0, 0.862933979, -0.477430556)
+texture = ExtResource("SourceArt_art1018_02_024")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree__art_017" type="Node3D" parent="Objects"]
 position = Vector3(-15.4, 0, 3.811)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__art_017"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree__art_017"]
-position = Vector3(0, 0.236, 0)
-mesh = SubResource("R124")
-material_override = SubResource("R123")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree__art_017"]
+transform = Transform3D(0.03, 0, 0, 0, 0.0259807621, 0.5, 0, -0.015, 0.866025404, 0, 2.64706659, -1.5075)
+texture = ExtResource("SourceArt_art1018_03_004")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree__art_018" type="Node3D" parent="Objects"]
 position = Vector3(-16.963, 0, 1.519)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__art_018"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree__art_018"]
-position = Vector3(0, 0.239, 0)
-mesh = SubResource("R126")
-material_override = SubResource("R125")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree__art_018"]
+transform = Transform3D(0.0438596491, 0, 0, 0, 0.0379835703, 0.5, 0, -0.0219298246, 0.866025404, 0, 1.09953997, -0.614035088)
+texture = ExtResource("SourceArt_art1018_07_014")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree__art_019" type="Node3D" parent="Objects"]
 position = Vector3(-17.625, 0, -1.203)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__art_019"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree__art_019"]
-position = Vector3(0, 0.242, 0)
-mesh = SubResource("R128")
-material_override = SubResource("R127")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree__art_019"]
+transform = Transform3D(0.0173684211, 0, 0, 0, 0.0150414939, 0.5, 0, -0.00868421053, 0.866025404, 0, 2.05156018, -1.16368421)
+texture = ExtResource("SourceArt_art1018_03_012")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree__art_020" type="Node3D" parent="Objects"]
 position = Vector3(-15.268, 0, -4.039)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__art_020"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree__art_020"]
-position = Vector3(0, 0.245, 0)
-mesh = SubResource("R130")
-material_override = SubResource("R129")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree__art_020"]
+transform = Transform3D(0.0438596491, 0, 0, 0, 0.0379835703, 0.5, 0, -0.0219298246, 0.866025404, 0, 1.09953997, -0.614035088)
+texture = ExtResource("SourceArt_art1018_07_014")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree__art_021" type="Node3D" parent="Objects"]
 position = Vector3(-14.123, 0, -6.437)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__art_021"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree__art_021"]
-position = Vector3(0, 0.248, 0)
-mesh = SubResource("R132")
-material_override = SubResource("R131")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree__art_021"]
+transform = Transform3D(0.0396551724, 0, 0, 0, 0.0343423867, 0.5, 0, -0.0198275862, 0.866025404, 0, 2.50865184, -1.42758621)
+texture = ExtResource("SourceArt_art1018_03_006")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree__art_022" type="Node3D" parent="Objects"]
 position = Vector3(-12.942, 0, -8.899)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__art_022"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree__art_022"]
-position = Vector3(0, 0.251, 0)
-mesh = SubResource("R134")
-material_override = SubResource("R133")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree__art_022"]
+transform = Transform3D(0.0438596491, 0, 0, 0, 0.0379835703, 0.5, 0, -0.0219298246, 0.866025404, 0, 1.21349068, -0.679824561)
+texture = ExtResource("SourceArt_art1018_07_013")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree__art_023" type="Node3D" parent="Objects"]
 position = Vector3(-11.381, 0, -12.018)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__art_023"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree__art_023"]
-position = Vector3(0, 0.254, 0)
-mesh = SubResource("R136")
-material_override = SubResource("R135")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree__art_023"]
+transform = Transform3D(0.0185964912, 0, 0, 0, 0.0161050338, 0.5, 0, -0.00929824561, 0.866025404, 0, 2.19407453, -1.24596491)
+texture = ExtResource("SourceArt_art1018_03_012")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree__art_024" type="Node3D" parent="Objects"]
 position = Vector3(-9.599, 0, -13.858)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__art_024"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree__art_024"]
-position = Vector3(0, 0.257, 0)
-mesh = SubResource("R138")
-material_override = SubResource("R137")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree__art_024"]
+transform = Transform3D(0.0347222222, 0, 0, 0, 0.0300703265, 0.5, 0, -0.0173611111, 0.866025404, 0, 0.862933979, -0.477430556)
+texture = ExtResource("SourceArt_art1018_02_024")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree__art_025" type="Node3D" parent="Objects"]
 position = Vector3(-7.533, 0, -15.658)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__art_025"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree__art_025"]
-position = Vector3(0, 0.26, 0)
-mesh = SubResource("R140")
-material_override = SubResource("R139")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree__art_025"]
+transform = Transform3D(0.013283208, 0, 0, 0, 0.0115035956, 0.5, 0, -0.00664160401, 0.866025404, 0, 2.26194575, -1.28515038)
+texture = ExtResource("SourceArt_art1018_03_015")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree__art_026" type="Node3D" parent="Objects"]
 position = Vector3(-4.855, 0, -15.866)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__art_026"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree__art_026"]
-position = Vector3(0, 0.263, 0)
-mesh = SubResource("R142")
-material_override = SubResource("R141")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree__art_026"]
+transform = Transform3D(0.0347222222, 0, 0, 0, 0.0300703265, 0.5, 0, -0.0173611111, 0.866025404, 0, 0.862933979, -0.477430556)
+texture = ExtResource("SourceArt_art1018_02_024")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree__art_027" type="Node3D" parent="Objects"]
 position = Vector3(-1.335, 0, -15.242)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__art_027"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree__art_027"]
-position = Vector3(0, 0.266, 0)
-mesh = SubResource("R144")
-material_override = SubResource("R143")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree__art_027"]
+transform = Transform3D(0.03, 0, 0, 0, 0.0259807621, 0.5, 0, -0.015, 0.866025404, 0, 2.64706659, -1.5075)
+texture = ExtResource("SourceArt_art1018_03_004")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree__art_028" type="Node3D" parent="Objects"]
 position = Vector3(1.353, 0, -15.45)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__art_028"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree__art_028"]
-position = Vector3(0, 0.269, 0)
-mesh = SubResource("R146")
-material_override = SubResource("R145")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree__art_028"]
+transform = Transform3D(0.0438596491, 0, 0, 0, 0.0379835703, 0.5, 0, -0.0219298246, 0.866025404, 0, 1.09953997, -0.614035088)
+texture = ExtResource("SourceArt_art1018_07_014")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree__art_029" type="Node3D" parent="Objects"]
 position = Vector3(4.791, 0, -15.658)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__art_029"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree__art_029"]
-position = Vector3(0, 0.272, 0)
-mesh = SubResource("R148")
-material_override = SubResource("R147")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree__art_029"]
+transform = Transform3D(0.0115288221, 0, 0, 0, 0.00998425278, 0.5, 0, -0.00576441103, 0.866025404, 0, 1.96795291, -1.11541353)
+texture = ExtResource("SourceArt_art1018_03_015")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree__art_030" type="Node3D" parent="Objects"]
 position = Vector3(7.633, 0, -15.866)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__art_030"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree__art_030"]
-position = Vector3(0, 0.275, 0)
-mesh = SubResource("R150")
-material_override = SubResource("R149")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree__art_030"]
+transform = Transform3D(0.0438596491, 0, 0, 0, 0.0379835703, 0.5, 0, -0.0219298246, 0.866025404, 0, 1.21349068, -0.679824561)
+texture = ExtResource("SourceArt_art1018_07_013")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree__art_031" type="Node3D" parent="Objects"]
 position = Vector3(9.73, 0, -14.047)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__art_031"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree__art_031"]
-position = Vector3(0, 0.278, 0)
-mesh = SubResource("R152")
-material_override = SubResource("R151")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree__art_031"]
+transform = Transform3D(0.0396551724, 0, 0, 0, 0.0343423867, 0.5, 0, -0.0198275862, 0.866025404, 0, 2.50865184, -1.42758621)
+texture = ExtResource("SourceArt_art1018_03_006")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree__art_032" type="Node3D" parent="Objects"]
 position = Vector3(11.232, 0, -11.861)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__art_032"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree__art_032"]
-position = Vector3(0, 0.281, 0)
-mesh = SubResource("R154")
-material_override = SubResource("R153")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree__art_032"]
+transform = Transform3D(0.0438596491, 0, 0, 0, 0.0379835703, 0.5, 0, -0.0219298246, 0.866025404, 0, 1.21349068, -0.679824561)
+texture = ExtResource("SourceArt_art1018_07_013")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree__art_033" type="Node3D" parent="Objects"]
 position = Vector3(13.114, 0, -9.017)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__art_033"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree__art_033"]
-position = Vector3(0, 0.284, 0)
-mesh = SubResource("R156")
-material_override = SubResource("R155")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree__art_033"]
+transform = Transform3D(0.0185964912, 0, 0, 0, 0.0161050338, 0.5, 0, -0.00929824561, 0.866025404, 0, 2.19407453, -1.24596491)
+texture = ExtResource("SourceArt_art1018_03_012")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree__art_034" type="Node3D" parent="Objects"]
 position = Vector3(13.933, 0, -6.351)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__art_034"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree__art_034"]
-position = Vector3(0, 0.287, 0)
-mesh = SubResource("R158")
-material_override = SubResource("R157")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree__art_034"]
+transform = Transform3D(0.0347222222, 0, 0, 0, 0.0300703265, 0.5, 0, -0.0173611111, 0.866025404, 0, 0.862933979, -0.477430556)
+texture = ExtResource("SourceArt_art1018_02_024")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree__art_035" type="Node3D" parent="Objects"]
 position = Vector3(15.476, 0, -4.094)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__art_035"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree__art_035"]
-position = Vector3(0, 0.29, 0)
-mesh = SubResource("R160")
-material_override = SubResource("R159")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree__art_035"]
+transform = Transform3D(0.0426724138, 0, 0, 0, 0.0369553944, 0.5, 0, -0.0213362069, 0.866025404, 0, 2.6967884, -1.5362069)
+texture = ExtResource("SourceArt_art1018_03_006")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree__art_036" type="Node3D" parent="Objects"]
 position = Vector3(17.394, 0, -1.187)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree__art_036"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree__art_036"]
-position = Vector3(0, 0.293, 0)
-mesh = SubResource("R162")
-material_override = SubResource("R161")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree__art_036"]
+transform = Transform3D(0.0438596491, 0, 0, 0, 0.0379835703, 0.5, 0, -0.0219298246, 0.866025404, 0, 1.09953997, -0.614035088)
+texture = ExtResource("SourceArt_art1018_07_014")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree_decoration_146" type="Node3D" parent="Objects"]
 position = Vector3(-6.5, 0, -3.5)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_decoration_146"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree_decoration_146" instance=ExtResource("Part_11")]
-position = Vector3(0, 1.62359649, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(3.4, 3.19719298, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree_decoration_146"]
+transform = Transform3D(0.0119298246, 0, 0, 0, 0.0103315311, 0.5, 0, -0.00596491228, 0.866025404, 0, 1.42062517, -0.799298246)
+texture = ExtResource("SourceArt_art1018_03_012")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree_tree_145" type="Node3D" parent="Objects"]
 position = Vector3(0, 0, -12.4)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_tree_145"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree_tree_145" instance=ExtResource("Part_11")]
-position = Vector3(0, 3.03412281, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(6.4, 6.01824561, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree_tree_145"]
+transform = Transform3D(0.0224561404, 0, 0, 0, 0.019447588, 0.5, 0, -0.0112280702, 0.866025404, 0, 2.64257679, -1.5045614)
+texture = ExtResource("SourceArt_art1018_03_012")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_spider_tree_collision_damage_147" type="Node3D" parent="Objects"]
 position = Vector3(7, 0, 4.5)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_spider_tree_collision_damage_147"
-[node name="PhysicalPart" parent="Objects/battle_spider_tree_collision_damage_147" instance=ExtResource("Part_9")]
-position = Vector3(0, 0.825892857, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(2.6, 1.60178571, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_spider_tree_collision_damage_147"]
+transform = Transform3D(0.0232142857, 0, 0, 0, 0.0201041612, 0.5, 0, -0.0116071429, 0.866025404, 0, 0.73019356, -0.400446429)
+texture = ExtResource("SourceArt_art1018_09_020")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="collision" type="StaticBody3D" parent="Objects/battle_spider_tree_collision_damage_147"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)

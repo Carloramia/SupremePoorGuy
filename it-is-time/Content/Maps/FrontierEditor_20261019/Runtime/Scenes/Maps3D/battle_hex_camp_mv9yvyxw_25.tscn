@@ -1,4 +1,4 @@
-[gd_scene load_steps=191 format=3]
+[gd_scene load_steps=114 format=3]
 
 [ext_resource type="Script" path="res://Modules/FrontierDelivery/Scripts/Map/BattleMap3D.gd" id="BattleScript"]
 [ext_resource type="Shader" path="res://Modules/FrontierDelivery/Scripts/Map/BattleGround.gdshader" id="GroundShader"]
@@ -10,31 +10,35 @@
 [ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/3b03ce4131ca22683e5304b3.png" id="Texture_4"]
 [ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/8f6e7118c14e243429d5a612.png" id="Texture_5"]
 [ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/45148437232b0695bf033d6f.png" id="Texture_6"]
-[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/battle_leaf_litter.tscn" id="Part_0"]
-[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_05_014.tscn" id="Part_1"]
-[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/mud.tscn" id="Part_2"]
-[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/web.tscn" id="Part_3"]
-[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_03_003.tscn" id="Part_4"]
-[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_08_021.tscn" id="Part_5"]
-[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_03_028.tscn" id="Part_6"]
-[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_02_025.tscn" id="Part_7"]
-[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_11_018.tscn" id="Part_8"]
-[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_02_024.tscn" id="Part_9"]
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/cabb4c92c854b5ee5664899f.png" id="Texture_7"]
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/a5bebf1f88ea1c2bce2d23ab.png" id="Texture_8"]
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/f5db6de62542759d5bc61621.png" id="Texture_9"]
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/0195cc451316f908883763d2.png" id="Texture_10"]
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/3b03ce4131ca22683e5304b3.png" id="Texture_11"]
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/8f6e7118c14e243429d5a612.png" id="Texture_12"]
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/45148437232b0695bf033d6f.png" id="Texture_13"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/c444f8cb10e52e41bd6f8afd.svg" id="SourceArt_battle_leaf_litter"]
+
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/9e866c7f796b13fc3192985d.png" id="SourceArt_art1018_05_014"]
+
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/d8649aa7c7e0d9503ffa1aa6.svg" id="SourceArt_mud"]
+
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/abb79c7b6ca43284e4b8bbc8.svg" id="SourceArt_web"]
+
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/45148437232b0695bf033d6f.png" id="SourceArt_art1018_03_003"]
+
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/7ad4a7b14785d9c2b8d91d58.png" id="SourceArt_art1018_08_021"]
+
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/05b82a96fbc8b1e5a07d4f7a.png" id="SourceArt_art1018_03_028"]
+
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/0195cc451316f908883763d2.png" id="SourceArt_art1018_02_025"]
+
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/a5bebf1f88ea1c2bce2d23ab.png" id="SourceArt_art1018_11_018"]
+
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/3b03ce4131ca22683e5304b3.png" id="SourceArt_art1018_02_024"]
+
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/cabb4c92c854b5ee5664899f.png" id="SourceArt_art1018_03_002"]
+
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/f5db6de62542759d5bc61621.png" id="SourceArt_art1018_04_005"]
+
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/8f6e7118c14e243429d5a612.png" id="SourceArt_art1018_11_010"]
 
 [sub_resource type="StandardMaterial3D" id="R0"]
 shading_mode = 0
 albedo_color = Color(0.458823529, 0.545098039, 0.384313725, 1)
-
-[sub_resource type="PrismMesh" id="R1"]
-left_to_right = 0.5
-size = Vector3(1, 1, 1)
 
 [sub_resource type="ShaderMaterial" id="R2"]
 shader = ExtResource("GroundShader")
@@ -400,402 +404,6 @@ points = PackedVector3Array(-2, 0, -1.5, -2, 2, -1.5, 2, 0, -1.5, 2, 2, -1.5, 2,
 [sub_resource type="ConvexPolygonShape3D" id="R83"]
 points = PackedVector3Array(1.1, 0, 0, 1.1, 2, 0, 1.07886381, 0, 0.214599354, 1.07886381, 2, 0.214599354, 1.01626749, 0, 0.420951776, 1.01626749, 2, 0.420951776, 0.914616574, 0, 0.611127256, 0.914616574, 2, 0.611127256, 0.777817459, 0, 0.777817459, 0.777817459, 2, 0.777817459, 0.611127256, 0, 0.914616574, 0.611127256, 2, 0.914616574, 0.420951776, 0, 1.01626749, 0.420951776, 2, 1.01626749, 0.214599354, 0, 1.07886381, 0.214599354, 2, 1.07886381, 6.7355574e-17, 0, 1.1, 6.7355574e-17, 2, 1.1, -0.214599354, 0, 1.07886381, -0.214599354, 2, 1.07886381, -0.420951776, 0, 1.01626749, -0.420951776, 2, 1.01626749, -0.611127256, 0, 0.914616574, -0.611127256, 2, 0.914616574, -0.777817459, 0, 0.777817459, -0.777817459, 2, 0.777817459, -0.914616574, 0, 0.611127256, -0.914616574, 2, 0.611127256, -1.01626749, 0, 0.420951776, -1.01626749, 2, 0.420951776, -1.07886381, 0, 0.214599354, -1.07886381, 2, 0.214599354, -1.1, 0, 1.34711148e-16, -1.1, 2, 1.34711148e-16, -1.07886381, 0, -0.214599354, -1.07886381, 2, -0.214599354, -1.01626749, 0, -0.420951776, -1.01626749, 2, -0.420951776, -0.914616574, 0, -0.611127256, -0.914616574, 2, -0.611127256, -0.777817459, 0, -0.777817459, -0.777817459, 2, -0.777817459, -0.611127256, 0, -0.914616574, -0.611127256, 2, -0.914616574, -0.420951776, 0, -1.01626749, -0.420951776, 2, -1.01626749, -0.214599354, 0, -1.07886381, -0.214599354, 2, -1.07886381, -2.02066722e-16, 0, -1.1, -2.02066722e-16, 2, -1.1, 0.214599354, 0, -1.07886381, 0.214599354, 2, -1.07886381, 0.420951776, 0, -1.01626749, 0.420951776, 2, -1.01626749, 0.611127256, 0, -0.914616574, 0.611127256, 2, -0.914616574, 0.777817459, 0, -0.777817459, 0.777817459, 2, -0.777817459, 0.914616574, 0, -0.611127256, 0.914616574, 2, -0.611127256, 1.01626749, 0, -0.420951776, 1.01626749, 2, -0.420951776, 1.07886381, 0, -0.214599354, 1.07886381, 2, -0.214599354)
 
-[sub_resource type="StandardMaterial3D" id="R84"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_7")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R85"]
-size = Vector2(4.95, 3.48444109)
-
-[sub_resource type="StandardMaterial3D" id="R86"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_8")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R87"]
-size = Vector2(2.5, 2.21153846)
-
-[sub_resource type="StandardMaterial3D" id="R88"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_9")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R89"]
-size = Vector2(4.6, 7.05784314)
-
-[sub_resource type="StandardMaterial3D" id="R90"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_10")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R91"]
-size = Vector2(2.5, 1.75675676)
-
-[sub_resource type="StandardMaterial3D" id="R92"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_7")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R93"]
-size = Vector2(5.3, 3.73081571)
-
-[sub_resource type="StandardMaterial3D" id="R94"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_11")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R95"]
-size = Vector2(2.5, 1.90972222)
-
-[sub_resource type="StandardMaterial3D" id="R96"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_12")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R97"]
-size = Vector2(5.3, 4.24658385)
-
-[sub_resource type="StandardMaterial3D" id="R98"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_11")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R99"]
-size = Vector2(2.5, 1.90972222)
-
-[sub_resource type="StandardMaterial3D" id="R100"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_13")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R101"]
-size = Vector2(4.95, 5.82897196)
-
-[sub_resource type="StandardMaterial3D" id="R102"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_8")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R103"]
-size = Vector2(2.5, 2.21153846)
-
-[sub_resource type="StandardMaterial3D" id="R104"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_12")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R105"]
-size = Vector2(4.6, 3.68571429)
-
-[sub_resource type="StandardMaterial3D" id="R106"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_10")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R107"]
-size = Vector2(2.5, 1.75675676)
-
-[sub_resource type="StandardMaterial3D" id="R108"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_9")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R109"]
-size = Vector2(4.6, 7.05784314)
-
-[sub_resource type="StandardMaterial3D" id="R110"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_10")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R111"]
-size = Vector2(2.5, 1.75675676)
-
-[sub_resource type="StandardMaterial3D" id="R112"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_8")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R113"]
-size = Vector2(2.5, 2.21153846)
-
-[sub_resource type="StandardMaterial3D" id="R114"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_11")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R115"]
-size = Vector2(2.5, 1.90972222)
-
-[sub_resource type="StandardMaterial3D" id="R116"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_9")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R117"]
-size = Vector2(4.95, 7.59485294)
-
-[sub_resource type="StandardMaterial3D" id="R118"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_8")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R119"]
-size = Vector2(2.5, 2.21153846)
-
-[sub_resource type="StandardMaterial3D" id="R120"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_13")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R121"]
-size = Vector2(4.95, 5.82897196)
-
-[sub_resource type="StandardMaterial3D" id="R122"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_8")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R123"]
-size = Vector2(2.5, 2.21153846)
-
-[sub_resource type="StandardMaterial3D" id="R124"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_12")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R125"]
-size = Vector2(4.6, 3.68571429)
-
-[sub_resource type="StandardMaterial3D" id="R126"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_10")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R127"]
-size = Vector2(2.5, 1.75675676)
-
-[sub_resource type="StandardMaterial3D" id="R128"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_13")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R129"]
-size = Vector2(5.3, 6.2411215)
-
-[sub_resource type="StandardMaterial3D" id="R130"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_11")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R131"]
-size = Vector2(2.5, 1.90972222)
-
-[sub_resource type="StandardMaterial3D" id="R132"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_7")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R133"]
-size = Vector2(5.3, 3.73081571)
-
-[sub_resource type="StandardMaterial3D" id="R134"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_11")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R135"]
-size = Vector2(2.5, 1.90972222)
-
-[sub_resource type="StandardMaterial3D" id="R136"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_9")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R137"]
-size = Vector2(4.95, 7.59485294)
-
-[sub_resource type="StandardMaterial3D" id="R138"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_8")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R139"]
-size = Vector2(2.5, 2.21153846)
-
-[sub_resource type="StandardMaterial3D" id="R140"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_7")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R141"]
-size = Vector2(4.6, 3.23806647)
-
-[sub_resource type="StandardMaterial3D" id="R142"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_10")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R143"]
-size = Vector2(2.5, 1.75675676)
-
-[sub_resource type="StandardMaterial3D" id="R144"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_12")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R145"]
-size = Vector2(4.6, 3.68571429)
-
-[sub_resource type="StandardMaterial3D" id="R146"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_10")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R147"]
-size = Vector2(2.5, 1.75675676)
-
-[sub_resource type="StandardMaterial3D" id="R148"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_13")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R149"]
-size = Vector2(5.3, 6.2411215)
-
-[sub_resource type="StandardMaterial3D" id="R150"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_11")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R151"]
-size = Vector2(2.5, 1.90972222)
-
-[sub_resource type="StandardMaterial3D" id="R152"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_12")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R153"]
-size = Vector2(4.95, 3.96614907)
-
-[sub_resource type="StandardMaterial3D" id="R154"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_8")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R155"]
-size = Vector2(2.5, 2.21153846)
-
 [sub_resource type="BoxShape3D" id="R156"]
 size = Vector3(18, 12, 0.5)
 
@@ -1107,43 +715,75 @@ position = Vector3(-6.3, 0, -6.3)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_037"
-[node name="PhysicalPart" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_037" instance=ExtResource("Part_0")]
-position = Vector3(0, 2.281, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(8.46, 4.512, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_037"]
+transform = Transform3D(0.0282, 0, 0, 0, 0, 1, 0, -0.0282, 0, 0, 0.023, 0)
+texture = ExtResource("SourceArt_battle_leaf_litter")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.65)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "ground"
+metadata/tilt_from_ground = 0
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_038" type="Node3D" parent="Objects"]
 position = Vector3(7.2, 0, 6.3)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_038"
-[node name="PhysicalPart" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_038" instance=ExtResource("Part_0")]
-position = Vector3(0, 2.281, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(8.46, 4.512, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_038"]
+transform = Transform3D(0.0282, 0, 0, 0, 0, 1, 0, -0.0282, 0, 0, 0.023, 0)
+texture = ExtResource("SourceArt_battle_leaf_litter")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.65)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "ground"
+metadata/tilt_from_ground = 0
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_039" type="Node3D" parent="Objects"]
 position = Vector3(-9, 0, 3.24)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_039"
-[node name="PhysicalPart" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_039" instance=ExtResource("Part_0")]
-position = Vector3(0, 2.281, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(8.46, 4.512, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_039"]
+transform = Transform3D(0.0282, 0, 0, 0, 0, 1, 0, -0.0282, 0, 0, 0.023, 0)
+texture = ExtResource("SourceArt_battle_leaf_litter")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.65)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "ground"
+metadata/tilt_from_ground = 0
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_040" type="Node3D" parent="Objects"]
 position = Vector3(2.7, 0, -8.64)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_040"
-[node name="PhysicalPart" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_040" instance=ExtResource("Part_0")]
-position = Vector3(0, 2.281, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(8.46, 4.512, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_040"]
+transform = Transform3D(0.0282, 0, 0, 0, 0, 1, 0, -0.0282, 0, 0, 0.023, 0)
+texture = ExtResource("SourceArt_battle_leaf_litter")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.65)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "ground"
+metadata/tilt_from_ground = 0
+
 [node name="battle_hex_camp_mv9yvyxw_25__player_deploy_01" type="Node3D" parent="Objects"]
-position = Vector3(-8, 0, 7)
+position = Vector3(-8.28, 0, 0)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__player_deploy_01"
@@ -1159,11 +799,19 @@ position = Vector3(-2, 0, -3)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__arena_rock_01"
-[node name="PhysicalPart" parent="Objects/battle_hex_camp_mv9yvyxw_25__arena_rock_01" instance=ExtResource("Part_1")]
-position = Vector3(0, 1.05669399, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(3.2, 2.06338798, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__arena_rock_01"]
+transform = Transform3D(0.0174863388, 0, 0, 0, 0.0151436136, 0.5, 0, -0.0087431694, 0.866025404, 0, 0.928473203, -0.515846995)
+texture = ExtResource("SourceArt_art1018_05_014")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="collision" type="StaticBody3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__arena_rock_01"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -1176,11 +824,19 @@ position = Vector3(4, 0, 3)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__arena_mud_01"
-[node name="PhysicalPart" parent="Objects/battle_hex_camp_mv9yvyxw_25__arena_mud_01" instance=ExtResource("Part_2")]
-position = Vector3(0, 0.025, 0)
-rotation = Vector3(-1.57079633, 0, 0)
-scale = Vector3(5, 3.5, 0.025)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__arena_mud_01"]
+transform = Transform3D(0.0390625, 0, 0, 0, 0, 1, 0, -0.02734375, 0, 0, 0.035, 0)
+texture = ExtResource("SourceArt_mud")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "ground"
+metadata/tilt_from_ground = 0
+
 [node name="region" type="Area3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__arena_mud_01"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -1193,11 +849,19 @@ position = Vector3(5, 0, -4)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__arena_web_01"
-[node name="PhysicalPart" parent="Objects/battle_hex_camp_mv9yvyxw_25__arena_web_01" instance=ExtResource("Part_3")]
-position = Vector3(0, 0.025, 0)
-rotation = Vector3(-1.57079633, 0, 0)
-scale = Vector3(2.2, 2.2, 0.025)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__arena_web_01"]
+transform = Transform3D(0.0171875, 0, 0, 0, 0.0148848116, 0.5, 0, -0.00859375, 0.866025404, 0, 0.987627944, -0.55)
+texture = ExtResource("SourceArt_web")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="region" type="Area3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__arena_web_01"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -1210,21 +874,37 @@ position = Vector3(-6, 0, -7)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__arena_tree_01"
-[node name="PhysicalPart" parent="Objects/battle_hex_camp_mv9yvyxw_25__arena_tree_01" instance=ExtResource("Part_4")]
-position = Vector3(0, 2.02686916, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(3.4, 4.00373832, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__arena_tree_01"]
+transform = Transform3D(0.0317757009, 0, 0, 0, 0.0275185642, 0.5, 0, -0.0158878505, 0.866025404, 0, 1.76866955, -1.00093458)
+texture = ExtResource("SourceArt_art1018_03_003")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__camp_altar_01" type="Node3D" parent="Objects"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__camp_altar_01"
-[node name="PhysicalPart" parent="Objects/battle_hex_camp_mv9yvyxw_25__camp_altar_01" instance=ExtResource("Part_5")]
-position = Vector3(0, 0.742919075, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(3.6, 1.43583815, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__camp_altar_01"]
+transform = Transform3D(0.0104046243, 0, 0, 0, 0, 1, 0, -0.0104046243, 0, 0, 0.035, 0)
+texture = ExtResource("SourceArt_art1018_08_021")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "ground"
+metadata/tilt_from_ground = 0
+
 [node name="click_area" type="Area3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__camp_altar_01"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -1233,32 +913,32 @@ collision_mask = 1
 [node name="Shape" type="CollisionShape3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__camp_altar_01/click_area"]
 shape = SubResource("R83")
 [node name="battle_hex_camp_mv9yvyxw_25__enemy_1" type="Node3D" parent="Objects"]
-position = Vector3(4.95, 0, -4.76313972)
+position = Vector3(9.995, 0, -0.476313972)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__enemy_1"
 [node name="battle_hex_camp_mv9yvyxw_25__enemy_2" type="Node3D" parent="Objects"]
-position = Vector3(3.3, 0, -1.90525589)
+position = Vector3(8.345, 0, 2.38156986)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__enemy_2"
 [node name="battle_hex_camp_mv9yvyxw_25__enemy_3" type="Node3D" parent="Objects"]
-position = Vector3(6.6, 0, -1.90525589)
+position = Vector3(11.645, 0, 2.38156986)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__enemy_3"
 [node name="battle_hex_camp_mv9yvyxw_25__enemy_4" type="Node3D" parent="Objects"]
-position = Vector3(1.65, 0, -4.76313972)
+position = Vector3(6.695, 0, -0.476313972)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__enemy_4"
 [node name="battle_hex_camp_mv9yvyxw_25__enemy_5" type="Node3D" parent="Objects"]
-position = Vector3(8.25, 0, -4.76313972)
+position = Vector3(13.295, 0, -0.476313972)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__enemy_5"
 [node name="battle_hex_camp_mv9yvyxw_25__enemy_6" type="Node3D" parent="Objects"]
-position = Vector3(3.3, 0, -7.62102355)
+position = Vector3(8.345, 0, -3.3341978)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__enemy_6"
@@ -1267,457 +947,757 @@ position = Vector3(-8.82, 0, -6.3)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_041"
-[node name="PhysicalPart" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_041" instance=ExtResource("Part_6")]
-position = Vector3(0, 1.60066766, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(6, 3.15133531, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_041"]
+transform = Transform3D(0.0178041543, 0, 0, 0, 0.0154188499, 0.5, 0, -0.00890207715, 0.866025404, 0, 1.39956822, -0.787833828)
+texture = ExtResource("SourceArt_art1018_03_028")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_042" type="Node3D" parent="Objects"]
 position = Vector3(1.08, 0, -11.7)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_042"
-[node name="PhysicalPart" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_042" instance=ExtResource("Part_7")]
-position = Vector3(0, 0.622297297, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(1.7, 1.19459459, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_042"]
+transform = Transform3D(0.022972973, 0, 0, 0, 0.0198951782, 0.5, 0, -0.0114864865, 0.866025404, 0, 0.552274633, -0.298648649)
+texture = ExtResource("SourceArt_art1018_02_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_043" type="Node3D" parent="Objects"]
 position = Vector3(10.44, 0, 1.44)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_043"
-[node name="PhysicalPart" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_043" instance=ExtResource("Part_8")]
-position = Vector3(0, 0.776923077, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(1.7, 1.50384615, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_043"]
+transform = Transform3D(0.0217948718, 0, 0, 0, 0.0188749126, 0.5, 0, -0.0108974359, 0.866025404, 0, 0.686184486, -0.375961538)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_044" type="Node3D" parent="Objects"]
 position = Vector3(-3.24, 0, 11.16)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_044"
-[node name="PhysicalPart" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_044" instance=ExtResource("Part_9")]
-position = Vector3(0, 0.674305556, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(1.7, 1.29861111, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_044"]
+transform = Transform3D(0.0236111111, 0, 0, 0, 0.020447822, 0.5, 0, -0.0118055556, 0.866025404, 0, 0.597315106, -0.324652778)
+texture = ExtResource("SourceArt_art1018_02_024")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_045" type="Node3D" parent="Objects"]
 position = Vector3(6.3, 0, 8.46)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_045"
-[node name="PhysicalPart" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_045" instance=ExtResource("Part_7")]
-position = Vector3(0, 0.622297297, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(1.7, 1.19459459, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_045"]
+transform = Transform3D(0.022972973, 0, 0, 0, 0.0198951782, 0.5, 0, -0.0114864865, 0.866025404, 0, 0.552274633, -0.298648649)
+texture = ExtResource("SourceArt_art1018_02_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_046" type="Node3D" parent="Objects"]
 position = Vector3(-11.34, 0, 0.72)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_046"
-[node name="PhysicalPart" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_046" instance=ExtResource("Part_8")]
-position = Vector3(0, 0.776923077, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(1.7, 1.50384615, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_046"]
+transform = Transform3D(0.0217948718, 0, 0, 0, 0.0188749126, 0.5, 0, -0.0108974359, 0.866025404, 0, 0.686184486, -0.375961538)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_001" type="Node3D" parent="Objects"]
 position = Vector3(15.801, 0, 1.19)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_001"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_001"]
-position = Vector3(0, 0.086, 0)
-mesh = SubResource("R85")
-material_override = SubResource("R84")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_001"]
+transform = Transform3D(0.0149546828, 0, 0, 0, 0.0129511352, 0.5, 0, -0.00747734139, 0.866025404, 0, 1.54480725, -0.871110272)
+texture = ExtResource("SourceArt_art1018_03_002")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_002" type="Node3D" parent="Objects"]
 position = Vector3(13.979, 0, 3.224)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_002"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_002"]
-position = Vector3(0, 0.089, 0)
-mesh = SubResource("R87")
-material_override = SubResource("R86")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_002"]
+transform = Transform3D(0.0320512821, 0, 0, 0, 0.0277572245, 0.5, 0, -0.016025641, 0.866025404, 0, 0.993624245, -0.552884615)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_003" type="Node3D" parent="Objects"]
 position = Vector3(12.651, 0, 5.898)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_003"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_003"]
-position = Vector3(0, 0.092, 0)
-mesh = SubResource("R89")
-material_override = SubResource("R88")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_003"]
+transform = Transform3D(0.0225490196, 0, 0, 0, 0.0195280238, 0.5, 0, -0.0112745098, 0.866025404, 0, 3.09213573, -1.76446078)
+texture = ExtResource("SourceArt_art1018_04_005")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_004" type="Node3D" parent="Objects"]
 position = Vector3(11.587, 0, 8.115)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_004"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_004"]
-position = Vector3(0, 0.095, 0)
-mesh = SubResource("R91")
-material_override = SubResource("R90")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_004"]
+transform = Transform3D(0.0337837838, 0, 0, 0, 0.029257615, 0.5, 0, -0.0168918919, 0.866025404, 0, 0.79669799, -0.439189189)
+texture = ExtResource("SourceArt_art1018_02_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_005" type="Node3D" parent="Objects"]
 position = Vector3(10.181, 0, 10.923)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_005"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_005"]
-position = Vector3(0, 0.098, 0)
-mesh = SubResource("R93")
-material_override = SubResource("R92")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_005"]
+transform = Transform3D(0.0160120846, 0, 0, 0, 0.013866872, 0.5, 0, -0.0080060423, 0.866025404, 0, 1.65149059, -0.932703927)
+texture = ExtResource("SourceArt_art1018_03_002")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_006" type="Node3D" parent="Objects"]
 position = Vector3(8.58, 0, 12.575)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_006"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_006"]
-position = Vector3(0, 0.101, 0)
-mesh = SubResource("R95")
-material_override = SubResource("R94")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_006"]
+transform = Transform3D(0.0347222222, 0, 0, 0, 0.0300703265, 0.5, 0, -0.0173611111, 0.866025404, 0, 0.862933979, -0.477430556)
+texture = ExtResource("SourceArt_art1018_02_024")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_007" type="Node3D" parent="Objects"]
 position = Vector3(6.658, 0, 14.092)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_007"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_007"]
-position = Vector3(0, 0.104, 0)
-mesh = SubResource("R97")
-material_override = SubResource("R96")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_007"]
+transform = Transform3D(0.0164596273, 0, 0, 0, 0.0142544554, 0.5, 0, -0.00822981366, 0.866025404, 0, 1.87482475, -1.06164596)
+texture = ExtResource("SourceArt_art1018_11_010")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_008" type="Node3D" parent="Objects"]
 position = Vector3(4.246, 0, 14.279)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_008"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_008"]
-position = Vector3(0, 0.107, 0)
-mesh = SubResource("R99")
-material_override = SubResource("R98")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_008"]
+transform = Transform3D(0.0347222222, 0, 0, 0, 0.0300703265, 0.5, 0, -0.0173611111, 0.866025404, 0, 0.862933979, -0.477430556)
+texture = ExtResource("SourceArt_art1018_02_024")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_009" type="Node3D" parent="Objects"]
 position = Vector3(1.082, 0, 13.718)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_009"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_009"]
-position = Vector3(0, 0.11, 0)
-mesh = SubResource("R101")
-material_override = SubResource("R100")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_009"]
+transform = Transform3D(0.0462616822, 0, 0, 0, 0.040063792, 0.5, 0, -0.0231308411, 0.866025404, 0, 2.5600189, -1.45724299)
+texture = ExtResource("SourceArt_art1018_03_003")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_010" type="Node3D" parent="Objects"]
 position = Vector3(-1.338, 0, 13.905)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_010"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_010"]
-position = Vector3(0, 0.113, 0)
-mesh = SubResource("R103")
-material_override = SubResource("R102")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_010"]
+transform = Transform3D(0.0320512821, 0, 0, 0, 0.0277572245, 0.5, 0, -0.016025641, 0.866025404, 0, 0.993624245, -0.552884615)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_011" type="Node3D" parent="Objects"]
 position = Vector3(-3.824, 0, 14.092)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_011"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_011"]
-position = Vector3(0, 0.116, 0)
-mesh = SubResource("R105")
-material_override = SubResource("R104")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_011"]
+transform = Transform3D(0.0142857143, 0, 0, 0, 0.0123717915, 0.5, 0, -0.00714285714, 0.866025404, 0, 1.6319611, -0.921428571)
+texture = ExtResource("SourceArt_art1018_11_010")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_012" type="Node3D" parent="Objects"]
 position = Vector3(-6.994, 0, 14.279)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_012"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_012"]
-position = Vector3(0, 0.119, 0)
-mesh = SubResource("R107")
-material_override = SubResource("R106")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_012"]
+transform = Transform3D(0.0337837838, 0, 0, 0, 0.029257615, 0.5, 0, -0.0168918919, 0.866025404, 0, 0.79669799, -0.439189189)
+texture = ExtResource("SourceArt_art1018_02_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_013" type="Node3D" parent="Objects"]
 position = Vector3(-8.817, 0, 12.538)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_013"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_013"]
-position = Vector3(0, 0.122, 0)
-mesh = SubResource("R109")
-material_override = SubResource("R108")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_013"]
+transform = Transform3D(0.0225490196, 0, 0, 0, 0.0195280238, 0.5, 0, -0.0112745098, 0.866025404, 0, 3.09213573, -1.76446078)
+texture = ExtResource("SourceArt_art1018_04_005")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_014" type="Node3D" parent="Objects"]
 position = Vector3(-10.17, 0, 10.569)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_014"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_014"]
-position = Vector3(0, 0.125, 0)
-mesh = SubResource("R111")
-material_override = SubResource("R110")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_014"]
+transform = Transform3D(0.0337837838, 0, 0, 0, 0.029257615, 0.5, 0, -0.0168918919, 0.866025404, 0, 0.79669799, -0.439189189)
+texture = ExtResource("SourceArt_art1018_02_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_015" type="Node3D" parent="Objects"]
 position = Vector3(-11.555, 0, 8.544)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_015"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_015"]
-position = Vector3(0, 0.128, 0)
-mesh = SubResource("R113")
-material_override = SubResource("R112")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_015"]
+transform = Transform3D(0.0320512821, 0, 0, 0, 0.0277572245, 0.5, 0, -0.016025641, 0.866025404, 0, 0.993624245, -0.552884615)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_016" type="Node3D" parent="Objects"]
 position = Vector3(-12.599, 0, 5.613)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_016"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_016"]
-position = Vector3(0, 0.131, 0)
-mesh = SubResource("R115")
-material_override = SubResource("R114")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_016"]
+transform = Transform3D(0.0347222222, 0, 0, 0, 0.0300703265, 0.5, 0, -0.0173611111, 0.866025404, 0, 0.862933979, -0.477430556)
+texture = ExtResource("SourceArt_art1018_02_024")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_017" type="Node3D" parent="Objects"]
 position = Vector3(-13.989, 0, 3.581)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_017"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_017"]
-position = Vector3(0, 0.134, 0)
-mesh = SubResource("R117")
-material_override = SubResource("R116")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_017"]
+transform = Transform3D(0.0242647059, 0, 0, 0, 0.0210138517, 0.5, 0, -0.0121323529, 0.866025404, 0, 3.32466779, -1.89871324)
+texture = ExtResource("SourceArt_art1018_04_005")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_018" type="Node3D" parent="Objects"]
 position = Vector3(-15.716, 0, 0.963)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_018"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_018"]
-position = Vector3(0, 0.137, 0)
-mesh = SubResource("R119")
-material_override = SubResource("R118")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_018"]
+transform = Transform3D(0.0320512821, 0, 0, 0, 0.0277572245, 0.5, 0, -0.016025641, 0.866025404, 0, 0.993624245, -0.552884615)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_019" type="Node3D" parent="Objects"]
 position = Vector3(-15.299, 0, -0.937)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_019"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_019"]
-position = Vector3(0, 0.14, 0)
-mesh = SubResource("R121")
-material_override = SubResource("R120")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_019"]
+transform = Transform3D(0.0462616822, 0, 0, 0, 0.040063792, 0.5, 0, -0.0231308411, 0.866025404, 0, 2.5600189, -1.45724299)
+texture = ExtResource("SourceArt_art1018_03_003")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_020" type="Node3D" parent="Objects"]
 position = Vector3(-13.989, 0, -3.581)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_020"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_020"]
-position = Vector3(0, 0.143, 0)
-mesh = SubResource("R123")
-material_override = SubResource("R122")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_020"]
+transform = Transform3D(0.0320512821, 0, 0, 0, 0.0277572245, 0.5, 0, -0.016025641, 0.866025404, 0, 0.993624245, -0.552884615)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_021" type="Node3D" parent="Objects"]
 position = Vector3(-12.943, 0, -5.766)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_021"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_021"]
-position = Vector3(0, 0.146, 0)
-mesh = SubResource("R125")
-material_override = SubResource("R124")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_021"]
+transform = Transform3D(0.0142857143, 0, 0, 0, 0.0123717915, 0.5, 0, -0.00714285714, 0.866025404, 0, 1.6319611, -0.921428571)
+texture = ExtResource("SourceArt_art1018_11_010")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_022" type="Node3D" parent="Objects"]
 position = Vector3(-11.555, 0, -8.544)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_022"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_022"]
-position = Vector3(0, 0.149, 0)
-mesh = SubResource("R127")
-material_override = SubResource("R126")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_022"]
+transform = Transform3D(0.0337837838, 0, 0, 0, 0.029257615, 0.5, 0, -0.0168918919, 0.866025404, 0, 0.79669799, -0.439189189)
+texture = ExtResource("SourceArt_art1018_02_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_023" type="Node3D" parent="Objects"]
 position = Vector3(-9.9, 0, -10.288)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_023"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_023"]
-position = Vector3(0, 0.152, 0)
-mesh = SubResource("R129")
-material_override = SubResource("R128")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_023"]
+transform = Transform3D(0.0495327103, 0, 0, 0, 0.0428965854, 0.5, 0, -0.0247663551, 0.866025404, 0, 2.73848488, -1.56028037)
+texture = ExtResource("SourceArt_art1018_03_003")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_024" type="Node3D" parent="Objects"]
 position = Vector3(-8.817, 0, -12.538)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_024"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_024"]
-position = Vector3(0, 0.155, 0)
-mesh = SubResource("R131")
-material_override = SubResource("R130")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_024"]
+transform = Transform3D(0.0347222222, 0, 0, 0, 0.0300703265, 0.5, 0, -0.0173611111, 0.866025404, 0, 0.862933979, -0.477430556)
+texture = ExtResource("SourceArt_art1018_02_024")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_025" type="Node3D" parent="Objects"]
 position = Vector3(-6.994, 0, -14.279)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_025"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_025"]
-position = Vector3(0, 0.158, 0)
-mesh = SubResource("R133")
-material_override = SubResource("R132")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_025"]
+transform = Transform3D(0.0160120846, 0, 0, 0, 0.013866872, 0.5, 0, -0.0080060423, 0.866025404, 0, 1.65149059, -0.932703927)
+texture = ExtResource("SourceArt_art1018_03_002")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_026" type="Node3D" parent="Objects"]
 position = Vector3(-3.722, 0, -13.718)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_026"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_026"]
-position = Vector3(0, 0.161, 0)
-mesh = SubResource("R135")
-material_override = SubResource("R134")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_026"]
+transform = Transform3D(0.0347222222, 0, 0, 0, 0.0300703265, 0.5, 0, -0.0173611111, 0.866025404, 0, 0.862933979, -0.477430556)
+texture = ExtResource("SourceArt_art1018_02_024")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_027" type="Node3D" parent="Objects"]
 position = Vector3(-1.338, 0, -13.905)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_027"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_027"]
-position = Vector3(0, 0.164, 0)
-mesh = SubResource("R137")
-material_override = SubResource("R136")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_027"]
+transform = Transform3D(0.0242647059, 0, 0, 0, 0.0210138517, 0.5, 0, -0.0121323529, 0.866025404, 0, 3.32466779, -1.89871324)
+texture = ExtResource("SourceArt_art1018_04_005")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_028" type="Node3D" parent="Objects"]
 position = Vector3(1.112, 0, -14.092)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_028"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_028"]
-position = Vector3(0, 0.167, 0)
-mesh = SubResource("R139")
-material_override = SubResource("R138")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_028"]
+transform = Transform3D(0.0320512821, 0, 0, 0, 0.0277572245, 0.5, 0, -0.016025641, 0.866025404, 0, 0.993624245, -0.552884615)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_029" type="Node3D" parent="Objects"]
 position = Vector3(4.246, 0, -14.279)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_029"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_029"]
-position = Vector3(0, 0.17, 0)
-mesh = SubResource("R141")
-material_override = SubResource("R140")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_029"]
+transform = Transform3D(0.013897281, 0, 0, 0, 0.0120353984, 0.5, 0, -0.00694864048, 0.866025404, 0, 1.43812391, -0.809516616)
+texture = ExtResource("SourceArt_art1018_03_002")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_030" type="Node3D" parent="Objects"]
 position = Vector3(6.481, 0, -13.718)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_030"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_030"]
-position = Vector3(0, 0.173, 0)
-mesh = SubResource("R143")
-material_override = SubResource("R142")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_030"]
+transform = Transform3D(0.0337837838, 0, 0, 0, 0.029257615, 0.5, 0, -0.0168918919, 0.866025404, 0, 0.79669799, -0.439189189)
+texture = ExtResource("SourceArt_art1018_02_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_031" type="Node3D" parent="Objects"]
 position = Vector3(8.814, 0, -12.918)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_031"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_031"]
-position = Vector3(0, 0.176, 0)
-mesh = SubResource("R145")
-material_override = SubResource("R144")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_031"]
+transform = Transform3D(0.0142857143, 0, 0, 0, 0.0123717915, 0.5, 0, -0.00714285714, 0.866025404, 0, 1.6319611, -0.921428571)
+texture = ExtResource("SourceArt_art1018_11_010")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_032" type="Node3D" parent="Objects"]
 position = Vector3(10.181, 0, -10.923)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_032"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_032"]
-position = Vector3(0, 0.179, 0)
-mesh = SubResource("R147")
-material_override = SubResource("R146")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_032"]
+transform = Transform3D(0.0337837838, 0, 0, 0, 0.029257615, 0.5, 0, -0.0168918919, 0.866025404, 0, 0.79669799, -0.439189189)
+texture = ExtResource("SourceArt_art1018_02_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_033" type="Node3D" parent="Objects"]
 position = Vector3(11.279, 0, -7.899)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_033"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_033"]
-position = Vector3(0, 0.182, 0)
-mesh = SubResource("R149")
-material_override = SubResource("R148")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_033"]
+transform = Transform3D(0.0495327103, 0, 0, 0, 0.0428965854, 0.5, 0, -0.0247663551, 0.866025404, 0, 2.73848488, -1.56028037)
+texture = ExtResource("SourceArt_art1018_03_003")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_034" type="Node3D" parent="Objects"]
 position = Vector3(12.651, 0, -5.898)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_034"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_034"]
-position = Vector3(0, 0.185, 0)
-mesh = SubResource("R151")
-material_override = SubResource("R150")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_034"]
+transform = Transform3D(0.0347222222, 0, 0, 0, 0.0300703265, 0.5, 0, -0.0173611111, 0.866025404, 0, 0.862933979, -0.477430556)
+texture = ExtResource("SourceArt_art1018_02_024")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_035" type="Node3D" parent="Objects"]
 position = Vector3(14.36, 0, -3.312)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_035"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_035"]
-position = Vector3(0, 0.188, 0)
-mesh = SubResource("R153")
-material_override = SubResource("R152")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_035"]
+transform = Transform3D(0.0153726708, 0, 0, 0, 0.0133131234, 0.5, 0, -0.0076863354, 0.866025404, 0, 1.75339292, -0.991537267)
+texture = ExtResource("SourceArt_art1018_11_010")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__art_036" type="Node3D" parent="Objects"]
 position = Vector3(15.801, 0, -1.19)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_hex_camp_mv9yvyxw_25__art_036"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_036"]
-position = Vector3(0, 0.191, 0)
-mesh = SubResource("R155")
-material_override = SubResource("R154")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_hex_camp_mv9yvyxw_25__art_036"]
+transform = Transform3D(0.0320512821, 0, 0, 0, 0.0277572245, 0.5, 0, -0.016025641, 0.866025404, 0, 0.993624245, -0.552884615)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_hex_camp_mv9yvyxw_25__camp_battle_01_biome_edge_01" type="Node3D" parent="Objects"]
 position = Vector3(13.9933427, 0, 4.30957909)
 rotation = Vector3(0, -0, 0)

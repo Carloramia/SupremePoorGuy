@@ -1,0 +1,36 @@
+「火速任命」开局剧情接入（2026-10-19）
+
+事件 ID：QST_MAIN_001_001。
+新游戏流程：进入大地图 → 王国特使原始八句对话 → 确认签收 → 保存成功后自由探索。
+首次自动打开待办事项的行为已替换，左侧待办按钮和原有四项新手任务继续保留。
+
+数据与接口
+- Resources/Application/OpeningAppointment.json 保存原始标题、说话人、八句对话和剧情凭证定义。
+- Localization/zh_CN/ui.json、en/ui.json 及 catalog.json 保存对应本地化。
+- GameSession.prepare_opening_event() 在新游戏首次保存前创建待执行进度。
+- GameSession.advance_opening_event() 逐句保存；最后确认时以同一保存事务写入完成标记和凭证。
+- data.opening_event 保存 id、line、completed，以及完成后的 credential。
+- 国王特令 ID 为 king_special_order，数量 1；目前仅作剧情凭证，没有城市、战斗或经济增益。
+- 本事件不额外增加魔力/物资，也不扣除游戏内时间。项目原有初始魔力设置保持原值。
+- 运行时地图将此事件标为 bound，处理器为 opening_appointment；权威交付源仍保留历史 pending_binding 草稿，实际执行由应用层接管。
+
+交互与保存
+- 剧情开启时地图输入被现有弹窗输入门禁阻止，普通关闭按钮隐藏，读完后必须明确确认。
+- ESC 仍可打开设置，关闭设置返回原句；可保存并返回主菜单。
+- 阅读过程中退出，继续游戏从已经保存的那句恢复。完成后继续/重启不会重播。
+- 保存失败时恢复原进度和凭证状态，界面保留，允许重试。
+- 已有存档不包含 opening_event 时保持原样，不强制补播。重新开始游戏会重置剧情和凭证。
+- 小屋点击视野检查统一使用 interaction_offset 对应的真实入口，防止使用图片中心而拒绝剧情后的正常召唤交互。
+
+诊断
+沿用 trackmap on / trackmap off。
+新增结构化事件：event_started、event_advanced、event_rejected、event_completed，携带 event_id、行号或凭证/失败原因。通过 getlogs 一同导出。
+
+验证
+- ValidateOpeningAppointment：新游戏替代弹窗、八句原文、门禁、设置嵌套、逐句保存、中断续读、完成失败回滚、单次凭证、无额外资金/时间、旧存档、重新开局、手动待办、中英文与窗口尺寸。
+- ValidateNewPlayerTasks / ValidateNewPlayerTaskSession / ValidateNewPlayerTaskUI：原有任务规则与真实界面交互。
+- ValidateHexWorldApplication / ValidateGameRoot：六边形与保留地图后端的开局、实际入场和战斗返回流程。
+- ValidateBattleCapacity / ValidateGlobalSettings：友方容量 50、部署/设置兼容。
+- 图形核验覆盖 1120×680、1280×720、1920×1080。原始日志及修改前副本位于 D:/GameJamWorkspace/RuntimeChecks/OpeningAppointment_20261019。
+
+限制：这是该开局事件的具体接入，没有构建通用剧情执行图系统；其他待绑定剧情事件不因此自动执行。尚未重新导出可运行包体。

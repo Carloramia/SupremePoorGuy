@@ -132,11 +132,11 @@ func object_visible(object: Dictionary) -> bool:
 func interaction_error(object: Dictionary, require_near := true) -> String:
 	if busy:return "正在转场，请稍候。"
 	if object.is_empty():return "地点不存在。"
-	if visibility(Catalog.v(object.position))!="visible" or not object_visible(object):return "需要先探索到当前视野内。"
+	var target := Catalog.world_point(object,Catalog.v(object.get("interaction_offset",[0,0])))
+	if visibility(target)!="visible" or not object_visible(object):return "需要先探索到当前视野内。"
 	if not condition(object.get("condition_ref","")):return "尚未满足地点条件。"
 	for obstacle in Catalog.objects_in_role("obstacles"):
 		if (obstacle.id in object.get("blocking_obstacle_ids",[]) or object.id in obstacle.get("blocked_ids",[])) and obstacle.id not in data.destroyed:return "请先清除关联路障。"
-	var target := Catalog.world_point(object,Catalog.v(object.get("interaction_offset",[0,0])))
 	if require_near and player().distance_to(target)>float(object.get("interaction_radius",42))+5:return "请靠近地点后交互。"
 	return ""
 
@@ -145,7 +145,7 @@ func blocked(point: Vector2) -> bool:
 	if not Rect2(Catalog.v(map.bounds.position),Catalog.v(map.bounds.size)).has_point(point):return true
 	if hex!=null:
 		hex.sync(data,party_count)
-		return not hex.can_pass(hex.axial(point))
+		return not hex.can_pass(hex.axial(point)) or hex.inside_art(point)
 	if opening_locked() and not _inside_opening(point):return true
 	for collider in Catalog.colliders_at(point):
 		if collider.id not in data.destroyed and Catalog.collider_contains(collider,point,float(map.get("player_radius",6))):return true

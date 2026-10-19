@@ -107,6 +107,7 @@ def compile_world(source, assets, roster_errors):
         'objects': objects, 'hex_grid': source['grid'], 'hex_cells': source['cells'],
         'crossings': source['crossings'], 'background': source['background'],
         'travel_animation_speed': math.sqrt(3)*source['grid']['cell_width']/2/source['traversal']['hex_step_seconds'],
+        'spawn_site_id': source.get('spawn_site_id', ''), 'spawn_site_anchor': source.get('spawn_site_anchor', []),
         'events': [{'id': e['id'], 'name': e['name'], 'status': 'pending_binding'} for e in source['event_catalog']['events']]}
 
 
@@ -168,6 +169,29 @@ def main():
     (OUT / 'BattleSettings.tres').write_text('\n'.join(lines)+'\n', encoding='utf-8')
     original_assets = {a['id']: a for a in source['assets']}
     world = compile_world(source, original_assets, errors)
+    for event in world['events']:
+        if event['id'] == 'QST_MAIN_001_001':
+            event.update(status='bound', runtime_handler='opening_appointment')
+    for obj in world['objects']:
+        if obj.get('event_id') == 'QST_MAIN_001_001' and obj.get('event_trigger', {}).get('mode') == 'on_game_start':
+            obj['event_trigger']['publish_status'] = 'bound'
+    patch = ROOT / BASE / 'Source/Patches/frontier-map-20261019-r1/project/frontier_toolkit/editor/hex/GodotPreview/scene.json'
+    if patch.is_file():
+        spec = read(patch)
+        assert spec['layout_sha256'] == hashlib.sha256((ROOT / BASE / 'Source/hex_layout.json').read_bytes()).hexdigest(), 'Stale mountain snapshot'
+        world['mountain_surfaces'] = spec['mountain_surfaces']
+        # Resolve the hut-relative entry from the same visual transform used by the authoring tool.
+        site = next(s for s in source['sites'] if s['id'] == source['spawn_site_id'])
+        visual = site['visual']; asset = original_assets[visual['asset_id']]
+        width = visual['width']; height = width * asset['height'] / asset['width'] * visual.get('height_scale', 1)
+        anchor = visual.get('anchor', asset.get('anchor', [0.5, 1]))
+        x, y = [(entry-origin)*size for entry, origin, size in zip(source['spawn_site_anchor'], anchor, [width, height])]
+        angle = math.radians(visual.get('rotation', 0)); offset = visual.get('offset', [0, 0])
+        world['spawn'] = [site['position'][0]+x*math.cos(angle)-y*math.sin(angle)+offset[0],
+                          site['position'][1]+x*math.sin(angle)+y*math.cos(angle)+offset[1]]
+        hut = next(o for o in world['objects'] if o['id'] == site['id'])
+        hut['discovery']['initially_visible'] = True
+        hut['interaction_offset'] = [world['spawn'][i]-site['position'][i] for i in range(2)]
     counts = {row['site_id']: row['expected_count'] for row in links}
     for obj in world['objects']:
         if obj['id'] in counts: obj['enemy_count'] = counts[obj['id']]
@@ -193,7 +217,6 @@ def main():
     battle_assets = {key: activate_asset(original_battle_assets[key]) for key in sorted(battle_ids) if key}
     used_parts = {}
     writer.ROOT = OUT
-    writer.PAPER_PARTS = {asset_id: URI+'/PaperParts/'+asset_id+'.tscn' for asset_id in battle_assets}
     (OUT/'Scenes/Maps3D').mkdir(parents=True, exist_ok=True)
     for item in workset['maps']:
         payload = read(ROOT / BASE / 'Data/BattleLevels' / (item['id']+'.battlelevel.json'))
@@ -229,7 +252,8 @@ def main():
     report = {'status': 'compiled', 'runtime_activation': True, 'version': '20261019', 'battle_maps': len(workset['maps']),
         'enabled_camps': sum(not e for e in errors.values()), 'blocked_camps': sum(bool(e) for e in errors.values()),
         'roster_errors': {key: error for key, error in errors.items() if error}, 'paper_assets': len(used_parts),
-        'hd_tiles': 48, 'default_for_new_games': True, 'legacy_saves': 'keep_20261015'}
+        'hd_tiles': 48, 'default_for_new_games': True, 'legacy_saves': 'keep_20261015',
+        'patch_id': 'frontier-map-20261019-r1' if patch.is_file() else ''}
     write(OUT/'integration.json', report)
     print(json.dumps(report, ensure_ascii=False))
 

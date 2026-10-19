@@ -53,10 +53,10 @@ func run() -> void:
 	app.ui._start_new()
 	check(await wait_world(),"New game enters the real delivery map")
 	await frames()
-	check(app.session.data.new_player_tasks.enabled and app.ui.overlay.visible,"First new-game world entry activates and opens the guide")
-	check(app.ui.modal_stack.size()==1 and app.ui.modal_stack.back().kind=="tasks","New game automatically opens exactly one task paper")
+	check(app.session.data.new_player_tasks.enabled and app.ui.overlay.visible,"First new-game world entry activates tasks and opens the story")
+	check(app.ui.modal_stack.size()==1 and app.ui.modal_stack.back().kind=="opening_event","New game opens the appointment instead of a task paper")
 	check(app.session.data.new_player_tasks.completed.is_empty(),"Spawning and saving the map complete no task")
-	app.ui._close_modal()
+	preload("res://Tests/Integration/ApplicationFixtures.gd").complete_opening(app)
 	await frames()
 	check(app.ui.modal_stack.is_empty() and not button.disabled and app.delivery_map.input_enabled,"Closing the initial guide restores travel without reopening it")
 	button.pressed.emit()
@@ -141,7 +141,8 @@ func run() -> void:
 	check(await wait_world(),"A second new game returns to the real map")
 	await frames()
 	check(app.session.data.new_player_tasks.enabled and app.session.data.new_player_tasks.completed.is_empty(),"A new game clears the prior tutorial while enabling the new one")
-	check(app.ui.modal_stack.size()==1 and app.ui.modal_stack.back().kind=="tasks","Another new game opens its own initial guide once")
+	check(app.ui.modal_stack.size()==1 and app.ui.modal_stack.back().kind=="opening_event","Another new game opens its own appointment once")
+	preload("res://Tests/Integration/ApplicationFixtures.gd").complete_opening(app)
 	var saved_path: String = app.save_path
 	var display_path: String = app.display_settings_path
 	app.queue_free()

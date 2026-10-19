@@ -1,0 +1,18 @@
+extends SceneTree
+const Sight=preload("res://MapSight.gd")
+const Hex=preload("res://HexMapData.gd")
+func _initialize() -> void:
+	var outer:=PackedVector2Array([Vector2(0,0),Vector2(100,0),Vector2(100,100),Vector2(0,100)])
+	var hole:=PackedVector2Array([Vector2(30,30),Vector2(70,30),Vector2(70,70),Vector2(30,70)])
+	var shape:=Sight.occluder_rings([outer,hole])
+	assert(Sight.contains_surface(shape,Vector2(10,50)))
+	assert(not Sight.contains_surface(shape,Vector2(50,50)))
+	assert(Sight.visible(Vector2(40,40),Vector2(60,60),[shape]))
+	assert(not Sight.visible(Vector2(-20,50),Vector2(50,50),[shape]))
+	var distances:=Sight.ray_distances(Vector2(-20,50),Vector2(120,50),[shape])
+	assert(distances.is_equal_approx(Vector2(20,50)))
+	var notch:=Sight.occluder(PackedVector2Array([Vector2(0,0),Vector2(25,0),Vector2(25,75),Vector2(75,75),Vector2(75,0),Vector2(100,0),Vector2(100,100),Vector2(0,100)]))
+	assert(Sight.visible(Vector2(50,-20),Vector2(50,50),[notch]))
+	assert(not Sight.visible(Vector2(50,-20),Vector2(50,90),[notch]))
+	print("PASS native concave notches, holes, separate opaque intervals and mountain-behind shadow")
+	quit()

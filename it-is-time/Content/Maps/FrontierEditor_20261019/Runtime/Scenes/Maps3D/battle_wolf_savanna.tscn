@@ -1,4 +1,4 @@
-[gd_scene load_steps=170 format=3]
+[gd_scene load_steps=106 format=3]
 
 [ext_resource type="Script" path="res://Modules/FrontierDelivery/Scripts/Map/BattleMap3D.gd" id="BattleScript"]
 [ext_resource type="Shader" path="res://Modules/FrontierDelivery/Scripts/Map/BattleGround.gdshader" id="GroundShader"]
@@ -9,29 +9,33 @@
 [ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/225b0044aa0b0f0fb57ed9b2.png" id="Texture_3"]
 [ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/d49de230f58be456c6382069.png" id="Texture_4"]
 [ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/cff2b8732defa110f3524191.png" id="Texture_5"]
-[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/battle_dry_patch.tscn" id="Part_0"]
-[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_03_025.tscn" id="Part_1"]
-[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_11_018.tscn" id="Part_2"]
-[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_09_025.tscn" id="Part_3"]
-[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/demo_thorn_large.tscn" id="Part_4"]
-[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_08_021.tscn" id="Part_5"]
-[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_05_015.tscn" id="Part_6"]
-[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_08_022.tscn" id="Part_7"]
-[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_03_028.tscn" id="Part_8"]
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/602770b268be2f93cdb6ad7b.png" id="Texture_6"]
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/a5bebf1f88ea1c2bce2d23ab.png" id="Texture_7"]
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/7e6c8d56a797c223fdc8a600.png" id="Texture_8"]
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/225b0044aa0b0f0fb57ed9b2.png" id="Texture_9"]
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/d49de230f58be456c6382069.png" id="Texture_10"]
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/cff2b8732defa110f3524191.png" id="Texture_11"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/360d732820bc29d798b4e37d.svg" id="SourceArt_battle_dry_patch"]
+
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/602770b268be2f93cdb6ad7b.png" id="SourceArt_art1018_03_025"]
+
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/a5bebf1f88ea1c2bce2d23ab.png" id="SourceArt_art1018_11_018"]
+
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/225b0044aa0b0f0fb57ed9b2.png" id="SourceArt_art1018_09_025"]
+
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/c025a08d754497a712639f1e.png" id="SourceArt_art1018_03_012"]
+
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/7ad4a7b14785d9c2b8d91d58.png" id="SourceArt_art1018_08_021"]
+
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/13051448c840c6988b94af1e.png" id="SourceArt_art1018_05_015"]
+
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/376ee7ee544cd057b8ea4201.png" id="SourceArt_art1018_08_022"]
+
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/05b82a96fbc8b1e5a07d4f7a.png" id="SourceArt_art1018_03_028"]
+
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/7e6c8d56a797c223fdc8a600.png" id="SourceArt_art1018_09_006"]
+
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/d49de230f58be456c6382069.png" id="SourceArt_art1018_09_003"]
+
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/cff2b8732defa110f3524191.png" id="SourceArt_art1018_11_011"]
 
 [sub_resource type="StandardMaterial3D" id="R0"]
 shading_mode = 0
 albedo_color = Color(0.62745098, 0.631372549, 0.431372549, 1)
-
-[sub_resource type="PrismMesh" id="R1"]
-left_to_right = 0.5
-size = Vector3(1, 1, 1)
 
 [sub_resource type="ShaderMaterial" id="R2"]
 shader = ExtResource("GroundShader")
@@ -352,336 +356,6 @@ points = PackedVector3Array(1.1, 0, 0, 1.1, 3, 0, 0.55, 0, 0.952627944, 0.55, 3,
 [sub_resource type="ConvexPolygonShape3D" id="R74"]
 points = PackedVector3Array(1.1, 0, 0, 1.1, 3, 0, 0.55, 0, 0.952627944, 0.55, 3, 0.952627944, -0.55, 0, 0.952627944, -0.55, 3, 0.952627944, -1.1, 0, 1.34711148e-16, -1.1, 3, 1.34711148e-16, -0.55, 0, -0.952627944, -0.55, 3, -0.952627944, 0.55, 0, -0.952627944, 0.55, 3, -0.952627944)
 
-[sub_resource type="StandardMaterial3D" id="R75"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_6")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R76"]
-size = Vector2(2.7, 3.3893617)
-
-[sub_resource type="StandardMaterial3D" id="R77"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_7")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R78"]
-size = Vector2(2.7, 2.38846154)
-
-[sub_resource type="StandardMaterial3D" id="R79"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_8")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R80"]
-size = Vector2(4.5, 6.4125)
-
-[sub_resource type="StandardMaterial3D" id="R81"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_6")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R82"]
-size = Vector2(2.7, 3.3893617)
-
-[sub_resource type="StandardMaterial3D" id="R83"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_7")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R84"]
-size = Vector2(2.7, 2.38846154)
-
-[sub_resource type="StandardMaterial3D" id="R85"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_7")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R86"]
-size = Vector2(2.7, 2.38846154)
-
-[sub_resource type="StandardMaterial3D" id="R87"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_9")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R88"]
-size = Vector2(2.7, 1.57281553)
-
-[sub_resource type="StandardMaterial3D" id="R89"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_6")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R90"]
-size = Vector2(2.7, 3.3893617)
-
-[sub_resource type="StandardMaterial3D" id="R91"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_7")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R92"]
-size = Vector2(2.7, 2.38846154)
-
-[sub_resource type="StandardMaterial3D" id="R93"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_9")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R94"]
-size = Vector2(2.7, 1.57281553)
-
-[sub_resource type="StandardMaterial3D" id="R95"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_9")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R96"]
-size = Vector2(2.7, 1.57281553)
-
-[sub_resource type="StandardMaterial3D" id="R97"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_6")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R98"]
-size = Vector2(2.7, 3.3893617)
-
-[sub_resource type="StandardMaterial3D" id="R99"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_10")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R100"]
-size = Vector2(4.5, 5.58333333)
-
-[sub_resource type="StandardMaterial3D" id="R101"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_9")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R102"]
-size = Vector2(2.7, 1.57281553)
-
-[sub_resource type="StandardMaterial3D" id="R103"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_6")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R104"]
-size = Vector2(2.7, 3.3893617)
-
-[sub_resource type="StandardMaterial3D" id="R105"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_6")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R106"]
-size = Vector2(2.7, 3.3893617)
-
-[sub_resource type="StandardMaterial3D" id="R107"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_7")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R108"]
-size = Vector2(2.7, 2.38846154)
-
-[sub_resource type="StandardMaterial3D" id="R109"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_9")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R110"]
-size = Vector2(2.7, 1.57281553)
-
-[sub_resource type="StandardMaterial3D" id="R111"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_6")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R112"]
-size = Vector2(2.7, 3.3893617)
-
-[sub_resource type="StandardMaterial3D" id="R113"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_7")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R114"]
-size = Vector2(2.7, 2.38846154)
-
-[sub_resource type="StandardMaterial3D" id="R115"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_7")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R116"]
-size = Vector2(2.7, 2.38846154)
-
-[sub_resource type="StandardMaterial3D" id="R117"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_9")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R118"]
-size = Vector2(2.7, 1.57281553)
-
-[sub_resource type="StandardMaterial3D" id="R119"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_11")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R120"]
-size = Vector2(4.5, 5.97761194)
-
-[sub_resource type="StandardMaterial3D" id="R121"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_7")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R122"]
-size = Vector2(2.7, 2.38846154)
-
-[sub_resource type="StandardMaterial3D" id="R123"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_9")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R124"]
-size = Vector2(2.7, 1.57281553)
-
-[sub_resource type="StandardMaterial3D" id="R125"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_9")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R126"]
-size = Vector2(2.7, 1.57281553)
-
-[sub_resource type="StandardMaterial3D" id="R127"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_6")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R128"]
-size = Vector2(2.7, 3.3893617)
-
-[sub_resource type="StandardMaterial3D" id="R129"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_7")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R130"]
-size = Vector2(2.7, 2.38846154)
-
-[sub_resource type="StandardMaterial3D" id="R131"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_9")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R132"]
-size = Vector2(2.7, 1.57281553)
-
-[sub_resource type="StandardMaterial3D" id="R133"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_6")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R134"]
-size = Vector2(2.7, 3.3893617)
-
 [sub_resource type="ConvexPolygonShape3D" id="R135"]
 points = PackedVector3Array(1.088, 0, 0, 1.088, 2.6, 0, 1.06709439, 0, 0.17577638, 1.06709439, 2.6, 0.17577638, 1.00518093, 0, 0.344797773, 1.00518093, 2.6, 0.344797773, 0.904638938, 0, 0.50056878, 0.904638938, 2.6, 0.50056878, 0.769332178, 0, 0.63710321, 0.769332178, 2.6, 0.63710321, 0.604460414, 0, 0.749154121, 0.604460414, 2.6, 0.749154121, 0.416359574, 0, 0.832415459, 0.416359574, 2.6, 0.832415459, 0.21225827, 0, 0.883687538, 0.21225827, 2.6, 0.883687538, 6.66207859e-17, 0, 0.901, 6.66207859e-17, 2.6, 0.901, -0.21225827, 0, 0.883687538, -0.21225827, 2.6, 0.883687538, -0.416359574, 0, 0.832415459, -0.416359574, 2.6, 0.832415459, -0.604460414, 0, 0.749154121, -0.604460414, 2.6, 0.749154121, -0.769332178, 0, 0.63710321, -0.769332178, 2.6, 0.63710321, -0.904638938, 0, 0.50056878, -0.904638938, 2.6, 0.50056878, -1.00518093, 0, 0.344797773, -1.00518093, 2.6, 0.344797773, -1.06709439, 0, 0.17577638, -1.06709439, 2.6, 0.17577638, -1.088, 0, 1.10340677e-16, -1.088, 2.6, 1.10340677e-16, -1.06709439, 0, -0.17577638, -1.06709439, 2.6, -0.17577638, -1.00518093, 0, -0.344797773, -1.00518093, 2.6, -0.344797773, -0.904638938, 0, -0.50056878, -0.904638938, 2.6, -0.50056878, -0.769332178, 0, -0.63710321, -0.769332178, 2.6, -0.63710321, -0.604460414, 0, -0.749154121, -0.604460414, 2.6, -0.749154121, -0.416359574, 0, -0.832415459, -0.416359574, 2.6, -0.832415459, -0.21225827, 0, -0.883687538, -0.21225827, 2.6, -0.883687538, -1.99862358e-16, 0, -0.901, -1.99862358e-16, 2.6, -0.901, 0.21225827, 0, -0.883687538, 0.21225827, 2.6, -0.883687538, 0.416359574, 0, -0.832415459, 0.416359574, 2.6, -0.832415459, 0.604460414, 0, -0.749154121, 0.604460414, 2.6, -0.749154121, 0.769332178, 0, -0.63710321, 0.769332178, 2.6, -0.63710321, 0.904638938, 0, -0.50056878, 0.904638938, 2.6, -0.50056878, 1.00518093, 0, -0.344797773, 1.00518093, 2.6, -0.344797773, 1.06709439, 0, -0.17577638, 1.06709439, 2.6, -0.17577638)
 
@@ -960,301 +634,541 @@ position = Vector3(-7, 0, -7.6)
 rotation = Vector3(0, 0.261672354, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_decoration_001"
-[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_decoration_001" instance=ExtResource("Part_0")]
-position = Vector3(0, 2.325, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(9.2, 4.6, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna_decoration_001"]
+transform = Transform3D(0.0306666667, 0, 0, 0, 0, 1, 0, -0.0333333333, 0, 0, 0.031, 0)
+texture = ExtResource("SourceArt_battle_dry_patch")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "ground"
+metadata/tilt_from_ground = 0
+
 [node name="battle_wolf_savanna_decoration_002" type="Node3D" parent="Objects"]
 position = Vector3(6.8, 0, 6.4)
 rotation = Vector3(0, 0.221130721, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_decoration_002"
-[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_decoration_002" instance=ExtResource("Part_0")]
-position = Vector3(0, 2.325, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(9.2, 4.6, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna_decoration_002"]
+transform = Transform3D(0.0306666667, -8.67361738e-19, 0, 0, 0, 1, 0, -0.0333333333, 0, 0, 0.031, 0)
+texture = ExtResource("SourceArt_battle_dry_patch")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "ground"
+metadata/tilt_from_ground = 0
+
 [node name="battle_wolf_savanna_decoration_003" type="Node3D" parent="Objects"]
 position = Vector3(-9, 0, 2.4)
 rotation = Vector3(0, 0.0399165589, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_decoration_003"
-[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_decoration_003" instance=ExtResource("Part_0")]
-position = Vector3(0, 2.325, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(9.2, 4.6, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna_decoration_003"]
+transform = Transform3D(0.0306666667, 0, 0, 0, 0, 1, 0, -0.0333333333, 0, 0, 0.031, 0)
+texture = ExtResource("SourceArt_battle_dry_patch")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "ground"
+metadata/tilt_from_ground = 0
+
 [node name="battle_wolf_savanna_decoration_004" type="Node3D" parent="Objects"]
 position = Vector3(8, 0, -4.8)
 rotation = Vector3(0, 0.147574174, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_decoration_004"
-[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_decoration_004" instance=ExtResource("Part_0")]
-position = Vector3(0, 2.325, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(9.2, 4.6, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna_decoration_004"]
+transform = Transform3D(0.0306666667, 8.67361738e-19, 0, 0, 0, 1, 0, -0.0333333333, 0, 0, 0.031, 0)
+texture = ExtResource("SourceArt_battle_dry_patch")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "ground"
+metadata/tilt_from_ground = 0
+
 [node name="battle_wolf_savanna_decoration_005" type="Node3D" parent="Objects"]
 position = Vector3(0.4, 0, 11.6)
 rotation = Vector3(0, -0.00826467145, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_decoration_005"
-[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_decoration_005" instance=ExtResource("Part_0")]
-position = Vector3(0, 2.325, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(9.2, 4.6, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna_decoration_005"]
+transform = Transform3D(0.0306666667, 0, 0, 0, 0, 1, 0, -0.0333333333, 0, 0, 0.031, 0)
+texture = ExtResource("SourceArt_battle_dry_patch")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "ground"
+metadata/tilt_from_ground = 0
+
 [node name="battle_wolf_savanna_decoration_006" type="Node3D" parent="Objects"]
 position = Vector3(8.632, 0, -1.124)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_decoration_006"
-[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_decoration_006" instance=ExtResource("Part_1")]
-position = Vector3(0, 0.432978723, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.815957447, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna_decoration_006"]
+transform = Transform3D(0.0138297872, 0, 0, 0, 0.0119769471, 0.5, 0, -0.00691489362, 0.866025404, 0, 0.385319939, -0.203989362)
+texture = ExtResource("SourceArt_art1018_03_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.561201556)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna_decoration_007" type="Node3D" parent="Objects"]
 position = Vector3(11.657, 0, -10.748)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_decoration_007"
-[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_decoration_007" instance=ExtResource("Part_2")]
-position = Vector3(0, 0.3125, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.575, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna_decoration_007"]
+transform = Transform3D(0.00833333333, 0, 0, 0, 0.00721687836, 0.5, 0, -0.00416666667, 0.866025404, 0, 0.280982304, -0.14375)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.739981432)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna_decoration_008" type="Node3D" parent="Objects"]
 position = Vector3(-12.848, 0, 4.247)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_decoration_008"
-[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_decoration_008" instance=ExtResource("Part_3")]
-position = Vector3(0, 0.214320388, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.378640777, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna_decoration_008"]
+transform = Transform3D(0.00631067961, 0, 0, 0, 0.00546520886, 0.5, 0, -0.00315533981, 0.866025404, 0, 0.195956266, -0.0946601942)
+texture = ExtResource("SourceArt_art1018_09_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.655176498)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna_decoration_009" type="Node3D" parent="Objects"]
 position = Vector3(9.169, 0, -7.057)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_decoration_009"
-[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_decoration_009" instance=ExtResource("Part_1")]
-position = Vector3(0, 0.432978723, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.815957447, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna_decoration_009"]
+transform = Transform3D(0.0138297872, 0, 0, 0, 0.0119769471, 0.5, 0, -0.00691489362, 0.866025404, 0, 0.385319939, -0.203989362)
+texture = ExtResource("SourceArt_art1018_03_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.771471293)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna_decoration_010" type="Node3D" parent="Objects"]
 position = Vector3(-12.837, 0, 11.936)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_decoration_010"
-[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_decoration_010" instance=ExtResource("Part_2")]
-position = Vector3(0, 0.3125, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.575, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna_decoration_010"]
+transform = Transform3D(0.00833333333, 0, 0, 0, 0.00721687836, 0.5, 0, -0.00416666667, 0.866025404, 0, 0.280982304, -0.14375)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.622488521)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna_decoration_011" type="Node3D" parent="Objects"]
 position = Vector3(-7.252, 0, 9.275)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_decoration_011"
-[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_decoration_011" instance=ExtResource("Part_3")]
-position = Vector3(0, 0.214320388, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.378640777, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna_decoration_011"]
+transform = Transform3D(0.00631067961, 0, 0, 0, 0.00546520886, 0.5, 0, -0.00315533981, 0.866025404, 0, 0.195956266, -0.0946601942)
+texture = ExtResource("SourceArt_art1018_09_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.607793401)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna_decoration_012" type="Node3D" parent="Objects"]
 position = Vector3(-4.956, 0, 9.475)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_decoration_012"
-[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_decoration_012" instance=ExtResource("Part_1")]
-position = Vector3(0, 0.432978723, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.815957447, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna_decoration_012"]
+transform = Transform3D(0.0138297872, 0, 0, 0, 0.0119769471, 0.5, 0, -0.00691489362, 0.866025404, 0, 0.385319939, -0.203989362)
+texture = ExtResource("SourceArt_art1018_03_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.617871958)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna_decoration_013" type="Node3D" parent="Objects"]
 position = Vector3(11.879, 0, 6.397)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_decoration_013"
-[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_decoration_013" instance=ExtResource("Part_2")]
-position = Vector3(0, 0.3125, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.575, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna_decoration_013"]
+transform = Transform3D(0.00833333333, 0, 0, 0, 0.00721687836, 0.5, 0, -0.00416666667, 0.866025404, 0, 0.280982304, -0.14375)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.604986436)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna_decoration_014" type="Node3D" parent="Objects"]
 position = Vector3(3.844, 0, -9.827)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_decoration_014"
-[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_decoration_014" instance=ExtResource("Part_3")]
-position = Vector3(0, 0.214320388, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.378640777, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna_decoration_014"]
+transform = Transform3D(0.00631067961, 0, 0, 0, 0.00546520886, 0.5, 0, -0.00315533981, 0.866025404, 0, 0.195956266, -0.0946601942)
+texture = ExtResource("SourceArt_art1018_09_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.667849981)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna_decoration_015" type="Node3D" parent="Objects"]
 position = Vector3(9.556, 0, -8.768)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_decoration_015"
-[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_decoration_015" instance=ExtResource("Part_1")]
-position = Vector3(0, 0.432978723, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.815957447, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna_decoration_015"]
+transform = Transform3D(0.0138297872, 0, 0, 0, 0.0119769471, 0.5, 0, -0.00691489362, 0.866025404, 0, 0.385319939, -0.203989362)
+texture = ExtResource("SourceArt_art1018_03_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.702948901)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna_decoration_016" type="Node3D" parent="Objects"]
 position = Vector3(-1.538, 0, 5.998)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_decoration_016"
-[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_decoration_016" instance=ExtResource("Part_2")]
-position = Vector3(0, 0.3125, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.575, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna_decoration_016"]
+transform = Transform3D(0.00833333333, 0, 0, 0, 0.00721687836, 0.5, 0, -0.00416666667, 0.866025404, 0, 0.280982304, -0.14375)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.631374698)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna_decoration_017" type="Node3D" parent="Objects"]
 position = Vector3(4.746, 0, -1.105)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_decoration_017"
-[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_decoration_017" instance=ExtResource("Part_3")]
-position = Vector3(0, 0.214320388, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.378640777, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna_decoration_017"]
+transform = Transform3D(0.00631067961, 0, 0, 0, 0.00546520886, 0.5, 0, -0.00315533981, 0.866025404, 0, 0.195956266, -0.0946601942)
+texture = ExtResource("SourceArt_art1018_09_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.650618106)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna_decoration_018" type="Node3D" parent="Objects"]
 position = Vector3(-4.379, 0, -8.179)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_decoration_018"
-[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_decoration_018" instance=ExtResource("Part_1")]
-position = Vector3(0, 0.432978723, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.815957447, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna_decoration_018"]
+transform = Transform3D(0.0138297872, 0, 0, 0, 0.0119769471, 0.5, 0, -0.00691489362, 0.866025404, 0, 0.385319939, -0.203989362)
+texture = ExtResource("SourceArt_art1018_03_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.613315593)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna_decoration_019" type="Node3D" parent="Objects"]
 position = Vector3(2.42, 0, -2)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_decoration_019"
-[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_decoration_019" instance=ExtResource("Part_2")]
-position = Vector3(0, 0.3125, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.575, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna_decoration_019"]
+transform = Transform3D(0.00833333333, 0, 0, 0, 0.00721687836, 0.5, 0, -0.00416666667, 0.866025404, 0, 0.280982304, -0.14375)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.663502242)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna_decoration_020" type="Node3D" parent="Objects"]
 position = Vector3(0.863, 0, 7.056)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_decoration_020"
-[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_decoration_020" instance=ExtResource("Part_3")]
-position = Vector3(0, 0.214320388, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.378640777, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna_decoration_020"]
+transform = Transform3D(0.00631067961, 0, 0, 0, 0.00546520886, 0.5, 0, -0.00315533981, 0.866025404, 0, 0.195956266, -0.0946601942)
+texture = ExtResource("SourceArt_art1018_09_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.752421179)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna_decoration_021" type="Node3D" parent="Objects"]
 position = Vector3(-3.87, 0, 0.597)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_decoration_021"
-[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_decoration_021" instance=ExtResource("Part_1")]
-position = Vector3(0, 0.432978723, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.815957447, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna_decoration_021"]
+transform = Transform3D(0.0138297872, 0, 0, 0, 0.0119769471, 0.5, 0, -0.00691489362, 0.866025404, 0, 0.385319939, -0.203989362)
+texture = ExtResource("SourceArt_art1018_03_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.58430359)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna_decoration_022" type="Node3D" parent="Objects"]
 position = Vector3(-10.148, 0, -11.285)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_decoration_022"
-[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_decoration_022" instance=ExtResource("Part_2")]
-position = Vector3(0, 0.3125, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.575, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna_decoration_022"]
+transform = Transform3D(0.00833333333, 0, 0, 0, 0.00721687836, 0.5, 0, -0.00416666667, 0.866025404, 0, 0.280982304, -0.14375)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.756836221)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna_decoration_023" type="Node3D" parent="Objects"]
 position = Vector3(-9.436, 0, 10.192)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_decoration_023"
-[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_decoration_023" instance=ExtResource("Part_3")]
-position = Vector3(0, 0.214320388, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.378640777, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna_decoration_023"]
+transform = Transform3D(0.00631067961, 0, 0, 0, 0.00546520886, 0.5, 0, -0.00315533981, 0.866025404, 0, 0.195956266, -0.0946601942)
+texture = ExtResource("SourceArt_art1018_09_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.561061466)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna_decoration_024" type="Node3D" parent="Objects"]
 position = Vector3(4.206, 0, -13.364)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_decoration_024"
-[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_decoration_024" instance=ExtResource("Part_1")]
-position = Vector3(0, 0.432978723, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.815957447, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna_decoration_024"]
+transform = Transform3D(0.0138297872, 0, 0, 0, 0.0119769471, 0.5, 0, -0.00691489362, 0.866025404, 0, 0.385319939, -0.203989362)
+texture = ExtResource("SourceArt_art1018_03_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.772505294)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna_decoration_025" type="Node3D" parent="Objects"]
 position = Vector3(2.577, 0, -5.042)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_decoration_025"
-[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_decoration_025" instance=ExtResource("Part_2")]
-position = Vector3(0, 0.3125, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.575, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna_decoration_025"]
+transform = Transform3D(0.00833333333, 0, 0, 0, 0.00721687836, 0.5, 0, -0.00416666667, 0.866025404, 0, 0.280982304, -0.14375)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.612619931)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna_decoration_026" type="Node3D" parent="Objects"]
 position = Vector3(9.382, 0, -3.221)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_decoration_026"
-[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_decoration_026" instance=ExtResource("Part_3")]
-position = Vector3(0, 0.214320388, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.378640777, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna_decoration_026"]
+transform = Transform3D(0.00631067961, 0, 0, 0, 0.00546520886, 0.5, 0, -0.00315533981, 0.866025404, 0, 0.195956266, -0.0946601942)
+texture = ExtResource("SourceArt_art1018_09_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.621555333)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna_decoration_027" type="Node3D" parent="Objects"]
 position = Vector3(0.658, 0, 11.027)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_decoration_027"
-[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_decoration_027" instance=ExtResource("Part_1")]
-position = Vector3(0, 0.432978723, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.815957447, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna_decoration_027"]
+transform = Transform3D(0.0138297872, 0, 0, 0, 0.0119769471, 0.5, 0, -0.00691489362, 0.866025404, 0, 0.385319939, -0.203989362)
+texture = ExtResource("SourceArt_art1018_03_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.697383952)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna_decoration_028" type="Node3D" parent="Objects"]
 position = Vector3(-5.15, 0, -2.101)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_decoration_028"
-[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_decoration_028" instance=ExtResource("Part_2")]
-position = Vector3(0, 0.3125, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.575, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna_decoration_028"]
+transform = Transform3D(0.00833333333, 0, 0, 0, 0.00721687836, 0.5, 0, -0.00416666667, 0.866025404, 0, 0.280982304, -0.14375)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.649455143)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna_decoration_029" type="Node3D" parent="Objects"]
 position = Vector3(-9.889, 0, 1.42)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_decoration_029"
-[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_decoration_029" instance=ExtResource("Part_3")]
-position = Vector3(0, 0.214320388, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(0.65, 0.378640777, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna_decoration_029"]
+transform = Transform3D(0.00631067961, 0, 0, 0, 0.00546520886, 0.5, 0, -0.00315533981, 0.866025404, 0, 0.195956266, -0.0946601942)
+texture = ExtResource("SourceArt_art1018_09_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 0.701735532)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna_thorns_147" type="Node3D" parent="Objects"]
 position = Vector3(-8, 0, -3)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_thorns_147"
-[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_thorns_147" instance=ExtResource("Part_4")]
-position = Vector3(0, 0.025, 0)
-rotation = Vector3(-1.57079633, 0, 0)
-scale = Vector3(4.4, 2.22913907, 0.025)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna_thorns_147"]
+transform = Transform3D(0.00831768311, 0, 0, 0, 0.00720332487, 0.5, 0, -0.00415884155, 0.866025404, 0, 0.999845533, -0.557284768)
+texture = ExtResource("SourceArt_art1018_03_012")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="region" type="Area3D" parent="Objects/battle_wolf_savanna_thorns_147"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -1267,11 +1181,19 @@ position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_post_battle_139"
-[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_post_battle_139" instance=ExtResource("Part_5")]
-position = Vector3(0, 1.06199422, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(5.2, 2.07398844, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna_post_battle_139"]
+transform = Transform3D(0.0150289017, 0, 0, 0, 0, 1, 0, -0.0150289017, 0, 0, 0.0348, 0)
+texture = ExtResource("SourceArt_art1018_08_021")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "ground"
+metadata/tilt_from_ground = 0
+
 [node name="click_area" type="Area3D" parent="Objects/battle_wolf_savanna_post_battle_139"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -1280,7 +1202,7 @@ collision_mask = 1
 [node name="Shape" type="CollisionShape3D" parent="Objects/battle_wolf_savanna_post_battle_139/click_area"]
 shape = SubResource("R68")
 [node name="battle_wolf_savanna_deployment_135" type="Node3D" parent="Objects"]
-position = Vector3(8.25366, 0, 9.78351)
+position = Vector3(-5.80655488, 0, 0.229301084)
 rotation = Vector3(0, -2.44080875, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_deployment_135"
@@ -1296,11 +1218,19 @@ position = Vector3(-3.3, 0, -5.71576766)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "collision_damage_13"
-[node name="PhysicalPart" parent="Objects/collision_damage_13" instance=ExtResource("Part_6")]
-position = Vector3(0, 0.682932692, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(2.3, 1.31586538, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/collision_damage_13"]
+transform = Transform3D(0.0110576923, 0, 0, 0, 0.00957624245, 0.5, 0, -0.00552884615, 0.866025404, 0, 0.604786426, -0.328966346)
+texture = ExtResource("SourceArt_art1018_05_015")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="collision" type="StaticBody3D" parent="Objects/collision_damage_13"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -1313,11 +1243,19 @@ position = Vector3(-1.65, 0, -4.76313972)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "collision_damage_14"
-[node name="PhysicalPart" parent="Objects/collision_damage_14" instance=ExtResource("Part_7")]
-position = Vector3(0, 0.971202532, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(2.3, 1.89240506, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/collision_damage_14"]
+transform = Transform3D(0.0291139241, 0, 0, 0, 0.0252133978, 0.5, 0, -0.014556962, 0.866025404, 0, 0.85443543, -0.473101266)
+texture = ExtResource("SourceArt_art1018_08_022")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="collision" type="StaticBody3D" parent="Objects/collision_damage_14"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -1330,11 +1268,19 @@ position = Vector3(8.25, 0, 0.952627944)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "collision_damage_15"
-[node name="PhysicalPart" parent="Objects/collision_damage_15" instance=ExtResource("Part_6")]
-position = Vector3(0, 0.682932692, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(2.3, 1.31586538, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/collision_damage_15"]
+transform = Transform3D(0.0110576923, 0, 0, 0, 0.00957624245, 0.5, 0, -0.00552884615, 0.866025404, 0, 0.604786426, -0.328966346)
+texture = ExtResource("SourceArt_art1018_05_015")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="collision" type="StaticBody3D" parent="Objects/collision_damage_15"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -1347,11 +1293,19 @@ position = Vector3(9.9, 0, 0)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "collision_damage_16"
-[node name="PhysicalPart" parent="Objects/collision_damage_16" instance=ExtResource("Part_7")]
-position = Vector3(0, 0.971202532, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(2.3, 1.89240506, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/collision_damage_16"]
+transform = Transform3D(0.0291139241, 0, 0, 0, 0.0252133978, 0.5, 0, -0.014556962, 0.866025404, 0, 0.85443543, -0.473101266)
+texture = ExtResource("SourceArt_art1018_08_022")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="collision" type="StaticBody3D" parent="Objects/collision_damage_16"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -1364,11 +1318,19 @@ position = Vector3(3.3, 0, 5.71576766)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "collision_damage_17"
-[node name="PhysicalPart" parent="Objects/collision_damage_17" instance=ExtResource("Part_6")]
-position = Vector3(0, 0.682932692, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(2.3, 1.31586538, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/collision_damage_17"]
+transform = Transform3D(0.0110576923, 0, 0, 0, 0.00957624245, 0.5, 0, -0.00552884615, 0.866025404, 0, 0.604786426, -0.328966346)
+texture = ExtResource("SourceArt_art1018_05_015")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="collision" type="StaticBody3D" parent="Objects/collision_damage_17"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -1381,401 +1343,667 @@ position = Vector3(-9.8, 0, -7)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna__art_031"
-[node name="PhysicalPart" parent="Objects/battle_wolf_savanna__art_031" instance=ExtResource("Part_1")]
-position = Vector3(0, 1.09202128, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(1.7, 2.13404255, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna__art_031"]
+transform = Transform3D(0.0361702128, 0, 0, 0, 0.0313243231, 0.5, 0, -0.0180851064, 0.866025404, 0, 0.959067532, -0.533510638)
+texture = ExtResource("SourceArt_art1018_03_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna__art_032" type="Node3D" parent="Objects"]
 position = Vector3(1.2, 0, -13)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna__art_032"
-[node name="PhysicalPart" parent="Objects/battle_wolf_savanna__art_032" instance=ExtResource("Part_2")]
-position = Vector3(0, 0.776923077, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(1.7, 1.50384615, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna__art_032"]
+transform = Transform3D(0.0217948718, 0, 0, 0, 0.0188749126, 0.5, 0, -0.0108974359, 0.866025404, 0, 0.686184486, -0.375961538)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna__art_033" type="Node3D" parent="Objects"]
 position = Vector3(11.6, 0, 1.6)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna__art_033"
-[node name="PhysicalPart" parent="Objects/battle_wolf_savanna__art_033" instance=ExtResource("Part_3")]
-position = Vector3(0, 0.520145631, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(1.7, 0.990291262, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna__art_033"]
+transform = Transform3D(0.0165048544, 0, 0, 0, 0.0142936232, 0.5, 0, -0.00825242718, 0.866025404, 0, 0.463808695, -0.247572816)
+texture = ExtResource("SourceArt_art1018_09_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna__art_034" type="Node3D" parent="Objects"]
 position = Vector3(-3.6, 0, 12.4)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna__art_034"
-[node name="PhysicalPart" parent="Objects/battle_wolf_savanna__art_034" instance=ExtResource("Part_1")]
-position = Vector3(0, 1.09202128, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(1.7, 2.13404255, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna__art_034"]
+transform = Transform3D(0.0361702128, 0, 0, 0, 0.0313243231, 0.5, 0, -0.0180851064, 0.866025404, 0, 0.959067532, -0.533510638)
+texture = ExtResource("SourceArt_art1018_03_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna__art_035" type="Node3D" parent="Objects"]
 position = Vector3(-12.6, 0, 0.8)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna__art_035"
-[node name="PhysicalPart" parent="Objects/battle_wolf_savanna__art_035" instance=ExtResource("Part_2")]
-position = Vector3(0, 0.776923077, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(1.7, 1.50384615, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna__art_035"]
+transform = Transform3D(0.0217948718, 0, 0, 0, 0.0188749126, 0.5, 0, -0.0108974359, 0.866025404, 0, 0.686184486, -0.375961538)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna_decoration_143" type="Node3D" parent="Objects"]
 position = Vector3(2, 0, -12.2)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_decoration_143"
-[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_decoration_143" instance=ExtResource("Part_8")]
-position = Vector3(0, 1.94206231, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(7.3, 3.83412463, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna_decoration_143"]
+transform = Transform3D(0.0216617211, 0, 0, 0, 0.0187596007, 0.5, 0, -0.0108308605, 0.866025404, 0, 1.69622467, -0.958531157)
+texture = ExtResource("SourceArt_art1018_03_028")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna__art_001" type="Node3D" parent="Objects"]
 position = Vector3(17.239, 0, 1.872)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna__art_001"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna__art_001"]
-position = Vector3(0, 0.149, 0)
-mesh = SubResource("R76")
-material_override = SubResource("R75")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna__art_001"]
+transform = Transform3D(0.0574468085, 0, 0, 0, 0.0497503955, 0.5, 0, -0.0287234043, 0.866025404, 0, 1.50363667, -0.847340426)
+texture = ExtResource("SourceArt_art1018_03_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna__art_002" type="Node3D" parent="Objects"]
 position = Vector3(14.96, 0, 4.573)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna__art_002"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna__art_002"]
-position = Vector3(0, 0.152, 0)
-mesh = SubResource("R78")
-material_override = SubResource("R77")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna__art_002"]
+transform = Transform3D(0.0346153846, 0, 0, 0, 0.0299778024, 0.5, 0, -0.0173076923, 0.866025404, 0, 1.07023418, -0.597115385)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna__art_003" type="Node3D" parent="Objects"]
 position = Vector3(13.541, 0, 7.447)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna__art_003"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna__art_003"]
-position = Vector3(0, 0.155, 0)
-mesh = SubResource("R80")
-material_override = SubResource("R79")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna__art_003"]
+transform = Transform3D(0.0375, 0, 0, 0, 0.0324759526, 0.5, 0, -0.01875, 0.866025404, 0, 2.81269395, -1.603125)
+texture = ExtResource("SourceArt_art1018_09_006")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna__art_004" type="Node3D" parent="Objects"]
 position = Vector3(11.671, 0, 11.101)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna__art_004"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna__art_004"]
-position = Vector3(0, 0.158, 0)
-mesh = SubResource("R82")
-material_override = SubResource("R81")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna__art_004"]
+transform = Transform3D(0.0574468085, 0, 0, 0, 0.0497503955, 0.5, 0, -0.0287234043, 0.866025404, 0, 1.50363667, -0.847340426)
+texture = ExtResource("SourceArt_art1018_03_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna__art_005" type="Node3D" parent="Objects"]
 position = Vector3(10.158, 0, 14.136)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna__art_005"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna__art_005"]
-position = Vector3(0, 0.161, 0)
-mesh = SubResource("R84")
-material_override = SubResource("R83")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna__art_005"]
+transform = Transform3D(0.0346153846, 0, 0, 0, 0.0299778024, 0.5, 0, -0.0173076923, 0.866025404, 0, 1.07023418, -0.597115385)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna__art_006" type="Node3D" parent="Objects"]
 position = Vector3(7.557, 0, 15.658)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna__art_006"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna__art_006"]
-position = Vector3(0, 0.164, 0)
-mesh = SubResource("R86")
-material_override = SubResource("R85")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna__art_006"]
+transform = Transform3D(0.0346153846, 0, 0, 0, 0.0299778024, 0.5, 0, -0.0173076923, 0.866025404, 0, 1.07023418, -0.597115385)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna__art_007" type="Node3D" parent="Objects"]
 position = Vector3(3.499, 0, 15.866)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna__art_007"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna__art_007"]
-position = Vector3(0, 0.167, 0)
-mesh = SubResource("R88")
-material_override = SubResource("R87")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna__art_007"]
+transform = Transform3D(0.0262135922, 0, 0, 0, 0.0227016368, 0.5, 0, -0.0131067961, 0.866025404, 0, 0.717049104, -0.393203883)
+texture = ExtResource("SourceArt_art1018_09_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna__art_008" type="Node3D" parent="Objects"]
 position = Vector3(0.158, 0, 15.242)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna__art_008"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna__art_008"]
-position = Vector3(0, 0.17, 0)
-mesh = SubResource("R90")
-material_override = SubResource("R89")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna__art_008"]
+transform = Transform3D(0.0574468085, 0, 0, 0, 0.0497503955, 0.5, 0, -0.0287234043, 0.866025404, 0, 1.50363667, -0.847340426)
+texture = ExtResource("SourceArt_art1018_03_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna__art_009" type="Node3D" parent="Objects"]
 position = Vector3(-3.889, 0, 15.45)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna__art_009"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna__art_009"]
-position = Vector3(0, 0.173, 0)
-mesh = SubResource("R92")
-material_override = SubResource("R91")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna__art_009"]
+transform = Transform3D(0.0346153846, 0, 0, 0, 0.0299778024, 0.5, 0, -0.0173076923, 0.866025404, 0, 1.07023418, -0.597115385)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna__art_010" type="Node3D" parent="Objects"]
 position = Vector3(-7.232, 0, 15.658)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna__art_010"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna__art_010"]
-position = Vector3(0, 0.176, 0)
-mesh = SubResource("R94")
-material_override = SubResource("R93")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna__art_010"]
+transform = Transform3D(0.0262135922, 0, 0, 0, 0.0227016368, 0.5, 0, -0.0131067961, 0.866025404, 0, 0.717049104, -0.393203883)
+texture = ExtResource("SourceArt_art1018_09_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna__art_011" type="Node3D" parent="Objects"]
 position = Vector3(-9.732, 0, 14.044)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna__art_011"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna__art_011"]
-position = Vector3(0, 0.179, 0)
-mesh = SubResource("R96")
-material_override = SubResource("R95")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna__art_011"]
+transform = Transform3D(0.0262135922, 0, 0, 0, 0.0227016368, 0.5, 0, -0.0131067961, 0.866025404, 0, 0.717049104, -0.393203883)
+texture = ExtResource("SourceArt_art1018_09_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna__art_012" type="Node3D" parent="Objects"]
 position = Vector3(-11.915, 0, 10.679)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna__art_012"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna__art_012"]
-position = Vector3(0, 0.182, 0)
-mesh = SubResource("R98")
-material_override = SubResource("R97")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna__art_012"]
+transform = Transform3D(0.0574468085, 0, 0, 0, 0.0497503955, 0.5, 0, -0.0287234043, 0.866025404, 0, 1.50363667, -0.847340426)
+texture = ExtResource("SourceArt_art1018_03_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna__art_013" type="Node3D" parent="Objects"]
 position = Vector3(-13.74, 0, 7.933)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna__art_013"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna__art_013"]
-position = Vector3(0, 0.185, 0)
-mesh = SubResource("R100")
-material_override = SubResource("R99")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna__art_013"]
+transform = Transform3D(0.0208333333, 0, 0, 0, 0.0180421959, 0.5, 0, -0.0104166667, 0.866025404, 0, 2.45365425, -1.39583333)
+texture = ExtResource("SourceArt_art1018_09_003")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna__art_014" type="Node3D" parent="Objects"]
 position = Vector3(-14.802, 0, 4.847)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna__art_014"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna__art_014"]
-position = Vector3(0, 0.188, 0)
-mesh = SubResource("R102")
-material_override = SubResource("R101")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna__art_014"]
+transform = Transform3D(0.0262135922, 0, 0, 0, 0.0227016368, 0.5, 0, -0.0131067961, 0.866025404, 0, 0.717049104, -0.393203883)
+texture = ExtResource("SourceArt_art1018_09_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna__art_015" type="Node3D" parent="Objects"]
 position = Vector3(-17.028, 0, 1.406)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna__art_015"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna__art_015"]
-position = Vector3(0, 0.191, 0)
-mesh = SubResource("R104")
-material_override = SubResource("R103")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna__art_015"]
+transform = Transform3D(0.0574468085, 0, 0, 0, 0.0497503955, 0.5, 0, -0.0287234043, 0.866025404, 0, 1.50363667, -0.847340426)
+texture = ExtResource("SourceArt_art1018_03_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna__art_016" type="Node3D" parent="Objects"]
 position = Vector3(-16.72, 0, -1.524)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna__art_016"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna__art_016"]
-position = Vector3(0, 0.194, 0)
-mesh = SubResource("R106")
-material_override = SubResource("R105")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna__art_016"]
+transform = Transform3D(0.0574468085, 0, 0, 0, 0.0497503955, 0.5, 0, -0.0287234043, 0.866025404, 0, 1.50363667, -0.847340426)
+texture = ExtResource("SourceArt_art1018_03_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna__art_017" type="Node3D" parent="Objects"]
 position = Vector3(-15.325, 0, -4.357)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna__art_017"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna__art_017"]
-position = Vector3(0, 0.197, 0)
-mesh = SubResource("R108")
-material_override = SubResource("R107")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna__art_017"]
+transform = Transform3D(0.0346153846, 0, 0, 0, 0.0299778024, 0.5, 0, -0.0173076923, 0.866025404, 0, 1.07023418, -0.597115385)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna__art_018" type="Node3D" parent="Objects"]
 position = Vector3(-13.479, 0, -7.97)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna__art_018"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna__art_018"]
-position = Vector3(0, 0.2, 0)
-mesh = SubResource("R110")
-material_override = SubResource("R109")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna__art_018"]
+transform = Transform3D(0.0262135922, 0, 0, 0, 0.0227016368, 0.5, 0, -0.0131067961, 0.866025404, 0, 0.717049104, -0.393203883)
+texture = ExtResource("SourceArt_art1018_09_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna__art_019" type="Node3D" parent="Objects"]
 position = Vector3(-11.99, 0, -10.963)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna__art_019"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna__art_019"]
-position = Vector3(0, 0.203, 0)
-mesh = SubResource("R112")
-material_override = SubResource("R111")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna__art_019"]
+transform = Transform3D(0.0574468085, 0, 0, 0, 0.0497503955, 0.5, 0, -0.0287234043, 0.866025404, 0, 1.50363667, -0.847340426)
+texture = ExtResource("SourceArt_art1018_03_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna__art_020" type="Node3D" parent="Objects"]
 position = Vector3(-9.522, 0, -13.992)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna__art_020"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna__art_020"]
-position = Vector3(0, 0.206, 0)
-mesh = SubResource("R114")
-material_override = SubResource("R113")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna__art_020"]
+transform = Transform3D(0.0346153846, 0, 0, 0, 0.0299778024, 0.5, 0, -0.0173076923, 0.866025404, 0, 1.07023418, -0.597115385)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna__art_021" type="Node3D" parent="Objects"]
 position = Vector3(-7.163, 0, -15.866)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna__art_021"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna__art_021"]
-position = Vector3(0, 0.209, 0)
-mesh = SubResource("R116")
-material_override = SubResource("R115")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna__art_021"]
+transform = Transform3D(0.0346153846, 0, 0, 0, 0.0299778024, 0.5, 0, -0.0173076923, 0.866025404, 0, 1.07023418, -0.597115385)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna__art_022" type="Node3D" parent="Objects"]
 position = Vector3(-3.678, 0, -15.242)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna__art_022"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna__art_022"]
-position = Vector3(0, 0.212, 0)
-mesh = SubResource("R118")
-material_override = SubResource("R117")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna__art_022"]
+transform = Transform3D(0.0262135922, 0, 0, 0, 0.0227016368, 0.5, 0, -0.0131067961, 0.866025404, 0, 0.717049104, -0.393203883)
+texture = ExtResource("SourceArt_art1018_09_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna__art_023" type="Node3D" parent="Objects"]
 position = Vector3(0.321, 0, -15.45)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna__art_023"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna__art_023"]
-position = Vector3(0, 0.215, 0)
-mesh = SubResource("R120")
-material_override = SubResource("R119")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna__art_023"]
+transform = Transform3D(0.0223880597, 0, 0, 0, 0.0193886284, 0.5, 0, -0.0111940299, 0.866025404, 0, 2.6243819, -1.49440299)
+texture = ExtResource("SourceArt_art1018_11_011")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna__art_024" type="Node3D" parent="Objects"]
 position = Vector3(3.616, 0, -15.658)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna__art_024"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna__art_024"]
-position = Vector3(0, 0.218, 0)
-mesh = SubResource("R122")
-material_override = SubResource("R121")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna__art_024"]
+transform = Transform3D(0.0346153846, 0, 0, 0, 0.0299778024, 0.5, 0, -0.0173076923, 0.866025404, 0, 1.07023418, -0.597115385)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna__art_025" type="Node3D" parent="Objects"]
 position = Vector3(6.998, 0, -15.866)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna__art_025"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna__art_025"]
-position = Vector3(0, 0.221, 0)
-mesh = SubResource("R124")
-material_override = SubResource("R123")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna__art_025"]
+transform = Transform3D(0.0262135922, 0, 0, 0, 0.0227016368, 0.5, 0, -0.0131067961, 0.866025404, 0, 0.717049104, -0.393203883)
+texture = ExtResource("SourceArt_art1018_09_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna__art_026" type="Node3D" parent="Objects"]
 position = Vector3(10.107, 0, -13.81)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna__art_026"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna__art_026"]
-position = Vector3(0, 0.224, 0)
-mesh = SubResource("R126")
-material_override = SubResource("R125")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna__art_026"]
+transform = Transform3D(0.0262135922, 0, 0, 0, 0.0227016368, 0.5, 0, -0.0131067961, 0.866025404, 0, 0.717049104, -0.393203883)
+texture = ExtResource("SourceArt_art1018_09_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna__art_027" type="Node3D" parent="Objects"]
 position = Vector3(11.908, 0, -11.106)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna__art_027"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna__art_027"]
-position = Vector3(0, 0.227, 0)
-mesh = SubResource("R128")
-material_override = SubResource("R127")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna__art_027"]
+transform = Transform3D(0.0574468085, 0, 0, 0, 0.0497503955, 0.5, 0, -0.0287234043, 0.866025404, 0, 1.50363667, -0.847340426)
+texture = ExtResource("SourceArt_art1018_03_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna__art_028" type="Node3D" parent="Objects"]
 position = Vector3(13.042, 0, -7.895)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna__art_028"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna__art_028"]
-position = Vector3(0, 0.23, 0)
-mesh = SubResource("R130")
-material_override = SubResource("R129")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna__art_028"]
+transform = Transform3D(0.0346153846, 0, 0, 0, 0.0299778024, 0.5, 0, -0.0173076923, 0.866025404, 0, 1.07023418, -0.597115385)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna__art_029" type="Node3D" parent="Objects"]
 position = Vector3(15.244, 0, -4.496)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna__art_029"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna__art_029"]
-position = Vector3(0, 0.233, 0)
-mesh = SubResource("R132")
-material_override = SubResource("R131")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna__art_029"]
+transform = Transform3D(0.0262135922, 0, 0, 0, 0.0227016368, 0.5, 0, -0.0131067961, 0.866025404, 0, 0.717049104, -0.393203883)
+texture = ExtResource("SourceArt_art1018_09_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna__art_030" type="Node3D" parent="Objects"]
 position = Vector3(17.095, 0, -1.707)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna__art_030"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_wolf_savanna__art_030"]
-position = Vector3(0, 0.236, 0)
-mesh = SubResource("R134")
-material_override = SubResource("R133")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna__art_030"]
+transform = Transform3D(0.0574468085, 0, 0, 0, 0.0497503955, 0.5, 0, -0.0287234043, 0.866025404, 0, 1.50363667, -0.847340426)
+texture = ExtResource("SourceArt_art1018_03_025")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_wolf_savanna_collision_damage_144" type="Node3D" parent="Objects"]
 position = Vector3(-3.5, 0, -3.9)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_collision_damage_144"
-[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_collision_damage_144" instance=ExtResource("Part_6")]
-position = Vector3(0, 0.997596154, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(3.4, 1.94519231, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna_collision_damage_144"]
+transform = Transform3D(0.0163461538, 0, 0, 0, 0.0141561845, 0.5, 0, -0.00817307692, 0.866025404, 0, 0.878892977, -0.486298077)
+texture = ExtResource("SourceArt_art1018_05_015")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="collision" type="StaticBody3D" parent="Objects/battle_wolf_savanna_collision_damage_144"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -1788,11 +2016,19 @@ position = Vector3(5, 0, 4.5)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_collision_damage_145"
-[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_collision_damage_145" instance=ExtResource("Part_7")]
-position = Vector3(0, 1.13575949, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(2.7, 2.22151899, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna_collision_damage_145"]
+transform = Transform3D(0.0341772152, 0, 0, 0, 0.0295983366, 0.5, 0, -0.0170886076, 0.866025404, 0, 0.998545939, -0.555379747)
+texture = ExtResource("SourceArt_art1018_08_022")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="collision" type="StaticBody3D" parent="Objects/battle_wolf_savanna_collision_damage_145"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -1805,11 +2041,19 @@ position = Vector3(8.6, 0, 1.6)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_wolf_savanna_collision_damage_146"
-[node name="PhysicalPart" parent="Objects/battle_wolf_savanna_collision_damage_146" instance=ExtResource("Part_6")]
-position = Vector3(0, 0.740144231, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(2.5, 1.43028846, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_wolf_savanna_collision_damage_146"]
+transform = Transform3D(0.0120192308, 0, 0, 0, 0.0104089592, 0.5, 0, -0.00600961538, 0.866025404, 0, 0.655933071, -0.357572115)
+texture = ExtResource("SourceArt_art1018_05_015")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="collision" type="StaticBody3D" parent="Objects/battle_wolf_savanna_collision_damage_146"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)

@@ -243,7 +243,7 @@ def validate(destination):
                         assert value.startswith(('data:', '#')), (path, value)
             svg_count += 1
     integrated = (destination / 'Runtime/integration.json').is_file()
-    adapted = ['Modules/FrontierDelivery/Scripts/Map/MapCatalog.gd'] if integrated else []
+    adapted = ['Modules/FrontierDelivery/Scripts/Map/MapCatalog.gd', 'Scripts/Application/CreatureFactory.gd'] if integrated else []
     for relative, expected in records['protected_runtime_files'].items():
         if relative in adapted:
             continue  # The later runtime integration deliberately adds version selection here.

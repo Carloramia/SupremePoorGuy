@@ -1,26 +1,25 @@
-[gd_scene load_steps=154 format=3]
+[gd_scene load_steps=91 format=3]
 
 [ext_resource type="Script" path="res://Modules/FrontierDelivery/Scripts/Map/BattleMap3D.gd" id="BattleScript"]
 [ext_resource type="Shader" path="res://Modules/FrontierDelivery/Scripts/Map/BattleGround.gdshader" id="GroundShader"]
 [ext_resource type="Shader" path="res://Modules/FrontierDelivery/Scripts/Map/BattleExterior.gdshader" id="ExteriorShader"]
 [ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/a5bebf1f88ea1c2bce2d23ab.png" id="Texture_0"]
 [ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/58908ba1a1cea84e384726d7.png" id="Texture_1"]
-[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_08_011.tscn" id="Part_0"]
-[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_05_015.tscn" id="Part_1"]
-[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_11_011.tscn" id="Part_2"]
-[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_09_015.tscn" id="Part_3"]
-[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_11_016.tscn" id="Part_4"]
-[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_11_018.tscn" id="Part_5"]
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/a5bebf1f88ea1c2bce2d23ab.png" id="Texture_2"]
-[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/58908ba1a1cea84e384726d7.png" id="Texture_3"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/4d291cb0cdbf030228af351a.png" id="SourceArt_art1018_08_011"]
+
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/13051448c840c6988b94af1e.png" id="SourceArt_art1018_05_015"]
+
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/cff2b8732defa110f3524191.png" id="SourceArt_art1018_11_011"]
+
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/aeb592585ea29f8dac3af15a.png" id="SourceArt_art1018_09_015"]
+
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/58908ba1a1cea84e384726d7.png" id="SourceArt_art1018_11_016"]
+
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/a5bebf1f88ea1c2bce2d23ab.png" id="SourceArt_art1018_11_018"]
 
 [sub_resource type="StandardMaterial3D" id="R0"]
 shading_mode = 0
 albedo_color = Color(0.505882353, 0.57254902, 0.376470588, 1)
-
-[sub_resource type="PrismMesh" id="R1"]
-left_to_right = 0.5
-size = Vector3(1, 1, 1)
 
 [sub_resource type="ShaderMaterial" id="R2"]
 shader = ExtResource("GroundShader")
@@ -335,336 +334,6 @@ points = PackedVector3Array(0.52, 0, 0, 0.52, 3, 0, 0.510008346, 0, 0.0913022707
 [sub_resource type="ConvexPolygonShape3D" id="R72"]
 points = PackedVector3Array(-3.5, 0, -2.5, -3.5, 2, -2.5, 3.5, 0, -2.5, 3.5, 2, -2.5, 3.5, 0, 2.5, 3.5, 2, 2.5, -3.5, 0, 2.5, -3.5, 2, 2.5)
 
-[sub_resource type="StandardMaterial3D" id="R73"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_2")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R74"]
-size = Vector2(3.3, 2.91923077)
-
-[sub_resource type="StandardMaterial3D" id="R75"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_3")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R76"]
-size = Vector2(3.3, 3.23465347)
-
-[sub_resource type="StandardMaterial3D" id="R77"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_3")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R78"]
-size = Vector2(3.3, 3.23465347)
-
-[sub_resource type="StandardMaterial3D" id="R79"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_2")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R80"]
-size = Vector2(3.3, 2.91923077)
-
-[sub_resource type="StandardMaterial3D" id="R81"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_3")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R82"]
-size = Vector2(3.3, 3.23465347)
-
-[sub_resource type="StandardMaterial3D" id="R83"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_2")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R84"]
-size = Vector2(3.3, 2.91923077)
-
-[sub_resource type="StandardMaterial3D" id="R85"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_3")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R86"]
-size = Vector2(3.3, 3.23465347)
-
-[sub_resource type="StandardMaterial3D" id="R87"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_3")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R88"]
-size = Vector2(3.3, 3.23465347)
-
-[sub_resource type="StandardMaterial3D" id="R89"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_2")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R90"]
-size = Vector2(3.3, 2.91923077)
-
-[sub_resource type="StandardMaterial3D" id="R91"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_3")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R92"]
-size = Vector2(3.3, 3.23465347)
-
-[sub_resource type="StandardMaterial3D" id="R93"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_2")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R94"]
-size = Vector2(3.3, 2.91923077)
-
-[sub_resource type="StandardMaterial3D" id="R95"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_3")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R96"]
-size = Vector2(3.3, 3.23465347)
-
-[sub_resource type="StandardMaterial3D" id="R97"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_3")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R98"]
-size = Vector2(3.3, 3.23465347)
-
-[sub_resource type="StandardMaterial3D" id="R99"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_2")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R100"]
-size = Vector2(3.3, 2.91923077)
-
-[sub_resource type="StandardMaterial3D" id="R101"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_3")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R102"]
-size = Vector2(3.3, 3.23465347)
-
-[sub_resource type="StandardMaterial3D" id="R103"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_2")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R104"]
-size = Vector2(3.3, 2.91923077)
-
-[sub_resource type="StandardMaterial3D" id="R105"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_3")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R106"]
-size = Vector2(3.3, 3.23465347)
-
-[sub_resource type="StandardMaterial3D" id="R107"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_3")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R108"]
-size = Vector2(3.3, 3.23465347)
-
-[sub_resource type="StandardMaterial3D" id="R109"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_2")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R110"]
-size = Vector2(3.3, 2.91923077)
-
-[sub_resource type="StandardMaterial3D" id="R111"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_3")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R112"]
-size = Vector2(3.3, 3.23465347)
-
-[sub_resource type="StandardMaterial3D" id="R113"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_2")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R114"]
-size = Vector2(3.3, 2.91923077)
-
-[sub_resource type="StandardMaterial3D" id="R115"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_3")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R116"]
-size = Vector2(3.3, 3.23465347)
-
-[sub_resource type="StandardMaterial3D" id="R117"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_3")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R118"]
-size = Vector2(3.3, 3.23465347)
-
-[sub_resource type="StandardMaterial3D" id="R119"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_2")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R120"]
-size = Vector2(3.3, 2.91923077)
-
-[sub_resource type="StandardMaterial3D" id="R121"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_3")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R122"]
-size = Vector2(3.3, 3.23465347)
-
-[sub_resource type="StandardMaterial3D" id="R123"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_2")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R124"]
-size = Vector2(3.3, 2.91923077)
-
-[sub_resource type="StandardMaterial3D" id="R125"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_3")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R126"]
-size = Vector2(3.3, 3.23465347)
-
-[sub_resource type="StandardMaterial3D" id="R127"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_3")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R128"]
-size = Vector2(3.3, 3.23465347)
-
-[sub_resource type="StandardMaterial3D" id="R129"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_2")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R130"]
-size = Vector2(3.3, 2.91923077)
-
-[sub_resource type="StandardMaterial3D" id="R131"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-albedo_texture = ExtResource("Texture_3")
-albedo_color = Color(1,1,1,1)
-texture_filter = 1
-
-[sub_resource type="PlaneMesh" id="R132"]
-size = Vector2(3.3, 3.23465347)
-
 [sub_resource type="BoxShape3D" id="R133"]
 size = Vector3(24, 12, 0.5)
 
@@ -934,21 +603,37 @@ position = Vector3(5, 0, -4)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_011"
-[node name="PhysicalPart" parent="Objects/battle_grass_sheep_boss__scene_011" instance=ExtResource("Part_0")]
-position = Vector3(0, 2.25037313, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(8.4, 4.45074627, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_011"]
+transform = Transform3D(0.0626865672, 0, 0, 0, 0.0542881596, 0.5, 0, -0.0313432836, 0.866025404, 0, 1.96182967, -1.11268657)
+texture = ExtResource("SourceArt_art1018_08_011")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_001" type="Node3D" parent="Objects"]
 position = Vector3(-7, 0, -5)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_001"
-[node name="PhysicalPart" parent="Objects/battle_grass_sheep_boss__scene_001" instance=ExtResource("Part_1")]
-position = Vector3(0, 1.11201923, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(3.8, 2.17403846, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_001"]
+transform = Transform3D(0.0182692308, 0, 0, 0, 0.015821618, 0.5, 0, -0.00913461538, 0.866025404, 0, 0.976386268, -0.543509615)
+texture = ExtResource("SourceArt_art1018_05_015")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_002" type="Node3D" parent="Objects"]
 position = Vector3(-7, 0, -4.506)
 rotation = Vector3(0, -0, 0)
@@ -966,11 +651,19 @@ position = Vector3(11, 0, 8)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_003"
-[node name="PhysicalPart" parent="Objects/battle_grass_sheep_boss__scene_003" instance=ExtResource("Part_1")]
-position = Vector3(0, 1.25504808, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(4.3, 2.46009615, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_003"]
+transform = Transform3D(0.0206730769, 0, 0, 0, 0.0179034098, 0.5, 0, -0.0103365385, 0.866025404, 0, 1.10025288, -0.615024038)
+texture = ExtResource("SourceArt_art1018_05_015")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_004" type="Node3D" parent="Objects"]
 position = Vector3(11, 0, 8.559)
 rotation = Vector3(0, -0, 0)
@@ -988,11 +681,19 @@ position = Vector3(-13, 0, -7)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_005"
-[node name="PhysicalPart" parent="Objects/battle_grass_sheep_boss__scene_005" instance=ExtResource("Part_1")]
-position = Vector3(0, 0.940384615, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(3.2, 1.83076923, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_005"]
+transform = Transform3D(0.0153846154, 0, 0, 0, 0.0133234678, 0.5, 0, -0.00769230769, 0.866025404, 0, 0.827746331, -0.457692308)
+texture = ExtResource("SourceArt_art1018_05_015")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_006" type="Node3D" parent="Objects"]
 position = Vector3(-13, 0, -6.584)
 rotation = Vector3(0, -0, 0)
@@ -1010,11 +711,19 @@ position = Vector3(-14, 0, 0)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_007"
-[node name="PhysicalPart" parent="Objects/battle_grass_sheep_boss__scene_007" instance=ExtResource("Part_2")]
-position = Vector3(0, 3.74440299, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(5.6, 7.43880597, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_007"]
+transform = Transform3D(0.0278606965, 0, 0, 0, 0.024128071, 0.5, 0, -0.0139303483, 0.866025404, 0, 3.25609747, -1.85970149)
+texture = ExtResource("SourceArt_art1018_11_011")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_008" type="Node3D" parent="Objects"]
 position = Vector3(-14, 0, 2.38)
 rotation = Vector3(0, -0, 0)
@@ -1032,11 +741,19 @@ position = Vector3(14, 0, 3)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_009"
-[node name="PhysicalPart" parent="Objects/battle_grass_sheep_boss__scene_009" instance=ExtResource("Part_2")]
-position = Vector3(0, 3.47873134, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(5.2, 6.90746269, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_009"]
+transform = Transform3D(0.0258706468, 0, 0, 0, 0.0224046373, 0.5, 0, -0.0129353234, 0.866025404, 0, 3.02601908, -1.72686567)
+texture = ExtResource("SourceArt_art1018_11_011")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_010" type="Node3D" parent="Objects"]
 position = Vector3(14, 0, 5.21)
 rotation = Vector3(0, -0, 0)
@@ -1054,93 +771,165 @@ position = Vector3(9, 0, -14)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_012"
-[node name="PhysicalPart" parent="Objects/battle_grass_sheep_boss__scene_012" instance=ExtResource("Part_3")]
-position = Vector3(0, 1.70708955, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(4.2, 3.3641791, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_012"]
+transform = Transform3D(0.0208955224, 0, 0, 0, 0.0180960532, 0.5, 0, -0.0104477612, 0.866025404, 0, 1.49173228, -0.841044776)
+texture = ExtResource("SourceArt_art1018_09_015")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_043" type="Node3D" parent="Objects"]
 position = Vector3(-10, 0, 1)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_043"
-[node name="PhysicalPart" parent="Objects/battle_grass_sheep_boss__scene_043" instance=ExtResource("Part_4")]
-position = Vector3(0, 1.78935644, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(3.6, 3.52871287, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_043"]
+transform = Transform3D(0.0356435644, 0, 0, 0, 0.0308682322, 0.5, 0, -0.0178217822, 0.866025404, 0, 1.56297749, -0.882178218)
+texture = ExtResource("SourceArt_art1018_11_016")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_044" type="Node3D" parent="Objects"]
 position = Vector3(-4, 0, -10)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_044"
-[node name="PhysicalPart" parent="Objects/battle_grass_sheep_boss__scene_044" instance=ExtResource("Part_5")]
-position = Vector3(0, 1.61730769, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(3.6, 3.18461538, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_044"]
+transform = Transform3D(0.0461538462, 0, 0, 0, 0.0399704033, 0.5, 0, -0.0230769231, 0.866025404, 0, 1.41397891, -0.796153846)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_045" type="Node3D" parent="Objects"]
 position = Vector3(-1, 0, 10)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_045"
-[node name="PhysicalPart" parent="Objects/battle_grass_sheep_boss__scene_045" instance=ExtResource("Part_4")]
-position = Vector3(0, 1.78935644, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(3.6, 3.52871287, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_045"]
+transform = Transform3D(0.0356435644, 0, 0, 0, 0.0308682322, 0.5, 0, -0.0178217822, 0.866025404, 0, 1.56297749, -0.882178218)
+texture = ExtResource("SourceArt_art1018_11_016")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_046" type="Node3D" parent="Objects"]
 position = Vector3(11, 0, -1)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_046"
-[node name="PhysicalPart" parent="Objects/battle_grass_sheep_boss__scene_046" instance=ExtResource("Part_5")]
-position = Vector3(0, 1.61730769, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(3.6, 3.18461538, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_046"]
+transform = Transform3D(0.0461538462, 0, 0, 0, 0.0399704033, 0.5, 0, -0.0230769231, 0.866025404, 0, 1.41397891, -0.796153846)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_047" type="Node3D" parent="Objects"]
 position = Vector3(4, 0, 12)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_047"
-[node name="PhysicalPart" parent="Objects/battle_grass_sheep_boss__scene_047" instance=ExtResource("Part_4")]
-position = Vector3(0, 1.78935644, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(3.6, 3.52871287, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_047"]
+transform = Transform3D(0.0356435644, 0, 0, 0, 0.0308682322, 0.5, 0, -0.0178217822, 0.866025404, 0, 1.56297749, -0.882178218)
+texture = ExtResource("SourceArt_art1018_11_016")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_048" type="Node3D" parent="Objects"]
 position = Vector3(0, 0, -14)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_048"
-[node name="PhysicalPart" parent="Objects/battle_grass_sheep_boss__scene_048" instance=ExtResource("Part_5")]
-position = Vector3(0, 1.61730769, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(3.6, 3.18461538, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_048"]
+transform = Transform3D(0.0461538462, 0, 0, 0, 0.0399704033, 0.5, 0, -0.0230769231, 0.866025404, 0, 1.41397891, -0.796153846)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_049" type="Node3D" parent="Objects"]
 position = Vector3(13, 0, 9)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_049"
-[node name="PhysicalPart" parent="Objects/battle_grass_sheep_boss__scene_049" instance=ExtResource("Part_4")]
-position = Vector3(0, 1.78935644, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(3.6, 3.52871287, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_049"]
+transform = Transform3D(0.0356435644, 0, 0, 0, 0.0308682322, 0.5, 0, -0.0178217822, 0.866025404, 0, 1.56297749, -0.882178218)
+texture = ExtResource("SourceArt_art1018_11_016")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_050" type="Node3D" parent="Objects"]
 position = Vector3(-13, 0, -11)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_050"
-[node name="PhysicalPart" parent="Objects/battle_grass_sheep_boss__scene_050" instance=ExtResource("Part_5")]
-position = Vector3(0, 1.61730769, 0)
-rotation = Vector3(0, 0, 0)
-scale = Vector3(3.6, 3.18461538, 0.08)
-metadata/decoration_collision_enabled = false
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_050"]
+transform = Transform3D(0.0461538462, 0, 0, 0, 0.0399704033, 0.5, 0, -0.0230769231, 0.866025404, 0, 1.41397891, -0.796153846)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
+cast_shadow = 0
+billboard = 0
+visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="sheep_arena_player_deploy_01" type="Node3D" parent="Objects"]
-position = Vector3(-11, 0, 8)
+position = Vector3(-9.12, 0, 0)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "sheep_arena_player_deploy_01"
@@ -1152,22 +941,22 @@ collision_mask = 1
 [node name="Shape" type="CollisionShape3D" parent="Objects/sheep_arena_player_deploy_01/region"]
 shape = SubResource("R72")
 [node name="battle_grass_sheep_boss__enemy_1" type="Node3D" parent="Objects"]
-position = Vector3(5, 0, -4)
+position = Vector3(9.79, 0, 3.75)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__enemy_1"
 [node name="battle_grass_sheep_boss__enemy_2" type="Node3D" parent="Objects"]
-position = Vector3(1, 0, -10)
+position = Vector3(5.79, 0, -2.25)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__enemy_2"
 [node name="battle_grass_sheep_boss__enemy_3" type="Node3D" parent="Objects"]
-position = Vector3(7, 0, -11)
+position = Vector3(11.79, 0, -3.25)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__enemy_3"
 [node name="battle_grass_sheep_boss__enemy_4" type="Node3D" parent="Objects"]
-position = Vector3(12, 0, -6)
+position = Vector3(16.79, 0, 1.75)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__enemy_4"
@@ -1176,331 +965,541 @@ position = Vector3(20.52, 0, 1.871)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_013"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_grass_sheep_boss__scene_013"]
-position = Vector3(0, 0.095, 0)
-mesh = SubResource("R74")
-material_override = SubResource("R73")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_013"]
+transform = Transform3D(0.0423076923, 0, 0, 0, 0.0366395363, 0.5, 0, -0.0211538462, 0.866025404, 0, 1.299264, -0.729807692)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_014" type="Node3D" parent="Objects"]
 position = Vector3(18.727, 0, 5.724)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_014"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_grass_sheep_boss__scene_014"]
-position = Vector3(0, 0.098, 0)
-mesh = SubResource("R76")
-material_override = SubResource("R75")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_014"]
+transform = Transform3D(0.0326732673, 0, 0, 0, 0.0282958795, 0.5, 0, -0.0163366337, 0.866025404, 0, 1.43584604, -0.808663366)
+texture = ExtResource("SourceArt_art1018_11_016")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_015" type="Node3D" parent="Objects"]
 position = Vector3(16.2, 0, 9.353)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_015"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_grass_sheep_boss__scene_015"]
-position = Vector3(0, 0.101, 0)
-mesh = SubResource("R78")
-material_override = SubResource("R77")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_015"]
+transform = Transform3D(0.0326732673, 0, 0, 0, 0.0282958795, 0.5, 0, -0.0163366337, 0.866025404, 0, 1.43584604, -0.808663366)
+texture = ExtResource("SourceArt_art1018_11_016")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_016" type="Node3D" parent="Objects"]
 position = Vector3(14.321, 0, 13.356)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_016"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_grass_sheep_boss__scene_016"]
-position = Vector3(0, 0.104, 0)
-mesh = SubResource("R80")
-material_override = SubResource("R79")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_016"]
+transform = Transform3D(0.0423076923, 0, 0, 0, 0.0366395363, 0.5, 0, -0.0211538462, 0.866025404, 0, 1.299264, -0.729807692)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_017" type="Node3D" parent="Objects"]
 position = Vector3(11.88, 0, 16.836)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_017"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_grass_sheep_boss__scene_017"]
-position = Vector3(0, 0.107, 0)
-mesh = SubResource("R82")
-material_override = SubResource("R81")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_017"]
+transform = Transform3D(0.0326732673, 0, 0, 0, 0.0282958795, 0.5, 0, -0.0163366337, 0.866025404, 0, 1.43584604, -0.808663366)
+texture = ExtResource("SourceArt_art1018_11_016")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_018" type="Node3D" parent="Objects"]
 position = Vector3(8.64, 0, 18.706)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_018"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_grass_sheep_boss__scene_018"]
-position = Vector3(0, 0.11, 0)
-mesh = SubResource("R84")
-material_override = SubResource("R83")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_018"]
+transform = Transform3D(0.0423076923, 0, 0, 0, 0.0366395363, 0.5, 0, -0.0211538462, 0.866025404, 0, 1.299264, -0.729807692)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_019" type="Node3D" parent="Objects"]
 position = Vector3(4.406, 0, 19.08)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_019"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_grass_sheep_boss__scene_019"]
-position = Vector3(0, 0.113, 0)
-mesh = SubResource("R86")
-material_override = SubResource("R85")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_019"]
+transform = Transform3D(0.0326732673, 0, 0, 0, 0.0282958795, 0.5, 0, -0.0163366337, 0.866025404, 0, 1.43584604, -0.808663366)
+texture = ExtResource("SourceArt_art1018_11_016")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_020" type="Node3D" parent="Objects"]
 position = Vector3(0, 0, 18.706)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_020"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_grass_sheep_boss__scene_020"]
-position = Vector3(0, 0.116, 0)
-mesh = SubResource("R88")
-material_override = SubResource("R87")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_020"]
+transform = Transform3D(0.0326732673, 0, 0, 0, 0.0282958795, 0.5, 0, -0.0163366337, 0.866025404, 0, 1.43584604, -0.808663366)
+texture = ExtResource("SourceArt_art1018_11_016")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_021" type="Node3D" parent="Objects"]
 position = Vector3(-4.406, 0, 19.08)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_021"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_grass_sheep_boss__scene_021"]
-position = Vector3(0, 0.119, 0)
-mesh = SubResource("R90")
-material_override = SubResource("R89")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_021"]
+transform = Transform3D(0.0423076923, 0, 0, 0, 0.0366395363, 0.5, 0, -0.0211538462, 0.866025404, 0, 1.299264, -0.729807692)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_022" type="Node3D" parent="Objects"]
 position = Vector3(-8.64, 0, 18.706)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_022"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_grass_sheep_boss__scene_022"]
-position = Vector3(0, 0.122, 0)
-mesh = SubResource("R92")
-material_override = SubResource("R91")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_022"]
+transform = Transform3D(0.0326732673, 0, 0, 0, 0.0282958795, 0.5, 0, -0.0163366337, 0.866025404, 0, 1.43584604, -0.808663366)
+texture = ExtResource("SourceArt_art1018_11_016")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_023" type="Node3D" parent="Objects"]
 position = Vector3(-11.88, 0, 16.836)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_023"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_grass_sheep_boss__scene_023"]
-position = Vector3(0, 0.125, 0)
-mesh = SubResource("R94")
-material_override = SubResource("R93")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_023"]
+transform = Transform3D(0.0423076923, 0, 0, 0, 0.0366395363, 0.5, 0, -0.0211538462, 0.866025404, 0, 1.299264, -0.729807692)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_024" type="Node3D" parent="Objects"]
 position = Vector3(-14.321, 0, 13.356)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_024"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_grass_sheep_boss__scene_024"]
-position = Vector3(0, 0.128, 0)
-mesh = SubResource("R96")
-material_override = SubResource("R95")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_024"]
+transform = Transform3D(0.0326732673, 0, 0, 0, 0.0282958795, 0.5, 0, -0.0163366337, 0.866025404, 0, 1.43584604, -0.808663366)
+texture = ExtResource("SourceArt_art1018_11_016")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_025" type="Node3D" parent="Objects"]
 position = Vector3(-16.2, 0, 9.353)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_025"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_grass_sheep_boss__scene_025"]
-position = Vector3(0, 0.131, 0)
-mesh = SubResource("R98")
-material_override = SubResource("R97")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_025"]
+transform = Transform3D(0.0326732673, 0, 0, 0, 0.0282958795, 0.5, 0, -0.0163366337, 0.866025404, 0, 1.43584604, -0.808663366)
+texture = ExtResource("SourceArt_art1018_11_016")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_026" type="Node3D" parent="Objects"]
 position = Vector3(-18.727, 0, 5.724)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_026"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_grass_sheep_boss__scene_026"]
-position = Vector3(0, 0.134, 0)
-mesh = SubResource("R100")
-material_override = SubResource("R99")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_026"]
+transform = Transform3D(0.0423076923, 0, 0, 0, 0.0366395363, 0.5, 0, -0.0211538462, 0.866025404, 0, 1.299264, -0.729807692)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_027" type="Node3D" parent="Objects"]
 position = Vector3(-20.52, 0, 1.871)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_027"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_grass_sheep_boss__scene_027"]
-position = Vector3(0, 0.137, 0)
-mesh = SubResource("R102")
-material_override = SubResource("R101")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_027"]
+transform = Transform3D(0.0326732673, 0, 0, 0, 0.0282958795, 0.5, 0, -0.0163366337, 0.866025404, 0, 1.43584604, -0.808663366)
+texture = ExtResource("SourceArt_art1018_11_016")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_028" type="Node3D" parent="Objects"]
 position = Vector3(-20.52, 0, -1.871)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_028"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_grass_sheep_boss__scene_028"]
-position = Vector3(0, 0.14, 0)
-mesh = SubResource("R104")
-material_override = SubResource("R103")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_028"]
+transform = Transform3D(0.0423076923, 0, 0, 0, 0.0366395363, 0.5, 0, -0.0211538462, 0.866025404, 0, 1.299264, -0.729807692)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_029" type="Node3D" parent="Objects"]
 position = Vector3(-18.727, 0, -5.724)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_029"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_grass_sheep_boss__scene_029"]
-position = Vector3(0, 0.143, 0)
-mesh = SubResource("R106")
-material_override = SubResource("R105")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_029"]
+transform = Transform3D(0.0326732673, 0, 0, 0, 0.0282958795, 0.5, 0, -0.0163366337, 0.866025404, 0, 1.43584604, -0.808663366)
+texture = ExtResource("SourceArt_art1018_11_016")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_030" type="Node3D" parent="Objects"]
 position = Vector3(-16.2, 0, -9.353)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_030"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_grass_sheep_boss__scene_030"]
-position = Vector3(0, 0.146, 0)
-mesh = SubResource("R108")
-material_override = SubResource("R107")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_030"]
+transform = Transform3D(0.0326732673, 0, 0, 0, 0.0282958795, 0.5, 0, -0.0163366337, 0.866025404, 0, 1.43584604, -0.808663366)
+texture = ExtResource("SourceArt_art1018_11_016")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_031" type="Node3D" parent="Objects"]
 position = Vector3(-14.321, 0, -13.356)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_031"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_grass_sheep_boss__scene_031"]
-position = Vector3(0, 0.149, 0)
-mesh = SubResource("R110")
-material_override = SubResource("R109")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_031"]
+transform = Transform3D(0.0423076923, 0, 0, 0, 0.0366395363, 0.5, 0, -0.0211538462, 0.866025404, 0, 1.299264, -0.729807692)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_032" type="Node3D" parent="Objects"]
 position = Vector3(-11.88, 0, -16.836)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_032"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_grass_sheep_boss__scene_032"]
-position = Vector3(0, 0.152, 0)
-mesh = SubResource("R112")
-material_override = SubResource("R111")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_032"]
+transform = Transform3D(0.0326732673, 0, 0, 0, 0.0282958795, 0.5, 0, -0.0163366337, 0.866025404, 0, 1.43584604, -0.808663366)
+texture = ExtResource("SourceArt_art1018_11_016")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_033" type="Node3D" parent="Objects"]
 position = Vector3(-8.64, 0, -18.706)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_033"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_grass_sheep_boss__scene_033"]
-position = Vector3(0, 0.155, 0)
-mesh = SubResource("R114")
-material_override = SubResource("R113")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_033"]
+transform = Transform3D(0.0423076923, 0, 0, 0, 0.0366395363, 0.5, 0, -0.0211538462, 0.866025404, 0, 1.299264, -0.729807692)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_034" type="Node3D" parent="Objects"]
 position = Vector3(-4.406, 0, -19.08)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_034"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_grass_sheep_boss__scene_034"]
-position = Vector3(0, 0.158, 0)
-mesh = SubResource("R116")
-material_override = SubResource("R115")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_034"]
+transform = Transform3D(0.0326732673, 0, 0, 0, 0.0282958795, 0.5, 0, -0.0163366337, 0.866025404, 0, 1.43584604, -0.808663366)
+texture = ExtResource("SourceArt_art1018_11_016")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_035" type="Node3D" parent="Objects"]
 position = Vector3(0, 0, -18.706)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_035"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_grass_sheep_boss__scene_035"]
-position = Vector3(0, 0.161, 0)
-mesh = SubResource("R118")
-material_override = SubResource("R117")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_035"]
+transform = Transform3D(0.0326732673, 0, 0, 0, 0.0282958795, 0.5, 0, -0.0163366337, 0.866025404, 0, 1.43584604, -0.808663366)
+texture = ExtResource("SourceArt_art1018_11_016")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_036" type="Node3D" parent="Objects"]
 position = Vector3(4.406, 0, -19.08)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_036"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_grass_sheep_boss__scene_036"]
-position = Vector3(0, 0.164, 0)
-mesh = SubResource("R120")
-material_override = SubResource("R119")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_036"]
+transform = Transform3D(0.0423076923, 0, 0, 0, 0.0366395363, 0.5, 0, -0.0211538462, 0.866025404, 0, 1.299264, -0.729807692)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_037" type="Node3D" parent="Objects"]
 position = Vector3(8.64, 0, -18.706)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_037"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_grass_sheep_boss__scene_037"]
-position = Vector3(0, 0.167, 0)
-mesh = SubResource("R122")
-material_override = SubResource("R121")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_037"]
+transform = Transform3D(0.0326732673, 0, 0, 0, 0.0282958795, 0.5, 0, -0.0163366337, 0.866025404, 0, 1.43584604, -0.808663366)
+texture = ExtResource("SourceArt_art1018_11_016")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_038" type="Node3D" parent="Objects"]
 position = Vector3(11.88, 0, -16.836)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_038"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_grass_sheep_boss__scene_038"]
-position = Vector3(0, 0.17, 0)
-mesh = SubResource("R124")
-material_override = SubResource("R123")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_038"]
+transform = Transform3D(0.0423076923, 0, 0, 0, 0.0366395363, 0.5, 0, -0.0211538462, 0.866025404, 0, 1.299264, -0.729807692)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_039" type="Node3D" parent="Objects"]
 position = Vector3(14.321, 0, -13.356)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_039"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_grass_sheep_boss__scene_039"]
-position = Vector3(0, 0.173, 0)
-mesh = SubResource("R126")
-material_override = SubResource("R125")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_039"]
+transform = Transform3D(0.0326732673, 0, 0, 0, 0.0282958795, 0.5, 0, -0.0163366337, 0.866025404, 0, 1.43584604, -0.808663366)
+texture = ExtResource("SourceArt_art1018_11_016")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_040" type="Node3D" parent="Objects"]
 position = Vector3(16.2, 0, -9.353)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_040"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_grass_sheep_boss__scene_040"]
-position = Vector3(0, 0.176, 0)
-mesh = SubResource("R128")
-material_override = SubResource("R127")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_040"]
+transform = Transform3D(0.0326732673, 0, 0, 0, 0.0282958795, 0.5, 0, -0.0163366337, 0.866025404, 0, 1.43584604, -0.808663366)
+texture = ExtResource("SourceArt_art1018_11_016")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_041" type="Node3D" parent="Objects"]
 position = Vector3(18.727, 0, -5.724)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_041"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_grass_sheep_boss__scene_041"]
-position = Vector3(0, 0.179, 0)
-mesh = SubResource("R130")
-material_override = SubResource("R129")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_041"]
+transform = Transform3D(0.0423076923, 0, 0, 0, 0.0366395363, 0.5, 0, -0.0211538462, 0.866025404, 0, 1.299264, -0.729807692)
+texture = ExtResource("SourceArt_art1018_11_018")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="battle_grass_sheep_boss__scene_042" type="Node3D" parent="Objects"]
 position = Vector3(20.52, 0, -1.871)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_grass_sheep_boss__scene_042"
-[node name="Visual" type="MeshInstance3D" parent="Objects/battle_grass_sheep_boss__scene_042"]
-position = Vector3(0, 0.182, 0)
-mesh = SubResource("R132")
-material_override = SubResource("R131")
+[node name="Visual" type="Sprite3D" parent="Objects/battle_grass_sheep_boss__scene_042"]
+transform = Transform3D(0.0326732673, 0, 0, 0, 0.0282958795, 0.5, 0, -0.0163366337, 0.866025404, 0, 1.43584604, -0.808663366)
+texture = ExtResource("SourceArt_art1018_11_016")
+pixel_size = 1.0
+modulate = Color(1, 1, 1, 1)
+texture_filter = 3
+alpha_cut = 2
 cast_shadow = 0
+billboard = 0
 visible = true
+metadata/surface_mode = "tilted"
+metadata/tilt_from_ground = 60
+
 [node name="Boundary0" type="StaticBody3D" parent="."]
 position = Vector3(18, 6, 10.3923048)
 rotation = Vector3(0, -2.0943951, 0)

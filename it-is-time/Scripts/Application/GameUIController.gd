@@ -3,7 +3,11 @@ extends "res://Modules/PaperUI/Scripts/GameDemo.gd"
 var application: Node
 var pause_hint: Label
 var deployment_hint: Label
+var capacity_hint: Label
 var start_battle_button: Button
+var reinforcement_button: Button
+var confirm_reinforcement_button: Button
+var cancel_reinforcement_button: Button
 var _main_menu_button: Button
 var _portrait_renderer: Node
 var visual_preset: Resource
@@ -43,6 +47,13 @@ func _ready() -> void:
 	deployment_hint.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
 	deployment_hint.offset_top = 14
 	deployment_hint.offset_bottom = 78
+	capacity_hint = pause_hint.duplicate()
+	capacity_hint.name = "BattleCapacity"
+	capacity_hint.add_theme_font_size_override("font_size",16)
+	capacity_hint.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	view.add_child(capacity_hint)
+	capacity_hint.offset_top = 84
+	capacity_hint.offset_bottom = 108
 	start_battle_button = _btn(view,"开始战斗",func(): application.start_battle())
 	start_battle_button.name = "StartBattle"
 	start_battle_button.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
@@ -52,6 +63,29 @@ func _ready() -> void:
 	start_battle_button.offset_bottom = -20
 	start_battle_button.focus_mode = Control.FOCUS_NONE
 	start_battle_button.hide()
+	reinforcement_button = _btn(view,"ui.reinforcements.open",func(): application.open_reinforcements())
+	reinforcement_button.name = "Reinforcements"
+	reinforcement_button.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
+	reinforcement_button.offset_left = -220
+	reinforcement_button.offset_right = -20
+	reinforcement_button.offset_top = -72
+	reinforcement_button.offset_bottom = -20
+	reinforcement_button.focus_mode = Control.FOCUS_NONE
+	confirm_reinforcement_button = _btn(view,"ui.reinforcements.confirm",func(): application.confirm_reinforcement())
+	confirm_reinforcement_button.name = "ConfirmReinforcement"
+	confirm_reinforcement_button.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
+	confirm_reinforcement_button.offset_left = -210
+	confirm_reinforcement_button.offset_right = -10
+	confirm_reinforcement_button.offset_top = -72
+	confirm_reinforcement_button.offset_bottom = -20
+	cancel_reinforcement_button = _btn(view,"ui.reinforcements.cancel",func(): application.cancel_reinforcement())
+	cancel_reinforcement_button.name = "CancelReinforcement"
+	cancel_reinforcement_button.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
+	cancel_reinforcement_button.offset_left = 10
+	cancel_reinforcement_button.offset_right = 210
+	cancel_reinforcement_button.offset_top = -72
+	cancel_reinforcement_button.offset_bottom = -20
+	for button: Button in [reinforcement_button,confirm_reinforcement_button,cancel_reinforcement_button]: button.hide()
 	resized.connect(_resize_event)
 	main_menu.get_node("%Continue").disabled = not state.has_save()
 	_show("main")
@@ -68,6 +102,9 @@ func set_visual_preset(preset: Resource) -> void:
 
 func update_battle_controls(in_battle: bool, manually_paused: bool, free_mouse: bool) -> void:
 	if is_instance_valid(pause_hint): pause_hint.visible = in_battle and manually_paused
+	capacity_hint.visible = route == "battle" and application.phase in ["deployment","battle","reinforcement"] and not overlay.visible and is_instance_valid(application.battle)
+	if capacity_hint.visible:
+		capacity_hint.text = L10N.text("ui.capacity.both",{"allies":application.battle.capacity_status().used,"enemies":application.battle.capacity_status(1).used,"limit":application.battle_capacity_settings.total_capacity})
 	if route=="battle" and in_battle and not overlay.visible:
 		status.text = "战斗已暂停 · Space 继续；Q 切换鼠标" if manually_paused else ("自由鼠标 · Q 返回地形光标；Space 暂停战斗" if free_mouse else "Q 显示自由鼠标；Space 暂停战斗；双方由 AI 控制。")
 
@@ -75,11 +112,39 @@ func update_deployment_controls(deploying: bool, can_start: bool, error: String)
 	var shown := deploying and route == "battle" and not overlay.visible
 	start_battle_button.visible = shown
 	start_battle_button.disabled = not can_start
-	start_battle_button.tooltip_text = "请先在合法位置放下正在拖动的生物。" if not can_start else "结束部署并启用双方 AI。"
+	start_battle_button.tooltip_text = error if not error.is_empty() else "请先在合法位置放下正在拖动的生物。" if not can_start else "结束部署并启用双方 AI。"
 	deployment_hint.visible = shown
 	deployment_hint.text = "部署阶段 · 蓝色边界内调整友军 · Q 切换鼠标"
 	deployment_hint.text += "\n" + (error if not error.is_empty() else ("再次点击左键放置；放置后才可开始战斗。" if not can_start else "靠近友军后点击左键拾起，再次点击放置；按 Q 后点击开始战斗。"))
 	if shown: status.text = "部署期间双方保持静止，位置调整仅在本场战斗生效。"
+
+func update_reinforcement_controls() -> void:
+	var available := route == "battle" and is_instance_valid(application.battle) and not overlay.visible
+	reinforcement_button.visible = available and application.phase == "battle"
+	if reinforcement_button.visible: reinforcement_button.disabled = application.battle.reserve_records().is_empty() or application.battle.ended
+	var placing: bool = available and application.phase == "reinforcement" and is_instance_valid(application.battle.deployment)
+	confirm_reinforcement_button.visible = placing
+	cancel_reinforcement_button.visible = placing
+	if placing:
+		confirm_reinforcement_button.disabled = not application.battle.deployment.can_start() or not application.battle.deployment.placement_error.is_empty()
+		deployment_hint.visible = true
+		deployment_hint.text = L10N.text("ui.reinforcements.placement")+"\n"+application.battle.deployment.placement_error
+
+func show_reinforcements() -> void:
+	_modal(L10N.text("ui.reinforcements.title"),func(body):
+		var host: Node3D = application.battle
+		var page: Control = _text_screen(body,L10N.text("ui.reinforcements.description")+"\n"+application.battle_capacity_settings.summary(host.capacity_status()))
+		var commands: Node = page.get_node("%Commands")
+		var records: Array = host.reserve_records()
+		if records.is_empty(): _btn(commands,"ui.reinforcements.empty",func(): pass).disabled = true
+		for record: Dictionary in records:
+			var text := L10N.text("ui.reinforcements.unit",{"name":L10N.creature_name(record),"cost":application.battle_capacity_settings.creature_cost(record)})
+			var button := _btn(commands,text,application.begin_reinforcement.bind(str(record.id)))
+			button.name = "Reserve_"+str(record.id).validate_node_name()
+			var error: String = host.reinforcement_error(record)
+			button.disabled = not error.is_empty()
+			button.tooltip_text = error
+		_btn(commands,"ui.reinforcements.retreat",func(): application.request_retreat()),"reinforcements")
 
 func _show(next: String) -> void:
 	if next == "main":
@@ -98,7 +163,7 @@ func _show(next: String) -> void:
 	if next == "eruption":
 		view.play_summon(state.data.pending.map(func(id): return state.monster_by_id(id)))
 		_btn(actions,"跳过召唤演出",func(): view.skip_eruption())
-	status.text = {"main":"ItIsTime","world":"点击地点后前往，抵达后交互。","battle":"自由光标观察战斗，双方由 AI 控制；队伍变更在下一战生效。","eruption":"召唤结果已保存，演出不会再次生成。"}.get(next,"")
+	status.text = {"main":"ItIsTime","world":"点击地点后前往，抵达后交互。","battle":"自由光标观察战斗，双方由 AI 控制；使用增援调用仓库生物。","eruption":"召唤结果已保存，演出不会再次生成。"}.get(next,"")
 	actions.visible = actions.get_child_count()>0
 	main_content.visible = not _has_page_root()
 	status.visible = next != "main" and not _has_page_root()
@@ -126,7 +191,7 @@ func _navigation_requested(action: String) -> void:
 	if action == "world" and application.phase == "scenario":
 		application._scenario_exit(&"return_to_map")
 		return
-	if action == "world" and application.phase in ["deployment","battle"]:
+	if action == "world" and application.phase in ["deployment","battle","reinforcement"]:
 		_confirm("撤退？","返回大地图，本次战斗不发放胜利奖励。",func(): application.request_retreat())
 	else: super._navigation_requested(action)
 
@@ -197,6 +262,7 @@ func _fill_detail(body: VBoxContainer, id: String) -> void:
 		else: _notice(state.last_error if not state.last_error.is_empty() else "名称不能为空"))
 	for trait_name: String in monster.traits:
 		_btn(page.get_node("%Traits"),"【%s】" % trait_name,func(): _trait(trait_name))
+	_append_capacity_detail(body,monster)
 
 func _trait(name_text: String) -> void:
 	for rune: Dictionary in Rules.RUNES:
@@ -288,14 +354,23 @@ func _resize_event() -> void:
 func _render_modal() -> void:
 	super._render_modal()
 	_resize_event()
+	close_button.visible=modal_stack.is_empty() or modal_stack.back().get("kind")!="opening_event"
 	if not modal_stack.is_empty() and modal_stack.back().get("kind","") != "settings": close_button.text = close_button.text.replace(" / Esc","")
 	if application != null: close_button.disabled = (application.phase=="settlement" or _battle_cancel_needs_save()) and modal_stack.size()==1 and modal_stack.back().get("kind","") != "settings"
+	if not modal_stack.is_empty() and modal_stack.back().get("kind")=="opening_event":
+		close_button.disabled=true
+		var next := modal_box.find_child("OpeningNext",true,false) as Button
+		if next!=null: next.grab_focus()
+	if not modal_stack.is_empty() and modal_stack.back().get("kind") == "battle_save_error": close_button.disabled = true
 	if application != null: application.refresh_input_gate()
 
 func _battle_cancel_needs_save() -> bool:
 	return application!=null and application._delivery_cancel_save_pending
 
 func _close_modal(store_results: bool = true) -> void:
+	if not modal_stack.is_empty() and modal_stack.back().get("kind") == "battle_save_error": return
+	var closes_reinforcements: bool = not modal_stack.is_empty() and modal_stack.back().get("kind") == "reinforcements"
+	if not modal_stack.is_empty() and modal_stack.back().get("kind")=="opening_event" and state.opening_event_pending(): return
 	if not modal_stack.is_empty() and modal_stack.back().get("kind","") == "settings":
 		super._close_modal(false)
 		return
@@ -306,16 +381,37 @@ func _close_modal(store_results: bool = true) -> void:
 		application._resolve_location({"success":false,"complete_location":false,"action":"leave"})
 		return
 	super._close_modal(store_results)
+	if closes_reinforcements: application.reinforcement_selection_closed()
 
 func _close_all() -> void:
+	if application != null and application._pause_reasons.has(&"battle_save"): return
 	if _battle_cancel_needs_save(): return
 	if application!=null and application.phase=="world" and is_instance_valid(application.delivery_map):
 		if not application.delivery_map.cancel_setup(): return
+	var closes_reinforcements := modal_stack.any(func(entry): return entry.get("kind") == "reinforcements")
 	super._close_all()
+	if closes_reinforcements: application.reinforcement_selection_closed()
 
 func _refresh_warehouse_filters(animate := true) -> void:
 	super._refresh_warehouse_filters(animate)
 	_append_battle_confirmation()
+
+func _refresh_sidebar() -> void:
+	super._refresh_sidebar()
+	L10N.bind(party_panel.get_node("%Count"),&"text",func(): return L10N.text("ui.capacity.party_count",{"slots":state.occupied_slots(),"count":state.monsters("team").size(),"used":state.party_capacity().used,"limit":application.battle_capacity_settings.total_capacity}))
+
+func _append_capacity_detail(body: VBoxContainer, creature: Dictionary) -> void:
+	var label := Label.new()
+	label.name = "CreatureCapacity"
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	body.add_child(label)
+	L10N.bind(label,&"text",func():
+		var text := L10N.text("ui.capacity.creature",{"cost":application.battle_capacity_settings.creature_cost(creature)})
+		var map = application.delivery_map
+		if is_instance_valid(map) and not map.runtime.data.pending_battle_setup.is_empty():
+			var setup: Dictionary = map.runtime.data.pending_battle_setup
+			return text+"\n"+application.battle_capacity_settings.summary(map.capacity_status(setup.location_id,setup.kind))
+		return text+"\n"+L10N.text("ui.capacity.party",state.party_capacity()))
 
 func _select_monster(id: String) -> void:
 	super._select_monster(id)
@@ -348,6 +444,36 @@ func _process(_delta: float) -> void:
 
 func _curtain(_raising: bool) -> void:
 	pass
+
+func _opening_event() -> void:
+	if application.phase!="world" or not state.opening_event_pending() or not modal_stack.is_empty(): return
+	var event: Dictionary=state.opening_event_definition()
+	application.trace_map_event("event_started",{"event_id":event.id,"source":"new_game","line":state.data.opening_event.line})
+	_modal(event.title,func(body):
+		var page := EventPanel.instantiate()
+		body.add_child(page)
+		page.name="OpeningAppointment"
+		L10N.bind(page.get_node("%Description"),&"text",func(): return L10N.text(event.lines[int(state.data.opening_event.line)]))
+		var description: Label=page.get_node("%Description")
+		description.add_theme_font_size_override("font_size",24)
+		var commands: Node=page.get_node("%Commands")
+		var speaker := Label.new(); speaker.name="OpeningSpeaker"
+		L10N.bind(speaker,&"text",func(): return L10N.text("opening.appointment.speaker_progress",{"speaker":L10N.text(event.speaker),"line":int(state.data.opening_event.line)+1,"total":event.lines.size()}))
+		commands.add_child(speaker)
+		var last: bool = int(state.data.opening_event.line)==event.lines.size()-1
+		var next := _btn(commands,"opening.appointment.confirm" if last else "opening.appointment.next",func():
+			if not state.advance_opening_event():
+				application.trace_map_event("event_rejected",{"event_id":event.id,"reason":state.last_error})
+				_notice(state.last_error)
+				return
+			if state.opening_event_pending():
+				application.trace_map_event("event_advanced",{"event_id":event.id,"line":state.data.opening_event.line})
+				_render_modal()
+			else:
+				application.trace_map_event("event_completed",{"event_id":event.id,"credential":event.credential})
+				_close_modal(false)
+				_notice(func(): return L10N.text("opening.appointment.completed",{"name":L10N.text(event.credential.name),"quantity":event.credential.quantity})))
+		next.name="OpeningNext","opening_event")
 
 func _tasks() -> void:
 	if not _tasks_available(): return

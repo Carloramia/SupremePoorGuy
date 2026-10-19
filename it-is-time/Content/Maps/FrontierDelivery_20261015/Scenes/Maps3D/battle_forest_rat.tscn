@@ -1,12 +1,4 @@
-[gd_scene load_steps=97 format=3]
-
-[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/GroundDecorations/ActiveAltar.tscn" id="Part_ActiveAltar"]
-
-[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/Props/LargeRock.tscn" id="Part_LargeRock"]
-
-[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/Props/LivingTree.tscn" id="Part_LivingTree"]
-
-[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/GroundEffects/Mud.tscn" id="Part_Mud"]
+[gd_scene load_steps=105 format=3]
 
 [ext_resource type="Script" path="res://Modules/FrontierDelivery/Scripts/Map/BattleMap3D.gd" id="BattleScript"]
 [ext_resource type="Shader" path="res://Modules/FrontierDelivery/Scripts/Map/BattleGround.gdshader" id="GroundShader"]
@@ -36,6 +28,10 @@
 [ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/86aab8d45abccae79b95284b.svg" id="Texture_26"]
 [ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/bd3f057b7352ad4eb3341282.svg" id="Texture_27"]
 
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/e9e45c44bd0772cb1d39f1ae.png" id="Source_Texture_12"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/d8649aa7c7e0d9503ffa1aa6.svg" id="Source_Texture_13"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/6dca112353890d6d59b74690.png" id="Source_Texture_14"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/9cfacbba0feb45ca6ff3c0fe.png" id="Source_Texture_15"]
 [sub_resource type="StandardMaterial3D" id="R0"]
 shading_mode = 0
 albedo_color = Color(0.419607843, 0.501960784, 0.376470588, 1)
@@ -342,6 +338,50 @@ ambient_light_source = 3
 ambient_light_color = Color(1,1,1,1)
 ambient_light_energy = 0.8
 
+[sub_resource type="StandardMaterial3D" id="Source_R32"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_12")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R33"]
+size = Vector2(3.2, 2.78518519)
+
+[sub_resource type="StandardMaterial3D" id="Source_R35"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_13")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R36"]
+size = Vector2(5, 3.5)
+
+[sub_resource type="StandardMaterial3D" id="Source_R38"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_14")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R39"]
+size = Vector2(1.65147453, 2.2)
+
+[sub_resource type="StandardMaterial3D" id="Source_R40"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_15")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R41"]
+size = Vector2(2.2, 2.11444444)
+
 [node name="battle_forest_rat" type="Node3D"]
 script = ExtResource("BattleScript")
 map_id = "battle_forest_rat"
@@ -472,14 +512,12 @@ position = Vector3(-2, 0, -3)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_forest_rat_arena_rock_01"
-[node name="PhysicalPart" parent="Objects/battle_forest_rat_arena_rock_01" instance=ExtResource("Part_LargeRock")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_forest_rat_arena_rock_01"]
 position = Vector3(0, 0.023, 0)
+mesh = SubResource("Source_R33")
+material_override = SubResource("Source_R32")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(1.18518518519, 1.18518518723)
-opacity = 1
-metadata/source_asset_id = "rock"
-
 [node name="collision" type="StaticBody3D" parent="Objects/battle_forest_rat_arena_rock_01"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -494,14 +532,12 @@ position = Vector3(4, 0, 3)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_forest_rat_arena_mud_01"
-[node name="PhysicalPart" parent="Objects/battle_forest_rat_arena_mud_01" instance=ExtResource("Part_Mud")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_forest_rat_arena_mud_01"]
 position = Vector3(0, 0.026, 0)
+mesh = SubResource("Source_R36")
+material_override = SubResource("Source_R35")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(3.90625, 2.734375)
-opacity = 1
-metadata/source_asset_id = "mud"
-
 [node name="region" type="Area3D" parent="Objects/battle_forest_rat_arena_mud_01"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -514,27 +550,23 @@ position = Vector3(-6, 0, -7)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_forest_rat_arena_tree_01"
-[node name="PhysicalPart" parent="Objects/battle_forest_rat_arena_tree_01" instance=ExtResource("Part_LivingTree")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_forest_rat_arena_tree_01"]
 position = Vector3(0, 0.029, 0)
+mesh = SubResource("Source_R39")
+material_override = SubResource("Source_R38")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(0.589812332143, 0.58981233244)
-opacity = 1
-metadata/source_asset_id = "tree"
-
 [node name="battle_forest_rat_camp_altar_01" type="Node3D" parent="Objects"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_forest_rat_camp_altar_01"
-[node name="PhysicalPart" parent="Objects/battle_forest_rat_camp_altar_01" instance=ExtResource("Part_ActiveAltar")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_forest_rat_camp_altar_01"]
 position = Vector3(0, 0.032, 0)
+mesh = SubResource("Source_R41")
+material_override = SubResource("Source_R40")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(0.305555555556, 0.305555554913)
-opacity = 1
-metadata/source_asset_id = "altar"
-
 [node name="click_area" type="Area3D" parent="Objects/battle_forest_rat_camp_altar_01"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)

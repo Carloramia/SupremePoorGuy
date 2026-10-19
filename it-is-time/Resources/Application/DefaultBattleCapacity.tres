@@ -1,0 +1,15 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Application/BattleCapacitySettings.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+total_capacity = 50
+creature_costs = Dictionary[String, int]({
+"human": 4,
+"stump_beast": 6,
+"wolf": 6,
+"snake": 8,
+"horned_beast": 10,
+"spider": 8
+})

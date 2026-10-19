@@ -302,7 +302,7 @@ func observation_checks(view: Control) -> void:
 	var rotation := rig.rotation
 	var pitch: float = rig.get_node("PitchPivot").rotation.x
 	for frame: int in 3: await physics_frame
-	check(view.camera==rig.get_camera() and view.camera.projection==Camera3D.PROJECTION_PERSPECTIVE and rig.scene_file_path=="res://Scenes/Camera/DragCamera3D.tscn","Observation reuses the battle's perspective DragCamera3D")
+	check(view.camera==rig.get_camera() and view.camera.projection==Camera3D.PROJECTION_ORTHOGONAL and rig.scene_file_path=="res://Scenes/Camera/DragCamera3D.tscn","Observation reuses the battle's orthographic DragCamera3D")
 	check(cursor.free_cursor_mode and cursor.free_camera_rig==rig and not cursor.selection_enabled and cursor.has_valid_ground_position() and cursor.is_gameplay_cursor_active(),"A free blue terrain cursor observes the private stage without controlling creatures")
 	var localization := root.get_node("GameLocalization")
 	var locale: String = localization.current_locale()
@@ -461,8 +461,8 @@ func pause_checks(view: Control) -> void:
 
 func application_flow(fixture: Array) -> void:
 	var app := preload("res://Scenes/Application/GameRoot.tscn").instantiate()
-	app.save_path = "user://summon_stage_session.json"
-	app.display_settings_path = "user://summon_stage_display.cfg"
+	app.save_path = "res://Tests/.runtime/integration/summon_stage_"+str(OS.get_process_id())+".json"
+	app.display_settings_path = app.save_path+".display.cfg"
 	root.add_child(app)
 	app.ui.animate_panels = false
 	app.ui.board_motion.enabled = false
@@ -470,7 +470,7 @@ func application_flow(fixture: Array) -> void:
 	for frame: int in 600:
 		if app.phase=="world": break
 		await process_frame
-	app.ui._close_all()
+	preload("res://Tests/Integration/ApplicationFixtures.gd").complete_opening(app)
 	for record: Dictionary in fixture:
 		app.session.data.monsters.append(record.duplicate(true))
 		app.session.data.pending.append(record.id)

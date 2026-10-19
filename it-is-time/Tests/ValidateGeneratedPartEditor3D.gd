@@ -155,14 +155,15 @@ func test_feather(actor: Node3D) -> void:
 	actor.restore_generated_part_edit(transaction.after)
 	var candidate: PhysicalBodyPart3D = transaction.after.part
 	var key := str(candidate.name)
-	var visual: MeshInstance3D = candidate.get_node("MeshInstance3D")
+	var visual: MeshInstance3D = candidate._resolve_visual_state_mesh()
 	var mesh_bounds := visual.mesh.get_aabb()
 	var pose := visual.transform
 	var shape_bounds := GEOMETRY.bounds(candidate)
 	body.free()
 	check(actor.generate_creature(), "Regenerate procedural feather")
 	var restored: PhysicalBodyPart3D = actor.get_node("GeneratedParts/"+key)
-	check(restored.get_node("MeshInstance3D").mesh.get_aabb().is_equal_approx(mesh_bounds) and restored.get_node("MeshInstance3D").transform.is_equal_approx(pose), "Procedural mesh must not become a box or accumulate scale")
+	var restored_visual: MeshInstance3D = restored._resolve_visual_state_mesh()
+	check(restored_visual.mesh.get_aabb().is_equal_approx(mesh_bounds) and restored_visual.transform.is_equal_approx(pose), "Feather visual must not become a box or accumulate scale")
 	check(GEOMETRY.bounds(restored).is_equal_approx(shape_bounds), "Procedural feather collider persists")
 
 func test_moved_body_anchors() -> void:

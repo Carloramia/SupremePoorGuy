@@ -656,7 +656,7 @@ func _capture_modal_backdrop() -> Texture2D:
 	return ImageTexture.create_from_image(frame.get_region(region)) if region.has_area() else null
 
 func _resize_event() -> void:
-	if modal_stack.is_empty() or modal_stack.back().get("kind", "dialog") not in ["event","tasks"]:
+	if modal_stack.is_empty() or modal_stack.back().get("kind", "dialog") not in ["event","opening_event","tasks"]:
 		return
 	var margin: MarginContainer = overlay.get_node("BoardMotion/MotionRoot/Margin")
 	var side := maxi(48,int(size.x * (0.12 if modal_stack.back().kind == "tasks" else 0.1)))
@@ -679,7 +679,7 @@ func _render_modal() -> void:
 	var ritual: bool = modal_stack.back().title.begins_with("六相召唤阵")
 	var warehouse: bool = modal_stack.back().title.begins_with("妖兽仓库")
 	var results: bool = modal_stack.back().title.begins_with("召唤完成")
-	var event: bool = modal_stack.back().get("kind", "dialog") == "event"
+	var event: bool = modal_stack.back().get("kind", "dialog") in ["event","opening_event"]
 	var tasks: bool = modal_stack.back().get("kind", "dialog") == "tasks"
 	var reading := event or tasks
 	L10N.bind(close_button,&"text",func(): return L10N.text(L10N.text("ui.95f69693f3c1") if event else (L10N.text("ui.977d03d89573") if tasks else L10N.text("ui.67a940be6b93"))))

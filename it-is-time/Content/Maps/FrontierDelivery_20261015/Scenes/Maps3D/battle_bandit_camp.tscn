@@ -1,22 +1,4 @@
-[gd_scene load_steps=97 format=3]
-
-[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/GroundDecorations/BrokenBarricade.tscn" id="Part_BrokenBarricade"]
-
-[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/GroundDecorations/DryGrassPatch.tscn" id="Part_DryGrassPatch"]
-
-[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/GroundDecorations/GrassTuft.tscn" id="Part_GrassTuft"]
-
-[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/Props/LargeRock.tscn" id="Part_LargeRock"]
-
-[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/GroundDecorations/SummoningArray.tscn" id="Part_SummoningArray"]
-
-[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/Props/SupplyCrate.tscn" id="Part_SupplyCrate"]
-
-[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/Props/TentAndFlag.tscn" id="Part_TentAndFlag"]
-
-[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/GroundEffects/Thorns.tscn" id="Part_Thorns"]
-
-[ext_resource type="PackedScene" path="res://Scenes/Environment/FrontierBattle/GroundDecorations/WoodFragment.tscn" id="Part_WoodFragment"]
+[gd_scene load_steps=177 format=3]
 
 [ext_resource type="Script" path="res://Modules/FrontierDelivery/Scripts/Map/BattleMap3D.gd" id="BattleScript"]
 [ext_resource type="Shader" path="res://Modules/FrontierDelivery/Scripts/Map/BattleGround.gdshader" id="GroundShader"]
@@ -43,6 +25,16 @@
 [ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/4d358eae562ee9481d9187df.svg" id="Texture_26"]
 [ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/bd438e9f08080b4bd5afa6de.svg" id="Texture_27"]
 [ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/8613d1ab734332ee128eb1ff.svg" id="Texture_28"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/360d732820bc29d798b4e37d.svg" id="Source_Texture_11"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/e7d739cab1a9dc214a6e832e.png" id="Source_Texture_12"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/1c7023eabb8afa18070342d8.png" id="Source_Texture_13"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/ff90ec506af73e568f154784.png" id="Source_Texture_14"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/36e60fd88dcdd7add858540b.png" id="Source_Texture_15"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/e9e45c44bd0772cb1d39f1ae.png" id="Source_Texture_16"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/2d54caf58d0dbfdb9cc03862.svg" id="Source_Texture_17"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/6432de71fa8e2551ff78442a.png" id="Source_Texture_29"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierDelivery_20261015/Assets/Maps/0234336476ea2fb49b203923.png" id="Source_Texture_30"]
+
 [sub_resource type="StandardMaterial3D" id="R0"]
 shading_mode = 0
 albedo_color = Color(0.588235294, 0.57254902, 0.411764706, 1)
@@ -332,6 +324,446 @@ ambient_light_source = 3
 ambient_light_color = Color(1,1,1,1)
 ambient_light_energy = 0.8
 
+[sub_resource type="StandardMaterial3D" id="Source_R29"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_11")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R30"]
+size = Vector2(10.12, 5.06)
+
+[sub_resource type="StandardMaterial3D" id="Source_R31"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_11")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R32"]
+size = Vector2(10.12, 5.06)
+
+[sub_resource type="StandardMaterial3D" id="Source_R33"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_11")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R34"]
+size = Vector2(10.12, 5.06)
+
+[sub_resource type="StandardMaterial3D" id="Source_R35"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_11")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R36"]
+size = Vector2(10.12, 5.06)
+
+[sub_resource type="StandardMaterial3D" id="Source_R37"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_11")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R38"]
+size = Vector2(10.12, 5.06)
+
+[sub_resource type="StandardMaterial3D" id="Source_R39"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_12")
+albedo_color = Color(1,1,1,0.727928252)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R40"]
+size = Vector2(0.35, 0.39516129)
+
+[sub_resource type="StandardMaterial3D" id="Source_R41"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_12")
+albedo_color = Color(1,1,1,0.633933689)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R42"]
+size = Vector2(0.35, 0.39516129)
+
+[sub_resource type="StandardMaterial3D" id="Source_R43"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_12")
+albedo_color = Color(1,1,1,0.776662122)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R44"]
+size = Vector2(0.35, 0.39516129)
+
+[sub_resource type="StandardMaterial3D" id="Source_R45"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_12")
+albedo_color = Color(1,1,1,0.7599701)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R46"]
+size = Vector2(0.35, 0.39516129)
+
+[sub_resource type="StandardMaterial3D" id="Source_R47"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_12")
+albedo_color = Color(1,1,1,0.68829321)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R48"]
+size = Vector2(0.35, 0.39516129)
+
+[sub_resource type="StandardMaterial3D" id="Source_R49"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_12")
+albedo_color = Color(1,1,1,0.688590161)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R50"]
+size = Vector2(0.35, 0.39516129)
+
+[sub_resource type="StandardMaterial3D" id="Source_R51"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_12")
+albedo_color = Color(1,1,1,0.685737967)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R52"]
+size = Vector2(0.35, 0.39516129)
+
+[sub_resource type="StandardMaterial3D" id="Source_R53"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_12")
+albedo_color = Color(1,1,1,0.551981831)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R54"]
+size = Vector2(0.35, 0.39516129)
+
+[sub_resource type="StandardMaterial3D" id="Source_R55"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_12")
+albedo_color = Color(1,1,1,0.582094621)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R56"]
+size = Vector2(0.35, 0.39516129)
+
+[sub_resource type="StandardMaterial3D" id="Source_R57"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_12")
+albedo_color = Color(1,1,1,0.59431324)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R58"]
+size = Vector2(0.35, 0.39516129)
+
+[sub_resource type="StandardMaterial3D" id="Source_R59"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_12")
+albedo_color = Color(1,1,1,0.668596228)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R60"]
+size = Vector2(0.35, 0.39516129)
+
+[sub_resource type="StandardMaterial3D" id="Source_R61"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_12")
+albedo_color = Color(1,1,1,0.778848518)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R62"]
+size = Vector2(0.35, 0.39516129)
+
+[sub_resource type="StandardMaterial3D" id="Source_R63"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_12")
+albedo_color = Color(1,1,1,0.582302338)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R64"]
+size = Vector2(0.35, 0.39516129)
+
+[sub_resource type="StandardMaterial3D" id="Source_R65"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_12")
+albedo_color = Color(1,1,1,0.643680786)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R66"]
+size = Vector2(0.35, 0.39516129)
+
+[sub_resource type="StandardMaterial3D" id="Source_R67"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_12")
+albedo_color = Color(1,1,1,0.62862221)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R68"]
+size = Vector2(0.35, 0.39516129)
+
+[sub_resource type="StandardMaterial3D" id="Source_R69"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_12")
+albedo_color = Color(1,1,1,0.767127751)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R70"]
+size = Vector2(0.35, 0.39516129)
+
+[sub_resource type="StandardMaterial3D" id="Source_R71"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_12")
+albedo_color = Color(1,1,1,0.753828412)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R72"]
+size = Vector2(0.35, 0.39516129)
+
+[sub_resource type="StandardMaterial3D" id="Source_R73"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_12")
+albedo_color = Color(1,1,1,0.735128871)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R74"]
+size = Vector2(0.35, 0.39516129)
+
+[sub_resource type="StandardMaterial3D" id="Source_R75"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_12")
+albedo_color = Color(1,1,1,0.552771777)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R76"]
+size = Vector2(0.35, 0.39516129)
+
+[sub_resource type="StandardMaterial3D" id="Source_R77"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_12")
+albedo_color = Color(1,1,1,0.672639665)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R78"]
+size = Vector2(0.35, 0.39516129)
+
+[sub_resource type="StandardMaterial3D" id="Source_R79"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_12")
+albedo_color = Color(1,1,1,0.61320428)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R80"]
+size = Vector2(0.35, 0.39516129)
+
+[sub_resource type="StandardMaterial3D" id="Source_R81"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_12")
+albedo_color = Color(1,1,1,0.694975428)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R82"]
+size = Vector2(0.35, 0.39516129)
+
+[sub_resource type="StandardMaterial3D" id="Source_R83"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_12")
+albedo_color = Color(1,1,1,0.615342736)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R84"]
+size = Vector2(0.35, 0.39516129)
+
+[sub_resource type="StandardMaterial3D" id="Source_R85"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_12")
+albedo_color = Color(1,1,1,0.632683696)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R86"]
+size = Vector2(0.35, 0.39516129)
+
+[sub_resource type="StandardMaterial3D" id="Source_R87"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_12")
+albedo_color = Color(1,1,1,0.558278446)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R88"]
+size = Vector2(0.35, 0.39516129)
+
+[sub_resource type="StandardMaterial3D" id="Source_R89"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_13")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R90"]
+size = Vector2(4.3, 2.17847682)
+
+[sub_resource type="StandardMaterial3D" id="Source_R92"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_14")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R93"]
+size = Vector2(5.2, 2.82033898)
+
+[sub_resource type="StandardMaterial3D" id="Source_R96"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_15")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R97"]
+size = Vector2(7.4, 6.07358491)
+
+[sub_resource type="StandardMaterial3D" id="Source_R98"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_15")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R99"]
+size = Vector2(4.7, 3.85754717)
+
+[sub_resource type="StandardMaterial3D" id="Source_R100"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_16")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R101"]
+size = Vector2(3.3, 2.87222222)
+
+[sub_resource type="StandardMaterial3D" id="Source_R103"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_16")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R104"]
+size = Vector2(3.1, 2.69814815)
+
+[sub_resource type="StandardMaterial3D" id="Source_R106"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_17")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R107"]
+size = Vector2(2.4, 2.4)
+
+[sub_resource type="StandardMaterial3D" id="Source_R108"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_17")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R109"]
+size = Vector2(2.1, 2.1)
+
+[sub_resource type="StandardMaterial3D" id="Source_R132"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_29")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R133"]
+size = Vector2(5.2, 3.46311475)
+
+[sub_resource type="StandardMaterial3D" id="Source_R134"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Source_Texture_30")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="Source_R135"]
+size = Vector2(2.18482759, 0.96)
+
 [node name="battle_bandit_camp" type="Node3D"]
 script = ExtResource("BattleScript")
 map_id = "battle_bandit_camp"
@@ -443,404 +875,342 @@ position = Vector3(-7.7, 0, -8.36)
 rotation = Vector3(0, 0.261336328, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_001"
-[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_001" instance=ExtResource("Part_DryGrassPatch")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_decoration_001"]
 position = Vector3(0, 0.02, 0)
+mesh = SubResource("Source_R30")
+material_override = SubResource("Source_R29")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(3.37333333333, 3.37333333333)
-opacity = 1
-metadata/source_asset_id = "battle_dry_patch"
-
 [node name="battle_bandit_camp_decoration_002" type="Node3D" parent="Objects"]
 position = Vector3(7.48, 0, 7.04)
 rotation = Vector3(0, -0.190469558, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_002"
-[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_002" instance=ExtResource("Part_DryGrassPatch")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_decoration_002"]
 position = Vector3(0, 0.023, 0)
+mesh = SubResource("Source_R32")
+material_override = SubResource("Source_R31")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(3.37333333333, 3.37333333333)
-opacity = 1
-metadata/source_asset_id = "battle_dry_patch"
-
 [node name="battle_bandit_camp_decoration_003" type="Node3D" parent="Objects"]
 position = Vector3(-9.9, 0, 2.64)
 rotation = Vector3(0, 0.06105088, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_003"
-[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_003" instance=ExtResource("Part_DryGrassPatch")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_decoration_003"]
 position = Vector3(0, 0.026, 0)
+mesh = SubResource("Source_R34")
+material_override = SubResource("Source_R33")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(3.37333333333, 3.37333333333)
-opacity = 1
-metadata/source_asset_id = "battle_dry_patch"
-
 [node name="battle_bandit_camp_decoration_004" type="Node3D" parent="Objects"]
 position = Vector3(8.8, 0, -5.28)
 rotation = Vector3(0, -0.171460225, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_004"
-[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_004" instance=ExtResource("Part_DryGrassPatch")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_decoration_004"]
 position = Vector3(0, 0.029, 0)
+mesh = SubResource("Source_R36")
+material_override = SubResource("Source_R35")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(3.37333333333, 3.37333333333)
-opacity = 1
-metadata/source_asset_id = "battle_dry_patch"
-
 [node name="battle_bandit_camp_decoration_005" type="Node3D" parent="Objects"]
 position = Vector3(0.44, 0, 12.76)
 rotation = Vector3(0, 0.155667053, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_005"
-[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_005" instance=ExtResource("Part_DryGrassPatch")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_decoration_005"]
 position = Vector3(0, 0.032, 0)
+mesh = SubResource("Source_R38")
+material_override = SubResource("Source_R37")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(3.37333333333, 3.37333333333)
-opacity = 1
-metadata/source_asset_id = "battle_dry_patch"
-
 [node name="battle_bandit_camp_decoration_006" type="Node3D" parent="Objects"]
 position = Vector3(7.999, 0, -5.464)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_006"
-[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_006" instance=ExtResource("Part_GrassTuft")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_decoration_006"]
 position = Vector3(0, 0.035, 0)
+mesh = SubResource("Source_R40")
+material_override = SubResource("Source_R39")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(1.12903225806, 1.12903225714)
-opacity = 0.72792825153
-metadata/source_asset_id = "demo_grass_tuft"
-
 [node name="battle_bandit_camp_decoration_007" type="Node3D" parent="Objects"]
 position = Vector3(8.596, 0, 3.573)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_007"
-[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_007" instance=ExtResource("Part_GrassTuft")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_decoration_007"]
 position = Vector3(0, 0.038, 0)
+mesh = SubResource("Source_R42")
+material_override = SubResource("Source_R41")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(1.12903225806, 1.12903225714)
-opacity = 0.633933689089
-metadata/source_asset_id = "demo_grass_tuft"
-
 [node name="battle_bandit_camp_decoration_008" type="Node3D" parent="Objects"]
 position = Vector3(6.404, 0, 11.853)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_008"
-[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_008" instance=ExtResource("Part_GrassTuft")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_decoration_008"]
 position = Vector3(0, 0.041, 0)
+mesh = SubResource("Source_R44")
+material_override = SubResource("Source_R43")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(1.12903225806, 1.12903225714)
-opacity = 0.776662122401
-metadata/source_asset_id = "demo_grass_tuft"
-
 [node name="battle_bandit_camp_decoration_009" type="Node3D" parent="Objects"]
 position = Vector3(-15.142, 0, 10.577)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_009"
-[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_009" instance=ExtResource("Part_GrassTuft")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_decoration_009"]
 position = Vector3(0, 0.044, 0)
+mesh = SubResource("Source_R46")
+material_override = SubResource("Source_R45")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(1.12903225806, 1.12903225714)
-opacity = 0.759970100182
-metadata/source_asset_id = "demo_grass_tuft"
-
 [node name="battle_bandit_camp_decoration_010" type="Node3D" parent="Objects"]
 position = Vector3(12.207, 0, -5.169)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_010"
-[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_010" instance=ExtResource("Part_GrassTuft")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_decoration_010"]
 position = Vector3(0, 0.047, 0)
+mesh = SubResource("Source_R48")
+material_override = SubResource("Source_R47")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(1.12903225806, 1.12903225714)
-opacity = 0.688293209899
-metadata/source_asset_id = "demo_grass_tuft"
-
 [node name="battle_bandit_camp_decoration_011" type="Node3D" parent="Objects"]
 position = Vector3(-10.695, 0, 3.128)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_011"
-[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_011" instance=ExtResource("Part_GrassTuft")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_decoration_011"]
 position = Vector3(0, 0.05, 0)
+mesh = SubResource("Source_R50")
+material_override = SubResource("Source_R49")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(1.12903225806, 1.12903225714)
-opacity = 0.688590160705
-metadata/source_asset_id = "demo_grass_tuft"
-
 [node name="battle_bandit_camp_decoration_012" type="Node3D" parent="Objects"]
 position = Vector3(-11.902, 0, 3.471)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_012"
-[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_012" instance=ExtResource("Part_GrassTuft")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_decoration_012"]
 position = Vector3(0, 0.053, 0)
+mesh = SubResource("Source_R52")
+material_override = SubResource("Source_R51")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(1.12903225806, 1.12903225714)
-opacity = 0.685737966809
-metadata/source_asset_id = "demo_grass_tuft"
-
 [node name="battle_bandit_camp_decoration_013" type="Node3D" parent="Objects"]
 position = Vector3(-3.563, 0, 11.667)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_013"
-[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_013" instance=ExtResource("Part_GrassTuft")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_decoration_013"]
 position = Vector3(0, 0.056, 0)
+mesh = SubResource("Source_R54")
+material_override = SubResource("Source_R53")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(1.12903225806, 1.12903225714)
-opacity = 0.55198183104
-metadata/source_asset_id = "demo_grass_tuft"
-
 [node name="battle_bandit_camp_decoration_014" type="Node3D" parent="Objects"]
 position = Vector3(-8.76, 0, 10.878)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_014"
-[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_014" instance=ExtResource("Part_GrassTuft")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_decoration_014"]
 position = Vector3(0, 0.059, 0)
+mesh = SubResource("Source_R56")
+material_override = SubResource("Source_R55")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(1.12903225806, 1.12903225714)
-opacity = 0.582094621114
-metadata/source_asset_id = "demo_grass_tuft"
-
 [node name="battle_bandit_camp_decoration_015" type="Node3D" parent="Objects"]
 position = Vector3(5.187, 0, -4.054)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_015"
-[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_015" instance=ExtResource("Part_GrassTuft")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_decoration_015"]
 position = Vector3(0, 0.062, 0)
+mesh = SubResource("Source_R58")
+material_override = SubResource("Source_R57")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(1.12903225806, 1.12903225714)
-opacity = 0.594313239536
-metadata/source_asset_id = "demo_grass_tuft"
-
 [node name="battle_bandit_camp_decoration_016" type="Node3D" parent="Objects"]
 position = Vector3(-13.515, 0, -0.352)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_016"
-[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_016" instance=ExtResource("Part_GrassTuft")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_decoration_016"]
 position = Vector3(0, 0.065, 0)
+mesh = SubResource("Source_R60")
+material_override = SubResource("Source_R59")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(1.12903225806, 1.12903225714)
-opacity = 0.668596228128
-metadata/source_asset_id = "demo_grass_tuft"
-
 [node name="battle_bandit_camp_decoration_017" type="Node3D" parent="Objects"]
 position = Vector3(16.078, 0, -6.437)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_017"
-[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_017" instance=ExtResource("Part_GrassTuft")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_decoration_017"]
 position = Vector3(0, 0.068, 0)
+mesh = SubResource("Source_R62")
+material_override = SubResource("Source_R61")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(1.12903225806, 1.12903225714)
-opacity = 0.778848518212
-metadata/source_asset_id = "demo_grass_tuft"
-
 [node name="battle_bandit_camp_decoration_018" type="Node3D" parent="Objects"]
 position = Vector3(-15.57, 0, 4.771)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_018"
-[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_018" instance=ExtResource("Part_GrassTuft")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_decoration_018"]
 position = Vector3(0, 0.071, 0)
+mesh = SubResource("Source_R64")
+material_override = SubResource("Source_R63")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(1.12903225806, 1.12903225714)
-opacity = 0.582302338296
-metadata/source_asset_id = "demo_grass_tuft"
-
 [node name="battle_bandit_camp_decoration_019" type="Node3D" parent="Objects"]
 position = Vector3(4.013, 0, -8.509)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_019"
-[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_019" instance=ExtResource("Part_GrassTuft")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_decoration_019"]
 position = Vector3(0, 0.074, 0)
+mesh = SubResource("Source_R66")
+material_override = SubResource("Source_R65")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(1.12903225806, 1.12903225714)
-opacity = 0.643680786362
-metadata/source_asset_id = "demo_grass_tuft"
-
 [node name="battle_bandit_camp_decoration_020" type="Node3D" parent="Objects"]
 position = Vector3(15.573, 0, 9.392)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_020"
-[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_020" instance=ExtResource("Part_GrassTuft")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_decoration_020"]
 position = Vector3(0, 0.077, 0)
+mesh = SubResource("Source_R68")
+material_override = SubResource("Source_R67")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(1.12903225806, 1.12903225714)
-opacity = 0.628622209643
-metadata/source_asset_id = "demo_grass_tuft"
-
 [node name="battle_bandit_camp_decoration_021" type="Node3D" parent="Objects"]
 position = Vector3(3.759, 0, 14.366)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_021"
-[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_021" instance=ExtResource("Part_GrassTuft")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_decoration_021"]
 position = Vector3(0, 0.08, 0)
+mesh = SubResource("Source_R70")
+material_override = SubResource("Source_R69")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(1.12903225806, 1.12903225714)
-opacity = 0.767127751427
-metadata/source_asset_id = "demo_grass_tuft"
-
 [node name="battle_bandit_camp_decoration_022" type="Node3D" parent="Objects"]
 position = Vector3(-14.372, 0, 2.879)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_022"
-[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_022" instance=ExtResource("Part_GrassTuft")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_decoration_022"]
 position = Vector3(0, 0.083, 0)
+mesh = SubResource("Source_R72")
+material_override = SubResource("Source_R71")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(1.12903225806, 1.12903225714)
-opacity = 0.753828411737
-metadata/source_asset_id = "demo_grass_tuft"
-
 [node name="battle_bandit_camp_decoration_023" type="Node3D" parent="Objects"]
 position = Vector3(15.723, 0, -1.926)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_023"
-[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_023" instance=ExtResource("Part_GrassTuft")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_decoration_023"]
 position = Vector3(0, 0.086, 0)
+mesh = SubResource("Source_R74")
+material_override = SubResource("Source_R73")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(1.12903225806, 1.12903225714)
-opacity = 0.735128871438
-metadata/source_asset_id = "demo_grass_tuft"
-
 [node name="battle_bandit_camp_decoration_024" type="Node3D" parent="Objects"]
 position = Vector3(11.344, 0, -8.144)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_024"
-[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_024" instance=ExtResource("Part_GrassTuft")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_decoration_024"]
 position = Vector3(0, 0.089, 0)
+mesh = SubResource("Source_R76")
+material_override = SubResource("Source_R75")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(1.12903225806, 1.12903225714)
-opacity = 0.55277177652
-metadata/source_asset_id = "demo_grass_tuft"
-
 [node name="battle_bandit_camp_decoration_025" type="Node3D" parent="Objects"]
 position = Vector3(-5.247, 0, -13.344)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_025"
-[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_025" instance=ExtResource("Part_GrassTuft")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_decoration_025"]
 position = Vector3(0, 0.092, 0)
+mesh = SubResource("Source_R78")
+material_override = SubResource("Source_R77")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(1.12903225806, 1.12903225714)
-opacity = 0.672639664506
-metadata/source_asset_id = "demo_grass_tuft"
-
 [node name="battle_bandit_camp_decoration_026" type="Node3D" parent="Objects"]
 position = Vector3(10.539, 0, -12.642)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_026"
-[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_026" instance=ExtResource("Part_GrassTuft")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_decoration_026"]
 position = Vector3(0, 0.095, 0)
+mesh = SubResource("Source_R80")
+material_override = SubResource("Source_R79")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(1.12903225806, 1.12903225714)
-opacity = 0.613204280363
-metadata/source_asset_id = "demo_grass_tuft"
-
 [node name="battle_bandit_camp_decoration_027" type="Node3D" parent="Objects"]
 position = Vector3(-13.287, 0, -4.941)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_027"
-[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_027" instance=ExtResource("Part_GrassTuft")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_decoration_027"]
 position = Vector3(0, 0.098, 0)
+mesh = SubResource("Source_R82")
+material_override = SubResource("Source_R81")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(1.12903225806, 1.12903225714)
-opacity = 0.694975427838
-metadata/source_asset_id = "demo_grass_tuft"
-
 [node name="battle_bandit_camp_decoration_028" type="Node3D" parent="Objects"]
 position = Vector3(-3.034, 0, -5.636)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_028"
-[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_028" instance=ExtResource("Part_GrassTuft")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_decoration_028"]
 position = Vector3(0, 0.101, 0)
+mesh = SubResource("Source_R84")
+material_override = SubResource("Source_R83")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(1.12903225806, 1.12903225714)
-opacity = 0.615342735995
-metadata/source_asset_id = "demo_grass_tuft"
-
 [node name="battle_bandit_camp_decoration_029" type="Node3D" parent="Objects"]
 position = Vector3(11.928, 0, -0.523)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_029"
-[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_029" instance=ExtResource("Part_GrassTuft")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_decoration_029"]
 position = Vector3(0, 0.104, 0)
+mesh = SubResource("Source_R86")
+material_override = SubResource("Source_R85")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(1.12903225806, 1.12903225714)
-opacity = 0.632683695635
-metadata/source_asset_id = "demo_grass_tuft"
-
 [node name="battle_bandit_camp_decoration_030" type="Node3D" parent="Objects"]
 position = Vector3(5.263, 0, -13.332)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_030"
-[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_030" instance=ExtResource("Part_GrassTuft")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_decoration_030"]
 position = Vector3(0, 0.107, 0)
+mesh = SubResource("Source_R88")
+material_override = SubResource("Source_R87")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(1.12903225806, 1.12903225714)
-opacity = 0.55827844581
-metadata/source_asset_id = "demo_grass_tuft"
-
 [node name="battle_bandit_camp_thorns_159" type="Node3D" parent="Objects"]
 position = Vector3(-9, 0, -0.8)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_thorns_159"
-[node name="PhysicalPart" parent="Objects/battle_bandit_camp_thorns_159" instance=ExtResource("Part_Thorns")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_thorns_159"]
 position = Vector3(0, 0.11, 0)
+mesh = SubResource("Source_R90")
+material_override = SubResource("Source_R89")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(1.4238410596, 1.42384105882)
-opacity = 1
-metadata/source_asset_id = "thorns"
-
 [node name="region" type="Area3D" parent="Objects/battle_bandit_camp_thorns_159"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -853,14 +1223,12 @@ position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_post_battle_149"
-[node name="PhysicalPart" parent="Objects/battle_bandit_camp_post_battle_149" instance=ExtResource("Part_SummoningArray")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_post_battle_149"]
 position = Vector3(0, 0.113, 0)
+mesh = SubResource("Source_R93")
+material_override = SubResource("Source_R92")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(1.10169491525, 1.10169491406)
-opacity = 1
-metadata/source_asset_id = "demo_summoning_array_idle"
-
 [node name="click_area" type="Area3D" parent="Objects/battle_bandit_camp_post_battle_149"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -885,40 +1253,34 @@ position = Vector3(0, 0, -13.42)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_153"
-[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_153" instance=ExtResource("Part_TentAndFlag")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_decoration_153"]
 position = Vector3(0, 0.119, 0)
+mesh = SubResource("Source_R97")
+material_override = SubResource("Source_R96")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(1.74528301887, 1.74528302011)
-opacity = 1
-metadata/source_asset_id = "demo_monster_camp"
-
 [node name="battle_bandit_camp_decoration_154" type="Node3D" parent="Objects"]
 position = Vector3(12.54, 0, -7.26)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_154"
-[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_154" instance=ExtResource("Part_TentAndFlag")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_decoration_154"]
 position = Vector3(0, 0.122, 0)
+mesh = SubResource("Source_R99")
+material_override = SubResource("Source_R98")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(1.10849056604, 1.10849056609)
-opacity = 1
-metadata/source_asset_id = "demo_monster_camp"
-
 [node name="battle_bandit_camp_collision_damage_155" type="Node3D" parent="Objects"]
 position = Vector3(-4, 0, -3.7)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_collision_damage_155"
-[node name="PhysicalPart" parent="Objects/battle_bandit_camp_collision_damage_155" instance=ExtResource("Part_LargeRock")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_collision_damage_155"]
 position = Vector3(0, 0.125, 0)
+mesh = SubResource("Source_R101")
+material_override = SubResource("Source_R100")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(1.22222222222, 1.22222222128)
-opacity = 1
-metadata/source_asset_id = "demo_rock_large"
-
 [node name="collision" type="StaticBody3D" parent="Objects/battle_bandit_camp_collision_damage_155"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -933,14 +1295,12 @@ position = Vector3(6, 0, 5.6)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_collision_damage_156"
-[node name="PhysicalPart" parent="Objects/battle_bandit_camp_collision_damage_156" instance=ExtResource("Part_LargeRock")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_collision_damage_156"]
 position = Vector3(0, 0.128, 0)
+mesh = SubResource("Source_R104")
+material_override = SubResource("Source_R103")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(1.14814814815, 1.14814814894)
-opacity = 1
-metadata/source_asset_id = "demo_rock_large"
-
 [node name="collision" type="StaticBody3D" parent="Objects/battle_bandit_camp_collision_damage_156"]
 position = Vector3(0, 0, 0)
 rotation = Vector3(0, -0, 0)
@@ -955,27 +1315,23 @@ position = Vector3(-6, 0, -5.2)
 rotation = Vector3(0, -0, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_157"
-[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_157" instance=ExtResource("Part_SupplyCrate")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_decoration_157"]
 position = Vector3(0, 0.131, 0)
+mesh = SubResource("Source_R107")
+material_override = SubResource("Source_R106")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(1.6, 1.6)
-opacity = 1
-metadata/source_asset_id = "battle_supply_crate"
-
 [node name="battle_bandit_camp_decoration_158" type="Node3D" parent="Objects"]
 position = Vector3(8, 0, 1.8)
 rotation = Vector3(0, -0.157079633, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_158"
-[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_158" instance=ExtResource("Part_SupplyCrate")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_decoration_158"]
 position = Vector3(0, 0.134, 0)
+mesh = SubResource("Source_R109")
+material_override = SubResource("Source_R108")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(1.4, 1.4)
-opacity = 1
-metadata/source_asset_id = "battle_supply_crate"
-
 [node name="battle_bandit_camp_biome_edge_01" type="Node3D" parent="Objects"]
 position = Vector3(18.1593262, 0, 4.445795)
 rotation = Vector3(0, -0, 0)
@@ -1102,27 +1458,23 @@ position = Vector3(8.22724, 0, 18.09993)
 rotation = Vector3(0, 0.42662741, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_broken_barricade_143"
-[node name="PhysicalPart" parent="Objects/battle_bandit_camp_broken_barricade_143" instance=ExtResource("Part_BrokenBarricade")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_broken_barricade_143"]
 position = Vector3(0, 0.17, 0)
+mesh = SubResource("Source_R133")
+material_override = SubResource("Source_R132")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(1.06557377049, 1.06557376923)
-opacity = 1
-metadata/source_asset_id = "demo_barricade_broken"
-
 [node name="battle_bandit_camp_decoration_144" type="Node3D" parent="Objects"]
 position = Vector3(7.1577, 0, 15.74694)
 rotation = Vector3(0, 0.653520212, 0)
 scale = Vector3(1, 1, 1)
 metadata/source_id = "battle_bandit_camp_decoration_144"
-[node name="PhysicalPart" parent="Objects/battle_bandit_camp_decoration_144" instance=ExtResource("Part_WoodFragment")]
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_decoration_144"]
 position = Vector3(0, 0.173, 0)
+mesh = SubResource("Source_R135")
+material_override = SubResource("Source_R134")
+cast_shadow = 0
 visible = true
-collision_enabled = false
-image_scale = Vector2(1.65517241667, 1.65517241379)
-opacity = 1
-metadata/source_asset_id = "demo_wood_fragment"
-
 [node name="Boundary0" type="StaticBody3D" parent="."]
 position = Vector3(16.5, 6, 9.52627944)
 rotation = Vector3(0, -2.0943951, 0)

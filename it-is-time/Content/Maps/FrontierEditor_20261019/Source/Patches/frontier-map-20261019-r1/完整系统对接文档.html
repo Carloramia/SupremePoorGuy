@@ -1,0 +1,2698 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>地图编辑器 · 完整系统对接文档</title><style>
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#f4f2eb;color:#26322d;font:16px/1.75 "Microsoft YaHei",sans-serif}aside{position:fixed;inset:0 auto 0 0;width:290px;overflow:auto;background:#173c34;padding:24px 20px;color:white}aside strong{display:block;font-size:20px;margin-bottom:16px}aside a{display:block;color:#dfebe4;text-decoration:none;margin:9px 0;font-size:13px}aside .depth-3{padding-left:14px;color:#b3c8bb}main{margin:24px 32px 80px 322px;background:white;padding:30px 48px;max-width:1320px;border:1px solid #ddd9cd;border-radius:12px}h1{font-size:30px}h2{font-size:23px;border-top:1px solid #ddd;padding-top:24px;margin-top:38px}h3{font-size:19px}h4,h5,h6{font-size:17px}h1,h2,h3,h4{color:#234d41;scroll-margin-top:20px}code{font:13px/1.6 Consolas,monospace;background:#eef2ed;padding:2px 4px;overflow-wrap:anywhere}pre{background:#182c28;color:#e5eee7;padding:16px;white-space:pre-wrap;overflow-wrap:anywhere;border-radius:6px}pre code{color:inherit;background:none;padding:0}table{border-collapse:collapse;width:100%;font-size:14px;margin:14px 0}.table-wrap{overflow:auto}td,th{padding:10px 12px;border:1px solid #dedfd7;text-align:left;vertical-align:top;min-width:100px}th{background:#e4ede5}a{color:#235f91}li{margin:6px 0}p{overflow-wrap:anywhere}.badge{color:#607367;font-size:13px}@media(max-width:950px){aside{position:static;width:auto;max-height:250px}main{margin:12px;padding:20px}}@media print{aside{display:none}main{margin:0;border:0;padding:0}body{background:white}h2{break-before:auto}pre{color:black;background:#eee}a{color:inherit}}</style><aside><strong>地图编辑器交接</strong><p class="badge">2026.10.19 · 本地离线文档</p><a class="depth-1" href="#section-0">地图编辑器系统合并完整对接文档</a><a class="depth-2" href="#section-1">1. 接收后先做什么</a><a class="depth-2" href="#section-2">2. 唯一数据源与目录</a><a class="depth-2" href="#section-3">3. 大地图蜂窝与坐标</a><a class="depth-3" href="#section-4">独立石块与破坏流程</a><a class="depth-2" href="#section-5">4. 战场工作集与营地衔接</a><a class="depth-3" href="#section-6">遭遇前出战与返回流程</a><a class="depth-2" href="#section-7">5. 事件、对话与地图入口</a><a class="depth-3" href="#section-8">已存在的请求接口</a><a class="depth-3" href="#section-9">数值参数与未绑定内容</a><a class="depth-3" href="#section-10">关键事件行为</a><a class="depth-2" href="#section-11">6. 美术接入与高清一致性</a><a class="depth-2" href="#section-12">7. 保存协议、系统合并顺序与验收</a><a class="depth-2" href="#section-13">8. 当前实际限制与交接责任</a><a class="depth-2" href="#section-14">附录 A：本次导出统计与校验结论</a><a class="depth-2" href="#section-15">附录 B：逐事件实际入口、参数和待绑定项</a><a class="depth-3" href="#section-16">1 · 火速任命 — QST_MAIN_001_001</a><a class="depth-3" href="#section-17">2 · 小树守卫 — QST_GRASS_002</a><a class="depth-3" href="#section-18">3 · 图书馆开门日 — QST_SIDE_001_001</a><a class="depth-3" href="#section-19">4 · 防卫预算 — QST_SIDE_002_001</a><a class="depth-3" href="#section-20">5 · 浑浊的大地 — QST_GRASS_005</a><a class="depth-3" href="#section-21">6 · 狼来了 — QST_GRASS_006</a><a class="depth-3" href="#section-22">7 · 年迈的驴子 — QST_GRASS_007</a><a class="depth-3" href="#section-23">8 · 超大型巨人 — QST_GRASS_008</a><a class="depth-3" href="#section-24">9 · 不对名单 — QST_GRASS_009</a><a class="depth-3" href="#section-25">10 · 甲壳圣堂 — QST_GRASS_010</a><a class="depth-3" href="#section-26">11 · 废弃矿井 — QST_GRASS_011</a><a class="depth-3" href="#section-27">12 · 过分敬业 — QST_GRASS_012</a><a class="depth-3" href="#section-28">13 · 群星之底 — QST_GRASS_013</a><a class="depth-3" href="#section-29">14 · 不便携式魔力扩充引擎 — QST_GRASS_014</a><a class="depth-3" href="#section-30">15 · 外行魔法师 — QST_GRASS_015</a><a class="depth-3" href="#section-31">16 · 看一眼不要钱 — QST_GRASS_016</a><a class="depth-3" href="#section-32">17 · 富含矿物质 — QST_GRASS_017</a><a class="depth-3" href="#section-33">18 · 血祭日 — QST_SIDE_003_001</a><a class="depth-3" href="#section-34">19 · 谁会赢？ — QST_GRASS_019</a><a class="depth-3" href="#section-35">20 · 谁会输？ — QST_GRASS_020</a><a class="depth-3" href="#section-36">AUX · 福斯特镇 — AUX_GRASS_FOSTER</a><a class="depth-3" href="#section-37">AUX · 萨尔格特城 — AUX_GRASS_SALGERT</a><a class="depth-3" href="#section-38">AUX · 罗瓦常驻 — AUX_GRASS_ROVA</a><a class="depth-2" href="#section-39">附录 C：事件关卡设计与 UI 接入执行稿全文</a><a class="depth-3" href="#section-40">事件关卡设计与UI接入执行文档</a><a class="depth-2" href="#section-63">附录原文：接入规范.md</a><a class="depth-3" href="#section-64">事件内容与接入规范</a><a class="depth-2" href="#section-74">附录原文：事件总表.md</a><a class="depth-3" href="#section-75">草原前期事件总表</a><a class="depth-2" href="#section-157">附录原文：程序监听清单.md</a><a class="depth-3" href="#section-158">事件程序监听清单</a><a class="depth-2" href="#section-168">附录原文：符文表.md</a><a class="depth-3" href="#section-169">事件符文表</a></aside><main><section style="background:#edf2e7;padding:18px;border:1px solid #819778"><h1>增量补丁已接入 · 2026-10-19</h1><p>当前为502条大地图素材记录、631点位、41张战场。已同步本轮迷雾、山体、召唤小屋出生点、战场部署和素材修正。</p><p>本轮字段及Godot接入步骤请先阅读同目录 <a href="补丁对接说明.md">补丁对接说明.md</a> 和 <a href="完整系统对接文档.md">完整文档新增首节</a>。下方保留原大包的完整事件与系统交接内容。</p></section><h1 id="section-0">地图编辑器系统合并完整对接文档</h1>
+<p>交付日期：2026-10-19。本文与同包数据、源码和资源共同构成一次导出快照；准确导出时间、文件 SHA256 及检查结果见 <code>核对记录/导出快照.json</code>、<code>核对记录/接入检查.json</code> 和根目录 <code>文件清单_SHA256.json</code>。</p>
+<h2 id="section-1">1. 接收后先做什么</h2>
+<ul>
+<li>将整个压缩包解压到本机目录，保留内部目录结构。不要直接在压缩包中运行。双击根目录 <code>启动本包编辑器.cmd</code>，默认在 Chrome 打开 <code>http://127.0.0.1:8876/</code>。需安装 Python 3.10 或以上；浏览器编辑器无需 npm、联网下载或 Godot。</li>
+<li>顶部“大地图灰盒 / 战斗场景”切换，快捷键 Alt+1 / Alt+2。大地图保存用“保存布局”或 Ctrl+S，战场用“保存战场”或 Ctrl+S；两者保存不同文件。</li>
+<li>先按本节和第 2 节确定当前数据，再查看第 3—8 节的字段与宿主接入。完整事件内容、监听要求、逐条实际入口和待配数值均在本文后半部，不用依赖口头解释。</li>
+<li>本包默认用 8876 端口以便与原工作区 8766 区分。需要其他端口时运行 <code>powershell -NoProfile -ExecutionPolicy Bypass -File .\启动本包编辑器.ps1 -Port 8878</code>。若端口属于另一份工作区，启动脚本会明确拒绝混用。</li>
+</ul>
+<p>导出保留当前已保存内容，不重置正式玩家存档。编辑器里的“试玩交互”是隔离预览，不写真实进度。接入方创建新游戏时从召唤小屋开始，保留战争迷雾。</p>
+<h2 id="section-2">2. 唯一数据源与目录</h2>
+<div class="table-wrap"><table>
+<tr><th>路径（相对本包根目录）</th><th>用途与维护方式</th></tr>
+<tr><td><code>project/frontier_toolkit/editor/hex/Data/Maps/hex_layout.json</code></td><td>当前大地图的唯一工作文件，包含格子、点位、道路、桥梁、控制层、素材、事件目录与数值参数</td></tr>
+<tr><td><code>project/frontier_toolkit/editor/hex/Data/Maps/hex_battles.json</code></td><td>全部当前战场工作集；敌军对象是常规营地阵容数量的编辑源</td></tr>
+<tr><td><code>project/frontier_toolkit/editor/hex/Tools/hex-planner/</code></td><td>当前蜂窝编辑器页面、共享模型、渲染器、试玩和完整浏览器资源</td></tr>
+<tr><td><code>project/frontier_toolkit/editor/hex/Tools/</code></td><td>Python 保存服务、数据校验及 Node 回归测试</td></tr>
+<tr><td><code>数据导出/</code></td><td>从本次工作文件派生的全量 JSON、逐场 battlelevel、接入请求和关联表；修改后应重新生成，不作为第二套独立工作源</td></tr>
+<tr><td><code>project/UI跳转原型/事件/</code></td><td>当前事件正文、接入规范、监听清单、符文表及完整配表草稿</td></tr>
+<tr><td><code>project/UI跳转原型/Scenes</code>、<code>Scripts</code>、<code>Assets</code>、<code>docs</code></td><td>独立 UI 原型、召唤/仓库/出战接口与已有文档</td></tr>
+<tr><td><code>project/frontier_toolkit/</code> 其他目录</td><td>Godot 地图、2.5D、旧连续坐标编辑器、UI 模块、适配与历史技术文档，保持原相对结构供接入参考</td></tr>
+<tr><td><code>project/事件配表工具/</code></td><td>当前磁盘上的写作/配表工具及 Godot 事件表现来源；缺件情况见第 8 节，不作为已能运行的事件执行器交付</td></tr>
+<tr><td><code>project/it-is-time/Content/Maps/FrontierDelivery_20261015/Assets/</code></td><td>战场资源中原 <code>res://Assets/Maps/...</code> 对应的完整美术依赖；路径映射见资源解析表</td></tr>
+<tr><td><code>美术源文件/</code></td><td>1018 原图集、图 7/图 8、十倍底图 TIFF、来源记录、已采用 85% 树木预览与原件</td></tr>
+<tr><td><code>核对记录/</code></td><td>源文件指纹、结构与引用检查、测试原始输出、已确认视觉调整记录</td></tr>
+</table></div>
+<p><code>Tools/hex-planner/layout.json</code>、<code>battles.json</code>、<code>events.json</code> 是静态后备。本包已依据工作文件同步这三份；在线编辑以 <code>Data/Maps</code> 为准。以后只更新静态 JSON 而不更新工作文件，会在在线模式看到旧内容。</p>
+<p><code>frontier_toolkit/UI跳转原型</code>、<code>UI跳转原型_20261015</code> 是工具箱中的历史副本，保留是为了不破坏其旧演示的资源引用。当前事件正文用 <code>project/UI跳转原型/事件/事件总表.md</code>，当前蜂窝场景用 <code>editor/hex/Data/Maps</code>。较早 README 中的 14/15 张战场、旧图标宽度或旧素材数不覆盖本次快照。</p>
+<h2 id="section-3">3. 大地图蜂窝与坐标</h2>
+<p>大地图使用平顶六边形，世界矩形起点 <code>[70,100]</code>、大小 <code>[27900,16350]</code>，单格横向顶点跨度 <code>255</code>。轴坐标 <code>(q,r)</code> 不是贴图像素。令 <code>R=255/2</code>，格心为：</p>
+<pre><code>x = origin.x + 1.5 × R × q
+y = origin.y + √3 × R × (r + q/2)
+origin = [70,100]</code></pre>
+<p>相邻轴坐标偏移为 <code>(1,0)、(0,1)、(-1,1)、(-1,0)、(0,-1)、(1,-1)</code>；相邻格心距离约 <code>220.8365</code> 世界单位。请直接复用 <code>model.js</code> 的 <code>center/axial/corners</code> 或 Python <code>hex_layout.center</code>，反算格子要做 cube rounding，不能分别取整后直接使用。</p>
+<p>底图贴在 <code>background.position/size</code> 指定的世界矩形；高清图像像素通过此矩形转换。38400×22500 是母版配准画布，并不表示每张生成分块都有同样的原生像素密度。图标放大和怪兽尺寸不改变格子大小、坐标或触发范围。</p>
+<div class="table-wrap"><table>
+<tr><th>字段</th><th>含义</th></tr>
+<tr><td><code>cells[].q/r/region</code></td><td>格子稳定坐标与六种区域：forest、spider、sparse、grass、pit、desert</td></tr>
+<tr><td><code>cells[].feature</code></td><td>wall、river、breakable、bridge；空值为普通地形</td></tr>
+<tr><td><code>cells[].control</code></td><td>allowed 可通过；outside 边缘禁止；breakable 橙色控制区，破坏条件满足后开放</td></tr>
+<tr><td><code>condition_ref/control_condition_ref</code></td><td>外部条件引用，需宿主解析，空值不构造额外业务</td></tr>
+<tr><td><code>event_id/event_trigger/event_links</code></td><td>单事件或共享事件入口；格子入口和点位入口分别保存</td></tr>
+<tr><td><code>sites[].id/kind/position</code></td><td>稳定点位身份、类型与世界坐标；命名变化不更换 ID</td></tr>
+<tr><td><code>sites[].radius</code></td><td>大地图交互/遭遇半径；独立于 visual.width 与战场 radius</td></tr>
+<tr><td><code>roads[].points/width</code></td><td>世界坐标道路折线；保存现有节点，不重新自动识别或平滑</td></tr>
+<tr><td><code>crossings[].points/width</code></td><td>跨河桥梁通道；道路外观不赋予任意渡河能力</td></tr>
+</table></div>
+<p>黑色 wall 是阻挡及视野遮挡山体；只有完全位于 pit 区域、连通块不超过 7 格的散点 wall 按深坑解释，详见 <code>model.js/hex_layout.py</code> 的 <code>wallKinds/wall_kinds</code>。左下长墙保留阻挡逻辑，背景已画墙，不能再自动补一串黑石。地图外、outside、永久 wall/river 与未破坏石障叠加约束，不能用美术透明度推断通行。</p>
+<p>出生点 <code>[3220,11372]</code>，位于召唤小屋附近；初始视野半径 <code>630</code>，<code>fog.enabled=true</code>，<code>preserve_exploration=true</code>。宿主需要按现有山体遮挡语义计算实时视野并保存探索记录；编辑器显示全图不等于取消战争迷雾。编辑源地图与玩家位置、迷雾、战斗完成、破坏列表分开保存，不能将同事预览中的试玩进度作为新游戏存档。</p>
+<h3 id="section-4">独立石块与破坏流程</h3>
+<p>27 块可破坏石头使用各自形状与透明素材。<code>site.destruction.cells</code> 和 <code>cell.obstacle_ids</code> 双向绑定；共享格需所有 owner 被破坏才开放。灰石与黑石按图 8 原位美术维护，位置、外观与逻辑区块分别记录。换图不能把所有石块换成同一张，也不能按矩形粗切代替真实轮廓。</p>
+<ul>
+<li>调用 <code>HexContentModel.destructionRequest(doc, obstacleId)</code> 读取稳定 ID、素材位置、格子列表、持有怪物条件和 <code>cost={unit:&quot;walk_steps&quot;,amount:3,clock_owner:&quot;host&quot;}</code>。</li>
+<li>正式宿主验证持有怪物、相邻可达、当前未破坏，再使用程序已有的行走计时计算 3 格耗时。试玩单格默认为 0.6 秒，不能将 1.8 秒硬编码为正式规则。</li>
+<li>动作成功后调用 <code>commitDestruction(doc,id,destroyedSet)</code>，隐藏 <code>remove_visual_ids</code>、移除本块碰撞，按 <code>opened_cells/blocked_cells</code> 更新导航。取消、失败或条件失效不提前隐藏。</li>
+<li>保存 <code>destroyed_obstacle_ids</code>；读档用 <code>restoreDestruction</code> 恢复。重复提交返回 <code>already_committed</code>，不能重复消耗或清空仍受其他石头/永久地形约束的格子。</li>
+</ul>
+<h2 id="section-5">4. 战场工作集与营地衔接</h2>
+<p>大地图以 <code>site.battle_map_id</code> 指向 <code>hex_battles.maps[].id</code>，<code>enemy_config_id</code> 对应战场 <code>encounter.enemy_config_id</code>，独立战场回指 <code>encounter.source_site_id</code>。不要通过名称、下拉顺序、图标或怪物中文名猜关联。当前逐点配对及完整敌军对象见 <code>数据导出/战斗点与战场关联.json</code>。</p>
+<p>战场是独立的小尺度坐标空间：<code>objects[].position=[X,Z]</code>，<code>height</code> 为高度；大地图世界坐标不能直接写入战场。<code>maps[].hex_grid.cell_width</code> 常用 2.2，以每张实际配置为准；<code>orientation</code> 可能为 flat 或 pointy，后者使用模型中的 30° 旋转。<code>maps[].radius</code> 是战场边界尺度，与大地图遭遇半径无换算关系。</p>
+<div class="table-wrap"><table>
+<tr><th>配置</th><th>接入用途</th></tr>
+<tr><td><code>hex_cells[].ground</code></td><td>plain/grass/soil/stone/sand/water 地面涂色，只表示外观，不自动加移速或伤害</td></tr>
+<tr><td><code>hex_cells[].control</code></td><td>allowed/outside/breakable 控制层；编译时转成对应多边形对象</td></tr>
+<tr><td><code>wall</code></td><td>边界空气墙厚度、高度、层及阻挡说明；围边装饰不代替物理边界</td></tr>
+<tr><td><code>background_blur/edge_feather/background_color</code></td><td>原有场外光晕表现配置；不能因更换场内背景丢弃</td></tr>
+<tr><td><code>objects[].visual</code></td><td>素材、视觉尺寸、透明度、显隐、层级；<code>visible=false</code> 的旧围边作为参考保留</td></tr>
+<tr><td><code>collision/region/click_area</code></td><td>实际碰撞、效果范围、交互范围，与图像大小相互独立</td></tr>
+<tr><td><code>linked_collision_id/visual_id</code></td><td>美术对象与独立碰撞的双向关联，移动时同步检查</td></tr>
+<tr><td><code>deployment.slots/facing</code></td><td>己方部署槽与朝向，均需正式队伍/部署适配</td></tr>
+<tr><td><code>enemy</code> 对象</td><td>monster_config_id、definition_id、monster_species、monster_type、monster_size、grouped、count、team_group、位置和朝向</td></tr>
+<tr><td><code>post_battle</code></td><td>战后事件、召唤、升级等语义引用；需正式宿主完成条件判断与业务执行</td></tr>
+<tr><td><code>effect_ref/condition_ref</code></td><td>留给效果/规则系统的 ID，缺项不得静默视为已配置</td></tr>
+</table></div>
+<p>常规战斗阵容的数量以当前战场 <code>type=enemy</code> 的对象 count 求和，不从图标、敌群摘要或旧事件备注反推。形态分蛇形、人形、兽形、蜘蛛形、飞行类，尺寸 tiny/small/medium/large/huge 单独设置；形态不决定体型、群体属性和强度。I 级默认 4—5，II 普通 6—7，II 高段 8，III 常规 9—10，02 和 08 保留故事单体，羊主为主怪加弓手共 4。具体以本包实际对象为准。复合点只允许 II 高段/III、最多两组；蜘蛛只在 spider 区域；III 关闭自动遭遇，保留主动挑战。</p>
+<p>大地图“编辑此战场”打开关联场景；在战场保存后，返回大地图刷新敌群摘要。<code>HexContentModel.battleRequest(doc,site,battle)</code> 输出 <code>frontier.battle.request</code>，其中 <code>readiness=host_roster_binding_required</code>；<code>definition_id=null</code> 的物种仍需程序接正式资源，不能用其他物种凑数。所有战场已保留各自环境布局、围边、光晕、部署和战后入口，但真实 AI、角色模型、伤亡与奖励不由地编实现。</p>
+<p><code>数据导出/逐场接入配置/*.battlelevel.json</code> 采用编辑器现有“导出接入配置”格式：<code>format=frontier-battle-level, version=1, map, assets, art_bindings, catalogs</code>。由 <code>HexBattleModel.compileMap</code> 将多格占地展开成真实六边形多边形，保留 semantic_group；不能将占地改成包围矩形。它是接入数据，不是完整可执行战斗。旧连续编辑器的 project.json/level.json 与当前 hex 工作集是不同格式；旧 Godot 转换器接入前应逐类型确认支持范围。</p>
+<h3 id="section-6">遭遇前出战与返回流程</h3>
+<p>正式流程应为：地图遭遇/主动挑战 → 固定本次来源点和返回位置 → 检查出战怪物 → 没有出战时打开出战页面 → 玩家确认后复查队伍 → 加载对应战场 → 战斗结果提交成功 → 结算页面 → 关闭结算后回到原地图位置，恢复迷雾与破坏状态。取消编队、加载失败或退出均不能当作胜利。19/20 号观战事件使用两方 AI，不能套用“玩家无队伍就拒绝观战”。</p>
+<p>这段是系统合并需要落实的流程要求；浏览器营地入口和请求输出不表示 UI/主工程已完成真实战斗链路。工具箱已有 <code>docs/battle_integration/</code> 的 request/result schema、代码审计与实施计划，完整原件一并保留；其中新协调器类和部分 DTO 为设计约定，接入时按实际实现核对，避免保留 FakeBattleAdapter 和正式入口同时响应。</p>
+<h2 id="section-7">5. 事件、对话与地图入口</h2>
+<p>完整内容以 <code>project/UI跳转原型/事件/事件总表.md</code> 为流程与正文来源。本次编辑器中的 <code>event_catalog.events</code> 收录 20 条事件与 3 条 AUX 辅助入口，保留全文、分支、注释、待定项及 runtime_bindings。<code>source_sha256</code> 是来源追踪，不是玩家版本号；<code>flow_authority.sha256</code> 要与事件总表实际字节核对，修改正文后同步目录，不能只改指纹掩盖内容变化。</p>
+<p>明确属于城市或地点内部的事件绑定到既有 icon；非城市、非既有交互点的事件通过独立菱形矩形问号入口。共享入口用 <code>event_links</code>，完成某一事件只隐藏对应选项，不能删掉整个城镇。07 两个入口共享同一事件进度，12 农田与城内回访共享阶段，17 北桥用桥入口。实际坐标、触发方式、阶段角色以本文逐条导出及 <code>事件入口绑定.json</code> 为准。</p>
+<h3 id="section-8">已存在的请求接口</h3>
+<pre><code>const CM = window.HexContentModel;
+const requests = CM.requestsForIcon(doc, &quot;layout_foster_town&quot;, {
+  mode: &quot;host_integration&quot; // 接入方上下文；不是正式存档
+});
+// 单个格子或点位可用 CM.request(doc, target, context)
+// 参数读取：CM.parameter(doc, eventId, key)，未配置会抛错</code></pre>
+<p>请求字段包括：<code>type=&quot;frontier.event.request&quot;</code>、<code>version=1</code>、<code>event_id</code>、<code>source_id</code>、<code>trigger_mode</code>、<code>entry_enabled</code>、<code>stage_id</code>、<code>once</code>、<code>readiness</code>、<code>unresolved</code>、<code>runtime_bindings</code>、<code>context</code>。<code>requestsForIcon</code> 另含 <code>entry_role/inherit_click_area</code>。启用入口与业务可发布是不同状态；当前 <code>pending_binding</code> 应保留，不能因为已经有坐标就改为 ready。</p>
+<p>触发模式枚举为 <code>interact、enter_range、on_discover、on_game_start、on_game_time、battle_won、dialogue_complete</code>。编辑器试玩通过当前 world iframe 的 <code>window.dispatchEvent(new CustomEvent(&#x27;frontier:event-request&#x27;,{detail:request}))</code> 发出；宿主需在该窗口上下文订阅或新增显式桥接。此 CustomEvent 不自动穿过 iframe，不能只在外层 shell 监听后就认为已接收。普通接入程序也可以直接调用内容模型生成请求。</p>
+<p>宿主接收后负责：条件与阶段筛选 → 持久请求去重 → 展示本阶段对白与真实选项 → 外部等待/战斗/交易 → 提交消耗、奖励、任务状态 → 成功回执后更新 UI。<code>EventPanel.tscn</code> 仅提供正文与固定选项布局，正文中的【选项】、自然语言条件和 <code>branches</code> 说明不会自动转成执行图。当前事件 <code>execution_graph=null</code> 的条目必须由事件系统负责人补齐节点，不可顺播全文后直接发所有奖励。</p>
+<h3 id="section-9">数值参数与未绑定内容</h3>
+<p>唯一数值编辑入口是 <code>event.runtime_bindings.parameters</code>；<code>parameter_specs</code> 记录 label/type/unit/min/max/allow_unconfigured。编辑器“事件库 → 接入参数 JSON → 保存接入参数到布局 → 保存布局”。不要通过改规格、分支键、事件 ID 来调数值。14/15/20 的旧 trigger_policy 兼容字段在请求时由 parameter_bindings 投影，不再维护第二份数值表。</p>
+<p><code>null</code> 表示未配置，不是 0、免费、条件通过或随机生成。未绑定的敌军、奇物、符文、天气、概率和交易结果仍应阻止相应业务执行并提示缺项。<code>数据导出/事件参数与待绑定.json</code> 完整保留每条参数及规格；生成的请求只是配置载荷，不承诺宿主已执行这些数值。</p>
+<h3 id="section-10">关键事件行为</h3>
+<div class="table-wrap"><table>
+<tr><th>编号</th><th>必须保留的行为</th></tr>
+<tr><td>01</td><td>新游戏开局首次在召唤小屋触发；读档不重新发放任命结果</td></tr>
+<tr><td>02</td><td>小树守卫卡洛德为故事单体；首次召唤并安排出战后的教学入口，战后文本/奖励等以原稿待定项为准，不增捕获</td></tr>
+<tr><td>03</td><td>福斯特镇图书馆，手记转为 armor/health/attack 三种符文解锁；私房钱仍待定，不增贤者线索</td></tr>
+<tr><td>04</td><td>按未接取/进行中/待交付路由清剿委托，正式清剿目标、物品与回执需要绑定</td></tr>
+<tr><td>05</td><td>草原羊主战前区域的传闻入口；阅读不自动开 Boss 战，不凭空增奖励</td></tr>
+<tr><td>06</td><td>拾取神秘物品先提交，再进入狼战；胜负均保留已拾取物品，不能失败回滚拾取</td></tr>
+<tr><td>07</td><td>驴与商人两个入口，两种发现顺序都用共用归还对话完成；不做实际护送，奖励去重</td></tr>
+<tr><td>08</td><td>巨型拱兽的歇脚地，保留原稿单体与实际战场关联</td></tr>
+<tr><td>09</td><td>矿洞附近独立遗弃货车入口，阅读奖励数值待定</td></tr>
+<tr><td>10</td><td>废弃圣堂入口，攻击力判定包含仓库与出战，以单只严格高于阈值判断</td></tr>
+<tr><td>11</td><td>废弃矿井战后发符文，具体符文/数量待定，不能擅改完整召唤图纸</td></tr>
+<tr><td>12</td><td>北桥东岸农田与萨尔格特城回访；选择回城路线立即锁定，离开/重载不能改为直接战斗</td></tr>
+<tr><td>13</td><td>红祭坛前道路转折问号入口，完整分支见正文</td></tr>
+<tr><td>14/15</td><td>萨尔格特城：购买引擎扣 100 魔力并扩圈；成功后满 4 个游戏日才出现鬼魂，使用程序已有计时，读档不重算起点</td></tr>
+<tr><td>16</td><td>福斯特镇东侧路边问号；胜利奖励眼球，不自动生成额外怪物，概率等参数待配</td></tr>
+<tr><td>17</td><td>北桥本体点击触发，不能合并为农田事件</td></tr>
+<tr><td>18</td><td>依次 1 只有皮毛、2 只飞行、3 只无手足蛇类；不能献祭最后一只；本阶段发奖成功后才揭示下一要求</td></tr>
+<tr><td>19</td><td>废弃圣堂边洞穴的事件入口；帮助对象不作为友军入场，旁观读取两方实际 AI 战斗结果</td></tr>
+<tr><td>20</td><td>萨尔格特城出口问号；四轮本金 10/20/50/100，赢总返还 2B 已含本金；双方阵容手填，第四次结算后永久关闭入口</td></tr>
+</table></div>
+<p>上表便于联调检查，不能替代后附完整正文、分支和监听规范。城市/普通点位的入口 ID、敌军、奖励资源与存档状态词必须建立明确映射；读文案标题和显示图案不能作为实际条件判定。</p>
+<h2 id="section-11">6. 美术接入与高清一致性</h2>
+<p>本包包含编辑器全部资源目录、战场原 <code>res://</code> 依赖、UI 素材、1018 原图集、图 7/图 8、十倍底图母版和采用的树木版本原件。<code>数据导出/素材库与路径解析.json</code> 逐资产列出原路径、浏览器路径、可找到的原件与 SHA256；保留 SVG、PNG 透明通道、图集裁切与 Godot <code>.import/.uid</code> 源元信息，不复制 <code>.godot</code> 缓存。</p>
+<p>当前高清底图为 <code>background.detail_revision=direct_original_hd_png_tiles</code>。总览只用于远景；近景直接绘制 <code>source_tiles.tiles[]</code> 的 48 张原始高清 PNG。必须一同读取 <code>pixel_size/rect/core/offset</code> 与 <code>clip_asset</code> 裁切接缝，使用 even-odd 处理孔洞。只把 overview.png 铺到全世界会模糊；将 48 块重新压成低分辨率整图也会失去当前清晰度。</p>
+<p>当前显示链在 <code>hd-background.js/background-tiles.js/world-content.js/render-quality.js</code>。Godot 正式工程需要自行实现相同贴图分块、裁切与坐标变换，或生成验证一致的纹理资源；本次没有将浏览器高清实现直接移植为 Godot 渲染器，不能因母版分辨率高就宣称主游戏已显示全部原块精度。</p>
+<p>点位置换接口：<code>sites[].visual.asset_id → assets[].path</code>。<code>width/height_scale/anchor/rotation/z_index</code> 控制世界视觉尺寸、比例、锚点、朝向与层级；组合图标额外使用 <code>visual.layers[].asset_id/width/offset</code>。默认 asset.anchor 及点位覆盖都要保留，底部锚点不是图像矩形中心。描边使用所在区域更深的颜色；阴影、预览图、atlas_rect/source_size/source_rect 等元数据按现有渲染模型解释，不要仅替换文件名后丢掉比例。</p>
+<p>已采用的树木为 85% 版本：358 棵树、132 灌丛/低装饰和 21 蛛网，共 511 个独立装饰点；61 个对应素材已保存于 <code>assets/woodland-85-20261019</code>。70% 与新增空地版本未采用。它们属于装饰，点击应透过至地面行走，不自动增加屏障。边界阻挡由原控制层维护，不能以树冠大小代替碰撞。</p>
+<p>废弃圣堂当前使用独立素材 <code>art1018_11_001</code>，宽 615；平原符合条件的 18 处原单格营地半径已扩为 375。三处 Boss、城镇与祭坛的实际组合和宽度以快照字段为准，较早文档中的方案仅为历史记录。本次导出不改变美术位置、尺寸、图标、布局或逻辑。</p>
+<p>战场资源中相对 <code>assets/...</code> 从 hex-planner 解析；<code>res://Assets/Maps/...</code> 是原地图交付根中的路径。浏览器显示需优先使用 <code>browser_path</code> 或编辑器原有回退，Godot 迁移时将原件复制到目标模块目录并批量映射 path，不要把机器绝对路径写入发布配置。已找到的源文件和目标定位都在解析表中；资源的 <code>definition_id</code>、角色模型与场景 ID 仍由正式注册表处理。</p>
+<h2 id="section-12">7. 保存协议、系统合并顺序与验收</h2>
+<p>本地服务 <code>Tools/serve_hex_planner.py</code> 只监听 127.0.0.1。GET <code>/api/layout</code>、<code>/api/battles</code> 返回当前 JSON 和 ETag；ETag 是原始文件字节 SHA256。POST 同路径提交 JSON，携带当前 <code>If-Match</code> 与同源 Origin；30 MB 请求上限。保存前进行结构、范围、来源、参数及双向绑定校验；成功原子替换并备份。冲突返回 409，导出草稿后人工按稳定 ID 合并，不能用旧快照强行覆盖。</p>
+<p><code>source_sha256/source_maps</code> 标记原始来源，服务会限制不兼容来源与历史战场丢失。范围与 grid 也是兼容条件。合并新项目时先保留数据来源，再设计显式迁移；不要为绕过保存校验随便修改这些字段。编辑器撤销栈与视角属于临时浏览器状态，导出的是已保存工作内容，不是可重放的整个编辑操作历史。</p>
+<p>建议按以下顺序接入：</p>
+<ul>
+<li><strong>资源与只读布局</strong>：导入当前 map/battles，建立稳定 ID 和资源注册表映射，先核对图 8 位置、85% 树木、高清底图、围边和光晕。</li>
+<li><strong>通行与雾</strong>：按格子和桥梁建立导航/视野遮挡；实现独立石障破坏与读档，检查永久约束及重叠 owner。</li>
+<li><strong>队伍与战斗</strong>：接入真实 monster instance、出战前跳转、独立战场加载、敌群预设、战斗生命周期与可靠返回。先禁用旧测试战斗入口。</li>
+<li><strong>事件执行与对话</strong>：保留正文，按本包分支/阶段补执行图；UI 只显示，条件/奖励/时间由正式服务执行。未配参数保持阻断与可定位提示。</li>
+<li><strong>统一存档事务</strong>：事件阶段、请求账本、消耗/奖励、阵容、pending battle、位置、迷雾和 destroyed IDs 统一所有权；保存成功后才释放对应流程。</li>
+</ul>
+<p>推荐的 request_id、battle_id、事务账本与状态机属于合并协议设计，不能把文档建议当成当前已存在的方法名。原型有些信号在测试逻辑执行后才发出，只监听可能造成二次扣费或双路跳转，需按 <code>UI跳转原型/docs/07_系统接入适配与联调协议.md</code> 替换宿主分支。</p>
+<p>最低验收包括：全图坐标与三桥一致；河流不能直接跨越；山体遮挡、散坑识别；无怪物拒绝破坏、有怪物耗时三格；两块共享格只破一块仍阻挡；重新加载恢复破坏与迷雾；召唤后未编队遭遇先到出战页；III 不自动开战；41 场均有对应资源且部署/敌方点不落障碍；战斗失败/退出不当胜利；07 双入口、12 路线锁定、14/15 四游戏日、18 献祭去重与阶段揭示、19/20 真实观战和四轮关闭；保存失败/重复回执/迟到回执都不重复发奖。</p>
+<h2 id="section-13">8. 当前实际限制与交接责任</h2>
+<p>当前地图/战场配置、素材、编辑入口、校验及浏览器试玩已存在。事件目录是完整内容草稿和接入参数，尚不是通用任务执行器；正式怪物资源、真实 AI、奖励/交易、任务阶段与正式玩家存档需要同事的系统适配。</p>
+<p>本次也核对了当前正式工程中的 <code>Scripts/Application/GameSession.gd</code>、<code>DeliveryMapBridge.gd</code> 和相关入口，并附上 <code>project/it-is-time/Scripts/Application</code>、<code>Modules/FrontierDelivery</code>、<code>Modules/PaperUI</code> 与应用场景，供同事沿用现有实现。当前正式工程已经有统一保存、战斗回执与新手任务基础；<code>DeliveryMapBridge._arrived</code> 在遭遇时发现空出战队伍，会保存 <code>pending_battle_setup</code> 并调用 <code>open_setup</code>，<code>confirm_setup</code> 再继续战斗。合并时复用该链路，核对它是否读取了本包最新 39 处阵容与 41 张战场，而不是重复制作另一套流程。此处为代码存在性核对，本次未运行整个主游戏做全量联调。</p>
+<p>当前该桥的普通地点分支仅为召唤小屋打开召唤页，其他地点显示“暂无已接入的事件”；不能据此认为本包 20 条事件已经由正式宿主执行。<code>GameSession.save_delivery_world/commit_battle</code> 是已存在的保存/回执入口，剧情阶段与奖励账本仍需扩展。时间沿用程序已有功能及执行稿约定，不另建正式时钟。较早技术文档中“没有 GameSession”“尚无战斗接入”等说法是当时审计结论，已不适合作为当前整个主工程的能力判断。</p>
+<p>磁盘中的事件配表工具 README 提到的部分 JS 流程文件，以及 Godot 事件表现 <code>core/event_definition.gd、event_session.gd、event_json_port.gd</code> 当前缺失。包内保留现存原件并在 <code>核对记录/资源与模块缺件.json</code> 列出；不会用占位文件伪装补齐，也不将该演示声明为可直接运行。地图编辑器不依赖这些缺失模块，仍可独立启动、保存与导出。配表草稿 <code>.events.json</code> 不能改后缀后直接当作单事件 <code>.event.json</code> 运行。</p>
+<p>工具箱的 Godot 项目、UI 原型与主工程采用的渲染/运行环境可能不同。保留各项目 project.godot 配置，不能整体覆盖同事主工程的 Autoload、输入、窗口或存档设置。当前包不包含整个 it-is-time 主游戏的 C# / AI / 角色系统源码，只包含编辑器及其适配文档与所需美术依赖；同事按其正式工程接入。</p>
+<p>本次自动检查的具体通过/失败、待配效果和未注册敌军见 <code>核对记录/接入检查.json</code> 及 <code>自动测试结果.json</code>。测试发现的历史约束冲突会原样说明，不擅自改动用户已确认的位置或命名。文件清单校验与启动验证负责确认交付完整性，不能替代真实战斗、经济与存档的联调验收。</p>
+<p>当前三组旧测试未全部通过的原因分别为：营地标题仍断言含“地区 · 怪物”而当前已采用“强盗营地 01”等名称；战场测试固定假设只有 13 张、首场为空，当前已有 41 张及现存环境；树木测试要求与原始效果图全部原位一致，但当前保存地图中的 <code>map8_tree_preview_grass_bush_014</code> 与 <code>map8_tree_preview_grass_pine_013</code> 两个装饰位置已变化。本包保留当前保存位置与对象，没有恢复成旧测试快照；结构校验和 41 场实际部署布局检查均通过。</p>
+<p>以下附录由本次快照生成，包含全量入口与参数；随后原样汇入四份当前事件文档，保留所有正文、分支、数值约定和监听细节。</p>
+<h2 id="section-14">附录 A：本次导出统计与校验结论</h2>
+<ul>
+<li>cells：10877</li>
+<li>sites：631</li>
+<li>camp_sites：39</li>
+<li>roads：9</li>
+<li>crossings：3</li>
+<li>battles：41</li>
+<li>world_assets：501</li>
+<li>battle_asset_records：1252</li>
+<li>events：20</li>
+<li>auxiliary_events：3</li>
+<li>branches：52</li>
+<li>breakable_stones：27</li>
+</ul>
+<p>Python 与 JavaScript 结构检查通过；逐场布局错误 0，效果/业务待配警告 111。自动测试 7/10 通过。资源文件未找到 0 项，素材目录指纹差异 0 项。详细原始输出均保留在核对记录中。</p>
+<p>当前未通过的历史测试：<code>encounter-stone-bindings.test.cjs</code>，详见 <code>测试日志/encounter-stone-bindings.test.cjs.txt</code>。本次导出未为通过测试而改变已确认的布局或名称。</p>
+<p>当前未通过的历史测试：<code>woodland.test.cjs</code>，详见 <code>测试日志/woodland.test.cjs.txt</code>。本次导出未为通过测试而改变已确认的布局或名称。</p>
+<p>当前未通过的历史测试：<code>battle-model.test.cjs</code>，详见 <code>测试日志/battle-model.test.cjs.txt</code>。本次导出未为通过测试而改变已确认的布局或名称。</p>
+<h2 id="section-15">附录 B：逐事件实际入口、参数和待绑定项</h2>
+<h3 id="section-16">1 · 火速任命 — QST_MAIN_001_001</h3>
+<p>类型：主线；辅助记录：False；发布状态：<code>pending_binding</code>。</p>
+<div class="table-wrap"><table>
+<tr><th>入口</th><th>稳定 ID</th><th>位置 / 格子</th><th>角色</th><th>触发配置</th></tr>
+<tr><td>召唤小屋</td><td><code>layout_summoning_hut</code></td><td>[3130, 11583.496854181656]</td><td>opening</td><td><code>{&quot;mode&quot;: &quot;on_game_start&quot;, &quot;enabled&quot;: true, &quot;once&quot;: true, &quot;stage_id&quot;: &quot;opening&quot;, &quot;publish_status&quot;: &quot;pending_binding&quot;, &quot;inherit_click_area&quot;: true, &quot;source_icon_id&quot;: &quot;layout_summoning_hut&quot;}</code></td></tr>
+</table></div>
+<p>原稿触发条件：首次任命；具体触发时机待定</p>
+<p>待绑定：开局触发点；特令物品ID及功能；结束确认方式</p>
+<p>接入参数与规格（完整）：</p>
+<pre><code>{
+  &quot;location&quot;: {
+    &quot;icon_id&quot;: &quot;layout_summoning_hut&quot;,
+    &quot;position&quot;: [
+      3220,
+      11355
+    ],
+    &quot;entry_role&quot;: &quot;opening&quot;
+  },
+  &quot;trigger_policy&quot;: {
+    &quot;type&quot;: &quot;new_game_only&quot;,
+    &quot;once_per_save&quot;: true
+  },
+  &quot;flow_source&quot;: {
+    &quot;document&quot;: &quot;UI跳转原型/事件/事件总表.md&quot;,
+    &quot;sha256&quot;: &quot;988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5&quot;,
+    &quot;event_number&quot;: 1
+  },
+  &quot;parameters&quot;: {
+    &quot;special_order_quantity&quot;: 1
+  },
+  &quot;parameter_specs&quot;: {
+    &quot;special_order_quantity&quot;: {
+      &quot;label&quot;: &quot;国王特令数量&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    }
+  }
+}</code></pre>
+<h3 id="section-17">2 · 小树守卫 — QST_GRASS_002</h3>
+<p>类型：教学；辅助记录：False；发布状态：<code>pending_binding</code>。</p>
+<div class="table-wrap"><table>
+<tr><th>入口</th><th>稳定 ID</th><th>位置 / 格子</th><th>角色</th><th>触发配置</th></tr>
+<tr><td>小树守卫克劳德</td><td><code>layout_wolf_den_001</code></td><td>[4277.5, 10700.150942321528]</td><td></td><td><code>{&quot;mode&quot;: &quot;interact&quot;, &quot;enabled&quot;: true, &quot;once&quot;: true, &quot;stage_id&quot;: &quot;&quot;, &quot;publish_status&quot;: &quot;pending_binding&quot;, &quot;source_icon_id&quot;: &quot;layout_wolf_den_001&quot;, &quot;inherit_click_area&quot;: true}</code></td></tr>
+</table></div>
+<p>原稿触发条件：完成首次召唤并安排出战，再进入大地图</p>
+<p>待绑定：开战确认还是自动；卡洛德敌军配置；战后文本与奖励</p>
+<p>接入参数与规格（完整）：</p>
+<pre><code>{
+  &quot;flow_source&quot;: {
+    &quot;document&quot;: &quot;UI跳转原型/事件/事件总表.md&quot;,
+    &quot;sha256&quot;: &quot;988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5&quot;,
+    &quot;event_number&quot;: 2
+  },
+  &quot;parameters&quot;: {
+    &quot;minimum_summons&quot;: 1,
+    &quot;minimum_party_size&quot;: 1,
+    &quot;magic_reward&quot;: null,
+    &quot;enemy_count&quot;: 1,
+    &quot;enemy_health_multiplier&quot;: null,
+    &quot;enemy_attack_multiplier&quot;: null
+  },
+  &quot;parameter_specs&quot;: {
+    &quot;minimum_summons&quot;: {
+      &quot;label&quot;: &quot;首次召唤成功数量&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;minimum_party_size&quot;: {
+      &quot;label&quot;: &quot;最低出战数量&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;magic_reward&quot;: {
+      &quot;label&quot;: &quot;胜利魔力奖励&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;魔力&quot;,
+      &quot;min&quot;: 0,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;enemy_count&quot;: {
+      &quot;label&quot;: &quot;敌军数量&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;enemy_health_multiplier&quot;: {
+      &quot;label&quot;: &quot;敌军生命调整倍率&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;倍&quot;,
+      &quot;min&quot;: 0.01,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;enemy_attack_multiplier&quot;: {
+      &quot;label&quot;: &quot;敌军攻击调整倍率&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;倍&quot;,
+      &quot;min&quot;: 0.01,
+      &quot;allow_unconfigured&quot;: true
+    }
+  }
+}</code></pre>
+<h3 id="section-18">3 · 图书馆开门日 — QST_SIDE_001_001</h3>
+<p>类型：支线；辅助记录：False；发布状态：<code>pending_binding</code>。</p>
+<div class="table-wrap"><table>
+<tr><th>入口</th><th>稳定 ID</th><th>位置 / 格子</th><th>角色</th><th>触发配置</th></tr>
+<tr><td>福斯特镇</td><td><code>layout_foster_town</code></td><td>[8220, 9900]</td><td>library</td><td><code>{&quot;mode&quot;: &quot;interact&quot;, &quot;enabled&quot;: true, &quot;once&quot;: true, &quot;stage_id&quot;: &quot;library&quot;, &quot;publish_status&quot;: &quot;pending_binding&quot;}</code></td></tr>
+</table></div>
+<p>原稿触发条件：首次图书馆剧情；不绑定必须先完成其他城市</p>
+<p>待绑定：3枚基础符文为本轮配置选择，见符文表；私房钱资源/数量；常驻入口启用条件</p>
+<p>接入参数与规格（完整）：</p>
+<pre><code>{
+  &quot;flow_source&quot;: {
+    &quot;document&quot;: &quot;UI跳转原型/事件/事件总表.md&quot;,
+    &quot;sha256&quot;: &quot;988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5&quot;,
+    &quot;event_number&quot;: 3
+  },
+  &quot;parameters&quot;: {
+    &quot;private_money_magic&quot;: null,
+    &quot;rune_unlock_count&quot;: 3
+  },
+  &quot;parameter_specs&quot;: {
+    &quot;private_money_magic&quot;: {
+      &quot;label&quot;: &quot;罗瓦援助魔力&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;魔力&quot;,
+      &quot;min&quot;: 0,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;rune_unlock_count&quot;: {
+      &quot;label&quot;: &quot;基础符文解锁种类&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    }
+  }
+}</code></pre>
+<h3 id="section-19">4 · 防卫预算 — QST_SIDE_002_001</h3>
+<p>类型：支线；辅助记录：False；发布状态：<code>pending_binding</code>。</p>
+<div class="table-wrap"><table>
+<tr><th>入口</th><th>稳定 ID</th><th>位置 / 格子</th><th>角色</th><th>触发配置</th></tr>
+<tr><td>萨尔格特城</td><td><code>layout_sargate_city</code></td><td>[19386.25, 8381.367923688693]</td><td>city_center</td><td><code>{&quot;mode&quot;: &quot;interact&quot;, &quot;enabled&quot;: true, &quot;once&quot;: true, &quot;stage_id&quot;: &quot;city_center&quot;, &quot;publish_status&quot;: &quot;pending_binding&quot;}</code></td></tr>
+</table></div>
+<p>原稿触发条件：未接取/进行中/待交付按任务状态路由</p>
+<p>待绑定：清剿目标、地点和数量；关联战斗ID；奇物ID；回访入口</p>
+<p>接入参数与规格（完整）：</p>
+<pre><code>{
+  &quot;flow_source&quot;: {
+    &quot;document&quot;: &quot;UI跳转原型/事件/事件总表.md&quot;,
+    &quot;sha256&quot;: &quot;988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5&quot;,
+    &quot;event_number&quot;: 4
+  },
+  &quot;parameters&quot;: {
+    &quot;required_battle_wins&quot;: 1,
+    &quot;relic_quantity&quot;: 1,
+    &quot;enemy_count&quot;: null,
+    &quot;enemy_health_multiplier&quot;: null,
+    &quot;enemy_attack_multiplier&quot;: null
+  },
+  &quot;parameter_specs&quot;: {
+    &quot;required_battle_wins&quot;: {
+      &quot;label&quot;: &quot;指定清剿胜利次数&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;relic_quantity&quot;: {
+      &quot;label&quot;: &quot;古老奇物数量&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;enemy_count&quot;: {
+      &quot;label&quot;: &quot;清剿敌军数量&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;enemy_health_multiplier&quot;: {
+      &quot;label&quot;: &quot;敌军生命调整倍率&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;倍&quot;,
+      &quot;min&quot;: 0.01,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;enemy_attack_multiplier&quot;: {
+      &quot;label&quot;: &quot;敌军攻击调整倍率&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;倍&quot;,
+      &quot;min&quot;: 0.01,
+      &quot;allow_unconfigured&quot;: true
+    }
+  }
+}</code></pre>
+<h3 id="section-20">5 · 浑浊的大地 — QST_GRASS_005</h3>
+<p>类型：支线；辅助记录：False；发布状态：<code>pending_binding</code>。</p>
+<div class="table-wrap"><table>
+<tr><th>入口</th><th>稳定 ID</th><th>位置 / 格子</th><th>角色</th><th>触发配置</th></tr>
+<tr><td>浑浊的大地 · 牧羊人</td><td><code>event_shepherd</code></td><td>[12692.5, 12466.842766041782]</td><td></td><td><code>{&quot;mode&quot;: &quot;interact&quot;, &quot;enabled&quot;: true, &quot;once&quot;: true, &quot;stage_id&quot;: &quot;&quot;, &quot;publish_status&quot;: &quot;pending_binding&quot;, &quot;inherit_click_area&quot;: true, &quot;source_icon_id&quot;: &quot;event_shepherd&quot;}</code></td></tr>
+</table></div>
+<p>原稿触发条件：与牧羊人交互；具体地图点待绑定</p>
+<p>待绑定：地图位置；结束按钮；是否写入东南线索任务</p>
+<p>接入参数与规格（完整）：</p>
+<pre><code>{
+  &quot;location&quot;: {
+    &quot;icon_id&quot;: &quot;event_shepherd&quot;,
+    &quot;position&quot;: [
+      12650,
+      12600
+    ],
+    &quot;entry_role&quot;: &quot;&quot;
+  },
+  &quot;flow_source&quot;: {
+    &quot;document&quot;: &quot;UI跳转原型/事件/事件总表.md&quot;,
+    &quot;sha256&quot;: &quot;988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5&quot;,
+    &quot;event_number&quot;: 5
+  },
+  &quot;parameters&quot;: {},
+  &quot;parameter_specs&quot;: {}
+}</code></pre>
+<h3 id="section-21">6 · 狼来了 — QST_GRASS_006</h3>
+<p>类型：支线；辅助记录：False；发布状态：<code>pending_binding</code>。</p>
+<div class="table-wrap"><table>
+<tr><th>入口</th><th>稳定 ID</th><th>位置 / 格子</th><th>角色</th><th>触发配置</th></tr>
+<tr><td>狼来了 · 石塔遗物</td><td><code>event_stone_tower</code></td><td>[8293.75, 12577.261005024298]</td><td></td><td><code>{&quot;mode&quot;: &quot;interact&quot;, &quot;enabled&quot;: true, &quot;once&quot;: true, &quot;stage_id&quot;: &quot;&quot;, &quot;publish_status&quot;: &quot;pending_binding&quot;, &quot;inherit_click_area&quot;: true, &quot;source_icon_id&quot;: &quot;event_stone_tower&quot;}</code></td></tr>
+</table></div>
+<p>原稿触发条件：抵达并拾取石塔底端物品后触发狼群遭遇；具体地图点待绑定</p>
+<p>待绑定：物品内容/正式ID暂搁置，不填默认物品；甲狼/草狼组成、数量；战后文本；失败后事件状态</p>
+<p>接入参数与规格（完整）：</p>
+<pre><code>{
+  &quot;location&quot;: {
+    &quot;icon_id&quot;: &quot;event_stone_tower&quot;,
+    &quot;position&quot;: [
+      8700,
+      12600
+    ],
+    &quot;entry_role&quot;: &quot;&quot;
+  },
+  &quot;flow_source&quot;: {
+    &quot;document&quot;: &quot;UI跳转原型/事件/事件总表.md&quot;,
+    &quot;sha256&quot;: &quot;988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5&quot;,
+    &quot;event_number&quot;: 6
+  },
+  &quot;parameters&quot;: {
+    &quot;pickup_quantity&quot;: 1,
+    &quot;enemy_count&quot;: null,
+    &quot;extra_magic_reward&quot;: null,
+    &quot;enemy_health_multiplier&quot;: null,
+    &quot;enemy_attack_multiplier&quot;: null
+  },
+  &quot;parameter_specs&quot;: {
+    &quot;pickup_quantity&quot;: {
+      &quot;label&quot;: &quot;神秘物品拾取数量&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;enemy_count&quot;: {
+      &quot;label&quot;: &quot;狼群数量&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;extra_magic_reward&quot;: {
+      &quot;label&quot;: &quot;额外战斗魔力奖励&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;魔力&quot;,
+      &quot;min&quot;: 0,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;enemy_health_multiplier&quot;: {
+      &quot;label&quot;: &quot;敌军生命调整倍率&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;倍&quot;,
+      &quot;min&quot;: 0.01,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;enemy_attack_multiplier&quot;: {
+      &quot;label&quot;: &quot;敌军攻击调整倍率&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;倍&quot;,
+      &quot;min&quot;: 0.01,
+      &quot;allow_unconfigured&quot;: true
+    }
+  }
+}</code></pre>
+<h3 id="section-22">7 · 年迈的驴子 — QST_GRASS_007</h3>
+<p>类型：支线；辅助记录：False；发布状态：<code>pending_binding</code>。</p>
+<div class="table-wrap"><table>
+<tr><th>入口</th><th>稳定 ID</th><th>位置 / 格子</th><th>角色</th><th>触发配置</th></tr>
+<tr><td>年迈的驴子 · 路中老驴</td><td><code>event_donkey</code></td><td>[7337.5, 10479.314464356496]</td><td>donkey</td><td><code>{&quot;mode&quot;: &quot;interact&quot;, &quot;enabled&quot;: true, &quot;once&quot;: true, &quot;stage_id&quot;: &quot;donkey&quot;, &quot;publish_status&quot;: &quot;pending_binding&quot;, &quot;inherit_click_area&quot;: true, &quot;source_icon_id&quot;: &quot;event_donkey&quot;}</code></td></tr>
+<tr><td>年迈的驴子 · 石旁商人</td><td><code>event_donkey_merchant</code></td><td>[7720, 10258.477986391465]</td><td>merchant</td><td><code>{&quot;mode&quot;: &quot;interact&quot;, &quot;enabled&quot;: true, &quot;once&quot;: true, &quot;stage_id&quot;: &quot;merchant&quot;, &quot;publish_status&quot;: &quot;pending_binding&quot;, &quot;inherit_click_area&quot;: true, &quot;source_icon_id&quot;: &quot;event_donkey_merchant&quot;}</code></td></tr>
+</table></div>
+<p>原稿触发条件：两节点先后顺序不限；各自持久保存seen标记</p>
+<p>待绑定：两节点位置与交互ID；两件奇物具体内容；共用归还对话结束与发奖回执；不做实际护送</p>
+<p>接入参数与规格（完整）：</p>
+<pre><code>{
+  &quot;flow_source&quot;: {
+    &quot;document&quot;: &quot;UI跳转原型/事件/事件总表.md&quot;,
+    &quot;sha256&quot;: &quot;988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5&quot;,
+    &quot;event_number&quot;: 7
+  },
+  &quot;parameters&quot;: {
+    &quot;relic_quantity&quot;: 2
+  },
+  &quot;parameter_specs&quot;: {
+    &quot;relic_quantity&quot;: {
+      &quot;label&quot;: &quot;归还后奇物数量&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    }
+  },
+  &quot;locations&quot;: [
+    {
+      &quot;icon_id&quot;: &quot;event_donkey&quot;,
+      &quot;position&quot;: [
+        7337.5,
+        10479.314464356496
+      ],
+      &quot;entry_role&quot;: &quot;donkey&quot;
+    },
+    {
+      &quot;icon_id&quot;: &quot;event_donkey_merchant&quot;,
+      &quot;position&quot;: [
+        7720,
+        10258.477986391465
+      ],
+      &quot;entry_role&quot;: &quot;merchant&quot;
+    }
+  ],
+  &quot;location&quot;: {
+    &quot;icon_id&quot;: &quot;event_donkey&quot;,
+    &quot;position&quot;: [
+      7337.5,
+      10479.314464356496
+    ],
+    &quot;entry_role&quot;: &quot;donkey&quot;
+  }
+}</code></pre>
+<h3 id="section-23">8 · 超大型巨人 — QST_GRASS_008</h3>
+<p>类型：支线；辅助记录：False；发布状态：<code>pending_binding</code>。</p>
+<div class="table-wrap"><table>
+<tr><th>入口</th><th>稳定 ID</th><th>位置 / 格子</th><th>角色</th><th>触发配置</th></tr>
+<tr><td>普通森林 · 巨型拱兽 01</td><td><code>layout_forest_wolf_den_001</code></td><td>[4468.75, 2197.9465406678023]</td><td>giant_beast</td><td><code>{&quot;mode&quot;: &quot;interact&quot;, &quot;enabled&quot;: true, &quot;once&quot;: true, &quot;stage_id&quot;: &quot;giant_beast&quot;, &quot;publish_status&quot;: &quot;pending_binding&quot;, &quot;inherit_click_area&quot;: true, &quot;source_icon_id&quot;: &quot;layout_forest_wolf_den_001&quot;}</code></td></tr>
+</table></div>
+<p>原稿触发条件：与目标遭遇；具体触发方式待绑定</p>
+<p>待绑定：三倍大拱兽的实际敌军预设；战后对白；奇物ID/池</p>
+<p>接入参数与规格（完整）：</p>
+<pre><code>{
+  &quot;location&quot;: {
+    &quot;icon_id&quot;: &quot;layout_forest_wolf_den_001&quot;,
+    &quot;position&quot;: [
+      4468.75,
+      2197.9465406678023
+    ],
+    &quot;entry_role&quot;: &quot;giant_beast&quot;
+  },
+  &quot;flow_source&quot;: {
+    &quot;document&quot;: &quot;UI跳转原型/事件/事件总表.md&quot;,
+    &quot;sha256&quot;: &quot;988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5&quot;,
+    &quot;event_number&quot;: 8
+  },
+  &quot;parameters&quot;: {
+    &quot;enemy_size_multiplier&quot;: 3,
+    &quot;enemy_count&quot;: 1,
+    &quot;relic_quantity&quot;: 1,
+    &quot;enemy_health_multiplier&quot;: null,
+    &quot;enemy_attack_multiplier&quot;: null
+  },
+  &quot;parameter_specs&quot;: {
+    &quot;enemy_size_multiplier&quot;: {
+      &quot;label&quot;: &quot;拱兽体型倍率&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;倍&quot;,
+      &quot;min&quot;: 0.01,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;enemy_count&quot;: {
+      &quot;label&quot;: &quot;精英拱兽数量&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;relic_quantity&quot;: {
+      &quot;label&quot;: &quot;奇物数量&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;enemy_health_multiplier&quot;: {
+      &quot;label&quot;: &quot;敌军生命调整倍率&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;倍&quot;,
+      &quot;min&quot;: 0.01,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;enemy_attack_multiplier&quot;: {
+      &quot;label&quot;: &quot;敌军攻击调整倍率&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;倍&quot;,
+      &quot;min&quot;: 0.01,
+      &quot;allow_unconfigured&quot;: true
+    }
+  }
+}</code></pre>
+<h3 id="section-24">9 · 不对名单 — QST_GRASS_009</h3>
+<p>类型：支线；辅助记录：False；发布状态：<code>pending_binding</code>。</p>
+<div class="table-wrap"><table>
+<tr><th>入口</th><th>稳定 ID</th><th>位置 / 格子</th><th>角色</th><th>触发配置</th></tr>
+<tr><td>不对名单 · 遗弃货车</td><td><code>event_abandoned_cart</code></td><td>[9441.25, 12798.097482989331]</td><td>cart</td><td><code>{&quot;mode&quot;: &quot;interact&quot;, &quot;enabled&quot;: true, &quot;once&quot;: true, &quot;stage_id&quot;: &quot;cart&quot;, &quot;publish_status&quot;: &quot;pending_binding&quot;, &quot;inherit_click_area&quot;: true, &quot;source_icon_id&quot;: &quot;event_abandoned_cart&quot;}</code></td></tr>
+</table></div>
+<p>原稿触发条件：检查货车内纸条</p>
+<p>待绑定：魔力数量；纸条结束/领取按钮；地点ID</p>
+<p>接入参数与规格（完整）：</p>
+<pre><code>{
+  &quot;flow_source&quot;: {
+    &quot;document&quot;: &quot;UI跳转原型/事件/事件总表.md&quot;,
+    &quot;sha256&quot;: &quot;988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5&quot;,
+    &quot;event_number&quot;: 9
+  },
+  &quot;parameters&quot;: {
+    &quot;magic_reward&quot;: null
+  },
+  &quot;parameter_specs&quot;: {
+    &quot;magic_reward&quot;: {
+      &quot;label&quot;: &quot;阅读领取魔力&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;魔力&quot;,
+      &quot;min&quot;: 0,
+      &quot;allow_unconfigured&quot;: true
+    }
+  },
+  &quot;locations&quot;: [
+    {
+      &quot;icon_id&quot;: &quot;event_abandoned_cart&quot;,
+      &quot;position&quot;: [
+        9441.25,
+        12798.097482989331
+      ],
+      &quot;entry_role&quot;: &quot;cart&quot;
+    }
+  ],
+  &quot;location&quot;: {
+    &quot;icon_id&quot;: &quot;event_abandoned_cart&quot;,
+    &quot;position&quot;: [
+      9441.25,
+      12798.097482989331
+    ],
+    &quot;entry_role&quot;: &quot;cart&quot;
+  }
+}</code></pre>
+<h3 id="section-25">10 · 甲壳圣堂 — QST_GRASS_010</h3>
+<p>类型：支线；辅助记录：False；发布状态：<code>pending_binding</code>。</p>
+<div class="table-wrap"><table>
+<tr><th>入口</th><th>稳定 ID</th><th>位置 / 格子</th><th>角色</th><th>触发配置</th></tr>
+<tr><td>废弃圣堂</td><td><code>layout_abandoned_church</code></td><td>[6572.5, 2750.037735580382]</td><td></td><td><code>{&quot;mode&quot;: &quot;interact&quot;, &quot;enabled&quot;: true, &quot;once&quot;: true, &quot;stage_id&quot;: &quot;&quot;, &quot;publish_status&quot;: &quot;pending_binding&quot;, &quot;source_icon_id&quot;: &quot;layout_abandoned_church&quot;, &quot;inherit_click_area&quot;: true}</code></td></tr>
+</table></div>
+<p>原稿触发条件：玩家持有的怪物中，至少1只攻击力高于阈值；包括仓库和出战怪物</p>
+<p>待绑定：攻击阈值与正式攻击字段口径；读取仓库和出战的持有怪物快照；是否有出击成本；奖励数值</p>
+<p>接入参数与规格（完整）：</p>
+<pre><code>{
+  &quot;flow_source&quot;: {
+    &quot;document&quot;: &quot;UI跳转原型/事件/事件总表.md&quot;,
+    &quot;sha256&quot;: &quot;988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5&quot;,
+    &quot;event_number&quot;: 10
+  },
+  &quot;parameters&quot;: {
+    &quot;attack_threshold&quot;: null,
+    &quot;magic_reward&quot;: null,
+    &quot;relic_quantity&quot;: 1,
+    &quot;action_magic_cost&quot;: null
+  },
+  &quot;parameter_specs&quot;: {
+    &quot;attack_threshold&quot;: {
+      &quot;label&quot;: &quot;单只攻击力阈值&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;正式攻击数值&quot;,
+      &quot;min&quot;: 0,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;magic_reward&quot;: {
+      &quot;label&quot;: &quot;魔力奖励&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;魔力&quot;,
+      &quot;min&quot;: 0,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;relic_quantity&quot;: {
+      &quot;label&quot;: &quot;特别甲片数量&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;action_magic_cost&quot;: {
+      &quot;label&quot;: &quot;出击魔力成本 待确认是否需要&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;魔力&quot;,
+      &quot;min&quot;: 0,
+      &quot;allow_unconfigured&quot;: true
+    }
+  }
+}</code></pre>
+<h3 id="section-26">11 · 废弃矿井 — QST_GRASS_011</h3>
+<p>类型：支线；辅助记录：False；发布状态：<code>pending_binding</code>。</p>
+<div class="table-wrap"><table>
+<tr><th>入口</th><th>稳定 ID</th><th>位置 / 格子</th><th>角色</th><th>触发配置</th></tr>
+<tr><td>被遗忘的矿洞</td><td><code>layout_forgotten_mine</code></td><td>[9823.75, 12356.424527059267]</td><td></td><td><code>{&quot;mode&quot;: &quot;interact&quot;, &quot;enabled&quot;: true, &quot;once&quot;: true, &quot;stage_id&quot;: &quot;&quot;, &quot;publish_status&quot;: &quot;pending_binding&quot;, &quot;source_icon_id&quot;: &quot;layout_forgotten_mine&quot;, &quot;inherit_click_area&quot;: true}</code></td></tr>
+</table></div>
+<p>原稿触发条件：进入探索时不能携带大型怪物出战；不能直接删除/回收它们</p>
+<p>待绑定：大型标签字段；鼠群预设/数量；可出战队伍不能为空；符文ID</p>
+<p>接入参数与规格（完整）：</p>
+<pre><code>{
+  &quot;flow_source&quot;: {
+    &quot;document&quot;: &quot;UI跳转原型/事件/事件总表.md&quot;,
+    &quot;sha256&quot;: &quot;988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5&quot;,
+    &quot;event_number&quot;: 11
+  },
+  &quot;parameters&quot;: {
+    &quot;maximum_large_party_members&quot;: 0,
+    &quot;minimum_party_size&quot;: 1,
+    &quot;enemy_count&quot;: null,
+    &quot;rune_unlock_count&quot;: null,
+    &quot;enemy_health_multiplier&quot;: null,
+    &quot;enemy_attack_multiplier&quot;: null
+  },
+  &quot;parameter_specs&quot;: {
+    &quot;maximum_large_party_members&quot;: {
+      &quot;label&quot;: &quot;可携带大型怪物上限&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 0,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;minimum_party_size&quot;: {
+      &quot;label&quot;: &quot;最低出战数量&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;enemy_count&quot;: {
+      &quot;label&quot;: &quot;鼠群数量&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;rune_unlock_count&quot;: {
+      &quot;label&quot;: &quot;符文解锁种类&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;enemy_health_multiplier&quot;: {
+      &quot;label&quot;: &quot;敌军生命调整倍率&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;倍&quot;,
+      &quot;min&quot;: 0.01,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;enemy_attack_multiplier&quot;: {
+      &quot;label&quot;: &quot;敌军攻击调整倍率&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;倍&quot;,
+      &quot;min&quot;: 0.01,
+      &quot;allow_unconfigured&quot;: true
+    }
+  }
+}</code></pre>
+<h3 id="section-27">12 · 过分敬业 — QST_GRASS_012</h3>
+<p>类型：支线；辅助记录：False；发布状态：<code>pending_binding</code>。</p>
+<div class="table-wrap"><table>
+<tr><th>入口</th><th>稳定 ID</th><th>位置 / 格子</th><th>角色</th><th>触发配置</th></tr>
+<tr><td>萨尔格特城</td><td><code>layout_sargate_city</code></td><td>[19386.25, 8381.367923688693]</td><td>return_city_enchanter</td><td><code>{&quot;mode&quot;: &quot;interact&quot;, &quot;enabled&quot;: true, &quot;once&quot;: true, &quot;stage_id&quot;: &quot;return_city_enchanter&quot;, &quot;publish_status&quot;: &quot;pending_binding&quot;}</code></td></tr>
+<tr><td>过分敬业 · 北桥东岸农田</td><td><code>event_diligent_farm</code></td><td>[16326.25, 6614.676099968439]</td><td>farm</td><td><code>{&quot;mode&quot;: &quot;interact&quot;, &quot;enabled&quot;: true, &quot;once&quot;: true, &quot;stage_id&quot;: &quot;farm&quot;, &quot;publish_status&quot;: &quot;pending_binding&quot;, &quot;inherit_click_area&quot;: true, &quot;source_icon_id&quot;: &quot;event_diligent_farm&quot;}</code></td></tr>
+</table></div>
+<p>原稿触发条件：尚未完成任一路线；选择回城找附魔师后锁定该路线，不可改为直接战斗</p>
+<p>待绑定：两档奖励数值；稻草人敌军资源；城市附魔师入口；衣服统一为刚毕业学生的旧衣服</p>
+<p>接入参数与规格（完整）：</p>
+<pre><code>{
+  &quot;flow_source&quot;: {
+    &quot;document&quot;: &quot;UI跳转原型/事件/事件总表.md&quot;,
+    &quot;sha256&quot;: &quot;988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5&quot;,
+    &quot;event_number&quot;: 12
+  },
+  &quot;parameters&quot;: {
+    &quot;direct_magic_reward&quot;: null,
+    &quot;enchanter_magic_reward&quot;: null,
+    &quot;enemy_count&quot;: null,
+    &quot;enemy_health_multiplier&quot;: null,
+    &quot;enemy_attack_multiplier&quot;: null
+  },
+  &quot;parameter_specs&quot;: {
+    &quot;direct_magic_reward&quot;: {
+      &quot;label&quot;: &quot;直接战斗路线魔力&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;魔力&quot;,
+      &quot;min&quot;: 0,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;enchanter_magic_reward&quot;: {
+      &quot;label&quot;: &quot;回城附魔师路线魔力&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;魔力&quot;,
+      &quot;min&quot;: 0,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;enemy_count&quot;: {
+      &quot;label&quot;: &quot;稻草人敌军数量&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;enemy_health_multiplier&quot;: {
+      &quot;label&quot;: &quot;敌军生命调整倍率&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;倍&quot;,
+      &quot;min&quot;: 0.01,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;enemy_attack_multiplier&quot;: {
+      &quot;label&quot;: &quot;敌军攻击调整倍率&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;倍&quot;,
+      &quot;min&quot;: 0.01,
+      &quot;allow_unconfigured&quot;: true
+    }
+  },
+  &quot;locations&quot;: [
+    {
+      &quot;icon_id&quot;: &quot;event_diligent_farm&quot;,
+      &quot;position&quot;: [
+        16326.25,
+        6614.676099968439
+      ],
+      &quot;entry_role&quot;: &quot;farm&quot;
+    },
+    {
+      &quot;icon_id&quot;: &quot;layout_sargate_city&quot;,
+      &quot;entry_role&quot;: &quot;return_city_enchanter&quot;,
+      &quot;position&quot;: [
+        19386.25,
+        8381.367923688693
+      ]
+    }
+  ],
+  &quot;location&quot;: {
+    &quot;icon_id&quot;: &quot;event_diligent_farm&quot;,
+    &quot;position&quot;: [
+      16326.25,
+      6614.676099968439
+    ],
+    &quot;entry_role&quot;: &quot;farm&quot;
+  }
+}</code></pre>
+<h3 id="section-28">13 · 群星之底 — QST_GRASS_013</h3>
+<p>类型：支线；辅助记录：False；发布状态：<code>pending_binding</code>。</p>
+<div class="table-wrap"><table>
+<tr><th>入口</th><th>稳定 ID</th><th>位置 / 格子</th><th>角色</th><th>触发配置</th></tr>
+<tr><td>群星之底 · 星图井</td><td><code>event_star_well</code></td><td>[13457.5, 9595.968552496368]</td><td></td><td><code>{&quot;mode&quot;: &quot;interact&quot;, &quot;enabled&quot;: true, &quot;once&quot;: true, &quot;stage_id&quot;: &quot;&quot;, &quot;publish_status&quot;: &quot;pending_binding&quot;, &quot;inherit_click_area&quot;: true, &quot;source_icon_id&quot;: &quot;event_star_well&quot;}</code></td></tr>
+</table></div>
+<p>原稿触发条件：查看井底星空</p>
+<p>待绑定：魔力数量；地点ID</p>
+<p>接入参数与规格（完整）：</p>
+<pre><code>{
+  &quot;location&quot;: {
+    &quot;icon_id&quot;: &quot;event_star_well&quot;,
+    &quot;position&quot;: [
+      13460,
+      9680
+    ],
+    &quot;entry_role&quot;: &quot;&quot;
+  },
+  &quot;flow_source&quot;: {
+    &quot;document&quot;: &quot;UI跳转原型/事件/事件总表.md&quot;,
+    &quot;sha256&quot;: &quot;988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5&quot;,
+    &quot;event_number&quot;: 13
+  },
+  &quot;parameters&quot;: {
+    &quot;magic_reward&quot;: null
+  },
+  &quot;parameter_specs&quot;: {
+    &quot;magic_reward&quot;: {
+      &quot;label&quot;: &quot;记录星图魔力&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;魔力&quot;,
+      &quot;min&quot;: 0,
+      &quot;allow_unconfigured&quot;: true
+    }
+  }
+}</code></pre>
+<h3 id="section-29">14 · 不便携式魔力扩充引擎 — QST_GRASS_014</h3>
+<p>类型：支线；辅助记录：False；发布状态：<code>pending_binding</code>。</p>
+<div class="table-wrap"><table>
+<tr><th>入口</th><th>稳定 ID</th><th>位置 / 格子</th><th>角色</th><th>触发配置</th></tr>
+<tr><td>萨尔格特城</td><td><code>layout_sargate_city</code></td><td>[19386.25, 8381.367923688693]</td><td>engine_merchant</td><td><code>{&quot;mode&quot;: &quot;interact&quot;, &quot;enabled&quot;: true, &quot;once&quot;: true, &quot;stage_id&quot;: &quot;engine_merchant&quot;, &quot;publish_status&quot;: &quot;pending_binding&quot;, &quot;inherit_click_area&quot;: true, &quot;source_icon_id&quot;: &quot;layout_sargate_city&quot;}</code></td></tr>
+</table></div>
+<p>原稿触发条件：魔力至少100；尚未买过；召唤阵尚有下一圈</p>
+<p>待绑定：正式升级接口/级别上限；满级处理；扣费扩圈及购买时间统一保存；游戏时间服务</p>
+<p>接入参数与规格（完整）：</p>
+<pre><code>{
+  &quot;location&quot;: {
+    &quot;icon_id&quot;: &quot;layout_sargate_city&quot;,
+    &quot;position&quot;: [
+      19386.25,
+      8381.367923688693
+    ],
+    &quot;entry_role&quot;: &quot;engine_merchant&quot;
+  },
+  &quot;trigger_policy&quot;: {
+    &quot;type&quot;: &quot;interact&quot;,
+    &quot;min_mana&quot;: 100,
+    &quot;not_purchased&quot;: true,
+    &quot;summoning_ring_can_expand&quot;: true,
+    &quot;purchase_cost&quot;: 100,
+    &quot;expand_rings&quot;: 1,
+    &quot;record_game_time_on_success&quot;: true
+  },
+  &quot;flow_source&quot;: {
+    &quot;document&quot;: &quot;UI跳转原型/事件/事件总表.md&quot;,
+    &quot;sha256&quot;: &quot;988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5&quot;,
+    &quot;event_number&quot;: 14
+  },
+  &quot;parameters&quot;: {
+    &quot;purchase_cost&quot;: 100,
+    &quot;expand_rings&quot;: 1,
+    &quot;maximum_array_stage&quot;: null
+  },
+  &quot;parameter_specs&quot;: {
+    &quot;purchase_cost&quot;: {
+      &quot;label&quot;: &quot;引擎购买费用&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;魔力&quot;,
+      &quot;min&quot;: 0,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;expand_rings&quot;: {
+      &quot;label&quot;: &quot;召唤阵扩充圈数&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;maximum_array_stage&quot;: {
+      &quot;label&quot;: &quot;召唤阵级别上限&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    }
+  },
+  &quot;parameter_bindings&quot;: {
+    &quot;min_mana&quot;: &quot;purchase_cost&quot;,
+    &quot;purchase_cost&quot;: &quot;purchase_cost&quot;,
+    &quot;expand_rings&quot;: &quot;expand_rings&quot;
+  }
+}</code></pre>
+<h3 id="section-30">15 · 外行魔法师 — QST_GRASS_015</h3>
+<p>类型：支线；辅助记录：False；发布状态：<code>pending_binding</code>。</p>
+<div class="table-wrap"><table>
+<tr><th>入口</th><th>稳定 ID</th><th>位置 / 格子</th><th>角色</th><th>触发配置</th></tr>
+<tr><td>萨尔格特城</td><td><code>layout_sargate_city</code></td><td>[19386.25, 8381.367923688693]</td><td>engine_ghost</td><td><code>{&quot;mode&quot;: &quot;on_game_time&quot;, &quot;enabled&quot;: true, &quot;once&quot;: true, &quot;stage_id&quot;: &quot;engine_ghost&quot;, &quot;publish_status&quot;: &quot;pending_binding&quot;, &quot;inherit_click_area&quot;: true, &quot;source_icon_id&quot;: &quot;layout_sargate_city&quot;}</code></td></tr>
+</table></div>
+<p>原稿触发条件：引擎购买成功后，正式游戏时间累计满4天；尚未触发过本事件</p>
+<p>待绑定：正式游戏时间和安全演出入口；符文ID/数量；卡罗拉后续不在本批；不以现实时间计时</p>
+<p>接入参数与规格（完整）：</p>
+<pre><code>{
+  &quot;location&quot;: {
+    &quot;icon_id&quot;: &quot;layout_sargate_city&quot;,
+    &quot;position&quot;: [
+      19386.25,
+      8381.367923688693
+    ],
+    &quot;entry_role&quot;: &quot;engine_ghost&quot;
+  },
+  &quot;trigger_policy&quot;: {
+    &quot;type&quot;: &quot;on_game_time&quot;,
+    &quot;requires_completed_event&quot;: &quot;QST_GRASS_014&quot;,
+    &quot;elapsed_game_days&quot;: 4,
+    &quot;location_id&quot;: &quot;layout_sargate_city&quot;,
+    &quot;once_per_save&quot;: true,
+    &quot;time_basis&quot;: &quot;game_time&quot;
+  },
+  &quot;flow_source&quot;: {
+    &quot;document&quot;: &quot;UI跳转原型/事件/事件总表.md&quot;,
+    &quot;sha256&quot;: &quot;988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5&quot;,
+    &quot;event_number&quot;: 15
+  },
+  &quot;parameters&quot;: {
+    &quot;elapsed_game_days&quot;: 4,
+    &quot;rune_unlock_count&quot;: null
+  },
+  &quot;parameter_specs&quot;: {
+    &quot;elapsed_game_days&quot;: {
+      &quot;label&quot;: &quot;引擎购买后延迟&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;游戏日&quot;,
+      &quot;min&quot;: 0,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;rune_unlock_count&quot;: {
+      &quot;label&quot;: &quot;符文解锁种类&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    }
+  },
+  &quot;parameter_bindings&quot;: {
+    &quot;elapsed_game_days&quot;: &quot;elapsed_game_days&quot;
+  }
+}</code></pre>
+<h3 id="section-31">16 · 看一眼不要钱 — QST_GRASS_016</h3>
+<p>类型：支线；辅助记录：False；发布状态：<code>pending_binding</code>。</p>
+<div class="table-wrap"><table>
+<tr><th>入口</th><th>稳定 ID</th><th>位置 / 格子</th><th>角色</th><th>触发配置</th></tr>
+<tr><td>看一眼不要钱 · 观光棚</td><td><code>event_circus</code></td><td>[9250, 9520]</td><td></td><td><code>{&quot;mode&quot;: &quot;interact&quot;, &quot;enabled&quot;: true, &quot;once&quot;: true, &quot;stage_id&quot;: &quot;&quot;, &quot;publish_status&quot;: &quot;pending_binding&quot;, &quot;inherit_click_area&quot;: true, &quot;source_icon_id&quot;: &quot;event_circus&quot;}</code></td></tr>
+</table></div>
+<p>原稿触发条件：到达观光点并播放望远镜激怒拱兽的剧情</p>
+<p>待绑定：魔眼拱兽战斗预设；眼球ID；概率/适用生成范围；退避后入口状态</p>
+<p>接入参数与规格（完整）：</p>
+<pre><code>{
+  &quot;location&quot;: {
+    &quot;icon_id&quot;: &quot;event_circus&quot;,
+    &quot;position&quot;: [
+      9250,
+      9520
+    ],
+    &quot;entry_role&quot;: &quot;&quot;
+  },
+  &quot;flow_source&quot;: {
+    &quot;document&quot;: &quot;UI跳转原型/事件/事件总表.md&quot;,
+    &quot;sha256&quot;: &quot;988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5&quot;,
+    &quot;event_number&quot;: 16
+  },
+  &quot;parameters&quot;: {
+    &quot;enemy_count&quot;: null,
+    &quot;relic_quantity&quot;: 1,
+    &quot;magic_eye_probability&quot;: null,
+    &quot;enemy_health_multiplier&quot;: null,
+    &quot;enemy_attack_multiplier&quot;: null
+  },
+  &quot;parameter_specs&quot;: {
+    &quot;enemy_count&quot;: {
+      &quot;label&quot;: &quot;魔眼拱兽敌军数量&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;relic_quantity&quot;: {
+      &quot;label&quot;: &quot;结晶化眼球数量&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;magic_eye_probability&quot;: {
+      &quot;label&quot;: &quot;魔眼特征产生概率&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;0到1&quot;,
+      &quot;min&quot;: 0,
+      &quot;allow_unconfigured&quot;: true,
+      &quot;max&quot;: 1
+    },
+    &quot;enemy_health_multiplier&quot;: {
+      &quot;label&quot;: &quot;敌军生命调整倍率&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;倍&quot;,
+      &quot;min&quot;: 0.01,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;enemy_attack_multiplier&quot;: {
+      &quot;label&quot;: &quot;敌军攻击调整倍率&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;倍&quot;,
+      &quot;min&quot;: 0.01,
+      &quot;allow_unconfigured&quot;: true
+    }
+  }
+}</code></pre>
+<h3 id="section-32">17 · 富含矿物质 — QST_GRASS_017</h3>
+<p>类型：支线；辅助记录：False；发布状态：<code>pending_binding</code>。</p>
+<div class="table-wrap"><table>
+<tr><th>入口</th><th>稳定 ID</th><th>位置 / 格子</th><th>角色</th><th>触发配置</th></tr>
+<tr><td>北桥 · 富含矿物质</td><td><code>event_north_bridge</code></td><td>[15109.84375, 6258.5]</td><td></td><td><code>{&quot;mode&quot;: &quot;interact&quot;, &quot;enabled&quot;: true, &quot;once&quot;: true, &quot;stage_id&quot;: &quot;&quot;, &quot;publish_status&quot;: &quot;pending_binding&quot;, &quot;inherit_click_area&quot;: true, &quot;source_icon_id&quot;: &quot;event_north_bridge&quot;}</code></td></tr>
+</table></div>
+<p>原稿触发条件：尚未通过任一路线解决</p>
+<p>待绑定：食矿鸟阵容/数量；两路奖励数值；木桥表现资源</p>
+<p>接入参数与规格（完整）：</p>
+<pre><code>{
+  &quot;location&quot;: {
+    &quot;icon_id&quot;: &quot;event_north_bridge&quot;,
+    &quot;position&quot;: [
+      15109.84375,
+      6258.5
+    ],
+    &quot;entry_role&quot;: &quot;&quot;
+  },
+  &quot;flow_source&quot;: {
+    &quot;document&quot;: &quot;UI跳转原型/事件/事件总表.md&quot;,
+    &quot;sha256&quot;: &quot;988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5&quot;,
+    &quot;event_number&quot;: 17
+  },
+  &quot;parameters&quot;: {
+    &quot;enemy_count&quot;: null,
+    &quot;fight_magic_reward&quot;: null,
+    &quot;wood_magic_reward&quot;: null,
+    &quot;enemy_health_multiplier&quot;: null,
+    &quot;enemy_attack_multiplier&quot;: null
+  },
+  &quot;parameter_specs&quot;: {
+    &quot;enemy_count&quot;: {
+      &quot;label&quot;: &quot;食矿鸟数量&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;fight_magic_reward&quot;: {
+      &quot;label&quot;: &quot;战斗路线魔力&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;魔力&quot;,
+      &quot;min&quot;: 0,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;wood_magic_reward&quot;: {
+      &quot;label&quot;: &quot;木桥路线魔力&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;魔力&quot;,
+      &quot;min&quot;: 0,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;enemy_health_multiplier&quot;: {
+      &quot;label&quot;: &quot;敌军生命调整倍率&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;倍&quot;,
+      &quot;min&quot;: 0.01,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;enemy_attack_multiplier&quot;: {
+      &quot;label&quot;: &quot;敌军攻击调整倍率&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;倍&quot;,
+      &quot;min&quot;: 0.01,
+      &quot;allow_unconfigured&quot;: true
+    }
+  }
+}</code></pre>
+<h3 id="section-33">18 · 血祭日 — QST_SIDE_003_001</h3>
+<p>类型：支线；辅助记录：False；发布状态：<code>pending_binding</code>。</p>
+<div class="table-wrap"><table>
+<tr><th>入口</th><th>稳定 ID</th><th>位置 / 格子</th><th>角色</th><th>触发配置</th></tr>
+<tr><td>红祭坛</td><td><code>layout_red_altar</code></td><td>[14290, 9625]</td><td></td><td><code>{&quot;mode&quot;: &quot;interact&quot;, &quot;enabled&quot;: true, &quot;once&quot;: true, &quot;stage_id&quot;: &quot;&quot;, &quot;publish_status&quot;: &quot;pending_binding&quot;, &quot;source_icon_id&quot;: &quot;layout_red_altar&quot;, &quot;inherit_click_area&quot;: true}</code></td></tr>
+</table></div>
+<p>原稿触发条件：逐阶段揭示；当前献祭完成并成功发奖之后，才显示下一次要求</p>
+<p>待绑定：正式皮毛/飞行/蛇类及手足字段；可回收与锁定规则；奖励ID/量；血雨作用/范围/时长/覆盖待定，不套默认天气</p>
+<p>接入参数与规格（完整）：</p>
+<pre><code>{
+  &quot;flow_source&quot;: {
+    &quot;document&quot;: &quot;UI跳转原型/事件/事件总表.md&quot;,
+    &quot;sha256&quot;: &quot;988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5&quot;,
+    &quot;event_number&quot;: 18
+  },
+  &quot;parameters&quot;: {
+    &quot;first_sacrifice_count&quot;: 1,
+    &quot;second_sacrifice_count&quot;: 2,
+    &quot;third_sacrifice_count&quot;: 3,
+    &quot;minimum_remaining_monsters&quot;: 1,
+    &quot;first_magic_reward&quot;: null,
+    &quot;second_rune_unlock_count&quot;: null,
+    &quot;third_rune_unlock_count&quot;: null,
+    &quot;first_blood_rain_game_days&quot;: null,
+    &quot;second_blood_rain_game_days&quot;: null,
+    &quot;blood_rain_radius_cells&quot;: null,
+    &quot;blood_rain_effect_strength&quot;: null
+  },
+  &quot;parameter_specs&quot;: {
+    &quot;first_sacrifice_count&quot;: {
+      &quot;label&quot;: &quot;第一阶段有皮毛怪物数量&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;second_sacrifice_count&quot;: {
+      &quot;label&quot;: &quot;第二阶段飞行怪物数量&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;third_sacrifice_count&quot;: {
+      &quot;label&quot;: &quot;第三阶段无手无足蛇类数量&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;minimum_remaining_monsters&quot;: {
+      &quot;label&quot;: &quot;献祭后最低持有数量&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;first_magic_reward&quot;: {
+      &quot;label&quot;: &quot;第一次献祭魔力&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;魔力&quot;,
+      &quot;min&quot;: 0,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;second_rune_unlock_count&quot;: {
+      &quot;label&quot;: &quot;第二次解锁符文种类&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;third_rune_unlock_count&quot;: {
+      &quot;label&quot;: &quot;第三次解锁符文种类&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;first_blood_rain_game_days&quot;: {
+      &quot;label&quot;: &quot;第一次血雨持续时间&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;游戏日&quot;,
+      &quot;min&quot;: 0,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;second_blood_rain_game_days&quot;: {
+      &quot;label&quot;: &quot;第二次血雨持续时间&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;游戏日&quot;,
+      &quot;min&quot;: 0,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;blood_rain_radius_cells&quot;: {
+      &quot;label&quot;: &quot;血雨作用半径&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;格&quot;,
+      &quot;min&quot;: 0,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;blood_rain_effect_strength&quot;: {
+      &quot;label&quot;: &quot;血雨效果强度&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;按正式天气效果定义&quot;,
+      &quot;min&quot;: 0,
+      &quot;allow_unconfigured&quot;: true
+    }
+  }
+}</code></pre>
+<h3 id="section-34">19 · 谁会赢？ — QST_GRASS_019</h3>
+<p>类型：支线；辅助记录：False；发布状态：<code>pending_binding</code>。</p>
+<div class="table-wrap"><table>
+<tr><th>入口</th><th>稳定 ID</th><th>位置 / 格子</th><th>角色</th><th>触发配置</th></tr>
+<tr><td>谁会赢？ · 圣堂旁洞穴</td><td><code>layout_forest_cave_001</code></td><td>[5425, 4516.7295593006365]</td><td>cave_duel</td><td><code>{&quot;mode&quot;: &quot;interact&quot;, &quot;enabled&quot;: true, &quot;once&quot;: true, &quot;stage_id&quot;: &quot;cave_duel&quot;, &quot;publish_status&quot;: &quot;pending_binding&quot;, &quot;inherit_click_area&quot;: true, &quot;source_icon_id&quot;: &quot;layout_forest_cave_001&quot;}</code></td></tr>
+</table></div>
+<p>原稿触发条件：进入对峙事件；三条路线未结算</p>
+<p>待绑定：双方阵容/数量；奖励强化预设；库存与队伍容量安置；真实观战回执及平局处理；魔力数量</p>
+<p>接入参数与规格（完整）：</p>
+<pre><code>{
+  &quot;location&quot;: {
+    &quot;icon_id&quot;: &quot;layout_forest_cave_001&quot;,
+    &quot;position&quot;: [
+      5616.25,
+      5068.820754213216
+    ],
+    &quot;entry_role&quot;: &quot;cave_duel&quot;
+  },
+  &quot;flow_source&quot;: {
+    &quot;document&quot;: &quot;UI跳转原型/事件/事件总表.md&quot;,
+    &quot;sha256&quot;: &quot;988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5&quot;,
+    &quot;event_number&quot;: 19
+  },
+  &quot;parameters&quot;: {
+    &quot;wolf_reward_quantity&quot;: 1,
+    &quot;beast_reward_quantity&quot;: 1,
+    &quot;watch_magic_reward&quot;: null,
+    &quot;wolf_side_count&quot;: null,
+    &quot;beast_side_count&quot;: null,
+    &quot;enemy_health_multiplier&quot;: null,
+    &quot;enemy_attack_multiplier&quot;: null
+  },
+  &quot;parameter_specs&quot;: {
+    &quot;wolf_reward_quantity&quot;: {
+      &quot;label&quot;: &quot;强化双头甲狼奖励数量&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;beast_reward_quantity&quot;: {
+      &quot;label&quot;: &quot;强化魔眼拱兽奖励数量&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;watch_magic_reward&quot;: {
+      &quot;label&quot;: &quot;旁观魔力奖励&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;魔力&quot;,
+      &quot;min&quot;: 0,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;wolf_side_count&quot;: {
+      &quot;label&quot;: &quot;狼方阵容总数量&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;beast_side_count&quot;: {
+      &quot;label&quot;: &quot;拱兽方阵容总数量&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;enemy_health_multiplier&quot;: {
+      &quot;label&quot;: &quot;敌军生命调整倍率&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;倍&quot;,
+      &quot;min&quot;: 0.01,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;enemy_attack_multiplier&quot;: {
+      &quot;label&quot;: &quot;敌军攻击调整倍率&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;倍&quot;,
+      &quot;min&quot;: 0.01,
+      &quot;allow_unconfigured&quot;: true
+    }
+  }
+}</code></pre>
+<h3 id="section-35">20 · 谁会输？ — QST_GRASS_020</h3>
+<p>类型：支线；辅助记录：False；发布状态：<code>pending_binding</code>。</p>
+<div class="table-wrap"><table>
+<tr><th>入口</th><th>稳定 ID</th><th>位置 / 格子</th><th>角色</th><th>触发配置</th></tr>
+<tr><td>谁会输？ · 杜波骑士</td><td><code>event_knight_bet</code></td><td>[19886.25, 9081.367923688693]</td><td></td><td><code>{&quot;mode&quot;: &quot;interact&quot;, &quot;enabled&quot;: true, &quot;once&quot;: false, &quot;stage_id&quot;: &quot;&quot;, &quot;publish_status&quot;: &quot;pending_binding&quot;, &quot;inherit_click_area&quot;: true, &quot;source_icon_id&quot;: &quot;event_knight_bet&quot;}</code></td></tr>
+</table></div>
+<p>原稿触发条件：已完成结算次数小于4；本轮双方阵容已手填；未下注；魔力足够</p>
+<p>待绑定：四轮双方怪物阵容由策划手填，不随机；失败扣款、平局/中止；战斗预设；下注请求及已结算次数持久化</p>
+<p>接入参数与规格（完整）：</p>
+<pre><code>{
+  &quot;location&quot;: {
+    &quot;icon_id&quot;: &quot;event_knight_bet&quot;,
+    &quot;position&quot;: [
+      19886.25,
+      9081.367923688693
+    ],
+    &quot;entry_role&quot;: &quot;&quot;
+  },
+  &quot;trigger_policy&quot;: {
+    &quot;max_settlements&quot;: 4,
+    &quot;stakes&quot;: [
+      10,
+      20,
+      50,
+      100
+    ],
+    &quot;gross_return_multiplier&quot;: 2,
+    &quot;hide_after_final_settlement&quot;: true,
+    &quot;requires_hand_authored_teams&quot;: true
+  },
+  &quot;flow_source&quot;: {
+    &quot;document&quot;: &quot;UI跳转原型/事件/事件总表.md&quot;,
+    &quot;sha256&quot;: &quot;988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5&quot;,
+    &quot;event_number&quot;: 20
+  },
+  &quot;parameters&quot;: {
+    &quot;max_settlements&quot;: 4,
+    &quot;stakes&quot;: [
+      10,
+      20,
+      50,
+      100
+    ],
+    &quot;gross_return_multiplier&quot;: 2,
+    &quot;enemy_health_multiplier&quot;: null,
+    &quot;enemy_attack_multiplier&quot;: null,
+    &quot;round_1_a_count&quot;: null,
+    &quot;round_1_b_count&quot;: null,
+    &quot;round_2_a_count&quot;: null,
+    &quot;round_2_b_count&quot;: null,
+    &quot;round_3_a_count&quot;: null,
+    &quot;round_3_b_count&quot;: null,
+    &quot;round_4_a_count&quot;: null,
+    &quot;round_4_b_count&quot;: null
+  },
+  &quot;parameter_specs&quot;: {
+    &quot;max_settlements&quot;: {
+      &quot;label&quot;: &quot;最多结算轮次&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;stakes&quot;: {
+      &quot;label&quot;: &quot;各轮下注本金&quot;,
+      &quot;type&quot;: &quot;number_array&quot;,
+      &quot;unit&quot;: &quot;魔力&quot;,
+      &quot;min&quot;: 0,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;gross_return_multiplier&quot;: {
+      &quot;label&quot;: &quot;获胜总返还倍率 含本金&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;倍&quot;,
+      &quot;min&quot;: 0,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;enemy_health_multiplier&quot;: {
+      &quot;label&quot;: &quot;敌军生命调整倍率&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;倍&quot;,
+      &quot;min&quot;: 0.01,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;enemy_attack_multiplier&quot;: {
+      &quot;label&quot;: &quot;敌军攻击调整倍率&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;unit&quot;: &quot;倍&quot;,
+      &quot;min&quot;: 0.01,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;round_1_a_count&quot;: {
+      &quot;label&quot;: &quot;第1轮A方怪物数量&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;round_1_b_count&quot;: {
+      &quot;label&quot;: &quot;第1轮B方怪物数量&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;round_2_a_count&quot;: {
+      &quot;label&quot;: &quot;第2轮A方怪物数量&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;round_2_b_count&quot;: {
+      &quot;label&quot;: &quot;第2轮B方怪物数量&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;round_3_a_count&quot;: {
+      &quot;label&quot;: &quot;第3轮A方怪物数量&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;round_3_b_count&quot;: {
+      &quot;label&quot;: &quot;第3轮B方怪物数量&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;round_4_a_count&quot;: {
+      &quot;label&quot;: &quot;第4轮A方怪物数量&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    },
+    &quot;round_4_b_count&quot;: {
+      &quot;label&quot;: &quot;第4轮B方怪物数量&quot;,
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;unit&quot;: &quot;个或只&quot;,
+      &quot;min&quot;: 1,
+      &quot;allow_unconfigured&quot;: true
+    }
+  },
+  &quot;parameter_bindings&quot;: {
+    &quot;max_settlements&quot;: &quot;max_settlements&quot;,
+    &quot;stakes&quot;: &quot;stakes&quot;,
+    &quot;gross_return_multiplier&quot;: &quot;gross_return_multiplier&quot;
+  }
+}</code></pre>
+<h3 id="section-36">AUX · 福斯特镇 — AUX_GRASS_FOSTER</h3>
+<p>类型：支线；辅助记录：True；发布状态：<code>pending_binding</code>。</p>
+<div class="table-wrap"><table>
+<tr><th>入口</th><th>稳定 ID</th><th>位置 / 格子</th><th>角色</th><th>触发配置</th></tr>
+<tr><td>福斯特镇</td><td><code>layout_foster_town</code></td><td>[8220, 9900]</td><td></td><td><code>{&quot;mode&quot;: &quot;interact&quot;, &quot;enabled&quot;: true, &quot;once&quot;: false, &quot;stage_id&quot;: &quot;&quot;, &quot;publish_status&quot;: &quot;pending_binding&quot;, &quot;source_icon_id&quot;: &quot;layout_foster_town&quot;, &quot;inherit_click_area&quot;: true}</code></td></tr>
+</table></div>
+<p>原稿触发条件：交互</p>
+<p>待绑定：待绑定：正式地点/图书馆交互ID</p>
+<p>接入参数与规格（完整）：</p>
+<pre><code>{}</code></pre>
+<h3 id="section-37">AUX · 萨尔格特城 — AUX_GRASS_SALGERT</h3>
+<p>类型：支线；辅助记录：True；发布状态：<code>pending_binding</code>。</p>
+<div class="table-wrap"><table>
+<tr><th>入口</th><th>稳定 ID</th><th>位置 / 格子</th><th>角色</th><th>触发配置</th></tr>
+<tr><td>萨尔格特城</td><td><code>layout_sargate_city</code></td><td>[19386.25, 8381.367923688693]</td><td></td><td><code>{&quot;mode&quot;: &quot;interact&quot;, &quot;enabled&quot;: true, &quot;once&quot;: false, &quot;stage_id&quot;: &quot;&quot;, &quot;publish_status&quot;: &quot;pending_binding&quot;, &quot;source_icon_id&quot;: &quot;layout_sargate_city&quot;, &quot;inherit_click_area&quot;: true}</code></td></tr>
+</table></div>
+<p>原稿触发条件：交互</p>
+<p>待绑定：待绑定：正式地点/城中心/附魔师交互ID</p>
+<p>接入参数与规格（完整）：</p>
+<pre><code>{}</code></pre>
+<h3 id="section-38">AUX · 罗瓦常驻 — AUX_GRASS_ROVA</h3>
+<p>类型：支线；辅助记录：True；发布状态：<code>pending_binding</code>。</p>
+<div class="table-wrap"><table>
+<tr><th>入口</th><th>稳定 ID</th><th>位置 / 格子</th><th>角色</th><th>触发配置</th></tr>
+<tr><td>福斯特镇</td><td><code>layout_foster_town</code></td><td>[8220, 9900]</td><td>rova</td><td><code>{&quot;mode&quot;: &quot;interact&quot;, &quot;enabled&quot;: true, &quot;once&quot;: false, &quot;stage_id&quot;: &quot;rova&quot;, &quot;publish_status&quot;: &quot;pending_binding&quot;}</code></td></tr>
+</table></div>
+<p>原稿触发条件：交互</p>
+<p>待绑定：待绑定：启用条件</p>
+<p>接入参数与规格（完整）：</p>
+<pre><code>{}</code></pre>
+<h2 id="section-39">附录 C：事件关卡设计与 UI 接入执行稿全文</h2>
+<p>来自既有 2026-10-19 Word 执行稿的只读提取，按原段落和表格顺序保留。资源与宿主参考清单保存原 Word 指纹。本稿中的旧命名/旧数量以本次当前快照为准；已有正式程序基础的代码核对见第 8 节。</p>
+<h3 id="section-40">事件关卡设计与UI接入执行文档</h3>
+<p>执行版本 2026年10月19日  |  对象 关卡与事件内容负责人 程序与UI集成人员</p>
+<p>20条事件的地图绑定已完成。全部流程以事件总表为准；数值在编辑器事件库的parameters配置。我们继续完成战斗关卡、事件内容与数值；程序负责事件执行、正式资源变更和存档。时间计时由程序已有功能提供，我们只保留接口，不另做时钟或倒计时。</p>
+<h4 id="section-41">一 执行范围与责任</h4>
+<div class="table-wrap"><table>
+<tr><th>工作</th><th>我们负责</th><th>程序负责</th></tr>
+<tr><td>地图与入口</td><td>保留现有位置；核对事件ID、主入口、共享入口与回访入口；导出最新地图</td><td>导入正式地图；校验抵达与开放条件；把入口交给事件执行器</td></tr>
+<tr><td>事件内容</td><td>整理原文、稳定分支键、分段、各阶段正文和提示；补齐缺失结果</td><td>加载配置、执行节点、恢复阶段；区分关闭、中断、完成</td></tr>
+<tr><td>战斗关卡</td><td>指定战斗地图、阵容、数量、体型与强度；填写19和20号双方预设</td><td>加载真实战斗；生成单位；玩家战斗及AI观战结果回传</td></tr>
+<tr><td>奖励与条件</td><td>确定奖励类型、数量、阈值与互斥规则；给出奖励名称和效果</td><td>资源ID映射、属性查询、消费与发奖、失败回滚和持久去重</td></tr>
+<tr><td>UI接入</td><td>提供标题、正文、按钮、不可用提示、待办目标和回访内容</td><td>复用EventPanel和TasksView；绑定正式数据；统一输入与页面返回</td></tr>
+<tr><td>时间与天气</td><td>14到15号提供4游戏日规则、演出条件；18号补血雨效果定义</td><td>复用已有计时，负责到期与恢复；天气由正式服务执行</td></tr>
+</table></div>
+<h5 id="section-42">先做的事情</h5>
+<p>第一步冻结最新地图入口清单；第二步补齐简单事件参数并打通13号；第三步用04号验证跨地点战斗回访；随后扩展条件、路线、献祭和观战。内容与程序可并行推进。</p>
+<p>原UI文档是0.7.12原型交接，包含历史占位说明。正式工程已有地图、战斗与四项新手任务基础；本轮复用现状。涉及时间的旧“未实现”描述，以程序已有计时功能为准。</p>
+<h4 id="section-43">二 地图入口如何接到现有UI</h4>
+<p>接入路线由正式宿主统一编排。事件窗只接显示数据和提交操作；魔力、怪物、阶段和奖励账本仍由正式GameSession及其业务服务维护。</p>
+<div class="table-wrap"><table>
+<tr><th>顺序</th><th>动作</th><th>执行要求</th></tr>
+<tr><td>1</td><td>点击并抵达</td><td>地图先检查可达、距离和开放条件；点击图标本身不算事件完成。</td></tr>
+<tr><td>2</td><td>读取入口绑定</td><td>读取event_id及stage_id或entry_role；同时读取当前正式进度。城市先筛选当前可用的子入口。</td></tr>
+<tr><td>3</td><td>打开事件窗</td><td>EventPanel的Description放当前正文，Commands放当前选项。说话人可随正文分段；策划注释留在配置。</td></tr>
+<tr><td>4</td><td>提交选择</td><td>发送事件、会话、阶段及稳定branch_key；宿主再次检查余额、队伍和路线状态，防止过期按钮执行。</td></tr>
+<tr><td>5</td><td>等待外部结果</td><td>战斗、交易、献祭和奖励提交期间锁定重复操作；切到其他页面时保存待处理状态。</td></tr>
+<tr><td>6</td><td>显示结果</td><td>读取真实成功或失败回执后，显示战后文案或下一阶段。关闭窗口只结束本次显示。</td></tr>
+<tr><td>7</td><td>刷新与返回</td><td>存档成功后刷新A1资源、待办及地图入口；战斗先结算，确认后大地图下拉，再恢复探索。</td></tr>
+</table></div>
+<h5 id="section-44">现有组件与需要补的适配</h5>
+<div class="table-wrap"><table>
+<tr><th>组件或入口</th><th>已有能力</th><th>本轮适配</th></tr>
+<tr><td>EventPanel.tscn</td><td>正文独立滚动；选项固定在底部</td><td>按事件阶段填数据和按钮；增加节点执行适配，保留现有布局。</td></tr>
+<tr><td>TasksViewpresent_tasks</td><td>接收任务快照并发action_requested</td><td>接剧情任务阶段；“前往”定位地图目标或打开对应页，不跨距离直接领奖。</td></tr>
+<tr><td>WorldView显示接口</td><td>地点概况和已结束事件隐藏</td><td>通过正式地图适配入口可用性；不要把原型隐藏API直接当作正式地图实现。</td></tr>
+<tr><td>GameDemo通知</td><td>点击、场景请求和队伍通知</td><td>替换测试路由及测试奖励，避免原型和正式服务各执行一次。</td></tr>
+<tr><td>正式GameSession</td><td>统一状态、保存与战斗回执基础</td><td>补剧情事件阶段与请求账本，接正式任务列表；保留现有新手任务行为。</td></tr>
+</table></div>
+<p>本轮沿用纸质事件窗、原字体字号、标题留白、固定选项、A2书签及既有转场。献祭选择优先复用仓库条目和确认流程；如必须增加或改动控件布局，先提交具体示意，按原UI交接约束确认后实施。</p>
+<h4 id="section-45">三 事件01到07的执行清单</h4>
+<p>“补参”主要补奖励、按钮和配置；“补桥段”补缺少的阶段衔接与结果文字；“补规则”需要先确定玩法或异常结果。均保留现有正文和已放位置。</p>
+<div class="table-wrap"><table>
+<tr><th>事件</th><th>内容项</th><th>我们要补齐</th><th>程序需要接入或扩展</th></tr>
+<tr><td>01 火速任命</td><td>补参</td><td>沿用开局opening绑定；确定特令是剧情标记还是实体物品及功能，确定结束确认。原对白保留，不新增签字选择。</td><td>开局一次性播放与完成提交；不发启动资金。</td></tr>
+<tr><td>02 小树守卫</td><td>补桥段</td><td>确定开战确认或自动遭遇；给卡洛德预设、战斗图、胜后文本及是否有奖励；补失败后提示。</td><td>首次召唤成功且安排出战后开放；战斗胜利推进；失败和退出不完成。</td></tr>
+<tr><td>03 图书馆开门日</td><td>补参</td><td>补私房钱资源和数值、首次与常驻入口文案；对齐初始符文开放策略。沿用armor、health、attack奖励。</td><td>城市菜单与首次/回访路由；正式解锁与援助提交去重；城市继续保留。</td></tr>
+<tr><td>04 防卫预算</td><td>补目标</td><td>明确唯一指定清剿战斗、阵容、目标提示及奇物；核对接取、未完成回访、交付三段正文。</td><td>接取→指定战斗成功→回城交付状态；任意其他战斗胜利不推进；交付后才发奖。</td></tr>
+<tr><td>05 浑浊的大地</td><td>补参</td><td>保留牧羊人原文；确定结束按钮及是否写入东南方向提示。无奖励按原稿保留。</td><td>记录听闻；如选用线索待办则更新提示；不自动开启Boss或揭晓身份。</td></tr>
+<tr><td>06 狼来了</td><td>补桥段</td><td>给狼群阵容和战后胜败提示；决定失败或退出后的事件去向。神秘物品仍暂搁置，独立列阻塞项。</td><td>拾取物品先持久提交再开战；胜败均保留；恢复或重试不重复发物品。</td></tr>
+<tr><td>07 年迈的驴子</td><td>补桥段</td><td>老驴和商人两个问号已放在快到福斯特镇的道路；补足共用归还对话、两件奇物与各阶段待办。沿用原稿，不制作护送路线。</td><td>分别保存两个seen标记；两种发现顺序汇合到同一归还对话和一次奖励。</td></tr>
+</table></div>
+<p>06号物品内容按原决定暂搁置。程序可先完成先拾取后战斗的接口与测试，但物品未定前，不用默认奇物替代并开放正式领取。</p>
+<h4 id="section-46">四 事件08到14的执行清单</h4>
+<p>“补参”主要补奖励、按钮和配置；“补桥段”补缺少的阶段衔接与结果文字；“补规则”需要先确定玩法或异常结果。均保留现有正文和已放位置。</p>
+<div class="table-wrap"><table>
+<tr><th>事件</th><th>内容项</th><th>我们要补齐</th><th>程序需要接入或扩展</th></tr>
+<tr><td>08 超大型巨人</td><td>补桥段</td><td>给三倍大拱兽实际预设、战斗图、胜后过渡及奇物。确认触发距离内的演出提示。</td><td>对白接战斗再接胜利掉落；载入失败和未胜利不发奖。</td></tr>
+<tr><td>09 不对名单</td><td>补参</td><td>原五条投资记录保留；补魔力数量和纸条读完后的领取按钮，货车问号已在矿洞西南路边。</td><td>阅读与领取分开；提前关闭保留未完成；领取提交后才完成。</td></tr>
+<tr><td>10 甲壳圣堂</td><td>补规则</td><td>定攻击阈值、奖励魔力和特别甲片；和程序对齐攻击数值口径，明确是否有出击成本。补不足提示。</td><td>确认时查询仓库与出战；任意单只攻击高于阈值才成功，不能加总或强制编队。</td></tr>
+<tr><td>11 废弃矿井</td><td>补参</td><td>给鼠群阵容、战斗图和奖励符文；补大型队伍、空队伍提示，核对战后血迹与残阵正文。</td><td>检查正式体型字段；不合格进入队伍准备且不删怪；胜利解锁符文。</td></tr>
+<tr><td>12 过分敬业</td><td>补规则</td><td>补两档魔力、稻草人战斗预设；农田问号已在北桥东岸，城内附魔师回访保留；补路线提示及两条结局正文。</td><td>接取回城路线立即保存锁定；重进和读档不改线；城内按阶段显示附魔师。</td></tr>
+<tr><td>13 群星之底</td><td>补参</td><td>补魔力数量和记录按钮；保留井底星图原文，当前版本到记录结束。</td><td>记录确认→奖励成功→完成；离开可再访；不派生额外事件。</td></tr>
+<tr><td>14 扩充引擎</td><td>补规则</td><td>沿用100魔力与扩一圈；补满级、余额不足提示及商人完成后表现。提供购买成功关联15号的配置。</td><td>扣费、扩圈、购买标记统一提交；成功后通知已有时间服务；失败不安排到期。</td></tr>
+</table></div>
+<p>11号奖励只配置符文，不补完整定向召唤图纸。12号回城路线在接取时锁定，不等待回城才锁定。14号不新增旅行耗时或计时规则。</p>
+<h4 id="section-47">五 事件15到20的执行清单</h4>
+<p>“补参”主要补奖励、按钮和配置；“补桥段”补缺少的阶段衔接与结果文字；“补规则”需要先确定玩法或异常结果。均保留现有正文和已放位置。</p>
+<div class="table-wrap"><table>
+<tr><th>事件</th><th>内容项</th><th>我们要补齐</th><th>程序需要接入或扩展</th></tr>
+<tr><td>15 外行魔法师</td><td>补参</td><td>补符文ID和数量、到期后的演出衔接及未读完再入提示；两种回答汇合原奖励。</td><td>消费已有时间服务的到期状态，安全时机只播一次；恢复待演出状态；不新建计时器。</td></tr>
+<tr><td>16 看一眼不要钱</td><td>补规则</td><td>给魔眼拱兽预设、眼球奇物与概率作用对象/数值；决定退避后能否再访并补提示。</td><td>帮助→真实战斗→胜利发眼球；退避按配置处理；奇物效果接正式生成规则。</td></tr>
+<tr><td>17 富含矿物质</td><td>补参</td><td>给食矿鸟阵容、两路魔力和木桥表现方式；如需更换地图素材，提供资源与显示规则。</td><td>战斗与木桥路线共享终局锁；木桥对白解决可直接提交奖励；不重复领取两路。</td></tr>
+<tr><td>18 血祭日</td><td>补规则</td><td>定三阶段奖励；补候选不足、锁定不可献祭、取消及成功文案；补血雨效果/范围/持续规则/覆盖。</td><td>依次1只有皮毛、2只飞行、3只无手无足蛇类；扣后至少剩1只；发奖成功才揭示下一要求；已扣待发不再扣。</td></tr>
+<tr><td>19 谁会赢</td><td>补规则</td><td>给两方战斗预设、两种强化奖励怪物预设、旁观魔力及各结局；补平局/中断规则。</td><td>助战时被帮怪物不参战；旁观两方AI真实战斗；奖励怪物走正式安置与容量规则。</td></tr>
+<tr><td>20 谁会输</td><td>补规则</td><td>手填四轮双方类型/数量/预设；补失败支付、平局和中断规则；补各轮提示及最终离场文本。</td><td>真实AI观战、下注锁、账务及轮次保存；10/20/50/100，赢返2B已含本金；第四次后永久退场。</td></tr>
+</table></div>
+<p>18号只显示当前献祭要求。19和20号必须读取实际AI战斗结果。四轮赌局不是四个新事件；第15号到期也不是立即强制打断战斗或当前对白。</p>
+<h4 id="section-48">六 哪些内容先补 哪些功能要扩展</h4>
+<h5 id="section-49">内容负责人先完成的六组交付</h5>
+<div class="table-wrap"><table>
+<tr><th>交付组</th><th>涉及事件</th><th>完成标准</th></tr>
+<tr><td>奖励与基础参数</td><td>01、03、09、10、11、13、15、17、18、19</td><td>明确名称、类型、数量、发放阶段；符文沿用实际ID。06物品另列暂缓。</td></tr>
+<tr><td>战斗配置包</td><td>02、04、06、08、11、12、16、17、19、20</td><td>每场有地图、阵容与预设；20号四轮双方均手填；强化奖励怪物独立给预设。</td></tr>
+<tr><td>阶段与结局文字</td><td>重点02、04、06、07、08、12、15、19、20</td><td>有接取、等待、成功、失败或中断后的实际显示内容；原稿已有部分直接沿用。</td></tr>
+<tr><td>门槛与边界规则</td><td>10、11、12、14、16、18、19、20</td><td>攻击/体型口径、路线锁、满级、再访、献祭及赌局异常结果均可判定。</td></tr>
+<tr><td>UI显示清单</td><td>全部事件</td><td>标题、当前正文、分支键、按钮、不可用提示、当前待办、完成后表现分开提供。</td></tr>
+<tr><td>地图入口映射</td><td>全部事件与辅助入口</td><td>从最新地图导出已有绑定；核对双入口与城市共享入口，不重新规划坐标。</td></tr>
+</table></div>
+<h5 id="section-50">程序需要扩展的共用机制</h5>
+<div class="table-wrap"><table>
+<tr><th>机制</th><th>复用事件</th><th>交付结果</th></tr>
+<tr><td>通用事件执行与恢复</td><td>全部</td><td>读取事件配置，保存阶段和稳定会话，外部操作可等待、重试和恢复。</td></tr>
+<tr><td>任务阶段与共享入口</td><td>04、07、12；城市03/14等</td><td>同一地点按阶段路由；双入口共进度；剧情待办与新手任务共存。</td></tr>
+<tr><td>条件与分支互斥</td><td>02、10、11、12、17、19</td><td>读取正式状态，确认时复核；路线和奖励不能串领。</td></tr>
+<tr><td>拾取 交易与发奖事务</td><td>06、14及全部奖励</td><td>消耗、结果、进度、去重记录按同一请求可靠提交。</td></tr>
+<tr><td>献祭选择与阶段展示</td><td>18</td><td>按实例选择、复核、确认及发奖；只展示当前要求；预留天气请求。</td></tr>
+<tr><td>AI观战与有限轮次赌局</td><td>19、20</td><td>无玩家部署也能真实对战；返回胜负方；下注、轮次和奖励可恢复。</td></tr>
+<tr><td>已有时间功能的适配</td><td>14→15；18天气持续如适用</td><td>接购买成功、到期通知及UI上下文；时间换算与计时仍由程序现有服务负责。</td></tr>
+</table></div>
+<h4 id="section-51">七 时间接口与其他系统交接</h4>
+<p>本节字段为本轮建议的语义契约，函数和信号名称由程序映射到已有实现。我们提供事件配置、显示和接收入口，不实现时间推进、日历换算、离线计时或另一套定时存档。</p>
+<div class="table-wrap"><table>
+<tr><th>交互方向</th><th>需要的最小数据</th><th>处理规则</th></tr>
+<tr><td>14号购买成功 → 程序时间服务</td><td>event_id、purchase_request_id、正式购买成功标记、4游戏日延迟规则</td><td>仅扣费和扩圈保存成功后登记；购买时刻、到期时刻由已有时间服务保存。</td></tr>
+<tr><td>程序到期通知 → 15号事件入口</td><td>schedule_id或等价稳定键、event_id、到期状态、是否已处理</td><td>达到或超过到期即有效；重复通知不得重复演出或发奖。计时单位由程序现有服务定义。</td></tr>
+<tr><td>事件入口 → 程序安全演出门禁</td><td>当前会话/战斗/转场是否可打断；事件入口是否可用</td><td>到期但正忙时保留待演出；恢复探索后再进入，不额外要求夜晚或休息。</td></tr>
+<tr><td>事件处理结果 → 程序记录</td><td>稳定会话ID、已开始/中断/完成、奖励提交结果</td><td>开始和完成分开保存；中断恢复同一事件，不重新启动4天计时。</td></tr>
+<tr><td>程序上下文 → A1显示</td><td>当前游戏日、地区、天气、下次可公开事件信息</td><td>UI只显示快照；未知或不应公开的下一事件不编造信息。</td></tr>
+<tr><td>18号 → 正式天气服务</td><td>天气效果ID、范围、持续规则、覆盖优先级及请求键</td><td>内容参数补齐后接入；持续时间仍交程序；未配置不套默认时长或祭坛格范围。</td></tr>
+</table></div>
+<h5 id="section-52">其他必须由程序提供的接口</h5>
+<div class="table-wrap"><table>
+<tr><th>接口领域</th><th>输入与结果要求</th></tr>
+<tr><td>地图与会话</td><td>输入事件、地点、交互物、入口角色；返回合法当前阶段及显示内容。真实抵达由地图证明。</td></tr>
+<tr><td>战斗</td><td>关联event_id、stage_id、request_id、battle_id、模式、地图和双方阵容；回传胜负方及结束原因。</td></tr>
+<tr><td>库存与能力</td><td>查询仓库和出战的正式实例、攻击口径、体型、皮毛/飞行/蛇类/手足、锁定与可回收状态。</td></tr>
+<tr><td>资源与奖励</td><td>输入稳定请求、具体奖励和消耗；返回真实成功/失败、实际发放记录；重试复用原请求。</td></tr>
+<tr><td>任务与UI</td><td>提供当前可行动目标及入口，完成或阶段变化刷新；点击“前往”仍遵守距离与地点开放。</td></tr>
+</table></div>
+<p>时间验收由程序演示：未满4天不出现；跨过到期日仍出现；读档不重计；到期遇战斗延后；中断恢复与重复通知不重复发奖。我们只验事件是否在正确时机出现和UI能否恢复。</p>
+<h4 id="section-53">八 地图绑定与数值配置交接</h4>
+<p>本轮新增四个问号入口，07对应老驴和商人两个入口，09对应货车，12对应农田主入口。当前20条事件全部有地图绑定；正文、分支、条件和结果统一以UI跳转原型/事件/事件总表.md为准。</p>
+<div class="table-wrap"><table>
+<tr><th>事件与入口</th><th>地图ID与角色</th><th>世界坐标</th></tr>
+<tr><td>07 年迈的驴子 老驴</td><td>event_donkey / donkey</td><td>7337.50，10479.31</td></tr>
+<tr><td>07 年迈的驴子 商人</td><td>event_donkey_merchant / merchant</td><td>7720.00，10258.48</td></tr>
+<tr><td>09 不对名单 货车</td><td>event_abandoned_cart / cart</td><td>9441.25，12798.10</td></tr>
+<tr><td>12 过分敬业 农田</td><td>event_diligent_farm / farm</td><td>16326.25，6614.68</td></tr>
+<tr><td>12 城内附魔师回访</td><td>layout_sargate_city / return_city_enchanter</td><td>保留既有位置</td></tr>
+<tr><td>17 北桥事件</td><td>event_north_bridge</td><td>保留桥本体入口，不合并12号</td></tr>
+</table></div>
+<p>07两入口位于快到福斯特镇的进镇道路，共用事件进度。09位于被遗忘的矿洞西南路边。12位于北桥东岸，保留城内回访；选择回城路线立即锁定。四个新点均使用已有菱形问号，位于可通行格且能从出生点抵达。</p>
+<h5 id="section-54">下一位策划的数值编辑入口</h5>
+<p>在编辑器打开事件库，选择事件，在现有“接入参数 JSON”中修改runtime_bindings.parameters，再点“保存接入参数到布局”和顶部“保存布局”。parameter_specs说明名称、单位、类型和范围。20条事件共预留88个数值参数槽位；05原稿无奖励，不新增奖励字段。</p>
+<p>未定数值保持null，不按零执行。已确认的100魔力、4游戏日、献祭1/2/3只和四轮赌局按总表初始化；调整这些规则时同步总表。怪物类型、实际阵容与资源ID仍由策划配置，数值倍率不能替代战斗预设。</p>
+<p>HexContentModel.parameter读取已配置参数，缺值明确报错；触发请求携带parameters、parameter_specs和流程来源。14、15、20号兼容触发数值由参数投影。编辑器隔离试玩已读取引擎费用、扩圈与鬼魂延迟；正式时间、战斗、献祭和奖励仍由程序已有服务接入。</p>
+<h5 id="section-55">同步文件与程序前置检查</h5>
+<p>在线编辑器以Data/Maps/hex_layout.json为工作布局，静态后备为Tools/hex-planner/layout.json，事件镜像为Tools/hex-planner/events.json。本轮已同步三处并核对在线API与实际界面。完整配置及操作见frontier_toolkit/editor/hex/EVENT_HANDOFF.md，UI跳转原型/交接文档.md也已登记。</p>
+<p>独立事件工程仍需补齐core/event_definition.gd、core/event_session.gd、core/event_json_port.gd及依赖，或由正式宿主提供等价模块。现有EventPanel继续复用，保留字体、固定选项和布局；不把地图内容预览当成真实事件完成。</p>
+<h4 id="section-56">九 执行批次与验收</h4>
+<div class="table-wrap"><table>
+<tr><th>批次</th><th>我们先交什么</th><th>程序完成什么</th><th>通过条件</th></tr>
+<tr><td>A 入口与样板</td><td>最新地图绑定、13号奖励与按钮；01/05/09可同步补参</td><td>完整事件依赖、显示适配、奖励与进度保存</td><td>13号从地图进入、领取、隐藏、读档恢复全部正确；提前关闭仍可再访。</td></tr>
+<tr><td>B 战斗与回访</td><td>04号指定战斗及三阶段内容；02/08/11/16预设</td><td>战斗回执接事件；城市阶段路由；剧情待办</td><td>04只认指定战斗并回城领奖；失败和载入失败不走胜利路线。</td></tr>
+<tr><td>C 条件与分支</td><td>07双入口、10阈值、12两路、17两路；06战后规则</td><td>seen、能力条件、路线锁、互斥结果和拾取恢复</td><td>顺序互换、仓库合格、路线重载、双路领取和06胜败保物品符合规则。</td></tr>
+<tr><td>D 特殊机制</td><td>18奖励与血雨、19双方/奖励预设、20四轮阵容和异常规则</td><td>献祭、AI观战、下注与有限轮次；天气接口</td><td>不献祭最后一只，不提前揭示；真实观战，赢返2B；第四轮骑士离场。</td></tr>
+<tr><td>E 时间适配与全量</td><td>14/15显示及奖励；整理全部分支验收路径</td><td>接已有计时、到期门禁、上下文；全量恢复回归</td><td>4游戏日到期及延后演出正确；20事件各分支可执行且不重复发奖。</td></tr>
+</table></div>
+<h5 id="section-57">共同验收清单</h5>
+<p>□ 地图绑定来自同一份最新导出；城市、07双入口及12回访都能进入正确阶段。</p>
+<p>□ 原文、说话人、选项和策划注释分开；没有把奖励说明直接当作已发奖。</p>
+<p>□ 未完成离开保留入口与阶段；完成无后续隐藏事件；共享城市保留。</p>
+<p>□ 胜利、失败、退出和载入失败分别处理；旧或重复战斗回执不能推进新阶段。</p>
+<p>□ 消耗、奖励及阶段保存失败可恢复；连点和读档不重复扣费或发奖。</p>
+<p>□ 1120×680、1280×720、1920×1080检查长正文、4选项和返回；不为容量自行缩字改布局。</p>
+<p>□ 现有新手任务保留原行为；剧情任务不被误套“新手指引全部完成”的显示。</p>
+<p>□ 06物品、18天气、20未定账务等缺参数时明确阻止正式执行，不以零值或随机默认掩盖。</p>
+<p>程序回交：实际接口与字段映射、修改文件、可运行事件配置样例、成功/失败/恢复演示及未完成项。我们回交：内容与关卡配置、最新入口映射及逐事件验收结果。</p>
+<h4 id="section-58">十 依据文件与执行记录</h4>
+<p>项目文件以H盘为正式存储位置。下列相对路径均基于 H:\ChatGPT\GitHub\SupremePoorGuy。时间分工、地图已放置及本轮交付范围按2026年10月19日的执行要求确定。</p>
+<div class="table-wrap"><table>
+<tr><th>文件</th><th>用途</th></tr>
+<tr><td>UI跳转原型/交接文档.md</td><td>当前UI基线、功能接入边界与布局约束</td></tr>
+<tr><td>UI跳转原型/docs/07_系统接入适配与联调协议.md</td><td>真实接口、事件缺件、正式宿主与奖励/存档边界</td></tr>
+<tr><td>UI跳转原型/docs/06_组件隔离与TA材质接口.md</td><td>事件窗、待办与地图展示组件职责</td></tr>
+<tr><td>UI跳转原型/事件/事件总表.md</td><td>20条事件正文、阶段、分支与未定项</td></tr>
+<tr><td>UI跳转原型/事件/接入规范.md</td><td>ID、外部等待、结果提交及完成规则</td></tr>
+<tr><td>UI跳转原型/事件/程序监听清单.md</td><td>逐事件查询、通知和回执要求</td></tr>
+<tr><td>UI跳转原型/事件/符文表.md</td><td>图书馆三枚基础符文及其他待配符文</td></tr>
+<tr><td>UI跳转原型/Scenes/UI/Screens/EventPanel.tscn</td><td>DescriptionScroll、Description与Commands实际布局</td></tr>
+<tr><td>UI跳转原型/Scripts/GameDemo.gd及同目录下UI/TasksView.gd</td><td>原型硬编码事件及待办实际显示行为</td></tr>
+<tr><td>frontier_toolkit/editor/hex/EVENT_HANDOFF.md</td><td>本轮四个新入口、88个数值接口和编辑器同步说明</td></tr>
+<tr><td>it-is-time/Scripts/Application/DeliveryMapBridge.gd</td><td>正式地图当前事件路由位置</td></tr>
+<tr><td>it-is-time/Scripts/Application/GameSession.gd及同目录下GameUIController.gd</td><td>正式保存、战斗回执及新手任务UI基础</td></tr>
+</table></div>
+<h5 id="section-59">执行用单事件条目模板</h5>
+<div class="table-wrap"><table>
+<tr><th>字段</th><th>填写内容</th></tr>
+<tr><td>身份与入口</td><td>event_id；已有地点ID；交互物ID；stage_id或entry_role；触发模式。</td></tr>
+<tr><td>阶段与显示</td><td>开放条件；当前正文；按钮文案与branch_key；不可用提示；当前待办。</td></tr>
+<tr><td>操作与结果</td><td>所需战斗/交易/献祭/奖励；成功、失败、取消与中断分别到哪里。</td></tr>
+<tr><td>完成与恢复</td><td>完成条件；奖励去重阶段；完成后入口；离开和读档恢复阶段。</td></tr>
+<tr><td>交接状态</td><td>内容待补 / 参数待配 / 接口待接 / 联调中 / 已验收；负责人和遗留项。</td></tr>
+</table></div>
+<p>本轮交付为执行文档。后续按批次填写和接入，不变更现有事件数量、地图摆放或正式UI布局。</p>
+<h4 id="section-60">十一 图标战斗与石障追加执行</h4>
+<p>2026年10月19日追加。地图与编辑器已配置下列三项；正式敌军资源、破坏进度存档与导航更新由程序接入已有宿主。时间继续使用程序已有计时功能。</p>
+<h5 id="section-61">图标与战斗部署</h5>
+<p>6号石塔入口使用art1018_10_004原始透明素材，宽430世界单位，沿用地区深色包边。事件ID与原稿流程保留；石塔不属于可破坏石头。</p>
+<p>39处战斗点已按地区与怪兽命名并配置固定阵容。02流浪狗、08巨型拱兽按用户确认保留单体；其余37处总数4至10只。I级4至5只，II普通6至7只，II高段8只，III常规9至10只；亡灵羊为1主怪与3名龙牙弓箭手，共4只。数量分档是可调初始值。</p>
+<p>蜘蛛仅放在蜘蛛森林。I与II普通单组；II高段和III最多两组，III只主动挑战。41张战场保留原有15张及环境，26张从共享模板独立复制，逐点修改互不影响。</p>
+<p>下一位策划：大地图选点后点“编辑此战场”，在敌方对象中调种类、尺寸、数量、位置和朝向，再保存战场。敌人数仅以战场objects中enemy对象的count合计，不另维护一份数值。返回大地图可查看摘要及“敌群接入请求”。</p>
+<p>程序：读取battleRequest中的敌群与definition_id，核验阵容后接正式战斗。巨鼠、食矿鸟、流浪狗、巨型拱兽、亡灵羊与龙牙弓箭手仍需注册正式资源；null映射不使用其它物种代替。事件总表与19、20观战阵容规则继续有效。</p>
+<h5 id="section-62">石头区块绑定与破坏回调</h5>
+<p>27块石头已与62个可破坏阻挡格双向绑定。中部下门首石补上48,30、49,28、50,27三个漏绑控制格。选择石头后，右侧显示素材ID、区块清单及绑定请求；每块有独立稳定ID。</p>
+<p>程序：destructionRequest导出素材、位置、区块与行走3格的耗时接口；程序验证持有怪物、相邻可达和计时结束后调用commitDestruction。只隐藏该石头实例并移除本块碰撞，按opened_cells更新导航，blocked_cells继续阻挡。重叠格须清除全部关联石头，永久山体和河流不解除。</p>
+<p>将destroyed_obstacle_ids存档；加载后restoreDestruction恢复外观与通行。重复完成回调不重复处理。编辑器试玩验证独立破坏、取消、重叠和恢复，试玩不写正式玩家存档。</p>
+<p>详细逐点清单、稳定ID与参数字段保存在正式仓库frontier_toolkit/editor/hex/EVENT_HANDOFF.md；UI跳转原型交接文档已同步摘要。</p>
+<h2 id="section-63">附录原文：接入规范.md</h2>
+<p>来源：<code>project/UI跳转原型/事件/接入规范.md</code>；SHA256：<code>987a51bd65b95c8bf10c8b12d38514a48c61f41b894a28a75993ba01af7f7849</code>。下文仅调整标题层级与相对链接以汇编，源文件原字节另附。</p>
+<h3 id="section-64">事件内容与接入规范</h3>
+<p>版本：v0.2 · 2026-10-18 · 状态：规则确认与接入约定，待正式宿主绑定。</p>
+<p>本规范对应<a href="project/UI跳转原型/事件/事件总表.md">事件总表</a>的20个事件，不表示运行时已经实现。适用于事件策划、地图、战斗、召唤、库存、存档与UI接入人员。基调为荒诞、搞笑＋奇幻；格式整理不能改变作者的笑点、人物关系、怪物生态或奖励意图。</p>
+<h4 id="section-65">1. 文件与唯一内容源</h4>
+<div class="table-wrap"><table>
+<tr><th>文件</th><th>用途</th><th>维护规则</th></tr>
+<tr><td>事件总表.md</td><td>当前事件内容源；包含ID、入口、条件、分支、结果、待定项及正文</td><td>修改剧情与规则先改此文件，再同步项目草稿</td></tr>
+<tr><td>草原事件_配表草稿.events.json</td><td>可导入现有配表工具的完整项目草稿</td><td>不含正式执行图，不是Godot单事件文件；不得当运行时直接发布</td></tr>
+<tr><td>接入规范.md</td><td>本文；描述接入约定与验收要求</td><td>变更公共规则须说明受影响事件</td></tr>
+<tr><td>符文表.md</td><td>现有符文目录及事件奖励来源</td><td>03号手记先配置3枚现有基础符文；其他来源待填，不改符文实现</td></tr>
+<tr><td>程序监听清单.md</td><td>20个事件的监听、查询、回执和验收要求</td><td>语义接入需求，不是现成Godot信号；与交接总览共同阅读</td></tr>
+<tr><td>原稿备份_2026-10-17.md</td><td>本次整理前的完整快照</td><td>只读留档，不持续编辑，不作为另一份当前正文</td></tr>
+<tr><td>../事件.md</td><td>旧路径索引</td><td>保留链接，不重复维护正文</td></tr>
+</table></div>
+<p>本批20条按故事条目计数。年迈的驴子有两个交互入口但通过一段对话归还，过分敬业还有锁定后的回城入口，血祭日有发奖后逐次揭示的三个阶段；地图点位数、事件条数、运行节点数、战斗场数分别统计，不能混用。两座城市与罗瓦常驻以AUX前缀作为工具辅助记录，不计入20条事件目标。</p>
+<h4 id="section-66">2. 接入范围与真实能力</h4>
+<p>本次仅整理内容和接口约定，不接入游戏、不改原型布局、不修改奖励或战斗实现、不写玩家存档。后续遵守<a href="project/UI跳转原型/交接文档.md">交接约束</a>：默认改功能不改布局；需要移动控件、改变字号或有布局挤压风险时，先准备具体方案并取得用户二次确认。</p>
+<p>当前需要区分三种格式：</p>
+<ul>
+<li><strong>写作/项目草稿</strong>：<code>schema_version=1</code>，根字段为<code>name / tables / stories / flows / flow_notes / flow_layouts</code>。本批交付属于此类。<code>tables</code>沿用工具七张业务表，<code>stories</code>保存段落，<code>flow_notes</code>保存不执行的接入说明。20条正文和3条辅助记录均为<code>草稿</code>，没有伪造正式入口ID。</li>
+<li><strong>旧七表业务配置</strong>：事件、阶段目标、剧情节点、选项、条件、结果、地图绑定。正式宿主需要实现加载、条件求值、事务和状态推进。工具能导出不等于游戏能执行。</li>
+<li><strong>Godot单事件展示格式</strong>：工具README描述为<code>schema_version / id / title / start / reward_mode / nodes</code>。不能把本批<code>.events.json</code>改个后缀就当成<code>.event.json</code>。对白/选择/奖励/结束四类展示节点也不能替代战斗等待、献祭、交易与跨地图任务执行。</li>
+</ul>
+<p>前次整理核对发现：现有配表工具有<code>schema.js / model.js / story.js</code>，README提到的<code>flow.js</code>及Godot事件工程<code>core</code>运行文件在当前工作区缺失。这里只校验现存数据模块的导入与字段，不宣称网页全流程、Godot事件演示或正式主工程运行通过。UI原型的事件面板仍是展示组件，不是通用事件执行器。历史能力说明见<a href="project/UI跳转原型/docs/07_系统接入适配与联调协议.md">系统接入适配协议</a>。</p>
+<p>导入前先在工具中保存现有完整项目。工具的“导入”会替换当前浏览器工作区；本次没有自动导入、覆盖浏览器草稿或改动工具种子数据。导入后从情节写作入口检查原稿，依据总表绑定执行分支；正文中的【选项】不会自动成为可执行选项。</p>
+<h4 id="section-67">3. ID与字段约定</h4>
+<p>已有明确映射时沿用工具ID：火速任命<code>QST_MAIN_001_001</code>、图书馆开门日<code>QST_SIDE_001_001</code>、防卫预算<code>QST_SIDE_002_001</code>、血祭日<code>QST_SIDE_003_001</code>。其余本批分配<code>QST_GRASS_序号</code>，三个辅助入口使用<code>AUX_GRASS_名称</code>。不能用事件显示名替换正式ID；若宿主已有ID，增加映射，不覆盖旧进度。</p>
+<div class="table-wrap"><table>
+<tr><th>字段</th><th>含义</th><th>必须避免</th></tr>
+<tr><td>event_id</td><td>稳定的内容与存档关联ID</td><td>改文案标题就换ID；与地图ID混用</td></tr>
+<tr><td>region_id / cell_id / location_id</td><td>地区、格子、地点的正式标识</td><td>只填“草原”就宣称已绑定位置</td></tr>
+<tr><td>interaction_id</td><td>NPC、货车、祭坛等实际入口</td><td>将正文中的NPC称呼当作正式资源ID</td></tr>
+<tr><td>开放/触发条件</td><td>谁、何时、在哪种状态可进入</td><td>空条件或待定解释为自动通过</td></tr>
+<tr><td>stage_id</td><td>同一事件内阶段，例如等待回城</td><td>把每个阶段算作一个新事件</td></tr>
+<tr><td>branch_key</td><td>选项稳定键，总表第一列</td><td>用按钮排序或完整中文台词当存档键</td></tr>
+<tr><td>展示正文</td><td>旁白、说话人、笔记与选项标签</td><td>把括号里的奖励/判定注释当对白</td></tr>
+<tr><td>battle_map_id / enemy_config_id</td><td>战斗场景与真实敌方预设</td><td>缺预设时替换敌人、传空敌军自动胜利</td></tr>
+<tr><td>reward/item/rune/preset ID</td><td>真实资源标识</td><td>“奇物”“符文”当作任意默认奖励</td></tr>
+<tr><td>once_key / request_id</td><td>奖励去重键与操作请求关联键</td><td>每次重开面板生成新领奖键</td></tr>
+<tr><td>publish_status</td><td>草稿→待绑定→联调→可发布</td><td>待定字段尚未补齐就标可发布</td></tr>
+</table></div>
+<p>总表的<code>active / complete / battle_pending</code>等状态词和分支键是策划约定，并非新注册的宿主字段或已实现API。正式字段需要系统负责人映射。读取怪物的攻击力、体型、皮毛、飞行与手足组件都用正式数据，不从立绘、中文名字或显示尺寸推断。</p>
+<h4 id="section-68">4. 节点、分支与外部等待</h4>
+<p>每个执行节点应有稳定<code>node_id</code>、类型、正文/说话人、下一节点；选项另有分支键、可见条件、可选条件、不可选提示与去向。正文、选项、条件、动作必须分离。节点读完或窗口关闭只结束播放，不能自动完成事件。07号的归还明确由指定共用对话完成，不等待实际护送；18号只有当前阶段奖励成功，才开放下一阶段。</p>
+<ul>
+<li><strong>纯对话</strong>：按正文顺序展示，确认结束；有奖励时等待提交成功再完成。没有写明玩家选择的台词不扩展成分支。</li>
+<li><strong>战斗</strong>：玩家选择/已确认遭遇→按模式校验阵容（玩家战斗校验玩家队伍与敌军；观战只校验两方AI阵容）→保存本次请求→进入战斗→等待对应结果→胜利后展示后文、结算。失败、加载失败、取消和退出均不进入胜利路线。</li>
+<li><strong>跨地点任务</strong>：接取→持久保存阶段→离开窗口→在目标城市/入口按阶段路由→交付。不得把“以后帮你问”立即接到领奖节点。</li>
+<li><strong>能力判定</strong>：确认时重读正式持有怪物字段；10号包括仓库和出战怪物，任意单只攻击力高于阈值即可，不要求先入队。失败保留未完成，不凭全队加总代替单只攻击力。</li>
+<li><strong>互斥路线</strong>：富含矿物质、谁会赢？在成功终局后锁定，其他终局不可再次领取。过分敬业更早在接取回城路线时锁定，之后不能改选直接解决，离开或读档不解除锁定。</li>
+<li><strong>汇合奖励</strong>：外行魔法师的两种回答共享同一奖励节点，不能两份各发一次。</li>
+<li><strong>离开</strong>：没有额外说明时不扣费、不领奖、不完成、不抹除已发现/已接取阶段。一次性与完成后隐藏是本次默认接入建议，原稿未定的重复规则仍可由作者调整；不要在未确认前将其作为正式发布规则。</li>
+</ul>
+<p>同一事件有互斥选择时，选择确认与执行必须再次读取最新状态。连点、两个窗口或读档后重试不能同时完成两条路线。</p>
+<h4 id="section-69">5. 事务、奖励与持久化</h4>
+<p>展示组件只发出意图，正式宿主拥有魔力、怪物、天气、事件进度和存档。不得让原型与正式服务各扣一次、各保存一份。推荐的语义事务为：校验→生成/复用请求→锁定结果→提交消耗、奖励、状态及去重账本→成功回执→刷新UI。具体实现由宿主决定，不在文案中绑定函数名。</p>
+<p>一次性结果键可按<code>event_id:stage_id:result_id</code>映射到宿主账本；重复事件按持久<code>round_id</code>或<code>encounter_id</code>区分。操作重试复用原请求，不重新随机奖励或重复消耗。</p>
+<ul>
+<li>购买引擎：扣100魔力、扩一圈、购买标记属于同次事务；余额不足、满级、保存失败不得只完成一半。</li>
+<li>献祭：选择实际怪物实例→显示将消耗的对象→不可逆确认→复核实例可用及条件→回收、奖励及阶段进度按同一请求持久提交。下一要求必须等本阶段奖励成功后才显示；若已消费待发奖，重试不得再次扣怪。天气效果未定，不擅自写入默认天气。取消不回收。不能因为一个怪物满足多个标签就重复消费同一实例。</li>
+<li>怪物奖励：谁会赢？的强化双头甲狼/魔眼拱兽必须有实际预设和实例ID；库存或队伍容量不足时按正式安置规则处理，不能静默丢弃或直接插入满员出战队伍。</li>
+<li>结果回执：至少关联事件、阶段、分支、请求及战斗ID。旧战斗或重复回执不能推进当前另一分支。</li>
+<li>随机行为：需要明确概率、候选池、抽取时机与持久结果；打开窗口、查看文本、读档重试不能擅自重掷。</li>
+</ul>
+<h4 id="section-70">6. 显示与完成规则</h4>
+<p>待办只显示当前尚未完成且可行动的目标；完成记录不继续占用待办列表。一次性事件成功提交且无后续时隐藏对应事件图标。城市、图书馆等共享入口继续保留；只移除其中已完成的任务选项。</p>
+<p>“已发现”“已阅读”“已接取”“战斗胜利”“已领取”“已完成”是不同状态。离开不等于失败，更不等于完成。有后续时切换到正确阶段入口；不可直接删除整条事件链。</p>
+<p>战斗结束顺序遵守现有原型：先弹结算，玩家结束结算后再由整个大地图下拉遮挡小地图。事件正文继续使用现有纸质面板、安全标题留白、固定选项与原有字体，不为接入内容修改布局。战斗地点的简短概况沿用悬停显示，点击才执行确认后的入口逻辑。</p>
+<h4 id="section-71">7. 已确认规则与剩余绑定项</h4>
+<div class="table-wrap"><table>
+<tr><th>事件</th><th>已确认</th><th>仍待配置或绑定</th></tr>
+<tr><td>02 小树守卫</td><td>敌方是曾被玩家收养的卡洛德，不增加捕获</td><td>开战方式、敌军预设与战后内容</td></tr>
+<tr><td>03 图书馆开门日</td><td>本版无贤者线索；手记转为符文，先配置甲片/血脉/锐牙3种</td><td>私房钱资源/数量；正式初始符文开放范围与重复奖励处理</td></tr>
+<tr><td>06 狼来了</td><td>拾取即得神秘物品，战斗胜负均保留</td><td>物品内容/ID暂时搁置；狼群预设；失败后的任务状态</td></tr>
+<tr><td>07 年迈的驴子</td><td>两种发现顺序都用一段对话直接归还，不做实际护送</td><td>两件奇物的具体奖励与入口ID</td></tr>
+<tr><td>10 甲壳圣堂</td><td>仓库与出战均可提供合格怪物，按单只攻击力判定</td><td>阈值与正式攻击字段口径、奖励数值</td></tr>
+<tr><td>12 过分敬业</td><td>接取回城路线后不可改直接解决；统一为刚毕业学生的旧衣服</td><td>稻草人素材/敌军、城市附魔师入口与两档奖励</td></tr>
+<tr><td>14/15 引擎与鬼魂</td><td>购买成功满4个游戏日后出现鬼魂，存档不重置计时</td><td>游戏时间与安全演出接口、满级购买处理、符文奖励</td></tr>
+<tr><td>16 看一眼不要钱</td><td>胜利奖励眼球；不自动生成额外怪物</td><td>退避后再访规则；眼球概率效果的对象、概率及范围</td></tr>
+<tr><td>18 血祭日</td><td>依次1只有皮毛、2只飞行、3只无手足蛇类；发奖后揭示下一要求；不能献祭最后一只</td><td>具体奖励与正式属性字段；血雨效果、范围、时长、覆盖规则</td></tr>
+<tr><td>19 谁会赢？</td><td>被帮助的怪物不作为友军入场；旁观使用两方AI真实战斗</td><td>阵容/数量、强化奖励预设、观战平局处理和魔力数值</td></tr>
+<tr><td>20 谁会输？</td><td>四轮10/20/50/100，赢返2倍本金，已含本金；第四次后骑士不出现；双方手填</td><td>四轮双方实际阵容；失败支付、平局与中止规则</td></tr>
+<tr><td>全部奖励</td><td>以当前总表和符文表为准</td><td>多数魔力数值与奇物/符文ID仍待填，不用默认20或随机奖励掩盖缺项</td></tr>
+</table></div>
+<p>具体功能监听、逐事件条件与结果回执见<a href="project/UI跳转原型/事件/程序监听清单.md">程序监听清单</a>。工具的“可重复”枚举不能表达20号的4次上限，必须另存已结算次数并在第4次后永久关闭，不能按枚举解释为无限重复。</p>
+<h4 id="section-72">8. 从草稿到发布</h4>
+<ul>
+<li>对照总表确认文案与分支，补齐每条“尚需绑定/确认”；保留当前文件之外的候选灵感，不混入正式20条。</li>
+<li>绑定正式地图入口、怪物/物品/符文/天气字段与宿主服务；沿用已有任务ID或登记映射。</li>
+<li>从写作稿手工编排执行节点。正文里的奖励说明留在配置备注，不能直接展示后视为已发奖。</li>
+<li>逐条绑定：事件总览→阶段目标→剧情节点/选项→条件→结果→地图入口；若采用另一正式运行时，提供同义映射表，不要求照搬旧七表。</li>
+<li>补全演示/宿主缺失模块后再验证真实节点执行；使用预览只能证明文本分支，不能证明战斗、交易或存档事务。</li>
+<li>按以下验收项在隔离存档完成联调，经过内容负责人确认再标记可发布。</li>
+</ul>
+<h4 id="section-73">9. 最低验收清单</h4>
+<ul>
+<li>每条已发布事件有真实入口和唯一ID，无断链、无不可达终局、无“待定”执行参数。</li>
+<li>初次进入、提前关闭、重新进入、读档后继续均路由正确；城市访问先后不被错误锁定。</li>
+<li>年迈的驴子分别按驴→商人、商人→驴测试，共用一段归还对话，不依赖实际护送；两件奇物只发一次。</li>
+<li>过分敬业接取回城路线后立即禁止直接解决，重进和读档不解锁；富含矿物质两路完成结果互斥，不能重复领奖。</li>
+<li>甲壳圣堂验证单只攻击力不足、等于、高于阈值；仓库中合格而出战不合格时仍通过，不要求临时入队，也不使用总攻击力蒙混通过。</li>
+<li>废弃矿井验证大型队伍、混合队伍、空队伍、合格队伍；不合格时不删怪，不以空队伍入场。</li>
+<li>所有战斗验证胜利、失败、退出、加载失败、重复与过期回执；未胜利不发胜利奖励。</li>
+<li>引擎购买验证99/100魔力、满级、连续点击、保存失败、重载；成功后保存购买时间，未满4天不出现鬼魂，满4天或跳过多天不漏触发，且只出现一次。</li>
+<li>献祭验证1/2/3只、第一阶段仅皮毛、扣完至少剩1只、取消、重复实例、保存失败与恢复；当前奖励未成功不能显示下一要求，已消费待发奖不得再扣怪；血雨待定不填默认效果。</li>
+<li>谁会赢？三路互斥，被帮助的怪物不作为友军入场；观战读取真实AI战斗结果且不部署玩家怪物；奖励来源正确，库存满时不丢失。</li>
+<li>谁会输？双方阵容由策划手填，四轮下注/结算不重复，赢返2倍本金而非3倍；第四次后骑士和入口关闭，重载不重开；失败/平局/中止规则未补齐前不发布真实支付。</li>
+<li>完成无后续的图标/待办隐藏，有后续的只切阶段，城市与常驻入口保留。</li>
+<li>使用1120×680至1920×1080窗口检查长文本、固定按钮、标题留白与返回流程；如需要布局改动，先按交接约束二次确认。</li>
+</ul>
+<ul>
+<li>06号物品领取与战斗结果分开保存；胜败、退出、加载失败后都不撤回已领物品，也不因重试重复发放。</li>
+<li>03号符文奖励对照符文表，确保没有里斯巴巴任务、提示或奖励结果。</li>
+</ul>
+<p>本次文件校验只证明草稿能被当前数据模块读取、20条内容和引用完整，不计作上述游戏内联调通过。</p>
+<h2 id="section-74">附录原文：事件总表.md</h2>
+<p>来源：<code>project/UI跳转原型/事件/事件总表.md</code>；SHA256：<code>988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5</code>。下文仅调整标题层级与相对链接以汇编，源文件原字节另附。</p>
+<p>---</p>
+<p>id: QST_EVENT_001</p>
+<p>version: v0.7</p>
+<p>author: 用户原稿，协作整理</p>
+<p>created: 2026-10-17</p>
+<p>updated: 2026-10-18</p>
+<p>status: 结构化草稿／未发布</p>
+<p>---</p>
+<h3 id="section-75">草原前期事件总表</h3>
+<p>本版按当前磁盘原稿整理，共 <strong>20个事件条目</strong>；“年迈的驴子”有两处入口，“过分敬业”另有回城入口，具体地图点位数待绑定。另有2个城市入口和1段罗瓦常驻对话，不计入20个。三阶段献祭、分支、重复赌局不额外增加事件数量。“断手工匠”已不在本次原稿中，不恢复占位。</p>
+<p>基调以原稿的荒诞、搞笑与奇幻感为准。保留作者原有措辞、铺垫和人物口吻，仅轻修明显语病，并在少数事件补充简短的场景描写。不新增事件，不改UI布局、游戏逻辑或存档。</p>
+<p>阅读顺序：<a href="project/UI跳转原型/事件/接入规范.md">接入规范</a> → 本表 → <a href="project/UI跳转原型/事件/符文表.md">符文表</a>／<a href="project/UI跳转原型/事件/程序监听清单.md">程序监听清单</a> → <a href="project/UI跳转原型/事件/草原事件_配表草稿.events.json">配表工具草稿</a>。所有ID、状态名和分支键都是本批配置约定，除沿用工具已有事件ID外，并非已绑定的宿主字段或API。待定不得按零值、空敌军或条件通过处理。</p>
+<h4 id="section-76">文风与显示篇幅</h4>
+<ul>
+<li><strong>原文优先：</strong> 以作者原稿为底稿，保留原句、信息量、对白节奏和笑点，不以简略版作为新的正文基准。</li>
+<li><strong>轻修范围：</strong> 处理明显错字、重复字句和必要的标点；不统一改写成短句，也不替换有辨识度的口头表达。</li>
+<li><strong>少量增加：</strong> 只在部分事件补充与原有场景一致的动作、声音或空间描写，不添加影响任务、世界观或奖励的新设定。</li>
+<li><strong>篇幅与排版：</strong> 尊重原段落的叙述长度，不按固定字数压缩。长对白可按话题分段，但保留原话及铺垫；说话人、选项和策划注释分开，方便后续接入。</li>
+</ul>
+<p>本轮只调整正文和写作约定，不改变现有显示组件、字体、字号或布局。</p>
+<h4 id="section-77">事件索引</h4>
+<div class="table-wrap"><table>
+<tr><th>序号</th><th>事件ID</th><th>名称</th><th>类型</th><th>战斗</th><th>接入状态</th></tr>
+<tr><td>1</td><td>QST_MAIN_001_001</td><td>火速任命</td><td>主线对话</td><td>无玩家战斗或待定</td><td>草稿／待绑定</td></tr>
+<tr><td>2</td><td>QST_GRASS_002</td><td>小树守卫</td><td>教学战斗</td><td>有战斗，需绑定</td><td>草稿／待绑定</td></tr>
+<tr><td>3</td><td>QST_SIDE_001_001</td><td>图书馆开门日</td><td>剧情对话</td><td>无玩家战斗或待定</td><td>草稿／待绑定</td></tr>
+<tr><td>4</td><td>QST_SIDE_002_001</td><td>防卫预算</td><td>清剿委托</td><td>有战斗，需绑定</td><td>草稿／待绑定</td></tr>
+<tr><td>5</td><td>QST_GRASS_005</td><td>浑浊的大地</td><td>传闻探索</td><td>无玩家战斗或待定</td><td>草稿／待绑定</td></tr>
+<tr><td>6</td><td>QST_GRASS_006</td><td>狼来了</td><td>野外战斗</td><td>有战斗，需绑定</td><td>草稿／待绑定</td></tr>
+<tr><td>7</td><td>QST_GRASS_007</td><td>年迈的驴子</td><td>双节点寻物</td><td>无玩家战斗或待定</td><td>草稿／待绑定</td></tr>
+<tr><td>8</td><td>QST_GRASS_008</td><td>超大型巨人</td><td>精英战斗</td><td>有战斗，需绑定</td><td>草稿／待绑定</td></tr>
+<tr><td>9</td><td>QST_GRASS_009</td><td>不对名单</td><td>笔记探索</td><td>无玩家战斗或待定</td><td>草稿／待绑定</td></tr>
+<tr><td>10</td><td>QST_GRASS_010</td><td>甲壳圣堂</td><td>能力判定探索</td><td>无玩家战斗或待定</td><td>草稿／待绑定</td></tr>
+<tr><td>11</td><td>QST_GRASS_011</td><td>废弃矿井</td><td>条件探索战斗</td><td>有战斗，需绑定</td><td>草稿／待绑定</td></tr>
+<tr><td>12</td><td>QST_GRASS_012</td><td>过分敬业</td><td>战斗/回城处理二选一</td><td>有战斗，需绑定</td><td>草稿／待绑定</td></tr>
+<tr><td>13</td><td>QST_GRASS_013</td><td>群星之底</td><td>星图探索</td><td>无玩家战斗或待定</td><td>草稿／待绑定</td></tr>
+<tr><td>14</td><td>QST_GRASS_014</td><td>不便携式魔力扩充引擎</td><td>交易升级</td><td>无玩家战斗或待定</td><td>草稿／待绑定</td></tr>
+<tr><td>15</td><td>QST_GRASS_015</td><td>外行魔法师</td><td>引擎后续对话</td><td>无玩家战斗或待定</td><td>草稿／待绑定</td></tr>
+<tr><td>16</td><td>QST_GRASS_016</td><td>看一眼不要钱</td><td>事故战斗</td><td>有战斗，需绑定</td><td>草稿／待绑定</td></tr>
+<tr><td>17</td><td>QST_GRASS_017</td><td>富含矿物质</td><td>战斗/建议二选一</td><td>有战斗，需绑定</td><td>草稿／待绑定</td></tr>
+<tr><td>18</td><td>QST_SIDE_003_001</td><td>血祭日</td><td>三阶段献祭</td><td>无玩家战斗或待定</td><td>草稿／待绑定</td></tr>
+<tr><td>19</td><td>QST_GRASS_019</td><td>谁会赢？</td><td>助战分支</td><td>有战斗，需绑定</td><td>草稿／待绑定</td></tr>
+<tr><td>20</td><td>QST_GRASS_020</td><td>谁会输？</td><td>限4次观战赌局</td><td>真实观战，玩家不参战</td><td>草稿／待绑定</td></tr>
+</table></div>
+<h4 id="section-78">剧情与地点约束</h4>
+<p>勇者战败，王国其他计划接连失效；落选召唤师临时成为最后希望。福斯特镇的罗瓦提供援助与手记对应的符文；本版不提供贤者线索；萨尔格特城城主提出防卫委托。两座城市的第一、第二定位不是强制访问顺序。博物馆只在对白中出现，不额外创建入口。守护者与亡灵羊的关系尚未在事件原稿中确认，不替作者揭晓。</p>
+<p>“待绑定”表示需要接入负责人填入真实地图、交互物、敌军、物品、能力字段和服务，不代表配表工具或原型已能执行。原始对白中已有但缺少按钮的事件，不擅自补写玩家的剧情选择；通用关闭/继续只属于播放器操作。</p>
+<h4 id="section-79">01 火速任命</h4>
+<div class="table-wrap"><table>
+<tr><th>字段</th><th>接入内容</th></tr>
+<tr><td>event_id</td><td>QST_MAIN_001_001</td></tr>
+<tr><td>类型</td><td>主线对话</td></tr>
+<tr><td>入口</td><td>王国特使；新游戏入口待确认</td></tr>
+<tr><td>开放/触发条件</td><td>首次任命；具体触发时机待定</td></tr>
+<tr><td>重复规则</td><td>一次性（本次整理建议；未确认的原稿重复规则在规范中说明）</td></tr>
+<tr><td>完成后显示</td><td>提交完成且无可接后续后隐藏事件标记和待办；城市等共享入口保留</td></tr>
+<tr><td>奖励/消耗</td><td>剧情交付国王特令1份；不发启动资金</td></tr>
+<tr><td>尚需绑定/确认</td><td>开局触发点；特令物品ID及功能；结束确认方式</td></tr>
+</table></div>
+<h5 id="section-80">分支与回调</h5>
+<div class="table-wrap"><table>
+<tr><th>分支键</th><th>文本/阶段</th><th>条件</th><th>去向</th><th>提交结果</th></tr>
+<tr><td>read</td><td>完整阅读交接对白</td><td>剧情顺序播放；玩家签字未写为可选分支</td><td>complete</td><td>交接阅读完成后登记任命；是否生成实体特令待绑定</td></tr>
+</table></div>
+<h5 id="section-81">展示正文与原稿说明</h5>
+<p><strong>触发条件：</strong> 原稿未写明具体时机。</p>
+<p><strong>事件流程：</strong> 特使确认玩家身份 → 说明王国处境 → 交付国王特令 → 办理签字交接 → 特使离开。</p>
+<h5 id="section-82">对话</h5>
+<p><strong>王国特使：</strong> 您好，您是之前参加过“魔王对抗计划”投标的召唤师先生吗？就是最后没中标的那位。</p>
+<p><strong>王国特使：</strong> 很不幸，勇者在北方被魔王打败了。其他中标的计划也不太顺利。比如炼金机甲计划，因为贪污问题，已经名存实亡了。</p>
+<p><strong>王国特使：</strong> 国王陛下希望您重启《超酷超炫的召唤怪物》计划。您现在是我们最后的希望。</p>
+<p><strong>王国特使：</strong> 这是国王特令。持有它，您可以自由通行于任何一座城市，并获得资源以外的任何帮助。</p>
+<p><strong>王国特使：</strong> 您知道的，税务问题困扰王国很久了。现在财政部的赤字也很严重。</p>
+<p><strong>王国特使：</strong> 请您在这张确认单上签字。还有这张。对，翻过来，背面还有。</p>
+<p><strong>王国特使：</strong> 这样交接就完成了，请填一下这张满意度回访表。</p>
+<p><strong>王国特使：</strong> 由于我也是劳务派遣的信使，没法和您一起上路。祝您一切顺利。</p>
+<h5 id="section-83">结果</h5>
+<ul>
+<li>玩家接到重启召唤计划、对抗魔王的任命。</li>
+<li>剧情交付 <strong>1 份国王特令</strong>，用于说明城市通行与协助资格；具体游戏功能待定。</li>
+<li>本事件不承诺提供启动资金或物资；特使不加入同行队伍。</li>
+</ul>
+<h4 id="section-84">02 小树守卫</h4>
+<div class="table-wrap"><table>
+<tr><th>字段</th><th>接入内容</th></tr>
+<tr><td>event_id</td><td>QST_GRASS_002</td></tr>
+<tr><td>类型</td><td>教学战斗</td></tr>
+<tr><td>入口</td><td>家门前小树；卡洛德</td></tr>
+<tr><td>开放/触发条件</td><td>完成首次召唤并安排出战，再进入大地图</td></tr>
+<tr><td>重复规则</td><td>一次性（本次整理建议；未确认的原稿重复规则在规范中说明）</td></tr>
+<tr><td>完成后显示</td><td>提交完成且无可接后续后隐藏事件标记和待办；城市等共享入口保留</td></tr>
+<tr><td>奖励/消耗</td><td>原稿未定，不补设</td></tr>
+<tr><td>尚需绑定/确认</td><td>开战确认还是自动；卡洛德敌军配置；战后文本与奖励</td></tr>
+</table></div>
+<h5 id="section-85">分支与回调</h5>
+<div class="table-wrap"><table>
+<tr><th>分支键</th><th>文本/阶段</th><th>条件</th><th>去向</th><th>提交结果</th></tr>
+<tr><td>battle</td><td>开战方式待定</td><td>已有教训卡洛德的动机；不擅自增加捕获选项</td><td>battle_pending → won → complete</td><td>只有胜利回执可以完成；失败/退出不当胜利</td></tr>
+</table></div>
+<h5 id="section-86">展示正文与原稿说明</h5>
+<p><strong>触发条件：</strong> 玩家完成召唤与出战，进入大地图后激活。</p>
+<p><strong>事件流程：</strong> 离家 → 发现守树的流浪狗 → 展示玩家决定教训它的旁白。后续如何进入战斗待定。</p>
+<h5 id="section-87">旁白</h5>
+<p>你走出了家门。门前的小树下，一条凶猛的流浪狗正守卫着那棵树。</p>
+<p>这条曾经被你收养，并且取名为卡洛德的狗忘恩负义，每天除了骚扰你以外什么都不做。尽管你睡过了魔法学院的所有攻击魔法课，但这对你来说并不是什么大问题。</p>
+<p>作为本世纪最伟大的魔法师之一，你决定给它一个教训。</p>
+<h5 id="section-88">结果</h5>
+<p>原稿已给出战斗动机，尚未写明开战方式、战后文本和奖励。不额外添加击败后驯服、捕获流浪狗等结果。</p>
+<h4 id="section-89">03 图书馆开门日</h4>
+<div class="table-wrap"><table>
+<tr><th>字段</th><th>接入内容</th></tr>
+<tr><td>event_id</td><td>QST_SIDE_001_001</td></tr>
+<tr><td>类型</td><td>剧情对话</td></tr>
+<tr><td>入口</td><td>福斯特镇 → 图书馆 → 罗瓦</td></tr>
+<tr><td>开放/触发条件</td><td>首次图书馆剧情；不绑定必须先完成其他城市</td></tr>
+<tr><td>重复规则</td><td>一次性（本次整理建议；未确认的原稿重复规则在规范中说明）</td></tr>
+<tr><td>完成后显示</td><td>提交完成且无可接后续后隐藏事件标记和待办；城市等共享入口保留</td></tr>
+<tr><td>奖励/消耗</td><td>召唤手记转为解锁3种符文：甲片 armor、血脉 health、锐牙 attack；私房钱类型/数量待定；不发独立手记物品</td></tr>
+<tr><td>尚需绑定/确认</td><td>3枚基础符文为本轮配置选择，见符文表；私房钱资源/数量；常驻入口启用条件</td></tr>
+</table></div>
+<h5 id="section-90">分支与回调</h5>
+<div class="table-wrap"><table>
+<tr><th>分支键</th><th>文本/阶段</th><th>条件</th><th>去向</th><th>提交结果</th></tr>
+<tr><td>talk</td><td>与罗瓦交谈</td><td>玩家台词按顺序播放；本版不提供贤者线索</td><td>complete</td><td>解锁符文表中3种基础符文；援助与符文各去重一次</td></tr>
+</table></div>
+<h5 id="section-91">展示正文与原稿说明</h5>
+<p><strong>触发条件：</strong> 点击福斯特镇，选择【图书馆】。</p>
+<p><strong>事件流程：</strong> 罗瓦招呼玩家 → 提到召唤手记 → 玩家说明来意 → 罗瓦提供援助 → 获得手记对应的符文。</p>
+<h6 id="section-92">对话</h6>
+<p><strong>罗瓦：</strong> 我没看错吧？你居然舍得从那间小屋子里出来了。我以为你会在那里待上一辈子。</p>
+<p><strong>罗瓦：</strong> 我猜你是为了召唤手记来的。让我找找……哦，我拿它垫炖菜了。</p>
+<p><strong>罗瓦：</strong> 你知道的，我老婆做的炖菜，比双头龙喷出来的熔岩还烫。</p>
+<p><strong>玩家：</strong> 我要去拯救世界了。</p>
+<p><strong>罗瓦：</strong> 拯救世界的计划啊。我看整个王国上下，似乎也没谁把它当回事。</p>
+<p><strong>罗瓦：</strong> 不管怎么说，作为老朋友，我还是想给你一些援助。</p>
+<p><strong>罗瓦：</strong> 这些是我的私房钱。别告诉我老婆。</p>
+<h6 id="section-93">结果</h6>
+<div class="table-wrap"><table>
+<tr><th>内容</th><th>奖励与用途</th><th>配置状态</th></tr>
+<tr><td>召唤手记</td><td>转化为解锁甲片 armor、血脉 health、锐牙 attack，共3种符文；不另发手记物品</td><td>本轮按现有3枚基础符文落表，具体见<a href="project/UI跳转原型/事件/符文表.md">符文表</a></td></tr>
+<tr><td>私房钱</td><td>罗瓦提供资源援助</td><td>类型与数量待定</td></tr>
+</table></div>
+<p>“我要去拯救世界了”按玩家台词整理，尚未扩展为多选分支。</p>
+<h4 id="section-94">04 防卫预算</h4>
+<div class="table-wrap"><table>
+<tr><th>字段</th><th>接入内容</th></tr>
+<tr><td>event_id</td><td>QST_SIDE_002_001</td></tr>
+<tr><td>类型</td><td>清剿委托</td></tr>
+<tr><td>入口</td><td>萨尔格特城 → 城中心 → 城主</td></tr>
+<tr><td>开放/触发条件</td><td>未接取/进行中/待交付按任务状态路由</td></tr>
+<tr><td>重复规则</td><td>一次性（本次整理建议；未确认的原稿重复规则在规范中说明）</td></tr>
+<tr><td>完成后显示</td><td>提交完成且无可接后续后隐藏事件标记和待办；城市等共享入口保留</td></tr>
+<tr><td>奖励/消耗</td><td>交付后古老奇物1件；名称/词条/引导物属性未定</td></tr>
+<tr><td>尚需绑定/确认</td><td>清剿目标、地点和数量；关联战斗ID；奇物ID；回访入口</td></tr>
+</table></div>
+<h5 id="section-95">分支与回调</h5>
+<div class="table-wrap"><table>
+<tr><th>分支键</th><th>文本/阶段</th><th>条件</th><th>去向</th><th>提交结果</th></tr>
+<tr><td>accept</td><td>初次接取</td><td>播放初次接取对白</td><td>active</td><td>登记委托；不直接发奇物</td></tr>
+<tr><td>revisit</td><td>任务未完成</td><td>显示预算困难对白</td><td>active</td><td>不重置已完成的战斗目标</td></tr>
+<tr><td>submit</td><td>交付任务</td><td>清剿目标达成且返回城主</td><td>complete</td><td>交付对白后给予古老奇物1件；完成一次</td></tr>
+</table></div>
+<h5 id="section-96">展示正文与原稿说明</h5>
+<p><strong>触发条件：</strong> 点击萨尔格特城，选择【城中心】。</p>
+<p><strong>委托目标：</strong> 玩家【必须】解决城市附近的怪物威胁（一场定制战斗），才能完成此委托；具体目标、位置与数量待定。</p>
+<p><strong>事件流程：</strong> 接取委托 → 处理周边威胁 → 返回城主处交付。对话按以下 3 个状态区分。</p>
+<h6 id="section-97">初次接取</h6>
+<p><strong>城主：</strong> 魔法师先生！哎呀，我们盼着您来已经好久了。您的超级大火球计划，一定能帮我们打败魔王。</p>
+<p><strong>城主：</strong> 呃，什么？那是另一个人？哦，不好意思。</p>
+<p><strong>城主：</strong> 不过，我们这里一定有您需要的东西。我记得博物馆里有一件古老的奇物。</p>
+<p><strong>城主：</strong> 随着魔王逼近，城镇周围的魔兽越来越躁动了。本季度的防卫预算已经超支，怪物们却还是不肯安分。</p>
+<p><strong>城主：</strong> 如果您能帮我们解决附近的威胁……当然，我不是在和您谈条件。我很乐意为您呈上那件奇物。</p>
+<h6 id="section-98">任务未完成</h6>
+<p><strong>显示条件：</strong> 已接取委托，但尚未完成；再次与城主交谈时使用。</p>
+<p><strong>城主：</strong> 城墙修缮费、卫兵薪酬、武器保养费、伤病保险……还有长官的好处费。唉，根本周转不开啊。</p>
+<h6 id="section-99">交付任务</h6>
+<p><strong>显示条件：</strong> 达成清剿目标，返回城主处交付。</p>
+<p><strong>城主：</strong> 不愧是王国的希望！呃，其实就算您不帮我们，协助持有国王特令的人，也是我无法拒绝的职责。</p>
+<p><strong>城主：</strong> 这件奇物来自古老的地下。当初挖出它时，周围的动物不是多长了几个头，就是生出了不该有的手脚。</p>
+<p><strong>城主：</strong> 真可怕啊……不过，如果是您的话，一定能好好使用它吧。</p>
+<h6 id="section-100">结果</h6>
+<ul>
+<li>完成委托并交付后，获得 <strong>1 件古老奇物</strong>。</li>
+<li>奇物来自地下，并与动物的多首、异常肢体变化有关。</li>
+<li>奇物的正式名称、是否属于引导物、具体效果待定，不因这段描述直接确定某个召唤词条。</li>
+</ul>
+<h4 id="section-101">05 浑浊的大地</h4>
+<div class="table-wrap"><table>
+<tr><th>字段</th><th>接入内容</th></tr>
+<tr><td>event_id</td><td>QST_GRASS_005</td></tr>
+<tr><td>类型</td><td>传闻探索</td></tr>
+<tr><td>入口</td><td>无字石碑旁的年迈牧羊人</td></tr>
+<tr><td>开放/触发条件</td><td>与牧羊人交互；具体地图点待绑定</td></tr>
+<tr><td>重复规则</td><td>一次性（本次整理建议；未确认的原稿重复规则在规范中说明）</td></tr>
+<tr><td>完成后显示</td><td>提交完成且无可接后续后隐藏事件标记和待办；城市等共享入口保留</td></tr>
+<tr><td>奖励/消耗</td><td>原稿无奖励</td></tr>
+<tr><td>尚需绑定/确认</td><td>地图位置；结束按钮；是否写入东南线索任务</td></tr>
+</table></div>
+<h5 id="section-102">分支与回调</h5>
+<div class="table-wrap"><table>
+<tr><th>分支键</th><th>文本/阶段</th><th>条件</th><th>去向</th><th>提交结果</th></tr>
+<tr><td>talk</td><td>听牧羊人讲述</td><td>守护者带走瘟疫，消失方向为草原东南</td><td>complete</td><td>只登记听闻；不自动揭示守护者身份或开启Boss战</td></tr>
+</table></div>
+<h5 id="section-103">展示正文与原稿说明</h5>
+<p>一位年迈的牧羊人坐在一块石碑上，然而石碑上什么都没有写，牧羊人的身边也没有哪怕一只羊。看到你靠近，他向你打招呼。</p>
+<p><strong>牧羊人：</strong> 你好啊，远道而来的旅行者。</p>
+<p><strong>牧羊人：</strong> 我听说这片草原曾经有一位守护者。它来自于古老的上个时代，那时群星仍在天空中闪耀，而尚未坠落。</p>
+<p><strong>牧羊人：</strong> 直到好多年前，一场瘟疫降临在了这片草原上，守护者带着瘟疫独自走进了漫漫原野从此消失不见，现在想想，或许那就是灾难降临的先兆。</p>
+<p><strong>牧羊人：</strong> 听说守护者消失的方向是草原的东南方，但那边怪物横行，没人敢进去一探究竟，真是令人感慨呀。</p>
+<h4 id="section-104">06 狼来了</h4>
+<div class="table-wrap"><table>
+<tr><th>字段</th><th>接入内容</th></tr>
+<tr><td>event_id</td><td>QST_GRASS_006</td></tr>
+<tr><td>类型</td><td>野外战斗</td></tr>
+<tr><td>入口</td><td>原野中央石塔；底端神秘物品；随后出现狼群</td></tr>
+<tr><td>开放/触发条件</td><td>抵达并拾取石塔底端物品后触发狼群遭遇；具体地图点待绑定</td></tr>
+<tr><td>重复规则</td><td>一次性（本次整理建议；未确认的原稿重复规则在规范中说明）</td></tr>
+<tr><td>完成后显示</td><td>提交完成且无可接后续后隐藏事件标记和待办；城市等共享入口保留</td></tr>
+<tr><td>奖励/消耗</td><td>拾取神秘物品1件，独立于战斗结算，胜利、失败均保留；具体内容/ID暂时搁置；战斗额外奖励未定</td></tr>
+<tr><td>尚需绑定/确认</td><td>物品内容/正式ID暂搁置，不填默认物品；甲狼/草狼组成、数量；战后文本；失败后事件状态</td></tr>
+</table></div>
+<h5 id="section-105">分支与回调</h5>
+<div class="table-wrap"><table>
+<tr><th>分支键</th><th>文本/阶段</th><th>条件</th><th>去向</th><th>提交结果</th></tr>
+<tr><td>pickup</td><td>拾取石塔物品</td><td>尚未领取；领取提交成功后登记拾取状态</td><td>battle_pending</td><td>先给予物品并持久去重，再进入狼群遭遇；读取文本不算领取</td></tr>
+<tr><td>battle</td><td>狼群靠近</td><td>已经拾取；本次战斗请求尚未执行</td><td>等待真实战斗结束</td><td>不得把物品奖励放进仅胜利可执行的结果组</td></tr>
+<tr><td>won</td><td>战斗胜利</td><td>匹配本次战斗回执</td><td>complete</td><td>保留已领取物品；不重复发放</td></tr>
+<tr><td>lost</td><td>战斗失败或退出</td><td>匹配本次战斗回执</td><td>后续任务状态待统一</td><td>保留已领取物品，不回收、不补发；拾取阶段不可重刷</td></tr>
+</table></div>
+<h5 id="section-106">展示正文与原稿说明</h5>
+<p>你不知不觉来到了原野的正中央，四处的风声呼啸着。</p>
+<p>你发现了一座由石头堆砌起来的巨大石塔，在石塔的底端摆放着一件神秘的物品，你才刚刚拾起。远处不知何时聚集的狼群慢慢地走来，准备享用这些从未见过的盘中餐。</p>
+<h4 id="section-107">07 年迈的驴子</h4>
+<div class="table-wrap"><table>
+<tr><th>字段</th><th>接入内容</th></tr>
+<tr><td>event_id</td><td>QST_GRASS_007</td></tr>
+<tr><td>类型</td><td>双节点寻物</td></tr>
+<tr><td>入口</td><td>节点donkey：路中老驴；节点merchant：石旁商人</td></tr>
+<tr><td>开放/触发条件</td><td>两节点先后顺序不限；各自持久保存seen标记</td></tr>
+<tr><td>重复规则</td><td>一次性（本次整理建议；未确认的原稿重复规则在规范中说明）</td></tr>
+<tr><td>完成后显示</td><td>提交完成且无可接后续后隐藏事件标记和待办；城市等共享入口保留</td></tr>
+<tr><td>奖励/消耗</td><td>完成找回交付后奇物2件；共享一次性奖励</td></tr>
+<tr><td>尚需绑定/确认</td><td>两节点位置与交互ID；两件奇物具体内容；共用归还对话结束与发奖回执；不做实际护送</td></tr>
+</table></div>
+<h5 id="section-108">分支与回调</h5>
+<div class="table-wrap"><table>
+<tr><th>分支键</th><th>文本/阶段</th><th>条件</th><th>去向</th><th>提交结果</th></tr>
+<tr><td>donkey_seen</td><td>查看老驴</td><td>首次进入donkey节点</td><td>active</td><td>登记seen_donkey；不发奖</td></tr>
+<tr><td>merchant_seen</td><td>与商人交谈</td><td>首次进入merchant节点</td><td>active</td><td>登记seen_merchant；不发奖</td></tr>
+<tr><td>from_donkey</td><td>我带你去找你兄弟</td><td>donkey节点且seen_merchant=true</td><td>return_dialogue</td><td>以共用对话直接表现归还，不启动导航、护送或地图移动</td></tr>
+<tr><td>from_merchant</td><td>是一头很老的驴吗？</td><td>merchant节点且seen_donkey=true</td><td>return_dialogue</td><td>进入同一段归还对话，两种发现顺序等价</td></tr>
+<tr><td>return_dialogue</td><td>归还对话结束</td><td>双方已发现且尚未交付</td><td>complete</td><td>交付成功后给予奇物2件；两入口共用一次性结果</td></tr>
+<tr><td>leave</td><td>离开</td><td>两节点均可离开</td><td>保持阶段</td><td>不清除已见标记，不完成</td></tr>
+</table></div>
+<h5 id="section-109">展示正文与原稿说明</h5>
+<p>（事件1）</p>
+<p>你发现有一头驴子站在路的中间，歪着嘴咀嚼着路边的草。</p>
+<p>没有主人，没有缰绳，这头老驴就这样静静地站在路的正中央。见到它的人也只能说一声，老驴。</p>
+<p>不知道它的主人在哪里，如果遇到了的话告诉他老驴在这里吧。</p>
+<p>【我带你去找你兄弟】（已触发事件2）</p>
+<p>【离开】</p>
+<p>（事件2）</p>
+<p>一个商人坐在石头旁边唉声叹气。</p>
+<p><strong>商人：</strong> 我的驴啊……我的好兄弟，你到底跑到哪里去了。</p>
+<p><strong>商人：</strong> 天哪，魔法师大人，你有见到我的驴兄弟吗？如果你见到了，请拜托告诉我它到底跑到哪里去了。</p>
+<p><strong>商人：</strong> 作为报答，我刚刚买的古董魔法道具全都给你！</p>
+<p>【是一头很老的驴吗？】（已触发事件1）</p>
+<p>【离开】</p>
+<p>（双方已发现后，通过上述任一入口播放同一段归还对话，不需要实际护送。）</p>
+<p><strong>商人：</strong> 我的好兄弟，可算把你找回来了！魔法师大人，说好的那些古董魔法道具，都是您的了。</p>
+<p>（奖励两件奇物）</p>
+<h4 id="section-110">08 超大型巨人</h4>
+<div class="table-wrap"><table>
+<tr><th>字段</th><th>接入内容</th></tr>
+<tr><td>event_id</td><td>QST_GRASS_008</td></tr>
+<tr><td>类型</td><td>精英战斗</td></tr>
+<tr><td>入口</td><td>异常巨大的拱兽</td></tr>
+<tr><td>开放/触发条件</td><td>与目标遭遇；具体触发方式待绑定</td></tr>
+<tr><td>重复规则</td><td>一次性（本次整理建议；未确认的原稿重复规则在规范中说明）</td></tr>
+<tr><td>完成后显示</td><td>提交完成且无可接后续后隐藏事件标记和待办；城市等共享入口保留</td></tr>
+<tr><td>奖励/消耗</td><td>奇物1件</td></tr>
+<tr><td>尚需绑定/确认</td><td>三倍大拱兽的实际敌军预设；战后对白；奇物ID/池</td></tr>
+</table></div>
+<h5 id="section-111">分支与回调</h5>
+<div class="table-wrap"><table>
+<tr><th>分支键</th><th>文本/阶段</th><th>条件</th><th>去向</th><th>提交结果</th></tr>
+<tr><td>battle</td><td>拱兽冲来</td><td>原稿为主动冲来；不新增观察后无条件领奖</td><td>battle_pending → won → complete</td><td>胜利后领取掉落</td></tr>
+</table></div>
+<h5 id="section-112">展示正文与原稿说明</h5>
+<p>一只极其庞大的拱兽站立在地面上，几乎有正常拱兽的三倍大。你看到它的脖子上有什么东西似乎在闪闪发光，但你还没来得及看清楚，它已经迈着大步子向你冲过来了，轰隆轰隆轰隆。</p>
+<p>每一步都震得地面发颤，扬起的尘土里，只剩下越来越近的庞大轮廓。</p>
+<p>（奖励一件奇物）</p>
+<h4 id="section-113">09 不对名单</h4>
+<div class="table-wrap"><table>
+<tr><th>字段</th><th>接入内容</th></tr>
+<tr><td>event_id</td><td>QST_GRASS_009</td></tr>
+<tr><td>类型</td><td>笔记探索</td></tr>
+<tr><td>入口</td><td>被遗弃的货车</td></tr>
+<tr><td>开放/触发条件</td><td>检查货车内纸条</td></tr>
+<tr><td>重复规则</td><td>一次性（本次整理建议；未确认的原稿重复规则在规范中说明）</td></tr>
+<tr><td>完成后显示</td><td>提交完成且无可接后续后隐藏事件标记和待办；城市等共享入口保留</td></tr>
+<tr><td>奖励/消耗</td><td>魔力，数量待定</td></tr>
+<tr><td>尚需绑定/确认</td><td>魔力数量；纸条结束/领取按钮；地点ID</td></tr>
+</table></div>
+<h5 id="section-114">分支与回调</h5>
+<div class="table-wrap"><table>
+<tr><th>分支键</th><th>文本/阶段</th><th>条件</th><th>去向</th><th>提交结果</th></tr>
+<tr><td>read</td><td>阅读纸条</td><td>按原稿顺序展示五条投资记录</td><td>complete</td><td>领取魔力成功后完成</td></tr>
+<tr><td>close</td><td>提前关闭</td><td>未确认领取</td><td>保持未完成</td><td>不自动标完成或重复领奖</td></tr>
+</table></div>
+<h5 id="section-115">展示正文与原稿说明</h5>
+<p>在草地中央有一辆被遗弃的货车，似乎是被魔兽袭击之后匆忙逃跑丢下了货物，你在里面找到了很多鞣制的动物皮革。其中还有一张纸条。</p>
+<p>水星月/14日：我新进了一批草莓，等我送到福斯特镇我就要挣大钱了。等着吧，这波我马上就要不对了。</p>
+<p>水星月/22日：草莓运到的时候已经烂掉了，低价卖亏损200金币，这波是思想出了问题。我决定投资养当地猪行业。</p>
+<p>水星月/25日：他们把我的草莓做成了草莓酱，赚了大钱。无所谓，等猪长大我马上就要不对了。</p>
+<p>土星日/17日：猪养大了，原来这个品种的猪是不能吃的。把猪处理掉了，亏损300金币。</p>
+<p>土星日/20日：这种猪的皮革原来是用来做衣服的高级材料？我加价买回来了，等我运回萨尔格特城马上就能翻倍赚钱，这波我要不对了。</p>
+<p>（获得魔力）</p>
+<h4 id="section-116">10 甲壳圣堂</h4>
+<div class="table-wrap"><table>
+<tr><th>字段</th><th>接入内容</th></tr>
+<tr><td>event_id</td><td>QST_GRASS_010</td></tr>
+<tr><td>类型</td><td>能力判定探索</td></tr>
+<tr><td>入口</td><td>森林边缘废弃圣堂</td></tr>
+<tr><td>开放/触发条件</td><td>玩家持有的怪物中，至少1只攻击力高于阈值；包括仓库和出战怪物</td></tr>
+<tr><td>重复规则</td><td>一次性（本次整理建议；未确认的原稿重复规则在规范中说明）</td></tr>
+<tr><td>完成后显示</td><td>提交完成且无可接后续后隐藏事件标记和待办；城市等共享入口保留</td></tr>
+<tr><td>奖励/消耗</td><td>魔力+特别甲片奇物；数量/ID待定</td></tr>
+<tr><td>尚需绑定/确认</td><td>攻击阈值与正式攻击字段口径；读取仓库和出战的持有怪物快照；是否有出击成本；奖励数值</td></tr>
+</table></div>
+<h5 id="section-117">分支与回调</h5>
+<div class="table-wrap"><table>
+<tr><th>分支键</th><th>文本/阶段</th><th>条件</th><th>去向</th><th>提交结果</th></tr>
+<tr><td>break</td><td>尝试打碎甲壳</td><td>仓库或出战中任意单只怪物攻击力高于阈值；不汇总全队攻击</td><td>失败：保持未完成；成功：complete</td><td>确认时重读持有怪物；不要求先把合格怪物编入出战；成功后发奖</td></tr>
+<tr><td>leave</td><td>离开</td><td>始终可用</td><td>保持阶段</td><td>获得合格怪物后可再来</td></tr>
+</table></div>
+<h5 id="section-118">展示正文与原稿说明</h5>
+<p>一座废弃的圣堂静静地坐落在森林的边缘，彩绘玻璃都已破裂，精致的花纹落满灰尘。你听见在圣坛之中还传来撞击声，出于好奇你决定进去查看一下。撞击声时断时续，在空荡的圣堂里回响。</p>
+<p>圣堂中摆放着许多巨大的甲壳，仿佛数不胜数的纪念碑，而在甲壳堆的正中央，有着一个格外巨大的甲壳。里面传来了敲击声，似乎有什么巨大的生物被困在自己的壳里了。</p>
+<p>【尝试打碎甲壳】（需要拥有怪物的攻击力高于某一数值）</p>
+<p>【离开】</p>
+<p>你指挥怪物们攻击甲壳，然而只能在这又厚又坚硬的盔甲上留下划痕。显然，需要有足够强大力量的一击才能生效。</p>
+<p>甲壳碎了，一只巨大寄居蟹生物从破碎的甲壳中站了起来，它那水晶般的新生外壳展开，同时变得更加坚硬。巨大的体型撞塌了圣堂的房顶，它冲着你点了点头，随后走向了远方。</p>
+<p>它的旧壳充满着魔力，在里面还有一块特别的甲片。</p>
+<p>（获得魔力，获得奇物）</p>
+<h4 id="section-119">11 废弃矿井</h4>
+<div class="table-wrap"><table>
+<tr><th>字段</th><th>接入内容</th></tr>
+<tr><td>event_id</td><td>QST_GRASS_011</td></tr>
+<tr><td>类型</td><td>条件探索战斗</td></tr>
+<tr><td>入口</td><td>废弃魔力水晶矿入口</td></tr>
+<tr><td>开放/触发条件</td><td>进入探索时不能携带大型怪物出战；不能直接删除/回收它们</td></tr>
+<tr><td>重复规则</td><td>一次性（本次整理建议；未确认的原稿重复规则在规范中说明）</td></tr>
+<tr><td>完成后显示</td><td>提交完成且无可接后续后隐藏事件标记和待办；城市等共享入口保留</td></tr>
+<tr><td>奖励/消耗</td><td>符文；ID/数量待定；不自动给予完整定向召唤图纸</td></tr>
+<tr><td>尚需绑定/确认</td><td>大型标签字段；鼠群预设/数量；可出战队伍不能为空；符文ID</td></tr>
+</table></div>
+<h5 id="section-120">分支与回调</h5>
+<div class="table-wrap"><table>
+<tr><th>分支键</th><th>文本/阶段</th><th>条件</th><th>去向</th><th>提交结果</th></tr>
+<tr><td>enter</td><td>进入探索</td><td>校验出战单位体型；不合格返回队伍准备</td><td>battle_pending</td><td>载入鼠群战斗</td></tr>
+<tr><td>won</td><td>击败鼠群</td><td>胜利回执属于本事件本次战斗</td><td>complete</td><td>展示血迹、灰烬及残阵正文；解锁符文</td></tr>
+<tr><td>leave</td><td>算了离开</td><td>战斗开始前</td><td>保持未完成</td><td>失败/取消也不授予符文</td></tr>
+</table></div>
+<h5 id="section-121">展示正文与原稿说明</h5>
+<p>这是一个废弃的矿井入口，虽然你的遗迹鉴识课挂科了，但你还是一眼认出了这是一个魔力水晶矿的开发入口——毕竟旁边的牌子写了——在“加把劲大开发”时期，王国的各处挖了很多类似的水晶矿。</p>
+<p>洞口吹来一阵凉风，旧木牌在风里轻轻摇晃，深处只剩一片漆黑。</p>
+<p>然而看着狭窄的洞口和身后庞大的怪物们，你陷入了沉思。</p>
+<p>【进入探索】（大型怪物无法出战）</p>
+<p>【算了离开】</p>
+<p>（击败鼠群后）</p>
+<p>矿洞的终点是一个巨大的空腔，地面上画着复杂的召唤阵，召唤阵已经被干涸的血迹与燃烧的灰烬覆盖。虽然关键部分已经破损，不过你依然从中摘抄了一些能用的符文。</p>
+<p>这是一个定向召唤阵，如果你以后找到完整的图纸，或许能够尝试召唤。</p>
+<p>（获得符文）</p>
+<h4 id="section-122">12 过分敬业</h4>
+<div class="table-wrap"><table>
+<tr><th>字段</th><th>接入内容</th></tr>
+<tr><td>event_id</td><td>QST_GRASS_012</td></tr>
+<tr><td>类型</td><td>战斗/回城处理二选一</td></tr>
+<tr><td>入口</td><td>农田；后续萨尔格特城附魔师入口</td></tr>
+<tr><td>开放/触发条件</td><td>尚未完成任一路线；选择回城找附魔师后锁定该路线，不可改为直接战斗</td></tr>
+<tr><td>重复规则</td><td>一次性（本次整理建议；未确认的原稿重复规则在规范中说明）</td></tr>
+<tr><td>完成后显示</td><td>提交完成且无可接后续后隐藏事件标记和待办；城市等共享入口保留</td></tr>
+<tr><td>奖励/消耗</td><td>直接解决：较少魔力；回城处理：较多魔力；两路互斥</td></tr>
+<tr><td>尚需绑定/确认</td><td>两档奖励数值；稻草人敌军资源；城市附魔师入口；衣服统一为刚毕业学生的旧衣服</td></tr>
+</table></div>
+<h5 id="section-123">分支与回调</h5>
+<div class="table-wrap"><table>
+<tr><th>分支键</th><th>文本/阶段</th><th>条件</th><th>去向</th><th>提交结果</th></tr>
+<tr><td>direct</td><td>直接解决</td><td>尚未接受回城路线，且事件未完成</td><td>battle_pending → won → complete</td><td>胜利后显示田地同被撕碎、农夫付报酬；较少魔力</td></tr>
+<tr><td>ask</td><td>路过萨尔格特城帮你问一下</td><td>尚未选择路线</td><td>active：await_enchanter</td><td>保存回城路线锁定；此时不领奖，之后不再允许direct</td></tr>
+<tr><td>enchanter</td><td>寻找附魔魔法师</td><td>城市入口且await_enchanter</td><td>complete</td><td>播放学生旧衣附魔对白及魔法师骑马出发；较多魔力</td></tr>
+<tr><td>leave</td><td>绕路离开</td><td>尚未开始战斗/完成</td><td>保持阶段</td><td>不解除已接取的回城路线锁定，不清除目标</td></tr>
+</table></div>
+<h5 id="section-124">展示正文与原稿说明</h5>
+<p>田里站着一群稻草人。它们穿着刚毕业学生的旧衣服，正在一蹦一跳地把农夫往田外赶。</p>
+<p><strong>农夫：</strong> 大人，大人！难道您是一位魔法师？</p>
+<p><strong>农夫：</strong> 我请了萨尔格特城的魔法师帮我施展了保护田地的魔法，但问题在于这些稻草人太敬业了。</p>
+<p><strong>农夫：</strong> 现在连我自己都没法进入田地了。</p>
+<p>【直接解决】</p>
+<p>怪物们像撕扯布娃娃一样撕碎了稻草人——和农夫的田地。</p>
+<p>农夫苦着脸向你支付了报酬。</p>
+<p>（获得较少魔力）</p>
+<p>【路过萨尔格特城帮你问一下】</p>
+<p>（在萨尔格特城出现过分敬业的选项）</p>
+<p>【寻找附魔魔法师】</p>
+<p>魔法师表示下次不会用刚毕业的学生的衣服来给稻草人做附魔了，这些傻子铆足劲干活就怕自己被开除。随后骑上马决定前往农夫的田地。</p>
+<p>（获得较多魔力）</p>
+<p>【绕路离开】</p>
+<h4 id="section-125">13 群星之底</h4>
+<div class="table-wrap"><table>
+<tr><th>字段</th><th>接入内容</th></tr>
+<tr><td>event_id</td><td>QST_GRASS_013</td></tr>
+<tr><td>类型</td><td>星图探索</td></tr>
+<tr><td>入口</td><td>发光枯井</td></tr>
+<tr><td>开放/触发条件</td><td>查看井底星空</td></tr>
+<tr><td>重复规则</td><td>一次性（本次整理建议；未确认的原稿重复规则在规范中说明）</td></tr>
+<tr><td>完成后显示</td><td>提交完成且无可接后续后隐藏事件标记和待办；城市等共享入口保留</td></tr>
+<tr><td>奖励/消耗</td><td>魔力，数量待定；后续事件Demo不做</td></tr>
+<tr><td>尚需绑定/确认</td><td>魔力数量；地点ID</td></tr>
+</table></div>
+<h5 id="section-126">分支与回调</h5>
+<div class="table-wrap"><table>
+<tr><th>分支键</th><th>文本/阶段</th><th>条件</th><th>去向</th><th>提交结果</th></tr>
+<tr><td>record</td><td>记录星图</td><td>玩家确认</td><td>complete</td><td>给予魔力；登记已记录；Demo不生成后续事件</td></tr>
+<tr><td>leave</td><td>离开</td><td>未记录</td><td>保持未完成</td><td>以后仍可回来</td></tr>
+</table></div>
+<h5 id="section-127">展示正文与原稿说明</h5>
+<p>一座枯井之中传来微弱的亮光。</p>
+<p>你看向井底，水井的底部有着一片明亮的星空，然而那些星图与你所知道的任何星图都不一样。它们看起来是如此地遥远，如此地古老，仿佛位于另一个你所不知道的世界。狭窄的井口框住了那片星空，却看不出它究竟有多深。</p>
+<p>井边刻着几道量水位的痕迹，最高的一道旁边用古老的语言写着：“天空最高涨到此处，星星即将归来。”</p>
+<p>【记录星图】（获得魔力，可后续事件但demo不做）</p>
+<p>【离开】</p>
+<h4 id="section-128">14 不便携式魔力扩充引擎</h4>
+<div class="table-wrap"><table>
+<tr><th>字段</th><th>接入内容</th></tr>
+<tr><td>event_id</td><td>QST_GRASS_014</td></tr>
+<tr><td>类型</td><td>交易升级</td></tr>
+<tr><td>入口</td><td>出售巨大机器的商人</td></tr>
+<tr><td>开放/触发条件</td><td>魔力至少100；尚未买过；召唤阵尚有下一圈</td></tr>
+<tr><td>重复规则</td><td>一次性（本次整理建议；未确认的原稿重复规则在规范中说明）</td></tr>
+<tr><td>完成后显示</td><td>提交完成且无可接后续后隐藏事件标记和待办；城市等共享入口保留</td></tr>
+<tr><td>奖励/消耗</td><td>扣100魔力；召唤阵扩充一圈；购买成功后记录游戏时间，4个游戏日后出现鬼魂</td></tr>
+<tr><td>尚需绑定/确认</td><td>正式升级接口/级别上限；满级处理；扣费扩圈及购买时间统一保存；游戏时间服务</td></tr>
+</table></div>
+<h5 id="section-129">分支与回调</h5>
+<div class="table-wrap"><table>
+<tr><th>分支键</th><th>文本/阶段</th><th>条件</th><th>去向</th><th>提交结果</th></tr>
+<tr><td>buy</td><td>我买了</td><td>资源/升级资格满足；尚未购买；满级处理仍待确认</td><td>complete</td><td>扣100魔力、扩圈、登记engine_owned和购买时间；同时安排4天后鬼魂；保存失败不启动计时</td></tr>
+<tr><td>leave</td><td>离开</td><td>始终可用</td><td>保持未完成</td><td>不扣费、不扩圈、不开始4天倒计时</td></tr>
+</table></div>
+<h5 id="section-130">展示正文与原稿说明</h5>
+<p>一位商人正在出售一件巨大的机器。上面写着“来自王国魔法学院教授的得意之作”，商人正在扯着嗓子向路人介绍，这台机器有多么多么了不起。然而平民们兴趣缺缺，看到你靠近，商人激动地拉住了你。</p>
+<p><strong>商人：</strong> 这位前途无量的魔法师先生，您是否有在魔力单次输出不足的烦恼呢？</p>
+<p><strong>商人：</strong> 请容我向您介绍这款不便携式魔力扩充容器，只要轻轻一按，巨大的魔力就会吼吼吼地喷涌而出。</p>
+<p><strong>商人：</strong> 基础型就足以支持大型召唤阵，如果有合适的魔力核心还可以进一步扩大单次输出量！</p>
+<p><strong>商人：</strong> 它的上一任主人用这个引擎驱动他自己的浮空艇，您猜怎么着，引擎出力太大自己飞走了，连同正在操作引擎的魔法师一起上了天。引擎从一百米高的地方掉下来毫发无伤，多么坚固呀。</p>
+<p><strong>商人：</strong> 你问魔法师本人怎么样了？哎呀，这些都是小事。</p>
+<p><strong>商人：</strong> 价格，嘿嘿，价格也不贵，只要100魔力。</p>
+<p>【我买了】</p>
+<p><strong>商人：</strong> 好嘞！如果晚上前任主人的鬼魂回来找你，你得想办法自己解决。</p>
+<p>【离开】</p>
+<p>（召唤阵扩充一圈）</p>
+<h4 id="section-131">15 外行魔法师</h4>
+<div class="table-wrap"><table>
+<tr><th>字段</th><th>接入内容</th></tr>
+<tr><td>event_id</td><td>QST_GRASS_015</td></tr>
+<tr><td>类型</td><td>引擎后续对话</td></tr>
+<tr><td>入口</td><td>购买引擎4个游戏日后的鬼魂事件；具体演出入口待绑定</td></tr>
+<tr><td>开放/触发条件</td><td>引擎购买成功后，正式游戏时间累计满4天；尚未触发过本事件</td></tr>
+<tr><td>重复规则</td><td>一次性（本次整理建议；未确认的原稿重复规则在规范中说明）</td></tr>
+<tr><td>完成后显示</td><td>提交完成且无可接后续后隐藏事件标记和待办；城市等共享入口保留</td></tr>
+<tr><td>奖励/消耗</td><td>符文，ID/数量待定；后续踢卡罗拉仅保留剧情请求</td></tr>
+<tr><td>尚需绑定/确认</td><td>正式游戏时间和安全演出入口；符文ID/数量；卡罗拉后续不在本批；不以现实时间计时</td></tr>
+</table></div>
+<h5 id="section-132">分支与回调</h5>
+<div class="table-wrap"><table>
+<tr><th>分支键</th><th>文本/阶段</th><th>条件</th><th>去向</th><th>提交结果</th></tr>
+<tr><td>funny</td><td>有点好笑</td><td>玩家选择</td><td>汇合teach</td><td>播放“不许笑”及踢屁股请求</td></tr>
+<tr><td>kind</td><td>没那么好笑</td><td>玩家选择</td><td>汇合teach</td><td>播放“还有点良心”及相同请求</td></tr>
+<tr><td>teach</td><td>共同奖励</td><td>任一对话分支走完</td><td>complete</td><td>解锁同一份符文，只发一次；不创建未写明的卡罗拉战斗</td></tr>
+</table></div>
+<h5 id="section-133">展示正文与原稿说明</h5>
+<p>（引擎购买成功满4个游戏日后出现；夜间为原有演出背景，不另加未确认的休息门槛。）</p>
+<p>夜深人静，你的怪物们围成了一个圈，你在圈圈的正中央靠着一只毛茸茸的怪物安睡。这时，一个透明的人影从魔法引擎里慢吞吞地爬了出来，他看了看自己透明的手，怒气冲冲地在原地绕圈。</p>
+<p><strong>鬼魂：</strong> 我就说！卡罗拉是个外行！</p>
+<p><strong>鬼魂：</strong> 都说了魔力输出不要那么大！说什么大就是好，多就是美，你倒是把加固的部分也一起增加变多啊！</p>
+<p><strong>鬼魂：</strong> 外行！外行！</p>
+<p><strong>鬼魂：</strong> 好啦！我这下死了！都怪你！</p>
+<p><strong>鬼魂：</strong> 还听还听，你，对就是那个在装睡的家伙，你觉得很好笑吗？你能理解在延毕三年后，被自己好不容易做出来毕业设计直接送上天的感觉吗？</p>
+<p>【有点好笑】</p>
+<p><strong>鬼魂：</strong> 不许笑不许笑不许笑！</p>
+<p><strong>鬼魂：</strong> 拜托你一件事，如果你最近见到了一个叫卡罗拉的魔法师，帮我狠狠地踢他的屁股。</p>
+<p><strong>鬼魂：</strong> 我很想亲自这么做，但现在神殿的复活名额都排到三年后了。</p>
+<p><strong>鬼魂：</strong> 作为回报，我研究的符文就教给你吧。</p>
+<p>【没那么好笑】</p>
+<p><strong>鬼魂：</strong> 哼，看来你还有点良心。</p>
+<p><strong>鬼魂：</strong> 拜托你一件事，如果你最近见到了一个叫卡罗拉的魔法师，帮我狠狠地踢他的屁股。</p>
+<p><strong>鬼魂：</strong> 我很想亲自这么做，但现在神殿的复活名额都排到三年后了。</p>
+<p><strong>鬼魂：</strong> 作为回报，我研究的符文就教给你吧。</p>
+<p>（获得符文）</p>
+<h4 id="section-134">16 看一眼不要钱</h4>
+<div class="table-wrap"><table>
+<tr><th>字段</th><th>接入内容</th></tr>
+<tr><td>event_id</td><td>QST_GRASS_016</td></tr>
+<tr><td>类型</td><td>事故战斗</td></tr>
+<tr><td>入口</td><td>马戏团观光棚；魔眼拱兽</td></tr>
+<tr><td>开放/触发条件</td><td>到达观光点并播放望远镜激怒拱兽的剧情</td></tr>
+<tr><td>重复规则</td><td>一次性（本次整理建议；未确认的原稿重复规则在规范中说明）</td></tr>
+<tr><td>完成后显示</td><td>提交完成且无可接后续后隐藏事件标记和待办；城市等共享入口保留</td></tr>
+<tr><td>奖励/消耗</td><td>结晶化眼球奇物；“概率产生魔眼特征怪物”的生效方式待定</td></tr>
+<tr><td>尚需绑定/确认</td><td>魔眼拱兽战斗预设；眼球ID；概率/适用生成范围；退避后入口状态</td></tr>
+</table></div>
+<h5 id="section-135">分支与回调</h5>
+<div class="table-wrap"><table>
+<tr><th>分支键</th><th>文本/阶段</th><th>条件</th><th>去向</th><th>提交结果</th></tr>
+<tr><td>help</td><td>帮他处理魔眼拱兽</td><td>玩家选择</td><td>battle_pending → won → complete</td><td>胜利后播放眼球掉落及团长新计划，发奇物</td></tr>
+<tr><td>away</td><td>离远一点</td><td>玩家选择</td><td>离开/再访规则待定</td><td>不发眼球，不生成魔眼怪物；不擅自自动战斗</td></tr>
+</table></div>
+<h5 id="section-136">展示正文与原稿说明</h5>
+<p>你远远地看见一个棚子，棚子下坐着一大堆拿着望远镜的人，旁边还挂着招牌：草原奇观，看一眼不要钱。在远处有一头看起来格外不一样的拱兽，它的头颅上只有一只巨大的眼睛。</p>
+<p><strong>马戏团长：</strong> 哦，大人，您也想要看一看这稀有的变异拱兽吗？</p>
+<p><strong>马戏团长：</strong> 您可以从我们这里租望远镜，美美观赏，我们有小望远镜，中望远镜，和超级超级大望远镜。</p>
+<p>马戏团长费劲地拖出了一个一人高的望远镜，巨大镜面反射的阳光笔直地照向了拱兽的眼睛。随着远处的一声怒吼，一道光波穿过了观光车的顶棚，客人们尖叫起来，四散奔逃。</p>
+<p>同时那怒气冲冲的庞然大物已经朝这边冲了过来。</p>
+<p><strong>马戏团长：</strong> 这个项目目前反馈比较强烈。</p>
+<p>【帮他处理魔眼拱兽】</p>
+<p>【离远一点】</p>
+<p>拱兽的身上掉落了一颗结晶化的眼球。</p>
+<p>（获得奇物，概率产生具备魔眼特征的怪物）</p>
+<p><strong>马戏团长：</strong> 哎，搞黄了……下次要不还是把餐厅开在蝎子的背上？</p>
+<h4 id="section-137">17 富含矿物质</h4>
+<div class="table-wrap"><table>
+<tr><th>字段</th><th>接入内容</th></tr>
+<tr><td>event_id</td><td>QST_GRASS_017</td></tr>
+<tr><td>类型</td><td>战斗/建议二选一</td></tr>
+<tr><td>入口</td><td>河边被食矿鸟啄食的桥</td></tr>
+<tr><td>开放/触发条件</td><td>尚未通过任一路线解决</td></tr>
+<tr><td>重复规则</td><td>一次性（本次整理建议；未确认的原稿重复规则在规范中说明）</td></tr>
+<tr><td>完成后显示</td><td>提交完成且无可接后续后隐藏事件标记和待办；城市等共享入口保留</td></tr>
+<tr><td>奖励/消耗</td><td>两路各有魔力奖励，数量待定；不能先后刷两路</td></tr>
+<tr><td>尚需绑定/确认</td><td>食矿鸟阵容/数量；两路奖励数值；木桥表现资源</td></tr>
+</table></div>
+<h5 id="section-138">分支与回调</h5>
+<div class="table-wrap"><table>
+<tr><th>分支键</th><th>文本/阶段</th><th>条件</th><th>去向</th><th>提交结果</th></tr>
+<tr><td>fight</td><td>帮忙赶走鸟</td><td>玩家选择</td><td>battle_pending → won → complete</td><td>战斗胜利获得魔力</td></tr>
+<tr><td>wood</td><td>建议用木头搭桥</td><td>玩家选择</td><td>complete</td><td>工人改用木头，食矿鸟飞走，给予魔力奖励</td></tr>
+<tr><td>leave</td><td>离开</td><td>未解决</td><td>保持未完成</td><td>不发奖</td></tr>
+</table></div>
+<h5 id="section-139">展示正文与原稿说明</h5>
+<p>你来到河边，几位修桥工站在河边，无奈地抬起头看着几只正在啄桥的食矿鸟。他们身后有着成堆的石料，然而却只能束手无策地站在原地。</p>
+<p><strong>工人：</strong> 以前修的石桥总被吃，我们特意换了更贵的石头加固。</p>
+<p><strong>工人：</strong> 结果现在来的鸟比以前还多了。</p>
+<p>【帮忙赶走鸟】</p>
+<p>（进入战斗，胜利获得魔力）</p>
+<p>【建议用木头搭桥】</p>
+<p>工人们听从你的意见使用木头来搭桥，食矿鸟无趣地飞走了。</p>
+<p>（获得魔力奖励）</p>
+<p>【离开】</p>
+<h4 id="section-140">18 血祭日</h4>
+<div class="table-wrap"><table>
+<tr><th>字段</th><th>接入内容</th></tr>
+<tr><td>event_id</td><td>QST_SIDE_003_001</td></tr>
+<tr><td>类型</td><td>三阶段献祭</td></tr>
+<tr><td>入口</td><td>沙漠边缘古老祭坛；位置不强归草原腹地</td></tr>
+<tr><td>开放/触发条件</td><td>逐阶段揭示；当前献祭完成并成功发奖之后，才显示下一次要求</td></tr>
+<tr><td>重复规则</td><td>一次性（本次整理建议；未确认的原稿重复规则在规范中说明）</td></tr>
+<tr><td>完成后显示</td><td>提交完成且无可接后续后隐藏事件标记和待办；城市等共享入口保留</td></tr>
+<tr><td>奖励/消耗</td><td>阶段1消耗1只有皮毛怪物、给予魔力；阶段2消耗2只飞行怪物、给予符文；阶段3消耗3只无手无足蛇类、给予符文；不得献祭最后一只持有怪物；血雨效果待定</td></tr>
+<tr><td>尚需绑定/确认</td><td>正式皮毛/飞行/蛇类及手足字段；可回收与锁定规则；奖励ID/量；血雨作用/范围/时长/覆盖待定，不套默认天气</td></tr>
+</table></div>
+<h5 id="section-141">分支与回调</h5>
+<div class="table-wrap"><table>
+<tr><th>分支键</th><th>文本/阶段</th><th>条件</th><th>去向</th><th>提交结果</th></tr>
+<tr><td>first</td><td>第一次献祭</td><td>只显示此阶段要求；1只有皮毛怪物，不额外检查修长；扣除后至少持有1只怪物</td><td>发奖成功后开放stage_2</td><td>校验并回收1只，给予魔力；奖励成功前不显示第二次要求</td></tr>
+<tr><td>second</td><td>第二次献祭</td><td>第一次已发奖；2只飞行怪物；扣除后至少持有1只怪物</td><td>发奖成功后开放stage_3</td><td>校验并回收2只，给予符文；奖励成功前不显示第三次要求</td></tr>
+<tr><td>third</td><td>第三次献祭</td><td>第二次已发奖；3只蛇类且无手无足怪物；扣除后至少持有1只怪物</td><td>发奖成功后complete</td><td>校验并回收3只，给予符文；第三次奖励成功后完成</td></tr>
+<tr><td>reward_retry</td><td>发奖失败或恢复待发奖</td><td>有同一阶段待处理请求</td><td>停留当前阶段</td><td>已提交回收则不再扣除；未提交的原子事务按同请求重试；不跳过奖励，不提前揭示下一要求</td></tr>
+</table></div>
+<h5 id="section-142">展示正文与原稿说明</h5>
+<p>（以下三段为策划全量内容。玩家初次只看见第一次要求；每次献祭完成并成功发奖后，再揭示下一段。每阶段扣除后，玩家必须至少仍持有1只怪物。）</p>
+<p>你在沙漠边缘找到了一处红色的祭坛，倒三角的鲜红巨石悬浮着，下方古老的碑文指示你按照条件在此处献祭生命。</p>
+<p>“那头兽只为猩红而生，漫步于无名之野。”</p>
+<p>“红日升起，红雨落下，此为血祭之日。”</p>
+<p>“为其献上血的祭礼，其必将回以血的报答”</p>
+<p>碑文上的第一次献祭：</p>
+<p>“皮毛修长之物，符合一的数”</p>
+<p>（献祭1只有皮毛的怪物，只检查皮毛；奖励魔力。原稿为暂时血雨，具体效果待定。）</p>
+<p>碑文上的第二次献祭：</p>
+<p>“矫健如飞之物，符合二的数”</p>
+<p>（献祭2只能飞行的怪物；奖励符文。原稿为暂时血雨，具体效果待定。）</p>
+<p>碑文上的第三次献祭：</p>
+<p>”无手无足之物，符合三的数”</p>
+<p>（献祭3只蛇类且无手无足的怪物；奖励符文。原稿为永久血雨，具体效果待定。）</p>
+<h4 id="section-143">19 谁会赢？</h4>
+<div class="table-wrap"><table>
+<tr><th>字段</th><th>接入内容</th></tr>
+<tr><td>event_id</td><td>QST_GRASS_019</td></tr>
+<tr><td>类型</td><td>助战分支</td></tr>
+<tr><td>入口</td><td>双头甲狼与魔眼拱兽交战处</td></tr>
+<tr><td>开放/触发条件</td><td>进入对峙事件；三条路线未结算</td></tr>
+<tr><td>重复规则</td><td>一次性（本次整理建议；未确认的原稿重复规则在规范中说明）</td></tr>
+<tr><td>完成后显示</td><td>提交完成且无可接后续后隐藏事件标记和待办；城市等共享入口保留</td></tr>
+<tr><td>奖励/消耗</td><td>三路互斥：双头甲狼1只 / 魔眼拱兽1只 / 魔力</td></tr>
+<tr><td>尚需绑定/确认</td><td>双方阵容/数量；奖励强化预设；库存与队伍容量安置；真实观战回执及平局处理；魔力数量</td></tr>
+</table></div>
+<h5 id="section-144">分支与回调</h5>
+<div class="table-wrap"><table>
+<tr><th>分支键</th><th>文本/阶段</th><th>条件</th><th>去向</th><th>提交结果</th></tr>
+<tr><td>wolf</td><td>帮助狼</td><td>玩家选择；被帮助的狼不作为友军入场</td><td>battle_pending → won → complete</td><td>玩家对战魔眼拱兽与拱兽群；胜利后奖励强化双头甲狼1只</td></tr>
+<tr><td>beast</td><td>帮助拱兽</td><td>玩家选择；被帮助的拱兽不作为友军入场</td><td>battle_pending → won → complete</td><td>玩家对战双头甲狼与狼群；胜利后奖励强化魔眼拱兽1只</td></tr>
+<tr><td>watch</td><td>谁也不帮</td><td>不部署玩家队伍；真实两方AI战斗</td><td>spectator_pending → 真实结束 → complete</td><td>按真实结果展示胜者离开；给予魔力，不给怪物；不可随机或脚本替代胜负</td></tr>
+</table></div>
+<h5 id="section-145">展示正文与原稿说明</h5>
+<p>你看到一头格外健硕的狼正在和一只拱兽在原野上撕咬，鲜血飞溅。</p>
+<p>那头狼的体格庞大，头颅与身体上披着石头的盔甲，它长着两个脑袋能够同时进行撕咬。</p>
+<p>那只拱兽的头上长着一只魔眼，它践踏着大地，向周围发射破坏性的光束。</p>
+<p>【帮助狼】</p>
+<p>(与魔眼拱兽+拱兽群战斗，胜利后获得一只双头甲狼，为野外精英的强化版本)</p>
+<p>【帮助拱兽】</p>
+<p>(与双头甲狼+狼群战斗，胜利后获得一只魔眼拱兽，为野外精英的强化版本))</p>
+<p>【谁也不帮】</p>
+<p>胜利者离开</p>
+<p>（观看斗蛐蛐并且获得魔力）</p>
+<h4 id="section-146">20 谁会输？</h4>
+<div class="table-wrap"><table>
+<tr><th>字段</th><th>接入内容</th></tr>
+<tr><td>event_id</td><td>QST_GRASS_020</td></tr>
+<tr><td>类型</td><td>最多4次的真实观战赌局</td></tr>
+<tr><td>入口</td><td>策划手动指定双方怪物阵容的战斗点；杜波骑士</td></tr>
+<tr><td>开放/触发条件</td><td>已完成结算次数小于4；本轮双方阵容已手填；未下注；魔力足够</td></tr>
+<tr><td>重复规则</td><td>限4次；赌注依次10/20/50/100；第四次结算后骑士不再出现</td></tr>
+<tr><td>完成后显示</td><td>前3次结算后可开放下一轮；第4次结算后永久结束本事件并隐藏骑士入口</td></tr>
+<tr><td>奖励/消耗</td><td>下注本金B；获胜返还2B，已包含本金，净赚B；胜负均推进一次已结算轮次；失败具体支付与平局/中止规则待定</td></tr>
+<tr><td>尚需绑定/确认</td><td>四轮双方怪物阵容由策划手填，不随机；失败扣款、平局/中止；战斗预设；下注请求及已结算次数持久化</td></tr>
+</table></div>
+<h5 id="section-147">分支与回调</h5>
+<div class="table-wrap"><table>
+<tr><th>分支键</th><th>文本/阶段</th><th>条件</th><th>去向</th><th>提交结果</th></tr>
+<tr><td>one</td><td>赌就赌，我选（怪物1组）</td><td>当前轮次1—4；双方阵容已手填；本金足够且无未结赌局</td><td>bet_pending → 真实观战 → settled</td><td>锁定本轮双方配置及下注；骑士选另一边；不部署玩家怪物</td></tr>
+<tr><td>two</td><td>赌就赌，我选（怪物2组）</td><td>同上</td><td>bet_pending → 真实观战 → settled</td><td>与one共享本轮下注锁，不得重复扣费或更换已锁定阵容</td></tr>
+<tr><td>settled</td><td>本轮真实战斗结算</td><td>对应本轮战斗结束且账务提交成功</td><td>前3轮：下一轮；第4轮：complete</td><td>获胜返还2倍本金；有效胜负均增加已结算次数；第4次后移除骑士入口</td></tr>
+<tr><td>leave</td><td>离开</td><td>未下注</td><td>保持轮次</td><td>不扣费、不推进次数；已下注后的关闭不视作撤销，平局/中止处理待定</td></tr>
+</table></div>
+<h5 id="section-148">展示正文与原稿说明</h5>
+<p>你看到（怪物1组）正在与（怪物2组）战斗。当你看得正起兴的时候，旁边走来了一个骑着马的骑士。</p>
+<p>骑士勒住马，饶有兴致地看了两眼战场，随后朝你露出了愉快的笑容。</p>
+<p><strong>骑士：</strong> 你好啊旅行者，我是杜波骑士，这场面还真是不太少见啊。</p>
+<p><strong>骑士：</strong> 我和你打赌10魔力，猜猜谁会赢怎么样。</p>
+<p><strong>骑士：</strong> 为了公平起见，你先选，我选另一边。</p>
+<p>【赌就赌，我选（怪物1组）】</p>
+<p>【赌就赌，我选（怪物2组）】</p>
+<p>【离开】</p>
+<p>（第1—3次结算后）</p>
+<p><strong>骑士：</strong> 老实攒魔力很无趣吧？下次有缘我们再赌哦？</p>
+<p>（最多进行四次，赌注依次为10、20、50、100魔力。每一轮的双方怪物阵容由策划手动决定，不自动随机。每轮胜负结算后推进一次，第四次结算后骑士离开，本版不再出现。）</p>
+<p>（获胜返还双倍本金：下注10返20，下注20返40，下注50返100，下注100返200；以上已包含本金，不是额外再返本金。失败具体支付及平局、中止处理仍待定。）</p>
+<h6 id="section-149">四轮阵容待填</h6>
+<div class="table-wrap"><table>
+<tr><th>次数</th><th>本金</th><th>怪物1组</th><th>怪物2组</th></tr>
+<tr><td>1</td><td>10</td><td>待手填类型、数量与预设</td><td>待手填类型、数量与预设</td></tr>
+<tr><td>2</td><td>20</td><td>待手填类型、数量与预设</td><td>待手填类型、数量与预设</td></tr>
+<tr><td>3</td><td>50</td><td>待手填类型、数量与预设</td><td>待手填类型、数量与预设</td></tr>
+<tr><td>4</td><td>100</td><td>待手填类型、数量与预设</td><td>待手填类型、数量与预设</td></tr>
+</table></div>
+<p>缺任一方阵容时保留待配置，不能临时随机补怪，也不能以空队伍判定胜负。</p>
+<h4 id="section-150">辅助入口（不计入20个事件）</h4>
+<h5 id="section-151">福斯特镇</h5>
+<ul>
+<li>ID：AUX_GRASS_FOSTER</li>
+<li>入口：福斯特镇</li>
+<li>条件：点击城镇；不强制先后城市顺序</li>
+<li>奖励：无</li>
+<li>待绑定：正式地点/图书馆交互ID</li>
+</ul>
+<ul>
+<li>library → 图书馆 → 点击入口 → QST_SIDE_001_001 / AUX_GRASS_ROVA → 按首次或常驻状态路由</li>
+</ul>
+<p><strong>触发条件：</strong> 点击福斯特镇。</p>
+<p><strong>地点定位：</strong> 玩家进入普通草原后遇到的第一座城市。</p>
+<h5 id="section-152">地点介绍</h5>
+<p>福斯特镇是一座平静和谐的小镇，也是你进入普通草原后遇到的第一座城市。</p>
+<p>就像童话里所说的那样，除了坐落着一座古老的图书馆，这座小镇没有任何特点。</p>
+<p><strong>交互入口：</strong> 【图书馆】。</p>
+<h5 id="section-153">萨尔格特城</h5>
+<ul>
+<li>ID：AUX_GRASS_SALGERT</li>
+<li>入口：萨尔格特城</li>
+<li>条件：点击城镇；不新增博物馆交互入口</li>
+<li>奖励：无</li>
+<li>待绑定：正式地点/城中心/附魔师交互ID</li>
+</ul>
+<ul>
+<li>center → 城中心 → 点击入口 → QST_SIDE_002_001 → 按委托阶段路由</li>
+<li>enchanter → 寻找附魔魔法师 → QST_GRASS_012等待回城 → QST_GRASS_012.enchanter → 只在对应任务激活时提供</li>
+</ul>
+<p><strong>地点定位：</strong> 玩家进入普通草原后遇到的第二座城市。</p>
+<h5 id="section-154">地点介绍</h5>
+<p>萨尔格特城是一座高大而繁荣的城市，也是你进入普通草原后遇到的第二座城市。</p>
+<p>高大的城墙与城墙上的分解炮，让怪物们不敢靠近。至于城墙之外的事情，这座城市就没什么办法了。</p>
+<p><strong>已写明的交互入口：</strong> 【城中心】。博物馆目前只在对话中被提及，未单独设为入口。</p>
+<h5 id="section-155">罗瓦常驻</h5>
+<ul>
+<li>ID：AUX_GRASS_ROVA</li>
+<li>入口：福斯特镇 → 图书馆</li>
+<li>条件：建议首次图书馆剧情结束后启用，原稿未正式确认</li>
+<li>奖励：无</li>
+<li>待绑定：启用条件</li>
+</ul>
+<ul>
+<li>talk → 怎么了，大英雄？ → 常驻入口 → 关闭返回 → 不重复发放私房钱</li>
+</ul>
+<p><strong>触发条件：</strong> 原稿仅标注“常驻”，具体启用条件待定。</p>
+<p><strong>罗瓦：</strong> 怎么了，大英雄？</p>
+<p>此段仅为日常招呼，不包含再次发放私房钱或其他奖励。</p>
+<h4 id="section-156">本次整理记录</h4>
+<ul>
+<li>从实际原稿重新计数为20个；不沿用旧开头“4个主要事件”。</li>
+<li>保留全部20个事件、2个城市入口与罗瓦常驻。正文以作者原稿为基准，保留原句与原有铺垫，只轻修明显语病；甲壳圣堂与群星之底各补充一句场景描写。上述为文案整理口径；本轮确认的规则与奖励以当前字段和分支表为准，稳定事件ID不变。</li>
+<li>归还老驴的两处入口共用事件状态及奖励；均通过一段对话直接归还，不做实际护送。</li>
+<li>过分敬业、富含矿物质、谁会赢？按互斥路线整理；外行魔法师两条对白汇合到同一奖励。</li>
+<li>魔眼眼球仅确定为奇物奖励，不把未定概率效果擅自实现为立即赠送怪物。</li>
+<li>血祭日确定按1/2/3只依次献祭，第一阶段仅检查皮毛，不能清空玩家持有怪物；每次成功发奖后才揭示下一要求。血雨效果仍待定，不继承旧示例7/3/1。</li>
+<li>不便携引擎购买成功满4个游戏日后触发鬼魂；谁会输？保留四轮，第四次结算后永久结束并移除骑士。</li>
+<li>第6、8、11、17、20号事件各增加一句场景或动作描写，分别新增26、28、26、28、28字（不计标点）；原有正文、分支与奖励保持不变。</li>
+<li>完整原稿快照见<a href="project/UI跳转原型/事件/原稿备份_2026-10-17.md">原稿备份</a>，SHA-256：0f5010ba0e5ecb34aef57f7b1dc7ca55affce15904a9a2f0c397eedba310a229。</li>
+</ul>
+<h2 id="section-157">附录原文：程序监听清单.md</h2>
+<p>来源：<code>project/UI跳转原型/事件/程序监听清单.md</code>；SHA256：<code>2d07bdcc85f0c068032fa91121e9a1cda4662ad313a96fc9154a09a9c1a572a6</code>。下文仅调整标题层级与相对链接以汇编，源文件原字节另附。</p>
+<h3 id="section-158">事件程序监听清单</h3>
+<p>版本：v0.1 · 2026-10-18 · 状态：接入需求，未实现。面向事件、地图、战斗、时间、库存与存档负责人。</p>
+<p>按<a href="project/UI跳转原型/事件/事件总表.md">事件总表</a>实现事件条件和阶段推进。本文列出的都是宿主需要提供的语义通知、查询和成功回执，不是已经注册的Godot信号名，不要求照搬函数名。</p>
+<h4 id="section-159">接入边界与现有通知</h4>
+<p>当前GameDemo提供 location_interaction_requested、scene_requested、party_changed 三类通知；它们不能覆盖本清单。地点点击不等于抵达，scene_requested不等于战斗完成，party_changed也不能代替仓库属性和持有数量变化。</p>
+<p>正式宿主必须接管事件进度、资源写入和存档。UI只负责显示和提交选择；不得保留原型与正式服务两条扣费、发奖或切场景路径。其他已确认布局不变，具体接口缺口见<a href="project/UI跳转原型/docs/07_系统接入适配与联调协议.md">系统接入协议</a>。</p>
+<h4 id="section-160">需要提供的监听与查询</h4>
+<div class="table-wrap"><table>
+<tr><th>功能域</th><th>监听什么</th><th>至少需要的数据或查询</th><th>使用规则</th></tr>
+<tr><td>地图与入口</td><td>真实抵达、发现、可交互、入口再次打开</td><td>事件ID、地区/格子/地点/交互物ID、当前阶段</td><td>点击标记后仍由地图确认能否进入，不能绕过距离或开放条件</td></tr>
+<tr><td>对话与选项</td><td>指定对话结束、分支确认、取消/关闭</td><td>会话ID、事件ID、阶段、稳定分支键</td><td>关闭窗口不等于完成事件；策划注释不当对白播放</td></tr>
+<tr><td>召唤与出战</td><td>召唤提交成功、队伍变更</td><td>已完成首次召唤、正式出战怪物ID</td><td>02号必须满足召唤与出战前置，不以点击按钮视为成功</td></tr>
+<tr><td>库存与怪物属性</td><td>入库、移队、回收、失去怪物、属性/特征变化</td><td>仓库和出战的持有怪物快照；单只攻击力；皮毛、飞行、蛇类、手脚、可回收/锁定状态</td><td>10号包括仓库；18号确认时重读正式字段，不从名称或立绘猜特征</td></tr>
+<tr><td>交易与升级</td><td>购买成功/失败、升级提交结果</td><td>实扣魔力、扩圈结果、购买时间、购买标记</td><td>14号购买成功才开始4天计时，失败不安排鬼魂</td></tr>
+<tr><td>游戏时间</td><td>游戏时间推进、多日跳过、读档恢复</td><td>权威游戏时间、购买时间、到期时间、鬼魂是否已触发</td><td>购买后满4个游戏日触发15号；使用“达到或超过”，不是恰好相等；不读电脑时间</td></tr>
+<tr><td>战斗</td><td>创建/载入结果、真实结束、退出/中断、结算确认</td><td>事件/阶段/请求/战斗ID、模式、双方阵容、胜负方、结束原因</td><td>区分玩家战斗与AI对战观战；旧回执不能推进新战斗，不按文本结束判胜</td></tr>
+<tr><td>奖励与符文</td><td>物品、魔力、怪物、符文的提交成功/失败</td><td>对应请求、实际奖励ID、符文解锁结果、去重记录</td><td>06号拾取奖励独立于胜负；18号等待奖励成功后才揭示下一要求</td></tr>
+<tr><td>献祭</td><td>候选变化、不可逆确认、消费结果、奖励结果</td><td>本阶段、选中实例、数量、条件、扣除后的持有总数、请求进度</td><td>同一实例不能重复计数；不能清空持有怪物；失败不得重复消费</td></tr>
+<tr><td>天气</td><td>正式天气服务就绪、变更结果</td><td>范围、持续规则、效果、覆盖优先级</td><td>18号仍待定；不可照旧工具提示默认只改祭坛格或填默认时长</td></tr>
+<tr><td>存档与任务显示</td><td>加载、保存结果、阶段恢复、入口刷新</td><td>已见地点、拾取/领奖记录、路线锁、献祭阶段、计时、赌局轮次和待结算请求</td><td>恢复当前阶段，不重发、不重新抽阵容、不重新计时；城市共享入口不被整个删掉</td></tr>
+</table></div>
+<p>这既包括“收到通知后刷新”，也包括“玩家确认操作时重新查询”。仅订阅变化、但使用旧缓存扣除怪物或发奖，不算完成接入。</p>
+<h4 id="section-161">逐事件绑定清单</h4>
+<div class="table-wrap"><table>
+<tr><th>编号与事件</th><th>必须监听或查询</th><th>允许推进的节点</th></tr>
+<tr><td>01 火速任命</td><td>新游戏/任命入口、交接对白结束、特令发放结果</td><td>指定交接提交成功；开局时点仍待确认</td></tr>
+<tr><td>02 小树守卫</td><td>首次召唤成功、出战队伍、进入大地图、卡洛德战斗结束</td><td>前置满足后开放，匹配的胜利结果才按现有规则完成；开战方式待定</td></tr>
+<tr><td>03 图书馆开门日</td><td>图书馆入口、首次/常驻状态、对话结束、符文与援助提交结果</td><td>按符文表解锁3种基础符文；不生成贤者线索</td></tr>
+<tr><td>04 防卫预算</td><td>城中心入口、接取、指定定制战斗胜利、返回城主、奇物提交结果</td><td>一场定制战斗达成后，回城交付；不是任意战斗获胜即完成</td></tr>
+<tr><td>05 浑浊的大地</td><td>牧羊人入口、听闻对白结束</td><td>登记听闻；是否生成东南任务提示仍待定，不自动开启Boss</td></tr>
+<tr><td>06 狼来了</td><td>石塔拾取成功、拾取去重记录、狼群战斗结束</td><td>先持久发放物品，再开战；胜负均保留物品，失败不能撤销或重发</td></tr>
+<tr><td>07 年迈的驴子</td><td>两节点已见状态、归还选项、共用归还对话结束、奖励结果</td><td>任一顺序见过双方后，以一段对话归还；不监听护送导航或实际抵达商人</td></tr>
+<tr><td>08 超大型巨人</td><td>拱兽遭遇、真实战斗结束、奇物提交结果</td><td>胜利后结算奇物，载入失败不能直接发奖</td></tr>
+<tr><td>09 不对名单</td><td>货车交互、纸条阅读/领取确认、魔力提交结果</td><td>指定领取成功后完成，提前关闭不自动领奖</td></tr>
+<tr><td>10 甲壳圣堂</td><td>仓库及出战持有怪物、单只攻击力、确认选项、奖励结果</td><td>任意一只高于阈值即可；不要求临时入队，不汇总攻击力</td></tr>
+<tr><td>11 废弃矿井</td><td>当前队伍体型、进入确认、鼠群战斗胜利、符文解锁</td><td>禁止大型怪物出战，不直接删除它们；胜利后解锁，失败不授符文</td></tr>
+<tr><td>12 过分敬业</td><td>分支接取、已保存路线锁、城市附魔师入口、直接战斗或对话结算</td><td>接取回城路线时即锁定，不得回农田改直接解决；离开不解锁</td></tr>
+<tr><td>13 群星之底</td><td>枯井入口、记录星图确认、魔力提交结果</td><td>记录与领奖成功后完成；本版不触发后续事件</td></tr>
+<tr><td>14 扩充引擎</td><td>余额、扩圈资格、购买结果、游戏时间</td><td>扣费、扩圈和购买时间保存成功后开始4天计时</td></tr>
+<tr><td>15 外行魔法师</td><td>游戏时间到期、存档恢复、未触发状态、安全演出时机、符文结果</td><td>满4天只触发一次；两种回答共享符文奖励；不新增卡罗拉战斗</td></tr>
+<tr><td>16 看一眼不要钱</td><td>两选项、魔眼拱兽战斗结果、眼球入库</td><td>胜利后给眼球；退避后的再访及概率效果待定，不擅自额外生成怪物</td></tr>
+<tr><td>17 富含矿物质</td><td>战斗/木桥选择、路线结果、食矿鸟战斗胜利、魔力结果</td><td>两条完成路线互斥；木桥选择走对话结果，不要求额外战斗</td></tr>
+<tr><td>18 血祭日</td><td>当前可见阶段、候选属性及数量、持有总数、回收和发奖结果、阶段恢复</td><td>1只有皮毛→成功发奖→揭示2只飞行→成功发奖→揭示3只无手足蛇类→成功发奖后完成</td></tr>
+<tr><td>19 谁会赢</td><td>帮助/旁观选择、敌军预设、真实结束、奖励怪物安置</td><td>助战时被帮怪物不参战；旁观时两方AI实际战斗，玩家不部署</td></tr>
+<tr><td>20 谁会输</td><td>策划手填的双方配置、下注/余额、真实观战结果、结算成功、次数恢复</td><td>四次本金10/20/50/100；胜返2倍本金；第四次结算后骑士消失</td></tr>
+</table></div>
+<h4 id="section-162">四条必须单独处理的时序</h4>
+<h5 id="section-163">石塔物品与狼群战斗</h5>
+<p>拾取确认 → 提交物品奖励并保存已领取 → 进入狼群战斗 → 接收胜利/失败。</p>
+<p>物品阶段和战斗阶段使用不同的去重记录。战败、退出、战斗加载失败不能撤回已成功领取的物品。物品内容暂时搁置，正式配置缺失时不能随便发一个默认奇物。</p>
+<h5 id="section-164">引擎购买后的4天</h5>
+<p>购买事务成功 → 保存购买游戏时间与到期时间 → 游戏时间达到或超过到期值 → 安排鬼魂出现 → 保存已触发记录。</p>
+<p>跨日跳过和读档也必须检查到期。重新进地图、开书或加载存档不能重新开始4天倒计时。若当前正处于战斗或其他不可打断会话，保存已到期状态，待安全演出入口可用后出现，不再次计时或重复排队。</p>
+<h5 id="section-165">献祭后逐次揭示要求</h5>
+<p>显示当前要求 → 校验并确认 → 提交本阶段献祭与奖励 → 收到持久化成功的奖励结果 → 显示下一要求。</p>
+<ul>
+<li>玩家初次只能看第一次；第二、三次的文字、条件和可点选入口不能提前显示。策划总表保留三段，不代表运行时整段顺序播放。</li>
+<li>第一阶段：恰好1只有皮毛怪物，不额外判断修长；第二阶段：恰好2只飞行怪物；第三阶段：恰好3只蛇类且无手无足怪物。</li>
+<li>确认时重读库存及候选。每阶段扣除后，玩家持有总数至少剩1只；同一实例不能占两个名额，且遵守正式不可回收、占用和锁定规则。</li>
+<li>只收到回收成功，不能揭示下一段。若已消费但奖励未成功，恢复同一待发奖请求，不再扣怪；若整个事务已回滚，则按同请求重试，不伪装成已经消费。</li>
+<li>奖励失败、存档失败或恢复未完成请求时，仍停留在当前阶段；禁止以“没有填奖励”当作零奖励成功。</li>
+<li>原稿的前两次临时血雨、第三次永久血雨仍作为内容描述保留；实际作用、范围、时长及覆盖待定。不要擅自调用默认天气效果。</li>
+</ul>
+<h5 id="section-166">四次赌局与骑士离开</h5>
+<p>按已结算次数选择第1—4轮 → 校验手填双方配置 → 确认下注并锁定本轮 → 两方AI实际对战 → 匹配真实结果并结算 → 成功后次数加1。</p>
+<div class="table-wrap"><table>
+<tr><th>轮次</th><th>本金B</th><th>获胜总返还2B</th><th>净收益</th></tr>
+<tr><td>1</td><td>10</td><td>20</td><td>10</td></tr>
+<tr><td>2</td><td>20</td><td>40</td><td>20</td></tr>
+<tr><td>3</td><td>50</td><td>100</td><td>50</td></tr>
+<tr><td>4</td><td>100</td><td>200</td><td>100</td></tr>
+</table></div>
+<p>返还2B已含本金，不能再另返B。双方阵容由策划手填，不是随机怪物池；缺配置不得以空阵容或临时抽怪开场。玩家不部署怪物，不能把普通玩家战斗的胜利标记当作所押一方获胜，也不能因玩家未编队就把AI中的一方判负。</p>
+<p>胜负结算均计一次；第四次结算后保存事件永久结束，移除骑士及相关待办，重载不再出现。未下注离开不计次。失败具体支付、平局及中止后的账务仍待确认，不能自行结算或提前消耗一次次数。</p>
+<h4 id="section-167">验收重点</h4>
+<ul>
+<li>06号分别胜利、失败、退出、加载失败和重载，物品阶段都不倒退、不重复领奖。</li>
+<li>07号按驴→商人、商人→驴两种顺序，仅靠归还对话即可完成，两件奇物只发一次。</li>
+<li>10号出战攻击力不足、仓库中存在合格怪物时仍可通过；恰好等于阈值按原有“高于”条件失败。</li>
+<li>12号接取回城路线后，重进、返回农田及读档都不能改选直接解决。</li>
+<li>14/15号验证未满4天、满4天、一次跳过多天、保存失败及重载；只出现一次。</li>
+<li>18号验证每一阶段只公开当前要求、奖励失败不揭示、消费恢复不重复，以及献祭后总数为0的拒绝。</li>
+<li>19号验证被帮助的怪物没有友军入场；旁观读取实际AI战斗结果，不随机编胜者。</li>
+<li>20号验证四轮手填阵容、获胜返还、重复结束回执、第四次后入口消失与存档恢复。</li>
+</ul>
+<p>以上为接入验收要求，不表示这些功能已经在当前原型实现。本次只交付文档与配表草稿，不改程序、布局或玩家存档。</p>
+<h2 id="section-168">附录原文：符文表.md</h2>
+<p>来源：<code>project/UI跳转原型/事件/符文表.md</code>；SHA256：<code>8ccae7e9cb9539dbbe9b5e280b5de241c67ef02e168269b0b65771a233d5a28d</code>。下文仅调整标题层级与相对链接以汇编，源文件原字节另附。</p>
+<h3 id="section-169">事件符文表</h3>
+<p>版本：v0.1 · 2026-10-18 · 状态：奖励配置草稿，未接入运行时。</p>
+<p>本表维护事件奖励与现有符文的对应关系。符文ID沿用<a href="project/UI跳转原型/Scripts/Ritual/RuneRules.gd">现有符文定义</a>，不新增图形、效果或数值规则。现有14枚符文在原型中默认开放，登记奖励来源不等于已改成正式的解锁进度。</p>
+<h4 id="section-170">已配置的事件奖励</h4>
+<div class="table-wrap"><table>
+<tr><th>来源事件</th><th>奖励符文ID</th><th>名称</th><th>解锁数量</th><th>说明</th></tr>
+<tr><td>03 图书馆开门日</td><td>armor</td><td>甲片</td><td>1种</td><td>召唤手记对应的基础符文</td></tr>
+<tr><td>03 图书馆开门日</td><td>health</td><td>血脉</td><td>1种</td><td>召唤手记对应的基础符文</td></tr>
+<tr><td>03 图书馆开门日</td><td>attack</td><td>锐牙</td><td>1种</td><td>召唤手记对应的基础符文</td></tr>
+</table></div>
+<p>03号奖励共3种符文，不再额外给予一本手记物品。本版不提供里斯巴巴线索、任务或地图提示。</p>
+<p>用户已确认“手记转为数个符文”；上述3枚是本轮从现有基础符文中作出的配置选择，并非另行确认的新符文设计。需要调整时改本表，并同步事件总表、配表草稿和正式奖励配置。</p>
+<h4 id="section-171">现有符文目录</h4>
+<p>以下效果为当前原型的试验参数，仅供奖励选型，不代表正式平衡定稿。</p>
+<div class="table-wrap"><table>
+<tr><th>符文ID</th><th>名称</th><th>档位</th><th>当前效果</th><th>本批事件来源</th></tr>
+<tr><td>armor</td><td>甲片</td><td>基础</td><td>护甲 +40%</td><td>03 召唤手记</td></tr>
+<tr><td>health</td><td>血脉</td><td>基础</td><td>生命与耐久 +15%</td><td>03 召唤手记</td></tr>
+<tr><td>attack</td><td>锐牙</td><td>基础</td><td>攻击 +12%</td><td>03 召唤手记</td></tr>
+<tr><td>iron</td><td>铁壁</td><td>强化</td><td>护甲 +100%</td><td>尚未分配</td></tr>
+<tr><td>bloodblade</td><td>血刃</td><td>强化</td><td>攻击 +35%，生命 -15%</td><td>尚未分配</td></tr>
+<tr><td>cocoon</td><td>护茧</td><td>强化</td><td>一次入场护盾</td><td>尚未分配</td></tr>
+<tr><td>vitality</td><td>厚生</td><td>强化</td><td>生命与耐久 +35%</td><td>尚未分配</td></tr>
+<tr><td>fang</td><td>开锋</td><td>强化</td><td>攻击 +28%</td><td>尚未分配</td></tr>
+<tr><td>burn</td><td>灼印</td><td>强化</td><td>攻击附加灼烧</td><td>尚未分配</td></tr>
+<tr><td>haste</td><td>迅击</td><td>强化</td><td>攻击周期 ×0.80</td><td>尚未分配</td></tr>
+<tr><td>feast</td><td>饕餮</td><td>强化</td><td>击杀回血</td><td>尚未分配</td></tr>
+<tr><td>giant</td><td>巨化</td><td>最强</td><td>3只，每只2队位</td><td>尚未分配</td></tr>
+<tr><td>multiply</td><td>增殖</td><td>最强</td><td>5本体，入场分身接口</td><td>尚未分配</td></tr>
+<tr><td>tiny</td><td>缩小</td><td>最强</td><td>5只为1队位，不可回收</td><td>尚未分配</td></tr>
+</table></div>
+<h4 id="section-172">尚待配置的符文奖励</h4>
+<div class="table-wrap"><table>
+<tr><th>来源</th><th>已确认的奖励语义</th><th>尚缺内容</th></tr>
+<tr><td>11 废弃矿井</td><td>战胜鼠群后获得符文，不直接获得完整定向召唤图纸</td><td>符文ID与数量</td></tr>
+<tr><td>15 外行魔法师</td><td>两种回答汇合到同一份符文奖励，只发一次</td><td>符文ID与数量</td></tr>
+<tr><td>18 第二次献祭</td><td>成功献祭2只飞行怪物后给予符文；奖励成功后才显示第三次要求</td><td>符文ID与数量</td></tr>
+<tr><td>18 第三次献祭</td><td>成功献祭3只蛇类且无手无足的怪物后给予符文；奖励成功后完成事件</td><td>符文ID与数量</td></tr>
+</table></div>
+<h4 id="section-173">程序读取约定</h4>
+<ul>
+<li>奖励是“解锁符文种类”，不是增加一次性绘制次数，也不是生成新的符文资产。</li>
+<li>配置至少包括来源事件、奖励阶段、符文ID、解锁数量与独立去重标记；符文ID必须存在于当前目录。</li>
+<li>03号对应稳定事件ID为 QST_SIDE_001_001。三枚符文按一次奖励提交处理，不能连点重复发放，也不与私房钱奖励互相重复结算。</li>
+<li>已知符文集合必须去重；正式初始开放范围、重复解锁是否补偿仍待确定，不自行折算魔力。</li>
+<li>当前项目草稿保持现有七张业务表结构；正式接入时由事件负责人配置“解锁符文”结果。本文不表示执行节点、奖励服务或正式解锁存档已经实现。</li>
+</ul></main></html>
