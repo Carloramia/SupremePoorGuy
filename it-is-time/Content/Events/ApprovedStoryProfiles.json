@@ -1,0 +1,104 @@
+{
+  "version": 1,
+  "profiles": {
+    "carlod": {
+      "species": "wolf",
+      "hp": 0.65,
+      "attack": 0.7
+    },
+    "wolf": {
+      "species": "wolf"
+    },
+    "rat": {
+      "species": "rat",
+      "hp": 0.7,
+      "attack": 0.7
+    },
+    "bird": {
+      "species": "bird",
+      "hp": 0.8,
+      "attack": 0.8
+    },
+    "scarecrow": {
+      "species": "scarecrow",
+      "hp": 0.75,
+      "attack": 0.8
+    },
+    "giant": {
+      "species": "horned_beast",
+      "hp": 2,
+      "attack": 1.25,
+      "scale": 3
+    },
+    "magic_eye": {
+      "species": "magic_eye_beast",
+      "hp": 1.5,
+      "attack": 1.2
+    },
+    "two_head": {
+      "species": "two_head_wolf",
+      "hp": 1.5,
+      "attack": 1.2
+    },
+    "beast": {
+      "species": "horned_beast"
+    },
+    "snake": {
+      "species": "snake"
+    },
+    "stump_beast": {
+      "species": "stump_beast"
+    },
+    "spider": {
+      "species": "spider"
+    },
+    "reward_two_head_wolf": {
+      "species": "two_head_wolf",
+      "hp": 1.8,
+      "attack": 1.38
+    },
+    "reward_magic_eye_beast": {
+      "species": "magic_eye_beast",
+      "hp": 1.8,
+      "attack": 1.38
+    },
+    "defense_snake": {
+      "species": "snake",
+      "hp": 0.75,
+      "attack": 0.8
+    },
+    "defense_beast": {
+      "species": "horned_beast",
+      "hp": 0.75,
+      "attack": 0.8
+    }
+  },
+  "items": {
+    "royal-order": {
+      "name": "国王特令",
+      "description": "王国特使签发的通行与协助凭证。"
+    }
+  },
+  "clock": {
+    "world_distance_per_game_day": 2400,
+    "advance_during": [
+      "actual_world_travel"
+    ],
+    "pause_during": [
+      "dialogue",
+      "battle",
+      "menus"
+    ],
+    "exclude_teleport_and_load": true
+  },
+  "blood_rain": {
+    "radius_cells": 2,
+    "first_days": 2,
+    "second_days": 4,
+    "third_permanent": true,
+    "summon_hp_multiplier": 1.1,
+    "stacking": "strongest_and_longest",
+    "effect_on_existing_monsters": false
+  },
+  "defense_site_id": "hex_camp_mv9za92d_38"
+}

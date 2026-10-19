@@ -452,7 +452,10 @@ const LEGACY_RUNES = [
 const RELICS = [
 	{"id":"tide-pump", "name":"潮汐泵", "effect":"刻入符文时恢复 3% 生命", "color":"52d0c8", "cells":[[0,0],[1,0],[0,1]]},
 	{"id":"prism-heart", "name":"棱镜心脏", "effect":"相邻符文强度提高 12%", "color":"e886ff", "cells":[[0,0],[1,0],[0,1],[-1,1]]},
-	{"id":"bone-die", "name":"骨骰", "effect":"召唤完成时强化一种属性", "color":"e4d6b0", "cells":[[0,0],[1,0]]}
+	{"id":"bone-die", "name":"骨骰", "effect":"召唤完成时强化一种属性", "color":"e4d6b0", "cells":[[0,0],[1,0]]},
+	{"id":"giant-tusk", "name":"巨兽獠牙", "effect":"召唤攻击 ×1.15", "color":"d6c7a0", "cells":[[0,0],[1,0],[2,-1]]},
+	{"id":"crystal-carapace", "name":"水晶甲片", "effect":"召唤护甲 ×1.20", "color":"81c6bd", "cells":[[0,0],[1,0],[0,1]]},
+	{"id":"crystal-eye", "name":"结晶眼球", "effect":"每只召唤结果10%获得魔眼", "color":"ad8fe7", "cells":[[0,0],[1,0],[1,-1]]}
 ]
 var stage: int = 1
 var draft: Array = []

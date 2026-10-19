@@ -42,6 +42,7 @@ func capture(name: String) -> void:
 func run() -> void:
 	root.size = Vector2i(1280,720)
 	app = ROOT_SCENE.instantiate()
+	app.enable_hex_map = false
 	app.save_path = "res://Tests/.runtime/integration/task_ui_%d.json" % Time.get_ticks_usec()
 	app.display_settings_path = "res://Tests/.runtime/integration/task_ui_display_%d.cfg" % Time.get_ticks_usec()
 	root.add_child(app)

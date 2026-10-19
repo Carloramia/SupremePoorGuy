@@ -200,6 +200,10 @@ func _sync_limb_terrain_collisions() -> void:
 		_on_limb_terrain_added(terrain)
 
 func _on_limb_terrain_added(node: Node) -> void:
+	# Removed battle actors remain alive until queue_free is flushed. They must
+	# neither query released physics RIDs nor bind terrain from another world.
+	if not is_inside_tree() or is_queued_for_deletion(): return
+	if node is StaticBody3D and (not node.is_inside_tree() or node.get_world_3d()!=get_world_3d()): return
 	if node is StaticBody3D and ignore_limb_terrain and not is_broken and BodyPartTag.LegLimb in tags:
 		# Preserve exceptions owned by other systems when restoring terrain collisions.
 		if node not in get_collision_exceptions():

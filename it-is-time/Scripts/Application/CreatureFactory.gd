@@ -8,8 +8,13 @@ const DEFINITIONS := {
 	"snake": {"scene":"res://Scenes/Creatures/Characters/Generate_Snake_NPC.tscn","name":"蛇兽","form":"蛇形","color":"bb9272"},
 	"horned_beast": {"scene":"res://Scenes/Creatures/Characters/Generate_HornedBeast_NPC.tscn","name":"角兽","form":"兽形","color":"b49a72"},
 	"spider": {"scene":"res://Scenes/Creatures/Characters/Generate_Spider_NPC.tscn","name":"蜘蛛","form":"兽形","color":"826f59"},
+	"rat": {"scene":"res://Scenes/Creatures/Characters/Generate_Rat_1_NPC.tscn","name":"矿鼠","form":"兽形","color":"938471"},
+	"bird": {"scene":"res://Scenes/Creatures/Characters/Generate_Bird_NPC.tscn","name":"食矿鸟","form":"兽形","color":"8c9a81"},
+	"scarecrow": {"scene":"res://Scenes/Creatures/Characters/Generate_StumpBeast_NPC.tscn","name":"敬业稻草人","form":"兽形","color":"b39f71"},
+	"two_head_wolf": {"scene":"res://Scenes/Creatures/Characters/Generate_Wolf_NPC.tscn","name":"双头甲狼","form":"兽形","color":"7f8c89"},
+	"magic_eye_beast": {"scene":"res://Scenes/Creatures/Characters/Generate_HornedBeast_NPC.tscn","name":"魔眼拱兽","form":"兽形","color":"a489bd"},
 }
-const SUMMON_POOL := ["stump_beast","wolf","snake","horned_beast","spider"]
+const SUMMON_POOL := ["stump_beast","wolf","snake","horned_beast","spider","bird","rat"]
 static var _templates: Dictionary = {}
 
 static var _collisions: Dictionary = {}
@@ -27,7 +32,7 @@ static func local_bounds(record: Dictionary) -> AABB:
 		var bounds: AABB = transform*_collisions[record.definition_id][path]
 		result = bounds if first else result.merge(bounds)
 		first = false
-	return result
+	return Transform3D(Basis.IDENTITY.scaled(Vector3.ONE*float(record.get("size_multiplier",1.0))),Vector3.ZERO)*result
 
 static func pack_transform(pose: Transform3D) -> Array:
 	return [pose.basis.x.x,pose.basis.x.y,pose.basis.x.z,pose.basis.y.x,pose.basis.y.y,pose.basis.y.z,pose.basis.z.x,pose.basis.z.y,pose.basis.z.z,pose.origin.x,pose.origin.y,pose.origin.z]
@@ -42,6 +47,7 @@ static func template(id: String) -> Dictionary:
 	var scene := load(definition.scene) as PackedScene
 	if scene == null: return {}
 	var actor := scene.instantiate()
+	_decorate_variant(actor,id)
 	var poses := {}
 	var parts := {}
 	_collisions[id] = {}
@@ -72,6 +78,8 @@ static func template(id: String) -> Dictionary:
 	var result := {"definition_id":id,"template_hash":FileAccess.get_sha256(definition.scene),"poses":poses,"parts":parts,
 		"hp":hp,"armor":armor/parts.size(),"attack":preload("res://Resources/Damage/DefaultDamageRules.tres").calculate_weapon_raw_damage(10.0,true),"speed":speed,"interval":1.5,"name":definition.name,"form":definition.form,"color":definition.color}
 	_templates[id] = result
+	result.merge({"fur":id in ["wolf","rat","two_head_wolf"],"flying":id=="bird","snake":id=="snake","hands":2 if id=="human" else 0,"feet":0 if id=="snake" else 2 if id in ["human","bird"] else 4,"large":id in ["stump_beast","horned_beast","magic_eye_beast"],"size_multiplier":1.0,"magic_eye":id=="magic_eye_beast"},true)
+	_templates[id] = result
 	return result.duplicate(true)
 
 static func valid_record(record: Dictionary) -> bool:
@@ -95,16 +103,20 @@ static func valid_record(record: Dictionary) -> bool:
 	for field: String in ["damage_multiplier","speed_multiplier","interval_multiplier"]:
 		var multiplier: Variant = record.get(field,1.0)
 		if not (multiplier is float or multiplier is int) or not is_finite(float(multiplier)) or float(multiplier)<=0: return false
+	if not (record.get("size_multiplier",1.0) is float or record.get("size_multiplier",1.0) is int) or not is_finite(float(record.get("size_multiplier",1.0))) or float(record.get("size_multiplier",1.0))<=0 or float(record.get("size_multiplier",1.0))>10: return false
+	if record.has("magic_eye") and not record.magic_eye is bool: return false
 	return true
 
 static func spawn(record: Dictionary, parent: Node3D, at: Vector3, faction: int, facing: float = 0.0) -> Node3D:
 	if not valid_record(record): return null
 	var actor := (load(DEFINITIONS[record.definition_id].scene) as PackedScene).instantiate() as Node3D
+	_decorate_variant(actor,str(record.definition_id))
 	actor.generate_on_ready = false
 	actor.faction_id = faction
 	actor.name = "Creature_"+str(record.id).validate_node_name()
 	actor.position = at
 	actor.rotation.y = facing
+	actor.scale = Vector3.ONE*float(record.get("size_multiplier",1.0))
 	actor.process_mode = Node.PROCESS_MODE_DISABLED
 	actor.set_meta(&"creature_instance_id",record.id)
 	actor.set_meta(&"summon_damage_multiplier",record.get("damage_multiplier",1.0))
@@ -121,6 +133,11 @@ static func spawn(record: Dictionary, parent: Node3D, at: Vector3, faction: int,
 		body.linear_velocity = Vector3.ZERO
 		body.angular_velocity = Vector3.ZERO
 		body.set_meta(&"creature_part_key",record.parts[path].key)
+	if record.get("magic_eye",false) or record.definition_id=="two_head_wolf":
+		var ability := preload("res://Scripts/Events/StoryCreatureAbilities.gd").new()
+		ability.name="StoryCreatureAbilities"
+		ability.record = record.duplicate(true)
+		actor.add_child(ability)
 	var ai := actor.get_node_or_null("NPCStateMachine3D")
 	if ai != null and ai.behavior != null:
 		ai.behavior = ai.behavior.duplicate(true)
@@ -138,6 +155,44 @@ static func spawn(record: Dictionary, parent: Node3D, at: Vector3, faction: int,
 				motion.target_speed *= float(record.get("speed_multiplier",1.0))
 				node.set(property,motion)
 	return actor
+
+static func _decorate_variant(actor: Node3D, id: String) -> void:
+	if id=="scarecrow":
+		var straw:=StandardMaterial3D.new(); straw.albedo_color=Color("b99a50"); straw.roughness=1.0
+		for mesh: Node in actor.find_children("*","MeshInstance3D",true,false): mesh.material_override=straw
+		for part: Node in actor.find_children("*","PhysicalBodyPart3D",true,false):
+			if str(part.get_meta(&"generated_part_key",part.name))!="Head": continue
+			var hat:=MeshInstance3D.new(); hat.name="StrawHat"
+			var cone:=CylinderMesh.new(); cone.top_radius=.1; cone.bottom_radius=2.0; cone.height=1.0
+			hat.mesh=cone; hat.position.y=1.0; hat.material_override=straw; part.add_child(hat)
+	if id!="two_head_wolf": return
+	var head: PhysicalBodyPart3D
+	var jaw: PhysicalBodyPart3D
+	var torso: PhysicalBodyPart3D
+	for part: Node in actor.find_children("*","PhysicalBodyPart3D",true,false):
+		var key: String = str(part.get_meta(&"generated_part_key",part.name))
+		if key=="Head": head=part
+		elif "Jaw" in key: jaw=part
+		elif torso==null and "Torso" in key: torso=part
+	if head==null or jaw==null or torso==null: return
+	var extra_head := head.duplicate() as PhysicalBodyPart3D
+	var extra_jaw := jaw.duplicate() as PhysicalBodyPart3D
+	extra_head.name="ExtraHead"; extra_jaw.name="ExtraJaw"
+	extra_head.set_meta(&"generated_part_key","ExtraHead")
+	extra_jaw.set_meta(&"generated_part_key","ExtraJaw")
+	head.get_parent().add_child(extra_head); jaw.get_parent().add_child(extra_jaw)
+	head.position.z-=.65; jaw.position.z-=.65
+	extra_head.position.z+=.65; extra_jaw.position.z+=.65
+	for own: Node in actor.find_children("*","PhysicalBodyPart3D",true,false):
+		if own!=extra_head: extra_head.add_collision_exception_with(own)
+		if own!=extra_jaw: extra_jaw.add_collision_exception_with(own)
+	for pair: Array in [[torso,extra_head],[extra_head,extra_jaw]]:
+		var joint := PinJoint3D.new()
+		joint.name="ExtraHeadJoint" if pair[0]==torso else "ExtraJawJoint"
+		head.get_parent().add_child(joint)
+		joint.position=pair[1].position
+		joint.node_a=joint.get_path_to(pair[0]); joint.node_b=joint.get_path_to(pair[1])
+		extra_head.add_collision_exception_with(pair[0]); extra_jaw.add_collision_exception_with(pair[0])
 
 static func activate(actor: Node3D) -> void:
 	actor.process_mode = Node.PROCESS_MODE_INHERIT

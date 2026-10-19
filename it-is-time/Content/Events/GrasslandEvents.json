@@ -1,0 +1,846 @@
+{
+  "version": 1,
+  "source": {
+    "repository": "Carloramia/SupremePoorGuy",
+    "commit": "816606c8ef033cc69e30998e5c4b48f9a15dbbc2",
+    "path": "UI跳转原型/事件/草原事件_配表草稿.events.json",
+    "note": "仅配置20个事件；2个城市与罗瓦常驻由入口层路由。开场演出不生成。"
+  },
+  "bindings": {
+    "rewards": {
+      "royal_order": {
+        "magic": 0,
+        "runes": [],
+        "relics": [],
+        "items": [
+          {
+            "id": "royal-order",
+            "count": 1
+          }
+        ]
+      },
+      "carlod": {
+        "magic": 30,
+        "runes": [],
+        "relics": []
+      },
+      "library": {
+        "magic": 50,
+        "runes": [
+          "armor",
+          "health",
+          "attack"
+        ],
+        "relics": []
+      },
+      "defense": {
+        "magic": 0,
+        "runes": [],
+        "relics": [
+          "prism-heart"
+        ]
+      },
+      "tower_item": {
+        "magic": 0,
+        "runes": [],
+        "relics": [
+          "bone-die"
+        ]
+      },
+      "donkey": {
+        "magic": 0,
+        "runes": [],
+        "relics": [
+          "bone-die",
+          "prism-heart"
+        ]
+      },
+      "giant": {
+        "magic": 0,
+        "runes": [],
+        "relics": [
+          "giant-tusk"
+        ]
+      },
+      "cart": {
+        "magic": 40,
+        "runes": [],
+        "relics": []
+      },
+      "shell": {
+        "magic": 60,
+        "runes": [],
+        "relics": [
+          "crystal-carapace"
+        ]
+      },
+      "mine": {
+        "magic": 0,
+        "runes": [
+          "iron"
+        ],
+        "relics": []
+      },
+      "farm_direct": {
+        "magic": 30,
+        "runes": [],
+        "relics": []
+      },
+      "farm_enchanter": {
+        "magic": 60,
+        "runes": [],
+        "relics": []
+      },
+      "stars": {
+        "magic": 60,
+        "runes": [],
+        "relics": []
+      },
+      "ghost": {
+        "magic": 0,
+        "runes": [
+          "fang"
+        ],
+        "relics": []
+      },
+      "eye": {
+        "magic": 0,
+        "runes": [],
+        "relics": [
+          "crystal-eye"
+        ]
+      },
+      "bridge_fight": {
+        "magic": 50,
+        "runes": [],
+        "relics": []
+      },
+      "bridge_wood": {
+        "magic": 40,
+        "runes": [],
+        "relics": []
+      },
+      "sacrifice_1": {
+        "magic": 60,
+        "runes": [],
+        "relics": []
+      },
+      "sacrifice_2": {
+        "magic": 0,
+        "runes": [
+          "haste"
+        ],
+        "relics": []
+      },
+      "sacrifice_3": {
+        "magic": 0,
+        "runes": [
+          "vitality"
+        ],
+        "relics": []
+      },
+      "strong_wolf": {
+        "magic": 0,
+        "runes": [],
+        "relics": [],
+        "monsters": [
+          {
+            "id": "reward_two_head_wolf",
+            "count": 1
+          }
+        ]
+      },
+      "strong_beast": {
+        "magic": 0,
+        "runes": [],
+        "relics": [],
+        "monsters": [
+          {
+            "id": "reward_magic_eye_beast",
+            "count": 1
+          }
+        ]
+      },
+      "watch_magic": {
+        "magic": 40,
+        "runes": [],
+        "relics": []
+      },
+      "wolves": {
+        "magic": 30,
+        "runes": [],
+        "relics": []
+      }
+    },
+    "battles": {
+      "carlod": {
+        "battle_map_id": "battle_hex_1",
+        "enemy_config_id": "story_carlod",
+        "profiles": [
+          "carlod"
+        ]
+      },
+      "defense": {
+        "battle_map_id": "battle_hex_camp_mv9za92d_38",
+        "enemy_config_id": "story_defense",
+        "profiles": [
+          "defense_snake",
+          "defense_snake",
+          "defense_snake",
+          "defense_snake",
+          "defense_snake",
+          "defense_beast",
+          "defense_beast",
+          "defense_beast"
+        ]
+      },
+      "wolves": {
+        "battle_map_id": "battle_wolf_savanna_site_2",
+        "enemy_config_id": "story_wolves",
+        "profiles": [
+          "wolf",
+          "wolf",
+          "wolf"
+        ]
+      },
+      "giant": {
+        "battle_map_id": "battle_forest_wolf",
+        "enemy_config_id": "story_giant",
+        "profiles": [
+          "giant"
+        ]
+      },
+      "rats": {
+        "battle_map_id": "battle_wolf_savanna_site_2",
+        "enemy_config_id": "story_rats",
+        "profiles": [
+          "rat",
+          "rat",
+          "rat",
+          "rat"
+        ]
+      },
+      "scarecrows": {
+        "battle_map_id": "battle_hex_camp_mv9ya347_12",
+        "enemy_config_id": "story_scarecrows",
+        "profiles": [
+          "scarecrow",
+          "scarecrow",
+          "scarecrow"
+        ]
+      },
+      "magic_eye": {
+        "battle_map_id": "battle_hex_camp_mv9yd6wh_16",
+        "enemy_config_id": "story_magic_eye",
+        "profiles": [
+          "magic_eye"
+        ]
+      },
+      "birds": {
+        "battle_map_id": "battle_bandit_camp_site_3",
+        "enemy_config_id": "story_birds",
+        "profiles": [
+          "bird",
+          "bird",
+          "bird"
+        ]
+      },
+      "help_wolf": {
+        "battle_map_id": "battle_forest_wolf",
+        "enemy_config_id": "story_help_wolf",
+        "profiles": [
+          "magic_eye",
+          "beast",
+          "beast"
+        ]
+      },
+      "help_beast": {
+        "battle_map_id": "battle_forest_wolf",
+        "enemy_config_id": "story_help_beast",
+        "profiles": [
+          "two_head",
+          "wolf",
+          "wolf"
+        ]
+      },
+      "watch_wolf_beast": {
+        "battle_map_id": "battle_forest_wolf",
+        "enemy_config_id": "story_watch_wolf_beast",
+        "profiles": [
+          "magic_eye",
+          "beast",
+          "beast"
+        ],
+        "other_side": {
+          "battle_map_id": "battle_forest_wolf",
+          "enemy_config_id": "story_watch_wolf_beast_other",
+          "profiles": [
+            "two_head",
+            "wolf",
+            "wolf"
+          ]
+        }
+      }
+    },
+    "monster_fields": {
+      "attack": "attack",
+      "large": "large",
+      "fur": "fur",
+      "flying": "flying",
+      "snake": "snake",
+      "hands": "hands",
+      "feet": "feet"
+    },
+    "attack_threshold": 130,
+    "engine_max_stage": 4,
+    "bet_loss_policy": "lose_stake",
+    "bet_draw_policy": "refund_stake_without_round",
+    "bet_abort_policy": "refund_stake_without_round",
+    "bet_rounds": [
+      {
+        "stake": 10,
+        "one": {
+          "battle_map_id": "battle_hex_camp_mv9zabhy_39",
+          "enemy_config_id": "story_bet_1_one",
+          "profiles": [
+            "wolf"
+          ]
+        },
+        "two": {
+          "battle_map_id": "battle_hex_camp_mv9zabhy_39",
+          "enemy_config_id": "story_bet_1_two",
+          "profiles": [
+            "rat",
+            "rat",
+            "rat"
+          ]
+        }
+      },
+      {
+        "stake": 20,
+        "one": {
+          "battle_map_id": "battle_hex_camp_mv9zabhy_39",
+          "enemy_config_id": "story_bet_2_one",
+          "profiles": [
+            "stump_beast"
+          ]
+        },
+        "two": {
+          "battle_map_id": "battle_hex_camp_mv9zabhy_39",
+          "enemy_config_id": "story_bet_2_two",
+          "profiles": [
+            "wolf",
+            "wolf"
+          ]
+        }
+      },
+      {
+        "stake": 50,
+        "one": {
+          "battle_map_id": "battle_hex_camp_mv9zabhy_39",
+          "enemy_config_id": "story_bet_3_one",
+          "profiles": [
+            "beast",
+            "spider"
+          ]
+        },
+        "two": {
+          "battle_map_id": "battle_hex_camp_mv9zabhy_39",
+          "enemy_config_id": "story_bet_3_two",
+          "profiles": [
+            "wolf",
+            "wolf",
+            "wolf"
+          ]
+        }
+      },
+      {
+        "stake": 100,
+        "one": {
+          "battle_map_id": "battle_hex_camp_mv9zabhy_39",
+          "enemy_config_id": "story_bet_4_one",
+          "profiles": [
+            "two_head"
+          ]
+        },
+        "two": {
+          "battle_map_id": "battle_hex_camp_mv9zabhy_39",
+          "enemy_config_id": "story_bet_4_two",
+          "profiles": [
+            "magic_eye"
+          ]
+        }
+      }
+    ],
+    "approved_failure_rules": true
+  },
+  "events": [
+    {
+      "id": "QST_MAIN_001_001",
+      "number": 1,
+      "title": "火速任命",
+      "entries": [
+        "opening"
+      ],
+      "trigger": "external_opening",
+      "operations": {
+        "read": {
+          "kind": "transaction",
+          "next": "complete",
+          "reward": "royal_order"
+        }
+      }
+    },
+    {
+      "id": "QST_GRASS_002",
+      "number": 2,
+      "title": "小树守卫",
+      "entries": [
+        "tree"
+      ],
+      "trigger": "world_after_summon_and_party",
+      "operations": {
+        "battle": {
+          "kind": "battle",
+          "next": "complete",
+          "battle": "carlod",
+          "reward": "carlod",
+          "guard": "summoned_party"
+        }
+      }
+    },
+    {
+      "id": "QST_SIDE_001_001",
+      "number": 3,
+      "title": "图书馆开门日",
+      "entries": [
+        "library"
+      ],
+      "trigger": "verified_arrival",
+      "operations": {
+        "talk": {
+          "kind": "transaction",
+          "next": "complete",
+          "reward": "library"
+        }
+      }
+    },
+    {
+      "id": "QST_SIDE_002_001",
+      "number": 4,
+      "title": "防卫预算",
+      "entries": [
+        "center",
+        "defense_target"
+      ],
+      "trigger": "verified_arrival",
+      "operations": {
+        "accept": {
+          "kind": "local",
+          "entry": "center",
+          "next": "active"
+        },
+        "revisit": {
+          "kind": "local",
+          "from": [
+            "active"
+          ],
+          "next": "active",
+          "entry": "center"
+        },
+        "submit": {
+          "kind": "transaction",
+          "entry": "center",
+          "from": [
+            "active"
+          ],
+          "next": "complete",
+          "reward": "defense",
+          "guard": "defense_won"
+        },
+        "battle": {
+          "kind": "battle",
+          "from": [
+            "active"
+          ],
+          "next": "active",
+          "battle": "defense",
+          "guard": "defense_active",
+          "entry": "defense_target",
+          "effect": "defense_won"
+        }
+      }
+    },
+    {
+      "id": "QST_GRASS_005",
+      "number": 5,
+      "title": "浑浊的大地",
+      "entries": [
+        "shepherd"
+      ],
+      "trigger": "verified_arrival",
+      "operations": {
+        "talk": {
+          "kind": "local",
+          "next": "complete"
+        }
+      }
+    },
+    {
+      "id": "QST_GRASS_006",
+      "number": 6,
+      "title": "狼来了",
+      "entries": [
+        "tower"
+      ],
+      "trigger": "verified_arrival",
+      "operations": {
+        "pickup": {
+          "kind": "transaction",
+          "next": "picked_up",
+          "reward": "tower_item"
+        },
+        "battle": {
+          "kind": "battle",
+          "from": [
+            "picked_up"
+          ],
+          "next": "complete",
+          "battle": "wolves",
+          "reward": "wolves"
+        }
+      }
+    },
+    {
+      "id": "QST_GRASS_007",
+      "number": 7,
+      "title": "年迈的驴子",
+      "entries": [
+        "donkey",
+        "merchant"
+      ],
+      "trigger": "verified_arrival",
+      "operations": {
+        "from_donkey": {
+          "kind": "local",
+          "next": "return_dialogue",
+          "guard": "both_seen",
+          "entry": "donkey"
+        },
+        "from_merchant": {
+          "kind": "local",
+          "next": "return_dialogue",
+          "guard": "both_seen",
+          "entry": "merchant"
+        },
+        "return_dialogue": {
+          "kind": "transaction",
+          "from": [
+            "return_dialogue"
+          ],
+          "next": "complete",
+          "reward": "donkey",
+          "guard": "both_seen"
+        }
+      }
+    },
+    {
+      "id": "QST_GRASS_008",
+      "number": 8,
+      "title": "超大型巨人",
+      "entries": [
+        "giant"
+      ],
+      "trigger": "verified_arrival",
+      "operations": {
+        "battle": {
+          "kind": "battle",
+          "next": "complete",
+          "battle": "giant",
+          "reward": "giant"
+        }
+      }
+    },
+    {
+      "id": "QST_GRASS_009",
+      "number": 9,
+      "title": "不对名单",
+      "entries": [
+        "cart"
+      ],
+      "trigger": "verified_arrival",
+      "operations": {
+        "read": {
+          "kind": "transaction",
+          "next": "complete",
+          "reward": "cart"
+        }
+      }
+    },
+    {
+      "id": "QST_GRASS_010",
+      "number": 10,
+      "title": "甲壳圣堂",
+      "entries": [
+        "temple"
+      ],
+      "trigger": "verified_arrival",
+      "operations": {
+        "break": {
+          "kind": "transaction",
+          "next": "complete",
+          "reward": "shell",
+          "guard": "attack"
+        }
+      }
+    },
+    {
+      "id": "QST_GRASS_011",
+      "number": 11,
+      "title": "废弃矿井",
+      "entries": [
+        "mine"
+      ],
+      "trigger": "verified_arrival",
+      "operations": {
+        "enter": {
+          "kind": "battle",
+          "next": "complete",
+          "battle": "rats",
+          "reward": "mine",
+          "guard": "small_party"
+        }
+      }
+    },
+    {
+      "id": "QST_GRASS_012",
+      "number": 12,
+      "title": "过分敬业",
+      "entries": [
+        "farm",
+        "enchanter"
+      ],
+      "trigger": "verified_arrival",
+      "operations": {
+        "direct": {
+          "kind": "battle",
+          "entry": "farm",
+          "next": "complete",
+          "battle": "scarecrows",
+          "reward": "farm_direct",
+          "guard": "direct_route"
+        },
+        "ask": {
+          "kind": "local",
+          "entry": "farm",
+          "next": "await_enchanter",
+          "guard": "no_route",
+          "route": "enchanter"
+        },
+        "enchanter": {
+          "kind": "transaction",
+          "from": [
+            "await_enchanter"
+          ],
+          "next": "complete",
+          "reward": "farm_enchanter",
+          "entry": "enchanter"
+        }
+      }
+    },
+    {
+      "id": "QST_GRASS_013",
+      "number": 13,
+      "title": "群星之底",
+      "entries": [
+        "well"
+      ],
+      "trigger": "verified_arrival",
+      "operations": {
+        "record": {
+          "kind": "transaction",
+          "next": "complete",
+          "reward": "stars"
+        }
+      }
+    },
+    {
+      "id": "QST_GRASS_014",
+      "number": 14,
+      "title": "不便携式魔力扩充引擎",
+      "entries": [
+        "engine"
+      ],
+      "trigger": "verified_arrival",
+      "operations": {
+        "buy": {
+          "kind": "purchase",
+          "next": "complete",
+          "cost": 100,
+          "guard": "engine"
+        }
+      }
+    },
+    {
+      "id": "QST_GRASS_015",
+      "number": 15,
+      "title": "外行魔法师",
+      "entries": [
+        "ghost"
+      ],
+      "trigger": "engine_purchase_plus_4_game_days",
+      "operations": {
+        "funny": {
+          "kind": "local",
+          "route": "funny",
+          "next": "teach"
+        },
+        "kind": {
+          "kind": "local",
+          "route": "kind",
+          "next": "teach"
+        },
+        "teach": {
+          "kind": "transaction",
+          "from": [
+            "teach"
+          ],
+          "next": "complete",
+          "reward": "ghost"
+        }
+      }
+    },
+    {
+      "id": "QST_GRASS_016",
+      "number": 16,
+      "title": "看一眼不要钱",
+      "entries": [
+        "circus"
+      ],
+      "trigger": "verified_arrival",
+      "operations": {
+        "help": {
+          "kind": "battle",
+          "next": "complete",
+          "battle": "magic_eye",
+          "reward": "eye"
+        },
+        "away": {
+          "kind": "local",
+          "next": "available"
+        }
+      }
+    },
+    {
+      "id": "QST_GRASS_017",
+      "number": 17,
+      "title": "富含矿物质",
+      "entries": [
+        "bridge"
+      ],
+      "trigger": "verified_arrival",
+      "operations": {
+        "fight": {
+          "kind": "battle",
+          "next": "complete",
+          "battle": "birds",
+          "reward": "bridge_fight"
+        },
+        "wood": {
+          "kind": "transaction",
+          "next": "complete",
+          "reward": "bridge_wood"
+        }
+      }
+    },
+    {
+      "id": "QST_SIDE_003_001",
+      "number": 18,
+      "title": "血祭日",
+      "entries": [
+        "altar"
+      ],
+      "trigger": "verified_arrival",
+      "operations": {
+        "first": {
+          "kind": "sacrifice",
+          "next": "stage_2",
+          "reward": "sacrifice_1",
+          "count": 1,
+          "trait": "fur"
+        },
+        "second": {
+          "kind": "sacrifice",
+          "from": [
+            "stage_2"
+          ],
+          "next": "stage_3",
+          "reward": "sacrifice_2",
+          "count": 2,
+          "trait": "flying"
+        },
+        "third": {
+          "kind": "sacrifice",
+          "from": [
+            "stage_3"
+          ],
+          "next": "complete",
+          "reward": "sacrifice_3",
+          "count": 3,
+          "trait": "limbless_snake"
+        }
+      }
+    },
+    {
+      "id": "QST_GRASS_019",
+      "number": 19,
+      "title": "谁会赢？",
+      "entries": [
+        "clash"
+      ],
+      "trigger": "verified_arrival",
+      "operations": {
+        "wolf": {
+          "kind": "battle",
+          "next": "complete",
+          "battle": "help_wolf",
+          "reward": "strong_wolf"
+        },
+        "beast": {
+          "kind": "battle",
+          "next": "complete",
+          "battle": "help_beast",
+          "reward": "strong_beast"
+        },
+        "watch": {
+          "kind": "spectator",
+          "next": "complete",
+          "battle": "watch_wolf_beast",
+          "reward": "watch_magic"
+        }
+      }
+    },
+    {
+      "id": "QST_GRASS_020",
+      "number": 20,
+      "title": "谁会输？",
+      "entries": [
+        "knight"
+      ],
+      "trigger": "verified_arrival",
+      "operations": {
+        "one": {
+          "kind": "bet",
+          "next": "available",
+          "guard": "bet"
+        },
+        "two": {
+          "kind": "bet",
+          "next": "available",
+          "guard": "bet"
+        }
+      }
+    }
+  ],
+  "approval": "FirstPlayable20261019 approved by user 2026-10-19"
+}

@@ -17,6 +17,9 @@ var definition: SceneDefinition
 var delivery_request: Dictionary = {}
 var delivery_settings: DeliveryBattleSettings
 var delivery_adapter: RefCounted
+var story_request: Dictionary = {}
+var story_enemy_records: Array = []
+var story_left_records: Array = []
 var deployment: Node3D
 var deployment_polygon := PackedVector2Array([Vector2(-80,-60),Vector2(-2,-60),Vector2(-2,60),Vector2(-80,60)])
 var monster_config_definitions: Dictionary = {}
@@ -80,11 +83,16 @@ func _ready() -> void:
 func deploy(records: Array, id: String) -> bool:
 	battle_id = id
 	if records.is_empty(): return false
-	if not delivery_request.is_empty():
+	story_left_records=records.duplicate(true)
+	if not story_request.is_empty():
+		delivery_adapter=preload("res://Scripts/Events/StoryBattleAdapter.gd").new()
+		if not delivery_adapter.build_story(self,records,story_enemy_records): return false
+		enemy_definitions.assign(story_enemy_records.map(func(record):return str(record.definition_id)))
+	elif not delivery_request.is_empty():
 		delivery_adapter = preload("res://Scripts/Application/DeliveryBattleEnvironmentAdapter.gd").new()
 		if not delivery_adapter.build(self,records): return false
 	elif definition != null and not _prepare_editor_layout(): return false
-	var authored := definition!=null or not delivery_request.is_empty()
+	var authored := definition!=null or not delivery_request.is_empty() or not story_request.is_empty()
 	var navigation := NavigationRegion3D.new()
 	navigation.name = "NavigationRegion3D"
 	var navmesh := NavigationMesh.new()
@@ -114,7 +122,7 @@ func deploy(records: Array, id: String) -> bool:
 		if not _inside_level(actor): last_error = "生物碰撞体超出战场边界。"; return false
 		index += 1
 	for enemy_index: int in enemy_definitions.size():
-		var record := FACTORY.template(enemy_definitions[enemy_index])
+		var record: Dictionary = story_enemy_records[enemy_index].duplicate(true) if not story_request.is_empty() else FACTORY.template(enemy_definitions[enemy_index])
 		record.id = "enemy_"+str(enemy_index)
 		var position_data: Dictionary = _enemy_positions[enemy_index] if authored else {"position":Vector3(28,0.1,enemy_index*16),"facing":PI}
 		var enemy := FACTORY.spawn(record,self,position_data.position,1,position_data.facing)
@@ -217,7 +225,8 @@ func _physics_process(delta: float) -> void:
 		if anchor == null or anchor.global_position.y < defeat_below_y: continue
 		if actor.get_faction_id()==0: allies+=1
 		else: enemies+=1
-	if allies==0: finish("defeat")
+	if allies==0 and enemies==0 and not story_request.is_empty(): finish("draw")
+	elif allies==0: finish("defeat")
 	elif enemies==0: finish("victory")
 
 func finish(outcome: String) -> void:
@@ -231,7 +240,10 @@ func finish(outcome: String) -> void:
 			parts[str(part.get_meta(&"creature_part_key",str(part.name)))] = {"hp":part.current_hp,"max_hp":part.max_hp,"broken":part.is_broken}
 		damage[str(actor.get_meta(&"creature_instance_id"))] = parts
 	var result := {"battle_id":battle_id,"outcome":outcome,"reward":20 if outcome=="victory" else 0,"parts":damage,"duration":elapsed}
-	if delivery_adapter!=null:
+	if not story_request.is_empty():
+		result.reward=0
+		if story_request.get("mode")=="spectator" and outcome in ["victory","defeat"]: result["winner"]="one" if outcome=="victory" else "two"
+	if delivery_adapter!=null and story_request.is_empty():
 		result.battle_map_id = delivery_request.battle_map_id
 		result.post_battle_options = []
 		if outcome=="victory":
@@ -241,4 +253,33 @@ func finish(outcome: String) -> void:
 					var option: String = object.get(field,"")
 					if not option.is_empty() and option not in result.post_battle_options: result.post_battle_options.append(option)
 	finished.emit(result)
+
+func checkpoint() -> Dictionary:
+	var snapshot:={"elapsed":elapsed,"ready_for_combat":ready_for_combat,"actors":[]}
+	for actor: Node3D in actors:
+		var parts:={}
+		for part: Node in actor.find_children("*","PhysicalBodyPart3D",true,false):
+			parts[str(actor.get_path_to(part))]={"pose":FACTORY.pack_transform(part.transform),"hp":part.current_hp,"linear":[part.linear_velocity.x,part.linear_velocity.y,part.linear_velocity.z],"angular":[part.angular_velocity.x,part.angular_velocity.y,part.angular_velocity.z]}
+		var ability:=actor.get_node_or_null("StoryCreatureAbilities")
+		snapshot.actors.append({"pose":FACTORY.pack_transform(actor.transform),"parts":parts,"eye_timer":ability.eye_timer if ability!=null else 0.0,"bite_timer":ability.bite_timer if ability!=null else 0.0})
+	return snapshot
+
+func restore_checkpoint(value: Dictionary) -> bool:
+	if not value.get("actors") is Array or value.actors.size()!=actors.size(): last_error="战斗快照阵容不匹配。"; return false
+	elapsed=float(value.get("elapsed",0))
+	for index: int in actors.size():
+		var actor: Node3D=actors[index]
+		var saved: Dictionary=value.actors[index]
+		actor.transform=FACTORY.unpack_transform(saved.pose)
+		for path: String in saved.parts:
+			var part:=actor.get_node_or_null(NodePath(path)) as PhysicalBodyPart3D
+			if part==null: continue
+			var record: Dictionary=saved.parts[path]
+			part.transform=FACTORY.unpack_transform(record.pose)
+			part.current_hp=float(record.hp)
+			if part.current_hp<=0 and not part.is_broken: part.break_part()
+			part.linear_velocity=Vector3(record.linear[0],record.linear[1],record.linear[2]); part.angular_velocity=Vector3(record.angular[0],record.angular[1],record.angular[2])
+		var ability:=actor.get_node_or_null("StoryCreatureAbilities")
+		if ability!=null: ability.eye_timer=float(saved.get("eye_timer",0)); ability.bite_timer=float(saved.get("bite_timer",0))
+	return true
 

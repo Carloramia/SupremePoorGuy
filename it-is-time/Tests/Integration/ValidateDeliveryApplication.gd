@@ -15,6 +15,7 @@ func wait_phase(app: Node, wanted: String) -> bool:
 func run() -> void:
 	root.size = Vector2i(1280,720)
 	var app := preload("res://Scenes/Application/GameRoot.tscn").instantiate()
+	app.enable_hex_map = false
 	app.save_path = "res://Tests/.runtime/integration/delivery_"+str(Time.get_ticks_usec())+".json"
 	app.display_settings_path = "res://Tests/.runtime/integration/delivery_display.cfg"
 	app.integration_logging = true
@@ -163,7 +164,7 @@ func _check_summoned_species() -> void:
 		records.append(record)
 	check(await host.deploy(records,"summon_pool"),"All five summoned species deploy into a real battlefield")
 	check(host.start_combat(),"Explicitly finish deployment before testing combat")
-	check(host.actors.size()==6,"Five allies and configured enemy spawn")
+	check(host.actors.size()==factory.SUMMON_POOL.size()+1,"Every summoned species and configured enemy spawn")
 	host.ended = true
 	for actor: Node3D in host.actors:
 		check(not actor.generate_on_ready and not actor.get_node("NPCStateMachine3D")._available_attacks().is_empty(),"Saved creature has usable AI attack modules: "+str(actor.name))

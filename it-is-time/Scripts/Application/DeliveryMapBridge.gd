@@ -128,6 +128,7 @@ func _arrived(id: String, kind: String) -> void:
 	application.ui.location = id
 	var object := Catalog.location(id)
 	if object.is_empty(): _map_diagnostic("interaction_rejected",{"location_id":id,"reason":"地点不存在。"}); return
+	if runtime.interaction_error(object).is_empty() and application.route_story_arrival(str(runtime.data.map_id),id): return
 	if kind=="obstacle":
 		var before: Dictionary = runtime.snapshot()
 		if not runtime.destroy_obstacle(id):
@@ -171,6 +172,7 @@ func roster_error(id: String, kind: String) -> String:
 	return application.delivery_battle_settings.availability_error(str(config.get("enemy_config_id",object.get("enemy_config_id",""))))
 
 func open_location(object: Dictionary) -> void:
+	if runtime.interaction_error(object).is_empty() and application.route_story_arrival(str(runtime.data.map_id),str(object.id)): return
 	if runtime.interaction_error(object).is_empty() and not application.session.record_task_arrival(str(runtime.data.map_id),str(object.id)):
 		application.ui._notice(application.session.last_error)
 	_map_diagnostic("location_panel_opened",{"location_id":object.id,"roster_error":roster_error(object.id,"clear"),"can_enter_battle":not application.session.monsters("team").is_empty() and roster_error(object.id,"clear").is_empty()})

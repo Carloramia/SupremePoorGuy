@@ -108,7 +108,9 @@ func _show(next: String) -> void:
 func _update_header() -> void:
 	if header == null: return
 	var place: String = application.location_name() if application != null else "边境"
-	header.text = "%s　|　第 %d 天　|　魔力 %d" % [place,int(state.data.day),state.data.magic]
+	var clock: Dictionary=state.data.get("story_events",{}).get("clock",{})
+	var day: float=clock.day if clock.get("ready",false) else state.data.day
+	header.text = "%s　|　第 %d 天　|　魔力 %d" % [place,int(day),state.data.magic]
 	header.tooltip_text = "正式会话；地图、仓库与召唤共用同一个存档槽。"
 
 func _update_motion_status() -> void:
@@ -157,7 +159,8 @@ func _build_ritual(body: VBoxContainer) -> void:
 	super._build_ritual(body)
 	var species := PackedStringArray()
 	for id: String in state.FACTORY.SUMMON_POOL: species.append(state.FACTORY.DEFINITIONS[id].name)
-	ritual_page.get_node("%Context").text = "[b]当前位置[/b]\n%s\n\n[b]可召唤物种（等概率）[/b]\n%s\n\n[b]能力边界[/b]\n普通结构与数值符文已接入；天气权重与特殊结构尚未开放。" % [application.location_name()," / ".join(species)]
+	var rain: bool=preload("res://Scripts/Events/HexMapProgress.gd").rain_active(state.data)
+	ritual_page.get_node("%Context").text = "[b]当前位置[/b]\n%s\n\n[b]可召唤物种（等概率）[/b]\n%s\n\n[b]区域效果[/b]\n%s" % [application.location_name()," / ".join(species),"血雨：本次新召唤生命与部位耐久 +10%。" if rain else "当前无血雨加成。"]
 	ritual_page.get_node("%Upgrade").text = "胜利后解锁下一圈"
 	ritual_page.get_node("%Upgrade").tooltip_text = "累计胜利达到当前阶数后开放。"
 	ritual_page.get_node("%Examples").tooltip_text = "示例只填入法阵，不赠送魔力；未接入能力会阻止召唤。"
@@ -219,6 +222,14 @@ func _term(title: String, content: String) -> void:
 
 func _task_action(action: String) -> void:
 	if not _tasks_available() or modal_stack.is_empty() or modal_stack.back().get("kind")!="tasks": return
+	if action.begins_with("story:") and is_instance_valid(application.hex_map):
+		var id:=action.trim_prefix("story:")
+		_close_all()
+		var request: Dictionary=state.pending_story_request(id)
+		if not request.is_empty(): application.story_controller.execute(request); return
+		var site: String=preload("res://Scripts/Events/StoryObjectives.gd").new().target(state.data,id)
+		if not site.is_empty(): application.hex_map.request_location(site)
+		return
 	var target: String = state.new_player_task_action(action)
 	if target.is_empty(): return
 	_close_all()
@@ -356,7 +367,7 @@ func _tasks() -> void:
 		var page := TasksPanel.instantiate()
 		body.add_child(page)
 		_task_page = page
-		page.present_tasks(state.new_player_task_rows())
+		page.present_tasks(_journey_rows())
 		page.action_requested.connect(_task_action),"tasks")
 
 func _tasks_available() -> bool:
@@ -364,9 +375,14 @@ func _tasks_available() -> bool:
 
 func refresh_task_list() -> void:
 	if is_instance_valid(_task_page) and not modal_stack.is_empty() and modal_stack.back().get("kind")=="tasks":
-		_task_page.present_tasks(state.new_player_task_rows())
+		_task_page.present_tasks(_journey_rows())
 
 func queue_task_completion(task_ids: Array) -> void:
 	for task: Dictionary in state.task_definitions:
 		if task.id in task_ids and task.title not in _task_notifications: _task_notifications.append(task.title)
 
+
+func _journey_rows() -> Array:
+	var rows: Array=state.new_player_task_rows()
+	if application!=null and is_instance_valid(application.hex_map): rows.append_array(preload("res://Scripts/Events/StoryObjectives.gd").new().rows(state.data))
+	return rows

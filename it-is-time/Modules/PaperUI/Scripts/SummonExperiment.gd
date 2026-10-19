@@ -152,6 +152,18 @@ static func _monster(rules, p: Dictionary, mutated: Array, serial: int, index: i
 		var d := Rules.definition(id)
 		var n: int = p.counts[id]
 		var amplification := MUTATION_AMPLIFIER if id in mutated else 1.0
+		var adjacent := 0
+		for relic: Dictionary in rules.relics:
+			if relic.relicId!="prism-heart": continue
+			for rune: Dictionary in rules.placed:
+				if not rune.enabled or rune.runeId!=id: continue
+				var touches := false
+				for cell: Array in rune.cells:
+					for anchor: Array in relic.cells:
+						var delta := Vector2i(int(cell[0])-int(anchor[0]),int(cell[1])-int(anchor[1]))
+						if delta in [Vector2i(1,0),Vector2i(0,1),Vector2i(-1,1),Vector2i(-1,0),Vector2i(0,-1),Vector2i(1,-1)]: touches=true
+				if touches: adjacent+=1
+		amplification *= 1.0+0.12*float(adjacent)/maxi(1,n)
 		traits.append(d.name)
 		match id:
 			"armor": armor_bonus += 0.40*n*amplification
@@ -188,6 +200,8 @@ static func _monster(rules, p: Dictionary, mutated: Array, serial: int, index: i
 			hp *= 0.20*f; attack *= 0.30*f; armor *= 0.20*f
 			visual_scale = 0.25 if "tiny" in mutated else 0.35
 	for relic in rules.relics:
+		if relic.relicId=="giant-tusk": attack*=1.15
+		elif relic.relicId=="crystal-carapace": armor*=1.20
 		if relic.relicId == "bone-die":
 			match rng.randi_range(0,2):
 				0: hp *= 1.1
@@ -201,6 +215,11 @@ static func _monster(rules, p: Dictionary, mutated: Array, serial: int, index: i
 	if not mutated.is_empty():
 		name_text = "畸变·"+name_text
 	var final_hp := maxi(1,int(round(hp)))
+	var tusk: float=1.15 if rules.relics.any(func(relic):return relic.relicId=="giant-tusk") else 1.0
+	var carapace: float=1.20 if rules.relics.any(func(relic):return relic.relicId=="crystal-carapace") else 1.0
+	# Apply event multipliers after the established integer stat rounding when
+	# materializing physics, so a promised +15% remains exactly +15% in combat.
+	var physical_ratios:={"attack":maxi(1,int(round(attack/tusk)))*tusk/maxf(1,basic.attack),"armor":maxi(0,int(round(armor/carapace)))*carapace/maxf(1,basic.armor)}
 	var part_hp := {"头部":maxi(1,int(round(hp*0.75))),"核心":final_hp,"肢体":maxi(1,int(round(hp*0.30)))}
 	return {"id":"summon_%d_%d" % [serial,index],"batch_id":"batch_%d" % serial,
 		"name":name_text,"form":form,"tier":p.tier,"hp":final_hp,"attack":maxi(1,int(round(attack))),
@@ -208,7 +227,7 @@ static func _monster(rules, p: Dictionary, mutated: Array, serial: int, index: i
 		"abilities":abilities,"effects":bonuses,"mode":p.mode,"mutation_sources":mutated,
 		"slots":p.slots_each,"recoverable":p.mode != "tiny","clone_count":(2 if "multiply" in mutated else 1) if p.mode=="multiply" else 0,
 		"clone_ratio":0.50,"visual_scale":visual_scale,"position":"pending",
-		"color":["839b78","8caaa3","bb9272"][index%3],"base_stats":basic,"part_hp":part_hp,
+		"color":["839b78","8caaa3","bb9272"][index%3],"base_stats":basic,"part_hp":part_hp,"physical_stat_ratios":physical_ratios,
 		"source_location":location,"source_layout":rules.export_layout(),"source_cost":p.cost,
 		"created_at":Time.get_datetime_string_from_system(),"recipe_id":RECIPE.id if p.mode=="special" else ""}
 

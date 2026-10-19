@@ -1,5 +1,12 @@
 extends Node
 
+signal story_event_due(event_ids: Array)
+signal story_event_entry_ready(event_id: String, entrance: String)
+## Level designer supplies map_id:location_id -> {event_id, entrance}.
+@export var story_event_bindings: Dictionary = {}
+var _announced_story_events: Array = []
+var _story_was_safe := false
+
 const SESSION = preload("res://Scripts/Application/GameSession.gd")
 const UI = preload("res://Scripts/Application/GameUIController.gd")
 const VIEW = preload("res://Scripts/Application/GameWorldView.gd")
@@ -9,6 +16,12 @@ const MAP_CATALOG = preload("res://Modules/FrontierDelivery/Scripts/Map/MapCatal
 @export var save_path := "user://saves/slot_01.json"
 @export var display_settings_path := "user://settings/display.cfg"
 @export var use_delivery_map := true
+@export var enable_hex_map := true
+var prefer_hex_map := true
+var hex_map: Control
+var story_controller: Node
+var story_content=preload("res://Scripts/Events/StoryEventContent.gd").new()
+var _story_battle_active:=false
 @export var delivery_battle_settings: DeliveryBattleSettings = preload("res://Resources/Application/FrontierDeliveryBattle.tres")
 @export var world_scene: PackedScene = preload("res://Modules/Frontier/world_map/demo/WorldMapDemo.tscn")
 @export var integration_logging := false
@@ -57,6 +70,7 @@ func _ready() -> void:
 	session.save_path = save_path
 	session.integration_logging = integration_logging
 	if session.has_save() and not session.load_save(): _load_failed = true; push_warning(session.last_error)
+	prefer_hex_map=enable_hex_map and (not session.has_save() or session.data.has("hex_map"))
 	if not session.data.battle.is_empty() and session.data.battle.get("map_id","")!="frontier_layout": use_delivery_map = false
 	var layer := CanvasLayer.new()
 	layer.name = "GameUI"
@@ -108,6 +122,40 @@ func is_battle_manually_paused() -> bool:
 func _process(_delta: float) -> void:
 	if returning_to_main_menu and phase not in ["loading_world","loading_battle","returning"]:
 		return_to_main_menu()
+	var safe := story_presentation_safe()
+	if safe and not _story_was_safe:
+		if not session.story_world_entered(): ui._notice(session.last_error)
+	_story_was_safe = safe
+	var ready := session.ready_story_events(safe)
+	_announced_story_events = _announced_story_events.filter(func(id): return id in ready)
+	if story_event_due.get_connections().is_empty(): return
+	var fresh := ready.filter(func(id): return id not in _announced_story_events)
+	if not fresh.is_empty():
+		_announced_story_events.append_array(fresh)
+		story_event_due.emit(fresh)
+
+func story_presentation_safe() -> bool:
+	var console := get_tree().root.get_node_or_null("RuntimeConsole")
+	return phase=="world" and not returning_to_main_menu and is_instance_valid(ui) and ui.route=="world" and not ui.overlay.visible and ui.modal_stack.is_empty() and session.data.battle.is_empty() and session.data.pending.is_empty() and (console==null or not console.is_console_open())
+
+func open_story_event(event_id: String, entrance: String) -> Dictionary:
+	return session.open_story_event(event_id,entrance,story_presentation_safe())
+
+func route_story_arrival(map_id: String, location_id: String) -> bool:
+	if phase!="world": return false
+	var binding: Variant = story_event_bindings.get(map_id+":"+location_id)
+	if binding==null: return false
+	if not binding is Dictionary or not binding.get("event_id") is String or not binding.get("entrance") is String:
+		ui._notice("事件入口绑定格式无效。")
+		return true
+	if not session.record_story_arrival(binding.event_id,binding.entrance,map_id,location_id):
+		ui._notice(session.last_error)
+		return true
+	if session.story_event_view(binding.event_id).get("completed",false): return true
+	if story_event_entry_ready.get_connections().is_empty():
+		ui._notice("事件入口已登记，剧情表现层尚未接入。")
+	else: story_event_entry_ready.emit(binding.event_id,binding.entrance)
+	return true
 
 func return_to_main_menu() -> bool:
 	# Let awaited loading/baking/tweens finish before freeing their nodes.
@@ -117,7 +165,7 @@ func return_to_main_menu() -> bool:
 		return false
 	returning_to_main_menu = false
 	_open_tasks_on_world_entry = false
-	if phase == "settlement" and session.data.battle.get("phase") != "settlement":
+	if phase == "settlement" and not _story_battle_active and session.data.battle.get("phase") != "settlement":
 		_finalize_battle()
 		if session.data.battle.get("phase") != "settlement": return false
 	if _delivery_cancel_save_pending:
@@ -127,13 +175,16 @@ func return_to_main_menu() -> bool:
 	trace_map_event("return_to_main_menu")
 	phase = "main"
 	_cleanup_battle()
-	for node: Node in [scenario,world_map,delivery_map]:
+	for node: Node in [scenario,world_map,delivery_map,hex_map]:
 		if is_instance_valid(node):
 			node.get_parent().remove_child(node)
 			node.queue_free()
 	scenario = null
 	world_map = null
 	delivery_map = null
+	hex_map=null
+	_story_battle_active=false
+	if is_instance_valid(story_controller): story_controller.queue_free(); story_controller=null
 	map_container.hide()
 	map_viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
 	map_container.position = Vector2.ZERO
@@ -222,6 +273,7 @@ func _session_changed() -> void:
 	if is_instance_valid(delivery_map): delivery_map.sync_party()
 
 func location_name() -> String:
+	if is_instance_valid(hex_map): return hex_map.location_name()
 	if is_instance_valid(delivery_map): return delivery_map.location_name()
 	if is_instance_valid(world_map) and world_map.interaction != null and world_map.interaction.active_location != null:
 		return world_map.interaction.active_location.definition.display_name
@@ -279,15 +331,18 @@ func ui_route_changed(next: String) -> void:
 		session.trace("route",{"route":next,"phase":phase})
 	if next == "world" and phase == "main": enter_world.call_deferred()
 	if is_instance_valid(map_container):
-		map_container.visible = not use_delivery_map and next == "world" and phase in ["world","loading_world","main"]
+		map_container.visible = (not use_delivery_map or is_instance_valid(hex_map)) and next == "world" and phase in ["world","loading_world","main"]
+		if is_instance_valid(hex_map): map_viewport.render_target_update_mode=SubViewport.UPDATE_ALWAYS if map_container.visible else SubViewport.UPDATE_DISABLED
 		battle_container.visible = next == "battle" and phase in ["deployment","battle","loading_battle","scenario"]
 	if is_instance_valid(delivery_map): delivery_map.visible = next=="world" and phase in ["world","loading_world","main","returning"]
+	if is_instance_valid(hex_map): hex_map.visible=next=="world" and phase in ["world","loading_world","main","returning"]
 	refresh_input_gate()
 
 func start_new_game() -> void:
 	if phase != "main": return
 	var previous := session.data.duplicate(true)
 	session.reset()
+	prefer_hex_map=enable_hex_map
 	if not session.save(): session.data = previous; ui._notice(session.last_error); return
 	_open_tasks_on_world_entry = true
 	ui._task_notifications.clear()
@@ -296,6 +351,7 @@ func start_new_game() -> void:
 	ui._show("world")
 
 func _enable_world_tasks() -> void:
+	if not session.story_world_entered(): ui._notice(session.last_error)
 	if not session.enable_new_player_tasks():
 		ui._notice(session.last_error)
 		return
@@ -305,6 +361,9 @@ func _enable_world_tasks() -> void:
 
 func enter_world() -> void:
 	if phase != "main": return
+	if use_delivery_map and prefer_hex_map:
+		_enter_hex_world()
+		return
 	if use_delivery_map:
 		_enter_delivery_world()
 		return
@@ -436,6 +495,7 @@ func _interaction_started(id: StringName) -> void:
 	var location: WorldMapLocation = world_map.get_location(id)
 	if not session.record_task_arrival(str(world_map.definition.map_id),str(id)): ui._notice(session.last_error)
 	world_map.interaction.panel.hide()
+	if route_story_arrival(str(world_map.definition.map_id),str(id)): return
 	ui.location = str(id)
 	ui._modal(location.definition.display_name,func(body):
 		var page: Control = ui._text_screen(body,location.definition.short_description)
@@ -541,6 +601,10 @@ func start_battle() -> void:
 
 func _battle_finished(result: Dictionary) -> void:
 	if phase not in ["deployment","battle"]: return
+	if _story_battle_active:
+		_pause_reasons.erase(&"manual")
+		story_controller.battle_finished(result)
+		return
 	_pending_result = result.duplicate(true)
 	_finalize_battle()
 
@@ -713,6 +777,9 @@ func refresh_input_gate() -> void:
 	if is_instance_valid(delivery_map):
 		var console := get_tree().root.get_node_or_null("RuntimeConsole")
 		delivery_map.set_enabled(phase=="world" and not paper_blocked and (console==null or not console.is_console_open()))
+	if is_instance_valid(hex_map):
+		var console := get_tree().root.get_node_or_null("RuntimeConsole")
+		hex_map.set_enabled(phase=="world" and not paper_blocked and (console==null or not console.is_console_open()))
 	if scenario != null: scenario.set_camera_input_enabled(not paper_blocked)
 	ui.update_battle_controls(phase=="battle",is_battle_manually_paused(),free_mouse_enabled)
 	var deploying := phase == "deployment" and is_instance_valid(battle) and is_instance_valid(battle.deployment)
@@ -729,8 +796,75 @@ func _apply_pause() -> void:
 		_owned_pause = false
 
 func save_session() -> bool:
+	if _story_battle_active and is_instance_valid(story_controller) and not story_controller.uncommitted_result.is_empty():
+		story_controller.battle_finished(story_controller.uncommitted_result.duplicate(true))
+		if not story_controller.uncommitted_result.is_empty(): return false
+	if _story_battle_active and is_instance_valid(battle) and not battle.ended:
+		if not session.save_story_checkpoint(story_controller.active_request,battle.checkpoint()): return false
+	if is_instance_valid(hex_map): return hex_map.save_progress()
 	if is_instance_valid(delivery_map): return delivery_map.save_progress()
 	return world_map.save_world_map() if world_map != null and world_map.is_initialized else session.save()
+
+func _enter_hex_world() -> void:
+	phase="loading_world"
+	if not is_instance_valid(story_controller):
+		story_controller=preload("res://Scripts/Events/StoryEventController.gd").new()
+		add_child(story_controller); story_controller.setup(self)
+	hex_map=preload("res://Scripts/Application/HexMapBridge.gd").new()
+	hex_map.application=self
+	hex_map.name="HexFrontierMap"
+	# Map-local fog/scenery use high z indices. Render them into an isolated
+	# texture so they cannot escape above paper dialogs or the application HUD.
+	map_viewport.add_child(hex_map)
+	hex_map.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	hex_map.site_arrived.connect(story_controller.arrived)
+	phase="world"; ui._show("world")
+	if not hex_map.save_progress(): return
+	_enable_world_tasks()
+	if not session.data.pending.is_empty(): ui._resume_pending()
+	elif ui.modal_stack.is_empty(): story_controller.resume_pending()
+	refresh_input_gate()
+
+func start_story_battle(request: Dictionary, config: Dictionary, left: Array, right: Array) -> void:
+	if phase!="world" or is_instance_valid(battle): return
+	_story_battle_active=true
+	phase="loading_battle"; ui._close_all()
+	if is_instance_valid(hex_map): hex_map.route.clear(); hex_map.hide(); hex_map.set_enabled(false)
+	battle=BATTLE.new(); battle.name="StoryBattle"
+	battle.application=self; battle.story_request=config.duplicate(true); battle.story_enemy_records=right.duplicate(true)
+	battle.finished.connect(_battle_finished)
+	battle_viewport.add_child(battle)
+	ui._show("battle"); battle_container.show(); battle_viewport.render_target_update_mode=SubViewport.UPDATE_ALWAYS
+	if not await battle.deploy(left,str(request.battle_id)):
+		var message: String=battle.last_error
+		_cleanup_battle()
+		phase="world"
+		story_controller.battle_finished({"battle_id":request.battle_id,"outcome":"load_failed","reward":0,"parts":{},"duration":0})
+		ui._notice(message)
+		return
+	_begin_deployment()
+	if config.mode=="spectator" or request.plan.get("checkpoint",{}).get("ready_for_combat",false):
+		start_battle()
+	if request.plan.has("checkpoint"):
+		if not battle.restore_checkpoint(request.plan.checkpoint): ui._notice(battle.last_error)
+
+func finish_story_battle() -> void:
+	ui.close_button.disabled=false
+	ui._close_all(); _cleanup_battle()
+	_story_battle_active=false; phase="world"
+	if is_instance_valid(hex_map): hex_map.show()
+	_pause_reasons.erase(&"manual"); _pause_reasons.erase(&"paper"); _apply_pause()
+	ui._show("world"); refresh_input_gate()
+
+func complete_opening_handoff() -> bool:
+	# Called only by the independent 2.5D opening after its handoff dialogue.
+	if not is_instance_valid(story_controller):
+		story_controller=preload("res://Scripts/Events/StoryEventController.gd").new(); add_child(story_controller); story_controller.setup(self)
+	if session.story_event_view("QST_MAIN_001_001").get("completed",false): return true
+	var opened: Dictionary=session.open_story_event("QST_MAIN_001_001","opening",true)
+	if not opened.ok: return false
+	var chosen: Dictionary=session.story_event_action("QST_MAIN_001_001","read",opened.event.conversation)
+	return chosen.ok and session.commit_story_receipt(story_controller._receipt(chosen.request),story_controller.resources.apply)
 
 func _window_close_requested() -> void:
 	if save_session(): get_tree().quit()

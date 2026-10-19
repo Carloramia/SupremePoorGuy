@@ -3,6 +3,10 @@ extends "res://Modules/PaperUI/Scripts/PrototypeState.gd"
 
 signal changed
 signal new_player_tasks_completed(task_ids: Array)
+signal story_events_changed
+const STORY_EVENTS = preload("res://Scripts/Events/StoryEventService.gd")
+const STORY_RESOURCES = preload("res://Scripts/Events/StoryEventResources.gd")
+const HEX_PROGRESS = preload("res://Scripts/Events/HexMapProgress.gd")
 const NEW_PLAYER_TASKS = preload("res://Scripts/Application/NewPlayerTasks.gd")
 const FACTORY = preload("res://Scripts/Application/CreatureFactory.gd")
 const SUPPORTED_RUNES := ["health","armor","attack","iron","bloodblade","vitality","fang","haste"]
@@ -13,12 +17,18 @@ var pending_result: Dictionary = {}
 var _recovered_backup := false
 var _needs_schema_backup := false
 var task_definitions: Array = NEW_PLAYER_TASKS.DEFINITIONS.duplicate(true)
+var story_events := STORY_EVENTS.new()
+var _story_business_active := false
 
 func reset() -> void:
 	super.reset()
 	data.merge({"schema_version":2,"worlds":{},"battle":{},"battle_results":{},"transactions":[],"day":1},true)
+	data["known_relics"]=["tide-pump","prism-heart","bone-die"]
 
 func save() -> bool:
+	if _story_business_active:
+		last_error = "事件资源适配器不得嵌套保存。"
+		return false
 	# Apply task completion and rewards inside the same transaction as business data.
 	if not _valid_save(data):
 		last_error = "状态校验失败，未覆盖存档。"
@@ -29,10 +39,12 @@ func save() -> bool:
 		data = before
 		last_error = tasks.error
 		return false
+	story_events.reconcile(data)
 	if not _save_session_file():
 		data = before
 		return false
 	if not tasks.completed.is_empty(): new_player_tasks_completed.emit(tasks.completed)
+	story_events_changed.emit()
 	return true
 
 func _save_session_file() -> bool:
@@ -62,6 +74,7 @@ func _save_session_file() -> bool:
 
 func load_save() -> bool:
 	var success := super.load_save()
+	if success and not data.has("known_relics"): data["known_relics"]=["tide-pump","prism-heart","bone-die"]
 	_recovered_backup = success and last_error=="已从备份恢复"
 	if success and int(data.schema_version)==1:
 		data.schema_version = 2
@@ -72,6 +85,9 @@ func load_save() -> bool:
 func _valid_save(value: Variant) -> bool:
 	if not super._valid_save(value) or int(value.get("schema_version",0)) not in [1,2]: return false
 	if not NEW_PLAYER_TASKS.valid_progress(value): return false
+	if not STORY_EVENTS.valid_progress(value): return false
+	if not STORY_RESOURCES.valid_inventory(value): return false
+	if value.has("hex_map") and not HEX_PROGRESS.valid(value.hex_map): return false
 	for key: String in ["worlds","battle","battle_results"]:
 		if not value.get(key) is Dictionary: return false
 	if not value.get("transactions") is Array: return false
@@ -153,7 +169,8 @@ func supported_layout(rules) -> String:
 	for item: Dictionary in rules.placed:
 		if item.enabled and item.runeId not in SUPPORTED_RUNES: return "符文“%s”的真实战斗效果尚未接入，不会扣费。" % Rules.definition(item.runeId).name
 	for relic: Dictionary in rules.relics:
-		if relic.relicId!="bone-die": return "该奇物的实际效果尚未接入，不会扣费。"
+		if relic.relicId not in ["bone-die","prism-heart","giant-tusk","crystal-carapace","crystal-eye"]: return "该奇物的实际效果尚未接入，不会扣费。"
+		if relic.relicId not in known_references(true): return "该奇物尚未解锁。"
 	return ""
 
 func summon(rules, at: String, back: String, test_rng: RandomNumberGenerator = null) -> bool:
@@ -181,11 +198,14 @@ func summon(rules, at: String, back: String, test_rng: RandomNumberGenerator = n
 		var real := FACTORY.template(id)
 		if real.is_empty(): last_error = "物种模板无法加载。"; return false
 		var hp_ratio := float(unit.hp)/maxf(float(unit.base_stats.hp),1.0)
-		var armor_ratio := float(unit.armor)/maxf(float(unit.base_stats.armor),1.0)
-		var attack_ratio := float(unit.attack)/maxf(float(unit.base_stats.attack),1.0)
+		if HEX_PROGRESS.rain_active(data): hp_ratio*=1.1; unit.traits.append("血雨祝福")
+		var armor_ratio: float=unit.get("physical_stat_ratios",{}).get("armor",float(unit.armor)/maxf(float(unit.base_stats.armor),1.0))
+		var attack_ratio: float=unit.get("physical_stat_ratios",{}).get("attack",float(unit.attack)/maxf(float(unit.base_stats.attack),1.0))
 		var interval_ratio := float(unit.interval)/1.5
 		var speed_ratio := float(unit.speed)/3.0
 		unit.merge(real,true)
+		if rules.relics.any(func(relic):return relic.relicId=="crystal-eye") and rng.randf()<0.1:
+			unit.magic_eye=true; unit.traits.append("魔眼")
 		unit.hp = 0.0
 		for part: Dictionary in unit.parts.values():
 			part.hp *= hp_ratio
@@ -225,6 +245,24 @@ func save_world(snapshot: Dictionary) -> bool:
 	data = before
 	return false
 
+func save_hex_world(snapshot: Dictionary) -> bool:
+	if not HEX_PROGRESS.valid(snapshot): last_error="新地图快照无效，未覆盖进度。"; return false
+	var before:=data.duplicate(true)
+	var previous: Dictionary=data.get("hex_map",{})
+	var distance:=maxf(0.0,float(snapshot.travel_distance)-float(previous.get("travel_distance",snapshot.travel_distance)))
+	var day: float=STORY_EVENTS.ensure(data).clock.day if STORY_EVENTS.ensure(data).clock.ready else 1.0
+	day+=distance/2400.0
+	data["hex_map"]=snapshot.duplicate(true)
+	for key: String in ["discovered","visited","cleared","destroyed"]:
+		for id: String in previous.get(key,[]):
+			if id not in data.hex_map[key]: data.hex_map[key].append(id)
+	data.hex_map.game_day=day
+	var error:=story_events.set_game_day(data,day)
+	if not error.is_empty(): data=before; last_error=error; return false
+	if save(): return true
+	data=before
+	return false
+
 func unlock_next_stage(current_layout: Dictionary = {}) -> bool:
 	var victories := 0
 	for result: Dictionary in data.battle_results.values():
@@ -235,6 +273,9 @@ func unlock_next_stage(current_layout: Dictionary = {}) -> bool:
 	return super.unlock_next_stage(current_layout)
 
 func recycle_monster(id: String) -> bool:
+	for event: Dictionary in data.get("story_events",{}).get("entries",{}).values():
+		for record: Dictionary in event.get("pending",{}).get("plan",{}).get("frozen_rosters",{}).get("left",[]):
+			if record.id==id: last_error="事件战斗尚未结算，该怪物不能回收。"; return false
 	if id in data.battle.get("party_ids",[]):
 		last_error = "已部署的生物在战斗结束前不能回收。"
 		return false
@@ -286,4 +327,107 @@ func delivery_snapshot() -> Dictionary:
 
 func trace(event: String, detail: Dictionary = {}) -> void:
 	if integration_logging: print("[integration] event=",event," data=",detail)
+
+func _save_story_change(before: Dictionary, result: Dictionary) -> Dictionary:
+	if not result.get("ok",false):
+		data = before
+		last_error = result.get("error","事件操作失败。")
+		return result
+	if data==before: return result
+	if save():
+		return result
+	data = before
+	return {"ok":false,"error":last_error}
+
+func story_world_entered() -> bool:
+	var before := data.duplicate(true)
+	story_events.reconcile(data,true)
+	return _save_story_change(before,{"ok":true}).ok
+
+func set_story_game_day(day: float) -> bool:
+	var before := data.duplicate(true)
+	var error := story_events.set_game_day(data,day)
+	return _save_story_change(before,{"ok":error.is_empty(),"error":error}).ok
+
+func open_story_event(id: String, entrance: String, safe: bool) -> Dictionary:
+	var before := data.duplicate(true)
+	return _save_story_change(before,story_events.open(data,id,entrance,safe))
+
+func story_event_action(id: String, branch: String, conversation: String, payload: Dictionary = {}) -> Dictionary:
+	var before := data.duplicate(true)
+	return _save_story_change(before,story_events.act(data,id,branch,conversation,payload))
+
+func commit_story_receipt(receipt: Dictionary, apply_business: Callable = Callable()) -> bool:
+	# Trusted host interface. UI must never fabricate receipts. Business callback
+	# mutates only this save dictionary and returns an error string; no nested save.
+	var before := data.duplicate(true)
+	var error := story_events.check_receipt(data,receipt)
+	if not error.is_empty(): data = before; last_error = error; return false
+	if STORY_EVENTS.ensure(data).receipts.has(receipt.request_id): return true
+	var request := story_events.pending_request(data,receipt.event_id)
+	error = story_events.revalidate_operation(data,request)
+	if not error.is_empty(): data = before; last_error = error; return false
+	if request.kind in ["transaction","purchase","sacrifice","bet"]:
+		if not apply_business.is_valid(): data = before; last_error = "缺少正式资源事务适配器，未推进事件。"; return false
+		_story_business_active = true
+		var result: Variant = apply_business.call(data,request.duplicate(true))
+		_story_business_active = false
+		if not result is String or not result.is_empty():
+			data = before
+			last_error = result if result is String else "资源事务必须返回错误字符串。"
+			return false
+	error = story_events.commit_receipt(data,receipt)
+	return _save_story_change(before,{"ok":error.is_empty(),"error":error}).ok
+
+func story_event_view(id: String) -> Dictionary:
+	return story_events.view(data,id)
+
+func record_story_arrival(id: String, entrance: String, map_id: String = "", location_id: String = "") -> bool:
+	if not story_events.definitions.has(id) or entrance not in story_events.definitions[id].entries:
+		last_error = "地编绑定的事件ID或入口键不存在。"
+		return false
+	var before := data.duplicate(true)
+	var e := story_events.entry(data,id)
+	if entrance not in e.seen: e.seen.append(entrance)
+	if not location_id.is_empty(): e["source_site_id"]=location_id
+	NEW_PLAYER_TASKS.record_location(data,map_id,location_id)
+	return _save_story_change(before,{"ok":true}).ok
+
+func pending_story_request(id: String) -> Dictionary:
+	return story_events.pending_request(data,id)
+
+func commit_story_battle(receipt: Dictionary, result: Dictionary, site_id: String) -> bool:
+	var before:=data.duplicate(true)
+	var error:=story_events.check_receipt(data,receipt)
+	if not error.is_empty(): data=before; last_error=error; return false
+	if STORY_EVENTS.ensure(data).receipts.has(receipt.request_id): return true
+	var request:=pending_story_request(receipt.event_id)
+	error=story_events.commit_receipt(data,receipt)
+	if not error.is_empty(): data=before; last_error=error; return false
+	if request.kind=="battle" and _valid_result(result):
+		data.battle_results[str(result.battle_id)]=result.duplicate(true)
+		data.battle_results[str(result.battle_id)]["site_id"]=site_id
+		data.battle_results[str(result.battle_id)]["map_id"]="hex_frontier_20261019"
+	if request.kind=="battle" and result.outcome=="victory" and data.has("hex_map") and not site_id.is_empty() and site_id not in data.hex_map.cleared: data.hex_map.cleared.append(site_id)
+	return _save_story_change(before,{"ok":true}).ok
+
+func save_story_checkpoint(request: Dictionary, checkpoint: Dictionary) -> bool:
+	var current:=pending_story_request(request.event_id)
+	if current.get("request_id")!=request.get("request_id"): last_error="战斗快照与待处理请求不匹配。"; return false
+	var before:=data.duplicate(true)
+	story_events.entry(data,request.event_id).pending.plan["checkpoint"]=checkpoint.duplicate(true)
+	return _save_story_change(before,{"ok":true}).ok
+
+func freeze_story_rosters(request: Dictionary, left: Array, right: Array) -> bool:
+	var current:=pending_story_request(request.event_id)
+	if current.get("request_id")!=request.get("request_id"): last_error="战斗请求失效。"; return false
+	if current.plan.has("frozen_rosters"): return true
+	for record: Dictionary in left+right:
+		if not FACTORY.valid_record(record): last_error="事件阵容包含无效怪物。"; return false
+	var before:=data.duplicate(true)
+	story_events.entry(data,request.event_id).pending.plan["frozen_rosters"]={"left":left.duplicate(true),"right":right.duplicate(true)}
+	return _save_story_change(before,{"ok":true}).ok
+
+func ready_story_events(safe: bool) -> Array:
+	return story_events.ready_events(data,safe)
 

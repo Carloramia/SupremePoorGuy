@@ -1,0 +1,2926 @@
+{
+  "version": 1,
+  "layout_sha256": "76f93dcb088ac95cf3aab1f4c0c76f7df0a20fdff5c7c61c60ccc7a388786ca5",
+  "coordinate_scale": 5,
+  "bindings": [
+    {
+      "event_id": "QST_MAIN_001_001",
+      "source_kind": "site",
+      "source_id": "layout_summoning_hut",
+      "source_name": "召唤小屋",
+      "position": [
+        3321.25,
+        11473.07861519914
+      ],
+      "radius": 42,
+      "entry_role": "opening",
+      "event_trigger": {
+        "mode": "on_game_start",
+        "enabled": true,
+        "once": true,
+        "stage_id": "opening",
+        "publish_status": "pending_binding",
+        "inherit_click_area": true,
+        "source_icon_id": "layout_summoning_hut"
+      },
+      "entrance": "opening",
+      "auxiliary": false
+    },
+    {
+      "event_id": "AUX_GRASS_FOSTER",
+      "source_kind": "site",
+      "source_id": "layout_foster_town",
+      "source_name": "福斯特镇",
+      "position": [
+        8102.5,
+        9816.8050304614
+      ],
+      "radius": 42,
+      "entry_role": "",
+      "event_trigger": {
+        "mode": "interact",
+        "enabled": true,
+        "once": false,
+        "stage_id": "",
+        "publish_status": "pending_binding",
+        "source_icon_id": "layout_foster_town",
+        "inherit_click_area": true
+      },
+      "entrance": "",
+      "auxiliary": true
+    },
+    {
+      "event_id": "QST_SIDE_001_001",
+      "source_kind": "site",
+      "source_id": "layout_foster_town",
+      "source_name": "福斯特镇",
+      "position": [
+        8102.5,
+        9816.8050304614
+      ],
+      "radius": 42,
+      "entry_role": "library",
+      "event_trigger": {
+        "mode": "interact",
+        "enabled": true,
+        "once": true,
+        "stage_id": "library",
+        "publish_status": "pending_binding"
+      },
+      "entrance": "library",
+      "auxiliary": false
+    },
+    {
+      "event_id": "AUX_GRASS_ROVA",
+      "source_kind": "site",
+      "source_id": "layout_foster_town",
+      "source_name": "福斯特镇",
+      "position": [
+        8102.5,
+        9816.8050304614
+      ],
+      "radius": 42,
+      "entry_role": "rova",
+      "event_trigger": {
+        "mode": "interact",
+        "enabled": true,
+        "once": false,
+        "stage_id": "rova",
+        "publish_status": "pending_binding"
+      },
+      "entrance": "rova",
+      "auxiliary": true
+    },
+    {
+      "event_id": "AUX_GRASS_SALGERT",
+      "source_kind": "site",
+      "source_id": "layout_sargate_city",
+      "source_name": "萨尔格特城",
+      "position": [
+        19386.25,
+        8381.367923688693
+      ],
+      "radius": 42,
+      "entry_role": "",
+      "event_trigger": {
+        "mode": "interact",
+        "enabled": true,
+        "once": false,
+        "stage_id": "",
+        "publish_status": "pending_binding",
+        "source_icon_id": "layout_sargate_city",
+        "inherit_click_area": true
+      },
+      "entrance": "",
+      "auxiliary": true
+    },
+    {
+      "event_id": "QST_SIDE_002_001",
+      "source_kind": "site",
+      "source_id": "layout_sargate_city",
+      "source_name": "萨尔格特城",
+      "position": [
+        19386.25,
+        8381.367923688693
+      ],
+      "radius": 42,
+      "entry_role": "city_center",
+      "event_trigger": {
+        "mode": "interact",
+        "enabled": true,
+        "once": true,
+        "stage_id": "city_center",
+        "publish_status": "pending_binding"
+      },
+      "entrance": "center",
+      "auxiliary": false
+    },
+    {
+      "event_id": "QST_GRASS_012",
+      "source_kind": "site",
+      "source_id": "layout_sargate_city",
+      "source_name": "萨尔格特城",
+      "position": [
+        19386.25,
+        8381.367923688693
+      ],
+      "radius": 42,
+      "entry_role": "return_city_enchanter",
+      "event_trigger": {
+        "mode": "interact",
+        "enabled": true,
+        "once": true,
+        "stage_id": "return_city_enchanter",
+        "publish_status": "pending_binding"
+      },
+      "entrance": "enchanter",
+      "auxiliary": false
+    },
+    {
+      "event_id": "QST_GRASS_014",
+      "source_kind": "site",
+      "source_id": "layout_sargate_city",
+      "source_name": "萨尔格特城",
+      "position": [
+        19386.25,
+        8381.367923688693
+      ],
+      "radius": 42,
+      "entry_role": "engine_merchant",
+      "event_trigger": {
+        "mode": "interact",
+        "enabled": true,
+        "once": true,
+        "stage_id": "engine_merchant",
+        "publish_status": "pending_binding",
+        "inherit_click_area": true,
+        "source_icon_id": "layout_sargate_city"
+      },
+      "entrance": "engine",
+      "auxiliary": false
+    },
+    {
+      "event_id": "QST_GRASS_015",
+      "source_kind": "site",
+      "source_id": "layout_sargate_city",
+      "source_name": "萨尔格特城",
+      "position": [
+        19386.25,
+        8381.367923688693
+      ],
+      "radius": 42,
+      "entry_role": "engine_ghost",
+      "event_trigger": {
+        "mode": "on_game_time",
+        "enabled": true,
+        "once": true,
+        "stage_id": "engine_ghost",
+        "publish_status": "pending_binding",
+        "inherit_click_area": true,
+        "source_icon_id": "layout_sargate_city"
+      },
+      "entrance": "ghost",
+      "auxiliary": false
+    },
+    {
+      "event_id": "QST_SIDE_003_001",
+      "source_kind": "site",
+      "source_id": "layout_red_altar",
+      "source_name": "红祭坛",
+      "position": [
+        14290,
+        9625
+      ],
+      "radius": 42,
+      "entry_role": "",
+      "event_trigger": {
+        "mode": "interact",
+        "enabled": true,
+        "once": true,
+        "stage_id": "",
+        "publish_status": "pending_binding",
+        "source_icon_id": "layout_red_altar",
+        "inherit_click_area": true
+      },
+      "entrance": "altar",
+      "auxiliary": false
+    },
+    {
+      "event_id": "QST_GRASS_010",
+      "source_kind": "site",
+      "source_id": "layout_abandoned_church",
+      "source_name": "废弃圣堂",
+      "position": [
+        6572.5,
+        2750.037735580382
+      ],
+      "radius": 42,
+      "entry_role": "",
+      "event_trigger": {
+        "mode": "interact",
+        "enabled": true,
+        "once": true,
+        "stage_id": "",
+        "publish_status": "pending_binding",
+        "source_icon_id": "layout_abandoned_church",
+        "inherit_click_area": true
+      },
+      "entrance": "temple",
+      "auxiliary": false
+    },
+    {
+      "event_id": "QST_GRASS_011",
+      "source_kind": "site",
+      "source_id": "layout_forgotten_mine",
+      "source_name": "被遗忘的矿洞",
+      "position": [
+        9823.75,
+        12356.424527059267
+      ],
+      "radius": 42,
+      "entry_role": "",
+      "event_trigger": {
+        "mode": "interact",
+        "enabled": true,
+        "once": true,
+        "stage_id": "",
+        "publish_status": "pending_binding",
+        "source_icon_id": "layout_forgotten_mine",
+        "inherit_click_area": true
+      },
+      "entrance": "mine",
+      "auxiliary": false
+    },
+    {
+      "event_id": "QST_GRASS_002",
+      "source_kind": "site",
+      "source_id": "layout_wolf_den_001",
+      "source_name": "小树守卫克劳德",
+      "position": [
+        4277.5,
+        10700.150942321528
+      ],
+      "radius": 300,
+      "entry_role": "",
+      "event_trigger": {
+        "mode": "interact",
+        "enabled": true,
+        "once": true,
+        "stage_id": "",
+        "publish_status": "pending_binding",
+        "source_icon_id": "layout_wolf_den_001",
+        "inherit_click_area": true
+      },
+      "entrance": "tree",
+      "auxiliary": false
+    },
+    {
+      "event_id": "QST_GRASS_008",
+      "source_kind": "site",
+      "source_id": "layout_forest_wolf_den_001",
+      "source_name": "普通森林 · 巨型拱兽 01",
+      "position": [
+        4468.75,
+        2197.9465406678023
+      ],
+      "radius": 300,
+      "entry_role": "giant_beast",
+      "event_trigger": {
+        "mode": "interact",
+        "enabled": true,
+        "once": true,
+        "stage_id": "giant_beast",
+        "publish_status": "pending_binding",
+        "inherit_click_area": true,
+        "source_icon_id": "layout_forest_wolf_den_001"
+      },
+      "entrance": "giant",
+      "auxiliary": false
+    },
+    {
+      "event_id": "QST_GRASS_019",
+      "source_kind": "site",
+      "source_id": "layout_forest_cave_001",
+      "source_name": "谁会赢？ · 圣堂旁洞穴",
+      "position": [
+        5425,
+        4516.7295593006365
+      ],
+      "radius": 300,
+      "entry_role": "cave_duel",
+      "event_trigger": {
+        "mode": "interact",
+        "enabled": true,
+        "once": true,
+        "stage_id": "cave_duel",
+        "publish_status": "pending_binding",
+        "inherit_click_area": true,
+        "source_icon_id": "layout_forest_cave_001"
+      },
+      "entrance": "clash",
+      "auxiliary": false
+    },
+    {
+      "event_id": "QST_GRASS_005",
+      "source_kind": "site",
+      "source_id": "event_shepherd",
+      "source_name": "浑浊的大地 · 牧羊人",
+      "position": [
+        12692.5,
+        12466.842766041782
+      ],
+      "radius": 100,
+      "entry_role": "",
+      "event_trigger": {
+        "mode": "interact",
+        "enabled": true,
+        "once": true,
+        "stage_id": "",
+        "publish_status": "pending_binding",
+        "inherit_click_area": true,
+        "source_icon_id": "event_shepherd"
+      },
+      "entrance": "shepherd",
+      "auxiliary": false
+    },
+    {
+      "event_id": "QST_GRASS_006",
+      "source_kind": "site",
+      "source_id": "event_stone_tower",
+      "source_name": "狼来了 · 石塔遗物",
+      "position": [
+        8293.75,
+        12577.261005024298
+      ],
+      "radius": 100,
+      "entry_role": "",
+      "event_trigger": {
+        "mode": "interact",
+        "enabled": true,
+        "once": true,
+        "stage_id": "",
+        "publish_status": "pending_binding",
+        "inherit_click_area": true,
+        "source_icon_id": "event_stone_tower"
+      },
+      "entrance": "tower",
+      "auxiliary": false
+    },
+    {
+      "event_id": "QST_GRASS_013",
+      "source_kind": "site",
+      "source_id": "event_star_well",
+      "source_name": "群星之底 · 星图井",
+      "position": [
+        13457.5,
+        9595.968552496368
+      ],
+      "radius": 100,
+      "entry_role": "",
+      "event_trigger": {
+        "mode": "interact",
+        "enabled": true,
+        "once": true,
+        "stage_id": "",
+        "publish_status": "pending_binding",
+        "inherit_click_area": true,
+        "source_icon_id": "event_star_well"
+      },
+      "entrance": "well",
+      "auxiliary": false
+    },
+    {
+      "event_id": "QST_GRASS_016",
+      "source_kind": "site",
+      "source_id": "event_circus",
+      "source_name": "看一眼不要钱 · 观光棚",
+      "position": [
+        9250,
+        9520
+      ],
+      "radius": 100,
+      "entry_role": "",
+      "event_trigger": {
+        "mode": "interact",
+        "enabled": true,
+        "once": true,
+        "stage_id": "",
+        "publish_status": "pending_binding",
+        "inherit_click_area": true,
+        "source_icon_id": "event_circus"
+      },
+      "entrance": "circus",
+      "auxiliary": false
+    },
+    {
+      "event_id": "QST_GRASS_020",
+      "source_kind": "site",
+      "source_id": "event_knight_bet",
+      "source_name": "谁会输？ · 杜波骑士",
+      "position": [
+        19886.25,
+        9081.367923688693
+      ],
+      "radius": 100,
+      "entry_role": "",
+      "event_trigger": {
+        "mode": "interact",
+        "enabled": true,
+        "once": false,
+        "stage_id": "",
+        "publish_status": "pending_binding",
+        "inherit_click_area": true,
+        "source_icon_id": "event_knight_bet"
+      },
+      "entrance": "knight",
+      "auxiliary": false
+    },
+    {
+      "event_id": "QST_GRASS_017",
+      "source_kind": "site",
+      "source_id": "event_north_bridge",
+      "source_name": "北桥 · 富含矿物质",
+      "position": [
+        15109.84375,
+        6258.5
+      ],
+      "radius": 160,
+      "entry_role": "",
+      "event_trigger": {
+        "mode": "interact",
+        "enabled": true,
+        "once": true,
+        "stage_id": "",
+        "publish_status": "pending_binding",
+        "inherit_click_area": true,
+        "source_icon_id": "event_north_bridge"
+      },
+      "entrance": "bridge",
+      "auxiliary": false
+    },
+    {
+      "event_id": "QST_GRASS_007",
+      "source_kind": "site",
+      "source_id": "event_donkey",
+      "source_name": "年迈的驴子 · 路中老驴",
+      "position": [
+        7337.5,
+        10479.314464356496
+      ],
+      "radius": 100,
+      "entry_role": "donkey",
+      "event_trigger": {
+        "mode": "interact",
+        "enabled": true,
+        "once": true,
+        "stage_id": "donkey",
+        "publish_status": "pending_binding",
+        "inherit_click_area": true,
+        "source_icon_id": "event_donkey"
+      },
+      "entrance": "donkey",
+      "auxiliary": false
+    },
+    {
+      "event_id": "QST_GRASS_007",
+      "source_kind": "site",
+      "source_id": "event_donkey_merchant",
+      "source_name": "年迈的驴子 · 石旁商人",
+      "position": [
+        7720,
+        10258.477986391465
+      ],
+      "radius": 100,
+      "entry_role": "merchant",
+      "event_trigger": {
+        "mode": "interact",
+        "enabled": true,
+        "once": true,
+        "stage_id": "merchant",
+        "publish_status": "pending_binding",
+        "inherit_click_area": true,
+        "source_icon_id": "event_donkey_merchant"
+      },
+      "entrance": "merchant",
+      "auxiliary": false
+    },
+    {
+      "event_id": "QST_GRASS_009",
+      "source_kind": "site",
+      "source_id": "event_abandoned_cart",
+      "source_name": "不对名单 · 遗弃货车",
+      "position": [
+        9441.25,
+        12798.097482989331
+      ],
+      "radius": 100,
+      "entry_role": "cart",
+      "event_trigger": {
+        "mode": "interact",
+        "enabled": true,
+        "once": true,
+        "stage_id": "cart",
+        "publish_status": "pending_binding",
+        "inherit_click_area": true,
+        "source_icon_id": "event_abandoned_cart"
+      },
+      "entrance": "cart",
+      "auxiliary": false
+    },
+    {
+      "event_id": "QST_GRASS_012",
+      "source_kind": "site",
+      "source_id": "event_diligent_farm",
+      "source_name": "过分敬业 · 北桥东岸农田",
+      "position": [
+        16326.25,
+        6614.676099968439
+      ],
+      "radius": 100,
+      "entry_role": "farm",
+      "event_trigger": {
+        "mode": "interact",
+        "enabled": true,
+        "once": true,
+        "stage_id": "farm",
+        "publish_status": "pending_binding",
+        "inherit_click_area": true,
+        "source_icon_id": "event_diligent_farm"
+      },
+      "entrance": "farm",
+      "auxiliary": false
+    }
+  ],
+  "events": [
+    {
+      "id": "QST_MAIN_001_001",
+      "number": 1,
+      "title": "火速任命",
+      "dialogues": {
+        "opening": [
+          {
+            "speaker": "王国特使",
+            "text": "您好，您是之前参加过“魔王对抗计划”投标的召唤师先生吗？就是最后没中标的那位。"
+          },
+          {
+            "speaker": "王国特使",
+            "text": "很不幸，勇者在北方被魔王打败了。其他中标的计划也不太顺利。比如炼金机甲计划，因为贪污问题，已经名存实亡了。"
+          },
+          {
+            "speaker": "王国特使",
+            "text": "国王陛下希望您重启《超酷超炫的召唤怪物》计划。您现在是我们最后的希望。"
+          },
+          {
+            "speaker": "王国特使",
+            "text": "这是国王特令。持有它，您可以自由通行于任何一座城市，并获得资源以外的任何帮助。"
+          },
+          {
+            "speaker": "王国特使",
+            "text": "您知道的，税务问题困扰王国很久了。现在财政部的赤字也很严重。"
+          },
+          {
+            "speaker": "王国特使",
+            "text": "请您在这张确认单上签字。还有这张。对，翻过来，背面还有。"
+          },
+          {
+            "speaker": "王国特使",
+            "text": "这样交接就完成了，请填一下这张满意度回访表。"
+          },
+          {
+            "speaker": "王国特使",
+            "text": "由于我也是劳务派遣的信使，没法和您一起上路。祝您一切顺利。"
+          }
+        ]
+      },
+      "branches": [
+        {
+          "key": "read",
+          "label": "完整阅读交接对白",
+          "condition": "剧情顺序播放；玩家签字未写为可选分支",
+          "next": "complete",
+          "result": "交接阅读完成后登记任命；是否生成实体特令待绑定"
+        }
+      ],
+      "parameters": {
+        "special_order_quantity": 1
+      },
+      "runtime_bindings": {
+        "location": {
+          "icon_id": "layout_summoning_hut",
+          "position": [
+            3220,
+            11355
+          ],
+          "entry_role": "opening"
+        },
+        "trigger_policy": {
+          "type": "new_game_only",
+          "once_per_save": true
+        },
+        "flow_source": {
+          "document": "UI跳转原型/事件/事件总表.md",
+          "sha256": "988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5",
+          "event_number": 1
+        },
+        "parameters": {
+          "special_order_quantity": 1
+        },
+        "parameter_specs": {
+          "special_order_quantity": {
+            "label": "国王特令数量",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          }
+        }
+      }
+    },
+    {
+      "id": "QST_GRASS_002",
+      "number": 2,
+      "title": "小树守卫",
+      "dialogues": {
+        "intro": [
+          {
+            "speaker": "",
+            "text": "你走出了家门。门前的小树下，一条凶猛的流浪狗正守卫着那棵树。"
+          },
+          {
+            "speaker": "",
+            "text": "这条曾经被你收养，并且取名为卡洛德的狗忘恩负义，每天除了骚扰你以外什么都不做。尽管你睡过了魔法学院的所有攻击魔法课，但这对你来说并不是什么大问题。"
+          },
+          {
+            "speaker": "",
+            "text": "作为本世纪最伟大的魔法师之一，你决定给它一个教训。"
+          }
+        ]
+      },
+      "branches": [
+        {
+          "key": "battle",
+          "label": "开战方式待定",
+          "condition": "已有教训卡洛德的动机；不擅自增加捕获选项",
+          "next": "battle_pending → won → complete",
+          "result": "只有胜利回执可以完成；失败/退出不当胜利"
+        }
+      ],
+      "parameters": {
+        "minimum_summons": 1,
+        "minimum_party_size": 1,
+        "magic_reward": null,
+        "enemy_count": 1,
+        "enemy_health_multiplier": null,
+        "enemy_attack_multiplier": null
+      },
+      "runtime_bindings": {
+        "flow_source": {
+          "document": "UI跳转原型/事件/事件总表.md",
+          "sha256": "988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5",
+          "event_number": 2
+        },
+        "parameters": {
+          "minimum_summons": 1,
+          "minimum_party_size": 1,
+          "magic_reward": null,
+          "enemy_count": 1,
+          "enemy_health_multiplier": null,
+          "enemy_attack_multiplier": null
+        },
+        "parameter_specs": {
+          "minimum_summons": {
+            "label": "首次召唤成功数量",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          },
+          "minimum_party_size": {
+            "label": "最低出战数量",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          },
+          "magic_reward": {
+            "label": "胜利魔力奖励",
+            "type": "number",
+            "unit": "魔力",
+            "min": 0,
+            "allow_unconfigured": true
+          },
+          "enemy_count": {
+            "label": "敌军数量",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          },
+          "enemy_health_multiplier": {
+            "label": "敌军生命调整倍率",
+            "type": "number",
+            "unit": "倍",
+            "min": 0.01,
+            "allow_unconfigured": true
+          },
+          "enemy_attack_multiplier": {
+            "label": "敌军攻击调整倍率",
+            "type": "number",
+            "unit": "倍",
+            "min": 0.01,
+            "allow_unconfigured": true
+          }
+        }
+      }
+    },
+    {
+      "id": "QST_SIDE_001_001",
+      "number": 3,
+      "title": "图书馆开门日",
+      "dialogues": {
+        "intro": [
+          {
+            "speaker": "罗瓦",
+            "text": "我没看错吧？你居然舍得从那间小屋子里出来了。我以为你会在那里待上一辈子。"
+          },
+          {
+            "speaker": "罗瓦",
+            "text": "我猜你是为了召唤手记来的。让我找找……哦，我拿它垫炖菜了。"
+          },
+          {
+            "speaker": "罗瓦",
+            "text": "你知道的，我老婆做的炖菜，比双头龙喷出来的熔岩还烫。"
+          },
+          {
+            "speaker": "玩家",
+            "text": "我要去拯救世界了。"
+          },
+          {
+            "speaker": "罗瓦",
+            "text": "拯救世界的计划啊。我看整个王国上下，似乎也没谁把它当回事。"
+          },
+          {
+            "speaker": "罗瓦",
+            "text": "不管怎么说，作为老朋友，我还是想给你一些援助。"
+          },
+          {
+            "speaker": "罗瓦",
+            "text": "这些是我的私房钱。别告诉我老婆。"
+          }
+        ]
+      },
+      "branches": [
+        {
+          "key": "talk",
+          "label": "与罗瓦交谈",
+          "condition": "玩家台词按顺序播放；本版不提供贤者线索",
+          "next": "complete",
+          "result": "解锁符文表中3种基础符文；援助与符文各去重一次"
+        }
+      ],
+      "parameters": {
+        "private_money_magic": null,
+        "rune_unlock_count": 3
+      },
+      "runtime_bindings": {
+        "flow_source": {
+          "document": "UI跳转原型/事件/事件总表.md",
+          "sha256": "988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5",
+          "event_number": 3
+        },
+        "parameters": {
+          "private_money_magic": null,
+          "rune_unlock_count": 3
+        },
+        "parameter_specs": {
+          "private_money_magic": {
+            "label": "罗瓦援助魔力",
+            "type": "number",
+            "unit": "魔力",
+            "min": 0,
+            "allow_unconfigured": true
+          },
+          "rune_unlock_count": {
+            "label": "基础符文解锁种类",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          }
+        }
+      }
+    },
+    {
+      "id": "QST_SIDE_002_001",
+      "number": 4,
+      "title": "防卫预算",
+      "dialogues": {
+        "intro": [
+          {
+            "speaker": "城主",
+            "text": "魔法师先生！哎呀，我们盼着您来已经好久了。您的超级大火球计划，一定能帮我们打败魔王。"
+          },
+          {
+            "speaker": "城主",
+            "text": "呃，什么？那是另一个人？哦，不好意思。"
+          },
+          {
+            "speaker": "城主",
+            "text": "不过，我们这里一定有您需要的东西。我记得博物馆里有一件古老的奇物。"
+          },
+          {
+            "speaker": "城主",
+            "text": "随着魔王逼近，城镇周围的魔兽越来越躁动了。本季度的防卫预算已经超支，怪物们却还是不肯安分。"
+          },
+          {
+            "speaker": "城主",
+            "text": "如果您能帮我们解决附近的威胁……当然，我不是在和您谈条件。我很乐意为您呈上那件奇物。"
+          }
+        ],
+        "revisit": [
+          {
+            "speaker": "城主",
+            "text": "城墙修缮费、卫兵薪酬、武器保养费、伤病保险……还有长官的好处费。唉，根本周转不开啊。"
+          }
+        ],
+        "submit": [
+          {
+            "speaker": "城主",
+            "text": "不愧是王国的希望！呃，其实就算您不帮我们，协助持有国王特令的人，也是我无法拒绝的职责。"
+          },
+          {
+            "speaker": "城主",
+            "text": "这件奇物来自古老的地下。当初挖出它时，周围的动物不是多长了几个头，就是生出了不该有的手脚。"
+          },
+          {
+            "speaker": "城主",
+            "text": "真可怕啊……不过，如果是您的话，一定能好好使用它吧。"
+          }
+        ]
+      },
+      "branches": [
+        {
+          "key": "accept",
+          "label": "初次接取",
+          "condition": "播放初次接取对白",
+          "next": "active",
+          "result": "登记委托；不直接发奇物"
+        },
+        {
+          "key": "revisit",
+          "label": "任务未完成",
+          "condition": "显示预算困难对白",
+          "next": "active",
+          "result": "不重置已完成的战斗目标"
+        },
+        {
+          "key": "submit",
+          "label": "交付任务",
+          "condition": "清剿目标达成且返回城主",
+          "next": "complete",
+          "result": "交付对白后给予古老奇物1件；完成一次"
+        }
+      ],
+      "parameters": {
+        "required_battle_wins": 1,
+        "relic_quantity": 1,
+        "enemy_count": null,
+        "enemy_health_multiplier": null,
+        "enemy_attack_multiplier": null
+      },
+      "runtime_bindings": {
+        "flow_source": {
+          "document": "UI跳转原型/事件/事件总表.md",
+          "sha256": "988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5",
+          "event_number": 4
+        },
+        "parameters": {
+          "required_battle_wins": 1,
+          "relic_quantity": 1,
+          "enemy_count": null,
+          "enemy_health_multiplier": null,
+          "enemy_attack_multiplier": null
+        },
+        "parameter_specs": {
+          "required_battle_wins": {
+            "label": "指定清剿胜利次数",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          },
+          "relic_quantity": {
+            "label": "古老奇物数量",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          },
+          "enemy_count": {
+            "label": "清剿敌军数量",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          },
+          "enemy_health_multiplier": {
+            "label": "敌军生命调整倍率",
+            "type": "number",
+            "unit": "倍",
+            "min": 0.01,
+            "allow_unconfigured": true
+          },
+          "enemy_attack_multiplier": {
+            "label": "敌军攻击调整倍率",
+            "type": "number",
+            "unit": "倍",
+            "min": 0.01,
+            "allow_unconfigured": true
+          }
+        }
+      }
+    },
+    {
+      "id": "QST_GRASS_005",
+      "number": 5,
+      "title": "浑浊的大地",
+      "dialogues": {
+        "intro": [
+          {
+            "speaker": "",
+            "text": "一位年迈的牧羊人坐在一块石碑上，然而石碑上什么都没有写，牧羊人的身边也没有哪怕一只羊。看到你靠近，他向你打招呼。"
+          },
+          {
+            "speaker": "牧羊人",
+            "text": "你好啊，远道而来的旅行者。"
+          },
+          {
+            "speaker": "牧羊人",
+            "text": "我听说这片草原曾经有一位守护者。它来自于古老的上个时代，那时群星仍在天空中闪耀，而尚未坠落。"
+          },
+          {
+            "speaker": "牧羊人",
+            "text": "直到好多年前，一场瘟疫降临在了这片草原上，守护者带着瘟疫独自走进了漫漫原野从此消失不见，现在想想，或许那就是灾难降临的先兆。"
+          },
+          {
+            "speaker": "牧羊人",
+            "text": "听说守护者消失的方向是草原的东南方，但那边怪物横行，没人敢进去一探究竟，真是令人感慨呀。"
+          }
+        ]
+      },
+      "branches": [
+        {
+          "key": "talk",
+          "label": "听牧羊人讲述",
+          "condition": "守护者带走瘟疫，消失方向为草原东南",
+          "next": "complete",
+          "result": "只登记听闻；不自动揭示守护者身份或开启Boss战"
+        }
+      ],
+      "parameters": {},
+      "runtime_bindings": {
+        "location": {
+          "icon_id": "event_shepherd",
+          "position": [
+            12650,
+            12600
+          ],
+          "entry_role": ""
+        },
+        "flow_source": {
+          "document": "UI跳转原型/事件/事件总表.md",
+          "sha256": "988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5",
+          "event_number": 5
+        },
+        "parameters": {},
+        "parameter_specs": {}
+      }
+    },
+    {
+      "id": "QST_GRASS_006",
+      "number": 6,
+      "title": "狼来了",
+      "dialogues": {
+        "intro": [
+          {
+            "speaker": "",
+            "text": "你不知不觉来到了原野的正中央，四处的风声呼啸着。"
+          },
+          {
+            "speaker": "",
+            "text": "你发现了一座由石头堆砌起来的巨大石塔，在石塔的底端摆放着一件神秘的物品，你才刚刚拾起。远处不知何时聚集的狼群慢慢地走来，准备享用这些从未见过的盘中餐。"
+          }
+        ]
+      },
+      "branches": [
+        {
+          "key": "pickup",
+          "label": "拾取石塔物品",
+          "condition": "尚未领取；领取提交成功后登记拾取状态",
+          "next": "battle_pending",
+          "result": "先给予物品并持久去重，再进入狼群遭遇；读取文本不算领取"
+        },
+        {
+          "key": "battle",
+          "label": "狼群靠近",
+          "condition": "已经拾取；本次战斗请求尚未执行",
+          "next": "等待真实战斗结束",
+          "result": "不得把物品奖励放进仅胜利可执行的结果组"
+        },
+        {
+          "key": "won",
+          "label": "战斗胜利",
+          "condition": "匹配本次战斗回执",
+          "next": "complete",
+          "result": "保留已领取物品；不重复发放"
+        },
+        {
+          "key": "lost",
+          "label": "战斗失败或退出",
+          "condition": "匹配本次战斗回执",
+          "next": "后续任务状态待统一",
+          "result": "保留已领取物品，不回收、不补发；拾取阶段不可重刷"
+        }
+      ],
+      "parameters": {
+        "pickup_quantity": 1,
+        "enemy_count": null,
+        "extra_magic_reward": null,
+        "enemy_health_multiplier": null,
+        "enemy_attack_multiplier": null
+      },
+      "runtime_bindings": {
+        "location": {
+          "icon_id": "event_stone_tower",
+          "position": [
+            8700,
+            12600
+          ],
+          "entry_role": ""
+        },
+        "flow_source": {
+          "document": "UI跳转原型/事件/事件总表.md",
+          "sha256": "988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5",
+          "event_number": 6
+        },
+        "parameters": {
+          "pickup_quantity": 1,
+          "enemy_count": null,
+          "extra_magic_reward": null,
+          "enemy_health_multiplier": null,
+          "enemy_attack_multiplier": null
+        },
+        "parameter_specs": {
+          "pickup_quantity": {
+            "label": "神秘物品拾取数量",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          },
+          "enemy_count": {
+            "label": "狼群数量",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          },
+          "extra_magic_reward": {
+            "label": "额外战斗魔力奖励",
+            "type": "number",
+            "unit": "魔力",
+            "min": 0,
+            "allow_unconfigured": true
+          },
+          "enemy_health_multiplier": {
+            "label": "敌军生命调整倍率",
+            "type": "number",
+            "unit": "倍",
+            "min": 0.01,
+            "allow_unconfigured": true
+          },
+          "enemy_attack_multiplier": {
+            "label": "敌军攻击调整倍率",
+            "type": "number",
+            "unit": "倍",
+            "min": 0.01,
+            "allow_unconfigured": true
+          }
+        }
+      }
+    },
+    {
+      "id": "QST_GRASS_007",
+      "number": 7,
+      "title": "年迈的驴子",
+      "dialogues": {
+        "donkey": [
+          {
+            "speaker": "",
+            "text": "你发现有一头驴子站在路的中间，歪着嘴咀嚼着路边的草。\n没有主人，没有缰绳，这头老驴就这样静静地站在路的正中央。见到它的人也只能说一声，老驴。\n不知道它的主人在哪里，如果遇到了的话告诉他老驴在这里吧。"
+          }
+        ],
+        "merchant": [
+          {
+            "speaker": "",
+            "text": "一个商人坐在石头旁边唉声叹气。"
+          },
+          {
+            "speaker": "商人",
+            "text": "我的驴啊……我的好兄弟，你到底跑到哪里去了。"
+          },
+          {
+            "speaker": "商人",
+            "text": "天哪，魔法师大人，你有见到我的驴兄弟吗？如果你见到了，请拜托告诉我它到底跑到哪里去了。"
+          },
+          {
+            "speaker": "商人",
+            "text": "作为报答，我刚刚买的古董魔法道具全都给你！"
+          }
+        ],
+        "return_dialogue": [
+          {
+            "speaker": "商人",
+            "text": "我的好兄弟，可算把你找回来了！魔法师大人，说好的那些古董魔法道具，都是您的了。"
+          }
+        ]
+      },
+      "branches": [
+        {
+          "key": "donkey_seen",
+          "label": "查看老驴",
+          "condition": "首次进入donkey节点",
+          "next": "active",
+          "result": "登记seen_donkey；不发奖"
+        },
+        {
+          "key": "merchant_seen",
+          "label": "与商人交谈",
+          "condition": "首次进入merchant节点",
+          "next": "active",
+          "result": "登记seen_merchant；不发奖"
+        },
+        {
+          "key": "from_donkey",
+          "label": "我带你去找你兄弟",
+          "condition": "donkey节点且seen_merchant=true",
+          "next": "return_dialogue",
+          "result": "以共用对话直接表现归还，不启动导航、护送或地图移动"
+        },
+        {
+          "key": "from_merchant",
+          "label": "是一头很老的驴吗？",
+          "condition": "merchant节点且seen_donkey=true",
+          "next": "return_dialogue",
+          "result": "进入同一段归还对话，两种发现顺序等价"
+        },
+        {
+          "key": "return_dialogue",
+          "label": "归还对话结束",
+          "condition": "双方已发现且尚未交付",
+          "next": "complete",
+          "result": "交付成功后给予奇物2件；两入口共用一次性结果"
+        },
+        {
+          "key": "leave",
+          "label": "离开",
+          "condition": "两节点均可离开",
+          "next": "保持阶段",
+          "result": "不清除已见标记，不完成"
+        }
+      ],
+      "parameters": {
+        "relic_quantity": 2
+      },
+      "runtime_bindings": {
+        "flow_source": {
+          "document": "UI跳转原型/事件/事件总表.md",
+          "sha256": "988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5",
+          "event_number": 7
+        },
+        "parameters": {
+          "relic_quantity": 2
+        },
+        "parameter_specs": {
+          "relic_quantity": {
+            "label": "归还后奇物数量",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          }
+        },
+        "locations": [
+          {
+            "icon_id": "event_donkey",
+            "position": [
+              7337.5,
+              10479.314464356496
+            ],
+            "entry_role": "donkey"
+          },
+          {
+            "icon_id": "event_donkey_merchant",
+            "position": [
+              7720,
+              10258.477986391465
+            ],
+            "entry_role": "merchant"
+          }
+        ],
+        "location": {
+          "icon_id": "event_donkey",
+          "position": [
+            7337.5,
+            10479.314464356496
+          ],
+          "entry_role": "donkey"
+        }
+      }
+    },
+    {
+      "id": "QST_GRASS_008",
+      "number": 8,
+      "title": "超大型巨人",
+      "dialogues": {
+        "intro": [
+          {
+            "speaker": "",
+            "text": "一只极其庞大的拱兽站立在地面上，几乎有正常拱兽的三倍大。你看到它的脖子上有什么东西似乎在闪闪发光，但你还没来得及看清楚，它已经迈着大步子向你冲过来了，轰隆轰隆轰隆。"
+          },
+          {
+            "speaker": "",
+            "text": "每一步都震得地面发颤，扬起的尘土里，只剩下越来越近的庞大轮廓。"
+          }
+        ]
+      },
+      "branches": [
+        {
+          "key": "battle",
+          "label": "拱兽冲来",
+          "condition": "原稿为主动冲来；不新增观察后无条件领奖",
+          "next": "battle_pending → won → complete",
+          "result": "胜利后领取掉落"
+        }
+      ],
+      "parameters": {
+        "enemy_size_multiplier": 3,
+        "enemy_count": 1,
+        "relic_quantity": 1,
+        "enemy_health_multiplier": null,
+        "enemy_attack_multiplier": null
+      },
+      "runtime_bindings": {
+        "location": {
+          "icon_id": "layout_forest_wolf_den_001",
+          "position": [
+            4468.75,
+            2197.9465406678023
+          ],
+          "entry_role": "giant_beast"
+        },
+        "flow_source": {
+          "document": "UI跳转原型/事件/事件总表.md",
+          "sha256": "988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5",
+          "event_number": 8
+        },
+        "parameters": {
+          "enemy_size_multiplier": 3,
+          "enemy_count": 1,
+          "relic_quantity": 1,
+          "enemy_health_multiplier": null,
+          "enemy_attack_multiplier": null
+        },
+        "parameter_specs": {
+          "enemy_size_multiplier": {
+            "label": "拱兽体型倍率",
+            "type": "number",
+            "unit": "倍",
+            "min": 0.01,
+            "allow_unconfigured": true
+          },
+          "enemy_count": {
+            "label": "精英拱兽数量",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          },
+          "relic_quantity": {
+            "label": "奇物数量",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          },
+          "enemy_health_multiplier": {
+            "label": "敌军生命调整倍率",
+            "type": "number",
+            "unit": "倍",
+            "min": 0.01,
+            "allow_unconfigured": true
+          },
+          "enemy_attack_multiplier": {
+            "label": "敌军攻击调整倍率",
+            "type": "number",
+            "unit": "倍",
+            "min": 0.01,
+            "allow_unconfigured": true
+          }
+        }
+      }
+    },
+    {
+      "id": "QST_GRASS_009",
+      "number": 9,
+      "title": "不对名单",
+      "dialogues": {
+        "intro": [
+          {
+            "speaker": "",
+            "text": "在草地中央有一辆被遗弃的货车，似乎是被魔兽袭击之后匆忙逃跑丢下了货物，你在里面找到了很多鞣制的动物皮革。其中还有一张纸条。"
+          },
+          {
+            "speaker": "",
+            "text": "水星月/14日：我新进了一批草莓，等我送到福斯特镇我就要挣大钱了。等着吧，这波我马上就要不对了。"
+          },
+          {
+            "speaker": "",
+            "text": "水星月/22日：草莓运到的时候已经烂掉了，低价卖亏损200金币，这波是思想出了问题。我决定投资养当地猪行业。"
+          },
+          {
+            "speaker": "",
+            "text": "水星月/25日：他们把我的草莓做成了草莓酱，赚了大钱。无所谓，等猪长大我马上就要不对了。"
+          },
+          {
+            "speaker": "",
+            "text": "土星日/17日：猪养大了，原来这个品种的猪是不能吃的。把猪处理掉了，亏损300金币。"
+          },
+          {
+            "speaker": "",
+            "text": "土星日/20日：这种猪的皮革原来是用来做衣服的高级材料？我加价买回来了，等我运回萨尔格特城马上就能翻倍赚钱，这波我要不对了。"
+          }
+        ]
+      },
+      "branches": [
+        {
+          "key": "read",
+          "label": "阅读纸条",
+          "condition": "按原稿顺序展示五条投资记录",
+          "next": "complete",
+          "result": "领取魔力成功后完成"
+        },
+        {
+          "key": "close",
+          "label": "提前关闭",
+          "condition": "未确认领取",
+          "next": "保持未完成",
+          "result": "不自动标完成或重复领奖"
+        }
+      ],
+      "parameters": {
+        "magic_reward": null
+      },
+      "runtime_bindings": {
+        "flow_source": {
+          "document": "UI跳转原型/事件/事件总表.md",
+          "sha256": "988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5",
+          "event_number": 9
+        },
+        "parameters": {
+          "magic_reward": null
+        },
+        "parameter_specs": {
+          "magic_reward": {
+            "label": "阅读领取魔力",
+            "type": "number",
+            "unit": "魔力",
+            "min": 0,
+            "allow_unconfigured": true
+          }
+        },
+        "locations": [
+          {
+            "icon_id": "event_abandoned_cart",
+            "position": [
+              9441.25,
+              12798.097482989331
+            ],
+            "entry_role": "cart"
+          }
+        ],
+        "location": {
+          "icon_id": "event_abandoned_cart",
+          "position": [
+            9441.25,
+            12798.097482989331
+          ],
+          "entry_role": "cart"
+        }
+      }
+    },
+    {
+      "id": "QST_GRASS_010",
+      "number": 10,
+      "title": "甲壳圣堂",
+      "dialogues": {
+        "intro": [
+          {
+            "speaker": "",
+            "text": "一座废弃的圣堂静静地坐落在森林的边缘，彩绘玻璃都已破裂，精致的花纹落满灰尘。你听见在圣坛之中还传来撞击声，出于好奇你决定进去查看一下。撞击声时断时续，在空荡的圣堂里回响。"
+          },
+          {
+            "speaker": "",
+            "text": "圣堂中摆放着许多巨大的甲壳，仿佛数不胜数的纪念碑，而在甲壳堆的正中央，有着一个格外巨大的甲壳。里面传来了敲击声，似乎有什么巨大的生物被困在自己的壳里了。"
+          }
+        ],
+        "failed": [
+          {
+            "speaker": "",
+            "text": "你指挥怪物们攻击甲壳，然而只能在这又厚又坚硬的盔甲上留下划痕。显然，需要有足够强大力量的一击才能生效。"
+          }
+        ],
+        "success": [
+          {
+            "speaker": "",
+            "text": "甲壳碎了，一只巨大寄居蟹生物从破碎的甲壳中站了起来，它那水晶般的新生外壳展开，同时变得更加坚硬。巨大的体型撞塌了圣堂的房顶，它冲着你点了点头，随后走向了远方。"
+          },
+          {
+            "speaker": "",
+            "text": "它的旧壳充满着魔力，在里面还有一块特别的甲片。"
+          }
+        ]
+      },
+      "branches": [
+        {
+          "key": "break",
+          "label": "尝试打碎甲壳",
+          "condition": "仓库或出战中任意单只怪物攻击力高于阈值；不汇总全队攻击",
+          "next": "失败：保持未完成；成功：complete",
+          "result": "确认时重读持有怪物；不要求先把合格怪物编入出战；成功后发奖"
+        },
+        {
+          "key": "leave",
+          "label": "离开",
+          "condition": "始终可用",
+          "next": "保持阶段",
+          "result": "获得合格怪物后可再来"
+        }
+      ],
+      "parameters": {
+        "attack_threshold": null,
+        "magic_reward": null,
+        "relic_quantity": 1,
+        "action_magic_cost": null
+      },
+      "runtime_bindings": {
+        "flow_source": {
+          "document": "UI跳转原型/事件/事件总表.md",
+          "sha256": "988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5",
+          "event_number": 10
+        },
+        "parameters": {
+          "attack_threshold": null,
+          "magic_reward": null,
+          "relic_quantity": 1,
+          "action_magic_cost": null
+        },
+        "parameter_specs": {
+          "attack_threshold": {
+            "label": "单只攻击力阈值",
+            "type": "number",
+            "unit": "正式攻击数值",
+            "min": 0,
+            "allow_unconfigured": true
+          },
+          "magic_reward": {
+            "label": "魔力奖励",
+            "type": "number",
+            "unit": "魔力",
+            "min": 0,
+            "allow_unconfigured": true
+          },
+          "relic_quantity": {
+            "label": "特别甲片数量",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          },
+          "action_magic_cost": {
+            "label": "出击魔力成本 待确认是否需要",
+            "type": "number",
+            "unit": "魔力",
+            "min": 0,
+            "allow_unconfigured": true
+          }
+        }
+      }
+    },
+    {
+      "id": "QST_GRASS_011",
+      "number": 11,
+      "title": "废弃矿井",
+      "dialogues": {
+        "intro": [
+          {
+            "speaker": "",
+            "text": "这是一个废弃的矿井入口，虽然你的遗迹鉴识课挂科了，但你还是一眼认出了这是一个魔力水晶矿的开发入口——毕竟旁边的牌子写了——在“加把劲大开发”时期，王国的各处挖了很多类似的水晶矿。"
+          },
+          {
+            "speaker": "",
+            "text": "洞口吹来一阵凉风，旧木牌在风里轻轻摇晃，深处只剩一片漆黑。"
+          },
+          {
+            "speaker": "",
+            "text": "然而看着狭窄的洞口和身后庞大的怪物们，你陷入了沉思。"
+          }
+        ],
+        "victory": [
+          {
+            "speaker": "",
+            "text": "矿洞的终点是一个巨大的空腔，地面上画着复杂的召唤阵，召唤阵已经被干涸的血迹与燃烧的灰烬覆盖。虽然关键部分已经破损，不过你依然从中摘抄了一些能用的符文。"
+          },
+          {
+            "speaker": "",
+            "text": "这是一个定向召唤阵，如果你以后找到完整的图纸，或许能够尝试召唤。"
+          }
+        ]
+      },
+      "branches": [
+        {
+          "key": "enter",
+          "label": "进入探索",
+          "condition": "校验出战单位体型；不合格返回队伍准备",
+          "next": "battle_pending",
+          "result": "载入鼠群战斗"
+        },
+        {
+          "key": "won",
+          "label": "击败鼠群",
+          "condition": "胜利回执属于本事件本次战斗",
+          "next": "complete",
+          "result": "展示血迹、灰烬及残阵正文；解锁符文"
+        },
+        {
+          "key": "leave",
+          "label": "算了离开",
+          "condition": "战斗开始前",
+          "next": "保持未完成",
+          "result": "失败/取消也不授予符文"
+        }
+      ],
+      "parameters": {
+        "maximum_large_party_members": 0,
+        "minimum_party_size": 1,
+        "enemy_count": null,
+        "rune_unlock_count": null,
+        "enemy_health_multiplier": null,
+        "enemy_attack_multiplier": null
+      },
+      "runtime_bindings": {
+        "flow_source": {
+          "document": "UI跳转原型/事件/事件总表.md",
+          "sha256": "988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5",
+          "event_number": 11
+        },
+        "parameters": {
+          "maximum_large_party_members": 0,
+          "minimum_party_size": 1,
+          "enemy_count": null,
+          "rune_unlock_count": null,
+          "enemy_health_multiplier": null,
+          "enemy_attack_multiplier": null
+        },
+        "parameter_specs": {
+          "maximum_large_party_members": {
+            "label": "可携带大型怪物上限",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 0,
+            "allow_unconfigured": true
+          },
+          "minimum_party_size": {
+            "label": "最低出战数量",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          },
+          "enemy_count": {
+            "label": "鼠群数量",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          },
+          "rune_unlock_count": {
+            "label": "符文解锁种类",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          },
+          "enemy_health_multiplier": {
+            "label": "敌军生命调整倍率",
+            "type": "number",
+            "unit": "倍",
+            "min": 0.01,
+            "allow_unconfigured": true
+          },
+          "enemy_attack_multiplier": {
+            "label": "敌军攻击调整倍率",
+            "type": "number",
+            "unit": "倍",
+            "min": 0.01,
+            "allow_unconfigured": true
+          }
+        }
+      }
+    },
+    {
+      "id": "QST_GRASS_012",
+      "number": 12,
+      "title": "过分敬业",
+      "dialogues": {
+        "intro": [
+          {
+            "speaker": "",
+            "text": "田里站着一群稻草人。它们穿着刚毕业学生的旧衣服，正在一蹦一跳地把农夫往田外赶。"
+          },
+          {
+            "speaker": "农夫",
+            "text": "大人，大人！难道您是一位魔法师？"
+          },
+          {
+            "speaker": "农夫",
+            "text": "我请了萨尔格特城的魔法师帮我施展了保护田地的魔法，但问题在于这些稻草人太敬业了。"
+          },
+          {
+            "speaker": "农夫",
+            "text": "现在连我自己都没法进入田地了。"
+          }
+        ],
+        "direct_victory": [
+          {
+            "speaker": "",
+            "text": "怪物们像撕扯布娃娃一样撕碎了稻草人——和农夫的田地。\n农夫苦着脸向你支付了报酬。"
+          }
+        ],
+        "enchanter": [
+          {
+            "speaker": "",
+            "text": "魔法师表示下次不会用刚毕业的学生的衣服来给稻草人做附魔了，这些傻子铆足劲干活就怕自己被开除。随后骑上马决定前往农夫的田地。"
+          }
+        ]
+      },
+      "branches": [
+        {
+          "key": "direct",
+          "label": "直接解决",
+          "condition": "尚未接受回城路线，且事件未完成",
+          "next": "battle_pending → won → complete",
+          "result": "胜利后显示田地同被撕碎、农夫付报酬；较少魔力"
+        },
+        {
+          "key": "ask",
+          "label": "路过萨尔格特城帮你问一下",
+          "condition": "尚未选择路线",
+          "next": "active：await_enchanter",
+          "result": "保存回城路线锁定；此时不领奖，之后不再允许direct"
+        },
+        {
+          "key": "enchanter",
+          "label": "寻找附魔魔法师",
+          "condition": "城市入口且await_enchanter",
+          "next": "complete",
+          "result": "播放学生旧衣附魔对白及魔法师骑马出发；较多魔力"
+        },
+        {
+          "key": "leave",
+          "label": "绕路离开",
+          "condition": "尚未开始战斗/完成",
+          "next": "保持阶段",
+          "result": "不解除已接取的回城路线锁定，不清除目标"
+        }
+      ],
+      "parameters": {
+        "direct_magic_reward": null,
+        "enchanter_magic_reward": null,
+        "enemy_count": null,
+        "enemy_health_multiplier": null,
+        "enemy_attack_multiplier": null
+      },
+      "runtime_bindings": {
+        "flow_source": {
+          "document": "UI跳转原型/事件/事件总表.md",
+          "sha256": "988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5",
+          "event_number": 12
+        },
+        "parameters": {
+          "direct_magic_reward": null,
+          "enchanter_magic_reward": null,
+          "enemy_count": null,
+          "enemy_health_multiplier": null,
+          "enemy_attack_multiplier": null
+        },
+        "parameter_specs": {
+          "direct_magic_reward": {
+            "label": "直接战斗路线魔力",
+            "type": "number",
+            "unit": "魔力",
+            "min": 0,
+            "allow_unconfigured": true
+          },
+          "enchanter_magic_reward": {
+            "label": "回城附魔师路线魔力",
+            "type": "number",
+            "unit": "魔力",
+            "min": 0,
+            "allow_unconfigured": true
+          },
+          "enemy_count": {
+            "label": "稻草人敌军数量",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          },
+          "enemy_health_multiplier": {
+            "label": "敌军生命调整倍率",
+            "type": "number",
+            "unit": "倍",
+            "min": 0.01,
+            "allow_unconfigured": true
+          },
+          "enemy_attack_multiplier": {
+            "label": "敌军攻击调整倍率",
+            "type": "number",
+            "unit": "倍",
+            "min": 0.01,
+            "allow_unconfigured": true
+          }
+        },
+        "locations": [
+          {
+            "icon_id": "event_diligent_farm",
+            "position": [
+              16326.25,
+              6614.676099968439
+            ],
+            "entry_role": "farm"
+          },
+          {
+            "icon_id": "layout_sargate_city",
+            "entry_role": "return_city_enchanter",
+            "position": [
+              19386.25,
+              8381.367923688693
+            ]
+          }
+        ],
+        "location": {
+          "icon_id": "event_diligent_farm",
+          "position": [
+            16326.25,
+            6614.676099968439
+          ],
+          "entry_role": "farm"
+        }
+      }
+    },
+    {
+      "id": "QST_GRASS_013",
+      "number": 13,
+      "title": "群星之底",
+      "dialogues": {
+        "intro": [
+          {
+            "speaker": "",
+            "text": "一座枯井之中传来微弱的亮光。"
+          },
+          {
+            "speaker": "",
+            "text": "你看向井底，水井的底部有着一片明亮的星空，然而那些星图与你所知道的任何星图都不一样。它们看起来是如此地遥远，如此地古老，仿佛位于另一个你所不知道的世界。狭窄的井口框住了那片星空，却看不出它究竟有多深。"
+          },
+          {
+            "speaker": "",
+            "text": "井边刻着几道量水位的痕迹，最高的一道旁边用古老的语言写着：“天空最高涨到此处，星星即将归来。”"
+          }
+        ]
+      },
+      "branches": [
+        {
+          "key": "record",
+          "label": "记录星图",
+          "condition": "玩家确认",
+          "next": "complete",
+          "result": "给予魔力；登记已记录；Demo不生成后续事件"
+        },
+        {
+          "key": "leave",
+          "label": "离开",
+          "condition": "未记录",
+          "next": "保持未完成",
+          "result": "以后仍可回来"
+        }
+      ],
+      "parameters": {
+        "magic_reward": null
+      },
+      "runtime_bindings": {
+        "location": {
+          "icon_id": "event_star_well",
+          "position": [
+            13460,
+            9680
+          ],
+          "entry_role": ""
+        },
+        "flow_source": {
+          "document": "UI跳转原型/事件/事件总表.md",
+          "sha256": "988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5",
+          "event_number": 13
+        },
+        "parameters": {
+          "magic_reward": null
+        },
+        "parameter_specs": {
+          "magic_reward": {
+            "label": "记录星图魔力",
+            "type": "number",
+            "unit": "魔力",
+            "min": 0,
+            "allow_unconfigured": true
+          }
+        }
+      }
+    },
+    {
+      "id": "QST_GRASS_014",
+      "number": 14,
+      "title": "不便携式魔力扩充引擎",
+      "dialogues": {
+        "intro": [
+          {
+            "speaker": "",
+            "text": "一位商人正在出售一件巨大的机器。上面写着“来自王国魔法学院教授的得意之作”，商人正在扯着嗓子向路人介绍，这台机器有多么多么了不起。然而平民们兴趣缺缺，看到你靠近，商人激动地拉住了你。"
+          },
+          {
+            "speaker": "商人",
+            "text": "这位前途无量的魔法师先生，您是否有在魔力单次输出不足的烦恼呢？"
+          },
+          {
+            "speaker": "商人",
+            "text": "请容我向您介绍这款不便携式魔力扩充容器，只要轻轻一按，巨大的魔力就会吼吼吼地喷涌而出。"
+          },
+          {
+            "speaker": "商人",
+            "text": "基础型就足以支持大型召唤阵，如果有合适的魔力核心还可以进一步扩大单次输出量！"
+          },
+          {
+            "speaker": "商人",
+            "text": "它的上一任主人用这个引擎驱动他自己的浮空艇，您猜怎么着，引擎出力太大自己飞走了，连同正在操作引擎的魔法师一起上了天。引擎从一百米高的地方掉下来毫发无伤，多么坚固呀。"
+          },
+          {
+            "speaker": "商人",
+            "text": "你问魔法师本人怎么样了？哎呀，这些都是小事。"
+          },
+          {
+            "speaker": "商人",
+            "text": "价格，嘿嘿，价格也不贵，只要100魔力。"
+          }
+        ],
+        "purchased": [
+          {
+            "speaker": "商人",
+            "text": "好嘞！如果晚上前任主人的鬼魂回来找你，你得想办法自己解决。"
+          }
+        ]
+      },
+      "branches": [
+        {
+          "key": "buy",
+          "label": "我买了",
+          "condition": "资源/升级资格满足；尚未购买；满级处理仍待确认",
+          "next": "complete",
+          "result": "扣100魔力、扩圈、登记engine_owned和购买时间；同时安排4天后鬼魂；保存失败不启动计时"
+        },
+        {
+          "key": "leave",
+          "label": "离开",
+          "condition": "始终可用",
+          "next": "保持未完成",
+          "result": "不扣费、不扩圈、不开始4天倒计时"
+        }
+      ],
+      "parameters": {
+        "purchase_cost": 100,
+        "expand_rings": 1,
+        "maximum_array_stage": null
+      },
+      "runtime_bindings": {
+        "location": {
+          "icon_id": "layout_sargate_city",
+          "position": [
+            19386.25,
+            8381.367923688693
+          ],
+          "entry_role": "engine_merchant"
+        },
+        "trigger_policy": {
+          "type": "interact",
+          "min_mana": 100,
+          "not_purchased": true,
+          "summoning_ring_can_expand": true,
+          "purchase_cost": 100,
+          "expand_rings": 1,
+          "record_game_time_on_success": true
+        },
+        "flow_source": {
+          "document": "UI跳转原型/事件/事件总表.md",
+          "sha256": "988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5",
+          "event_number": 14
+        },
+        "parameters": {
+          "purchase_cost": 100,
+          "expand_rings": 1,
+          "maximum_array_stage": null
+        },
+        "parameter_specs": {
+          "purchase_cost": {
+            "label": "引擎购买费用",
+            "type": "number",
+            "unit": "魔力",
+            "min": 0,
+            "allow_unconfigured": true
+          },
+          "expand_rings": {
+            "label": "召唤阵扩充圈数",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          },
+          "maximum_array_stage": {
+            "label": "召唤阵级别上限",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          }
+        },
+        "parameter_bindings": {
+          "min_mana": "purchase_cost",
+          "purchase_cost": "purchase_cost",
+          "expand_rings": "expand_rings"
+        }
+      }
+    },
+    {
+      "id": "QST_GRASS_015",
+      "number": 15,
+      "title": "外行魔法师",
+      "dialogues": {
+        "intro": [
+          {
+            "speaker": "",
+            "text": "夜深人静，你的怪物们围成了一个圈，你在圈圈的正中央靠着一只毛茸茸的怪物安睡。这时，一个透明的人影从魔法引擎里慢吞吞地爬了出来，他看了看自己透明的手，怒气冲冲地在原地绕圈。"
+          },
+          {
+            "speaker": "鬼魂",
+            "text": "我就说！卡罗拉是个外行！"
+          },
+          {
+            "speaker": "鬼魂",
+            "text": "都说了魔力输出不要那么大！说什么大就是好，多就是美，你倒是把加固的部分也一起增加变多啊！"
+          },
+          {
+            "speaker": "鬼魂",
+            "text": "外行！外行！"
+          },
+          {
+            "speaker": "鬼魂",
+            "text": "好啦！我这下死了！都怪你！"
+          },
+          {
+            "speaker": "鬼魂",
+            "text": "还听还听，你，对就是那个在装睡的家伙，你觉得很好笑吗？你能理解在延毕三年后，被自己好不容易做出来毕业设计直接送上天的感觉吗？"
+          }
+        ],
+        "funny": [
+          {
+            "speaker": "鬼魂",
+            "text": "不许笑不许笑不许笑！"
+          },
+          {
+            "speaker": "鬼魂",
+            "text": "拜托你一件事，如果你最近见到了一个叫卡罗拉的魔法师，帮我狠狠地踢他的屁股。"
+          },
+          {
+            "speaker": "鬼魂",
+            "text": "我很想亲自这么做，但现在神殿的复活名额都排到三年后了。"
+          },
+          {
+            "speaker": "鬼魂",
+            "text": "作为回报，我研究的符文就教给你吧。"
+          }
+        ],
+        "kind": [
+          {
+            "speaker": "鬼魂",
+            "text": "哼，看来你还有点良心。"
+          },
+          {
+            "speaker": "鬼魂",
+            "text": "拜托你一件事，如果你最近见到了一个叫卡罗拉的魔法师，帮我狠狠地踢他的屁股。"
+          },
+          {
+            "speaker": "鬼魂",
+            "text": "我很想亲自这么做，但现在神殿的复活名额都排到三年后了。"
+          },
+          {
+            "speaker": "鬼魂",
+            "text": "作为回报，我研究的符文就教给你吧。"
+          }
+        ]
+      },
+      "branches": [
+        {
+          "key": "funny",
+          "label": "有点好笑",
+          "condition": "玩家选择",
+          "next": "汇合teach",
+          "result": "播放“不许笑”及踢屁股请求"
+        },
+        {
+          "key": "kind",
+          "label": "没那么好笑",
+          "condition": "玩家选择",
+          "next": "汇合teach",
+          "result": "播放“还有点良心”及相同请求"
+        },
+        {
+          "key": "teach",
+          "label": "共同奖励",
+          "condition": "任一对话分支走完",
+          "next": "complete",
+          "result": "解锁同一份符文，只发一次；不创建未写明的卡罗拉战斗"
+        }
+      ],
+      "parameters": {
+        "elapsed_game_days": 4,
+        "rune_unlock_count": null
+      },
+      "runtime_bindings": {
+        "location": {
+          "icon_id": "layout_sargate_city",
+          "position": [
+            19386.25,
+            8381.367923688693
+          ],
+          "entry_role": "engine_ghost"
+        },
+        "trigger_policy": {
+          "type": "on_game_time",
+          "requires_completed_event": "QST_GRASS_014",
+          "elapsed_game_days": 4,
+          "location_id": "layout_sargate_city",
+          "once_per_save": true,
+          "time_basis": "game_time"
+        },
+        "flow_source": {
+          "document": "UI跳转原型/事件/事件总表.md",
+          "sha256": "988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5",
+          "event_number": 15
+        },
+        "parameters": {
+          "elapsed_game_days": 4,
+          "rune_unlock_count": null
+        },
+        "parameter_specs": {
+          "elapsed_game_days": {
+            "label": "引擎购买后延迟",
+            "type": "number",
+            "unit": "游戏日",
+            "min": 0,
+            "allow_unconfigured": true
+          },
+          "rune_unlock_count": {
+            "label": "符文解锁种类",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          }
+        },
+        "parameter_bindings": {
+          "elapsed_game_days": "elapsed_game_days"
+        }
+      }
+    },
+    {
+      "id": "QST_GRASS_016",
+      "number": 16,
+      "title": "看一眼不要钱",
+      "dialogues": {
+        "intro": [
+          {
+            "speaker": "",
+            "text": "你远远地看见一个棚子，棚子下坐着一大堆拿着望远镜的人，旁边还挂着招牌：草原奇观，看一眼不要钱。在远处有一头看起来格外不一样的拱兽，它的头颅上只有一只巨大的眼睛。"
+          },
+          {
+            "speaker": "马戏团长",
+            "text": "哦，大人，您也想要看一看这稀有的变异拱兽吗？"
+          },
+          {
+            "speaker": "马戏团长",
+            "text": "您可以从我们这里租望远镜，美美观赏，我们有小望远镜，中望远镜，和超级超级大望远镜。"
+          },
+          {
+            "speaker": "",
+            "text": "马戏团长费劲地拖出了一个一人高的望远镜，巨大镜面反射的阳光笔直地照向了拱兽的眼睛。随着远处的一声怒吼，一道光波穿过了观光车的顶棚，客人们尖叫起来，四散奔逃。"
+          },
+          {
+            "speaker": "",
+            "text": "同时那怒气冲冲的庞然大物已经朝这边冲了过来。"
+          },
+          {
+            "speaker": "马戏团长",
+            "text": "这个项目目前反馈比较强烈。"
+          }
+        ],
+        "victory": [
+          {
+            "speaker": "",
+            "text": "拱兽的身上掉落了一颗结晶化的眼球。"
+          },
+          {
+            "speaker": "马戏团长",
+            "text": "哎，搞黄了……下次要不还是把餐厅开在蝎子的背上？"
+          }
+        ]
+      },
+      "branches": [
+        {
+          "key": "help",
+          "label": "帮他处理魔眼拱兽",
+          "condition": "玩家选择",
+          "next": "battle_pending → won → complete",
+          "result": "胜利后播放眼球掉落及团长新计划，发奇物"
+        },
+        {
+          "key": "away",
+          "label": "离远一点",
+          "condition": "玩家选择",
+          "next": "离开/再访规则待定",
+          "result": "不发眼球，不生成魔眼怪物；不擅自自动战斗"
+        }
+      ],
+      "parameters": {
+        "enemy_count": null,
+        "relic_quantity": 1,
+        "magic_eye_probability": null,
+        "enemy_health_multiplier": null,
+        "enemy_attack_multiplier": null
+      },
+      "runtime_bindings": {
+        "location": {
+          "icon_id": "event_circus",
+          "position": [
+            9250,
+            9520
+          ],
+          "entry_role": ""
+        },
+        "flow_source": {
+          "document": "UI跳转原型/事件/事件总表.md",
+          "sha256": "988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5",
+          "event_number": 16
+        },
+        "parameters": {
+          "enemy_count": null,
+          "relic_quantity": 1,
+          "magic_eye_probability": null,
+          "enemy_health_multiplier": null,
+          "enemy_attack_multiplier": null
+        },
+        "parameter_specs": {
+          "enemy_count": {
+            "label": "魔眼拱兽敌军数量",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          },
+          "relic_quantity": {
+            "label": "结晶化眼球数量",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          },
+          "magic_eye_probability": {
+            "label": "魔眼特征产生概率",
+            "type": "number",
+            "unit": "0到1",
+            "min": 0,
+            "allow_unconfigured": true,
+            "max": 1
+          },
+          "enemy_health_multiplier": {
+            "label": "敌军生命调整倍率",
+            "type": "number",
+            "unit": "倍",
+            "min": 0.01,
+            "allow_unconfigured": true
+          },
+          "enemy_attack_multiplier": {
+            "label": "敌军攻击调整倍率",
+            "type": "number",
+            "unit": "倍",
+            "min": 0.01,
+            "allow_unconfigured": true
+          }
+        }
+      }
+    },
+    {
+      "id": "QST_GRASS_017",
+      "number": 17,
+      "title": "富含矿物质",
+      "dialogues": {
+        "intro": [
+          {
+            "speaker": "",
+            "text": "你来到河边，几位修桥工站在河边，无奈地抬起头看着几只正在啄桥的食矿鸟。他们身后有着成堆的石料，然而却只能束手无策地站在原地。"
+          },
+          {
+            "speaker": "工人",
+            "text": "以前修的石桥总被吃，我们特意换了更贵的石头加固。"
+          },
+          {
+            "speaker": "工人",
+            "text": "结果现在来的鸟比以前还多了。"
+          }
+        ],
+        "wood": [
+          {
+            "speaker": "",
+            "text": "工人们听从你的意见使用木头来搭桥，食矿鸟无趣地飞走了。"
+          }
+        ]
+      },
+      "branches": [
+        {
+          "key": "fight",
+          "label": "帮忙赶走鸟",
+          "condition": "玩家选择",
+          "next": "battle_pending → won → complete",
+          "result": "战斗胜利获得魔力"
+        },
+        {
+          "key": "wood",
+          "label": "建议用木头搭桥",
+          "condition": "玩家选择",
+          "next": "complete",
+          "result": "工人改用木头，食矿鸟飞走，给予魔力奖励"
+        },
+        {
+          "key": "leave",
+          "label": "离开",
+          "condition": "未解决",
+          "next": "保持未完成",
+          "result": "不发奖"
+        }
+      ],
+      "parameters": {
+        "enemy_count": null,
+        "fight_magic_reward": null,
+        "wood_magic_reward": null,
+        "enemy_health_multiplier": null,
+        "enemy_attack_multiplier": null
+      },
+      "runtime_bindings": {
+        "location": {
+          "icon_id": "event_north_bridge",
+          "position": [
+            15109.84375,
+            6258.5
+          ],
+          "entry_role": ""
+        },
+        "flow_source": {
+          "document": "UI跳转原型/事件/事件总表.md",
+          "sha256": "988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5",
+          "event_number": 17
+        },
+        "parameters": {
+          "enemy_count": null,
+          "fight_magic_reward": null,
+          "wood_magic_reward": null,
+          "enemy_health_multiplier": null,
+          "enemy_attack_multiplier": null
+        },
+        "parameter_specs": {
+          "enemy_count": {
+            "label": "食矿鸟数量",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          },
+          "fight_magic_reward": {
+            "label": "战斗路线魔力",
+            "type": "number",
+            "unit": "魔力",
+            "min": 0,
+            "allow_unconfigured": true
+          },
+          "wood_magic_reward": {
+            "label": "木桥路线魔力",
+            "type": "number",
+            "unit": "魔力",
+            "min": 0,
+            "allow_unconfigured": true
+          },
+          "enemy_health_multiplier": {
+            "label": "敌军生命调整倍率",
+            "type": "number",
+            "unit": "倍",
+            "min": 0.01,
+            "allow_unconfigured": true
+          },
+          "enemy_attack_multiplier": {
+            "label": "敌军攻击调整倍率",
+            "type": "number",
+            "unit": "倍",
+            "min": 0.01,
+            "allow_unconfigured": true
+          }
+        }
+      }
+    },
+    {
+      "id": "QST_SIDE_003_001",
+      "number": 18,
+      "title": "血祭日",
+      "dialogues": {
+        "intro": [
+          {
+            "speaker": "",
+            "text": "你在沙漠边缘找到了一处红色的祭坛，倒三角的鲜红巨石悬浮着，下方古老的碑文指示你按照条件在此处献祭生命。"
+          },
+          {
+            "speaker": "",
+            "text": "“那头兽只为猩红而生，漫步于无名之野。”\n“红日升起，红雨落下，此为血祭之日。”\n“为其献上血的祭礼，其必将回以血的报答”"
+          }
+        ],
+        "first": [
+          {
+            "speaker": "",
+            "text": "碑文上的第一次献祭：\n“皮毛修长之物，符合一的数”"
+          }
+        ],
+        "second": [
+          {
+            "speaker": "",
+            "text": "碑文上的第二次献祭：\n“矫健如飞之物，符合二的数”"
+          }
+        ],
+        "third": [
+          {
+            "speaker": "",
+            "text": "碑文上的第三次献祭：\n”无手无足之物，符合三的数”"
+          }
+        ]
+      },
+      "branches": [
+        {
+          "key": "first",
+          "label": "第一次献祭",
+          "condition": "只显示此阶段要求；1只有皮毛怪物，不额外检查修长；扣除后至少持有1只怪物",
+          "next": "发奖成功后开放stage_2",
+          "result": "校验并回收1只，给予魔力；奖励成功前不显示第二次要求"
+        },
+        {
+          "key": "second",
+          "label": "第二次献祭",
+          "condition": "第一次已发奖；2只飞行怪物；扣除后至少持有1只怪物",
+          "next": "发奖成功后开放stage_3",
+          "result": "校验并回收2只，给予符文；奖励成功前不显示第三次要求"
+        },
+        {
+          "key": "third",
+          "label": "第三次献祭",
+          "condition": "第二次已发奖；3只蛇类且无手无足怪物；扣除后至少持有1只怪物",
+          "next": "发奖成功后complete",
+          "result": "校验并回收3只，给予符文；第三次奖励成功后完成"
+        },
+        {
+          "key": "reward_retry",
+          "label": "发奖失败或恢复待发奖",
+          "condition": "有同一阶段待处理请求",
+          "next": "停留当前阶段",
+          "result": "已提交回收则不再扣除；未提交的原子事务按同请求重试；不跳过奖励，不提前揭示下一要求"
+        }
+      ],
+      "parameters": {
+        "first_sacrifice_count": 1,
+        "second_sacrifice_count": 2,
+        "third_sacrifice_count": 3,
+        "minimum_remaining_monsters": 1,
+        "first_magic_reward": null,
+        "second_rune_unlock_count": null,
+        "third_rune_unlock_count": null,
+        "first_blood_rain_game_days": null,
+        "second_blood_rain_game_days": null,
+        "blood_rain_radius_cells": null,
+        "blood_rain_effect_strength": null
+      },
+      "runtime_bindings": {
+        "flow_source": {
+          "document": "UI跳转原型/事件/事件总表.md",
+          "sha256": "988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5",
+          "event_number": 18
+        },
+        "parameters": {
+          "first_sacrifice_count": 1,
+          "second_sacrifice_count": 2,
+          "third_sacrifice_count": 3,
+          "minimum_remaining_monsters": 1,
+          "first_magic_reward": null,
+          "second_rune_unlock_count": null,
+          "third_rune_unlock_count": null,
+          "first_blood_rain_game_days": null,
+          "second_blood_rain_game_days": null,
+          "blood_rain_radius_cells": null,
+          "blood_rain_effect_strength": null
+        },
+        "parameter_specs": {
+          "first_sacrifice_count": {
+            "label": "第一阶段有皮毛怪物数量",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          },
+          "second_sacrifice_count": {
+            "label": "第二阶段飞行怪物数量",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          },
+          "third_sacrifice_count": {
+            "label": "第三阶段无手无足蛇类数量",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          },
+          "minimum_remaining_monsters": {
+            "label": "献祭后最低持有数量",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          },
+          "first_magic_reward": {
+            "label": "第一次献祭魔力",
+            "type": "number",
+            "unit": "魔力",
+            "min": 0,
+            "allow_unconfigured": true
+          },
+          "second_rune_unlock_count": {
+            "label": "第二次解锁符文种类",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          },
+          "third_rune_unlock_count": {
+            "label": "第三次解锁符文种类",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          },
+          "first_blood_rain_game_days": {
+            "label": "第一次血雨持续时间",
+            "type": "number",
+            "unit": "游戏日",
+            "min": 0,
+            "allow_unconfigured": true
+          },
+          "second_blood_rain_game_days": {
+            "label": "第二次血雨持续时间",
+            "type": "number",
+            "unit": "游戏日",
+            "min": 0,
+            "allow_unconfigured": true
+          },
+          "blood_rain_radius_cells": {
+            "label": "血雨作用半径",
+            "type": "number",
+            "unit": "格",
+            "min": 0,
+            "allow_unconfigured": true
+          },
+          "blood_rain_effect_strength": {
+            "label": "血雨效果强度",
+            "type": "number",
+            "unit": "按正式天气效果定义",
+            "min": 0,
+            "allow_unconfigured": true
+          }
+        }
+      }
+    },
+    {
+      "id": "QST_GRASS_019",
+      "number": 19,
+      "title": "谁会赢？",
+      "dialogues": {
+        "intro": [
+          {
+            "speaker": "",
+            "text": "你看到一头格外健硕的狼正在和一只拱兽在原野上撕咬，鲜血飞溅。"
+          },
+          {
+            "speaker": "",
+            "text": "那头狼的体格庞大，头颅与身体上披着石头的盔甲，它长着两个脑袋能够同时进行撕咬。"
+          },
+          {
+            "speaker": "",
+            "text": "那只拱兽的头上长着一只魔眼，它践踏着大地，向周围发射破坏性的光束。"
+          }
+        ],
+        "spectator_end": [
+          {
+            "speaker": "",
+            "text": "胜利者离开"
+          }
+        ]
+      },
+      "branches": [
+        {
+          "key": "wolf",
+          "label": "帮助狼",
+          "condition": "玩家选择；被帮助的狼不作为友军入场",
+          "next": "battle_pending → won → complete",
+          "result": "玩家对战魔眼拱兽与拱兽群；胜利后奖励强化双头甲狼1只"
+        },
+        {
+          "key": "beast",
+          "label": "帮助拱兽",
+          "condition": "玩家选择；被帮助的拱兽不作为友军入场",
+          "next": "battle_pending → won → complete",
+          "result": "玩家对战双头甲狼与狼群；胜利后奖励强化魔眼拱兽1只"
+        },
+        {
+          "key": "watch",
+          "label": "谁也不帮",
+          "condition": "不部署玩家队伍；真实两方AI战斗",
+          "next": "spectator_pending → 真实结束 → complete",
+          "result": "按真实结果展示胜者离开；给予魔力，不给怪物；不可随机或脚本替代胜负"
+        }
+      ],
+      "parameters": {
+        "wolf_reward_quantity": 1,
+        "beast_reward_quantity": 1,
+        "watch_magic_reward": null,
+        "wolf_side_count": null,
+        "beast_side_count": null,
+        "enemy_health_multiplier": null,
+        "enemy_attack_multiplier": null
+      },
+      "runtime_bindings": {
+        "location": {
+          "icon_id": "layout_forest_cave_001",
+          "position": [
+            5616.25,
+            5068.820754213216
+          ],
+          "entry_role": "cave_duel"
+        },
+        "flow_source": {
+          "document": "UI跳转原型/事件/事件总表.md",
+          "sha256": "988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5",
+          "event_number": 19
+        },
+        "parameters": {
+          "wolf_reward_quantity": 1,
+          "beast_reward_quantity": 1,
+          "watch_magic_reward": null,
+          "wolf_side_count": null,
+          "beast_side_count": null,
+          "enemy_health_multiplier": null,
+          "enemy_attack_multiplier": null
+        },
+        "parameter_specs": {
+          "wolf_reward_quantity": {
+            "label": "强化双头甲狼奖励数量",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          },
+          "beast_reward_quantity": {
+            "label": "强化魔眼拱兽奖励数量",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          },
+          "watch_magic_reward": {
+            "label": "旁观魔力奖励",
+            "type": "number",
+            "unit": "魔力",
+            "min": 0,
+            "allow_unconfigured": true
+          },
+          "wolf_side_count": {
+            "label": "狼方阵容总数量",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          },
+          "beast_side_count": {
+            "label": "拱兽方阵容总数量",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          },
+          "enemy_health_multiplier": {
+            "label": "敌军生命调整倍率",
+            "type": "number",
+            "unit": "倍",
+            "min": 0.01,
+            "allow_unconfigured": true
+          },
+          "enemy_attack_multiplier": {
+            "label": "敌军攻击调整倍率",
+            "type": "number",
+            "unit": "倍",
+            "min": 0.01,
+            "allow_unconfigured": true
+          }
+        }
+      }
+    },
+    {
+      "id": "QST_GRASS_020",
+      "number": 20,
+      "title": "谁会输？",
+      "dialogues": {
+        "intro": [
+          {
+            "speaker": "",
+            "text": "你看到（怪物1组）正在与（怪物2组）战斗。当你看得正起兴的时候，旁边走来了一个骑着马的骑士。"
+          },
+          {
+            "speaker": "",
+            "text": "骑士勒住马，饶有兴致地看了两眼战场，随后朝你露出了愉快的笑容。"
+          },
+          {
+            "speaker": "骑士",
+            "text": "你好啊旅行者，我是杜波骑士，这场面还真是不太少见啊。"
+          },
+          {
+            "speaker": "骑士",
+            "text": "我和你打赌10魔力，猜猜谁会赢怎么样。"
+          },
+          {
+            "speaker": "骑士",
+            "text": "为了公平起见，你先选，我选另一边。"
+          }
+        ],
+        "settled": [
+          {
+            "speaker": "骑士",
+            "text": "老实攒魔力很无趣吧？下次有缘我们再赌哦？"
+          }
+        ]
+      },
+      "branches": [
+        {
+          "key": "one",
+          "label": "赌就赌，我选（怪物1组）",
+          "condition": "当前轮次1—4；双方阵容已手填；本金足够且无未结赌局",
+          "next": "bet_pending → 真实观战 → settled",
+          "result": "锁定本轮双方配置及下注；骑士选另一边；不部署玩家怪物"
+        },
+        {
+          "key": "two",
+          "label": "赌就赌，我选（怪物2组）",
+          "condition": "同上",
+          "next": "bet_pending → 真实观战 → settled",
+          "result": "与one共享本轮下注锁，不得重复扣费或更换已锁定阵容"
+        },
+        {
+          "key": "settled",
+          "label": "本轮真实战斗结算",
+          "condition": "对应本轮战斗结束且账务提交成功",
+          "next": "前3轮：下一轮；第4轮：complete",
+          "result": "获胜返还2倍本金；有效胜负均增加已结算次数；第4次后移除骑士入口"
+        },
+        {
+          "key": "leave",
+          "label": "离开",
+          "condition": "未下注",
+          "next": "保持轮次",
+          "result": "不扣费、不推进次数；已下注后的关闭不视作撤销，平局/中止处理待定"
+        }
+      ],
+      "parameters": {
+        "max_settlements": 4,
+        "stakes": [
+          10,
+          20,
+          50,
+          100
+        ],
+        "gross_return_multiplier": 2,
+        "enemy_health_multiplier": null,
+        "enemy_attack_multiplier": null,
+        "round_1_a_count": null,
+        "round_1_b_count": null,
+        "round_2_a_count": null,
+        "round_2_b_count": null,
+        "round_3_a_count": null,
+        "round_3_b_count": null,
+        "round_4_a_count": null,
+        "round_4_b_count": null
+      },
+      "runtime_bindings": {
+        "location": {
+          "icon_id": "event_knight_bet",
+          "position": [
+            19886.25,
+            9081.367923688693
+          ],
+          "entry_role": ""
+        },
+        "trigger_policy": {
+          "max_settlements": 4,
+          "stakes": [
+            10,
+            20,
+            50,
+            100
+          ],
+          "gross_return_multiplier": 2,
+          "hide_after_final_settlement": true,
+          "requires_hand_authored_teams": true
+        },
+        "flow_source": {
+          "document": "UI跳转原型/事件/事件总表.md",
+          "sha256": "988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5",
+          "event_number": 20
+        },
+        "parameters": {
+          "max_settlements": 4,
+          "stakes": [
+            10,
+            20,
+            50,
+            100
+          ],
+          "gross_return_multiplier": 2,
+          "enemy_health_multiplier": null,
+          "enemy_attack_multiplier": null,
+          "round_1_a_count": null,
+          "round_1_b_count": null,
+          "round_2_a_count": null,
+          "round_2_b_count": null,
+          "round_3_a_count": null,
+          "round_3_b_count": null,
+          "round_4_a_count": null,
+          "round_4_b_count": null
+        },
+        "parameter_specs": {
+          "max_settlements": {
+            "label": "最多结算轮次",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          },
+          "stakes": {
+            "label": "各轮下注本金",
+            "type": "number_array",
+            "unit": "魔力",
+            "min": 0,
+            "allow_unconfigured": true
+          },
+          "gross_return_multiplier": {
+            "label": "获胜总返还倍率 含本金",
+            "type": "number",
+            "unit": "倍",
+            "min": 0,
+            "allow_unconfigured": true
+          },
+          "enemy_health_multiplier": {
+            "label": "敌军生命调整倍率",
+            "type": "number",
+            "unit": "倍",
+            "min": 0.01,
+            "allow_unconfigured": true
+          },
+          "enemy_attack_multiplier": {
+            "label": "敌军攻击调整倍率",
+            "type": "number",
+            "unit": "倍",
+            "min": 0.01,
+            "allow_unconfigured": true
+          },
+          "round_1_a_count": {
+            "label": "第1轮A方怪物数量",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          },
+          "round_1_b_count": {
+            "label": "第1轮B方怪物数量",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          },
+          "round_2_a_count": {
+            "label": "第2轮A方怪物数量",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          },
+          "round_2_b_count": {
+            "label": "第2轮B方怪物数量",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          },
+          "round_3_a_count": {
+            "label": "第3轮A方怪物数量",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          },
+          "round_3_b_count": {
+            "label": "第3轮B方怪物数量",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          },
+          "round_4_a_count": {
+            "label": "第4轮A方怪物数量",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          },
+          "round_4_b_count": {
+            "label": "第4轮B方怪物数量",
+            "type": "integer",
+            "unit": "个或只",
+            "min": 1,
+            "allow_unconfigured": true
+          }
+        },
+        "parameter_bindings": {
+          "max_settlements": "max_settlements",
+          "stakes": "stakes",
+          "gross_return_multiplier": "gross_return_multiplier"
+        }
+      }
+    }
+  ]
+}
