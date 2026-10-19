@@ -6,8 +6,8 @@
 [ext_resource type="PackedScene" path="res://Scenes/Creatures/Components/NavigationNPCSpawner3D.tscn" id="5_npc_spawner"]
 [ext_resource type="PackedScene" path="res://Scenes/Input/TerrainCursor3D.tscn" id="6_terrain_cursor"]
 [ext_resource type="PackedScene" path="res://Scenes/VFX/TerrainArcIndicator3D.tscn" id="7_terrain_arc"]
-[ext_resource type="PackedScene" path="res://Scenes/Creatures/Characters/Generate_Spider_NPC.tscn" id="8_qhub5"]
 [ext_resource type="Script" uid="uid://dw288em073ls0" path="res://Scripts/Creatures/Modules/CreatureModuleAttachment.gd" id="9_cuare"]
+[ext_resource type="PackedScene" uid="uid://dmp6yysgqss2f" path="res://Scenes/Creatures/Characters/Generate_Wolf_NPC.tscn" id="10_a1huo"]
 [ext_resource type="PackedScene" uid="uid://dstgtopkigikh" path="res://Scenes/Creatures/Characters/Character_Test_NPC.tscn" id="10_cuare"]
 [ext_resource type="Script" uid="uid://bubsk21aew8vp" path="res://Scripts/Debug/TestLevelPause.gd" id="10_pause"]
 
@@ -56,30 +56,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 43.19173, 0)
 light_energy = 5.0
 omni_range = 500.0
 
-[node name="GenerateSpiderNPC" parent="." unique_id=1279460167 instance=ExtResource("8_qhub5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.674088, 1.4623777, -5.3933105)
-module_attachments = Array[ExtResource("9_cuare")]([])
-
-[node name="GenerateSpiderNPC2" parent="." unique_id=515801811 instance=ExtResource("8_qhub5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.57222, 1.462347, 23.380615)
-module_attachments = Array[ExtResource("9_cuare")]([])
-
-[node name="GenerateSpiderNPC3" parent="." unique_id=79325780 instance=ExtResource("8_qhub5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.743683, 1.4624082, -23.968994)
-module_attachments = Array[ExtResource("9_cuare")]([])
-
 [node name="CharacterTestNPC" parent="." unique_id=418755916 instance=ExtResource("10_cuare")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 47.01738, 1.38, -31.027832)
 faction_id = 2
 
-[node name="GenerateSpiderNPC4" parent="." unique_id=2061269749 instance=ExtResource("8_qhub5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.7574615, 1.4623775, -54.100708)
-module_attachments = Array[ExtResource("9_cuare")]([])
-
-[node name="GenerateSpiderNPC5" parent="." unique_id=2127211030 instance=ExtResource("8_qhub5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.1148834, 1.4623774, 47.69751)
-module_attachments = Array[ExtResource("9_cuare")]([])
-
-[node name="GenerateSpiderNPC6" parent="." unique_id=1050862636 instance=ExtResource("8_qhub5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24.744781, 1.4624083, 14.053589)
+[node name="GenerateWolfNPC" parent="." unique_id=1556976358 instance=ExtResource("10_a1huo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23.192657, 3.2265394, 29.137207)
 module_attachments = Array[ExtResource("9_cuare")]([])
