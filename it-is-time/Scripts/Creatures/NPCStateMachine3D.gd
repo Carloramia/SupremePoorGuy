@@ -729,6 +729,11 @@ func _update_combat(delta: float) -> void:
 			if _enemy != previous: _prediction_distance_sample = -1
 			if _enemy != previous and _enemy != null: _log_state_event(&"target_acquired",{"target":str(_enemy.get_path()),"target_part":str(_enemy_torso(_enemy).get_path()),"distance":_horizontal_distance_to(_enemy_position(_enemy))})
 			if debug_logging_enabled: print("[npc_combat] npc=",get_parent().name," target=",_enemy.name if _enemy != null else &"none")
+	# Summon taunts only affect the next target decision, never interrupt an action.
+	if current_state != State.ATTACK:
+		var effects: Node = get_parent().get_meta(&"summon_effects",null)
+		var forced: Node3D = effects.taunt_target() if is_instance_valid(effects) else null
+		if _is_enemy(forced): _enemy=forced
 	if _enemy == null:
 		_attack_block_reason = &"no_enemy"
 		_distance_attack = null

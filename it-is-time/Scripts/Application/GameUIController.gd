@@ -157,10 +157,10 @@ func _build_ritual(body: VBoxContainer) -> void:
 	super._build_ritual(body)
 	var species := PackedStringArray()
 	for id: String in state.FACTORY.SUMMON_POOL: species.append(state.FACTORY.DEFINITIONS[id].name)
-	ritual_page.get_node("%Context").text = "[b]当前位置[/b]\n%s\n\n[b]可召唤物种（等概率）[/b]\n%s\n\n[b]能力边界[/b]\n普通结构与数值符文已接入；天气权重与特殊结构尚未开放。" % [application.location_name()," / ".join(species)]
+	ritual_page.get_node("%Context").text = "[b]当前位置[/b]\n%s\n\n[b]基础物种池[/b]\n%s\n\n[b]首轮规则[/b]\n9种符文、8种奇物；仅可使用已经获得的条目。大群5只共1队位，不产生分身。螺旋人像增加一对肢体，并排除不适配物种；天气权重未接入。" % [application.location_name()," / ".join(species)]
 	ritual_page.get_node("%Upgrade").text = "胜利后解锁下一圈"
 	ritual_page.get_node("%Upgrade").tooltip_text = "累计胜利达到当前阶数后开放。"
-	ritual_page.get_node("%Examples").tooltip_text = "示例只填入法阵，不赠送魔力；未接入能力会阻止召唤。"
+	ritual_page.get_node("%Examples").tooltip_text = "示例只填入法阵，不赠送魔力或条目；未获得条目会阻止召唤。"
 
 func _refresh_ritual() -> void:
 	super._refresh_ritual()
@@ -189,6 +189,8 @@ func _fill_detail(body: VBoxContainer, id: String) -> void:
 	_request_creature_portrait(page.get_node("%Portrait"),monster)
 	page.get_node("%Name").text = monster.name
 	page.get_node("%Stats").text = "生命 %.0f　攻击参考 %.1f\n平均护甲 %.1f　目标移速 %.1f\n攻击冷却倍率 %.2f\n真实物理部位 %d 个" % [monster.hp,monster.attack,monster.armor,monster.speed,monster.get("interval_multiplier",1.0),monster.parts.size()]
+	if monster.get("mode","")=="swarm": page.get_node("%Stats").text+="\n大群：同批5只共占1队位，无分身"
+	if monster.get("magic_eye",false): page.get_node("%Stats").text+="\n本只已获得射线魔眼"
 	page.get_node("%Stats").tooltip_text = "生命为各部位上限之和；护甲为部位平均值。攻击参考为冲量10的挥击原始伤害，实际伤害仍由接触冲量、护甲和全局规则决定。冷却倍率缩放AI与动作自身冷却，不缩放物理动作时长。"
 	var name_input: LineEdit = page.get_node("%NameInput")
 	name_input.text = monster.name
@@ -199,16 +201,18 @@ func _fill_detail(body: VBoxContainer, id: String) -> void:
 		_btn(page.get_node("%Traits"),"【%s】" % trait_name,func(): _trait(trait_name))
 
 func _trait(name_text: String) -> void:
-	for rune: Dictionary in Rules.RUNES:
+	for rune: Dictionary in Rules.RUNES+Rules.RELICS:
 		if rune.name == name_text:
-			_term(name_text,rune.effect+"\n"+rune.detail+"\n\n"+("已映射到真实部位属性或攻击冷却。" if rune.id in state.SUPPORTED_RUNES else "此效果尚未开放，召唤会在扣费前被阻止。"))
+			super._term(name_text,rune.effect+"\n"+rune.detail+"\n\n首轮测试规则；具体数值尚需战斗平衡验证。")
 			return
+	super._term(name_text,"旧版本保留的怪物特性；不会重掷已有怪物。")
 
 func _book() -> void:
-	_modal("符文辞典",func(body):
-		var page := _text_screen(body,"首轮开放普通结构及数值符文；未接入的结构、特殊效果和奇物会在扣费前阻止召唤。")
-		for rune: Dictionary in Rules.RUNES:
-			_btn(page.get_node("%Commands"),rune.name+(" · 已接入" if rune.id in state.SUPPORTED_RUNES else " · 未开放"),func(): _trait(rune.name)))
+	_modal("符文与奇物辞典",func(body):
+		var page := _text_screen(body,"9种符文、8种奇物。新游戏初始拥有生命，其余由事件奖励接口解锁。战斗数值为首轮测试参数。")
+		for rune: Dictionary in Rules.RUNES+Rules.RELICS:
+			var owned: bool = rune.id in state.known_references(rune.has("kind"))
+			_btn(page.get_node("%Commands"),rune.name+(" · 已获得" if owned else " · 未获得"),func(): _trait(rune.name)))
 
 func _help() -> void:
 	_term("旅途指南","地图点击地点并沿路径抵达后交互。召唤结果可加入出战或存入仓库，队位上限6。\n战场默认使用自由地形光标，双方由AI控制。Q切换系统鼠标与地形光标，Space暂停/继续战斗；鼠标移动地形光标，右键拖拽旋转镜头，滚轮缩放。\nESC在所有阶段打开设置，再按一次返回原界面。设置中可选择分辨率、全屏和保存后返回主菜单。B工坊入口和Q轮盘仍禁用。法阵中Enter刻入、Backspace撤回；纸页可点击返回按钮关闭。\n存档同时保存仓库、召唤结果和地图；中途退出战斗会从初始部署重开。")

@@ -121,7 +121,7 @@ func check_map() -> void:
 	check(is_equal_approx(app.session.data.world_time.total_minutes-start,5.0), "Successful place visit pays its configured five minutes once")
 	app.ui._close_all()
 	var rules = preload("res://Modules/PaperUI/Scripts/Ritual/RuneRules.gd").new()
-	rules.import_layout({"version":3,"stage":1,"placed":[{"uid":"time","runeId":"health","cells":[[-1,0],[0,0],[1,0]],"enabled":true}],"placedRelics":[]})
+	rules.import_layout({"version":4,"stage":1,"placed":[{"uid":"time","runeId":"health","cells":[[-1,0],[0,0],[1,0]],"enabled":true}],"placedRelics":[]})
 	start = app.session.data.world_time.total_minutes
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 1234

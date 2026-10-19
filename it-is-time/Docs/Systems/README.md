@@ -28,6 +28,7 @@ flowchart LR
 | [装备、材料与工坊](EquipmentWorkshop/README.md) | 物品栏、多持握点、武器类别、材料和网格构建 |
 | [地图、界面与部署](WorldMapUI/README.md) | 地图 JSON、敌方编队、原型适配、暂停与设置 |
 | [任务、符文与召唤](QuestsRunes/README.md) | 实际新手待办、独立任务框架、符文效果入口 |
+| [符文与奇物首轮接入](Summoning/README.md) | 当前9+8目录、独立测试场景、真实效果、事件发奖适配器和限制 |
 | [输入、光标与摄像机](InputCamera/README.md) | 正式输入门控、测试 Controller、DragCamera |
 | [日志、测试与导出](DebugExport/README.md) | 控制台、性能模式、可视化、包体自检 |
 

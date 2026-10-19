@@ -14,7 +14,7 @@ func _init() -> void:
 	reset()
 
 func reset() -> void:
-	data = {"version":SAVE_VERSION, "magic":300, "serial":0, "monsters":[], "pending":[], "pending_location":"grassland", "pending_return":"world", "completed":[], "array_stage":1,"last_summon":{},"layout":{"version":3,"stage":1,"placed":[],"placedRelics":[]}}
+	data = {"version":SAVE_VERSION, "magic":300, "serial":0, "monsters":[], "pending":[], "pending_location":"grassland", "pending_return":"world", "completed":[], "array_stage":1,"last_summon":{},"layout":{"version":4,"stage":1,"placed":[],"placedRelics":[]}}
 
 func save() -> bool:
 	last_error = ""
@@ -288,10 +288,10 @@ func transfer_ids(id: String) -> Array:
 	if unit.is_empty():
 		return []
 	var ids: Array = [id]
-	if unit.get("mode", "normal") == "tiny":
+	if unit.get("mode", "normal") in ["tiny","swarm"]:
 		ids.clear()
 		for other in data.monsters:
-			if other.get("mode", "normal")=="tiny" and other.batch_id==unit.batch_id:
+			if other.get("mode", "normal")==unit.mode and other.batch_id==unit.batch_id:
 				ids.append(other.id)
 	return ids
 
@@ -322,7 +322,7 @@ static func team_slots(units: Array) -> int:
 	for unit in units:
 		if unit.position != "team":
 			continue
-		if unit.get("mode", "normal") == "tiny":
+		if unit.get("mode", "normal") in ["tiny","swarm"]:
 			tiny_batches[unit.batch_id] = int(tiny_batches.get(unit.batch_id,0))+1
 		else:
 			total += int(unit.get("slots",1))
@@ -338,14 +338,25 @@ func _prepare_summon_save() -> void:
 		data.legacy_summon_layout = data.layout.duplicate(true)
 		data.layout = {"version":3,"stage":1,"placed":[],"placedRelics":[]}
 		data.array_stage = 1
-		if data.has("known_runes"):
-			data.known_runes = Rules.RUNES.map(func(item): return item.id)
 	data.array_stage = int(data.get("array_stage",data.layout.get("stage",1)))
 	if not data.has("last_summon"):
 		data.last_summon = {}
+	if int(data.layout.get("version",0))<4:
+		data.legacy_rune_layout_v3=data.layout.duplicate(true)
+		data.layout={"version":4,"stage":data.array_stage,"placed":[],"placedRelics":[]}
+		# Preserve only previously owned knowledge; do not grant eight new relics to old saves.
+		var old_runes: Array = data.get("known_runes",Rules.PREVIOUS_RUNES.map(func(item):return item.id))
+		var mapped: Array = []
+		for id: String in old_runes:
+			var current: String = {"iron":"armor","vitality":"health","fang":"attack","tiny":"multiply"}.get(id,id)
+			if not Rules.current_definition(current).is_empty() and current not in mapped: mapped.append(current)
+		if "health" not in mapped: mapped.push_front("health")
+		data.known_runes=mapped
+		data.known_relics=data.get("known_relics",Rules.PREVIOUS_RELICS.map(func(item):return item.id))
+		data.catalogue_version=4
 
 func _valid_summon_unit(unit: Dictionary) -> bool:
-	if unit.get("mode") not in ["normal","giant","ultra","multiply","tiny","special"] or int(unit.get("tier",0)) not in [1,2,3,4]:
+	if unit.get("mode") not in ["normal","giant","ultra","multiply","tiny","swarm","special"] or int(unit.get("tier",0)) not in [1,2,3,4]:
 		return false
 	if not unit.get("batch_id") is String or str(unit.batch_id).is_empty():
 		return false
@@ -353,7 +364,7 @@ func _valid_summon_unit(unit: Dictionary) -> bool:
 		return false
 	if not unit.get("mutation_sources") is Array or not unit.get("abilities") is Array or not unit.get("recoverable") is bool:
 		return false
-	if unit.mode=="tiny" and unit.recoverable:
+	if unit.mode in ["tiny","swarm"] and unit.recoverable:
 		return false
 	for source in unit.mutation_sources:
 		if not source is String or Rules.definition(source).is_empty():

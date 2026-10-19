@@ -11,15 +11,20 @@ const DEFINITIONS := {
 }
 const SUMMON_POOL := ["stump_beast","wolf","snake","horned_beast","spider"]
 const DAMAGE_RULES = preload("res://Resources/Damage/DefaultDamageRules.tres")
+const ANATOMY = preload("res://Scripts/Summoning/SummonAnatomy.gd")
 static var _templates: Dictionary = {}
 
 static var _collisions: Dictionary = {}
 static var _presentation_parts: Dictionary = {}
 static var _presentation_cleanup_registered := false
 
-static func presentation_part(definition_id: String, path: String) -> PackedScene:
-	if not _presentation_parts.has(definition_id): template(definition_id)
-	return _presentation_parts.get(definition_id,{}).get(path) as PackedScene
+static func cache_key(id: String, anatomy: Dictionary = {}) -> String:
+	return id if anatomy.is_empty() else id+":"+JSON.stringify(anatomy,"",true)
+
+static func presentation_part(definition_id: String, path: String, anatomy: Dictionary = {}) -> PackedScene:
+	var key := cache_key(definition_id,anatomy)
+	if not _presentation_parts.has(key): template(definition_id,anatomy)
+	return _presentation_parts.get(key,{}).get(path) as PackedScene
 
 static func _release_presentation_parts() -> void:
 	_presentation_parts.clear()
@@ -41,16 +46,17 @@ static func _pack_presentation_part(source: Node) -> PackedScene:
 	return packed if error == OK else null
 
 static func local_bounds(record: Dictionary) -> AABB:
-	if not _collisions.has(record.definition_id): template(record.definition_id)
+	var key := cache_key(record.definition_id,record.get("anatomy",{}))
+	if not _collisions.has(key): template(record.definition_id,record.get("anatomy",{}))
 	var result := AABB()
 	var first := true
-	for path: String in _collisions[record.definition_id]:
+	for path: String in _collisions[key]:
 		var transform := Transform3D.IDENTITY
 		var current := path
 		while not current.is_empty():
 			transform = unpack_transform(record.poses[current])*transform
 			current = current.get_base_dir() if "/" in current else ""
-		var bounds: AABB = transform*_collisions[record.definition_id][path]
+		var bounds: AABB = transform*_collisions[key][path]
 		result = bounds if first else result.merge(bounds)
 		first = false
 	return result
@@ -61,17 +67,21 @@ static func pack_transform(pose: Transform3D) -> Array:
 static func unpack_transform(values: Array) -> Transform3D:
 	return Transform3D(Basis(Vector3(values[0],values[1],values[2]),Vector3(values[3],values[4],values[5]),Vector3(values[6],values[7],values[8])),Vector3(values[9],values[10],values[11]))
 
-static func template(id: String) -> Dictionary:
+static func template(id: String, anatomy: Dictionary = {}) -> Dictionary:
 	if not DEFINITIONS.has(id): return {}
-	if _templates.has(id): return _templates[id].duplicate(true)
+	if not ANATOMY.valid(anatomy): return {}
+	var key := cache_key(id,anatomy)
+	if _templates.has(key): return _templates[key].duplicate(true)
 	var definition: Dictionary = DEFINITIONS[id]
 	var scene := load(definition.scene) as PackedScene
 	if scene == null: return {}
 	var actor := scene.instantiate()
+	actor.generate_on_ready = false
+	if not ANATOMY.apply(actor,anatomy): actor.free(); return {}
 	var poses := {}
 	var parts := {}
-	_collisions[id] = {}
-	_presentation_parts[id] = {}
+	_collisions[key] = {}
+	_presentation_parts[key] = {}
 	if not _presentation_cleanup_registered and Engine.get_main_loop() is SceneTree:
 		Engine.get_main_loop().root.tree_exiting.connect(_release_presentation_parts,CONNECT_ONE_SHOT)
 		_presentation_cleanup_registered = true
@@ -91,10 +101,10 @@ static func template(id: String) -> Dictionary:
 			if not points.is_empty():
 				var bounds := AABB(points[0],Vector3.ZERO)
 				for point: Vector3 in points: bounds = bounds.expand(point)
-				_collisions[id][str(actor.get_path_to(node))] = bounds
+				_collisions[key][str(actor.get_path_to(node))] = bounds
 		if node is PhysicalBodyPart3D:
 			# Cache only this small subtree; presentation must not instantiate a generator or AI.
-			_presentation_parts[id][str(actor.get_path_to(node))] = _pack_presentation_part(node)
+			_presentation_parts[key][str(actor.get_path_to(node))] = _pack_presentation_part(node)
 			var derived_hp: float = DAMAGE_RULES.health_for_mass(node.mass) if node.mass_based_health else node.max_hp
 			parts[str(actor.get_path_to(node))] = {"key":str(node.get_meta(&"generated_part_key",str(node.name))),"hp":derived_hp,"armor":node.armor,"resilience":node.resilience,"mass":node.mass,"authored_hp":node.max_hp}
 			hp += derived_hp
@@ -111,14 +121,25 @@ static func template(id: String) -> Dictionary:
 	if parts.is_empty(): return {}
 	var result := {"definition_id":id,"template_hash":FileAccess.get_sha256(definition.scene),"poses":poses,"parts":parts,
 		"hp":hp,"armor":armor/parts.size(),"resilience":0.0,"base_total_mass":total_mass,"balance_revision":DAMAGE_RULES.BALANCE_REVISION,"attack":DAMAGE_RULES.base_attack_damage*pow(total_mass,1.0/3.0)*attack_multiplier,"speed":speed,"interval":1.5,"name":definition.name,"form":definition.form,"color":definition.color}
-	_templates[id] = result
+	if not anatomy.is_empty(): result.anatomy = anatomy.duplicate(true)
+	_templates[key] = result
 	return result.duplicate(true)
 
 static func valid_record(record: Dictionary) -> bool:
 	var id: String = record.get("definition_id","")
 	if not DEFINITIONS.has(id) or not record.get("poses") is Dictionary or not record.get("parts") is Dictionary: return false
 	if record.get("template_hash") != FileAccess.get_sha256(DEFINITIONS[id].scene): return false
-	var reference := template(id)
+	if not record.get("anatomy",{}) is Dictionary: return false
+	if not record.get("magic_eye",false) is bool or not record.get("combat_revival_used",false) is bool: return false
+	var durability: Variant = record.get("limb_durability_bonus",0.0)
+	if not (durability is float or durability is int) or not is_finite(float(durability)) or float(durability)<0.0: return false
+	if not record.get("relic_ids",[]) is Array or not record.get("effects",{}) is Dictionary: return false
+	for relic: Variant in record.get("relic_ids",[]):
+		if not relic is String or relic not in preload("res://Scripts/Summoning/SummonContent.gd").RELICS.map(func(item):return item.id): return false
+	var burn: Variant = record.get("effects",{}).get("burn_ratio",0.0)
+	if not (burn is float or burn is int) or not is_finite(float(burn)) or float(burn)<0.0: return false
+	var reference := template(id,record.get("anatomy",{}))
+	if reference.is_empty(): return false
 	if record.poses.size() != reference.poses.size() or record.parts.size() != reference.parts.size(): return false
 	for path: String in record.poses:
 		if not reference.poses.has(path) or not record.poses[path] is Array or record.poses[path].size()!=12: return false
@@ -143,7 +164,7 @@ static func valid_record(record: Dictionary) -> bool:
 static func upgrade_damage_record(record: Dictionary) -> bool:
 	if int(record.get("balance_revision",0)) >= DAMAGE_RULES.BALANCE_REVISION: return false
 	if not valid_record(record): return false
-	var reference := template(record.definition_id)
+	var reference := template(record.definition_id,record.get("anatomy",{}))
 	var hp := 0.0
 	for path: String in record.parts:
 		var part: Dictionary = record.parts[path]
@@ -166,6 +187,7 @@ static func spawn(record: Dictionary, parent: Node3D, at: Vector3, faction: int,
 	upgrade_damage_record(record)
 	var actor := (load(DEFINITIONS[record.definition_id].scene) as PackedScene).instantiate() as Node3D
 	actor.generate_on_ready = false
+	if not ANATOMY.apply(actor,record.get("anatomy",{})): actor.free(); return null
 	actor.faction_id = faction
 	actor.name = "Creature_"+str(record.id).validate_node_name()
 	actor.position = at
@@ -203,6 +225,10 @@ static func spawn(record: Dictionary, parent: Node3D, at: Vector3, faction: int,
 				motion = motion.duplicate(true)
 				motion.target_speed *= float(record.get("speed_multiplier",1.0))
 				node.set(property,motion)
+	var effects := preload("res://Scripts/Summoning/SummonCombatEffects3D.gd").new()
+	effects.name = "SummonEffects"
+	effects.record = record.duplicate(true)
+	actor.add_child(effects)
 	return actor
 
 static func activate(actor: Node3D) -> void:

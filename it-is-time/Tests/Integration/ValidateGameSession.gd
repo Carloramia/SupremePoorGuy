@@ -12,7 +12,7 @@ func run() -> void:
 	check(session._valid_save(session.data),"An empty new-game roster is valid")
 	check(session.save(),"Save formal session")
 	var rules := RULES.new()
-	check(rules.import_layout({"version":3,"stage":1,"placed":[{"uid":"test","runeId":"health","cells":[[-1,0],[0,0],[1,0]],"enabled":true}],"placedRelics":[]}),"Load v3 health layout")
+	check(rules.import_layout({"version":4,"stage":1,"placed":[{"uid":"test","runeId":"health","cells":[[-1,0],[0,0],[1,0]],"enabled":true}],"placedRelics":[]}),"Load current health layout")
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 1234
 	check(session.summon(rules,"frontier","world",rng),"Summon actual creature descriptors")
@@ -42,17 +42,21 @@ func run() -> void:
 	check(not session.supported_layout(rules).length(),"Supported health effect remains enabled")
 	var unknown := RULES.new()
 	unknown.placed = [{"uid":"bad","runeId":"burn","cells":[[0,0]],"enabled":true}]
-	check(not session.supported_layout(unknown).is_empty(),"Unsupported damage-over-time is rejected before spending")
+	check(not session.supported_layout(unknown).is_empty(),"Unowned damage-over-time is rejected before spending")
 	var world_state := WorldMapRuntimeState.new()
 	world_state.map_id = &"frontier"
 	world_state.pending_battle = {"map_id":"frontier","location_id":"bandits"}
 	var world := world_state.to_dict()
 	check(session.save_world(world) and session.data.battle.party_ids.size()==1,"Battle request atomically captures party IDs")
 	var battle_id: String = session.data.battle.battle_id
-	var result := {"battle_id":battle_id,"outcome":"victory","reward":20,"parts":{}}
+	session.data.battle.event_id="QST_GRASS_011"
+	check(session.save(),"Save the event provenance on the real battle request")
+	var result := {"battle_id":battle_id,"outcome":"victory","reward":20,"parts":{},"content_source":"caller_cannot_override_request"}
 	var magic: float = session.data.magic
 	world.pending_battle = {}
 	check(session.commit_battle(result,world),"Commit battle receipt, world and reward together")
+	check(session.data.battle_results[battle_id].content_source=="QST_GRASS_011" and session.data.battle.result.content_source=="QST_GRASS_011","Reward source comes only from the committed battle request")
+	check(session.claim_content_reward("QST_GRASS_011",battle_id,{"battle_id":battle_id}) and session.data.known_runes.has("multiply") and session.data.known_runes.has("bloodblade"),"Real saved event battle can grant swarm and biting curse together")
 	check(session.commit_battle(result,world) and session.data.magic==magic+20,"Duplicate battle receipt never pays twice")
 	var invalid := session.data.duplicate(true)
 	invalid.worlds.frontier.player_position.x = "invalid"

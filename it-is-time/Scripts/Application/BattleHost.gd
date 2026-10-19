@@ -212,7 +212,13 @@ func _physics_process(delta: float) -> void:
 	var allies := 0
 	var enemies := 0
 	for actor: Node3D in actors:
-		if not is_instance_valid(actor) or not actor.is_combat_alive(): continue
+		if not is_instance_valid(actor): continue
+		if not actor.is_combat_alive():
+			var effects: Node = actor.get_meta(&"summon_effects",null)
+			if not is_instance_valid(effects) or not effects.has_pending_return(): continue
+			if actor.get_faction_id()==0: allies+=1
+			else: enemies+=1
+			continue
 		var anchor: Node3D = actor.get_combat_anchor()
 		if anchor == null or anchor.global_position.y < defeat_below_y: continue
 		if actor.get_faction_id()==0: allies+=1

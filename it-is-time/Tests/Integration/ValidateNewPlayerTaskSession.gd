@@ -15,8 +15,8 @@ func _initialize() -> void: call_deferred("run")
 func run() -> void:
 	var session := SESSION.new()
 	session.save_path = "res://Tests/.runtime/integration/new_player_tasks_%d.json" % Time.get_ticks_usec()
-	session.task_definitions[0].reward = {"magic":13,"runes":["iron"],"relics":["bone-die"]}
-	session.data.known_runes = ["armor"]
+	session.task_definitions[0].reward = {"magic":13,"runes":["attack"],"relics":["taunt-bell"]}
+	session.data.known_runes = ["health"]
 	session.data.known_relics = []
 	var notifications := {"count":0}
 	session.new_player_tasks_completed.connect(func(ids): notifications.count += ids.size())
@@ -31,11 +31,11 @@ func run() -> void:
 	check(session.data==before and notifications.count==0,"Failed save rolls back facts, reward, completion and notification")
 	session.save_path = path
 	check(session.record_task_arrival("frontier_layout","summoning_hut"),"Actual arrival is committed")
-	check(session.data.magic==313 and session.data.known_runes.has("iron") and session.data.known_relics==["bone-die"],"Reward types commit with task completion")
+	check(session.data.magic==313 and session.data.known_runes.has("attack") and session.data.known_relics==["taunt-bell"],"Reward types commit with task completion")
 	check(notifications.count==1,"Notification is emitted only after successful save")
 	check(session.record_task_arrival("frontier_layout","summoning_hut") and session.data.magic==313 and notifications.count==1,"Repeated arrival never repeats reward or notification")
 	var rules := RULES.new()
-	rules.extend([0,0]); rules.extend([1,0]); rules.commit()
+	rules.extend([-1,0]); rules.extend([0,0]); rules.extend([1,0]); rules.commit()
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 1234
 	check(session.summon(rules,"frontier_layout","world",rng),"A real supported summon succeeds")
@@ -88,6 +88,6 @@ func run() -> void:
 	check(not legacy._valid_save(corrupt),"Malformed task receipts are rejected before load/save")
 	legacy.reset()
 	check(legacy.save() and legacy.data.new_player_tasks.completed.is_empty() and not legacy.data.new_player_tasks.enabled,"Starting a new session resets tasks and receipts")
-	check(legacy.data.magic==300 and not legacy.data.has("known_runes"),"New game preserves 300 magic and the default all-unlocked policy")
+	check(legacy.data.magic==300 and legacy.data.known_runes==["health"] and legacy.data.known_relics.is_empty(),"New game preserves 300 magic and owns only basic life")
 	print("NEW_PLAYER_TASK_SESSION checks=",checks," failures=",failures)
 	quit(1 if failures else 0)

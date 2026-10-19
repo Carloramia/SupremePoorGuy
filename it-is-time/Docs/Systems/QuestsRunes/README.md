@@ -18,7 +18,9 @@
 
 [RuneRules](../../../Modules/PaperUI/Scripts/Ritual/RuneRules.gd) 定义符文 ID、格形、描述与效果；[RuneBoard](../../../Modules/PaperUI/Scripts/Ritual/RuneBoard.gd) 负责格盘；[SummonExperiment](../../../Modules/PaperUI/Scripts/SummonExperiment.gd) 计算当前试验规则与结果。正式 [GameSession.summon()](../../../Scripts/Application/GameSession.gd) 负责调用、扣费、实例与保存。
 
-符文集合包含属性、重复/结构与风险等不同规则。GameSession 的 `SUPPORTED_RUNES` 目前包含 `health`、`armor`、`attack`、`iron`、`bloodblade`、`vitality`、`fang`、`haste`；不能由展示列表推断所有符文都已支持真实物理角色。结构组合、失败率和倍率以 RuneRules/SummonExperiment 与会话校验为准。
+2026-10-20首轮已切换为9类符文、8件奇物；`SummonContent.gd`是当前目录及事件奖励映射的来源。`SUPPORTED_RUNES`包含生命、防御、攻击、撕咬诅咒、好战、沸血、血肉顽强、巨化、大群。大群合并缩小效果，5只真实本体共1队位，不生成分身；螺旋人像增加一对同类肢体，不增加变异率；结晶化眼球保证本批1只获得射线魔眼。
+
+真实战斗效果、独立测试入口、旧存档策略与事件发奖接口见 [符文与奇物接入交接](../Summoning/README.md)。完整剧情事件仍待事件负责人挂接，不能把奖励映射表当作已运行的事件状态机。
 
 `CreatureFactory.SUMMON_POOL` 决定抽到哪个角色，符文效果决定如何修饰它；二者是独立配置。当前池没有 Human/Bird/Rat/Ratkin。队伍上限按队位计算：普通、巨化、超巨化及缩小批次的占位方式可能不同，不等于永远最多 6 个刚体角色实例。
 

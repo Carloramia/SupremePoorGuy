@@ -40,6 +40,8 @@
 
 ## 成功条件
 
+2026-10-20当前符文与奇物检查：`Integration/ValidateCurrentSummoning.gd`（274项）、`ValidateSummonCombatEffects.gd`（25项）、`ValidateSummonContentLab.gd`（13项）。运行边界与当前限制见 [接入交接](../Docs/Systems/Summoning/README.md)。这些检查使用独立测试存档，不证明完整剧情事件、长期战斗平衡或美术表现已验收。
+
 同时检查退出码、脚本成功标识、`ERROR:` / `SCRIPT ERROR:`、断言和超时。Godot 脚本异常可能仍返回 0；某个子函数失败后调用者继续打印 PASS，也不能判为全测试通过。`--fixed-fps 60` 用于可重复步进，不表示机器实际达到 60FPS。
 
 [RunOptimizationChecks.py](../Tools/Testing/RunOptimizationChecks.py) 已联合检查这些条件，但它的内置列表包含 [ValidateQuests](Integration/ValidateQuests.gd)。该测试引用当前会话里不存在的通用任务 API，应按失败/待恢复接线处理，不以历史报告替代当前执行结果；可用 `--only` 运行明确适用的单项。

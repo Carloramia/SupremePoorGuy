@@ -32,7 +32,7 @@ func run() -> void:
 	app.ui._close_all()
 	app.ui._open_ritual()
 	await capture("04_ritual")
-	assert(app.ui.rules.import_layout({"version":3,"stage":1,"placed":[{"uid":"test","runeId":"health","cells":[[-1,0],[0,0],[1,0]],"enabled":true}],"placedRelics":[]}))
+	assert(app.ui.rules.import_layout({"version":4,"stage":1,"placed":[{"uid":"test","runeId":"health","cells":[[-1,0],[0,0],[1,0]],"enabled":true}],"placedRelics":[]}))
 	app.ui._perform_summon()
 	app.ui.view.skip_eruption()
 	for frame: int in 30: await process_frame
