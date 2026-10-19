@@ -36,6 +36,7 @@ func run() -> void:
 	var target_x := -5.0 if "--left" in OS.get_cmdline_user_args() else 5.0
 	var target := PART.instantiate() as PhysicalBodyPart3D
 	target.tags.assign([PhysicalBodyPart3D.BodyPartTag.Torso])
+	target.mass_based_health = false
 	target.max_hp = 10000.0
 	target.armor = 0.0
 	target.freeze = true

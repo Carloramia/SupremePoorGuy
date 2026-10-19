@@ -131,10 +131,10 @@ func inspect(actor: Node) -> void:
 		if tag.Tail in part.tags:
 			tails += 1
 			check(tag.Feather in part.tags and part.name.begins_with("TailFeather_"),"Tail cluster must use individually referenced feather parts")
-	check(bodies.size() == 39 and wings == 6 and feathers == 23 and tails == 5 and feet == 2 and heads == 1,"Bird must retain its authored structure and five added tail feathers")
+	check(bodies.size() == 45 and wings == 12 and feathers == 23 and tails == 5 and feet == 2 and heads == 1,"Bird must retain six blocks per wing and five tail feathers")
 	check(not container.has_node("Neck_1_1"),"Bird must have no physical Neck")
 	var joints := container.get_node("Joints")
-	check(joints.get_child_count() == 38,"Bird must retain existing connections plus five tail joints")
+	check(joints.get_child_count() == 44,"Bird must connect all subdivided wings and retain five tail joints")
 	var direct_head := false
 	for node: Node in joints.get_children():
 		check(node is Generic6DOFJoint3D,"Assembly must not leave dangling segment spring proxies")
@@ -168,14 +168,16 @@ func inspect(actor: Node) -> void:
 	check(support.bindings.size() == 1 and not support.bindings[0].has_neck,"Head support must recognize the direct Torso attachment")
 	var controller := actor.get_node("WingPoseController3D")
 	controller.refresh_physics_query_cache()
-	check(controller.bindings.size() == 6 and controller.feather_bindings.size() == 18,"Wing and feather controllers must discover every new binding")
+	check(controller.bindings.size() == 12 and controller.feather_bindings.size() == 18,"Wing and feather controllers must discover every new binding")
+	var section_feathers := [0,0,0]
 	for binding: Dictionary in controller.bindings:
-		check(binding.feathers.size() == [2,3,4][binding.section_index],"Each wing section must have its own row of individual feathers")
+		section_feathers[binding.section_index] += binding.feathers.size()
+	check(section_feathers == [4,6,8],"Subdivision must preserve the feathers assigned to each wing section")
 	for binding: Dictionary in controller.feather_bindings:
 		if not str(binding.b.name).ends_with("_3_004"): continue
 		check(Basis(binding.open).y.dot(Vector3.UP)>0.99999,"Last feather must align with its unfolded wing tip")
 	var audit: Dictionary = actor.get_internal_collision_diagnostics()
-	check(audit.missing_pairs == 0 and audit.pairs == 741,"All internal collisions must remain ignored")
+	check(audit.missing_pairs == 0 and audit.pairs == 990,"All internal collisions must remain ignored")
 	var movement := actor.get_node("GeneratedLegStepMovementController3D")
 	movement.refresh_physics_query_cache()
 	check(movement._chains.size() == 2,"Ground gait must find both two-link leg chains")
@@ -203,7 +205,7 @@ func run() -> void:
 		root.add_child(actor)
 		var generator := actor.get_node("BirdGenerator")
 		check(generator.use_manual_layout and generator.manual_layout != null,"Paper asset layout must persist in scene")
-		check(generator.part_scene_rules.size() == 39,"Existing and added Parts must each retain their scene rules")
+		check(generator.part_scene_rules.size() == 45,"Existing and added Parts must each retain their scene rules")
 		check(generator.neck_segment_count == 0,"Procedural Neck count must stay zero")
 		check(actor.density_data.is_valid(),"Bird density resource must be valid")
 		inspect(actor)

@@ -21,6 +21,9 @@ const PLAYER_CONTEXT = preload("res://Scripts/Player/PlayerControlContext.gd")
 @export_range(1.0, 10.0, 0.1) var maximum_articulated_load_ratio: float = 1.5
 ## Let the constraint solver apply the servo along the joint's free hinge axis.
 @export var joint_motor_pose: bool = true
+## Zero keeps the ordinary pose settings; long wings can fold with a softer servo.
+@export_range(0.0, 10.0, 0.1, "or_greater") var fold_posture_frequency: float = 0.0
+@export_range(0.0, 500.0, 1.0, "or_greater") var fold_maximum_angular_acceleration: float = 0.0
 
 @export_group("Expanded Wing Shape")
 ## Additional upward angle at each wing-to-wing joint; the first root keeps its generated angle.
@@ -277,6 +280,9 @@ func _physics_process(delta: float) -> void:
 	var pose_transition_time := transition_time if pressed else fold_transition_time
 	if dive != null and dive.is_active() and dive.wants_folded_wings(): pose_transition_time = dive.data.fold_time
 	unfold_ratio = move_toward(unfold_ratio, 1.0 if pressed else 0.0, delta / maxf(pose_transition_time, 0.05))
+	var soft_fold: bool = not pressed and (dive == null or not dive.is_active())
+	var frequency := fold_posture_frequency if soft_fold and fold_posture_frequency > 0.0 else posture_frequency
+	var acceleration_limit := fold_maximum_angular_acceleration if soft_fold and fold_maximum_angular_acceleration > 0.0 else maximum_angular_acceleration
 	var compensated: Dictionary = {}
 	for binding: Dictionary in bindings:
 		if not _binding_intact(binding): continue
@@ -290,8 +296,8 @@ func _physics_process(delta: float) -> void:
 		var target := a.global_basis.orthonormalized().get_rotation_quaternion() * closed.slerp(_get_expanded_relative_pose(binding), unfold_ratio)
 		var error := target * b.global_basis.orthonormalized().get_rotation_quaternion().inverse()
 		if error.w < 0.0: error = -error
-		var omega := TAU * maxf(posture_frequency, 0.0)
-		var acceleration := _stable_acceleration(error.get_axis()*error.get_angle(), b.angular_velocity-a.angular_velocity, posture_frequency,damping_ratio,delta).limit_length(maxf(maximum_angular_acceleration,0.0))
+		var omega := TAU * maxf(frequency, 0.0)
+		var acceleration := _stable_acceleration(error.get_axis()*error.get_angle(), b.angular_velocity-a.angular_velocity, frequency,damping_ratio,delta).limit_length(maxf(acceleration_limit,0.0))
 		var inverse := b.get_inverse_inertia_tensor()
 		if not a.freeze:
 			var parent_inverse := a.get_inverse_inertia_tensor()
@@ -310,7 +316,7 @@ func _physics_process(delta: float) -> void:
 			if automatic_load_inertia:
 				effective_inertia = _effective_hinge_inertia(binding,axis,a.global_transform*local_frame.origin)
 				load_factor = 1.0
-				torque_limit = effective_inertia*maxf(maximum_angular_acceleration,0.0)
+				torque_limit = effective_inertia*maxf(acceleration_limit,0.0)
 				if joint_motor_pose and dive != null and dive.is_aiming(): torque_limit *= dive.data.aiming_wing_motor_force_multiplier
 				if absolute_torque_limit_enabled: torque_limit = minf(torque_limit,maxf(maximum_torque,0.0))
 			uncapped_torque = axis*hinge_acceleration*effective_inertia*load_factor
