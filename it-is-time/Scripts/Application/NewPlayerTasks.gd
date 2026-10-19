@@ -51,7 +51,7 @@ static func _string_list(value: Variant) -> bool:
 		seen[item] = true
 	return true
 
-static func _valid_reward(reward: Variant) -> bool:
+static func _valid_reward(reward: Variant, allow_legacy := true) -> bool:
 	if not reward is Dictionary or not _integer(reward.get("magic",0)): return false
 	for key: Variant in reward:
 		if key not in ["magic", "runes", "relics"]: return false
@@ -59,7 +59,7 @@ static func _valid_reward(reward: Variant) -> bool:
 		var ids: Variant = reward.get(pair[0],[])
 		if not _string_list(ids): return false
 		for id: String in ids:
-			if RULES.definition(id,pair[1]).is_empty(): return false
+			if (RULES.definition(id,pair[1]) if allow_legacy else RULES.current_definition(id,pair[1])).is_empty(): return false
 	return true
 
 static func valid_progress(data: Dictionary) -> bool:
@@ -85,7 +85,7 @@ static func validate_definitions(definitions: Array) -> String:
 		if task.get("action") not in ACTIONS: return "任务 %s 的跳转类型无效。" % id
 		var condition: Variant = task.get("condition")
 		if not condition is Dictionary or condition.get("type") not in CONDITION_TYPES or not _integer(condition.get("count",1),1): return "任务 %s 的完成条件无效。" % id
-		if not _valid_reward(task.get("reward",{})): return "任务 %s 的奖励配置无效。" % id
+		if not _valid_reward(task.get("reward",{}),false): return "任务 %s 的奖励配置无效。" % id
 		by_id[id] = task
 	for task: Dictionary in definitions:
 		for prerequisite: String in task.get("prerequisites",[]):

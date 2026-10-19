@@ -18,7 +18,7 @@ CHECKS = {
     "Tests/ValidateControlledPartMotionTracking.gd": "CONTROLLED_PART_MOTION_TRACKING_VALIDATION_PASSED",
     "Tests/Integration/ValidateGameSession.gd": "APPLICATION_SESSION_PASSED",
     "Tests/Integration/ValidateGameRoot.gd": "APPLICATION_ROOT_PASSED",
-    "Tests/Integration/ValidateQuests.gd": "QUEST_INTERFACES_PASSED",
+    "Tests/Integration/ValidateQuests.gd": "QUEST_FRAMEWORK_PASSED",
 }
 
 

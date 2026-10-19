@@ -118,27 +118,27 @@ func _test_history() -> void:
 
 func _test_rewards_and_validation() -> void:
 	var definitions: Array = TASKS.DEFINITIONS.duplicate(true)
-	definitions[0].reward = {"magic":17, "runes":["iron"], "relics":["bone-die"]}
+	definitions[0].reward = {"magic":17, "runes":["attack"], "relics":["taunt-bell"]}
 	var data := fixture()
 	data.known_runes = ["armor"]
 	data.known_relics = []
 	TASKS.record_location(data,"map","hut")
 	TASKS.reconcile(data,definitions)
-	check(data.magic==317 and "iron" in data.known_runes and "bone-die" in data.known_relics,"Configured magic and reference unlocks are granted")
+	check(data.magic==317 and "attack" in data.known_runes and "taunt-bell" in data.known_relics,"Configured current magic and reference unlocks are granted")
 	check(data.new_player_tasks.completed.explore_frontier.reward.magic==17,"Completion contains the original reward receipt")
 	definitions[0].reward.magic = 99
 	TASKS.reconcile(data,definitions)
 	check(data.magic==317,"Editing reward configuration does not repay completed tasks")
 	var reloaded: Dictionary = JSON.parse_string(JSON.stringify(data))
 	TASKS.reconcile(reloaded,definitions)
-	check(reloaded.magic==317 and reloaded.known_runes.count("iron")==1,"Loading and rechecking do not duplicate rewards")
+	check(reloaded.magic==317 and reloaded.known_runes.count("attack")==1,"Loading and rechecking do not duplicate rewards")
 	var all_unlocked := fixture()
 	TASKS.record_location(all_unlocked,"map","hut")
 	TASKS.reconcile(all_unlocked,definitions)
 	check(all_unlocked.known_runes.size()==TASKS.RULES.RUNES.size() and all_unlocked.known_relics.size()==TASKS.RULES.RELICS.size(),"Missing reference lists preserve the all-unlocked policy")
 	check(all_unlocked.magic==399,"Already-owned unlocks grant no compensation")
-	check(TASKS.reward_text(definitions[0].reward).contains("骨骰"),"Rewards have readable reference names")
-	for error_kind: String in ["duplicate", "missing", "cycle", "negative", "fraction", "unknown_rune", "unsupported_reward"]:
+	check(TASKS.reward_text(definitions[0].reward).contains("挑衅铃"),"Rewards have readable current reference names")
+	for error_kind: String in ["duplicate", "missing", "cycle", "negative", "fraction", "unknown_rune", "retired_rune", "unsupported_reward"]:
 		var invalid: Array = TASKS.DEFINITIONS.duplicate(true)
 		match error_kind:
 			"duplicate": invalid[1].id = invalid[0].id
@@ -147,6 +147,7 @@ func _test_rewards_and_validation() -> void:
 			"negative": invalid[0].reward.magic = -1
 			"fraction": invalid[0].reward.magic = 1.5
 			"unknown_rune": invalid[0].reward.runes = ["not_a_rune"]
+			"retired_rune": invalid[0].reward.runes = ["iron"]
 			"unsupported_reward": invalid[0].reward.gold = 10
 		var unchanged := fixture()
 		var snapshot := unchanged.duplicate(true)

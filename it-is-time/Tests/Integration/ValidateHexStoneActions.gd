@@ -15,7 +15,7 @@ func check(ok: bool, message: String) -> void:
 func run() -> void:
 	root.get_node("RuntimeConsole").auto_getlogs_enabled=false
 	var app := preload("res://Scenes/Application/GameRoot.tscn").instantiate()
-	app.save_path="D:/GameJamWorkspace/RuntimeChecks/HexMapIntegration/stone_"+str(Time.get_ticks_usec())+".json"
+	app.save_path="res://Tests/.runtime/integration/stone_"+str(Time.get_ticks_usec())+".json"
 	app.display_settings_path=app.save_path+".display.cfg"
 	root.add_child(app)
 	app.ui.animate_panels=false
@@ -23,6 +23,10 @@ func run() -> void:
 	for frame: int in 300:
 		if app.phase=="world": break
 		await process_frame
+	app.story_controller._process(0.3)
+	var opening: String = app.session.STORIES.OPENING
+	for step: int in 8: app.story_controller._choose(opening,"next",int(app.session.STORIES.entry(app.session.data,opening).revision))
+	app.story_controller._choose(opening,"confirm",int(app.session.STORIES.entry(app.session.data,opening).revision))
 	app.ui._close_all()
 	var map: Control=app.delivery_map
 	var stone := {}

@@ -1,7 +1,7 @@
 extends SceneTree
 const FACTORY = preload("res://Scripts/Application/CreatureFactory.gd")
 var failed := false
-var output := "D:/GameJamWorkspace/Reports/GlobalSettings_2026-10-16"
+var output := "res://Tests/.runtime/global-settings"
 func _initialize() -> void: call_deferred("run")
 func check(ok: bool, message: String) -> void:
 	print("SETTINGS_CHECK ",ok," ",message)
@@ -21,7 +21,14 @@ func key(code: Key, echo: bool = false) -> void:
 func settings_open(app: Node) -> bool:
 	return not app.ui.modal_stack.is_empty() and app.ui.modal_stack.back().kind == "settings"
 func click(control: Control) -> void:
+	var ancestor: Node = control.get_parent()
+	while ancestor!=null:
+		if ancestor is ScrollContainer:
+			ancestor.ensure_control_visible(control)
+			await process_frame
+		ancestor=ancestor.get_parent()
 	var point := control.get_global_rect().get_center()
+	check(root.get_visible_rect().has_point(point),"Actual mouse target is on screen after scrolling")
 	var motion := InputEventMouseMotion.new()
 	motion.position = point; motion.global_position = point
 	root.push_input(motion,true)

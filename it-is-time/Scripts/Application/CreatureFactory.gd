@@ -126,6 +126,9 @@ static func template(id: String, anatomy: Dictionary = {}) -> Dictionary:
 	return result.duplicate(true)
 
 static func valid_record(record: Dictionary) -> bool:
+	if not record.get("event_traits",{}) is Dictionary: return false
+	for key: Variant in record.get("event_traits",{}):
+		if key not in ["fur","can_fly"] or not record.event_traits[key] is bool: return false
 	var id: String = record.get("definition_id","")
 	if not DEFINITIONS.has(id) or not record.get("poses") is Dictionary or not record.get("parts") is Dictionary: return false
 	if record.get("template_hash") != FileAccess.get_sha256(DEFINITIONS[id].scene): return false

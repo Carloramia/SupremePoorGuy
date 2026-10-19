@@ -114,7 +114,7 @@ func deploy(records: Array, id: String) -> bool:
 		if not _inside_level(actor): last_error = "生物碰撞体超出战场边界。"; return false
 		index += 1
 	for enemy_index: int in enemy_definitions.size():
-		var record := FACTORY.template(enemy_definitions[enemy_index])
+		var record := FACTORY.template(enemy_definitions[enemy_index],delivery_request.get("enemy_anatomy",{}))
 		record.id = "enemy_"+str(enemy_index)
 		var position_data: Dictionary = _enemy_positions[enemy_index] if authored else {"position":Vector3(28,0.1,enemy_index*16),"facing":PI}
 		var enemy := FACTORY.spawn(record,self,position_data.position,1,position_data.facing)
@@ -223,7 +223,8 @@ func _physics_process(delta: float) -> void:
 		if anchor == null or anchor.global_position.y < defeat_below_y: continue
 		if actor.get_faction_id()==0: allies+=1
 		else: enemies+=1
-	if allies==0: finish("defeat")
+	if allies==0 and enemies==0 and delivery_request.get("combat_mode")=="spectator": finish("draw")
+	elif allies==0: finish("defeat")
 	elif enemies==0: finish("victory")
 
 func finish(outcome: String) -> void:
@@ -236,7 +237,13 @@ func finish(outcome: String) -> void:
 		for part: PhysicalBodyPart3D in actor.find_children("*","PhysicalBodyPart3D",true,false):
 			parts[str(part.get_meta(&"creature_part_key",str(part.name)))] = {"hp":part.current_hp,"max_hp":part.max_hp,"broken":part.is_broken}
 		damage[str(actor.get_meta(&"creature_instance_id"))] = parts
-	var result := {"battle_id":battle_id,"outcome":outcome,"reward":20 if outcome=="victory" else 0,"parts":damage,"duration":elapsed}
+	# Monster-level victory loot has no confirmed table yet; zero is only a transport
+	# placeholder, not a configured level reward. Event payments are settled separately.
+	var result := {"battle_id":battle_id,"outcome":outcome,"reward":0,"magic_reward_pending":outcome=="victory","reward_basis":"monster_level","parts":damage,"duration":elapsed}
+	if delivery_request.get("kind")=="story":
+		result.reward=0
+		result.combat_mode=delivery_request.get("combat_mode","party")
+		result.winner_faction=0 if outcome=="victory" else 1 if outcome=="defeat" else -1
 	if delivery_adapter!=null:
 		result.battle_map_id = delivery_request.battle_map_id
 		result.post_battle_options = []

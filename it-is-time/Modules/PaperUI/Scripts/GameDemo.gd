@@ -367,6 +367,7 @@ func _refresh_ritual() -> void:
 			_refresh_ritual())
 	var preview := Experiment.preview(rules)
 	L10N.bind(ritual_summary,&"text",func(): return L10N.text(L10N.text("ui.86a4ba85300a") % [rules.stage,Rules.cells(rules.stage).size(),state.data.magic,preview.cost,preview.tier,preview.count,preview.total_slots,rules.draft.size()]))
+	ritual_summary.tooltip_text="基准 %d + 符文占格 %d + 奇物 %d = %d 魔力" % [preview.base_cost,preview.rune_cost,preview.relic_cost,preview.cost] if preview.cost_rule=="demo" else "非Demo测试阶数：沿用旧实验计费，未设定正式基准。"
 	L10N.bind(summon_button,&"text",func(): return L10N.text(L10N.text("ui.19812bd6781a") % [preview.count,L10N.text("ui.0d64a436c66f") if preview.mode=="ultra" else L10N.text("ui.b3ad05dff665") if preview.mode=="special" else ""]))
 	summon_button.disabled = count == 0 or not rules.draft.is_empty() or preview.cost > state.data.magic or not preview.error.is_empty()
 	L10N.bind(summon_button,&"tooltip_text",func(): return L10N.text(preview.error if not preview.error.is_empty() else L10N.text("ui.4ebd772c41b8")))
@@ -659,7 +660,7 @@ func _capture_modal_backdrop() -> Texture2D:
 	return ImageTexture.create_from_image(frame.get_region(region)) if region.has_area() else null
 
 func _resize_event() -> void:
-	if modal_stack.is_empty() or modal_stack.back().get("kind", "dialog") not in ["event","tasks"]:
+	if modal_stack.is_empty() or modal_stack.back().get("kind", "dialog") not in ["event","story","tasks"]:
 		return
 	var margin: MarginContainer = overlay.get_node("BoardMotion/MotionRoot/Margin")
 	var side := maxi(48,int(size.x * (0.12 if modal_stack.back().kind == "tasks" else 0.1)))
@@ -684,7 +685,9 @@ func _render_modal() -> void:
 	var results: bool = modal_stack.back().title.begins_with("召唤完成")
 	var event: bool = modal_stack.back().get("kind", "dialog") == "event"
 	var tasks: bool = modal_stack.back().get("kind", "dialog") == "tasks"
-	var reading := event or tasks
+	# Story uses the same full reading sheet as event menus, even for a short line.
+	# Otherwise the outer scroll shrink-wraps Body and collapses DescriptionScroll.
+	var reading: bool = event or tasks or modal_stack.back().get("kind", "dialog")=="story"
 	L10N.bind(close_button,&"text",func(): return L10N.text(L10N.text("ui.95f69693f3c1") if event else (L10N.text("ui.977d03d89573") if tasks else L10N.text("ui.67a940be6b93"))))
 	var content_page := ritual or warehouse or results
 	var fixed_content := content_page or reading

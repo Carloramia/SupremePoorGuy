@@ -86,6 +86,9 @@ func _process(delta: float) -> void:
 
 func sync_party() -> void:
 	runtime.party_count = application.session.monsters().size()
+	runtime.completed_story_ids.clear()
+	for id: String in application.session.data.get("story_events",{}).get("entries",{}):
+		if application.session.data.story_events.entries[id].completed: runtime.completed_story_ids.append(id)
 
 func save_progress(action: String = "") -> bool:
 	_save_elapsed = 0.0
@@ -168,6 +171,7 @@ func _arrived(id: String, kind: String) -> void:
 		else: begin_battle(id,kind)
 		return
 	if kind=="clear":
+		if runtime.interaction_error(object).is_empty() and application.story_controller.show_location(object): return
 		open_location(object)
 		return
 	var error: String = runtime.interaction_error(object)
@@ -178,6 +182,7 @@ func _arrived(id: String, kind: String) -> void:
 		_map_diagnostic("event_routed",{"location_id":id,"event_id":"summon","source":"summoning_hut"})
 		application.ui._open_ritual()
 	else:
+		if application.story_controller.show_location(object): return
 		_map_diagnostic("event_unavailable",{"location_id":id,"reason":"此地点暂无已接入的事件。"})
 		application.ui._modal(str(object.name),func(body):
 			var pending: Array=[]
@@ -293,6 +298,7 @@ func cancel_battle() -> bool:
 	var before: Dictionary = session.data.duplicate(true)
 	var snapshot: Dictionary = runtime.snapshot()
 	runtime.cancel_battle()
+	session.STORIES.cancel_battle(session.data,session.data.battle)
 	session.data.battle = {}
 	if session.save_delivery_world(runtime.snapshot()):
 		_last_saved = runtime.snapshot()

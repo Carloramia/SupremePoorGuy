@@ -579,6 +579,12 @@ func create_logs_archive(output_directory: String = "", log_directory: String = 
 		writer.write_file(FileAccess.get_file_as_bytes(log_path))
 		writer.close_file()
 
+	# Include this process's buffered console output even when --log-file redirects the
+	# engine log outside user://logs. It also captures the event immediately before getlogs.
+	if writer.start_file("logs/runtime_console_snapshot.log") == OK:
+		writer.write_file(("\n".join(_output_lines)+"\n").to_utf8_buffer())
+		writer.close_file()
+
 	var manifest := (
 		"Project: %s\nCreated: %s\nLog source: %s\nFiles: %d\n"
 		% [ProjectSettings.get_setting("application/config/name", ""), timestamp, ProjectSettings.globalize_path(log_root), log_files.size()]

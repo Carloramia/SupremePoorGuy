@@ -75,7 +75,7 @@ func run() -> void:
 	app.session.save_path = real_path
 	app._finalize_battle()
 	await process_frame
-	check(app.phase=="settlement" and app.session.data.magic==magic+20,"Real result commits one reward and opens settlement")
+	check(app.phase=="settlement" and app.session.data.magic==magic and app._pending_result.reward==0 and app._pending_result.magic_reward_pending,"Real victory commits settlement without inventing unconfigured monster-level magic")
 	app.ui._settings()
 	check(app.ui.modal_stack.size()==2,"Settings may open above committed settlement")
 	app.ui._close_modal()

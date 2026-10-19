@@ -15,7 +15,8 @@ func build(host: Node3D, records: Array) -> bool:
 	scale = host.delivery_settings.unit_scale
 	if not is_finite(scale) or scale<=0.0: host.last_error = "战场单位倍率无效。"; return false
 	var request: Dictionary = host.delivery_request
-	var error: String = host.delivery_settings.availability_error(str(request.get("enemy_config_id","")))
+	var frozen: Array = request.get("enemy_definitions_snapshot",[])
+	var error: String = "" if not frozen.is_empty() else host.delivery_settings.availability_error(str(request.get("enemy_config_id","")))
 	if not error.is_empty(): host.last_error = error; return false
 	layout = CATALOG.map_data(str(request.get("battle_map_id","")))
 	if layout.get("kind")!="battle": host.last_error = "战场ID无效。"; return false
@@ -56,24 +57,24 @@ func build(host: Node3D, records: Array) -> bool:
 		var placed := place(record,false)
 		if placed.is_empty(): host.last_error = "地图中部左侧无法安全放入出战队伍，请减少队伍或调整战场单位倍率。"; return false
 		host._deployment.append(placed)
-	var roster: EnemyRosterData = host.delivery_settings.enemy_rosters[request.enemy_config_id]
-	host.enemy_definitions.assign(roster.definitions)
+	if not frozen.is_empty(): host.enemy_definitions.assign(frozen)
+	else: host.enemy_definitions.assign(host.delivery_settings.enemy_rosters[request.enemy_config_id].definitions)
 	var order: Array[int] = []
 	var areas := {}
-	for index: int in roster.definitions.size():
+	for index: int in host.enemy_definitions.size():
 		order.append(index)
-		var bounds := FACTORY.local_bounds(FACTORY.template(roster.definitions[index]))
+		var bounds := FACTORY.local_bounds(FACTORY.template(host.enemy_definitions[index],request.get("enemy_anatomy",{})))
 		areas[index]=bounds.size.x*bounds.size.z
 	if CATALOG.is_hex():
 		# Place large bodies before small ones; preserve roster/actor indices in the result.
 		order.sort_custom(func(a,b): return a<b if is_equal_approx(areas[a],areas[b]) else areas[a]>areas[b])
 	var positions := {}
 	for index: int in order:
-		var species: String=roster.definitions[index]
-		var placed := place(FACTORY.template(species),true)
+		var species: String=host.enemy_definitions[index]
+		var placed := place(FACTORY.template(species,request.get("enemy_anatomy",{})),true)
 		if placed.is_empty(): host.last_error = "地图中部右侧没有足够的合法敌方部署位置。"; return false
 		positions[index]=placed
-	for index: int in roster.definitions.size(): host._enemy_positions.append(positions[index])
+	for index: int in host.enemy_definitions.size(): host._enemy_positions.append(positions[index])
 	for title: String in ["Ground"]: host.get_node(title).free()
 	return true
 

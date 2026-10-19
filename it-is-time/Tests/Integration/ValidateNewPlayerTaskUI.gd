@@ -23,6 +23,14 @@ func wait_world() -> bool:
 		await physics_frame
 	return false
 
+func finish_opening() -> void:
+	app.story_controller._process(0.3)
+	check(not app.ui.modal_stack.is_empty() and app.ui.modal_stack.back().kind=="story","Native opening precedes tutorial paper")
+	var id: String = app.session.STORIES.OPENING
+	for step: int in 8:
+		app.story_controller._choose(id,"next",int(app.session.STORIES.entry(app.session.data,id).revision))
+	app.story_controller._choose(id,"confirm",int(app.session.STORIES.entry(app.session.data,id).revision))
+
 func task_row(id: String) -> Control:
 	for row: Control in app.ui._task_page.get_node("%PendingRows").get_children():
 		if row.get_meta("task_id","")==id: return row
@@ -40,6 +48,7 @@ func capture(name: String) -> void:
 	check(picture.save_png(folder+"/"+name+".png")==OK,"Task screenshot saved: "+name)
 
 func run() -> void:
+	root.get_node("RuntimeConsole").auto_getlogs_enabled=false
 	root.size = Vector2i(1280,720)
 	app = ROOT_SCENE.instantiate()
 	app.save_path = "res://Tests/.runtime/integration/task_ui_%d.json" % Time.get_ticks_usec()
@@ -53,6 +62,7 @@ func run() -> void:
 	app.ui._start_new()
 	check(await wait_world(),"New game enters the real delivery map")
 	await frames()
+	finish_opening()
 	check(app.session.data.new_player_tasks.enabled and app.ui.overlay.visible,"First new-game world entry activates and opens the guide")
 	check(app.ui.modal_stack.size()==1 and app.ui.modal_stack.back().kind=="tasks","New game automatically opens exactly one task paper")
 	check(app.session.data.new_player_tasks.completed.is_empty(),"Spawning and saving the map complete no task")
@@ -101,7 +111,7 @@ func run() -> void:
 	await capture("02_explored_1280")
 	app.ui._close_all()
 	var rules = app.ui.Rules.new()
-	rules.extend([0,0]); rules.extend([1,0]); rules.commit()
+	rules.extend([-1,0]); rules.extend([0,0]); rules.extend([1,0]); rules.commit()
 	var rng := RandomNumberGenerator.new(); rng.seed = 1234
 	check(app.session.summon(rules,"frontier_layout","world",rng),"Actual session generates a supported batch")
 	var id: String = app.session.data.pending[0]
@@ -140,6 +150,7 @@ func run() -> void:
 	app.start_new_game()
 	check(await wait_world(),"A second new game returns to the real map")
 	await frames()
+	finish_opening()
 	check(app.session.data.new_player_tasks.enabled and app.session.data.new_player_tasks.completed.is_empty(),"A new game clears the prior tutorial while enabling the new one")
 	check(app.ui.modal_stack.size()==1 and app.ui.modal_stack.back().kind=="tasks","Another new game opens its own initial guide once")
 	var saved_path: String = app.save_path

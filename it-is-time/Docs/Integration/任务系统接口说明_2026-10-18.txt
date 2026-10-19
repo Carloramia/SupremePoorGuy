@@ -1,5 +1,10 @@
 任务系统基础接口
 
+2026-10-20现状提示
+本文件的通用QuestDefinitions/configure_quests等接口未接入当前GameRoot与GameSession，不是现有调用契约。
+本批20条剧情已采用独立原生执行器接线，读取Content/Events/Current，不依赖本文件所述通用任务API。
+请先读Docs/Systems/StoryEvents/README.md；原有4项新手待办继续由NewPlayerTasks维护。
+
 本次范围
 - 已提供任务资源、前置解锁、接取、事件计数、完成锁存、领奖、持久化和变更信号。
 - 尚未替换现有“待办事项”页面，未默认启用新任务，也未自动采集地图/召唤/编队事件。

@@ -4,6 +4,7 @@ signal diagnostic_event(event: String, detail: Dictionary)
 var diagnostic_logging := false
 var data: Dictionary
 var party_count := 0
+var completed_story_ids: Array[String] = []
 var busy := false
 var rng := RandomNumberGenerator.new()
 var hex: RefCounted
@@ -59,14 +60,26 @@ static func valid_snapshot(value: Dictionary) -> bool:
 	if not active.is_empty():
 		for key in ["request_id","location_id","battle_map_id","kind"]:
 			if not active.get(key) is String or active[key].is_empty():return false
-		if Catalog.location_for_version(active.location_id,selected).is_empty() or Catalog.map_data(active.battle_map_id,selected).get("kind","")!="battle" or active.kind not in ["clear","encounter"]:return false
-		if not active.get("party_ids") is Array or active.party_ids.is_empty():return false
+		if Catalog.location_for_version(active.location_id,selected).is_empty() or Catalog.map_data(active.battle_map_id,selected).get("kind","")!="battle" or active.kind not in ["clear","encounter","story"]:return false
+		if active.kind=="story":
+			if active.get("combat_mode") not in ["party","spectator"] or not active.get("event_id") is String: return false
+			if active.combat_mode=="spectator":
+				for key: String in ["side_a_roster","side_b_roster"]:
+					if not active.get(key) is String or active[key].is_empty(): return false
+			var factory = preload("res://Scripts/Application/CreatureFactory.gd")
+			for key: String in (["enemy_definitions_snapshot","side_a_definitions_snapshot"] if active.combat_mode=="spectator" else ["enemy_definitions_snapshot"]):
+				if not active.get(key) is Array or active[key].is_empty(): return false
+				for species: Variant in active[key]:
+					if not species is String or not factory.DEFINITIONS.has(species): return false
+			if not active.get("enemy_anatomy",{}) is Dictionary or not factory.ANATOMY.valid(active.get("enemy_anatomy",{})): return false
+		if not active.get("party_ids") is Array: return false
+		if active.party_ids.is_empty() and not (active.kind=="story" and active.combat_mode=="spectator"):return false
 		var seen:Array=[]
 		for id in active.party_ids:
 			if not id is String or id.is_empty() or id in seen:return false
 			seen.append(id)
 	for receipt in value.get("battle_receipts",{}).values():
-		if not receipt is Dictionary or receipt.get("outcome","") not in ["victory","defeat","retreat"]:return false
+		if not receipt is Dictionary or receipt.get("outcome","") not in ["victory","defeat","retreat","draw"]:return false
 	if selected=="20261019":
 		var explored: Variant = value.get("explored_cells",[])
 		if not explored is Array or explored.size()>map.hex_cells.size(): return false
@@ -126,6 +139,8 @@ func known(object: Dictionary) -> bool:
 	return object.type=="town" or object.get("discovery",{}).get("known",false) or object.get("discovery",{}).get("initially_visible",false)
 
 func object_visible(object: Dictionary) -> bool:
+	# Dedicated event icons disappear, but shared towns and the summon hut stay.
+	if object.get("type","")!="town" and object.get("location_id","")!="summoning_hut" and object.get("event_id","") in completed_story_ids and object.get("event_links",[]).is_empty(): return false
 	if not object.has("discovery"):return true
 	return known(object) or (visibility(Catalog.v(object.position))!="unknown" and (not object.discovery.get("condition_ref","") or object.id in data.discovered))
 
@@ -296,7 +311,8 @@ func cancel_battle() -> void:
 
 func complete_battle(result: Dictionary) -> bool:
 	var request: Dictionary=data.active_battle
-	if request.is_empty() or result.get("request_id","")!=request.request_id or not result.get("outcome","") in ["victory","defeat","retreat"] or data.battle_receipts.has(request.request_id):return false
-	if result.outcome=="victory" and request.kind=="clear" and request.location_id not in data.cleared:data.cleared.append(request.location_id)
+	if request.is_empty() or result.get("request_id","")!=request.request_id or not result.get("outcome","") in ["victory","defeat","retreat","draw"] or data.battle_receipts.has(request.request_id):return false
+	if result.outcome=="draw" and not (request.kind=="story" and request.get("combat_mode")=="spectator"): return false
+	if result.outcome=="victory" and (request.kind=="clear" or (request.kind=="story" and request.get("event_id")=="QST_SIDE_002_001" and request.get("clear_location_on_victory",false))) and request.location_id not in data.cleared:data.cleared.append(request.location_id)
 	data.battle_receipts[request.request_id]=result.duplicate(true)
 	return true

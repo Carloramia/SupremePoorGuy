@@ -1,0 +1,1293 @@
+{
+  "QST_MAIN_001_001": {
+    "start": "intro",
+    "nodes": {
+      "intro": {
+        "type": "dialogue",
+        "paragraphs": [
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "next": "sign"
+      },
+      "sign": {
+        "type": "action",
+        "label": "确认签收",
+        "action": {
+          "op": "appointment"
+        }
+      },
+      "end": {
+        "type": "end"
+      }
+    }
+  },
+  "QST_GRASS_002": {
+    "start": "intro",
+    "nodes": {
+      "intro": {
+        "type": "dialogue",
+        "paragraphs": [
+          3,
+          4,
+          5
+        ],
+        "next": "decision"
+      },
+      "decision": {
+        "type": "choice",
+        "paragraphs": [],
+        "options": [
+          {
+            "id": "battle",
+            "label": "教训卡洛德",
+            "action": {
+              "op": "battle",
+              "branch": "battle",
+              "won": "end",
+              "lost": "decision",
+              "mode": "party"
+            }
+          },
+          {
+            "id": "leave",
+            "label": "离开",
+            "action": {
+              "op": "close"
+            }
+          }
+        ]
+      },
+      "end": {
+        "type": "end"
+      }
+    }
+  },
+  "QST_SIDE_001_001": {
+    "start": "intro",
+    "nodes": {
+      "intro": {
+        "type": "dialogue",
+        "paragraphs": [
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "next": "runes"
+      },
+      "runes": {
+        "type": "action",
+        "label": "收下攻击、防御符文",
+        "action": {
+          "op": "reward",
+          "reward_key": "QST_SIDE_001_001",
+          "next": "aid"
+        }
+      },
+      "aid": {
+        "type": "choice",
+        "paragraphs": [],
+        "options": [
+          {
+            "id": "aid",
+            "label": "领取罗瓦的援助",
+            "action": {
+              "op": "money",
+              "parameter": "private_money_magic",
+              "next": "end"
+            }
+          },
+          {
+            "id": "leave",
+            "label": "离开",
+            "action": {
+              "op": "close"
+            }
+          }
+        ]
+      },
+      "end": {
+        "type": "end"
+      }
+    }
+  },
+  "QST_SIDE_002_001": {
+    "start": "intro",
+    "nodes": {
+      "intro": {
+        "type": "dialogue",
+        "paragraphs": [
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "next": "accept"
+      },
+      "accept": {
+        "type": "choice",
+        "paragraphs": [],
+        "options": [
+          {
+            "id": "accept",
+            "label": "接下委托",
+            "next": "progress",
+            "action": {
+              "op": "flag",
+              "flag": "accepted",
+              "value": true
+            }
+          },
+          {
+            "id": "leave",
+            "label": "离开",
+            "action": {
+              "op": "close"
+            }
+          }
+        ]
+      },
+      "progress": {
+        "type": "choice",
+        "paragraphs": [
+          11
+        ],
+        "options": [
+          {
+            "id": "battle",
+            "label": "前往已绑定的清剿战斗",
+            "action": {
+              "op": "battle",
+              "branch": "clear",
+              "won": "return",
+              "lost": "progress",
+              "mode": "party"
+            }
+          },
+          {
+            "id": "leave",
+            "label": "离开",
+            "action": {
+              "op": "close"
+            }
+          }
+        ]
+      },
+      "return": {
+        "type": "choice",
+        "paragraphs": [],
+        "options": [
+          {
+            "id": "submit",
+            "label": "返回城主交付",
+            "next": "submit",
+            "action": {
+              "op": "require_role",
+              "role": "city_center"
+            }
+          },
+          {
+            "id": "leave",
+            "label": "离开",
+            "action": {
+              "op": "close"
+            }
+          }
+        ]
+      },
+      "submit": {
+        "type": "dialogue",
+        "paragraphs": [
+          14,
+          15,
+          16
+        ],
+        "next": "reward"
+      },
+      "reward": {
+        "type": "action",
+        "label": "收下螺旋人像",
+        "action": {
+          "op": "reward",
+          "reward_key": "QST_SIDE_002_001",
+          "next": "end"
+        }
+      },
+      "end": {
+        "type": "end"
+      }
+    }
+  },
+  "QST_GRASS_005": {
+    "start": "intro",
+    "nodes": {
+      "intro": {
+        "type": "dialogue",
+        "paragraphs": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "next": "end"
+      },
+      "end": {
+        "type": "end"
+      }
+    }
+  },
+  "QST_GRASS_006": {
+    "start": "intro",
+    "nodes": {
+      "intro": {
+        "type": "dialogue",
+        "paragraphs": [
+          0
+        ],
+        "next": "pickup"
+      },
+      "pickup": {
+        "type": "action",
+        "label": "拾取神秘物品",
+        "action": {
+          "op": "pickup",
+          "next": "approach"
+        }
+      },
+      "approach": {
+        "type": "dialogue",
+        "paragraphs": [
+          1
+        ],
+        "next": "decision"
+      },
+      "decision": {
+        "type": "choice",
+        "paragraphs": [],
+        "options": [
+          {
+            "id": "battle",
+            "label": "应对靠近的狼群",
+            "action": {
+              "op": "battle",
+              "branch": "battle",
+              "won": "end",
+              "lost": "decision",
+              "mode": "party"
+            }
+          },
+          {
+            "id": "leave",
+            "label": "离开",
+            "action": {
+              "op": "close"
+            }
+          }
+        ]
+      },
+      "end": {
+        "type": "end"
+      }
+    }
+  },
+  "QST_GRASS_007": {
+    "start": "donkey",
+    "nodes": {
+      "donkey": {
+        "type": "dialogue",
+        "paragraphs": [
+          1
+        ],
+        "next": "donkey_choice"
+      },
+      "merchant": {
+        "type": "dialogue",
+        "paragraphs": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "next": "merchant_choice"
+      },
+      "donkey_choice": {
+        "type": "choice",
+        "paragraphs": [],
+        "options": [
+          {
+            "id": "from_donkey",
+            "label": "我带你去找你兄弟",
+            "next": "return_dialogue",
+            "action": {
+              "op": "both_seen"
+            }
+          },
+          {
+            "id": "leave",
+            "label": "离开",
+            "action": {
+              "op": "close"
+            }
+          }
+        ]
+      },
+      "merchant_choice": {
+        "type": "choice",
+        "paragraphs": [],
+        "options": [
+          {
+            "id": "from_merchant",
+            "label": "是一头很老的驴吗？",
+            "next": "return_dialogue",
+            "action": {
+              "op": "both_seen"
+            }
+          },
+          {
+            "id": "leave",
+            "label": "离开",
+            "action": {
+              "op": "close"
+            }
+          }
+        ]
+      },
+      "return_dialogue": {
+        "type": "dialogue",
+        "paragraphs": [
+          9
+        ],
+        "next": "reward"
+      },
+      "reward": {
+        "type": "action",
+        "label": "收下挑衅铃、宣传旗帜",
+        "action": {
+          "op": "reward",
+          "reward_key": "QST_GRASS_007",
+          "next": "end"
+        }
+      },
+      "end": {
+        "type": "end"
+      }
+    }
+  },
+  "QST_GRASS_008": {
+    "start": "intro",
+    "nodes": {
+      "intro": {
+        "type": "dialogue",
+        "paragraphs": [
+          0,
+          1
+        ],
+        "next": "decision"
+      },
+      "decision": {
+        "type": "choice",
+        "paragraphs": [],
+        "options": [
+          {
+            "id": "battle",
+            "label": "应对冲来的拱兽",
+            "action": {
+              "op": "battle",
+              "branch": "battle",
+              "won": "reward",
+              "lost": "decision",
+              "mode": "party"
+            }
+          },
+          {
+            "id": "leave",
+            "label": "离开",
+            "action": {
+              "op": "close"
+            }
+          }
+        ]
+      },
+      "reward": {
+        "type": "action",
+        "label": "收下巨化符文",
+        "action": {
+          "op": "reward",
+          "reward_key": "QST_GRASS_008",
+          "next": "end"
+        }
+      },
+      "end": {
+        "type": "end"
+      }
+    }
+  },
+  "QST_GRASS_009": {
+    "start": "intro",
+    "nodes": {
+      "intro": {
+        "type": "dialogue",
+        "paragraphs": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "next": "reward"
+      },
+      "reward": {
+        "type": "action",
+        "label": "领取魔力",
+        "action": {
+          "op": "money",
+          "parameter": "magic_reward",
+          "next": "end"
+        }
+      },
+      "end": {
+        "type": "end"
+      }
+    }
+  },
+  "QST_GRASS_010": {
+    "start": "intro",
+    "nodes": {
+      "intro": {
+        "type": "dialogue",
+        "paragraphs": [
+          0,
+          1
+        ],
+        "next": "decision"
+      },
+      "decision": {
+        "type": "choice",
+        "paragraphs": [],
+        "options": [
+          {
+            "id": "break",
+            "label": "尝试打碎甲壳",
+            "action": {
+              "op": "attack_check",
+              "passed": "success",
+              "failed": "failure"
+            }
+          },
+          {
+            "id": "leave",
+            "label": "离开",
+            "action": {
+              "op": "close"
+            }
+          }
+        ]
+      },
+      "failure": {
+        "type": "dialogue",
+        "paragraphs": [
+          3
+        ],
+        "next": "decision"
+      },
+      "success": {
+        "type": "dialogue",
+        "paragraphs": [
+          4,
+          5
+        ],
+        "next": "reward"
+      },
+      "reward": {
+        "type": "action",
+        "label": "收下壳雕和魔力",
+        "action": {
+          "op": "shell_reward",
+          "next": "end"
+        }
+      },
+      "end": {
+        "type": "end"
+      }
+    }
+  },
+  "QST_GRASS_011": {
+    "start": "intro",
+    "nodes": {
+      "intro": {
+        "type": "dialogue",
+        "paragraphs": [
+          0,
+          1,
+          2
+        ],
+        "next": "decision"
+      },
+      "decision": {
+        "type": "choice",
+        "paragraphs": [],
+        "options": [
+          {
+            "id": "enter",
+            "label": "进入探索",
+            "action": {
+              "op": "battle",
+              "branch": "enter",
+              "won": "aftermath",
+              "lost": "decision",
+              "mode": "party",
+              "restriction": "no_large"
+            }
+          },
+          {
+            "id": "leave",
+            "label": "离开",
+            "action": {
+              "op": "close"
+            }
+          }
+        ]
+      },
+      "aftermath": {
+        "type": "dialogue",
+        "paragraphs": [
+          5,
+          6
+        ],
+        "next": "reward"
+      },
+      "reward": {
+        "type": "action",
+        "label": "摘抄大群、撕咬诅咒",
+        "action": {
+          "op": "reward",
+          "reward_key": "QST_GRASS_011",
+          "next": "end"
+        }
+      },
+      "end": {
+        "type": "end"
+      }
+    }
+  },
+  "QST_GRASS_012": {
+    "start": "intro",
+    "nodes": {
+      "intro": {
+        "type": "dialogue",
+        "paragraphs": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "next": "decision"
+      },
+      "decision": {
+        "type": "choice",
+        "paragraphs": [],
+        "options": [
+          {
+            "id": "direct",
+            "label": "直接解决",
+            "action": {
+              "op": "battle",
+              "branch": "direct",
+              "won": "direct_aftermath",
+              "lost": "decision",
+              "mode": "party"
+            }
+          },
+          {
+            "id": "ask",
+            "label": "路过萨尔格特城帮你问一下",
+            "next": "waiting",
+            "action": {
+              "op": "flag",
+              "flag": "await_enchanter",
+              "value": true
+            }
+          },
+          {
+            "id": "leave",
+            "label": "离开",
+            "action": {
+              "op": "close"
+            }
+          }
+        ]
+      },
+      "waiting": {
+        "type": "choice",
+        "paragraphs": [],
+        "options": [
+          {
+            "id": "enchanter",
+            "label": "寻找附魔魔法师",
+            "next": "enchanter",
+            "action": {
+              "op": "require_role",
+              "role": "return_city_enchanter"
+            }
+          },
+          {
+            "id": "leave",
+            "label": "离开",
+            "action": {
+              "op": "close"
+            }
+          }
+        ]
+      },
+      "direct_aftermath": {
+        "type": "dialogue",
+        "paragraphs": [{"index": 4, "lines": [1, 2]}],
+        "next": "direct_reward"
+      },
+      "direct_reward": {
+        "type": "action",
+        "label": "领取直接解决的报酬",
+        "action": {
+          "op": "money",
+          "parameter": "direct_magic_reward",
+          "next": "end"
+        }
+      },
+      "enchanter": {
+        "type": "dialogue",
+        "paragraphs": [
+          {
+            "index": 6,
+            "lines": [
+              0
+            ]
+          }
+        ],
+        "next": "enchanter_reward"
+      },
+      "enchanter_reward": {
+        "type": "action",
+        "label": "领取回城处理的报酬",
+        "action": {
+          "op": "money",
+          "parameter": "enchanter_magic_reward",
+          "next": "end"
+        }
+      },
+      "end": {
+        "type": "end"
+      }
+    }
+  },
+  "QST_GRASS_013": {
+    "start": "intro",
+    "nodes": {
+      "intro": {
+        "type": "dialogue",
+        "paragraphs": [
+          0,
+          1,
+          2
+        ],
+        "next": "decision"
+      },
+      "decision": {
+        "type": "choice",
+        "paragraphs": [],
+        "options": [
+          {
+            "id": "record",
+            "label": "记录星图",
+            "action": {
+              "op": "money",
+              "parameter": "magic_reward",
+              "next": "end"
+            }
+          },
+          {
+            "id": "leave",
+            "label": "离开",
+            "action": {
+              "op": "close"
+            }
+          }
+        ]
+      },
+      "end": {
+        "type": "end"
+      }
+    }
+  },
+  "QST_GRASS_014": {
+    "start": "intro",
+    "nodes": {
+      "intro": {
+        "type": "dialogue",
+        "paragraphs": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "next": "decision"
+      },
+      "decision": {
+        "type": "choice",
+        "paragraphs": [],
+        "options": [
+          {
+            "id": "buy",
+            "label": "我买了",
+            "action": {
+              "op": "buy_engine",
+              "next": "bought"
+            }
+          },
+          {
+            "id": "leave",
+            "label": "离开",
+            "action": {
+              "op": "close"
+            }
+          }
+        ]
+      },
+      "bought": {
+        "type": "dialogue",
+        "paragraphs": [
+          8
+        ],
+        "next": "end"
+      },
+      "end": {
+        "type": "end"
+      }
+    }
+  },
+  "QST_GRASS_015": {
+    "start": "intro",
+    "nodes": {
+      "intro": {
+        "type": "dialogue",
+        "paragraphs": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "next": "decision"
+      },
+      "decision": {
+        "type": "choice",
+        "paragraphs": [],
+        "options": [
+          {
+            "id": "funny",
+            "label": "有点好笑",
+            "next": "funny"
+          },
+          {
+            "id": "kind",
+            "label": "没那么好笑",
+            "next": "kind"
+          }
+        ]
+      },
+      "funny": {
+        "type": "dialogue",
+        "paragraphs": [
+          8,
+          9,
+          10,
+          11
+        ],
+        "next": "teach"
+      },
+      "kind": {
+        "type": "dialogue",
+        "paragraphs": [
+          13,
+          14,
+          15,
+          16
+        ],
+        "next": "teach"
+      },
+      "teach": {
+        "type": "action",
+        "label": "学习好战、血肉顽强",
+        "action": {
+          "op": "reward",
+          "reward_key": "QST_GRASS_015",
+          "next": "end"
+        }
+      },
+      "end": {
+        "type": "end"
+      }
+    }
+  },
+  "QST_GRASS_016": {
+    "start": "intro",
+    "nodes": {
+      "intro": {
+        "type": "dialogue",
+        "paragraphs": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "next": "decision"
+      },
+      "decision": {
+        "type": "choice",
+        "paragraphs": [],
+        "options": [
+          {
+            "id": "help",
+            "label": "帮他处理魔眼拱兽",
+            "action": {
+              "op": "battle",
+              "branch": "help",
+              "won": "aftermath",
+              "lost": "decision",
+              "mode": "party"
+            }
+          },
+          {
+            "id": "away",
+            "label": "离远一点",
+            "action": {
+              "op": "close"
+            }
+          }
+        ]
+      },
+      "aftermath": {
+        "type": "dialogue",
+        "paragraphs": [
+          {
+            "index": 7,
+            "lines": [
+              0
+            ]
+          },
+          8
+        ],
+        "next": "reward"
+      },
+      "reward": {
+        "type": "action",
+        "label": "收下结晶化眼球",
+        "action": {
+          "op": "reward",
+          "reward_key": "QST_GRASS_016",
+          "next": "end"
+        }
+      },
+      "end": {
+        "type": "end"
+      }
+    }
+  },
+  "QST_GRASS_017": {
+    "start": "intro",
+    "nodes": {
+      "intro": {
+        "type": "dialogue",
+        "paragraphs": [
+          0,
+          1,
+          2
+        ],
+        "next": "decision"
+      },
+      "decision": {
+        "type": "choice",
+        "paragraphs": [],
+        "options": [
+          {
+            "id": "fight",
+            "label": "帮忙赶走鸟",
+            "action": {
+              "op": "battle",
+              "branch": "fight",
+              "won": "fight_reward",
+              "lost": "decision",
+              "mode": "party"
+            }
+          },
+          {
+            "id": "wood",
+            "label": "建议用木头搭桥",
+            "next": "wood",
+            "action": {
+              "op": "require_money",
+              "parameter": "wood_magic_reward"
+            }
+          },
+          {
+            "id": "leave",
+            "label": "离开",
+            "action": {
+              "op": "close"
+            }
+          }
+        ]
+      },
+      "wood": {
+        "type": "dialogue",
+        "paragraphs": [
+          {
+            "index": 4,
+            "lines": [
+              1
+            ]
+          }
+        ],
+        "next": "wood_reward"
+      },
+      "wood_reward": {
+        "type": "action",
+        "label": "领取木桥方案的报酬",
+        "action": {
+          "op": "money",
+          "parameter": "wood_magic_reward",
+          "next": "end"
+        }
+      },
+      "fight_reward": {
+        "type": "action",
+        "label": "领取赶走食矿鸟的报酬",
+        "action": {
+          "op": "money",
+          "parameter": "fight_magic_reward",
+          "next": "end"
+        }
+      },
+      "end": {
+        "type": "end"
+      }
+    }
+  },
+  "QST_SIDE_003_001": {
+    "start": "intro",
+    "nodes": {
+      "intro": {
+        "type": "dialogue",
+        "paragraphs": [
+          1,
+          2
+        ],
+        "next": "stage_1"
+      },
+      "stage_1": {
+        "type": "choice",
+        "paragraphs": [
+          {
+            "index": 3,
+            "lines": [
+              0,
+              1
+            ]
+          }
+        ],
+        "options": [
+          {
+            "id": "first",
+            "label": "选择1只有皮毛的怪物",
+            "action": {
+              "op": "sacrifice",
+              "stage": 1,
+              "next": "stage_2"
+            }
+          },
+          {
+            "id": "leave",
+            "label": "离开",
+            "action": {
+              "op": "close"
+            }
+          }
+        ]
+      },
+      "stage_2": {
+        "type": "choice",
+        "paragraphs": [
+          {
+            "index": 4,
+            "lines": [
+              0,
+              1
+            ]
+          }
+        ],
+        "options": [
+          {
+            "id": "second",
+            "label": "选择2只飞行怪物",
+            "action": {
+              "op": "sacrifice",
+              "stage": 2,
+              "next": "stage_3"
+            }
+          },
+          {
+            "id": "leave",
+            "label": "离开",
+            "action": {
+              "op": "close"
+            }
+          }
+        ]
+      },
+      "stage_3": {
+        "type": "choice",
+        "paragraphs": [
+          {
+            "index": 5,
+            "lines": [
+              0,
+              1
+            ]
+          }
+        ],
+        "options": [
+          {
+            "id": "third",
+            "label": "选择3只无手无足的蛇类怪物",
+            "action": {
+              "op": "sacrifice",
+              "stage": 3,
+              "next": "end"
+            }
+          },
+          {
+            "id": "leave",
+            "label": "离开",
+            "action": {
+              "op": "close"
+            }
+          }
+        ]
+      },
+      "end": {
+        "type": "end"
+      }
+    }
+  },
+  "QST_GRASS_019": {
+    "start": "intro",
+    "nodes": {
+      "intro": {
+        "type": "dialogue",
+        "paragraphs": [
+          0,
+          1,
+          2
+        ],
+        "next": "decision"
+      },
+      "decision": {
+        "type": "choice",
+        "paragraphs": [],
+        "options": [
+          {
+            "id": "wolf",
+            "label": "帮助狼",
+            "action": {
+              "op": "battle",
+              "branch": "wolf",
+              "won": "monster_reward",
+              "lost": "decision",
+              "mode": "party",
+              "reward_preset": "wolf"
+            }
+          },
+          {
+            "id": "beast",
+            "label": "帮助拱兽",
+            "action": {
+              "op": "battle",
+              "branch": "beast",
+              "won": "monster_reward",
+              "lost": "decision",
+              "mode": "party",
+              "reward_preset": "beast"
+            }
+          },
+          {
+            "id": "watch",
+            "label": "谁也不帮",
+            "action": {
+              "op": "battle",
+              "branch": "watch",
+              "won": "watch_reward",
+              "lost": "decision",
+              "mode": "spectator"
+            }
+          },
+          {
+            "id": "leave",
+            "label": "离开",
+            "action": {
+              "op": "close"
+            }
+          }
+        ]
+      },
+      "monster_reward": {
+        "type": "action",
+        "label": "接收获胜奖励怪物",
+        "action": {
+          "op": "monster_reward",
+          "next": "end"
+        }
+      },
+      "watch_reward": {
+        "type": "action",
+        "label": "领取观战魔力",
+        "action": {
+          "op": "money",
+          "parameter": "watch_magic_reward",
+          "next": "end"
+        }
+      },
+      "end": {
+        "type": "end"
+      }
+    }
+  },
+  "QST_GRASS_020": {
+    "start": "intro",
+    "nodes": {
+      "intro": {
+        "type": "dialogue",
+        "paragraphs": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "next": "decision"
+      },
+      "decision": {
+        "type": "choice",
+        "paragraphs": [],
+        "options": [
+          {
+            "id": "one",
+            "label": "赌就赌，我选怪物1组",
+            "action": {
+              "op": "bet",
+              "side": 0
+            }
+          },
+          {
+            "id": "two",
+            "label": "赌就赌，我选怪物2组",
+            "action": {
+              "op": "bet",
+              "side": 1
+            }
+          },
+          {
+            "id": "leave",
+            "label": "离开",
+            "action": {
+              "op": "close"
+            }
+          }
+        ]
+      },
+      "again": {
+        "type": "dialogue",
+        "paragraphs": [
+          7
+        ],
+        "next": "decision"
+      },
+      "gift": {
+        "type": "dialogue",
+        "paragraphs": [
+          11
+        ],
+        "next": "gift_reward"
+      },
+      "gift_reward": {
+        "type": "action",
+        "label": "收下发条盒",
+        "action": {
+          "op": "reward",
+          "reward_key": "QST_GRASS_020:round_4",
+          "next": "end"
+        }
+      },
+      "unresolved": {
+        "type": "blocked",
+        "message": "本轮结果或账务处理尚待配置。保留原赌局，不再次下注、不擅自退款或增加轮次。"
+      },
+      "end": {
+        "type": "end"
+      }
+    }
+  },
+  "AUX_GRASS_ROVA": {
+    "start": "intro",
+    "nodes": {
+      "intro": {
+        "type": "dialogue",
+        "paragraphs": [
+          1
+        ],
+        "next": "close"
+      },
+      "close": {
+        "type": "action",
+        "label": "返回",
+        "action": {
+          "op": "close"
+        }
+      }
+    }
+  },
+  "AUX_GRASS_FOSTER": {
+    "start": "menu",
+    "nodes": {
+      "menu": {
+        "type": "container"
+      }
+    }
+  },
+  "AUX_GRASS_SALGERT": {
+    "start": "menu",
+    "nodes": {
+      "menu": {
+        "type": "container"
+      }
+    }
+  }
+}

@@ -8,6 +8,8 @@ const DEFAULT_WORLD_TIME = preload("res://Resources/Application/DefaultWorldTime
 const NEW_PLAYER_TASKS = preload("res://Scripts/Application/NewPlayerTasks.gd")
 const FACTORY = preload("res://Scripts/Application/CreatureFactory.gd")
 const CONTENT = preload("res://Scripts/Summoning/SummonContent.gd")
+const STORIES = preload("res://Scripts/Events/StoryService.gd")
+var story_parameters: Dictionary = {}
 const SUPPORTED_RUNES := ["health","armor","attack","bloodblade","haste","burn","limb-fortitude","giant","multiply"]
 const DELIVERY_RUNTIME = preload("res://Modules/FrontierDelivery/Scripts/Map/WorldMapRuntime.gd")
 const DELIVERY_MAP := "frontier_layout"
@@ -26,6 +28,7 @@ func reset() -> void:
 	data.known_runes=["health"]
 	data.known_relics=[]
 	data.catalogue_version=CONTENT.VERSION
+	STORIES.ensure(data)
 	_ensure_world_time()
 	if _saved_world_time.is_empty(): _saved_world_time = data.world_time.duplicate()
 
@@ -150,6 +153,12 @@ func load_save() -> bool:
 func _valid_save(value: Variant) -> bool:
 	if not super._valid_save(value) or int(value.get("schema_version",0)) not in [1,2]: return false
 	if not NEW_PLAYER_TASKS.valid_progress(value): return false
+	if not STORIES.valid(value): return false
+	if value.has("event_items"):
+		if not value.event_items is Dictionary: return false
+		for key: Variant in value.event_items:
+			var count: Variant = value.event_items[key]
+			if not key is String or key.is_empty() or not (count is float or count is int) or not is_finite(float(count)) or float(count)<0 or floor(float(count))!=float(count): return false
 	for key: String in ["known_runes","known_relics"]:
 		if value.has(key):
 			if not value[key] is Array: return false
@@ -187,7 +196,11 @@ func _valid_save(value: Variant) -> bool:
 	if not pending.get("battle_id") is String or pending.battle_id.is_empty(): return false
 	if pending.get("phase")=="settlement":
 		return _valid_result(pending.get("result")) and pending.result.battle_id==pending.battle_id and value.battle_results.has(pending.battle_id)
-	if pending.get("phase")!="loading" or not pending.get("party_ids") is Array or pending.party_ids.is_empty(): return false
+	if pending.get("phase")!="loading" or not pending.get("party_ids") is Array: return false
+	if pending.get("kind")=="story":
+		var current: Dictionary = STORIES.entry(value,str(pending.get("event_id","")))
+		if not current.get("flags",{}).get("await_battle",false) or current.flags.get("pending_battle_id")!=pending.battle_id: return false
+	if pending.party_ids.is_empty() and not (pending.get("kind")=="story" and pending.get("combat_mode")=="spectator"): return false
 	if not pending.get("map_id") is String or not pending.get("location_id") is String or not value.worlds.has(pending.map_id): return false
 	if pending.map_id==DELIVERY_MAP:
 		var probe: Dictionary = value.worlds[pending.map_id].duplicate(true)
@@ -236,9 +249,12 @@ func new_player_task_action(task_id: String) -> String:
 
 func _valid_result(value: Variant) -> bool:
 	if not value is Dictionary or not value.get("battle_id") is String or value.battle_id.is_empty(): return false
-	if value.get("outcome") not in ["victory","defeat","retreat"] or not value.get("parts") is Dictionary: return false
+	if value.get("outcome") not in ["victory","defeat","retreat","draw"] or not value.get("parts") is Dictionary: return false
+	if value.outcome=="draw" and value.get("combat_mode")!="spectator": return false
 	if not value.get("content_source","") is String or value.get("combat_mode","party") not in ["party","spectator"]: return false
 	var reward: Variant = value.get("reward")
+	if not value.get("magic_reward_pending",false) is bool: return false
+	if value.get("magic_reward_pending",false) and (reward!=0 or value.get("reward_basis")!="monster_level"): return false
 	return (reward is int or reward is float) and is_finite(float(reward)) and float(reward)>=0
 
 func supported_layout(rules) -> String:
@@ -256,6 +272,25 @@ func supported_layout(rules) -> String:
 func claim_content_reward(key: String, receipt_id: String, facts: Dictionary) -> bool:
 	var before := data.duplicate(true)
 	last_error=preload("res://Scripts/Summoning/SummonRewardBindings.gd").apply(data,key,receipt_id,facts)
+	if not last_error.is_empty(): data=before; return false
+	if save(): return true
+	data=before
+	return false
+
+func event_parameters() -> Dictionary:
+	return story_parameters if not story_parameters.is_empty() else STORIES.CATALOG.parameters()
+
+func open_story_event(id: String, context: Dictionary) -> bool:
+	var before := data.duplicate(true)
+	last_error=STORIES.open(data,id,context,event_parameters())
+	if not last_error.is_empty(): data=before; return false
+	if save(): return true
+	data=before
+	return false
+
+func advance_story_event(id: String, choice: String, revision: int, selected_ids: Array = []) -> bool:
+	var before := data.duplicate(true)
+	last_error=STORIES.advance(data,event_parameters(),id,choice,revision,selected_ids)
 	if not last_error.is_empty(): data=before; return false
 	if save(): return true
 	data=before
@@ -356,6 +391,7 @@ func commit_battle(result: Dictionary, world_snapshot: Dictionary) -> bool:
 	var id: String = result.battle_id
 	if data.battle_results.has(id): return true
 	if data.battle.get("battle_id","") != id: last_error = "战斗回执与待处理战斗不匹配。"; return false
+	if data.battle.get("kind")=="story" and float(result.get("reward",0))!=0.0: last_error="事件奖励由事件结算，战斗不得附带默认魔力。"; return false
 	var before := data.duplicate(true)
 	data.magic += int(result.get("reward",0))
 	data.battle_results[id] = result.duplicate(true)
@@ -363,6 +399,9 @@ func commit_battle(result: Dictionary, world_snapshot: Dictionary) -> bool:
 	# Reward provenance comes from the committed battle request, not a display name or result payload.
 	data.battle_results[id].content_source = str(data.battle.get("event_id",data.battle.get("content_source","")))
 	data.battle_results[id].combat_mode = str(data.battle.get("combat_mode","party"))
+	if data.battle.get("kind")=="story": data.battle_results[id].winner_faction=0 if result.outcome=="victory" else 1 if result.outcome=="defeat" else -1
+	last_error=STORIES.battle_result(data,data.battle,data.battle_results[id])
+	if not last_error.is_empty(): data=before; return false
 	var backend := "frontier_delivery_v1" if world_snapshot.map_id==DELIVERY_MAP else "legacy_frontier"
 	data.worlds[str(world_snapshot.map_id)] = tagged_world(world_snapshot,backend)
 	data.battle = {"battle_id":id,"map_id":world_snapshot.map_id,"phase":"settlement","result":data.battle_results[id].duplicate(true)}

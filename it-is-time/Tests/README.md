@@ -4,6 +4,14 @@
 
 ## 如何运行
 
+剧情事件接线检查为 [ValidateStoryEvents](Integration/ValidateStoryEvents.gd)，覆盖真实UI入口、会话事务及观战BattleHost；[ValidateStoryEventPaths](Integration/ValidateStoryEventPaths.gd)遍历20条剧情全部98个节点和57条路径，[ValidateStoryEventBoundaries](Integration/ValidateStoryEventBoundaries.gd)检查配置/存档拒绝、开场续接和幽灵时机。使用隔离存档，未填正式值的分支仍不可发布。完整配置与验证边界见 [事件交接](../Docs/Systems/StoryEvents/README.md)。
+
+在工程根执行`python Tools/Testing/RunStoryIntegrationChecks.py --godot <Godot控制台exe路径>`，联合运行30个连续对白、正文布局、Demo魔力、剧情及相邻系统测试；支持`--only`指定脚本名、`--output`指定日志目录。2026-10-20本轮全部通过，覆盖明细见事件交接；`ValidateOpeningAppointment`复用事件边界测试，不重复计作新覆盖。[ValidateDemoMagic](Integration/ValidateDemoMagic.gd)检查32项费用、固定奖励与等级掉落占位规则。此前旧脚本关于战斗固定+20的断言已改为“等级掉落待配置且不发放”，但保留结算、回执幂等与失败回滚断言；通用会话中人工指定奖励的事务测试仍保留，不能当作当前正式战斗掉落数值。
+
+[ValidateStoryDialogueLog](Integration/ValidateStoryDialogueLog.gd)无图形41项、实际截图43项，检查同一面板内向下追加、控件复用、自动滚到最新句、读档与失败重试去重、设置返回及事件/分支隔离。使用隔离存档，非headless加`-- --capture`可输出`Tests/.runtime/story-dialogue-log/opening_three_lines.png`及`opening_accumulated.png`。
+
+[ValidateStoryTextLayout](Integration/ValidateStoryTextLayout.gd)检查正文滚动区实际尺寸和裁切，而非只检查节点可见标志。无图形894项通过；非headless运行并传`-- --capture`，900项通过并生成三种尺寸的正文、长文末尾截图。视频反馈的旧布局可被该测试检出；统一大号事件面板的显示规则与输出位置见[事件交接](../Docs/Systems/StoryEvents/README.md)。
+
 在工程根，令 `$godot` 指向 Godot 4.7.2 编辑器控制台程序：
 
 ```powershell
@@ -44,8 +52,8 @@
 
 同时检查退出码、脚本成功标识、`ERROR:` / `SCRIPT ERROR:`、断言和超时。Godot 脚本异常可能仍返回 0；某个子函数失败后调用者继续打印 PASS，也不能判为全测试通过。`--fixed-fps 60` 用于可重复步进，不表示机器实际达到 60FPS。
 
-[RunOptimizationChecks.py](../Tools/Testing/RunOptimizationChecks.py) 已联合检查这些条件，但它的内置列表包含 [ValidateQuests](Integration/ValidateQuests.gd)。该测试引用当前会话里不存在的通用任务 API，应按失败/待恢复接线处理，不以历史报告替代当前执行结果；可用 `--only` 运行明确适用的单项。
+[RunOptimizationChecks.py](../Tools/Testing/RunOptimizationChecks.py) 和剧情运行器均联合检查这些条件。[ValidateQuests](Integration/ValidateQuests.gd)现为29项独立QuestService测试，覆盖前置、目标计数、去重、配置回滚和状态往返；不再调用不存在的GameSession通用任务接口，也不宣称正式会话能自动发放该框架奖励。旧接口文档仅作未来接线参考。
 
 2026-10-18 部件编辑器回归中，Bird 的 `test_feather` 有空 Mesh `get_aabb` 异常；不能用其随后输出的总 PASS 忽略该错误。历史混战还记录过失效关节和原生崩溃。更多边界见 [包体与验证记录](../Docs/Integration/Windows导出与资源包_2026-10-18.txt)。
 
-本批 README 只做路径、引用和文档检查，没有重新运行全部玩法回归。
+本轮实际运行上述30个入口，另做正文与连续对白图形截图专项；不等于已运行本目录所有物理、编辑器、性能与图形测试，历史问题须以各自最新专项回归为准。

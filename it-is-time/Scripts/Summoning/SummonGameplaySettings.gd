@@ -1,6 +1,11 @@
 class_name SummonGameplaySettings
 extends Resource
 ## First-pass tunable values, not final balance. No map logic is kept here.
+@export_group("Magic Cost")
+## Confirmed Demo stages only. Missing stages retain legacy laboratory pricing.
+@export var base_magic_by_stage: Dictionary[int,int] = {1:5,2:10}
+@export_range(0,100,1) var magic_per_rune_cell: int = 1
+@export_range(0,100,1) var magic_per_relic: int = 2
 @export_group("Structure")
 @export_range(1,5,1) var swarm_count: int = 5
 @export_range(0.1,1.0,0.01) var swarm_scale: float = 0.35

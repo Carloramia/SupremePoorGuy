@@ -25,6 +25,7 @@ var ui: Control
 var world_time_hud: Control
 var world_map: WorldMapController
 var delivery_map
+var story_controller: Node
 var battle: Node3D
 var scenario: ScenarioController
 var phase := "main"
@@ -94,6 +95,10 @@ func _ready() -> void:
 	session.changed.connect(_session_changed)
 	session.world_time_changed.connect(ui._update_header)
 	session.new_player_tasks_completed.connect(ui.queue_task_completion)
+	story_controller=preload("res://Scripts/Events/StoryController.gd").new()
+	story_controller.application=self
+	story_controller.name="StoryEvents"
+	add_child(story_controller)
 	refresh_input_gate()
 	if "--verify-export" in OS.get_cmdline_user_args(): _verify_export.call_deferred()
 
@@ -310,13 +315,19 @@ func ui_route_changed(next: String) -> void:
 
 func start_new_game() -> void:
 	if phase != "main": return
+	if _configured_delivery_map and use_hex_map_for_new_games:
+		var story_error: String = session.STORIES.CATALOG.validate()
+		if not story_error.is_empty(): ui._notice("事件配置校验失败："+story_error); return
 	var previous := session.data.duplicate(true)
 	var previous_backend := use_delivery_map
 	# Continuing a legacy backend must not change the configured new-game default.
 	use_delivery_map=_configured_delivery_map
 	session.reset()
-	if use_delivery_map and use_hex_map_for_new_games: session.data.delivery_map_version="20261019"
+	if use_delivery_map and use_hex_map_for_new_games:
+		session.data.delivery_map_version="20261019"
+		session.STORIES.prepare_new_game(session.data)
 	if not session.save(): session.data = previous; use_delivery_map=previous_backend; ui._notice(session.last_error); return
+	story_controller.reset_for_new_game()
 	_open_tasks_on_world_entry = true
 	ui._task_notifications.clear()
 	ui.rules.import_layout(session.data.layout)
@@ -327,9 +338,17 @@ func _enable_world_tasks() -> void:
 	if not session.enable_new_player_tasks():
 		ui._notice(session.last_error)
 		return
-	if _open_tasks_on_world_entry:
-		_open_tasks_on_world_entry = false
-		if not returning_to_main_menu and ui.modal_stack.is_empty(): ui._tasks()
+	var opening: Dictionary = session.STORIES.entry(session.data,session.STORIES.OPENING)
+	if not opening.is_empty() and not opening.completed: return
+	var guide_pending: bool = not opening.is_empty() and not opening.flags.get("guide_shown",false)
+	if not _open_tasks_on_world_entry and not guide_pending: return
+	if returning_to_main_menu or not ui.modal_stack.is_empty(): return
+	if guide_pending:
+		var before: Dictionary = session.data.duplicate(true)
+		opening.flags.guide_shown=true
+		if not session.save(): session.data=before; ui._notice(session.last_error); return
+	_open_tasks_on_world_entry=false
+	ui._tasks()
 
 func enter_world() -> void:
 	if phase != "main": return
@@ -426,13 +445,24 @@ func _delivery_battle_requested(request: Dictionary) -> void:
 	battle_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	var records: Array = []
 	for id: String in session.data.battle.party_ids: records.append(session.monster_by_id(id))
+	if request.get("combat_mode")=="spectator":
+		var definitions: Array = request.get("side_a_definitions_snapshot",[])
+		for index: int in definitions.size():
+			var record: Dictionary = battle.FACTORY.template(definitions[index])
+			record.id="story_ai_a_"+str(index)
+			records.append(record)
 	if not await battle.deploy(records,str(session.data.battle.battle_id)):
 		var message: String = battle.last_error
 		trace_map_event("battle_load_failed",{"reason":message})
 		_cleanup_battle()
 		_cancel_failed_delivery_battle(message)
 		return
-	_begin_deployment()
+	if request.get("combat_mode")=="spectator":
+		if not battle.start_combat(): _cleanup_battle(); _cancel_failed_delivery_battle("观战阵容未准备完成。"); return
+		phase="battle"
+		free_mouse_enabled=true
+		refresh_input_gate()
+	else: _begin_deployment()
 
 func get_delivery_battle_settings() -> DeliveryBattleSettings:
 	if session.delivery_version()=="20261019":
@@ -515,6 +545,9 @@ func _interaction_completed(_id: StringName, _result: Dictionary) -> void:
 	refresh_input_gate.call_deferred()
 
 func open_event(_id: String) -> void:
+	if phase=="world" and is_instance_valid(delivery_map):
+		for row: Dictionary in story_controller.location_events(delivery_map.active_location_id):
+			if row.id==_id: story_controller.open_event(_id,row.context); return
 	trace_map_event("event_rejected",{"event_id":_id,"reason":"需要先抵达地图事件地点。"})
 	ui._notice("请先前往大地图上的事件地点。")
 
@@ -603,7 +636,8 @@ func _show_settlement() -> void:
 	trace_map_event("settlement_opened",{"outcome":_pending_result.outcome,"reward":_pending_result.reward,"post_battle_options":_pending_result.get("post_battle_options",[])})
 	ui._close_all()
 	ui._modal("战斗结算",func(body):
-		var page: Control = ui._text_screen(body,"结果：%s\n魔力奖励：%d\n部位战损已记录。本轮采用战后恢复，不永久删除库存生物。" % [_pending_result.outcome,int(_pending_result.reward)])
+		var magic_text: String = "待配置（将按怪物等级计算，当前不发放）" if _pending_result.get("magic_reward_pending",false) else str(int(_pending_result.reward))
+		var page: Control = ui._text_screen(body,"结果：%s\n战斗魔力奖励：%s\n事件固定报酬由对应事件单独领取。\n部位战损已记录。本轮采用战后恢复，不永久删除库存生物。" % [_pending_result.outcome,magic_text])
 		ui._btn(page.get_node("%Commands"),"返回大地图",return_to_world)
 		if "summon" in _pending_result.get("post_battle_options",[]):
 			ui._btn(page.get_node("%Commands"),"战后召唤",func():

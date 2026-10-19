@@ -2,6 +2,7 @@
 
 | 目录 | 地位 |
 |---|---|
+| [Events/Current](Events/README.md) | 正式剧情正文、原生执行图与实际读取的事件参数；独立于地图Source快照 |
 | [FrontierDelivery_20261015](Maps/FrontierDelivery_20261015) | 旧档兼容地图包，含原运行时 JSON、转换出的场景与素材 |
 | [FrontierEditor_20261019](Maps/FrontierEditor_20261019/README.md) | 新游戏默认地图；Runtime 为实际接入产物，其余为资源快照与对应表；[接入记录](../Docs/Systems/WorldMapUI/新版六边形地图接入_2026-10-19.md) |
 | [IntegrationFrontier_v1](Maps/IntegrationFrontier_v1) | 保留的 Frontier 集成地图与 SceneDefinition 资源 |

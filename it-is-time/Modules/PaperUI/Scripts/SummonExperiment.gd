@@ -24,11 +24,14 @@ static func _shift(path: Array, offset: Array) -> Array:
 static func preview(rules) -> Dictionary:
 	var cost := 0
 	var active_cost := 0
+	var rune_cells := 0
+	var relic_cells := 0
 	var counts := {}
 	var attribute_bonuses := {"health":0.0,"attack":0.0,"armor":0.0}
 	var error := ""
 	for item: Dictionary in rules.placed:
 		cost += item.cells.size()
+		rune_cells += item.cells.size()
 		if not item.enabled: continue
 		active_cost += item.cells.size()
 		var d: Dictionary = Rules.current_definition(item.runeId)
@@ -40,11 +43,18 @@ static func preview(rules) -> Dictionary:
 	var has_eye := false
 	for item: Dictionary in rules.relics:
 		cost += item.cells.size()
+		relic_cells += item.cells.size()
 		active_cost += item.cells.size()
 		var d: Dictionary = Rules.current_definition(item.relicId,true)
 		if d.is_empty(): error = "布局含旧奇物，请从当前目录重新选择。"; continue
 		if d.kind=="combat": combat_relics+=1
 		if d.id=="crystal-eye": has_eye=true
+	# Pricing and tier strength are independent: base fees must not raise monster tier.
+	var confirmed_pricing: bool = SETTINGS.base_magic_by_stage.has(rules.stage)
+	var base_cost: int = SETTINGS.base_magic_by_stage.get(rules.stage,0)
+	var rune_cost: int = rune_cells*SETTINGS.magic_per_rune_cell if confirmed_pricing else rune_cells
+	var relic_cost: int = rules.relics.size()*SETTINGS.magic_per_relic if confirmed_pricing else relic_cells
+	if confirmed_pricing: cost=base_cost+rune_cost+relic_cost
 	if combat_relics>1: error="首轮每次召唤最多使用1件战斗定位奇物。"
 	var tier := 1
 	for i: int in TIER_COSTS.size():
@@ -77,7 +87,7 @@ static func preview(rules) -> Dictionary:
 			if source.id=="giant": source.chance=1.0
 	# No paid attempt may violate the promised eye guarantee. The all-failed policy is unapproved.
 	if has_eye and failure>0.0: error="魔眼保底的全失败处理尚未定案；首轮请使用无失败风险的构筑。"
-	return {"cost":cost,"effective_cost":active_cost,"counts":counts,"attribute_bonuses":attribute_bonuses,"tier":tier,"mode":mode,"count":count,"slots_each":slots,"total_slots":1 if mode=="swarm" else count*slots,"sources":sources,"mutation_chance":probability,"failure_chance":failure,"error":error}
+	return {"cost":cost,"base_cost":base_cost,"rune_cost":rune_cost,"relic_cost":relic_cost,"cost_rule":"demo" if confirmed_pricing else "legacy_lab","effective_cost":active_cost,"counts":counts,"attribute_bonuses":attribute_bonuses,"tier":tier,"mode":mode,"count":count,"slots_each":slots,"total_slots":1 if mode=="swarm" else count*slots,"sources":sources,"mutation_chance":probability,"failure_chance":failure,"error":error}
 
 static func generate(rules, serial: int, location: String, rng: RandomNumberGenerator) -> Dictionary:
 	var p := preview(rules)

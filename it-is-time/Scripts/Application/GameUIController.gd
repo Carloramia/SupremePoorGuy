@@ -223,6 +223,9 @@ func _term(title: String, content: String) -> void:
 
 func _task_action(action: String) -> void:
 	if not _tasks_available() or modal_stack.is_empty() or modal_stack.back().get("kind")!="tasks": return
+	if action.begins_with("event:"):
+		application.story_controller.navigate(action.trim_prefix("event:"))
+		return
 	var target: String = state.new_player_task_action(action)
 	if target.is_empty(): return
 	_close_all()
@@ -248,7 +251,7 @@ func _settings() -> void:
 		var choices: Array = application.DISPLAY_RESOLUTIONS.duplicate()
 		if current.resolution not in choices: choices.append(current.resolution)
 		var caption := Label.new()
-		caption.text = "分辨率（窗口尺寸 / 全屏渲染尺寸）"
+		L10N.bind(caption,&"text","分辨率（窗口尺寸 / 全屏渲染尺寸）")
 		commands.add_child(caption)
 		var resolution := OptionButton.new()
 		resolution.name = "Resolution"
@@ -258,7 +261,7 @@ func _settings() -> void:
 		commands.add_child(resolution)
 		var fullscreen := CheckButton.new()
 		fullscreen.name = "Fullscreen"
-		fullscreen.text = "全屏"
+		L10N.bind(fullscreen,&"text","全屏")
 		fullscreen.button_pressed = current.fullscreen
 		commands.add_child(fullscreen)
 		var apply := _btn(commands,"应用显示设置",func():
@@ -266,6 +269,21 @@ func _settings() -> void:
 			else: _notice(application.display_error))
 		apply.name = "ApplyDisplay"
 		apply.tooltip_text = "全屏保持显示器桌面模式，画面按所选分辨率渲染。"
+		var localization: Node = get_tree().root.get_node("GameLocalization")
+		var language_row := preload("res://Scenes/Application/UI/LanguageRow.tscn").instantiate()
+		commands.add_child(language_row)
+		var language_caption: Label = language_row.get_node("%Caption")
+		L10N.bind(language_caption,&"text","ui.settings.language")
+		var language: OptionButton = language_row.get_node("%Language")
+		var locales: Array = localization.configuration.get("locales",{}).keys()
+		for locale: String in locales:
+			language.add_item(localization.configuration.locales[locale].get("name",locale))
+		language.select(locales.find(localization.current_locale()))
+		language.item_selected.connect(func(index):
+			var previous: String = localization.current_locale()
+			if not localization.set_locale(locales[index]):
+				language.select(locales.find(previous))
+				_notice("ui.settings.language_error"))
 		_btn(commands,"保存游戏",func(): _notice("已保存" if application.save_session() else state.last_error))
 		_btn(page.get_node("%Commands"),"动效：开启" if animate_panels else "动效：简化",func():
 			animate_panels = not animate_panels
@@ -293,13 +311,17 @@ func _render_modal() -> void:
 	super._render_modal()
 	_resize_event()
 	if not modal_stack.is_empty() and modal_stack.back().get("kind","") != "settings": close_button.text = close_button.text.replace(" / Esc","")
-	if application != null: close_button.disabled = (application.phase=="settlement" or _battle_cancel_needs_save()) and modal_stack.size()==1 and modal_stack.back().get("kind","") != "settings"
+	if application != null: close_button.disabled = _mandatory_opening() or ((application.phase=="settlement" or _battle_cancel_needs_save()) and modal_stack.size()==1 and modal_stack.back().get("kind","") != "settings")
 	if application != null: application.refresh_input_gate()
 
 func _battle_cancel_needs_save() -> bool:
 	return application!=null and application._delivery_cancel_save_pending
 
+func _mandatory_opening() -> bool:
+	return application!=null and modal_stack.size()==1 and modal_stack.back().get("event_id")==state.STORIES.OPENING and not state.STORIES.entry(state.data,state.STORIES.OPENING).get("completed",false)
+
 func _close_modal(store_results: bool = true) -> void:
+	if store_results and _mandatory_opening(): return
 	if not modal_stack.is_empty() and modal_stack.back().get("kind","") == "settings":
 		super._close_modal(false)
 		return
@@ -310,12 +332,14 @@ func _close_modal(store_results: bool = true) -> void:
 		application._resolve_location({"success":false,"complete_location":false,"action":"leave"})
 		return
 	super._close_modal(store_results)
+	if application!=null and application.phase=="world": close_button.disabled=false
 
 func _close_all() -> void:
 	if _battle_cancel_needs_save(): return
 	if application!=null and application.phase=="world" and is_instance_valid(application.delivery_map):
 		if not application.delivery_map.cancel_setup(): return
 	super._close_all()
+	if application!=null and application.phase=="world": close_button.disabled=false
 
 func _refresh_warehouse_filters(animate := true) -> void:
 	super._refresh_warehouse_filters(animate)
@@ -362,7 +386,7 @@ func _tasks() -> void:
 		var page := TasksPanel.instantiate()
 		body.add_child(page)
 		_task_page = page
-		page.present_tasks(state.new_player_task_rows())
+		page.present_tasks(_all_task_rows())
 		page.action_requested.connect(_task_action),"tasks")
 
 func _tasks_available() -> bool:
@@ -370,7 +394,12 @@ func _tasks_available() -> bool:
 
 func refresh_task_list() -> void:
 	if is_instance_valid(_task_page) and not modal_stack.is_empty() and modal_stack.back().get("kind")=="tasks":
-		_task_page.present_tasks(state.new_player_task_rows())
+		_task_page.present_tasks(_all_task_rows())
+
+func _all_task_rows() -> Array:
+	var rows: Array = state.new_player_task_rows()
+	if application!=null and is_instance_valid(application.story_controller): rows.append_array(application.story_controller.task_rows())
+	return rows
 
 func queue_task_completion(task_ids: Array) -> void:
 	for task: Dictionary in state.task_definitions:
