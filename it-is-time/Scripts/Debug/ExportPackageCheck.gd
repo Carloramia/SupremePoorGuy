@@ -49,6 +49,7 @@ func run(app: Node) -> void:
 		if app.phase=="world": break
 		await _tree.physics_frame
 	check(app.phase=="world" and app.delivery_map!=null,"New game opens the actual delivery map")
+	check(app.session.delivery_version()=="20261019" and CATALOG.index().maps.size()==42,"New hex-world runtime is included in the package")
 	check(FileAccess.file_exists(app.save_path),"Save writes outside the installed game directory")
 	await capture("world_map")
 	app.ui._close_all()
@@ -58,7 +59,7 @@ func run(app: Node) -> void:
 	check(app.session.save(),"Exported creature hashes allow saving the roster")
 	var camp := {}
 	for object: Dictionary in CATALOG.world().objects:
-		if object.type=="camp" and "wolf" in str(object.get("enemy_config_id","")): camp=object; break
+		if object.type=="camp" and "wolf" in str(object.get("enemy_config_id","")) and app.get_delivery_battle_settings().availability_error(str(object.enemy_config_id)).is_empty(): camp=object; break
 	check(not camp.is_empty(),"Battle configuration available")
 	if not camp.is_empty():
 		app.delivery_map.runtime.data.player = camp.position.duplicate()
@@ -67,7 +68,8 @@ func run(app: Node) -> void:
 		for frame: int in 1200:
 			if app.phase=="deployment": break
 			await _tree.physics_frame
-		check(app.phase=="deployment" and app.battle!=null and app.battle.actors.size()==2,"3D map, navigation and two physical creatures deploy")
+		var expected := 1+app.get_delivery_battle_settings().enemy_rosters[str(camp.enemy_config_id)].definitions.size()
+		check(app.phase=="deployment" and app.battle!=null and app.battle.actors.size()==expected,"3D map, navigation and configured physical creatures deploy")
 		await capture("deployment")
 		if app.phase=="deployment":
 			app.start_battle()

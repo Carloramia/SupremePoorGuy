@@ -18,6 +18,11 @@ static func level(node: Node) -> Node:
 	return node.get_tree().current_scene if node.get_tree().current_scene != null else node.get_tree().root
 
 static func interface_open(node: Node) -> bool:
+	var viewport := node.get_viewport()
+	var viewport_host := viewport.get_parent() if viewport != null else null
+	# An isolated preview owns observation input without unlocking the paused game.
+	if viewport_host != null and viewport_host.has_method("is_observation_input_blocked"):
+		return viewport_host.is_observation_input_blocked()
 	var host := application(node)
 	return host != null and host.is_gameplay_blocked()
 

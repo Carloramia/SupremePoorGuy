@@ -1077,7 +1077,7 @@ func _on_pinned_foot_broken(_source: Node, leg: RigidBody3D) -> void:
 
 func _release_support_pin(leg) -> void:
 	if _support_pins.has(leg):
-		var pin: Generic6DOFJoint3D = _support_pins[leg].joint
+		var pin: Variant = _support_pins[leg].joint
 		if is_instance_valid(pin): pin.free()
 		_support_pins.erase(leg)
 	_support_anchors.erase(leg)
@@ -2108,8 +2108,9 @@ func _expand_hip_joint_for_step(leg: RigidBody3D, target: Vector3) -> void:
 
 ## Restores the authored limits. Call only when every Leg is already inside those limits.
 func restore_base_hip_joint_limits() -> void:
-	for joint: Generic6DOFJoint3D in _hip_joint_base_limits:
-		if not is_instance_valid(joint):
+	for joint: Variant in _hip_joint_base_limits.keys():
+		if not is_instance_valid(joint) or joint.is_queued_for_deletion():
+			_hip_joint_base_limits.erase(joint)
 			continue
 		var limits: Vector4 = _hip_joint_base_limits[joint]
 		joint.set_param_x(Generic6DOFJoint3D.PARAM_LINEAR_LOWER_LIMIT, limits.x)
@@ -2135,8 +2136,9 @@ func _update_joint_spring_scale(delta: float) -> void:
 func _apply_joint_spring_scale(scale: float) -> void:
 	if not scale_joint_angular_springs:
 		return
-	for joint: Generic6DOFJoint3D in _joint_base_springs:
-		if not is_instance_valid(joint):
+	for joint: Variant in _joint_base_springs.keys():
+		if not is_instance_valid(joint) or joint.is_queued_for_deletion():
+			_joint_base_springs.erase(joint)
 			continue
 		var base_values: Vector2 = _joint_base_springs[joint]
 		joint.set_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_SPRING_STIFFNESS, base_values.x * scale)

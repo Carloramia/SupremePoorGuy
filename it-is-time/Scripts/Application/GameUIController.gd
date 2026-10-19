@@ -96,7 +96,7 @@ func _show(next: String) -> void:
 	_refresh_sidebar()
 	view.configure(next,location,state.monsters("team"))
 	if next == "eruption":
-		view.erupt()
+		view.play_summon(state.data.pending.map(func(id): return state.monster_by_id(id)))
 		_btn(actions,"跳过召唤演出",func(): view.skip_eruption())
 	status.text = {"main":"ItIsTime","world":"点击地点后前往，抵达后交互。","battle":"自由光标观察战斗，双方由 AI 控制；队伍变更在下一战生效。","eruption":"召唤结果已保存，演出不会再次生成。"}.get(next,"")
 	actions.visible = actions.get_child_count()>0
@@ -334,7 +334,9 @@ func _append_battle_confirmation() -> void:
 	button.tooltip_text = error if not error.is_empty() else "请先将至少一只妖兽加入出战队列。" if button.disabled else "使用已选队伍进入本次遭遇。"
 
 func _process(_delta: float) -> void:
-	view.set_process(modal_stack.is_empty() or modal_stack.back().get("kind","") != "settings")
+	var summon_paused: bool = not modal_stack.is_empty() and modal_stack.back().get("kind","") == "settings"
+	view.set_process(not summon_paused)
+	view.set_summon_paused(summon_paused)
 	if is_instance_valid(_main_menu_button): _main_menu_button.disabled = application.phase == "main" or application.returning_to_main_menu
 	if application != null: application.refresh_input_gate()
 	var task_button: Button = base.get_node("%Navigation").get_node("%Tasks")

@@ -4,6 +4,8 @@ func _initialize() -> void:
 	call_deferred("_validate")
 
 func _validate() -> void:
+	root.get_node("CombatAudio").settings = root.get_node("CombatAudio").settings.duplicate()
+	root.get_node("CombatAudio").settings.enabled = false
 	var character := load(
 		"res://Scenes/Creatures/Characters/Character_Test_2.tscn"
 	).instantiate() as Node3D
@@ -16,10 +18,9 @@ func _validate() -> void:
 	var head := character.get_node("Head") as PhysicalBodyPart3D
 	var damage_controller := character.get_node("CharacterDamageController3D") as CharacterDamageController3D
 	var damage_service := root.get_node("DamageService")
-	assert(is_equal_approx(torso.max_hp, 200.0) and is_equal_approx(torso.armor, 15.0))
-	assert(is_equal_approx(arm_r.max_hp, 80.0) and is_equal_approx(arm_r.armor, 8.0))
-	assert(is_equal_approx(leg_r.max_hp, 100.0) and is_equal_approx(leg_r.armor, 10.0))
-	assert(is_equal_approx(head.max_hp, 100.0) and is_equal_approx(head.armor, 5.0))
+	for part: PhysicalBodyPart3D in [torso,arm_r,leg_r,head]:
+		assert(is_equal_approx(part.max_hp,40.0*part.base_combat_mass))
+		assert(is_zero_approx(part.resilience))
 
 	var weapon := load("res://Scenes/Items/Weapon_Test.tscn").instantiate() as SampleWeapon3D
 	root.add_child(weapon)

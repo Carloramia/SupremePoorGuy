@@ -1,0 +1,52 @@
+NPC 朝向与 Z 轴对齐修正（2026-10-19）
+
+问题
+Wolf 等生成 NPC 开启了 generated_x_axis_facing，但没有开启 humanoid_xz_positioning。
+旧状态机只在后者为 true 时使用 X/Z 分开规划，前者只改变朝向。
+因此身体尝试朝世界 +/-X，接近或后退位置却仍按双方 XZ 连线上的圆形距离计算。
+
+修正入口
+Scripts/Creatures/NPCStateMachine3D.gd
+1. generated_x_axis_facing 或 humanoid_xz_positioning 任意一个开启，均采用轴向战斗站位。
+2. X 轴维持当前攻击对应的距离；Z 轴靠近目标所在的攻击通道。
+   X 距离已经合适时，只调整 Z，不再绕着目标保持圆形距离。
+3. 朝向确认从角色初始左右朝向开始；delta=0 的读取不再消耗本帧的确认更新。
+   攻击期间继续保留起手朝向，攻击模组自己的固定轨迹不被本次修改重写。
+4. 普通攻击在 Z 通道未对齐时不提前进入准备；Snake、冲锋仍使用自身攻击原点的接近/对齐阶段。
+5. 无可用攻击时，生成 NPC 仍可接近并对齐，进入近距离后不强制后退。
+6. 友军避让通道为抵达误差留出余量，避免“已到站位，但攻击仍在等待 Z 对齐”。
+7. 小范围的 Z 修正会使用相应的导航抵达/重规划精度，避免导航先停止。
+
+地面侧向接近
+NPCStateMachine3D 根节点 Inspector -> Combat Positioning -> Lateral Approach Speed Ratio。
+默认 0.35。该设置作用于自动地面接近阶段的 Z 轴期望速度分量，X 分量不变。
+实现方式为同时调整方向和速度倍率，避免只缩小 Z 方向再归一化造成 X/Z 速度失真。
+临近目标继续使用原来的减速算法。Bird 空中移动、玩家移动、手动导航指令和攻击接管轨迹不使用这项侧向缩放。
+
+覆盖范围
+Wolf、StumpBeast、HornedBeast、Spider：由既有 generated_x_axis_facing 自动启用配套站位。
+Snake：保留攻击原点补偿、路径和对齐迟滞；无攻击追踪与速度缩放改用公共实现。
+通用 Generate_Creature_NPC 与 Bird：补开 generated_x_axis_facing。
+Human（含武器子类）和 Rat_1/Rat_2：沿用已有轴向站位，并共享确认、避让边界和地面侧向接近修正。
+没有修改生物布局、视觉/碰撞体、Joint 参数、目标 X 速度、伤害或攻击动作参数。
+
+验证入口
+Tests/ValidateGeneratedNPCAxisPositioning3D.gd
+Tests/Integration/ValidateWolfAxisApproach.gd
+连同已有回归共 12 项验证通过；最终日志没有 ERROR / SCRIPT ERROR。
+汇总见 Reports/NPCAxisPositioning_2026-10-19/validation.json。
+日志与 Wolf 逐帧样本保存于 Reports/NPCAxisPositioning_2026-10-19/。
+
+Wolf 双方物理接近样本
+平地，两个敌对 Wolf，初始相向、Z 间距约 16，关闭实际伤害动作但保留攻击距离规划，运行 12 秒。
+修正后 Z 间距约 0.89；质量加权躯干朝向的偏差峰值约 3.0 度。
+计入每个独立 Torso/SubTorso 的偏差峰值约 12.4 度；末帧两只整体朝向误差约 0.71/1.01 度。
+该样本仍观察到一只 Wolf 后段站高下降（Torso Y 约从 8.2 降到 5.1），本轮未改躯干支撑或关节参数，不将站高问题列为已修复。
+该样本验证朝向和通道收敛，不代表完整攻击混战、所有地形、所有体型的站高与步态验收。
+
+诊断
+motiondetail full
+tracknpcstate on
+tracknpcmotion on
+复现后 getlogs。
+状态快照新增 axis_combat_positioning，表示当前实际生效的站位规则；humanoid_xz_positioning=false 不再代表生成 NPC 使用圆形站位。

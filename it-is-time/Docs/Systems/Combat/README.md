@@ -33,13 +33,13 @@ NPC 接收器按需实现 `has_npc_attack()`、`predict_npc_attack()`、`try_sta
   → HP / 伤害数字 / Broken / 关节移除与控制停用
 ```
 
-全局服务是 [DamageService](../../../Scripts/Damage/DamageService.gd)，默认数据为 [DefaultDamageRules.tres](../../../Resources/Damage/DefaultDamageRules.tres)。普通冲量转换与挥舞有不同阈值、倍率和上限；`apply_armor()` 为 `max(raw - Armor, 0)`，武器常态接触还经过额外倍率与单次上限。不要把 UI 中的“护甲 +40%”理解为受到伤害减少 40%。
+全局服务是 [DamageService](../../../Scripts/Damage/DamageService.gd)，默认数据为 [DefaultDamageRules.tres](../../../Resources/Damage/DefaultDamageRules.tres)。主动攻击原伤害为 `35 × 完整身体基础总质量的立方根 × 动作倍率 × 命中质量`，先应用韧性，再扣固定护甲：`max(raw × 100 / (韧性 + 100) - Armor, 0)`。默认韧性为0，默认固定护甲为10；命中质量来自有效冲量，正常范围0.95～1.05。常态接触保留原有低强度冲量转换、倍率与单次上限，不使用35的主动攻击公式。不要把 UI 中的“护甲 +40%”理解为受到伤害减少 40%。
 
-武器通过 [SampleWeapon3D](../../../Scripts/Items/SampleWeapon3D.gd) 处理施加者、友军排除、同一挥舞对同一 Part 的去重与常态接触冷却。临时命中体见 [TemporaryAttackHitbox3D](../../../Scripts/Items/TemporaryAttackHitbox3D.gd) 及物种派生实现；踏地冲击波使用 [StompShockwave3D](../../../Scripts/VFX/StompShockwave3D.gd)。不同来源的采样方式不相同，调整全局规则后应分别测试。
+武器通过 [SampleWeapon3D](../../../Scripts/Items/SampleWeapon3D.gd) 处理施加者、友军排除、同一挥舞对同一 Part 的去重与常态接触冷却。临时命中体见 [TemporaryAttackHitbox3D](../../../Scripts/Items/TemporaryAttackHitbox3D.gd) 及物种派生实现；踏地冲击波使用 [StompShockwave3D](../../../Scripts/VFX/StompShockwave3D.gd)。同动作的多攻击体共享去重记录，但不同受击部位各自承受完整伤害，不设整只目标的总伤害预算。
 
 ## 部位和角色死亡
 
-[Part](../../../Scripts/Creatures/PhysicalBodyParts.gd) 持有 `max_hp`、`current_hp`、`armor`、`is_broken`。[CharacterDamageController3D](../../../Scripts/Creatures/CharacterDamageController3D.gd) 处理断裂后的连接与连带结果：
+[Part](../../../Scripts/Creatures/PhysicalBodyParts.gd) 持有 `max_hp`、`current_hp`、`armor`、`resilience`、`is_broken`。默认运行时 `max_hp = 裸装部位基础质量 × 40`；Inspector 的 `mass_based_health` 可用于固定血量的特殊部件和测试夹具。攻击者身体质量在初始化时缓存，装备合并质量和后来断肢不会改变该基准。[CharacterDamageController3D](../../../Scripts/Creatures/CharacterDamageController3D.gd) 处理断裂后的连接与连带结果：
 
 - 移除与 Broken Part 连接的 Joint；控制器停止控制 Broken 部件。
 - Torso 断裂会使相连且不带 Torso 标签的部件断裂；所有 Head 都 Broken 后，停用角色并使剩余部件 Broken。
@@ -51,3 +51,7 @@ NPC 接收器按需实现 `has_npc_attack()`、`predict_npc_attack()`、`try_sta
 诊断：`trackdamage`、`showattackboxes on`、`trackwolfattacks on 名称`、`tracksnakeattacks on 名称`、`trackcharge`。可视化说明见 [攻击碰撞体可视化](../../Combat/攻击碰撞箱可视化控制台说明_2026-10-16.txt)。
 
 攻击阶段、实际扣血和首次 Broken 也会触发 [战斗音效](../Audio/README.md)，播放配置独立于伤害计算。
+
+已接入 [伤害与耐久方案 V2](../../Combat/伤害与耐久方案_V2_总质量与双护甲_2026-10-18.md)，最终结算顺序按后续要求采用“先韧性、后固定护甲”。旧仓库记录保留姿态与符文倍率并迁移数值，下次保存前保留 `.pre_damage_v2.bak`；不会重新随机生成角色。[第一版方案](../../Combat/伤害与耐久线性化方案_2026-10-18.md) 仅保留设计历史。
+
+配置入口与正式攻击测试见 [伤害V2实施与低矮目标测试](../../Combat/伤害V2实施与低矮目标测试_2026-10-18.md)。测试使用保留正常物理接触回调的被动Rat目标，冻结靶样本已排除。

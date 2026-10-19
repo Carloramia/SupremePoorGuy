@@ -10,9 +10,35 @@ const DEFINITIONS := {
 	"spider": {"scene":"res://Scenes/Creatures/Characters/Generate_Spider_NPC.tscn","name":"蜘蛛","form":"兽形","color":"826f59"},
 }
 const SUMMON_POOL := ["stump_beast","wolf","snake","horned_beast","spider"]
+const DAMAGE_RULES = preload("res://Resources/Damage/DefaultDamageRules.tres")
 static var _templates: Dictionary = {}
 
 static var _collisions: Dictionary = {}
+static var _presentation_parts: Dictionary = {}
+static var _presentation_cleanup_registered := false
+
+static func presentation_part(definition_id: String, path: String) -> PackedScene:
+	if not _presentation_parts.has(definition_id): template(definition_id)
+	return _presentation_parts.get(definition_id,{}).get(path) as PackedScene
+
+static func _release_presentation_parts() -> void:
+	_presentation_parts.clear()
+
+static func _pack_presentation_part(source: Node) -> PackedScene:
+	# Flatten nested scene instances before packing, so preview copies cannot duplicate GLB subtrees.
+	var copy := source.duplicate(0)
+	copy.scene_file_path = ""
+	copy.set_script(source.get_script())
+	for property: Dictionary in source.get_property_list():
+		if property.usage & PROPERTY_USAGE_SCRIPT_VARIABLE and property.usage & PROPERTY_USAGE_STORAGE:
+			copy.set(property.name,source.get(property.name))
+	for child: Node in copy.find_children("*","",true,false):
+		child.scene_file_path = ""
+		child.owner = copy
+	var packed := PackedScene.new()
+	var error := packed.pack(copy)
+	copy.free()
+	return packed if error == OK else null
 
 static func local_bounds(record: Dictionary) -> AABB:
 	if not _collisions.has(record.definition_id): template(record.definition_id)
@@ -45,9 +71,15 @@ static func template(id: String) -> Dictionary:
 	var poses := {}
 	var parts := {}
 	_collisions[id] = {}
+	_presentation_parts[id] = {}
+	if not _presentation_cleanup_registered and Engine.get_main_loop() is SceneTree:
+		Engine.get_main_loop().root.tree_exiting.connect(_release_presentation_parts,CONNECT_ONE_SHOT)
+		_presentation_cleanup_registered = true
 	var hp := 0.0
 	var armor := 0.0
 	var speed := 3.0
+	var total_mass := 0.0
+	var attack_multiplier := 1.0
 	for node: Node in actor.find_children("*","",true,false):
 		if node is Node3D: poses[str(actor.get_path_to(node))] = pack_transform(node.transform)
 		if node is CollisionShape3D and not node.disabled and node.shape!=null and node.get_parent() is PhysicalBodyPart3D:
@@ -61,16 +93,24 @@ static func template(id: String) -> Dictionary:
 				for point: Vector3 in points: bounds = bounds.expand(point)
 				_collisions[id][str(actor.get_path_to(node))] = bounds
 		if node is PhysicalBodyPart3D:
-			parts[str(actor.get_path_to(node))] = {"key":str(node.get_meta(&"generated_part_key",str(node.name))),"hp":node.max_hp,"armor":node.armor}
-			hp += node.max_hp
+			# Cache only this small subtree; presentation must not instantiate a generator or AI.
+			_presentation_parts[id][str(actor.get_path_to(node))] = _pack_presentation_part(node)
+			var derived_hp: float = DAMAGE_RULES.health_for_mass(node.mass) if node.mass_based_health else node.max_hp
+			parts[str(actor.get_path_to(node))] = {"key":str(node.get_meta(&"generated_part_key",str(node.name))),"hp":derived_hp,"armor":node.armor,"resilience":node.resilience,"mass":node.mass,"authored_hp":node.max_hp}
+			hp += derived_hp
 			armor += node.armor
+			total_mass += node.mass
+		var action: Variant = node.get("data")
+		if action is Resource and action.get("damage_multiplier") is float and not is_equal_approx(action.damage_multiplier,1.0): attack_multiplier = action.damage_multiplier
+		var actions: Variant = node.get("actions")
+		if actions is Array and not actions.is_empty() and actions[0] is Resource: attack_multiplier = actions[0].damage_multiplier
 		for property: String in ["slow_gait_data","motion_data"]:
 			var motion: Variant = node.get(property)
 			if motion is Resource and motion.get("target_speed") is float: speed = motion.target_speed
 	actor.free()
 	if parts.is_empty(): return {}
 	var result := {"definition_id":id,"template_hash":FileAccess.get_sha256(definition.scene),"poses":poses,"parts":parts,
-		"hp":hp,"armor":armor/parts.size(),"attack":preload("res://Resources/Damage/DefaultDamageRules.tres").calculate_weapon_raw_damage(10.0,true),"speed":speed,"interval":1.5,"name":definition.name,"form":definition.form,"color":definition.color}
+		"hp":hp,"armor":armor/parts.size(),"resilience":0.0,"base_total_mass":total_mass,"balance_revision":DAMAGE_RULES.BALANCE_REVISION,"attack":DAMAGE_RULES.base_attack_damage*pow(total_mass,1.0/3.0)*attack_multiplier,"speed":speed,"interval":1.5,"name":definition.name,"form":definition.form,"color":definition.color}
 	_templates[id] = result
 	return result.duplicate(true)
 
@@ -92,13 +132,38 @@ static func valid_record(record: Dictionary) -> bool:
 		for key: String in ["hp","armor"]:
 			var value: Variant = record.parts[path].get(key)
 			if not (value is float or value is int) or not is_finite(float(value)) or float(value)<0: return false
+		var resilience: Variant = record.parts[path].get("resilience",0.0)
+		if not (resilience is float or resilience is int) or not is_finite(float(resilience)) or float(resilience)<0: return false
 	for field: String in ["damage_multiplier","speed_multiplier","interval_multiplier"]:
 		var multiplier: Variant = record.get(field,1.0)
 		if not (multiplier is float or multiplier is int) or not is_finite(float(multiplier)) or float(multiplier)<=0: return false
 	return true
 
+## Upgrade numeric data only; poses, equipment, faction and rune multipliers stay intact.
+static func upgrade_damage_record(record: Dictionary) -> bool:
+	if int(record.get("balance_revision",0)) >= DAMAGE_RULES.BALANCE_REVISION: return false
+	if not valid_record(record): return false
+	var reference := template(record.definition_id)
+	var hp := 0.0
+	for path: String in record.parts:
+		var part: Dictionary = record.parts[path]
+		var base: Dictionary = reference.parts[path]
+		var health_multiplier := float(part.hp)/maxf(float(base.authored_hp),0.000001)
+		part.hp = float(base.hp)*health_multiplier
+		part.resilience = part.get("resilience",0.0)
+		part.mass = base.mass
+		hp += float(part.hp)
+	record.hp = hp
+	record.attack = float(reference.attack)*float(record.get("damage_multiplier",1.0))
+	record.resilience = 0.0
+	record.base_total_mass = reference.base_total_mass
+	record.balance_revision = DAMAGE_RULES.BALANCE_REVISION
+	return true
+
 static func spawn(record: Dictionary, parent: Node3D, at: Vector3, faction: int, facing: float = 0.0) -> Node3D:
 	if not valid_record(record): return null
+	record = record.duplicate(true)
+	upgrade_damage_record(record)
 	var actor := (load(DEFINITIONS[record.definition_id].scene) as PackedScene).instantiate() as Node3D
 	actor.generate_on_ready = false
 	actor.faction_id = faction
@@ -117,6 +182,7 @@ static func spawn(record: Dictionary, parent: Node3D, at: Vector3, faction: int,
 		body.max_hp = record.parts[path].hp
 		body.current_hp = body.max_hp
 		body.armor = record.parts[path].armor
+		body.resilience = float(record.parts[path].get("resilience",0.0))
 		body.freeze = true
 		body.linear_velocity = Vector3.ZERO
 		body.angular_velocity = Vector3.ZERO

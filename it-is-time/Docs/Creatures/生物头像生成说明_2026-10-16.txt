@@ -2,7 +2,9 @@
 
 仓库详情、出战成员详情和召唤结果卡片现在使用真实生物的截图，不再按人形/兽形/蛇形复用概念图。
 取景方向为角色局部+Z朝向-Z，画面右侧为+X，上侧为+Y；对应当前纸片模型所在X-Y平面的正面正交视图。
-背景为不透明纯白色，默认512x384；根据全部可见视觉部件的包围盒自动居中，并预留12%的取景余量。
+背景为不透明纯白色，默认512x384。2026-10-18起改为以Head标签部位的可见模型边界为中心，按正面外接矩形面积约占图片25%计算取景，不使用碰撞箱。
+多个Head合并计算边界；细长头部优先保证完整显示并预留12%余量，此时面积可能小于25%。没有可见Head时回退到原来的全身居中取景。
+仍复制全部可见部件，头部附近的身体自然保留在画面中，超出取景范围的身体会被裁切，不改变生物资源或姿态。
 
 截图使用角色记录中的保存姿态及其物种场景里的视觉资源，不重新运行生成器，不启用物理模拟、AI、攻击、关节、碰撞箱或编辑器标记。
 只复制可见MeshInstance3D/Sprite3D，保留部件纹理、材质和内部模型变换。角色的世界位置和战斗中的实时运动不参与头像。
@@ -15,7 +17,8 @@
 实现：Scripts/Application/CreaturePortraitRenderer.gd。
 界面接入：Scripts/Application/GameUIController.gd。
 尺寸：CreaturePortraitRenderer.IMAGE_SIZE。
-取景余量：_capture中的extent乘数1.12。
+头部面积比例：CreaturePortraitRenderer.HEAD_AREA_RATIO，默认0.25。
+取景计算：_framing；细长头部和无头部回退的取景余量为1.12。
 
 检查：Tests/ValidateCreaturePortraits.gd；Tests/CaptureCreaturePortraits.gd；Tests/Integration/CaptureCreaturePortraitUI.gd。
 当前已检查Human、StumpBeast、Wolf、Snake、HornedBeast和Spider，包含实际GPU截图、纯白背景、缓存复用、关闭/切换详情、仓库/出战详情/召唤卡片及原界面输入回归。

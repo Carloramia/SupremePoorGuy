@@ -26,6 +26,7 @@ func run() -> void:
 	var target := load("res://Scenes/Creatures/Bodyparts/_PhysicalSampleBodyParts.tscn").instantiate() as PhysicalBodyPart3D
 	target.freeze = true
 	target.max_hp = 10000.0
+	target.mass_based_health = false
 	target.armor = 0.0
 	root.add_child(target)
 	for record: Dictionary in manifest.weapons:

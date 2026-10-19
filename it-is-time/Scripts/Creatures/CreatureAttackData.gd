@@ -2,6 +2,7 @@
 extends Resource
 
 @export var enabled: bool = true
+@export_range(0.0, 20.0, 0.01, "or_greater") var damage_multiplier: float = 1.0
 @export_range(0.0, 20.0, 0.01, "or_greater") var cooldown: float = 1.2
 
 func _init() -> void:

@@ -1,5 +1,6 @@
 class_name LimbSwingPresetBase
 extends Resource
+@export_range(0.0, 20.0, 0.01, "or_greater") var damage_multiplier: float = 1.0
 
 ## Shared charge, lift, and swing tuning inherited by concrete swing resources.
 

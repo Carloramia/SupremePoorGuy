@@ -142,8 +142,10 @@ func _apply_spider_independent_support() -> void:
 			body.apply_central_force(force)
 			_spider_support_rows.append({"body": body.name, "gravity_compensation": compensation, "height_error": error, "has_floor": has_floor, "force": force})
 	for chain: Dictionary in _chains.values():
+		if chain.joints.is_empty() or not is_instance_valid(chain.joints[-1]) or chain.joints[-1].is_queued_for_deletion(): continue
 		var joint: Generic6DOFJoint3D = chain.joints[-1]
 		if not is_instance_valid(joint) or not joint.get_meta(&"spider_root_anchor", false): continue
+		if not is_instance_valid(chain.bodies[-2]) or not is_instance_valid(chain.root): continue
 		var upper: RigidBody3D = chain.bodies[-2]
 		var torso: RigidBody3D = chain.root
 		var a: Transform3D = joint.get_meta(&"generated_joint_frame_a")
@@ -326,7 +328,8 @@ func refresh_physics_query_cache() -> void:
 	super.refresh_physics_query_cache()
 	# Shared chain capture restores relative limits; restore the absolute-Y
 	# bounds before both physics and structural reach capture use them.
-	for joint: Generic6DOFJoint3D in get_parent()._spider_angle_joints:
+	for joint: Variant in get_parent()._spider_angle_joints:
+		if not is_instance_valid(joint) or joint.is_queued_for_deletion(): continue
 		# Cache capture must not take the runtime warm-start shortcut.
 		joint.set_meta(&"spider_world_limits_initialized", false)
 		get_parent()._update_spider_world_limits(joint)
@@ -660,7 +663,7 @@ func _calculate_leg_adhesion_force(leg: RigidBody3D, hit: Dictionary, multiplier
 	return super._calculate_leg_adhesion_force(leg, hit, multiplier).limit_length(leg.mass * maximum_adhesion_acceleration)
 
 func _spider_root_strained(leg: RigidBody3D) -> bool:
-	if not _chains.has(leg) or not _independent_support_enabled() or _planar_mode_active(): return false
+	if not _chain_is_intact(leg) or not _independent_support_enabled() or _planar_mode_active(): return false
 	var chain: Dictionary = _chains[leg]
 	var hip: Generic6DOFJoint3D = chain.joints[-1]
 	if not is_instance_valid(hip) or not hip.get_meta(&"spider_root_anchor", false): return false
@@ -693,10 +696,11 @@ func update_leg_surface_adhesion() -> void:
 	super.update_leg_surface_adhesion()
 	var character := get_parent()
 	for foot: RigidBody3D in _chains:
+		if not _chain_is_intact(foot): continue
 		var stepping := is_leg_stepping(foot)
 		var ratio := stepping_joint_stiffness_ratio if stepping else grounded_joint_stiffness_ratio
-		for joint: Generic6DOFJoint3D in _chains[foot].joints:
-			if not is_instance_valid(joint) or not joint.has_meta(&"authored_walk_limits"): continue
+		for joint: Variant in _chains[foot].joints:
+			if not is_instance_valid(joint) or joint.is_queued_for_deletion() or not joint.has_meta(&"authored_walk_limits"): continue
 			var spring: Vector2 = character.get_spider_joint_spring(joint)
 			var weights := Vector2(ratio, stepping_joint_damping_ratio if stepping else 1.0)
 			# Release promptly for lift; restore over 0.15 seconds after contact.
@@ -725,8 +729,8 @@ func get_support_foot_diagnostics(leg: RigidBody3D) -> Dictionary:
 	result["stepping_damping_ratio"] = stepping_joint_damping_ratio
 	var springs: Array[Dictionary] = []
 	if _chains.has(leg):
-		for joint: Generic6DOFJoint3D in _chains[leg].joints:
-			if not is_instance_valid(joint): continue
+		for joint: Variant in _chains[leg].joints:
+			if not is_instance_valid(joint) or joint.is_queued_for_deletion(): continue
 			springs.append({"joint": joint.name, "effective_inertia": joint.get_meta(&"spider_effective_inertia", 1.0), "stiffness": joint.get_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_SPRING_STIFFNESS), "damping": joint.get_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_SPRING_DAMPING), "weights": joint.get_meta(&"spider_spring_weights", Vector2.ONE)})
 			springs[-1]["axis_alignment"] = _spider_axis_alignment.get(joint, {})
 			if joint.has_meta(&"spider_world_angle"):

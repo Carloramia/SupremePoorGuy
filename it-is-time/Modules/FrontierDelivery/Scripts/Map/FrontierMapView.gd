@@ -4,6 +4,7 @@ const Catalog = preload("res://Modules/FrontierDelivery/Scripts/Map/MapCatalog.g
 const Runtime = preload("res://Modules/FrontierDelivery/Scripts/Map/WorldMapRuntime.gd")
 signal interaction_requested(id: String, kind: String)
 signal progress_changed
+signal distance_travelled(distance: float)
 signal feedback(message: String)
 signal location_hovered(id: String, point: Vector2)
 var runtime = Runtime.new()
@@ -42,6 +43,7 @@ var _remembered_nodes: Dictionary = {}
 var _object_refresh_elapsed := 0.0
 var _fog_origin:=Vector2.ZERO
 var _fog_step:=Vector2.ONE
+var _hex_fog: RefCounted
 
 func _notification(what: int) -> void:
 	if what==NOTIFICATION_TRANSLATION_CHANGED and is_instance_valid(hud): hud.queue_redraw()
@@ -136,6 +138,7 @@ func _layout() -> void:
 	world_canvas.size=size
 	world_scene.scale=Vector2.ONE*zoom
 	world_scene.position=size/2.0-camera*zoom
+	if Catalog.is_hex(): world_scene.update_view(Rect2(camera-size/(2.0*zoom),size/zoom),zoom)
 	known_markers.transform=world_scene.transform
 	if fog_material:
 		fog_material.set_shader_parameter("view_size",size)
@@ -164,7 +167,7 @@ func _gui_input(event: InputEvent) -> void:
 			accept_event()
 		elif event.pressed and event.button_index in [MOUSE_BUTTON_WHEEL_UP,MOUSE_BUTTON_WHEEL_DOWN]:
 			var before:=screen_to_world(event.position)
-			zoom=clampf(zoom*(1.15 if event.button_index==MOUSE_BUTTON_WHEEL_UP else 1.0/1.15),.10,2.5)
+			zoom=clampf(zoom*(1.15 if event.button_index==MOUSE_BUTTON_WHEEL_UP else 1.0/1.15),.025 if Catalog.is_hex() else .10,2.5)
 			camera+=before-screen_to_world(event.position)
 			_layout()
 			accept_event()
@@ -213,6 +216,15 @@ func request_obstacle(id: String) -> bool:
 	var object:=Catalog.location(id)
 	var error:String=runtime.interaction_error(object,false)
 	if not error.is_empty():feedback.emit(error);return false
+	if runtime.hex!=null:
+		runtime.hex.sync(runtime.data,runtime.party_count)
+		if runtime.hex.axial(runtime.player()) in runtime.hex.obstacle_neighbors(object):
+			interaction_requested.emit(id,"obstacle")
+			return true
+		path=runtime.hex.obstacle_route(runtime.player(),object)
+		pending_interaction=id
+		if path.is_empty(): feedback.emit("无法抵达石障相邻的可通行格。"); return false
+		return true
 	if not object.get("requires_near_interaction",false) or runtime.interaction_error(object).is_empty():
 		interaction_requested.emit(id,"obstacle")
 		return true
@@ -282,6 +294,13 @@ func _mark_navigation_cell(cell: Vector2i) -> void:
 
 func request_move(point: Vector2,interaction_id := "") -> bool:
 	pending_interaction=interaction_id
+	if runtime.hex!=null:
+		if runtime.busy or not input_enabled: return false
+		if interaction_id.is_empty() and runtime.blocked(point): feedback.emit("该位置无法抵达。"); return false
+		runtime.hex.sync(runtime.data,runtime.party_count)
+		path=runtime.hex.route(runtime.player(),point,not interaction_id.is_empty())
+		if path.is_empty(): feedback.emit("没有可通行的六边形路线：请检查河流、山体或石障。"); return false
+		return true
 	if runtime.opening_locked() and not runtime._inside_opening(point):
 		feedback.emit("需要先在召唤小屋获得妖兽，才能离开开局区域。")
 		return false
@@ -308,8 +327,10 @@ func stop_moving() -> void:
 func _process(delta: float) -> void:
 	if mode!="world" or not input_enabled or runtime.busy or path.is_empty() or not is_visible_in_tree():return
 	var from: Vector2=runtime.player()
-	var to:=from.move_toward(path[0],180.0*Catalog.road_speed(from)*minf(delta,.05))
+	var to:=from.move_toward(path[0],float(Catalog.world().get("travel_animation_speed",180.0))*Catalog.road_speed(from)*minf(delta,.05))
 	var encounter: Dictionary=runtime.move_to(to)
+	var distance := from.distance_to(runtime.player())
+	if distance > 0.0: distance_travelled.emit(distance)
 	if runtime.player().is_equal_approx(from) and not from.is_equal_approx(to):
 		stop_moving()
 		progress_changed.emit()
@@ -335,6 +356,10 @@ func _process(delta: float) -> void:
 			interaction_requested.emit(id,"obstacle" if object.type=="destructible" else ("clear" if object.type=="camp" else "location"))
 
 func _create_fog() -> void:
+	if Catalog.is_hex():
+		_hex_fog=preload("res://Scripts/Application/HexWorldFog.gd").new()
+		_hex_fog.create(self)
+		return
 	fog_rect=ColorRect.new()
 	fog_rect.mouse_filter=Control.MOUSE_FILTER_IGNORE
 	fog_rect.z_index=1000
@@ -372,6 +397,7 @@ void fragment(){
 	fog_material.set_shader_parameter("explored_color",explored_color)
 
 func _rebuild_fog() -> void:
+	if _hex_fog!=null: _hex_fog.rebuild(); return
 	fog_image=Image.create(256,154,false,Image.FORMAT_R8)
 	_fog_origin=Catalog.v(Catalog.world().bounds.position)
 	_fog_step=Catalog.v(Catalog.world().bounds.size)/Vector2(fog_image.get_size())
@@ -419,6 +445,7 @@ func _paint_fog_segment(from: Vector2,to: Vector2,radius: float,state: String) -
 			fog_image.set_pixel(x,y,Color.WHITE if explored else Color.BLACK)
 
 func _stamp_fog() -> void:
+	if _hex_fog!=null: _hex_fog.update(); return
 	fog_material.set_shader_parameter("player",runtime.player())
 	if runtime.player().distance_to(last_fog_position)<12:return
 	last_fog_position=runtime.player()
@@ -434,6 +461,19 @@ func _stamp_fog() -> void:
 	fog_texture.update(fog_image)
 
 func _refresh_objects() -> void:
+	if Catalog.is_hex():
+		world_scene.refresh(runtime)
+		for remembered: Node2D in _remembered_nodes.values(): remembered.visible=false
+		for object: Dictionary in Catalog.objects_in_role("interactive"):
+			if not runtime.known(object) or runtime.visibility(Catalog.v(object.position))=="visible": continue
+			if not _remembered_nodes.has(object.id):
+				var copy := world_scene.get_node("Objects/"+str(object.id)).duplicate() as Node2D
+				copy.z_index=0
+				copy.modulate=Color(0.65,0.65,0.65,0.8)
+				known_markers.add_child(copy)
+				_remembered_nodes[object.id]=copy
+			_remembered_nodes[object.id].visible=true
+		return
 	for child in _remembered_nodes.values():child.visible=false
 	for object in Catalog.world().objects:
 		var node: Node2D=world_scene.get_node("Objects/"+object.id)
@@ -484,6 +524,7 @@ func _draw_hud() -> void:
 	var font:=get_theme_default_font()
 	for object in Catalog.objects_in_role("interactive"):
 		if not runtime.object_visible(object):continue
+		if Catalog.is_hex() and zoom<0.10 and object.id!=hovered_id: continue
 		if object.get("name_label",{}).get("style","")=="paper":continue
 		if object.get("hide_name_label",false):
 			if object.id!=hovered_id:continue
@@ -491,6 +532,10 @@ func _draw_hud() -> void:
 		var p:=world_to_screen(Catalog.v(object.position))+Vector2(0,20)
 		if p.x<0 or p.x>size.x or p.y<0 or p.y>size.y:continue
 		var width:=font.get_string_size(label,HORIZONTAL_ALIGNMENT_LEFT,-1,18).x
-		hud.draw_style_box(get_theme_stylebox("panel","Panel"),Rect2(p-Vector2(width/2+4,18),Vector2(width+8,24)))
+		var label_rect := Rect2(p-Vector2(width/2+4,18),Vector2(width+8,24))
+		if Catalog.is_hex():
+			hud.draw_rect(label_rect,Color("ead9b6"))
+			hud.draw_rect(label_rect,Color("5a4a35"),false,1)
+		else: hud.draw_style_box(get_theme_stylebox("panel","Panel"),label_rect)
 		hud.draw_string(font,p-Vector2(width/2,0),label,HORIZONTAL_ALIGNMENT_LEFT,-1,18,Color("392e24"))
 	hud.draw_rect(Rect2(Vector2(2,2),size-Vector2(4,4)),Color("a67b45"),false,3)

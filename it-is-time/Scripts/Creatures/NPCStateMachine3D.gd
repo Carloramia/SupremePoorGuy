@@ -7,6 +7,7 @@ var _performance_mode: Resource = preload("res://Resources/Settings/PerformanceO
 var _combat_decision_elapsed: float = 1.0
 var _movement_direction_frame: int = -1
 var _cached_movement_direction: Vector3 = Vector3.ZERO
+var _approach_direction_speed_scale: float = 1.0
 
 signal state_changed(previous_state: State, current_state: State)
 ## Passive lifecycle telemetry; observers do not participate in attack decisions.
@@ -50,10 +51,10 @@ var _collision_stop_distance := 0.0
 @export var auto_start_when_target_exists: bool = true
 @export var use_fast_movement: bool = false
 
-@export_group("Humanoid Combat Positioning")
+@export_group("Combat Positioning")
 ## Keep body facing on world +/-X; align attack lanes by walking along Z.
 @export var humanoid_xz_positioning: bool = false
-## Generated actors retain their own leg-driven turning, independent of attack lane rules.
+## Generated actors turn only toward +/-X and align attack lanes by moving along Z.
 @export var generated_x_axis_facing: bool = false
 @export_range(0.0, 1.0, 0.01) var generated_facing_confirmation_time: float = 0.2
 @export_range(0.01, 5.0, 0.01) var attack_z_tolerance: float = 0.5
@@ -64,6 +65,8 @@ var _collision_stop_distance := 0.0
 @export_range(0.01, 5.0, 0.01) var predicted_attack_z_tolerance: float = 1.5
 @export_range(0.1, 10.0, 0.1) var approach_slowdown_distance: float = 2.0
 @export_range(0.1, 50.0, 0.1) var approach_braking_acceleration: float = 8.0
+## Grounded sidestepping has less structural reach than forward walking; X speed is unchanged.
+@export_range(0.1, 1.0, 0.05) var lateral_approach_speed_ratio: float = 0.35
 
 @export_group("Friendly Avoidance")
 @export var friendly_avoidance_enabled: bool = true
@@ -119,6 +122,8 @@ func _ready() -> void:
 	):
 		debug_logging_enabled = true
 	_navigation_origin = get_node_or_null(navigation_origin_path) as Node3D
+	_generated_facing_side = -1.0 if get_parent().global_basis.x.x < 0.0 else 1.0
+	_generated_facing_candidate = _generated_facing_side
 	_target = get_node_or_null(target_path) as Node3D
 	if not is_instance_valid(_target) and auto_find_target_by_group:
 		_target = get_tree().get_first_node_in_group(target_group) as Node3D
@@ -197,7 +202,7 @@ func get_state_diagnostics() -> Dictionary:
 	elif not _character_enabled: disabled_reason = "character_disabled"
 	elif PLAYER_CONTEXT.controlled_character(self) == get_parent(): disabled_reason = "player_controlled"
 	var nav_ready := _navigation_map_is_ready()
-	return {"npc_path":str(get_parent().get_path()),"npc_id":get_parent().get_instance_id(),"state_machine_path":str(get_path()),"state":State.keys()[current_state],"disabled_reason":disabled_reason,"manual_command":_manual_command,"enemy":str(_enemy.get_path()) if is_instance_valid(_enemy) else "none","has_requested_target":_has_requested_target,"position":_get_navigation_origin_position(),"target":_requested_target_position,"navigation_ready":nav_ready,"path_points":navigation_agent.get_current_navigation_path().size(),"navigation_finished":navigation_agent.is_navigation_finished() if nav_ready else true,"target_reachable":navigation_agent.is_target_reachable() if nav_ready else false,"active_attack":_active_attack.action_id if _active_attack != null else &"none","attack_elapsed":_attack_elapsed,"attack_block_reason":_attack_block_reason,"cooldowns":cooldowns,"target_switch_remaining":_target_switch_remaining,"generated_x_axis_facing":generated_x_axis_facing,"facing_side":_generated_facing_side,"facing_candidate":_generated_facing_candidate,"facing_confirmation_elapsed":_generated_facing_elapsed,"prediction_distance_sample":_prediction_distance_sample}
+	return {"npc_path":str(get_parent().get_path()),"npc_id":get_parent().get_instance_id(),"state_machine_path":str(get_path()),"state":State.keys()[current_state],"disabled_reason":disabled_reason,"manual_command":_manual_command,"enemy":str(_enemy.get_path()) if is_instance_valid(_enemy) else "none","has_requested_target":_has_requested_target,"position":_get_navigation_origin_position(),"target":_requested_target_position,"navigation_ready":nav_ready,"path_points":navigation_agent.get_current_navigation_path().size(),"navigation_finished":navigation_agent.is_navigation_finished() if nav_ready else true,"target_reachable":navigation_agent.is_target_reachable() if nav_ready else false,"active_attack":_active_attack.action_id if _active_attack != null else &"none","attack_elapsed":_attack_elapsed,"attack_block_reason":_attack_block_reason,"cooldowns":cooldowns,"target_switch_remaining":_target_switch_remaining,"generated_x_axis_facing":generated_x_axis_facing,"axis_combat_positioning":_uses_axis_positioning(),"facing_side":_generated_facing_side,"facing_candidate":_generated_facing_candidate,"facing_confirmation_elapsed":_generated_facing_elapsed,"prediction_distance_sample":_prediction_distance_sample}
 
 func move_to_node(target: Node3D) -> void:
 	_cancel_attack()
@@ -225,9 +230,16 @@ func resume_autonomous() -> void:
 	_manual_command = false
 	_scan_elapsed = 0.0
 
+func _uses_axis_positioning() -> bool:
+	return generated_x_axis_facing or humanoid_xz_positioning
+
+func _attack_allows_movement() -> bool:
+	if _active_attack == null: return false
+	return _active_attack.allow_movement or (is_instance_valid(_attack_receiver) and _attack_receiver.has_method("allows_npc_attack_movement") and _attack_receiver.allows_npc_attack_movement())
+
 func get_movement_direction() -> Vector3:
 	if not enabled or not _character_enabled: return Vector3.ZERO
-	var walking_attack := current_state == State.ATTACK and _active_attack != null and _active_attack.allow_movement
+	var walking_attack := current_state == State.ATTACK and _attack_allows_movement()
 	if walking_attack and _distance_attack != null and absf(_distance_error) <= _attack_distance_tolerance(_distance_attack): return Vector3.ZERO
 	if (current_state != State.MOVE_TO_TARGET and not walking_attack) or not _has_requested_target:
 		return Vector3.ZERO
@@ -238,6 +250,7 @@ func get_movement_direction() -> Vector3:
 	return _cached_movement_direction
 
 func _calculate_movement_direction() -> Vector3:
+	_approach_direction_speed_scale = 1.0
 	var flight := get_parent().get_node_or_null("BirdFlightController3D")
 	if flight != null and flight.is_airborne():
 		# Airborne navigation follows the combat destination on XZ, not ground mesh paths.
@@ -251,7 +264,14 @@ func _calculate_movement_direction() -> Vector3:
 	if direction.is_zero_approx():
 		direction = _requested_target_position - origin
 		direction.y = 0.0
-	return _apply_friendly_avoidance(direction.normalized()) if not direction.is_zero_approx() else Vector3.ZERO
+	return _axis_approach_direction(_apply_friendly_avoidance(direction.normalized())) if not direction.is_zero_approx() else Vector3.ZERO
+
+func _axis_approach_direction(direction: Vector3) -> Vector3:
+	_approach_direction_speed_scale = 1.0
+	if _manual_command or not _uses_axis_positioning() or current_state != State.MOVE_TO_TARGET: return direction
+	var adjusted := Vector3(direction.x, 0.0, direction.z * lateral_approach_speed_ratio)
+	_approach_direction_speed_scale = adjusted.length()
+	return adjusted.normalized()
 
 func _is_friendly(actor: Variant) -> bool:
 	if not is_instance_valid(actor) or not actor is Node3D or not actor.is_inside_tree() or actor.is_queued_for_deletion() or actor == get_parent(): return false
@@ -278,12 +298,12 @@ func _update_friendly_neighbors(delta: float) -> void:
 	# Only peers on our side of the enemy compete; facing still uses the enemy's X.
 	if current_state == State.ATTACK: return
 	_friendly_approach_offset = 0.0
-	if not humanoid_xz_positioning or _manual_command or not is_instance_valid(_enemy): return
+	if not _uses_axis_positioning() or _manual_command or not is_instance_valid(_enemy): return
 	var rank := 0
 	var target_x := _enemy_position(_enemy).x
 	for machine: Node in get_tree().get_nodes_in_group(&"npc_state_machines"):
 		if machine == self or not _is_friendly(machine.get_parent()): continue
-		if not machine.enabled or not machine._character_enabled or not machine.humanoid_xz_positioning or machine._manual_command or machine._enemy != _enemy: continue
+		if not machine.enabled or not machine._character_enabled or not machine._uses_axis_positioning() or machine._manual_command or machine._enemy != _enemy: continue
 		if signf(machine._get_navigation_origin_position().x-target_x) != signf(origin.x-target_x): continue
 		if machine.get_instance_id() < get_instance_id(): rank += 1
 	if rank > 0:
@@ -323,11 +343,13 @@ func is_fast_movement_requested() -> bool:
 	return current_state == State.MOVE_TO_TARGET and use_fast_movement
 
 func get_npc_movement_speed_scale(full_speed: float) -> float:
-	if not humanoid_xz_positioning or _manual_command: return 1.0
-	if not enabled or not _character_enabled or current_state != State.MOVE_TO_TARGET or not _has_requested_target: return 0.0
+	if not _uses_axis_positioning() or _manual_command: return 1.0
+	var moving := current_state == State.MOVE_TO_TARGET or (current_state == State.ATTACK and _attack_allows_movement())
+	if not enabled or not _character_enabled or not moving or not _has_requested_target: return 0.0
 	var remaining := (_requested_target_position-_get_navigation_origin_position()).slide(Vector3.UP).length()
 	var braking_speed := sqrt(2.0 * approach_braking_acceleration * remaining)
-	return clampf(minf(remaining / approach_slowdown_distance, braking_speed / maxf(full_speed,0.001)),0.0,1.0)
+	get_movement_direction()
+	return clampf(minf(remaining / approach_slowdown_distance, braking_speed / maxf(full_speed,0.001)),0.0,1.0) * _approach_direction_speed_scale
 
 func set_diagnostic_logging_enabled(enabled: bool) -> void:
 	debug_logging_enabled = enabled
@@ -336,19 +358,21 @@ func set_diagnostic_logging_enabled(enabled: bool) -> void:
 func _set_agent_target(target_position: Vector3) -> void:
 	# Navigation must not stop outside the attack's distance tolerance.
 	navigation_agent.target_desired_distance = maxf(minf(_navigation_arrival_distance, _attack_distance_tolerance(_distance_attack)*0.5),0.01) if behavior != null and not _manual_command and _distance_attack != null else _navigation_arrival_distance
-	if humanoid_xz_positioning and behavior != null and not _manual_command:
+	var repath_distance := target_repath_distance
+	if _uses_axis_positioning() and behavior != null and not _manual_command:
 		navigation_agent.target_desired_distance = minf(navigation_agent.target_desired_distance, maxf(attack_z_tolerance * 0.5, 0.005))
+		repath_distance = minf(repath_distance, maxf(attack_z_tolerance * 0.5, 0.005))
 	var map := navigation_agent.get_navigation_map()
 	var iteration := NavigationServer3D.map_get_iteration_id(map) if map.is_valid() else 0
 	# Keep the current projection while the requested destination is within the existing repath tolerance.
-	if _has_requested_target and map == _last_navigation_map and iteration == _last_navigation_iteration and _last_navigation_request.distance_to(target_position) < maxf(target_repath_distance, 0.000001): return
+	if _has_requested_target and map == _last_navigation_map and iteration == _last_navigation_iteration and _last_navigation_request.distance_to(target_position) < maxf(repath_distance, 0.000001): return
 	_last_navigation_request = target_position
 	_last_navigation_map = map
 	_last_navigation_iteration = iteration
 	var navigation_target := _project_to_navigation_map(target_position)
 	var should_repath := (
 		not _has_requested_target
-		or navigation_agent.target_position.distance_to(navigation_target) >= target_repath_distance
+		or navigation_agent.target_position.distance_to(navigation_target) >= repath_distance
 	)
 	_requested_target_position = navigation_target
 	_movement_direction_frame = -1
@@ -382,12 +406,12 @@ func get_generated_facing_direction(_delta: float) -> Vector3:
 	var charge := get_parent().get_node_or_null("ChargeAttackController3D")
 	if charge != null and charge.owns_velocity(): return Vector3(charge._direction,0,0)
 	if not enabled or not _character_enabled or not _is_enemy(_enemy): return Vector3.ZERO
-	if generated_x_axis_facing:
+	if _uses_axis_positioning():
 		# Stomping keeps its starting heading; a moving enemy must not turn the raised body.
 		if current_state == State.ATTACK: return Vector3.RIGHT * _generated_facing_side
 		var dx := _enemy_position(_enemy).x - _get_navigation_origin_position().x
 		var side := signf(dx) if absf(dx) > facing_x_dead_zone else _generated_facing_side
-		if _generated_facing_frame != Engine.get_physics_frames():
+		if _delta > 0.0 and _generated_facing_frame != Engine.get_physics_frames():
 			_generated_facing_frame = Engine.get_physics_frames()
 			if side != _generated_facing_candidate:
 				_generated_facing_candidate = side
@@ -524,7 +548,10 @@ func _minimum_character_standoff() -> float:
 	return _collision_stop_distance
 
 func _target_z_attack_ready(attack: ATTACK, target: Node3D) -> bool:
-	if not humanoid_xz_positioning: return true
+	if not _uses_axis_positioning(): return true
+	var receiver := get_parent().get_node_or_null(attack.receiver_path)
+	# Charge and Snake bite align their attack origin through their own approach stage.
+	if receiver != null and receiver.has_method("uses_navigation_attack_gate") and receiver.uses_navigation_attack_gate(): return true
 	var limit := maxf(attack_z_tolerance,predicted_attack_z_tolerance) if attack.prediction_enabled else attack_z_tolerance
 	return absf(target.global_position.z-_get_navigation_origin_position().z) <= limit
 
@@ -535,14 +562,16 @@ func _attack_approach(attack: ATTACK) -> Dictionary:
 	return {}
 
 func _plan_attack_distance(distance: float, attacks: Array[ATTACK]) -> bool:
-	if humanoid_xz_positioning and is_instance_valid(_target):
+	if _uses_axis_positioning() and is_instance_valid(_target):
 		distance = absf(_target.global_position.x - _get_navigation_origin_position().x)
 	_distance_attack = _active_attack
+	if attacks.is_empty() and _uses_axis_positioning() and behavior != null and is_instance_valid(_target):
+		return _plan_target_distance(maxf(behavior.preferred_distance, arrival_distance), arrival_distance, false)
 	if _distance_attack == null:
 		for attack: ATTACK in attacks:
 			if float(_cooldowns.get(attack,0.0)) > 0.0: continue
 			var receiver := get_parent().get_node_or_null(attack.receiver_path)
-			if receiver != null and receiver.has_method("should_prepare_npc_attack") and receiver.should_prepare_npc_attack(attack.action_id,_target):
+			if receiver != null and receiver.has_method("should_prepare_npc_attack") and _target_z_attack_ready(attack,_target) and receiver.should_prepare_npc_attack(attack.action_id,_target):
 				# Let the normal selector check facing, visibility and terrain before retreating.
 				_distance_attack = attack
 				_distance_error = 0.0
@@ -573,26 +602,33 @@ func _plan_attack_distance(distance: float, attacks: Array[ATTACK]) -> bool:
 		if absf(_distance_error) <= _attack_distance_tolerance(_distance_attack) and absf(float(approach.z_error)) <= float(approach.z_tolerance): return false
 		_set_agent_target(approach.goal)
 		return true
-	_distance_error = distance-desired
 	var tolerance := minf(_attack_distance_tolerance(_distance_attack), (_attack_maximum_range(_distance_attack,_target)-_attack_minimum_range(_distance_attack))*0.5)
-	if humanoid_xz_positioning:
-		var origin := _get_navigation_origin_position()
-		var target_position := _target.global_position
-		var lane_limit := maxf(0.0,(predicted_attack_z_tolerance if _distance_attack.prediction_enabled else attack_z_tolerance)-0.1)
+	return _plan_target_distance(desired, tolerance)
+
+func _plan_target_distance(desired: float, tolerance: float, allow_retreat: bool = true) -> bool:
+	var origin := _get_navigation_origin_position()
+	var target_position := _target.global_position
+	var difference := (target_position-origin).slide(Vector3.UP)
+	_distance_error = (absf(difference.x) if _uses_axis_positioning() else difference.length())-desired
+	var adjust_distance := _distance_error > tolerance or (allow_retreat and _distance_error < -tolerance)
+	if _uses_axis_positioning():
+		var predicted := _distance_attack != null and _distance_attack.prediction_enabled
+		# Reserve the arrival band so an avoidance lane cannot stop outside attack reach.
+		var lane_limit := maxf(0.0,(maxf(predicted_attack_z_tolerance,attack_z_tolerance) if predicted else attack_z_tolerance)-attack_z_tolerance-0.05)
 		target_position.z += clampf(_friendly_approach_offset,-lane_limit,lane_limit) if friendly_avoidance_enabled else 0.0
 		var z_error := target_position.z - origin.z
-		if absf(_distance_error) <= tolerance and absf(z_error) <= attack_z_tolerance: return false
+		if not adjust_distance and absf(z_error) <= attack_z_tolerance: return false
 		var goal := origin
 		# Within the X stop band, move only along Z rather than orbiting the enemy.
-		if absf(_distance_error) > tolerance:
+		if adjust_distance:
 			var side := signf(origin.x - target_position.x)
-			if is_zero_approx(side): side = -1.0
+			if is_zero_approx(side): side = -_generated_facing_side
 			goal.x = target_position.x + side * desired
 		goal.z = target_position.z
 		_set_agent_target(goal)
 		return true
-	if absf(_distance_error) <= tolerance: return false
-	var away := (_get_navigation_origin_position()-_target.global_position).slide(Vector3.UP).normalized()
+	if not adjust_distance: return false
+	var away := -difference.normalized()
 	if away.is_zero_approx(): away = Vector3.LEFT
 	_set_agent_target(_target.global_position + away*desired)
 	return true
@@ -656,7 +692,7 @@ func _update_combat(delta: float) -> void:
 		_has_requested_target = false
 	if _performance_mode.enabled:
 		# Finish/cancel attacks on the real physics tick; do not delay their timers or controls.
-		if current_state == State.ATTACK and _active_attack != null and is_instance_valid(_target) and _target.get("is_broken") != true and (not _active_attack.allow_movement or _combat_decision_elapsed < _performance_mode.ai_decision_interval):
+		if current_state == State.ATTACK and _active_attack != null and is_instance_valid(_target) and _target.get("is_broken") != true and (not _attack_allows_movement() or _combat_decision_elapsed < _performance_mode.ai_decision_interval):
 			_advance_active_attack(delta)
 			return
 		if _combat_decision_elapsed < _performance_mode.ai_decision_interval and _scan_elapsed > 0.0 and is_instance_valid(_target) and _target.get("is_broken") != true:
@@ -758,7 +794,14 @@ func _try_attack(_distance: float) -> bool:
 	_attack_retry = maxf(behavior.scan_interval,0.05)
 	_attack_predictions.clear()
 	_attack_gate_rejections.clear()
-	if humanoid_xz_positioning and is_instance_valid(_target) and absf(_target.global_position.z-_get_navigation_origin_position().z) > maxf(attack_z_tolerance,predicted_attack_z_tolerance):
+	var available := _available_attacks()
+	var lane_ready := not _uses_axis_positioning() or not is_instance_valid(_target) or available.is_empty()
+	if not lane_ready:
+		for attack: ATTACK in available:
+			if _target_z_attack_ready(attack,_target):
+				lane_ready = true
+				break
+	if not lane_ready:
 		_attack_block_reason = &"z_alignment_pending"
 		return false
 	var facing := get_parent().get_node_or_null("PhysicalFacingController3D")
@@ -768,7 +811,6 @@ func _try_attack(_distance: float) -> bool:
 	var choices: Array[Dictionary] = []
 	var weight := 0.0
 	var targets := _attack_target_candidates()
-	var available := _available_attacks()
 	if available.is_empty():
 		_attack_block_reason = &"no_usable_attack"
 		return false

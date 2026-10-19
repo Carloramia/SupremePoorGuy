@@ -188,11 +188,13 @@ func _set_phase(next: Phase, reason: StringName) -> void:
 	phase = next; _elapsed = 0.0
 	if next == Phase.DIVING:
 		CombatAudio3D.play_at(self, &"attack")
+		var damage_context: Dictionary = get_node("/root/DamageService").create_attack_context(get_parent(),data.damage_multiplier)
 		for head: PhysicalBodyPart3D in _heads:
 			if not _alive(head): continue
 			var weapon := DIVE_WEAPON.instantiate() as SampleWeapon3D
+			weapon.damage_multiplier = data.damage_multiplier
 			add_child(weapon)
-			weapon.attach_to_head(head, data.weapon_length_ratio, data.weapon_radius_ratio)
+			weapon.attach_to_head(head, data.weapon_length_ratio, data.weapon_radius_ratio,damage_context)
 			_temporary_weapons.append(weapon)
 		_log(&"weapon_created", {"count": _temporary_weapons.size()})
 	_aiming_ready_elapsed = 0.0

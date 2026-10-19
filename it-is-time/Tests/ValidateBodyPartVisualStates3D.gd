@@ -125,7 +125,8 @@ func verify_generated() -> void:
 		var joint_poses: Array[Transform3D] = []
 		for joint: Node3D in joints: joint_poses.append(joint.transform)
 		assert(hand.set_visual_state(&"grip"))
-		assert(hand.get_node("Model/PaperVolume").global_position.is_equal_approx(hand.get_node("JointIn").global_position))
+		var grip: BodyPartVisualState3D = hand.visual_states.filter(func(state): return state.state_name == &"grip")[0]
+		assert(hand.get_node("Model/PaperVolume").to_global(grip.mesh_anchor).is_equal_approx(hand.get_node(grip.anchor_path).global_position))
 		assert_same(physics_snapshot(hand),before)
 		assert(socket.transform==socket_pose)
 		for i: int in joints.size(): assert(joints[i].transform==joint_poses[i])

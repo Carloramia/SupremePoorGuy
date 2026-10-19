@@ -7,6 +7,7 @@ var _previous_center := Vector3.ZERO
 var _has_previous_center := false
 var _debug_query: PhysicsShapeQueryParameters3D
 var _ground_box_valid := false
+func damage_contact_mass() -> float: return attached_body.mass if is_instance_valid(attached_body) else mass
 
 func get_attack_debug_shapes() -> Array[Dictionary]:
 	if not _ground_box_valid or not is_instance_valid(attached_shape) or attached_shape.is_queued_for_deletion() or not is_instance_valid(attached_body) or attached_body.is_broken: return []

@@ -1,0 +1,264 @@
+extends RefCounted
+## Shared physical pose targets and NPC prediction. Joint positions remain solver-owned.
+
+static func capture(state: Dictionary) -> Array[Dictionary]:
+	var bodies: Array[RigidBody3D] = [state.body]
+	var joints: Array[Generic6DOFJoint3D] = [state.joint]
+	for follower: Dictionary in state.followers:
+		bodies.append(follower.body)
+		joints.append(follower.joint)
+	var anchor: RigidBody3D = state.anchor_body
+	var result: Array[Dictionary] = []
+	for index: int in bodies.size():
+		var body := bodies[index]
+		var joint := joints[index]
+		var parent_body: RigidBody3D = anchor if index == 0 else bodies[index-1]
+		var proximal := local_anchor(joint,body)
+		var distal := local_anchor(joints[index+1],body) if index+1 < joints.size() else proximal
+		# A single Arm has no elbow; it reaches by rotating its existing rigid lever.
+		if bodies.size() == 1: distal = Vector3.ZERO
+		result.append({"body":body,"joint":joint,"proximal":proximal,"distal":distal,
+			"joint_basis":_joint_basis(joint,body),"parent_joint_basis":_joint_basis(joint,parent_body),"parent_is_a":joint.get_node_or_null(joint.node_a) == parent_body,
+			"rest_basis":anchor.global_basis.inverse()*body.global_basis})
+	return result
+
+static func local_anchor(joint: Generic6DOFJoint3D, body: RigidBody3D) -> Vector3:
+	var key := &"generated_joint_frame_a" if joint.get_node_or_null(joint.node_a) == body else &"generated_joint_frame_b"
+	if joint.has_meta(key): return (joint.get_meta(key) as Transform3D).origin
+	return body.to_local(joint.global_position)
+
+static func reach(chain: Array[Dictionary]) -> float:
+	var result := 0.0
+	for link: Dictionary in chain: result += (link.body.global_basis*Vector3(link.distal-link.proximal)).length()
+	return result
+
+static func _joint_basis(joint: Generic6DOFJoint3D, body: RigidBody3D) -> Basis:
+	var key := &"generated_joint_frame_a" if joint.get_node_or_null(joint.node_a) == body else &"generated_joint_frame_b"
+	if joint.has_meta(key): return (joint.get_meta(key) as Transform3D).basis
+	return body.global_basis.inverse()*joint.global_basis
+
+static func poses(state: Dictionary, preset: WeaponArmAttackPreset, direction: Vector3, up: Vector3, progress: float) -> Array[Transform3D]:
+	var chain: Array[Dictionary] = state.pose_chain
+	var anchor: RigidBody3D = state.anchor_body
+	var pivot := anchor.to_global(state.pose_anchor_local)
+	var length := reach(chain)
+	var blend := smoothstep(0.0,1.0,progress)
+	if chain.size() == 1:
+		# With no elbow, keep the shoulder attached and use a short aimed jab arc.
+		var link: Dictionary = chain[0]
+		var basis: Basis = anchor.global_basis*Basis(link.rest_basis)
+		var forward: Vector3 = basis*Vector3(state.get("weapon_aim_local",state.weapon_forward_local))
+		if not forward.is_zero_approx(): basis = Basis(Quaternion(forward.normalized(),direction))*basis
+		var axis := direction.cross(up).normalized()
+		var lever := basis*-Vector3(link.proximal)
+		var side := signf(direction.dot(axis.cross(lever)))
+		if is_zero_approx(side): side = 1.0
+		var span := asin(clampf((preset.strike_reach-preset.preparation_reach)*0.5,0.05,0.45))
+		basis = Basis(axis,lerpf(-span,span,blend)*side)*basis
+		return [Transform3D(basis,pivot-basis*Vector3(link.proximal))]
+	var extension := lerpf(preset.preparation_reach,preset.strike_reach,blend)
+	var height := lerpf(preset.preparation_height,preset.strike_height,blend)
+	var end := pivot+(direction*extension+up*height).limit_length(0.99)*length
+	return targets(state,end,direction,up)
+
+static func targets(state: Dictionary, end: Vector3, direction: Vector3, up: Vector3) -> Array[Transform3D]:
+	var chain: Array[Dictionary] = state.pose_chain
+	var anchor: RigidBody3D = state.anchor_body
+	var pivot := anchor.to_global(state.pose_anchor_local)
+	var length := reach(chain)
+	end = pivot+(end-pivot).limit_length(length*0.99)
+	var points: Array[Vector3] = [pivot]
+	var lengths: Array[float] = []
+	# Deterministic bend plane prevents the IK solution flipping across a straight elbow.
+	for index: int in chain.size():
+		var link: Dictionary = chain[index]
+		lengths.append((link.body.global_basis*Vector3(link.distal-link.proximal)).length())
+		var fraction := float(index+1)/chain.size()
+		points.append(pivot.lerp(end,fraction)-up*sin(fraction*PI)*length*0.35)
+	for iteration: int in 12:
+		points[-1] = end
+		for index: int in range(lengths.size()-1,-1,-1):
+			var axis := (points[index]-points[index+1]).normalized()
+			points[index] = points[index+1]+axis*lengths[index]
+		points[0] = pivot
+		for index: int in lengths.size():
+			var axis := (points[index+1]-points[index]).normalized()
+			if axis.is_zero_approx(): axis = direction
+			points[index+1] = points[index]+axis*lengths[index]
+	var result: Array[Transform3D] = []
+	for index: int in chain.size():
+		var link: Dictionary = chain[index]
+		var basis: Basis = anchor.global_basis*Basis(link.rest_basis)
+		var rest_vector: Vector3 = basis*Vector3(link.distal-link.proximal)
+		var desired := points[index+1]-points[index]
+		if not rest_vector.is_zero_approx() and not desired.is_zero_approx():
+			basis = Basis(Quaternion(rest_vector.normalized(),desired.normalized()))*basis
+		if index == chain.size()-1 and chain.size() > 1:
+			var forward: Vector3 = basis*Vector3(state.get("weapon_aim_local",state.weapon_forward_local))
+			if not forward.is_zero_approx(): basis = Basis(Quaternion(forward.normalized(),direction))*basis
+		var connection := points[index]
+		if uses_hand_drive(state,state.preset):
+			var parent_basis: Basis = anchor.global_basis if index == 0 else result[-1].basis
+			basis = _limited_basis(link,parent_basis,basis)
+			connection = pivot if index == 0 else result[-1]*Vector3(chain[index-1].distal)
+		result.append(Transform3D(basis,connection-basis*Vector3(link.proximal)))
+	return result
+
+static func _limited_basis(link: Dictionary, parent: Basis, desired: Basis) -> Basis:
+	var parent_frame: Basis = link.parent_joint_basis
+	var child_frame: Basis = link.joint_basis
+	var angles := (parent_frame.inverse()*parent.inverse()*desired*child_frame).get_euler()
+	var sign := -1.0 if link.parent_is_a else 1.0
+	for index: int in 3:
+		var axis: String = ["x","y","z"][index]
+		if not link.joint.get("angular_limit_"+axis+"/enabled"): continue
+		var low: float = link.joint.get("angular_limit_"+axis+"/lower_angle")*sign
+		var high: float = link.joint.get("angular_limit_"+axis+"/upper_angle")*sign
+		angles[index] = clampf(angles[index],minf(low,high),maxf(low,high))
+	return parent*parent_frame*Basis.from_euler(angles)*child_frame.inverse()
+
+static func apply(state: Dictionary, preset: WeaponArmAttackPreset, targets: Array[Transform3D], delta: float, power: float, preparing: bool = false) -> void:
+	var speed_ratio := preset.preparation_speed_ratio if preparing else 1.0
+	var force_ratio := preset.preparation_force_ratio if preparing else 1.0
+	if uses_hand_drive(state,preset):
+		_apply_hand_drive(state,preset,targets,delta,power,speed_ratio,force_ratio,preparing)
+		return
+	var omega := TAU*preset.pose_frequency*speed_ratio
+	var stiffness := omega*omega
+	var damping := 2.0*preset.pose_damping_ratio*omega
+	var anchor: RigidBody3D = state.anchor_body
+	var drives: Array[Vector3] = []
+	for index: int in state.pose_chain.size():
+		var body: RigidBody3D = state.pose_chain[index].body
+		var error := (targets[index].basis.get_rotation_quaternion()*body.global_basis.get_rotation_quaternion().inverse()).normalized()
+		if error.w < 0.0: error = -error
+		var rate := body.angular_velocity-anchor.angular_velocity
+		var acceleration := ((error.get_axis()*error.get_angle()*stiffness-rate*(damping+stiffness*delta))/(1.0+damping*delta+stiffness*delta*delta)).limit_length(preset.maximum_pose_acceleration*power*force_ratio)
+		var inverse := body.get_inverse_inertia_tensor()
+		var lever: Vector3 = body.global_basis*(body.center_of_mass-Vector3(state.pose_chain[index].proximal))
+		var torque := Vector3.ZERO
+		for axis: Vector3 in [Vector3.RIGHT,Vector3.UP,Vector3.BACK]:
+			var inverse_moment := axis.dot(inverse*axis)
+			if inverse_moment > 0.000001: torque += axis*acceleration.dot(axis)*(1.0/inverse_moment+body.mass*lever.cross(axis).length_squared())
+		drives.append(torque)
+	# Carry distal motor reactions into the proximal motor, rather than fighting
+	# the elbow with the wrist servo. The final reaction still reaches the Torso.
+	var motor := Vector3.ZERO
+	for index: int in range(state.pose_chain.size()-1,-1,-1):
+		var body: RigidBody3D = state.pose_chain[index].body
+		var parent_body: RigidBody3D = anchor if index == 0 else state.pose_chain[index-1].body
+		motor = (drives[index]+motor).limit_length(preset.maximum_pose_torque*force_ratio)
+		body.sleeping = false
+		body.apply_torque(motor)
+		if not parent_body.freeze: parent_body.apply_torque(-motor)
+
+static func uses_hand_drive(state: Dictionary, preset: WeaponArmAttackPreset) -> bool:
+	return preset.hand_driven_motion and state.pose_chain.size() > 1
+
+static func rest_poses(state: Dictionary) -> Array[Transform3D]:
+	var result: Array[Transform3D] = []
+	var anchor: RigidBody3D = state.anchor_body
+	var pivot := anchor.to_global(state.pose_anchor_local)
+	for link: Dictionary in state.pose_chain:
+		var basis := anchor.global_basis*Basis(link.rest_basis)
+		var pose := Transform3D(basis,pivot-basis*Vector3(link.proximal))
+		result.append(pose)
+		pivot = pose*Vector3(link.distal)
+	return result
+
+static func _point_velocity(body: RigidBody3D, point: Vector3) -> Vector3:
+	var direct := PhysicsServer3D.body_get_direct_state(body.get_rid())
+	var center := body.to_global(direct.center_of_mass_local if direct != null else body.center_of_mass)
+	return body.linear_velocity+body.angular_velocity.cross(point-center)
+
+static func _angular_torque(body: RigidBody3D, acceleration: Vector3) -> Vector3:
+	var inverse := body.get_inverse_inertia_tensor()
+	return inverse.inverse()*acceleration if absf(inverse.determinant()) > 1e-18 else Vector3.ZERO
+
+static func _apply_hand_drive(state: Dictionary, preset: WeaponArmAttackPreset, targets: Array[Transform3D], delta: float, power: float, speed_ratio: float, force_ratio: float, preparing: bool) -> void:
+	var chain: Array[Dictionary] = state.pose_chain
+	var hand: RigidBody3D = chain[-1].body
+	var anchor: RigidBody3D = state.anchor_body
+	var wrist := hand.to_global(chain[-1].proximal)
+	var pivot := anchor.to_global(state.pose_anchor_local)
+	var desired := targets[-1]*Vector3(chain[-1].proximal)
+	desired = pivot+(desired-pivot).limit_length(reach(chain)*0.99)
+	var desired_velocity := _point_velocity(anchor,desired)
+	if state.has("hand_previous_target"):
+		desired_velocity = (desired-Vector3(state.hand_previous_target))/maxf(delta,0.000001)
+	state.hand_previous_target = desired
+	var velocity_error := desired_velocity-_point_velocity(hand,wrist)
+	var omega := TAU*preset.hand_position_frequency*speed_ratio
+	var stiffness := omega*omega
+	var damping := 2.0*preset.hand_position_damping*omega
+	var acceleration := ((desired-wrist)*stiffness+velocity_error*damping)/(1.0+damping*delta+stiffness*delta*delta)
+	var chain_mass := 0.0
+	for link: Dictionary in chain: chain_mass += link.body.mass
+	var effective_mass := chain_mass if anchor.freeze else 1.0/(1.0/maxf(chain_mass,0.001)+1.0/maxf(anchor.mass,0.001))
+	var force := (acceleration.limit_length(preset.hand_maximum_acceleration*power*force_ratio)*effective_mass).limit_length(preset.hand_maximum_force*force_ratio)
+	if not hand.freeze:
+		hand.sleeping = false
+		hand.apply_central_force(force)
+	# Keep this an internal actuator instead of accelerating the whole character with an external force.
+	if not anchor.freeze: anchor.apply_force(-force,pivot-anchor.global_position)
+	var error := (targets[-1].basis.get_rotation_quaternion()*hand.global_basis.get_rotation_quaternion().inverse()).normalized()
+	if error.w < 0.0: error = -error
+	omega = TAU*preset.pose_frequency*speed_ratio
+	stiffness = omega*omega
+	damping = 2.0*preset.pose_damping_ratio*omega
+	var rate := hand.angular_velocity-anchor.angular_velocity
+	var alpha := ((error.get_axis()*error.get_angle()*stiffness-rate*(damping+stiffness*delta))/(1.0+damping*delta+stiffness*delta*delta)).limit_length(preset.maximum_pose_acceleration*power*force_ratio)
+	var torque := _angular_torque(hand,alpha).limit_length(preset.maximum_pose_torque*force_ratio)
+	if not hand.freeze: hand.apply_torque(torque)
+	if not anchor.freeze: anchor.apply_torque(-torque)
+	var axis := anchor.global_basis.z.normalized()
+	for index: int in range(chain.size()-1):
+		var body: RigidBody3D = chain[index].body
+		var parent_body: RigidBody3D = anchor if index == 0 else chain[index-1].body
+		var passive := _angular_torque(body,-(body.angular_velocity-parent_body.angular_velocity)*preset.passive_limb_damping).limit_length(preset.maximum_pose_torque*0.15)
+		if not body.freeze: body.apply_torque(passive)
+		if not parent_body.freeze: parent_body.apply_torque(-passive)
+		if index == 0: continue
+		var upper: Dictionary = chain[index-1]
+		var lower: Dictionary = chain[index]
+		var first: Vector3 = upper.body.global_basis*Vector3(upper.distal-upper.proximal)
+		var second: Vector3 = body.global_basis*Vector3(lower.distal-lower.proximal)
+		if first.is_zero_approx() or second.is_zero_approx(): continue
+		var planned_first: Vector3 = targets[index-1].basis*Vector3(upper.distal-upper.proximal)
+		var planned_second: Vector3 = targets[index].basis*Vector3(lower.distal-lower.proximal)
+		var angle := atan2(axis.dot(first.cross(second)),first.dot(second))
+		var planned_angle := atan2(axis.dot(planned_first.cross(planned_second)),planned_first.dot(planned_second))
+		if absf(planned_angle) < deg_to_rad(5.0) or (absf(angle) > deg_to_rad(8.0) and signf(angle) == signf(planned_angle)): continue
+		var bend_alpha := axis*clampf(wrapf(planned_angle-angle,-PI,PI),-0.5,0.5)*preset.passive_bend_acceleration
+		var bend := _angular_torque(body,bend_alpha).limit_length(preset.maximum_pose_torque*0.1)
+		if not body.freeze: body.apply_torque(bend)
+		if not parent_body.freeze: parent_body.apply_torque(-bend)
+	state["hand_drive_diagnostics"] = {"hand":str(hand.name),"position_error":desired.distance_to(wrist),"velocity_error":velocity_error.length(),
+		"force":force,"force_length":force.length(),"orientation_error_degrees":rad_to_deg(error.get_angle()),"torque_length":torque.length(),"chain_mass":chain_mass,"passive_links":chain.size()-1,
+		"preparing":preparing,"speed_ratio":speed_ratio,"force_ratio":force_ratio,"force_limit":preset.hand_maximum_force*force_ratio,"torque_limit":preset.maximum_pose_torque*force_ratio}
+
+static func unlock(state: Dictionary) -> void:
+	var saved: Array[Dictionary] = []
+	for link: Dictionary in state.pose_chain:
+		var joint: Generic6DOFJoint3D = link.joint
+		var body: RigidBody3D = link.body
+		for axis: String in ["x","y","z"]:
+			var limit := "angular_limit_%s/enabled" % axis
+			var spring := "angular_spring_%s/enabled" % axis
+			var lock := "axis_lock_angular_%s" % axis
+			saved.append({"joint":joint,"body":body,"limit":limit,"spring":spring,"lock":lock,
+				"limit_value":joint.get(limit),"spring_value":joint.get(spring),"lock_value":body.get(lock)})
+			if not uses_hand_drive(state,state.preset): joint.set(limit,false)
+			joint.set(spring,false)
+			body.set(lock,false)
+	state.pose_snapshot = saved
+
+static func restore(state: Dictionary) -> void:
+	state.erase("hand_previous_target")
+	state.erase("hand_drive_diagnostics")
+	for saved: Dictionary in state.get("pose_snapshot",[]):
+		if is_instance_valid(saved.joint):
+			saved.joint.set(saved.limit,saved.limit_value)
+			saved.joint.set(saved.spring,saved.spring_value)
+		if is_instance_valid(saved.body): saved.body.set(saved.lock,saved.lock_value)
+	state.pose_snapshot = []

@@ -73,6 +73,7 @@ func refresh_physics_query_cache() -> void:
 
 func _sync_direct_head_slack(binding: Dictionary) -> void:
 	if binding.has_neck or not _alive(binding.head) or binding.joints.is_empty(): return
+	if not is_instance_valid(binding.joints[0]) or binding.joints[0].is_queued_for_deletion(): return
 	var joint: Generic6DOFJoint3D = binding.joints[0] as Generic6DOFJoint3D
 	if not is_instance_valid(joint) or joint.is_queued_for_deletion(): return
 	if joint.has_meta(&"module_joint_settings"): return

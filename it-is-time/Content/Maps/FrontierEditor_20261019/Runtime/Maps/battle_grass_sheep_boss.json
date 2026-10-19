@@ -1,0 +1,4123 @@
+{
+  "id": "battle_grass_sheep_boss",
+  "name": "草原羊主 · 环草石台",
+  "kind": "battle",
+  "radius": 24,
+  "orientation": "flat",
+  "ground_asset": "",
+  "background_asset": "",
+  "ground_color": "#819260",
+  "background_blur": 9,
+  "edge_feather": 0.8,
+  "natural_border": true,
+  "wall": {
+    "thickness": 0.5,
+    "height": 12,
+    "layer": 1
+  },
+  "objects": [
+    {
+      "id": "battle_grass_sheep_boss__scene_001",
+      "name": "固定岩石外观 1",
+      "type": "decoration",
+      "layer": "decoration",
+      "position": [
+        -7,
+        -5
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_05_015",
+        "size": [
+          3.8,
+          2.1740384615384616
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 0,
+        "tint": "#789361"
+      },
+      "hide_name_label": true,
+      "linked_collision_id": "battle_grass_sheep_boss__scene_002"
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_002",
+      "name": "固定岩石碰撞 1",
+      "type": "indestructible",
+      "layer": "props",
+      "position": [
+        -7,
+        -4.506
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_05_014",
+        "size": [
+          2.3,
+          1.4830601092896174
+        ],
+        "visible": false,
+        "opacity": 1,
+        "z_index": 0,
+        "tint": "#525962"
+      },
+      "collision": {
+        "enabled": true,
+        "shape": "circle",
+        "offset": [
+          0,
+          0
+        ],
+        "size": [
+          2.7359999999999998,
+          1.5959999999999999
+        ],
+        "rotation": 0,
+        "points": [],
+        "height": 3,
+        "depth": 0,
+        "layer": 1
+      },
+      "condition_ref": "",
+      "broken_asset": "rubble",
+      "blocked_ids": [],
+      "hide_name_label": true,
+      "visual_id": "battle_grass_sheep_boss__scene_001"
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_003",
+      "name": "固定岩石外观 2",
+      "type": "decoration",
+      "layer": "decoration",
+      "position": [
+        11,
+        8
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_05_015",
+        "size": [
+          4.3,
+          2.4600961538461537
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 0,
+        "tint": "#789361"
+      },
+      "hide_name_label": true,
+      "linked_collision_id": "battle_grass_sheep_boss__scene_004"
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_004",
+      "name": "固定岩石碰撞 2",
+      "type": "indestructible",
+      "layer": "props",
+      "position": [
+        11,
+        8.559
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_09_020",
+        "size": [
+          2.3,
+          1.4169642857142857
+        ],
+        "visible": false,
+        "opacity": 1,
+        "z_index": 0,
+        "tint": "#525962"
+      },
+      "collision": {
+        "enabled": true,
+        "shape": "circle",
+        "offset": [
+          0,
+          0
+        ],
+        "size": [
+          3.0959999999999996,
+          1.8059999999999998
+        ],
+        "rotation": 0,
+        "points": [],
+        "height": 3,
+        "depth": 0,
+        "layer": 1
+      },
+      "condition_ref": "",
+      "broken_asset": "rubble",
+      "blocked_ids": [],
+      "hide_name_label": true,
+      "visual_id": "battle_grass_sheep_boss__scene_003"
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_005",
+      "name": "固定岩石外观 3",
+      "type": "decoration",
+      "layer": "decoration",
+      "position": [
+        -13,
+        -7
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_05_015",
+        "size": [
+          3.2,
+          1.830769230769231
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 0,
+        "tint": "#789361"
+      },
+      "hide_name_label": true,
+      "linked_collision_id": "battle_grass_sheep_boss__scene_006"
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_006",
+      "name": "固定岩石碰撞 3",
+      "type": "indestructible",
+      "layer": "props",
+      "position": [
+        -13,
+        -6.584
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_05_014",
+        "size": [
+          2.3,
+          1.4830601092896174
+        ],
+        "visible": false,
+        "opacity": 1,
+        "z_index": 0,
+        "tint": "#525962"
+      },
+      "collision": {
+        "enabled": true,
+        "shape": "circle",
+        "offset": [
+          0,
+          0
+        ],
+        "size": [
+          2.304,
+          1.344
+        ],
+        "rotation": 0,
+        "points": [],
+        "height": 3,
+        "depth": 0,
+        "layer": 1
+      },
+      "condition_ref": "",
+      "broken_asset": "rubble",
+      "blocked_ids": [],
+      "hide_name_label": true,
+      "visual_id": "battle_grass_sheep_boss__scene_005"
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_007",
+      "name": "场内树 1",
+      "type": "tree",
+      "layer": "decoration",
+      "position": [
+        -14,
+        0
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_11_011",
+        "size": [
+          5.6,
+          7.438805970149253
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 0,
+        "tint": "#557454"
+      },
+      "linked_collision_id": "battle_grass_sheep_boss__scene_008",
+      "hide_name_label": true
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_008",
+      "name": "树干碰撞 1",
+      "type": "indestructible",
+      "layer": "props",
+      "position": [
+        -14,
+        2.38
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_09_020",
+        "size": [
+          2.3,
+          1.4169642857142857
+        ],
+        "visible": false,
+        "opacity": 1,
+        "z_index": 0,
+        "tint": "#525962"
+      },
+      "collision": {
+        "enabled": true,
+        "shape": "circle",
+        "offset": [
+          0,
+          0
+        ],
+        "size": [
+          1.1199999999999999,
+          1.008
+        ],
+        "rotation": 0,
+        "points": [],
+        "height": 3,
+        "depth": 0,
+        "layer": 1
+      },
+      "condition_ref": "",
+      "broken_asset": "rubble",
+      "blocked_ids": [],
+      "hide_name_label": true,
+      "visual_id": "battle_grass_sheep_boss__scene_007"
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_009",
+      "name": "场内树 2",
+      "type": "tree",
+      "layer": "decoration",
+      "position": [
+        14,
+        3
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_11_011",
+        "size": [
+          5.2,
+          6.907462686567165
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 0,
+        "tint": "#557454"
+      },
+      "linked_collision_id": "battle_grass_sheep_boss__scene_010",
+      "hide_name_label": true
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_010",
+      "name": "树干碰撞 2",
+      "type": "indestructible",
+      "layer": "props",
+      "position": [
+        14,
+        5.21
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_05_014",
+        "size": [
+          2.3,
+          1.4830601092896174
+        ],
+        "visible": false,
+        "opacity": 1,
+        "z_index": 0,
+        "tint": "#525962"
+      },
+      "collision": {
+        "enabled": true,
+        "shape": "circle",
+        "offset": [
+          0,
+          0
+        ],
+        "size": [
+          1.04,
+          0.9359999999999999
+        ],
+        "rotation": 0,
+        "points": [],
+        "height": 3,
+        "depth": 0,
+        "layer": 1
+      },
+      "condition_ref": "",
+      "broken_asset": "rubble",
+      "blocked_ids": [],
+      "hide_name_label": true,
+      "visual_id": "battle_grass_sheep_boss__scene_009"
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_011",
+      "name": "草原羊主环草石台",
+      "type": "decoration",
+      "layer": "decoration",
+      "position": [
+        5,
+        -4
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_08_011",
+        "size": [
+          8.4,
+          4.450746268656716
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": -2,
+        "tint": "#789361"
+      },
+      "hide_name_label": true
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_012",
+      "name": "羊主后方古立石",
+      "type": "decoration",
+      "layer": "decoration",
+      "position": [
+        9,
+        -14
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_09_015",
+        "size": [
+          4.2,
+          3.3641791044776124
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 0,
+        "tint": "#789361"
+      },
+      "hide_name_label": true
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_013",
+      "name": "外围草丛",
+      "type": "edge_decoration",
+      "layer": "decoration",
+      "position": [
+        20.52,
+        1.871
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_11_018",
+        "size": [
+          3.3,
+          2.919230769230769
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 1,
+        "tint": "#647c68"
+      },
+      "hide_name_label": true
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_014",
+      "name": "外围草丛",
+      "type": "edge_decoration",
+      "layer": "decoration",
+      "position": [
+        18.727,
+        5.724
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_11_016",
+        "size": [
+          3.3,
+          3.2346534653465344
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 1,
+        "tint": "#647c68"
+      },
+      "hide_name_label": true
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_015",
+      "name": "外围草丛",
+      "type": "edge_decoration",
+      "layer": "decoration",
+      "position": [
+        16.2,
+        9.353
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_11_016",
+        "size": [
+          3.3,
+          3.2346534653465344
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 1,
+        "tint": "#647c68"
+      },
+      "hide_name_label": true
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_016",
+      "name": "外围草丛",
+      "type": "edge_decoration",
+      "layer": "decoration",
+      "position": [
+        14.321,
+        13.356
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_11_018",
+        "size": [
+          3.3,
+          2.919230769230769
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 1,
+        "tint": "#647c68"
+      },
+      "hide_name_label": true
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_017",
+      "name": "外围草丛",
+      "type": "edge_decoration",
+      "layer": "decoration",
+      "position": [
+        11.88,
+        16.836
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_11_016",
+        "size": [
+          3.3,
+          3.2346534653465344
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 1,
+        "tint": "#647c68"
+      },
+      "hide_name_label": true
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_018",
+      "name": "外围草丛",
+      "type": "edge_decoration",
+      "layer": "decoration",
+      "position": [
+        8.64,
+        18.706
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_11_018",
+        "size": [
+          3.3,
+          2.919230769230769
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 1,
+        "tint": "#647c68"
+      },
+      "hide_name_label": true
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_019",
+      "name": "外围草丛",
+      "type": "edge_decoration",
+      "layer": "decoration",
+      "position": [
+        4.406,
+        19.08
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_11_016",
+        "size": [
+          3.3,
+          3.2346534653465344
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 1,
+        "tint": "#647c68"
+      },
+      "hide_name_label": true
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_020",
+      "name": "外围草丛",
+      "type": "edge_decoration",
+      "layer": "decoration",
+      "position": [
+        0,
+        18.706
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_11_016",
+        "size": [
+          3.3,
+          3.2346534653465344
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 1,
+        "tint": "#647c68"
+      },
+      "hide_name_label": true
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_021",
+      "name": "外围草丛",
+      "type": "edge_decoration",
+      "layer": "decoration",
+      "position": [
+        -4.406,
+        19.08
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_11_018",
+        "size": [
+          3.3,
+          2.919230769230769
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 1,
+        "tint": "#647c68"
+      },
+      "hide_name_label": true
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_022",
+      "name": "外围草丛",
+      "type": "edge_decoration",
+      "layer": "decoration",
+      "position": [
+        -8.64,
+        18.706
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_11_016",
+        "size": [
+          3.3,
+          3.2346534653465344
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 1,
+        "tint": "#647c68"
+      },
+      "hide_name_label": true
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_023",
+      "name": "外围草丛",
+      "type": "edge_decoration",
+      "layer": "decoration",
+      "position": [
+        -11.88,
+        16.836
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_11_018",
+        "size": [
+          3.3,
+          2.919230769230769
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 1,
+        "tint": "#647c68"
+      },
+      "hide_name_label": true
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_024",
+      "name": "外围草丛",
+      "type": "edge_decoration",
+      "layer": "decoration",
+      "position": [
+        -14.321,
+        13.356
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_11_016",
+        "size": [
+          3.3,
+          3.2346534653465344
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 1,
+        "tint": "#647c68"
+      },
+      "hide_name_label": true
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_025",
+      "name": "外围草丛",
+      "type": "edge_decoration",
+      "layer": "decoration",
+      "position": [
+        -16.2,
+        9.353
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_11_016",
+        "size": [
+          3.3,
+          3.2346534653465344
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 1,
+        "tint": "#647c68"
+      },
+      "hide_name_label": true
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_026",
+      "name": "外围草丛",
+      "type": "edge_decoration",
+      "layer": "decoration",
+      "position": [
+        -18.727,
+        5.724
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_11_018",
+        "size": [
+          3.3,
+          2.919230769230769
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 1,
+        "tint": "#647c68"
+      },
+      "hide_name_label": true
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_027",
+      "name": "外围草丛",
+      "type": "edge_decoration",
+      "layer": "decoration",
+      "position": [
+        -20.52,
+        1.871
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_11_016",
+        "size": [
+          3.3,
+          3.2346534653465344
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 1,
+        "tint": "#647c68"
+      },
+      "hide_name_label": true
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_028",
+      "name": "外围草丛",
+      "type": "edge_decoration",
+      "layer": "decoration",
+      "position": [
+        -20.52,
+        -1.871
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_11_018",
+        "size": [
+          3.3,
+          2.919230769230769
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 1,
+        "tint": "#647c68"
+      },
+      "hide_name_label": true
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_029",
+      "name": "外围草丛",
+      "type": "edge_decoration",
+      "layer": "decoration",
+      "position": [
+        -18.727,
+        -5.724
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_11_016",
+        "size": [
+          3.3,
+          3.2346534653465344
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 1,
+        "tint": "#647c68"
+      },
+      "hide_name_label": true
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_030",
+      "name": "外围草丛",
+      "type": "edge_decoration",
+      "layer": "decoration",
+      "position": [
+        -16.2,
+        -9.353
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_11_016",
+        "size": [
+          3.3,
+          3.2346534653465344
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 1,
+        "tint": "#647c68"
+      },
+      "hide_name_label": true
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_031",
+      "name": "外围草丛",
+      "type": "edge_decoration",
+      "layer": "decoration",
+      "position": [
+        -14.321,
+        -13.356
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_11_018",
+        "size": [
+          3.3,
+          2.919230769230769
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 1,
+        "tint": "#647c68"
+      },
+      "hide_name_label": true
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_032",
+      "name": "外围草丛",
+      "type": "edge_decoration",
+      "layer": "decoration",
+      "position": [
+        -11.88,
+        -16.836
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_11_016",
+        "size": [
+          3.3,
+          3.2346534653465344
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 1,
+        "tint": "#647c68"
+      },
+      "hide_name_label": true
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_033",
+      "name": "外围草丛",
+      "type": "edge_decoration",
+      "layer": "decoration",
+      "position": [
+        -8.64,
+        -18.706
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_11_018",
+        "size": [
+          3.3,
+          2.919230769230769
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 1,
+        "tint": "#647c68"
+      },
+      "hide_name_label": true
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_034",
+      "name": "外围草丛",
+      "type": "edge_decoration",
+      "layer": "decoration",
+      "position": [
+        -4.406,
+        -19.08
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_11_016",
+        "size": [
+          3.3,
+          3.2346534653465344
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 1,
+        "tint": "#647c68"
+      },
+      "hide_name_label": true
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_035",
+      "name": "外围草丛",
+      "type": "edge_decoration",
+      "layer": "decoration",
+      "position": [
+        0,
+        -18.706
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_11_016",
+        "size": [
+          3.3,
+          3.2346534653465344
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 1,
+        "tint": "#647c68"
+      },
+      "hide_name_label": true
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_036",
+      "name": "外围草丛",
+      "type": "edge_decoration",
+      "layer": "decoration",
+      "position": [
+        4.406,
+        -19.08
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_11_018",
+        "size": [
+          3.3,
+          2.919230769230769
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 1,
+        "tint": "#647c68"
+      },
+      "hide_name_label": true
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_037",
+      "name": "外围草丛",
+      "type": "edge_decoration",
+      "layer": "decoration",
+      "position": [
+        8.64,
+        -18.706
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_11_016",
+        "size": [
+          3.3,
+          3.2346534653465344
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 1,
+        "tint": "#647c68"
+      },
+      "hide_name_label": true
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_038",
+      "name": "外围草丛",
+      "type": "edge_decoration",
+      "layer": "decoration",
+      "position": [
+        11.88,
+        -16.836
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_11_018",
+        "size": [
+          3.3,
+          2.919230769230769
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 1,
+        "tint": "#647c68"
+      },
+      "hide_name_label": true
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_039",
+      "name": "外围草丛",
+      "type": "edge_decoration",
+      "layer": "decoration",
+      "position": [
+        14.321,
+        -13.356
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_11_016",
+        "size": [
+          3.3,
+          3.2346534653465344
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 1,
+        "tint": "#647c68"
+      },
+      "hide_name_label": true
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_040",
+      "name": "外围草丛",
+      "type": "edge_decoration",
+      "layer": "decoration",
+      "position": [
+        16.2,
+        -9.353
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_11_016",
+        "size": [
+          3.3,
+          3.2346534653465344
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 1,
+        "tint": "#647c68"
+      },
+      "hide_name_label": true
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_041",
+      "name": "外围草丛",
+      "type": "edge_decoration",
+      "layer": "decoration",
+      "position": [
+        18.727,
+        -5.724
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_11_018",
+        "size": [
+          3.3,
+          2.919230769230769
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 1,
+        "tint": "#647c68"
+      },
+      "hide_name_label": true
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_042",
+      "name": "外围草丛",
+      "type": "edge_decoration",
+      "layer": "decoration",
+      "position": [
+        20.52,
+        -1.871
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_11_016",
+        "size": [
+          3.3,
+          3.2346534653465344
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 1,
+        "tint": "#647c68"
+      },
+      "hide_name_label": true
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_043",
+      "name": "场内低草 1",
+      "type": "decoration",
+      "layer": "decoration",
+      "position": [
+        -10,
+        1
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_11_016",
+        "size": [
+          3.6,
+          3.528712871287129
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 0,
+        "tint": "#789361"
+      },
+      "hide_name_label": true
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_044",
+      "name": "场内低草 2",
+      "type": "decoration",
+      "layer": "decoration",
+      "position": [
+        -4,
+        -10
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_11_018",
+        "size": [
+          3.6,
+          3.184615384615385
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 0,
+        "tint": "#789361"
+      },
+      "hide_name_label": true
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_045",
+      "name": "场内低草 3",
+      "type": "decoration",
+      "layer": "decoration",
+      "position": [
+        -1,
+        10
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_11_016",
+        "size": [
+          3.6,
+          3.528712871287129
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 0,
+        "tint": "#789361"
+      },
+      "hide_name_label": true
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_046",
+      "name": "场内低草 4",
+      "type": "decoration",
+      "layer": "decoration",
+      "position": [
+        11,
+        -1
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_11_018",
+        "size": [
+          3.6,
+          3.184615384615385
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 0,
+        "tint": "#789361"
+      },
+      "hide_name_label": true
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_047",
+      "name": "场内低草 5",
+      "type": "decoration",
+      "layer": "decoration",
+      "position": [
+        4,
+        12
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_11_016",
+        "size": [
+          3.6,
+          3.528712871287129
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 0,
+        "tint": "#789361"
+      },
+      "hide_name_label": true
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_048",
+      "name": "场内低草 6",
+      "type": "decoration",
+      "layer": "decoration",
+      "position": [
+        0,
+        -14
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_11_018",
+        "size": [
+          3.6,
+          3.184615384615385
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 0,
+        "tint": "#789361"
+      },
+      "hide_name_label": true
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_049",
+      "name": "场内低草 7",
+      "type": "decoration",
+      "layer": "decoration",
+      "position": [
+        13,
+        9
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_11_016",
+        "size": [
+          3.6,
+          3.528712871287129
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 0,
+        "tint": "#789361"
+      },
+      "hide_name_label": true
+    },
+    {
+      "id": "battle_grass_sheep_boss__scene_050",
+      "name": "场内低草 8",
+      "type": "decoration",
+      "layer": "decoration",
+      "position": [
+        -13,
+        -11
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "art1018_11_018",
+        "size": [
+          3.6,
+          3.184615384615385
+        ],
+        "visible": true,
+        "opacity": 1,
+        "z_index": 0,
+        "tint": "#789361"
+      },
+      "hide_name_label": true
+    },
+    {
+      "id": "sheep_arena_player_deploy_01",
+      "name": "西南己方部署区",
+      "type": "deployment",
+      "layer": "deployment",
+      "position": [
+        -11,
+        8
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "",
+        "size": [
+          2.2,
+          2.2
+        ],
+        "visible": false,
+        "opacity": 1,
+        "z_index": 0,
+        "tint": "#9fba8d"
+      },
+      "region": {
+        "enabled": true,
+        "shape": "rect",
+        "offset": [
+          0,
+          0
+        ],
+        "size": [
+          7,
+          5
+        ],
+        "rotation": 0,
+        "points": [],
+        "height": 2,
+        "depth": 0
+      },
+      "facing": 45,
+      "slots": [
+        [
+          -1.5,
+          0
+        ],
+        [
+          1.5,
+          0
+        ]
+      ],
+      "rule_ref": ""
+    },
+    {
+      "id": "battle_grass_sheep_boss__enemy_1",
+      "name": "草原羊主",
+      "type": "enemy",
+      "layer": "deployment",
+      "position": [
+        5,
+        -4
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "",
+        "size": [
+          2.2,
+          2.2
+        ],
+        "visible": false,
+        "opacity": 1,
+        "z_index": 0,
+        "tint": "#c47470"
+      },
+      "monster_config_id": "enemy_grass_sheep_boss",
+      "facing": -126.86989764584402,
+      "team_group": "enemy_primary",
+      "monster_type": "beast",
+      "monster_size": "huge",
+      "grouped": false,
+      "count": 1,
+      "monster_species": "sheep",
+      "combat_rank": "elite",
+      "definition_id": null,
+      "resource_status": "pending_authored_definition"
+    },
+    {
+      "id": "battle_grass_sheep_boss__enemy_2",
+      "name": "龙牙弓箭手 1",
+      "type": "enemy",
+      "layer": "deployment",
+      "position": [
+        1,
+        -10
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "",
+        "size": [
+          2.2,
+          2.2
+        ],
+        "visible": false,
+        "opacity": 1,
+        "z_index": 0,
+        "tint": "#c47470"
+      },
+      "monster_config_id": "monster_dragonfang_archer",
+      "facing": -146.30993247402023,
+      "team_group": "enemy_secondary",
+      "monster_type": "humanoid",
+      "monster_size": "medium",
+      "grouped": true,
+      "count": 1,
+      "monster_species": "dragonfang_archer",
+      "combat_rank": "normal",
+      "definition_id": null,
+      "resource_status": "pending_authored_definition"
+    },
+    {
+      "id": "battle_grass_sheep_boss__enemy_3",
+      "name": "龙牙弓箭手 2",
+      "type": "enemy",
+      "layer": "deployment",
+      "position": [
+        7,
+        -11
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "",
+        "size": [
+          2.2,
+          2.2
+        ],
+        "visible": false,
+        "opacity": 1,
+        "z_index": 0,
+        "tint": "#c47470"
+      },
+      "monster_config_id": "monster_dragonfang_archer",
+      "facing": -136.54815769897797,
+      "team_group": "enemy_secondary",
+      "monster_type": "humanoid",
+      "monster_size": "medium",
+      "grouped": true,
+      "count": 1,
+      "monster_species": "dragonfang_archer",
+      "combat_rank": "normal",
+      "definition_id": null,
+      "resource_status": "pending_authored_definition"
+    },
+    {
+      "id": "battle_grass_sheep_boss__enemy_4",
+      "name": "龙牙弓箭手 3",
+      "type": "enemy",
+      "layer": "deployment",
+      "position": [
+        12,
+        -6
+      ],
+      "height": 0,
+      "rotation": 0,
+      "scale": [
+        1,
+        1
+      ],
+      "visual": {
+        "asset": "",
+        "size": [
+          2.2,
+          2.2
+        ],
+        "visible": false,
+        "opacity": 1,
+        "z_index": 0,
+        "tint": "#c47470"
+      },
+      "monster_config_id": "monster_dragonfang_archer",
+      "facing": -121.32869286780416,
+      "team_group": "enemy_secondary",
+      "monster_type": "humanoid",
+      "monster_size": "medium",
+      "grouped": true,
+      "count": 1,
+      "monster_species": "dragonfang_archer",
+      "combat_rank": "normal",
+      "definition_id": null,
+      "resource_status": "pending_authored_definition"
+    }
+  ],
+  "unit_placement": "external_monster_system",
+  "entry": {
+    "mode": "closed_natural",
+    "opening": false,
+    "source_camp_id": "grass_sheep_boss",
+    "source_obstacle_ids": [],
+    "source_camp_ids": [
+      "grass_sheep_boss"
+    ],
+    "notes": "独立Boss场景；西南为己方部署区，外围自然围边，没有大地图破坏开口依赖。"
+  },
+  "notes": "环草石台：草丛包围开阔的石质主场，羊主居中前压，三名龙牙弓箭手分置后侧；西南部署，左右均可接近弓手。 地面涂色仅定义外观；固定岩石与树干碰撞单独配置。计时、AI、真实碰撞体尺寸和结算由正式系统接入。",
+  "layout_version": "boss-scenes-20261019",
+  "border_biome": {
+    "id": "grass",
+    "version": 2,
+    "style": "grass_ring_dais",
+    "counts": {
+      "trees": 2,
+      "grass": 38,
+      "rocks": 3
+    },
+    "decorative_only": false,
+    "feather_ground": true
+  },
+  "hex_grid": {
+    "cell_width": 2.2,
+    "origin": [
+      0,
+      0
+    ]
+  },
+  "hex_cells": [
+    {
+      "q": -14,
+      "r": 7,
+      "ground": "grass"
+    },
+    {
+      "q": -13,
+      "r": 5,
+      "ground": "grass"
+    },
+    {
+      "q": -13,
+      "r": 6,
+      "ground": "grass"
+    },
+    {
+      "q": -13,
+      "r": 7,
+      "ground": "grass"
+    },
+    {
+      "q": -13,
+      "r": 8,
+      "ground": "grass"
+    },
+    {
+      "q": -12,
+      "r": 3,
+      "ground": "grass"
+    },
+    {
+      "q": -12,
+      "r": 4,
+      "ground": "grass"
+    },
+    {
+      "q": -12,
+      "r": 5,
+      "ground": "grass"
+    },
+    {
+      "q": -12,
+      "r": 6,
+      "ground": "grass"
+    },
+    {
+      "q": -12,
+      "r": 7,
+      "ground": "grass"
+    },
+    {
+      "q": -12,
+      "r": 8,
+      "ground": "grass"
+    },
+    {
+      "q": -12,
+      "r": 9,
+      "ground": "grass"
+    },
+    {
+      "q": -11,
+      "r": 1,
+      "ground": "grass"
+    },
+    {
+      "q": -11,
+      "r": 2,
+      "ground": "grass"
+    },
+    {
+      "q": -11,
+      "r": 3,
+      "ground": "grass"
+    },
+    {
+      "q": -11,
+      "r": 4,
+      "ground": "grass"
+    },
+    {
+      "q": -11,
+      "r": 5,
+      "ground": "grass"
+    },
+    {
+      "q": -11,
+      "r": 6,
+      "ground": "grass"
+    },
+    {
+      "q": -11,
+      "r": 7,
+      "ground": "grass"
+    },
+    {
+      "q": -11,
+      "r": 8,
+      "ground": "grass"
+    },
+    {
+      "q": -11,
+      "r": 9,
+      "ground": "grass"
+    },
+    {
+      "q": -11,
+      "r": 10,
+      "ground": "grass"
+    },
+    {
+      "q": -10,
+      "r": -1,
+      "ground": "grass"
+    },
+    {
+      "q": -10,
+      "r": 0,
+      "ground": "grass"
+    },
+    {
+      "q": -10,
+      "r": 1,
+      "ground": "grass"
+    },
+    {
+      "q": -10,
+      "r": 2,
+      "ground": "grass"
+    },
+    {
+      "q": -10,
+      "r": 3,
+      "ground": "grass"
+    },
+    {
+      "q": -10,
+      "r": 4,
+      "ground": "grass"
+    },
+    {
+      "q": -10,
+      "r": 5,
+      "ground": "grass"
+    },
+    {
+      "q": -10,
+      "r": 6,
+      "ground": "grass"
+    },
+    {
+      "q": -10,
+      "r": 7,
+      "ground": "grass"
+    },
+    {
+      "q": -10,
+      "r": 8,
+      "ground": "grass"
+    },
+    {
+      "q": -10,
+      "r": 9,
+      "ground": "grass"
+    },
+    {
+      "q": -10,
+      "r": 10,
+      "ground": "grass"
+    },
+    {
+      "q": -10,
+      "r": 11,
+      "ground": "grass"
+    },
+    {
+      "q": -9,
+      "r": -3,
+      "ground": "grass"
+    },
+    {
+      "q": -9,
+      "r": -2,
+      "ground": "grass"
+    },
+    {
+      "q": -9,
+      "r": -1,
+      "ground": "grass"
+    },
+    {
+      "q": -9,
+      "r": 0,
+      "ground": "grass"
+    },
+    {
+      "q": -9,
+      "r": 1,
+      "ground": "grass"
+    },
+    {
+      "q": -9,
+      "r": 2,
+      "ground": "grass"
+    },
+    {
+      "q": -9,
+      "r": 3,
+      "ground": "grass"
+    },
+    {
+      "q": -9,
+      "r": 4,
+      "ground": "grass"
+    },
+    {
+      "q": -9,
+      "r": 5,
+      "ground": "grass"
+    },
+    {
+      "q": -9,
+      "r": 6,
+      "ground": "grass"
+    },
+    {
+      "q": -9,
+      "r": 7,
+      "ground": "grass"
+    },
+    {
+      "q": -9,
+      "r": 8,
+      "ground": "grass"
+    },
+    {
+      "q": -9,
+      "r": 9,
+      "ground": "grass"
+    },
+    {
+      "q": -9,
+      "r": 10,
+      "ground": "grass"
+    },
+    {
+      "q": -9,
+      "r": 11,
+      "ground": "grass"
+    },
+    {
+      "q": -9,
+      "r": 12,
+      "ground": "grass"
+    },
+    {
+      "q": -8,
+      "r": -5,
+      "ground": "grass"
+    },
+    {
+      "q": -8,
+      "r": -4,
+      "ground": "grass"
+    },
+    {
+      "q": -8,
+      "r": -3,
+      "ground": "grass"
+    },
+    {
+      "q": -8,
+      "r": -2,
+      "ground": "grass"
+    },
+    {
+      "q": -8,
+      "r": -1,
+      "ground": "grass"
+    },
+    {
+      "q": -8,
+      "r": 0,
+      "ground": "grass"
+    },
+    {
+      "q": -8,
+      "r": 1,
+      "ground": "grass"
+    },
+    {
+      "q": -8,
+      "r": 2,
+      "ground": "grass"
+    },
+    {
+      "q": -8,
+      "r": 3,
+      "ground": "grass"
+    },
+    {
+      "q": -8,
+      "r": 4,
+      "ground": "grass"
+    },
+    {
+      "q": -8,
+      "r": 5,
+      "ground": "grass"
+    },
+    {
+      "q": -8,
+      "r": 6,
+      "ground": "grass"
+    },
+    {
+      "q": -8,
+      "r": 7,
+      "ground": "grass"
+    },
+    {
+      "q": -8,
+      "r": 8,
+      "ground": "soil"
+    },
+    {
+      "q": -8,
+      "r": 9,
+      "ground": "soil"
+    },
+    {
+      "q": -8,
+      "r": 10,
+      "ground": "grass"
+    },
+    {
+      "q": -8,
+      "r": 11,
+      "ground": "grass"
+    },
+    {
+      "q": -8,
+      "r": 12,
+      "ground": "grass"
+    },
+    {
+      "q": -8,
+      "r": 13,
+      "ground": "grass"
+    },
+    {
+      "q": -7,
+      "r": -7,
+      "ground": "grass"
+    },
+    {
+      "q": -7,
+      "r": -6,
+      "ground": "grass"
+    },
+    {
+      "q": -7,
+      "r": -5,
+      "ground": "grass"
+    },
+    {
+      "q": -7,
+      "r": -4,
+      "ground": "grass"
+    },
+    {
+      "q": -7,
+      "r": -3,
+      "ground": "grass"
+    },
+    {
+      "q": -7,
+      "r": -2,
+      "ground": "grass"
+    },
+    {
+      "q": -7,
+      "r": -1,
+      "ground": "grass"
+    },
+    {
+      "q": -7,
+      "r": 0,
+      "ground": "grass"
+    },
+    {
+      "q": -7,
+      "r": 1,
+      "ground": "grass"
+    },
+    {
+      "q": -7,
+      "r": 2,
+      "ground": "grass"
+    },
+    {
+      "q": -7,
+      "r": 3,
+      "ground": "grass"
+    },
+    {
+      "q": -7,
+      "r": 4,
+      "ground": "grass"
+    },
+    {
+      "q": -7,
+      "r": 5,
+      "ground": "grass"
+    },
+    {
+      "q": -7,
+      "r": 6,
+      "ground": "grass"
+    },
+    {
+      "q": -7,
+      "r": 7,
+      "ground": "soil"
+    },
+    {
+      "q": -7,
+      "r": 8,
+      "ground": "soil"
+    },
+    {
+      "q": -7,
+      "r": 9,
+      "ground": "soil"
+    },
+    {
+      "q": -7,
+      "r": 10,
+      "ground": "grass"
+    },
+    {
+      "q": -7,
+      "r": 11,
+      "ground": "grass"
+    },
+    {
+      "q": -7,
+      "r": 12,
+      "ground": "grass"
+    },
+    {
+      "q": -7,
+      "r": 13,
+      "ground": "grass"
+    },
+    {
+      "q": -7,
+      "r": 14,
+      "ground": "grass"
+    },
+    {
+      "q": -6,
+      "r": -7,
+      "ground": "grass"
+    },
+    {
+      "q": -6,
+      "r": -6,
+      "ground": "grass"
+    },
+    {
+      "q": -6,
+      "r": -5,
+      "ground": "grass"
+    },
+    {
+      "q": -6,
+      "r": -4,
+      "ground": "grass"
+    },
+    {
+      "q": -6,
+      "r": -3,
+      "ground": "grass"
+    },
+    {
+      "q": -6,
+      "r": -2,
+      "ground": "grass"
+    },
+    {
+      "q": -6,
+      "r": -1,
+      "ground": "grass"
+    },
+    {
+      "q": -6,
+      "r": 0,
+      "ground": "grass"
+    },
+    {
+      "q": -6,
+      "r": 1,
+      "ground": "grass"
+    },
+    {
+      "q": -6,
+      "r": 2,
+      "ground": "grass"
+    },
+    {
+      "q": -6,
+      "r": 3,
+      "ground": "grass"
+    },
+    {
+      "q": -6,
+      "r": 4,
+      "ground": "grass"
+    },
+    {
+      "q": -6,
+      "r": 5,
+      "ground": "grass"
+    },
+    {
+      "q": -6,
+      "r": 6,
+      "ground": "soil"
+    },
+    {
+      "q": -6,
+      "r": 7,
+      "ground": "soil"
+    },
+    {
+      "q": -6,
+      "r": 8,
+      "ground": "soil"
+    },
+    {
+      "q": -6,
+      "r": 9,
+      "ground": "grass"
+    },
+    {
+      "q": -6,
+      "r": 10,
+      "ground": "grass"
+    },
+    {
+      "q": -6,
+      "r": 11,
+      "ground": "grass"
+    },
+    {
+      "q": -6,
+      "r": 12,
+      "ground": "grass"
+    },
+    {
+      "q": -6,
+      "r": 13,
+      "ground": "grass"
+    },
+    {
+      "q": -5,
+      "r": -8,
+      "ground": "grass"
+    },
+    {
+      "q": -5,
+      "r": -7,
+      "ground": "grass"
+    },
+    {
+      "q": -5,
+      "r": -6,
+      "ground": "grass"
+    },
+    {
+      "q": -5,
+      "r": -5,
+      "ground": "grass"
+    },
+    {
+      "q": -5,
+      "r": -4,
+      "ground": "grass"
+    },
+    {
+      "q": -5,
+      "r": -3,
+      "ground": "grass"
+    },
+    {
+      "q": -5,
+      "r": -2,
+      "ground": "grass"
+    },
+    {
+      "q": -5,
+      "r": -1,
+      "ground": "grass"
+    },
+    {
+      "q": -5,
+      "r": 0,
+      "ground": "grass"
+    },
+    {
+      "q": -5,
+      "r": 1,
+      "ground": "grass"
+    },
+    {
+      "q": -5,
+      "r": 2,
+      "ground": "grass"
+    },
+    {
+      "q": -5,
+      "r": 3,
+      "ground": "grass"
+    },
+    {
+      "q": -5,
+      "r": 4,
+      "ground": "soil"
+    },
+    {
+      "q": -5,
+      "r": 5,
+      "ground": "soil"
+    },
+    {
+      "q": -5,
+      "r": 6,
+      "ground": "soil"
+    },
+    {
+      "q": -5,
+      "r": 7,
+      "ground": "soil"
+    },
+    {
+      "q": -5,
+      "r": 8,
+      "ground": "grass"
+    },
+    {
+      "q": -5,
+      "r": 9,
+      "ground": "grass"
+    },
+    {
+      "q": -5,
+      "r": 10,
+      "ground": "grass"
+    },
+    {
+      "q": -5,
+      "r": 11,
+      "ground": "grass"
+    },
+    {
+      "q": -5,
+      "r": 12,
+      "ground": "grass"
+    },
+    {
+      "q": -5,
+      "r": 13,
+      "ground": "grass"
+    },
+    {
+      "q": -4,
+      "r": -8,
+      "ground": "grass"
+    },
+    {
+      "q": -4,
+      "r": -7,
+      "ground": "grass"
+    },
+    {
+      "q": -4,
+      "r": -6,
+      "ground": "grass"
+    },
+    {
+      "q": -4,
+      "r": -5,
+      "ground": "grass"
+    },
+    {
+      "q": -4,
+      "r": -4,
+      "ground": "grass"
+    },
+    {
+      "q": -4,
+      "r": -3,
+      "ground": "grass"
+    },
+    {
+      "q": -4,
+      "r": -2,
+      "ground": "grass"
+    },
+    {
+      "q": -4,
+      "r": -1,
+      "ground": "grass"
+    },
+    {
+      "q": -4,
+      "r": 0,
+      "ground": "grass"
+    },
+    {
+      "q": -4,
+      "r": 1,
+      "ground": "grass"
+    },
+    {
+      "q": -4,
+      "r": 2,
+      "ground": "grass"
+    },
+    {
+      "q": -4,
+      "r": 3,
+      "ground": "soil"
+    },
+    {
+      "q": -4,
+      "r": 4,
+      "ground": "soil"
+    },
+    {
+      "q": -4,
+      "r": 5,
+      "ground": "soil"
+    },
+    {
+      "q": -4,
+      "r": 6,
+      "ground": "soil"
+    },
+    {
+      "q": -4,
+      "r": 7,
+      "ground": "grass"
+    },
+    {
+      "q": -4,
+      "r": 8,
+      "ground": "grass"
+    },
+    {
+      "q": -4,
+      "r": 9,
+      "ground": "grass"
+    },
+    {
+      "q": -4,
+      "r": 10,
+      "ground": "grass"
+    },
+    {
+      "q": -4,
+      "r": 11,
+      "ground": "grass"
+    },
+    {
+      "q": -4,
+      "r": 12,
+      "ground": "grass"
+    },
+    {
+      "q": -3,
+      "r": -9,
+      "ground": "grass"
+    },
+    {
+      "q": -3,
+      "r": -8,
+      "ground": "grass"
+    },
+    {
+      "q": -3,
+      "r": -7,
+      "ground": "grass"
+    },
+    {
+      "q": -3,
+      "r": -6,
+      "ground": "grass"
+    },
+    {
+      "q": -3,
+      "r": -5,
+      "ground": "grass"
+    },
+    {
+      "q": -3,
+      "r": -4,
+      "ground": "grass"
+    },
+    {
+      "q": -3,
+      "r": -3,
+      "ground": "grass"
+    },
+    {
+      "q": -3,
+      "r": -2,
+      "ground": "grass"
+    },
+    {
+      "q": -3,
+      "r": -1,
+      "ground": "grass"
+    },
+    {
+      "q": -3,
+      "r": 0,
+      "ground": "grass"
+    },
+    {
+      "q": -3,
+      "r": 1,
+      "ground": "grass"
+    },
+    {
+      "q": -3,
+      "r": 2,
+      "ground": "soil"
+    },
+    {
+      "q": -3,
+      "r": 3,
+      "ground": "soil"
+    },
+    {
+      "q": -3,
+      "r": 4,
+      "ground": "soil"
+    },
+    {
+      "q": -3,
+      "r": 5,
+      "ground": "soil"
+    },
+    {
+      "q": -3,
+      "r": 6,
+      "ground": "grass"
+    },
+    {
+      "q": -3,
+      "r": 7,
+      "ground": "grass"
+    },
+    {
+      "q": -3,
+      "r": 8,
+      "ground": "grass"
+    },
+    {
+      "q": -3,
+      "r": 9,
+      "ground": "grass"
+    },
+    {
+      "q": -3,
+      "r": 10,
+      "ground": "grass"
+    },
+    {
+      "q": -3,
+      "r": 11,
+      "ground": "grass"
+    },
+    {
+      "q": -3,
+      "r": 12,
+      "ground": "grass"
+    },
+    {
+      "q": -2,
+      "r": -9,
+      "ground": "grass"
+    },
+    {
+      "q": -2,
+      "r": -8,
+      "ground": "grass"
+    },
+    {
+      "q": -2,
+      "r": -7,
+      "ground": "grass"
+    },
+    {
+      "q": -2,
+      "r": -6,
+      "ground": "grass"
+    },
+    {
+      "q": -2,
+      "r": -5,
+      "ground": "grass"
+    },
+    {
+      "q": -2,
+      "r": -4,
+      "ground": "grass"
+    },
+    {
+      "q": -2,
+      "r": -3,
+      "ground": "grass"
+    },
+    {
+      "q": -2,
+      "r": -2,
+      "ground": "grass"
+    },
+    {
+      "q": -2,
+      "r": -1,
+      "ground": "grass"
+    },
+    {
+      "q": -2,
+      "r": 0,
+      "ground": "grass"
+    },
+    {
+      "q": -2,
+      "r": 1,
+      "ground": "soil"
+    },
+    {
+      "q": -2,
+      "r": 2,
+      "ground": "soil"
+    },
+    {
+      "q": -2,
+      "r": 3,
+      "ground": "soil"
+    },
+    {
+      "q": -2,
+      "r": 4,
+      "ground": "grass"
+    },
+    {
+      "q": -2,
+      "r": 5,
+      "ground": "grass"
+    },
+    {
+      "q": -2,
+      "r": 6,
+      "ground": "grass"
+    },
+    {
+      "q": -2,
+      "r": 7,
+      "ground": "grass"
+    },
+    {
+      "q": -2,
+      "r": 8,
+      "ground": "grass"
+    },
+    {
+      "q": -2,
+      "r": 9,
+      "ground": "grass"
+    },
+    {
+      "q": -2,
+      "r": 10,
+      "ground": "grass"
+    },
+    {
+      "q": -2,
+      "r": 11,
+      "ground": "grass"
+    },
+    {
+      "q": -1,
+      "r": -10,
+      "ground": "grass"
+    },
+    {
+      "q": -1,
+      "r": -9,
+      "ground": "grass"
+    },
+    {
+      "q": -1,
+      "r": -8,
+      "ground": "grass"
+    },
+    {
+      "q": -1,
+      "r": -7,
+      "ground": "grass"
+    },
+    {
+      "q": -1,
+      "r": -6,
+      "ground": "grass"
+    },
+    {
+      "q": -1,
+      "r": -5,
+      "ground": "grass"
+    },
+    {
+      "q": -1,
+      "r": -4,
+      "ground": "grass"
+    },
+    {
+      "q": -1,
+      "r": -3,
+      "ground": "grass"
+    },
+    {
+      "q": -1,
+      "r": -2,
+      "ground": "stone"
+    },
+    {
+      "q": -1,
+      "r": -1,
+      "ground": "stone"
+    },
+    {
+      "q": -1,
+      "r": 0,
+      "ground": "soil"
+    },
+    {
+      "q": -1,
+      "r": 1,
+      "ground": "soil"
+    },
+    {
+      "q": -1,
+      "r": 2,
+      "ground": "soil"
+    },
+    {
+      "q": -1,
+      "r": 3,
+      "ground": "grass"
+    },
+    {
+      "q": -1,
+      "r": 4,
+      "ground": "grass"
+    },
+    {
+      "q": -1,
+      "r": 5,
+      "ground": "grass"
+    },
+    {
+      "q": -1,
+      "r": 6,
+      "ground": "grass"
+    },
+    {
+      "q": -1,
+      "r": 7,
+      "ground": "grass"
+    },
+    {
+      "q": -1,
+      "r": 8,
+      "ground": "grass"
+    },
+    {
+      "q": -1,
+      "r": 9,
+      "ground": "grass"
+    },
+    {
+      "q": -1,
+      "r": 10,
+      "ground": "grass"
+    },
+    {
+      "q": -1,
+      "r": 11,
+      "ground": "grass"
+    },
+    {
+      "q": 0,
+      "r": -10,
+      "ground": "grass"
+    },
+    {
+      "q": 0,
+      "r": -9,
+      "ground": "grass"
+    },
+    {
+      "q": 0,
+      "r": -8,
+      "ground": "grass"
+    },
+    {
+      "q": 0,
+      "r": -7,
+      "ground": "grass"
+    },
+    {
+      "q": 0,
+      "r": -6,
+      "ground": "grass"
+    },
+    {
+      "q": 0,
+      "r": -5,
+      "ground": "grass"
+    },
+    {
+      "q": 0,
+      "r": -4,
+      "ground": "stone"
+    },
+    {
+      "q": 0,
+      "r": -3,
+      "ground": "stone"
+    },
+    {
+      "q": 0,
+      "r": -2,
+      "ground": "stone"
+    },
+    {
+      "q": 0,
+      "r": -1,
+      "ground": "stone"
+    },
+    {
+      "q": 0,
+      "r": 0,
+      "ground": "soil"
+    },
+    {
+      "q": 0,
+      "r": 1,
+      "ground": "soil"
+    },
+    {
+      "q": 0,
+      "r": 2,
+      "ground": "grass"
+    },
+    {
+      "q": 0,
+      "r": 3,
+      "ground": "grass"
+    },
+    {
+      "q": 0,
+      "r": 4,
+      "ground": "grass"
+    },
+    {
+      "q": 0,
+      "r": 5,
+      "ground": "grass"
+    },
+    {
+      "q": 0,
+      "r": 6,
+      "ground": "grass"
+    },
+    {
+      "q": 0,
+      "r": 7,
+      "ground": "grass"
+    },
+    {
+      "q": 0,
+      "r": 8,
+      "ground": "grass"
+    },
+    {
+      "q": 0,
+      "r": 9,
+      "ground": "grass"
+    },
+    {
+      "q": 0,
+      "r": 10,
+      "ground": "grass"
+    },
+    {
+      "q": 1,
+      "r": -11,
+      "ground": "grass"
+    },
+    {
+      "q": 1,
+      "r": -10,
+      "ground": "grass"
+    },
+    {
+      "q": 1,
+      "r": -9,
+      "ground": "grass"
+    },
+    {
+      "q": 1,
+      "r": -8,
+      "ground": "grass"
+    },
+    {
+      "q": 1,
+      "r": -7,
+      "ground": "grass"
+    },
+    {
+      "q": 1,
+      "r": -6,
+      "ground": "grass"
+    },
+    {
+      "q": 1,
+      "r": -5,
+      "ground": "stone"
+    },
+    {
+      "q": 1,
+      "r": -4,
+      "ground": "stone"
+    },
+    {
+      "q": 1,
+      "r": -3,
+      "ground": "stone"
+    },
+    {
+      "q": 1,
+      "r": -2,
+      "ground": "stone"
+    },
+    {
+      "q": 1,
+      "r": -1,
+      "ground": "stone"
+    },
+    {
+      "q": 1,
+      "r": 0,
+      "ground": "soil"
+    },
+    {
+      "q": 1,
+      "r": 1,
+      "ground": "grass"
+    },
+    {
+      "q": 1,
+      "r": 2,
+      "ground": "grass"
+    },
+    {
+      "q": 1,
+      "r": 3,
+      "ground": "grass"
+    },
+    {
+      "q": 1,
+      "r": 4,
+      "ground": "grass"
+    },
+    {
+      "q": 1,
+      "r": 5,
+      "ground": "grass"
+    },
+    {
+      "q": 1,
+      "r": 6,
+      "ground": "grass"
+    },
+    {
+      "q": 1,
+      "r": 7,
+      "ground": "grass"
+    },
+    {
+      "q": 1,
+      "r": 8,
+      "ground": "grass"
+    },
+    {
+      "q": 1,
+      "r": 9,
+      "ground": "grass"
+    },
+    {
+      "q": 1,
+      "r": 10,
+      "ground": "grass"
+    },
+    {
+      "q": 2,
+      "r": -11,
+      "ground": "grass"
+    },
+    {
+      "q": 2,
+      "r": -10,
+      "ground": "grass"
+    },
+    {
+      "q": 2,
+      "r": -9,
+      "ground": "grass"
+    },
+    {
+      "q": 2,
+      "r": -8,
+      "ground": "grass"
+    },
+    {
+      "q": 2,
+      "r": -7,
+      "ground": "grass"
+    },
+    {
+      "q": 2,
+      "r": -6,
+      "ground": "grass"
+    },
+    {
+      "q": 2,
+      "r": -5,
+      "ground": "stone"
+    },
+    {
+      "q": 2,
+      "r": -4,
+      "ground": "stone"
+    },
+    {
+      "q": 2,
+      "r": -3,
+      "ground": "stone"
+    },
+    {
+      "q": 2,
+      "r": -2,
+      "ground": "stone"
+    },
+    {
+      "q": 2,
+      "r": -1,
+      "ground": "stone"
+    },
+    {
+      "q": 2,
+      "r": 0,
+      "ground": "grass"
+    },
+    {
+      "q": 2,
+      "r": 1,
+      "ground": "grass"
+    },
+    {
+      "q": 2,
+      "r": 2,
+      "ground": "grass"
+    },
+    {
+      "q": 2,
+      "r": 3,
+      "ground": "grass"
+    },
+    {
+      "q": 2,
+      "r": 4,
+      "ground": "grass"
+    },
+    {
+      "q": 2,
+      "r": 5,
+      "ground": "grass"
+    },
+    {
+      "q": 2,
+      "r": 6,
+      "ground": "grass"
+    },
+    {
+      "q": 2,
+      "r": 7,
+      "ground": "grass"
+    },
+    {
+      "q": 2,
+      "r": 8,
+      "ground": "grass"
+    },
+    {
+      "q": 2,
+      "r": 9,
+      "ground": "grass"
+    },
+    {
+      "q": 3,
+      "r": -12,
+      "ground": "grass"
+    },
+    {
+      "q": 3,
+      "r": -11,
+      "ground": "grass"
+    },
+    {
+      "q": 3,
+      "r": -10,
+      "ground": "grass"
+    },
+    {
+      "q": 3,
+      "r": -9,
+      "ground": "grass"
+    },
+    {
+      "q": 3,
+      "r": -8,
+      "ground": "grass"
+    },
+    {
+      "q": 3,
+      "r": -7,
+      "ground": "soil"
+    },
+    {
+      "q": 3,
+      "r": -6,
+      "ground": "stone"
+    },
+    {
+      "q": 3,
+      "r": -5,
+      "ground": "stone"
+    },
+    {
+      "q": 3,
+      "r": -4,
+      "ground": "stone"
+    },
+    {
+      "q": 3,
+      "r": -3,
+      "ground": "stone"
+    },
+    {
+      "q": 3,
+      "r": -2,
+      "ground": "stone"
+    },
+    {
+      "q": 3,
+      "r": -1,
+      "ground": "stone"
+    },
+    {
+      "q": 3,
+      "r": 0,
+      "ground": "grass"
+    },
+    {
+      "q": 3,
+      "r": 1,
+      "ground": "grass"
+    },
+    {
+      "q": 3,
+      "r": 2,
+      "ground": "grass"
+    },
+    {
+      "q": 3,
+      "r": 3,
+      "ground": "grass"
+    },
+    {
+      "q": 3,
+      "r": 4,
+      "ground": "grass"
+    },
+    {
+      "q": 3,
+      "r": 5,
+      "ground": "grass"
+    },
+    {
+      "q": 3,
+      "r": 6,
+      "ground": "grass"
+    },
+    {
+      "q": 3,
+      "r": 7,
+      "ground": "grass"
+    },
+    {
+      "q": 3,
+      "r": 8,
+      "ground": "grass"
+    },
+    {
+      "q": 3,
+      "r": 9,
+      "ground": "grass"
+    },
+    {
+      "q": 4,
+      "r": -12,
+      "ground": "grass"
+    },
+    {
+      "q": 4,
+      "r": -11,
+      "ground": "grass"
+    },
+    {
+      "q": 4,
+      "r": -10,
+      "ground": "grass"
+    },
+    {
+      "q": 4,
+      "r": -9,
+      "ground": "grass"
+    },
+    {
+      "q": 4,
+      "r": -8,
+      "ground": "soil"
+    },
+    {
+      "q": 4,
+      "r": -7,
+      "ground": "soil"
+    },
+    {
+      "q": 4,
+      "r": -6,
+      "ground": "stone"
+    },
+    {
+      "q": 4,
+      "r": -5,
+      "ground": "stone"
+    },
+    {
+      "q": 4,
+      "r": -4,
+      "ground": "stone"
+    },
+    {
+      "q": 4,
+      "r": -3,
+      "ground": "stone"
+    },
+    {
+      "q": 4,
+      "r": -2,
+      "ground": "stone"
+    },
+    {
+      "q": 4,
+      "r": -1,
+      "ground": "grass"
+    },
+    {
+      "q": 4,
+      "r": 0,
+      "ground": "grass"
+    },
+    {
+      "q": 4,
+      "r": 1,
+      "ground": "grass"
+    },
+    {
+      "q": 4,
+      "r": 2,
+      "ground": "grass"
+    },
+    {
+      "q": 4,
+      "r": 3,
+      "ground": "grass"
+    },
+    {
+      "q": 4,
+      "r": 4,
+      "ground": "grass"
+    },
+    {
+      "q": 4,
+      "r": 5,
+      "ground": "grass"
+    },
+    {
+      "q": 4,
+      "r": 6,
+      "ground": "grass"
+    },
+    {
+      "q": 4,
+      "r": 7,
+      "ground": "grass"
+    },
+    {
+      "q": 4,
+      "r": 8,
+      "ground": "grass"
+    },
+    {
+      "q": 5,
+      "r": -13,
+      "ground": "grass"
+    },
+    {
+      "q": 5,
+      "r": -12,
+      "ground": "grass"
+    },
+    {
+      "q": 5,
+      "r": -11,
+      "ground": "grass"
+    },
+    {
+      "q": 5,
+      "r": -10,
+      "ground": "grass"
+    },
+    {
+      "q": 5,
+      "r": -9,
+      "ground": "soil"
+    },
+    {
+      "q": 5,
+      "r": -8,
+      "ground": "soil"
+    },
+    {
+      "q": 5,
+      "r": -7,
+      "ground": "stone"
+    },
+    {
+      "q": 5,
+      "r": -6,
+      "ground": "stone"
+    },
+    {
+      "q": 5,
+      "r": -5,
+      "ground": "stone"
+    },
+    {
+      "q": 5,
+      "r": -4,
+      "ground": "stone"
+    },
+    {
+      "q": 5,
+      "r": -3,
+      "ground": "stone"
+    },
+    {
+      "q": 5,
+      "r": -2,
+      "ground": "grass"
+    },
+    {
+      "q": 5,
+      "r": -1,
+      "ground": "grass"
+    },
+    {
+      "q": 5,
+      "r": 0,
+      "ground": "grass"
+    },
+    {
+      "q": 5,
+      "r": 1,
+      "ground": "grass"
+    },
+    {
+      "q": 5,
+      "r": 2,
+      "ground": "grass"
+    },
+    {
+      "q": 5,
+      "r": 3,
+      "ground": "grass"
+    },
+    {
+      "q": 5,
+      "r": 4,
+      "ground": "grass"
+    },
+    {
+      "q": 5,
+      "r": 5,
+      "ground": "grass"
+    },
+    {
+      "q": 5,
+      "r": 6,
+      "ground": "grass"
+    },
+    {
+      "q": 5,
+      "r": 7,
+      "ground": "grass"
+    },
+    {
+      "q": 5,
+      "r": 8,
+      "ground": "grass"
+    },
+    {
+      "q": 6,
+      "r": -13,
+      "ground": "grass"
+    },
+    {
+      "q": 6,
+      "r": -12,
+      "ground": "grass"
+    },
+    {
+      "q": 6,
+      "r": -11,
+      "ground": "grass"
+    },
+    {
+      "q": 6,
+      "r": -10,
+      "ground": "grass"
+    },
+    {
+      "q": 6,
+      "r": -9,
+      "ground": "grass"
+    },
+    {
+      "q": 6,
+      "r": -8,
+      "ground": "grass"
+    },
+    {
+      "q": 6,
+      "r": -7,
+      "ground": "stone"
+    },
+    {
+      "q": 6,
+      "r": -6,
+      "ground": "stone"
+    },
+    {
+      "q": 6,
+      "r": -5,
+      "ground": "stone"
+    },
+    {
+      "q": 6,
+      "r": -4,
+      "ground": "stone"
+    },
+    {
+      "q": 6,
+      "r": -3,
+      "ground": "grass"
+    },
+    {
+      "q": 6,
+      "r": -2,
+      "ground": "grass"
+    },
+    {
+      "q": 6,
+      "r": -1,
+      "ground": "grass"
+    },
+    {
+      "q": 6,
+      "r": 0,
+      "ground": "grass"
+    },
+    {
+      "q": 6,
+      "r": 1,
+      "ground": "grass"
+    },
+    {
+      "q": 6,
+      "r": 2,
+      "ground": "grass"
+    },
+    {
+      "q": 6,
+      "r": 3,
+      "ground": "grass"
+    },
+    {
+      "q": 6,
+      "r": 4,
+      "ground": "grass"
+    },
+    {
+      "q": 6,
+      "r": 5,
+      "ground": "grass"
+    },
+    {
+      "q": 6,
+      "r": 6,
+      "ground": "grass"
+    },
+    {
+      "q": 6,
+      "r": 7,
+      "ground": "grass"
+    },
+    {
+      "q": 7,
+      "r": -14,
+      "ground": "grass"
+    },
+    {
+      "q": 7,
+      "r": -13,
+      "ground": "grass"
+    },
+    {
+      "q": 7,
+      "r": -12,
+      "ground": "grass"
+    },
+    {
+      "q": 7,
+      "r": -11,
+      "ground": "grass"
+    },
+    {
+      "q": 7,
+      "r": -10,
+      "ground": "grass"
+    },
+    {
+      "q": 7,
+      "r": -9,
+      "ground": "grass"
+    },
+    {
+      "q": 7,
+      "r": -8,
+      "ground": "grass"
+    },
+    {
+      "q": 7,
+      "r": -7,
+      "ground": "grass"
+    },
+    {
+      "q": 7,
+      "r": -6,
+      "ground": "stone"
+    },
+    {
+      "q": 7,
+      "r": -5,
+      "ground": "stone"
+    },
+    {
+      "q": 7,
+      "r": -4,
+      "ground": "grass"
+    },
+    {
+      "q": 7,
+      "r": -3,
+      "ground": "grass"
+    },
+    {
+      "q": 7,
+      "r": -2,
+      "ground": "grass"
+    },
+    {
+      "q": 7,
+      "r": -1,
+      "ground": "grass"
+    },
+    {
+      "q": 7,
+      "r": 0,
+      "ground": "grass"
+    },
+    {
+      "q": 7,
+      "r": 1,
+      "ground": "grass"
+    },
+    {
+      "q": 7,
+      "r": 2,
+      "ground": "grass"
+    },
+    {
+      "q": 7,
+      "r": 3,
+      "ground": "grass"
+    },
+    {
+      "q": 7,
+      "r": 4,
+      "ground": "grass"
+    },
+    {
+      "q": 7,
+      "r": 5,
+      "ground": "grass"
+    },
+    {
+      "q": 7,
+      "r": 6,
+      "ground": "grass"
+    },
+    {
+      "q": 7,
+      "r": 7,
+      "ground": "grass"
+    },
+    {
+      "q": 8,
+      "r": -13,
+      "ground": "grass"
+    },
+    {
+      "q": 8,
+      "r": -12,
+      "ground": "grass"
+    },
+    {
+      "q": 8,
+      "r": -11,
+      "ground": "grass"
+    },
+    {
+      "q": 8,
+      "r": -10,
+      "ground": "grass"
+    },
+    {
+      "q": 8,
+      "r": -9,
+      "ground": "grass"
+    },
+    {
+      "q": 8,
+      "r": -8,
+      "ground": "grass"
+    },
+    {
+      "q": 8,
+      "r": -7,
+      "ground": "grass"
+    },
+    {
+      "q": 8,
+      "r": -6,
+      "ground": "grass"
+    },
+    {
+      "q": 8,
+      "r": -5,
+      "ground": "grass"
+    },
+    {
+      "q": 8,
+      "r": -4,
+      "ground": "grass"
+    },
+    {
+      "q": 8,
+      "r": -3,
+      "ground": "grass"
+    },
+    {
+      "q": 8,
+      "r": -2,
+      "ground": "grass"
+    },
+    {
+      "q": 8,
+      "r": -1,
+      "ground": "grass"
+    },
+    {
+      "q": 8,
+      "r": 0,
+      "ground": "grass"
+    },
+    {
+      "q": 8,
+      "r": 1,
+      "ground": "grass"
+    },
+    {
+      "q": 8,
+      "r": 2,
+      "ground": "grass"
+    },
+    {
+      "q": 8,
+      "r": 3,
+      "ground": "grass"
+    },
+    {
+      "q": 8,
+      "r": 4,
+      "ground": "grass"
+    },
+    {
+      "q": 8,
+      "r": 5,
+      "ground": "grass"
+    },
+    {
+      "q": 9,
+      "r": -12,
+      "ground": "grass"
+    },
+    {
+      "q": 9,
+      "r": -11,
+      "ground": "grass"
+    },
+    {
+      "q": 9,
+      "r": -10,
+      "ground": "grass"
+    },
+    {
+      "q": 9,
+      "r": -9,
+      "ground": "grass"
+    },
+    {
+      "q": 9,
+      "r": -8,
+      "ground": "grass"
+    },
+    {
+      "q": 9,
+      "r": -7,
+      "ground": "grass"
+    },
+    {
+      "q": 9,
+      "r": -6,
+      "ground": "grass"
+    },
+    {
+      "q": 9,
+      "r": -5,
+      "ground": "grass"
+    },
+    {
+      "q": 9,
+      "r": -4,
+      "ground": "grass"
+    },
+    {
+      "q": 9,
+      "r": -3,
+      "ground": "grass"
+    },
+    {
+      "q": 9,
+      "r": -2,
+      "ground": "grass"
+    },
+    {
+      "q": 9,
+      "r": -1,
+      "ground": "grass"
+    },
+    {
+      "q": 9,
+      "r": 0,
+      "ground": "grass"
+    },
+    {
+      "q": 9,
+      "r": 1,
+      "ground": "grass"
+    },
+    {
+      "q": 9,
+      "r": 2,
+      "ground": "grass"
+    },
+    {
+      "q": 9,
+      "r": 3,
+      "ground": "grass"
+    },
+    {
+      "q": 10,
+      "r": -11,
+      "ground": "grass"
+    },
+    {
+      "q": 10,
+      "r": -10,
+      "ground": "grass"
+    },
+    {
+      "q": 10,
+      "r": -9,
+      "ground": "grass"
+    },
+    {
+      "q": 10,
+      "r": -8,
+      "ground": "grass"
+    },
+    {
+      "q": 10,
+      "r": -7,
+      "ground": "grass"
+    },
+    {
+      "q": 10,
+      "r": -6,
+      "ground": "grass"
+    },
+    {
+      "q": 10,
+      "r": -5,
+      "ground": "grass"
+    },
+    {
+      "q": 10,
+      "r": -4,
+      "ground": "grass"
+    },
+    {
+      "q": 10,
+      "r": -3,
+      "ground": "grass"
+    },
+    {
+      "q": 10,
+      "r": -2,
+      "ground": "grass"
+    },
+    {
+      "q": 10,
+      "r": -1,
+      "ground": "grass"
+    },
+    {
+      "q": 10,
+      "r": 0,
+      "ground": "grass"
+    },
+    {
+      "q": 10,
+      "r": 1,
+      "ground": "grass"
+    },
+    {
+      "q": 11,
+      "r": -10,
+      "ground": "grass"
+    },
+    {
+      "q": 11,
+      "r": -9,
+      "ground": "grass"
+    },
+    {
+      "q": 11,
+      "r": -8,
+      "ground": "grass"
+    },
+    {
+      "q": 11,
+      "r": -7,
+      "ground": "grass"
+    },
+    {
+      "q": 11,
+      "r": -6,
+      "ground": "grass"
+    },
+    {
+      "q": 11,
+      "r": -5,
+      "ground": "grass"
+    },
+    {
+      "q": 11,
+      "r": -4,
+      "ground": "grass"
+    },
+    {
+      "q": 11,
+      "r": -3,
+      "ground": "grass"
+    },
+    {
+      "q": 11,
+      "r": -2,
+      "ground": "grass"
+    },
+    {
+      "q": 11,
+      "r": -1,
+      "ground": "grass"
+    },
+    {
+      "q": 12,
+      "r": -9,
+      "ground": "grass"
+    },
+    {
+      "q": 12,
+      "r": -8,
+      "ground": "grass"
+    },
+    {
+      "q": 12,
+      "r": -7,
+      "ground": "grass"
+    },
+    {
+      "q": 12,
+      "r": -6,
+      "ground": "grass"
+    },
+    {
+      "q": 12,
+      "r": -5,
+      "ground": "grass"
+    },
+    {
+      "q": 12,
+      "r": -4,
+      "ground": "grass"
+    },
+    {
+      "q": 12,
+      "r": -3,
+      "ground": "grass"
+    },
+    {
+      "q": 13,
+      "r": -8,
+      "ground": "grass"
+    },
+    {
+      "q": 13,
+      "r": -7,
+      "ground": "grass"
+    },
+    {
+      "q": 13,
+      "r": -6,
+      "ground": "grass"
+    },
+    {
+      "q": 13,
+      "r": -5,
+      "ground": "grass"
+    },
+    {
+      "q": 14,
+      "r": -7,
+      "ground": "grass"
+    }
+  ],
+  "enemy_config_id": "enemy_grass_sheep_boss",
+  "encounter": {
+    "version": 1,
+    "source_site_id": "grass_sheep_boss",
+    "region": "grass",
+    "difficulty": 3,
+    "sublevel": "normal",
+    "enemy_config_id": "enemy_grass_sheep_boss",
+    "story_singleton": false,
+    "minimum_count": 4,
+    "maximum_count": 10,
+    "maximum_groups": 2,
+    "content_source": "地图战斗部署20261019"
+  },
+  "background_color": "#536c3b",
+  "scene_design": {
+    "version": 1,
+    "source_site_id": "grass_sheep_boss",
+    "description": "环草石台：草丛包围开阔的石质主场，羊主居中前压，三名龙牙弓箭手分置后侧；西南部署，左右均可接近弓手。",
+    "player_approach": "southwest",
+    "terrain_semantics": "visual_only",
+    "blockers": "objects[type=indestructible].collision",
+    "roster_source": "objects[type=enemy]",
+    "monster_art_status": "external_character_team",
+    "layout_units": "existing_battle_world_units"
+  },
+  "art_direction": {
+    "version": 1,
+    "revision": "all-battle-art-20261019",
+    "region": "grass",
+    "region_name": "普通草原",
+    "style": "boss_authored_scene",
+    "palette_source": "existing_1018_cutouts_and_local_effect_decals",
+    "collision_source": "unchanged_existing_objects",
+    "legacy_border": "retained_hidden_for_reference",
+    "character_art": "external_character_team"
+  }
+}

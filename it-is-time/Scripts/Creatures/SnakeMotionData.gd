@@ -18,6 +18,7 @@ extends Resource
 @export_range(0.0, 0.5, 0.01) var support_release_time: float = 0.12
 
 @export_group("Turning")
+## In Ground S Path mode, the raised chain turns now; belly pieces consume facing markers at their actual route positions.
 @export_range(0.0, 360.0, 1.0) var turn_speed_degrees: float = 90.0
 @export_range(0.05, 2.0, 0.01) var turn_response_time: float = 0.5
 

@@ -116,20 +116,11 @@ func _plan_attack_distance(distance: float, attacks: Array[ATTACK]) -> bool:
 	_clear_reposition()
 	_lane_alignment_active = false
 	_lane_alignment.clear()
-	_distance_attack = null
-	_distance_error = distance - behavior.preferred_distance
-	if _distance_error <= arrival_distance: return false
-	var away := (_get_navigation_origin_position() - _target.global_position).slide(Vector3.UP).normalized()
-	if away.is_zero_approx(): away = Vector3.LEFT
-	_set_agent_target(_target.global_position + away * behavior.preferred_distance)
-	return true
+	return super._plan_attack_distance(distance, attacks)
 
 func get_npc_movement_speed_scale(full_speed: float) -> float:
 	if generated_x_axis_facing and not _manual_command:
-		if current_state != State.MOVE_TO_TARGET or not _has_requested_target: return 0.0
-		# Pure Z corrections still need propulsion when the X distance error is zero.
-		var remaining := (_requested_target_position-_get_navigation_origin_position()).slide(Vector3.UP).length()
-		return clampf(minf(remaining/approach_slowdown_distance,sqrt(2.0*approach_braking_acceleration*remaining)/maxf(full_speed,0.001)),0.0,1.0)
+		return super.get_npc_movement_speed_scale(full_speed)
 	if _reposition_distance < 0.0 or _manual_command: return super.get_npc_movement_speed_scale(full_speed)
 	var remaining := maxf(absf(_distance_error)-_attack_distance_tolerance(_distance_attack)*0.5,0.0)
 	var braking_speed := sqrt(2.0*approach_braking_acceleration*remaining)

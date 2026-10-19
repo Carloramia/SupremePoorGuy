@@ -58,10 +58,22 @@ func build(host: Node3D, records: Array) -> bool:
 		host._deployment.append(placed)
 	var roster: EnemyRosterData = host.delivery_settings.enemy_rosters[request.enemy_config_id]
 	host.enemy_definitions.assign(roster.definitions)
-	for species: String in roster.definitions:
+	var order: Array[int] = []
+	var areas := {}
+	for index: int in roster.definitions.size():
+		order.append(index)
+		var bounds := FACTORY.local_bounds(FACTORY.template(roster.definitions[index]))
+		areas[index]=bounds.size.x*bounds.size.z
+	if CATALOG.is_hex():
+		# Place large bodies before small ones; preserve roster/actor indices in the result.
+		order.sort_custom(func(a,b): return a<b if is_equal_approx(areas[a],areas[b]) else areas[a]>areas[b])
+	var positions := {}
+	for index: int in order:
+		var species: String=roster.definitions[index]
 		var placed := place(FACTORY.template(species),true)
 		if placed.is_empty(): host.last_error = "地图中部右侧没有足够的合法敌方部署位置。"; return false
-		host._enemy_positions.append(placed)
+		positions[index]=placed
+	for index: int in roster.definitions.size(): host._enemy_positions.append(positions[index])
 	for title: String in ["Ground"]: host.get_node(title).free()
 	return true
 

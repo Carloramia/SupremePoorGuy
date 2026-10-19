@@ -7,6 +7,8 @@ func check(value: bool, message: String) -> void:
 		failed = true
 		push_error(message)
 func run() -> void:
+	root.get_node("CombatAudio").settings = root.get_node("CombatAudio").settings.duplicate()
+	root.get_node("CombatAudio").settings.enabled = false
 	var actor = load("res://Scenes/Creatures/Characters/Generate_Wolf_NPC.tscn").instantiate()
 	actor.generate_on_ready = false
 	root.add_child(actor)
@@ -34,6 +36,7 @@ func run() -> void:
 	target.armor = 1000000000.0
 	check(weapon.apply_contact_damage(target,10.0) == 0.0 and not enemy.is_temporarily_ragdolled(),"Armor absorbing damage cannot ragdoll")
 	target.armor = 0.0
+	weapon.end_damage_swing(); weapon.begin_damage_swing()
 	check(weapon.apply_contact_damage(target,100.0) > 0.0,"Claw deals effective damage")
 	check(enemy.is_temporarily_ragdolled() and movement.process_mode == Node.PROCESS_MODE_DISABLED and attacks.process_mode == Node.PROCESS_MODE_DISABLED,"Lighter enemy loses movement and attack control")
 	var time_left: float = enemy._hit_ragdoll_timer.time_left

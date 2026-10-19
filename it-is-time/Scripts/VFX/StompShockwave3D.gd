@@ -14,6 +14,8 @@ var _material: ShaderMaterial
 var _visual: MeshInstance3D
 var impact_impulse := 0.0
 var raw_impact_damage := 0.0
+var damage_context: Dictionary = {}
+var contact_mass := 1.0
 var _debug_shape: SphereShape3D
 
 func get_attack_debug_shapes() -> Array[Dictionary]:
@@ -22,13 +24,15 @@ func get_attack_debug_shapes() -> Array[Dictionary]:
 	_debug_shape.radius = data.radius*clampf(elapsed/data.duration,0.0,1.0)
 	return [{"shape":_debug_shape,"transform":Transform3D(Basis.IDENTITY,contact),"active":true}]
 
-func setup(settings: DATA, source: Node3D, point: Vector3, surface_normal: Vector3, measured_impulse: float = 0.0) -> void:
+func setup(settings: DATA, source: Node3D, point: Vector3, surface_normal: Vector3, measured_impulse: float = 0.0, context: Dictionary = {}, foot_mass: float = 1.0) -> void:
 	data = settings
 	source_character = source
 	source_faction = source.get_faction_id()
 	contact = point
 	normal = surface_normal.normalized() if not surface_normal.is_zero_approx() else Vector3.UP
 	impact_impulse = maxf(measured_impulse,0.0) if is_finite(measured_impulse) else 0.0
+	damage_context = context
+	contact_mass = foot_mass
 
 func _ready() -> void:
 	if data == null or not data.enabled or not data.is_valid(): queue_free(); return
@@ -36,8 +40,9 @@ func _ready() -> void:
 	add_to_group(&"damage_components")
 	global_position = contact
 	var service := get_tree().root.get_node_or_null("DamageService")
-	if service != null: raw_impact_damage = service.calculate_raw_damage(impact_impulse*data.impulse_scale)
-	if is_instance_valid(source_character): raw_impact_damage *= float(source_character.get_meta(&"summon_damage_multiplier",1.0))
+	if service != null:
+		if damage_context.is_empty(): damage_context = service.create_attack_context(source_character)
+		raw_impact_damage = service.calculate_attack_raw_damage(impact_impulse*data.impulse_scale,damage_context,contact_mass)
 	var tangent := normal.cross(Vector3.FORWARD).normalized()
 	if tangent.is_zero_approx(): tangent = normal.cross(Vector3.RIGHT).normalized()
 	global_basis = Basis(tangent,normal,tangent.cross(normal))
@@ -112,8 +117,11 @@ func _strike(actor: Node3D, parts: Array, part: PhysicalBodyPart3D, distance: fl
 	var strength := lerpf(1.0,data.edge_strength,clampf(distance/data.radius,0.0,1.0))
 	var raw_damage := raw_impact_damage*strength
 	var service := get_tree().root.get_node_or_null("DamageService")
-	var hp_damage: float = service.apply_armor(raw_damage,part.armor) if service != null else 0.0
-	var applied := part.apply_damage(hp_damage,source_character if is_instance_valid(source_character) else self)
+	var hp_damage: float = service.apply_armor(raw_damage,part.armor,part.resilience) if service != null else 0.0
+	var registered: bool = service != null and raw_damage > 0.0 and service.register_attack_hit(damage_context,part)
+	if registered:
+		service.attack_contact.emit({"source":source_character if is_instance_valid(source_character) else self,"target":part,"attack_id":damage_context.get("id",0),"mass":damage_context.get("mass",0.0),"multiplier":damage_context.get("multiplier",1.0),"impulse":impact_impulse,"raw":raw_damage,"armor":part.armor,"resilience":part.resilience,"final_damage":hp_damage})
+	var applied := part.apply_damage(hp_damage,source_character if is_instance_valid(source_character) else self) if registered else 0.0
 	var torsos: Array[PhysicalBodyPart3D] = []
 	var total_mass := 0.0
 	var torso_mass := 0.0
@@ -132,7 +140,7 @@ func _strike(actor: Node3D, parts: Array, part: PhysicalBodyPart3D, distance: fl
 		for body: PhysicalBodyPart3D in torsos:
 			body.sleeping = false
 			body.apply_central_impulse(impulse*(body.mass/torso_mass))
-	_log("hit", "target=%s part=%s distance=%.2f stomp_impulse=%.3f raw=%.2f armor=%.2f damage=%.2f knockback_impulse=%s" % [actor.name,part.name,distance,impact_impulse,raw_damage,part.armor,applied,impulse])
+	_log("hit", "target=%s part=%s attack_id=%s mass=%.3f distance=%.2f stomp_impulse=%.3f raw=%.2f resilience=%.2f armor=%.2f registered=%s damage=%.2f knockback_impulse=%s" % [actor.name,part.name,damage_context.get("id",0),damage_context.get("mass",0.0),distance,impact_impulse,raw_damage,part.resilience,part.armor,registered,applied,impulse])
 
 func _log(event: String, details: String) -> void:
 	var console := get_tree().root.get_node_or_null("RuntimeConsole")

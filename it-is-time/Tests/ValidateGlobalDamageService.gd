@@ -14,11 +14,11 @@ func _validate() -> void:
 	assert(is_zero_approx(service.calculate_raw_damage(5.0)))
 	assert(is_equal_approx(service.calculate_raw_damage(20.0), 30.0))
 	assert(is_equal_approx(service.calculate_damage(20.0, 8.0), 22.0))
-	assert(is_equal_approx(service.calculate_raw_damage(100.0), 100.0))
+	assert(is_equal_approx(service.calculate_raw_damage(100.0), 190.0))
 
-	assert(is_zero_approx(service.calculate_weapon_damage(1.0, 8.0, true)))
-	assert(is_equal_approx(service.calculate_weapon_damage(2.7, 15.0, true), 95.0))
-	assert(is_equal_approx(service.calculate_weapon_damage(2.7, 10.0, true), 100.0))
+	assert(is_zero_approx(service.calculate_weapon_damage(0.0, 8.0, true)))
+	assert(is_equal_approx(service.calculate_weapon_damage(3.0, 15.0, true), 20.0))
+	assert(is_equal_approx(service.calculate_weapon_damage(3.0, 10.0, true), 25.0))
 	assert(is_equal_approx(service.calculate_weapon_damage(20.0, 8.0, false), 1.1))
 	assert(service.calculate_weapon_damage(10000.0, 0.0, false) <= 2.0)
 

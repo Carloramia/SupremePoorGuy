@@ -2,12 +2,37 @@ extends RefCounted
 ## Immutable converted authoring data. Runtime progress belongs to PrototypeState.
 static var _index: Dictionary = {}
 static var _maps: Dictionary = {}
+static var version := "20261015"
+static var _indexes := {}
+static var _version_maps := {}
+static var _hex_keys := {}
 static var _colliders: Array = []
 static var _colliders_ready := false
 static var _roles: Dictionary = {}
 static var _locations: Dictionary = {}
 static var _collider_cells: Dictionary = {}
 const COLLIDER_CELL_SIZE := 128.0
+
+static func select_version(value: String) -> void:
+	assert(value in ["20261015","20261019"])
+	if value==version: return
+	version=value
+	_index={}; _maps={}; _roles={}; _locations={}; _colliders=[]; _colliders_ready=false; _collider_cells={}
+
+static func is_hex() -> bool:
+	return version=="20261019"
+
+static func hex_cell_keys(value: String) -> Dictionary:
+	if not _hex_keys.has(value):
+		var keys := {}
+		for cell: Dictionary in world(value).get("hex_cells",[]): keys["%d,%d" % [int(cell.q),int(cell.r)]]=true
+		_hex_keys[value]=keys
+	return _hex_keys[value]
+
+static func location_for_version(id: String, value: String) -> Dictionary:
+	for object: Dictionary in world(value).objects:
+		if object.id==id or object.get("location_id","")==id: return object
+	return {}
 
 static func objects_in_role(role: String) -> Array:
 	if _roles.is_empty():
@@ -84,20 +109,25 @@ static func shape_world_bounds(object: Dictionary,shape: Dictionary) -> Rect2:
 		else:rect=rect.expand(point)
 	return rect
 
-static func index() -> Dictionary:
-	if _index.is_empty():
-		_index = JSON.parse_string(FileAccess.get_file_as_string("res://Content/Maps/FrontierDelivery_20261015/Data/Maps/index.json"))
-	return _index
+static func index(value: String = "") -> Dictionary:
+	var selected := version if value.is_empty() else value
+	if not _indexes.has(selected):
+		var path := "res://Content/Maps/FrontierEditor_20261019/Runtime/index.json" if selected=="20261019" else "res://Content/Maps/FrontierDelivery_20261015/Data/Maps/index.json"
+		_indexes[selected] = JSON.parse_string(FileAccess.get_file_as_string(path))
+	return _indexes[selected]
 
-static func map_data(id: String) -> Dictionary:
-	if not index().maps.has(id):
+static func map_data(id: String, value: String = "") -> Dictionary:
+	var selected := version if value.is_empty() else value
+	var catalog := index(selected)
+	if not catalog.maps.has(id):
 		return {}
-	if not _maps.has(id):
-		_maps[id] = JSON.parse_string(FileAccess.get_file_as_string(index().maps[id].data))
-	return _maps[id]
+	var key := selected+":"+id
+	if not _version_maps.has(key):
+		_version_maps[key] = JSON.parse_string(FileAccess.get_file_as_string(catalog.maps[id].data))
+	return _version_maps[key]
 
-static func world() -> Dictionary:
-	return map_data("frontier_layout")
+static func world(value: String = "") -> Dictionary:
+	return map_data("frontier_layout",value)
 
 static func object_art(object: Dictionary,broken := false) -> Dictionary:
 	var policy:Dictionary=index().get("world_art",{})

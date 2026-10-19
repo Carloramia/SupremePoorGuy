@@ -1,23 +1,27 @@
-[gd_resource type="Resource" script_class="WeaponArmAttackPreset" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="WeaponArmAttackPreset" format=3 uid="uid://bq2mtblwhkc8e"]
 
-[ext_resource type="Script" path="res://Scripts/Combat/WeaponArmAttackPreset.gd" id="1"]
+[ext_resource type="Script" uid="uid://dj344s2g3ka8e" path="res://Scripts/Combat/WeaponArmAttackPreset.gd" id="1"]
 
 [resource]
-script = ExtResource("1")
 resource_name = "Spear thrust"
+script = ExtResource("1")
 aim_in_3d = true
-minimum_charge_time = 0.15
-maximum_charge_time = 1.2
-swing_duration = 0.28
-follow_through_ratio = 0.5
-minimum_follow_through_time = 0.12
-cooldown_duration = 0.2
-recovery_duration = 0.35
-sustained_swing_enabled = false
-charge_angle_drag_enabled = false
 preparation_reach = 0.4
 strike_reach = 0.97
 preparation_height = 0.12
 pose_frequency = 6.0
 maximum_pose_acceleration = 180.0
 maximum_pose_torque = 1500.0
+npc_charge_range_multiplier = 1.35
+preparation_speed_ratio = 0.65
+preparation_force_ratio = 0.5
+damage_only_during_swing = true
+hand_driven_motion = true
+maximum_charge_time = 1.2
+charge_angle_drag_enabled = false
+swing_duration = 0.28
+cooldown_duration = 0.2
+sustained_swing_enabled = false
+follow_through_ratio = 0.5
+minimum_follow_through_time = 0.12
+recovery_duration = 0.35

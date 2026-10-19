@@ -12,8 +12,12 @@ config_version=5
 
 config/name="ItIsTime"
 run/main_scene="res://Scenes/Application/GameRoot.tscn"
-config/features=PackedStringArray("4.7", "Forward Plus")
+config/features=PackedStringArray("4.7", "C#", "Forward Plus")
 config/icon="res://icon.svg"
+
+[audio]
+
+buses/default_bus_layout="res://Resources/Audio/default_bus_layout.tres"
 
 [autoload]
 
@@ -22,10 +26,6 @@ DamageService="*res://Scripts/Damage/DamageService.gd"
 CombatAudio="*res://Scripts/Audio/CombatAudio3D.gd"
 WorkshopUIController="*res://Scripts/UI/WorkshopUIController.gd"
 RuntimeConsole="*res://Scenes/Debug/RuntimeConsole.tscn"
-
-[audio]
-
-buses/default_bus_layout="res://Resources/Audio/default_bus_layout.tres"
 
 [debug]
 
@@ -37,9 +37,12 @@ file_logging/max_log_files=10
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 
+[dotnet]
+
+project/assembly_name="ItIsTime"
+
 [editor]
 
-; CreatureFactory hashes authored scene files when validating saved creatures.
 export/convert_text_resources_to_binary=false
 
 [editor_plugins]

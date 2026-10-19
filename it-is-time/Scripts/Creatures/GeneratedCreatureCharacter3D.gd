@@ -685,6 +685,7 @@ func _migrate_saved_body_segments(container: Node) -> void:
 	_configure_body_part_collision_exceptions()
 
 func _activate_parts(container: Node) -> void:
+	reset_combat_mass()
 	_apply_physics_test_mode()
 	for part: Node in container.get_children():
 		if part is PhysicalBodyPart3D:

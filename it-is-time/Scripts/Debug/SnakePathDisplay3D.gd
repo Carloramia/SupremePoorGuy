@@ -2,6 +2,7 @@ extends Node3D
 
 const HISTORY_COLOR := Color(0.05,0.9,1.0)
 const PREVIEW_COLOR := Color(1.0,0.55,0.05)
+const TURN_COLOR := Color(0.9,0.2,1.0)
 const UPDATE_INTERVAL := 0.2
 var enabled := false
 var filter := ""
@@ -89,6 +90,20 @@ func _build_mesh(snapshot: Dictionary, space: PhysicsDirectSpaceState3D) -> Imme
 		var color := HISTORY_COLOR if float(snapshot.distances[i]) <= float(snapshot.progress) else PREVIEW_COLOR
 		for vertex: Vector3 in [a.position-side_a,a.position+side_a,b.position+side_b,a.position-side_a,b.position+side_b,b.position-side_b]:
 			mesh.surface_set_color(color)
+			mesh.surface_add_vertex(vertex)
+	for marker: Dictionary in snapshot.get("turns",[]):
+		var hit := _project_to_terrain(marker.position,snapshot,space)
+		if hit.is_empty(): continue
+		var forward: Vector3 = Vector3(marker.facing).slide(hit.normal).normalized()
+		if forward.is_zero_approx(): continue
+		if not started:
+			mesh.surface_begin(Mesh.PRIMITIVE_TRIANGLES)
+			started = true
+		var size: float = maxf(float(snapshot.line_width)*6.0,0.3)
+		var side := forward.cross(Vector3(hit.normal)).normalized()*size*0.5
+		var center: Vector3 = hit.position+Vector3(hit.normal)*0.015
+		for vertex: Vector3 in [center+forward*size,center-forward*size*0.5+side,center-forward*size*0.5-side]:
+			mesh.surface_set_color(TURN_COLOR)
 			mesh.surface_add_vertex(vertex)
 	if started: mesh.surface_end()
 	return mesh

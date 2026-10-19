@@ -23,6 +23,7 @@ var _support_lost_time := 0.0
 var _support_count := 0
 var _npc_attack := false
 var _shockwaves_spawned := 0
+var _damage_context: Dictionary = {}
 const HIT_PREDICTION = preload("res://Scripts/Creatures/NPCAttackPrediction3D.gd")
 
 func predict_npc_attack(action_id: StringName, target: Node3D, _charge: float, samples: int = 24, margin: float = 0.1) -> Dictionary:
@@ -162,6 +163,7 @@ func try_start_action(action_id: StringName = &"foreleg_stomp") -> bool:
 	_movement.begin_action_control(feet,bodies,self)
 	_reason = &"started"
 	_shockwaves_spawned = 0
+	_damage_context = get_node("/root/DamageService").create_attack_context(get_parent(),_data.damage_multiplier)
 	_confirmation = 0.0
 	_rise_elapsed = 0.0
 	_support_lost_time = 0.0
@@ -169,10 +171,10 @@ func try_start_action(action_id: StringName = &"foreleg_stomp") -> bool:
 	_set_phase(Phase.RISING)
 	return true
 
-func _spawn_shockwave(point: Vector3, normal: Vector3, impulse: float) -> void:
+func _spawn_shockwave(point: Vector3, normal: Vector3, impulse: float, contact_mass: float = 1.0) -> void:
 	if _data.shockwave == null or not _data.shockwave.enabled or not _data.shockwave.is_valid(): return
 	var wave := SHOCKWAVE.instantiate()
-	wave.setup(_data.shockwave,get_parent(),point,normal,impulse)
+	wave.setup(_data.shockwave,get_parent(),point,normal,impulse,_damage_context,contact_mass)
 	var host: Node = preload("res://Scripts/Player/PlayerControlContext.gd").level(self)
 	host.add_child.call_deferred(wave)
 	_shockwaves_spawned += 1
@@ -189,7 +191,7 @@ func _update_contact_shockwave(row: Dictionary) -> void:
 	row["stomp_impulse"] = impulse
 	row["shockwave_triggered"] = true
 	CombatAudio3D.play_at(row.body, &"stomp", sample.get("position",pending.point))
-	_spawn_shockwave(sample.get("position",pending.point),pending.normal,impulse)
+	_spawn_shockwave(sample.get("position",pending.point),pending.normal,impulse,row.body.mass)
 
 func _reject(reason: StringName) -> bool:
 	if not is_active(): _reason = reason

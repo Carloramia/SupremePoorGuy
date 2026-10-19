@@ -1,0 +1,63 @@
+断肢与失效关节引用修复（2026-10-19）
+
+原始问题
+用户日志：D:/GameJamWorkspace/Logs/runtime_logs_2026-10-19_04-04-11_40964_143941378/logs/godot.log。
+Spider 在断肢后仍遍历缓存中的关节，报 Trying to assign invalid previously freed instance。
+原报错位于 SpiderLegStepMovementController3D.gd:698 的吸附更新。
+CharacterDamageController3D 会销毁断裂部位连接的 Joint，但移动控制器保留链缓存用于诊断。
+把缓存值先赋给 Generic6DOFJoint3D 类型变量，再判断 is_instance_valid，检查执行得太晚。
+
+本次改动
+1. SpiderLegStepMovementController3D：吸附和腿根受力检查跳过失效肢体链；
+   独立躯干支撑、关节缓存刷新及脚部诊断在读取关节前检查其有效性和待删除状态。
+2. SpiderCharacter3D：世界角度限位与腿根锚点绑定跳过失效/待删除关节。
+3. LegStepMovementControllerBase3D：安全释放失效接地固定关节；
+   恢复髋关节限制、缩放弹簧参数时，从字典清除失效/待删除关节。
+4. GeneratedLegStepMovementController3D：诊断跳过失效关节；
+   调整落地固定关节余量前验证缓存，失效时释放固定记录。
+5. GeneratedLimbControl3D：动作放宽关节角度前确认整条肢体链完整；
+   结束动作恢复限位时跳过失效/待删除关节。Wolf、HornedBeast 等共享此修复。
+6. WingPoseController3D、BirdFlightController3D：Bird 的翅膀姿态与落地限位恢复，
+   在类型绑定前验证缓存中的部位/关节。
+7. HeadPositionSupport3D：直接连接的 Head 调整滑动余量前验证关节。
+8. EquipmentMultiGrip3D、WeaponArmPose3D：双手常态持握与攻击姿态接管，
+   先验证缓存链，链断裂时停止姿态控制或跳过失效连接。
+
+没有修改正常肢体的质量、力/扭矩、步态参数、关节限位、场景布局、视觉或碰撞箱。
+不强制重新捕获全部肢体的自然姿态，避免把受击变形写成新的站姿。
+原有 Broken、攻击取消、装备掉落规则继续负责断裂后的行为。
+
+验证
+新增 Tests/ValidateFreedCreatureJoints3D.gd，333 项检查通过，退出码 0，无 ERROR / SCRIPT ERROR。
+覆盖 Spider、Wolf、StumpBeast、HornedBeast、Beast、Ratkin、Rat_1、Rat_2、Human 和 Bird。
+逐一测试关节 queue_free 后尚未释放、实际释放、真实部位 break_part 后的更新，
+同时读取完整运动快照、支撑诊断、弹簧/限位恢复，并检查失效脚已退出可用脚列表。
+额外测试 Bird 翅膀/落地/头部缓存、删除接地固定关节、Human 双手持握和攻击姿态缓存。
+
+对照：在隔离目录使用修复前的相关脚本，保留当前其他脚本及资源，运行同一个新测试。
+测试退出码 1，准确重现原 Spider 第 698 行错误，也检出共享基类、动作限位和持握的失效引用。
+隔离测试没有回退工作项目；对照脚本副本保留在报告目录的 BaselineScripts/，临时工程已清理。
+
+通过的已有回归：
+ValidateSharedLimbControl、ValidateSpiderPounce、ValidateEquipmentMultiGrip3D、
+ValidateSnakeBrokenConnections3D、ValidateDamageSystem。
+ValidateBirdLandingCache3D 固定 60Hz 复跑正常退出；隔离修复前版本也通过。
+Snake 已有断裂连接处理通过检查，本次没有重复修改 Snake。
+
+未通过/不能计为完整通过的旧测试：
+- ValidateWolfJointSafety：ForeLeg_1 的物理伸展角断言失败；
+  修复前后各腿测得角度完全一致（约 19.98、1.02、19.99、61.99 度）。
+- ValidateWingPose3D：翅膀数量/重新生成数量的三项断言失败；
+  修复前后错误相同，展开/收拢的姿态误差输出也完全一致。
+- ValidateHumanLimbPose3D：旧测试依赖当前 TestLevel 中不存在的 GenerateHumanNPC 节点。
+- BirdLandingCache 首轮曾在输出成功标记后原生异常退出；后续当前版本及对照版本正常退出。
+  不能把首轮算作通过，也未据一次复跑宣称已解决此原生退出问题。
+以上不属于本次失效关节修复引入的脚本断点；本次未调整对应物理表现或重建旧场景夹具。
+
+全部日志与固定步进对照保存在 Reports/FreedCreatureJoints_2026-10-19/。
+validation.json 汇总退出码、标记与错误数量。测试副本只关闭自动打包日志，避免失败时的归档干扰。
+
+使用与边界
+请停止目前停在断点的运行，再重新启动游戏，加载完整修复后的脚本。
+本次完成定向断肢/释放与组件回归，未完成长时间多人混战稳定性或所有地形、体型的压力测试。
+本次重点处理被销毁的 Joint 缓存，不代表项目中所有节点释放顺序均经过穷举验证。

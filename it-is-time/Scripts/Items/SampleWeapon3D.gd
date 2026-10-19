@@ -25,6 +25,7 @@ func get_arm_attack_preset() -> LimbSwingPresetBase:
 
 @export_group("Hit Registration")
 @export_range(0.01, 5.0, 0.01, "or_greater") var passive_hit_cooldown: float = 0.25
+@export_range(0.0, 20.0, 0.01, "or_greater") var damage_multiplier: float = 1.0
 
 var wielder_character: Node
 var wielder_team_id: int = -1
@@ -34,6 +35,7 @@ var damage_logging_enabled: bool = false
 var _swing_hit_parts: Dictionary = {}
 var _passive_hit_times_msec: Dictionary = {}
 var _active_swing_count: int = 0
+var damage_context: Dictionary = {}
 
 func _ready() -> void:
 	super._ready()
@@ -56,7 +58,13 @@ func prepare_temporary_attack(character: Node) -> void:
 	can_be_picked_up = false
 	set_wielder(character, character.get_faction_id())
 
-func begin_damage_swing() -> void:
+func begin_damage_swing(context: Dictionary = {}) -> void:
+	if not context.is_empty(): damage_context = context
+	elif _active_swing_count == 0:
+		# Temporary hitboxes are configured before add_child(); their wielder is already in the tree.
+		var host: Node = wielder_character if is_instance_valid(wielder_character) and wielder_character.is_inside_tree() else self
+		var service := host.get_node_or_null("/root/DamageService") if host.is_inside_tree() else null
+		if service != null: damage_context = service.create_attack_context(wielder_character,damage_multiplier,mass)
 	swing_sequence += 1
 	_active_swing_count += 1
 	swing_damage_active = true
@@ -71,26 +79,36 @@ func try_register_hit(target: Node) -> bool:
 
 ## Shared settlement for regular contacts and temporary compound-body attack shapes.
 func apply_contact_damage(target: PhysicalBodyPart3D, impulse: float) -> float:
-	if target.is_broken or target._is_friendly_weapon(self) or impulse <= 0.0: return 0.0
+	if not is_instance_valid(target) or target.is_broken or target._is_friendly_weapon(self) or not is_finite(impulse) or impulse <= 0.0: return 0.0
+	if not swing_damage_active:
+		var preset := get_arm_attack_preset() as WeaponArmAttackPreset
+		if preset != null and preset.damage_only_during_swing: return 0.0
 	# Generated parts live under GeneratedParts rather than directly under the character.
 	var actor: Node = preload("res://Scripts/Player/PlayerControlContext.gd").character_of(target)
 	var source_team: int = wielder_character.get_faction_id() if is_instance_valid(wielder_character) and wielder_character.has_method("get_faction_id") else wielder_team_id
 	if actor != null and (actor == wielder_character or (source_team >= 0 and actor.get_faction_id() == source_team)): return 0.0
 	var service := get_node_or_null("/root/DamageService")
 	if service == null: return 0.0
-	var raw: float = service.calculate_weapon_raw_damage(impulse, swing_damage_active)
-	if is_instance_valid(wielder_character): raw *= float(wielder_character.get_meta(&"summon_damage_multiplier",1.0))
-	var damage: float = service.apply_weapon_armor(raw, target.armor, swing_damage_active)
-	var registered := damage > 0.0 and try_register_hit(target)
+	var raw: float = service.calculate_attack_raw_damage(impulse,damage_context,damage_contact_mass()) if swing_damage_active else service.calculate_weapon_raw_damage(impulse,false)
+	if not swing_damage_active and is_instance_valid(wielder_character): raw *= float(wielder_character.get_meta(&"summon_damage_multiplier",1.0))
+	var damage: float = service.apply_weapon_armor(raw, target.armor, swing_damage_active,target.resilience)
+	var registered := raw > 0.0 and try_register_hit(target)
+	if swing_damage_active and registered:
+		service.attack_contact.emit({"source":self,"target":target,"attack_id":damage_context.get("id",0),"mass":damage_context.get("mass",0.0),"multiplier":damage_context.get("multiplier",1.0),"impulse":impulse,"raw":raw,"armor":target.armor,"resilience":target.resilience,"final_damage":damage})
 	if damage_logging_enabled or target.damage_logging_enabled:
-		print("[part_impact] target=%s weapon=%s mode=%s registered=%s impulse=%.3f raw_damage=%.3f armor=%.3f hp_damage=%.3f hp=%.3f" % [target.name, name, "swing" if swing_damage_active else "passive", registered, impulse, raw, target.armor, damage if registered else 0.0, target.current_hp])
+		print("[part_impact] target=%s weapon=%s mode=%s registered=%s attack_id=%s body_mass=%.3f multiplier=%.3f impulse=%.3f raw_damage=%.3f resilience=%.3f armor=%.3f hp_damage=%.3f hp=%.3f" % [target.name,name,"swing" if swing_damage_active else "passive",registered,damage_context.get("id",0),damage_context.get("mass",0.0),damage_context.get("multiplier",1.0),impulse,raw,target.resilience,target.armor,damage if registered else 0.0,target.current_hp])
 	return target.apply_damage(damage, self) if registered else 0.0
+
+func damage_contact_mass() -> float:
+	return rigid_attachment_holder.mass if is_instance_valid(rigid_attachment_holder) else mass
 
 func _register_hit(target: Node) -> bool:
 	var target_id := target.get_instance_id()
 	if swing_damage_active:
 		if _swing_hit_parts.has(target_id):
 			return false
+		var service := get_node_or_null("/root/DamageService")
+		if service != null and not service.register_attack_hit(damage_context,target): return false
 		_swing_hit_parts[target_id] = swing_sequence
 		return true
 	var now_msec := Time.get_ticks_msec()

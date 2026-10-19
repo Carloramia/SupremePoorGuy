@@ -85,7 +85,7 @@ func _stop_pose_motors() -> void:
 		for binding: Dictionary in links:
 			if is_instance_valid(binding.joint): binding.joint.set_flag_z(Generic6DOFJoint3D.FLAG_ENABLE_MOTOR,false)
 
-func _alive(body: PhysicalBodyPart3D) -> bool:
+func _alive(body: Variant) -> bool:
 	return is_instance_valid(body) and not body.is_queued_for_deletion() and not body.is_broken
 
 func _planar_active() -> bool:
@@ -203,7 +203,7 @@ func _get_expanded_relative_pose(binding: Dictionary) -> Quaternion:
 
 func _binding_intact(binding: Dictionary) -> bool:
 	if not _alive(binding.a) or not _alive(binding.b): return false
-	var joint: Generic6DOFJoint3D = binding.joint
+	var joint: Variant = binding.joint
 	return is_instance_valid(joint) and joint.is_inside_tree() and not joint.is_queued_for_deletion()
 
 func _collect_load_bodies(body: PhysicalBodyPart3D) -> Array[PhysicalBodyPart3D]:

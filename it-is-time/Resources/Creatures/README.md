@@ -18,3 +18,7 @@ GeneratedCreatureDensityData 按生成部位类型匹配密度，最终质量还
 | [WolfPhysics.tres](WolfPhysics.tres) | [WolfPhysicsData.gd](../../Scripts/Creatures/WolfPhysicsData.gd) | [WolfCharacter3D.gd](../../Scripts/Creatures/WolfCharacter3D.gd)、[Generate_Wolf.tscn](../../Scenes/Creatures/Characters/Generate_Wolf.tscn) |
 
 [VisualStates/Human](VisualStates/Human) 保存 Human 多套 Open/Grip 视觉资源；对应 BodyPartVisualState3D，在 Part.visual_states 中引用。[Wolf/ManualLayouts](Wolf/ManualLayouts) 保存版本化布局与碰撞快照，修改前确认当前 WolfGenerator 选用的具体版本。
+
+Generate_Human 当前 Human4 手部单独使用 `VisualStates/Human/GenerateHuman4HandRightGrip.tres` 与 `GenerateHuman4HandLeftGrip.tres`，仅将持物视觉的腕部对齐 `JointIn_Arm_R_Limb_1` / `JointIn_Arm_L_Limb_1`；右手的 `mesh_anchor` 对应纹理腕孔中心。Open 状态、原始模型、物理关节、碰撞箱和 ItemSocket3D 均保持原有设置。场景内的手部和生成快照同时引用这两个资源，继承场景及按当前手动布局重新生成时也会保留修正；通用 Human4 手部资源不受影响。
+
+Generate_Human 的两个肘关节（`Joint_008_HumanArm` / `Joint_011_HumanArm`）对齐当前 Human4 上臂与前臂纹理孔心的中点，关节位于部件厚度中心平面。关节点、两侧局部关节框架、连接标记和手动生成布局的 anchor 同步保存；模型、碰撞箱、关节转轴、限位与自然姿态不变。模型孔心原有的小间距保留，因此右侧每孔距转轴约 0.008、左侧约 0.0012。

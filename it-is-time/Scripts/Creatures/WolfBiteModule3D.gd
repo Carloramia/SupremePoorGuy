@@ -384,6 +384,7 @@ func start(next_target: PhysicalBodyPart3D) -> bool:
 	joint.set_flag_z(Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_SPRING,false)
 	joint.set_flag_z(Generic6DOFJoint3D.FLAG_ENABLE_MOTOR,false)
 	_weapon = BiteHitbox.new()
+	_weapon.damage_multiplier = data.damage_multiplier
 	_weapon.name = "BiteHitbox"
 	_weapon.setup(jaw,controller.get_parent(),_shape().size,Vector3(jaw.get_meta(&"generated_size",Vector3.ONE))*data.box_center_ratio,data.impulse_multiplier,data.hit_ragdoll_duration)
 	add_child(_weapon)

@@ -83,7 +83,7 @@ func run() -> void:
 	movement.end_attack_control(owner)
 	movement._ground_path.points.clear()
 	for frame: int in 100: movement._update_connections(1.0/60.0)
-	assert(not movement._path_ready,"Recovery cannot publish a route cleared by a whole-body turn")
+	assert(not movement._path_ready,"Recovery cannot publish an explicitly cleared route")
 	movement.cancel_motion()
 	assert(not movement._path_ready and not movement._connection_recovery_resume_path and movement.get_ground_path_debug_snapshot().is_empty(),"Explicit cancellation still invalidates route state")
 	actor.free()

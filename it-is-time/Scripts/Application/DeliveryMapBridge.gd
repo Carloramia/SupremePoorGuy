@@ -9,6 +9,8 @@ var _map_diagnostic_logging := false
 var _last_travel_feedback := ""
 var _travel_pending := false
 var _travel_target := Vector2.ZERO
+var _destruction_serial := 0
+var _breaking_obstacle := ""
 
 func _ready() -> void:
 	battle_preview_enabled = false
@@ -17,6 +19,7 @@ func _ready() -> void:
 	var console := get_tree().root.get_node_or_null("RuntimeConsole")
 	set_map_diagnostic_logging(console!=null and console.is_map_tracking_enabled())
 	sync_party()
+	distance_travelled.connect(application.session.advance_world_travel)
 	super._ready()
 	_last_saved = runtime.snapshot()
 	interaction_requested.connect(_arrived)
@@ -37,6 +40,7 @@ func set_map_diagnostic_logging(value: bool) -> void:
 	runtime.diagnostic_logging = value
 
 func _map_diagnostic(event: String, detail: Dictionary = {}) -> void:
+	if Catalog.is_hex(): detail=detail.merged({"map_version":Catalog.version})
 	if _map_diagnostic_logging: application.trace_map_event(event,detail)
 
 func _gui_input(event: InputEvent) -> void:
@@ -83,22 +87,33 @@ func _process(delta: float) -> void:
 func sync_party() -> void:
 	runtime.party_count = application.session.monsters().size()
 
-func save_progress() -> bool:
+func save_progress(action: String = "") -> bool:
 	_save_elapsed = 0.0
+	if not action.is_empty(): application.session.spend_world_action(action)
 	if application.session.save_delivery_world(runtime.snapshot()):
 		_last_saved = runtime.snapshot()
 		return true
 	_map_diagnostic("map_save_failed",{"reason":application.session.last_error})
-	runtime.data = _last_saved.duplicate(true)
+	runtime.restore_snapshot(_last_saved)
+	application.session.restore_saved_world_time()
 	stop_moving()
 	reset_runtime(runtime)
 	application.ui._notice(func(): return L10N.text(application.session.last_error))
 	return false
 
 func set_enabled(value: bool) -> void:
+	var was_enabled := input_enabled
 	input_enabled = value
+	# Commit the last partial second before a menu starts its own save transaction.
+	if was_enabled and not value and runtime.snapshot() != _last_saved: save_progress()
 	world_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS if is_visible_in_tree() else SubViewport.UPDATE_DISABLED
 	if not value:
+		if not _breaking_obstacle.is_empty():
+			_destruction_serial+=1
+			runtime.busy=false
+			_map_diagnostic("obstacle_break_cancelled",{"location_id":_breaking_obstacle})
+			_breaking_obstacle=""
+			feedback.emit("石障破坏已取消。")
 		dragging = false
 		application.ui.view.hide_location_hint()
 
@@ -129,13 +144,16 @@ func _arrived(id: String, kind: String) -> void:
 	var object := Catalog.location(id)
 	if object.is_empty(): _map_diagnostic("interaction_rejected",{"location_id":id,"reason":"地点不存在。"}); return
 	if kind=="obstacle":
+		if runtime.hex!=null:
+			await _destroy_hex_obstacle(object)
+			return
 		var before: Dictionary = runtime.snapshot()
 		if not runtime.destroy_obstacle(id):
 			var reason: String = runtime.interaction_error(object)
 			_map_diagnostic("interaction_rejected",{"location_id":id,"reason":reason if not reason.is_empty() else "路障不可破坏或超出有效范围。","owned_count":runtime.party_count})
 			application.ui._notice("ui.cb9081b24ad0")
 			return
-		if not save_progress(): runtime.data = before
+		if not save_progress("clear_obstacle"): runtime.restore_snapshot(before)
 		else: _map_diagnostic("obstacle_destroyed",{"location_id":id})
 		_refresh_objects()
 		return
@@ -155,27 +173,71 @@ func _arrived(id: String, kind: String) -> void:
 	var error: String = runtime.interaction_error(object)
 	if not error.is_empty(): _map_diagnostic("interaction_rejected",{"location_id":id,"reason":error}); application.ui._notice(func(): return L10N.text(error)); return
 	if id not in runtime.data.visited: runtime.data.visited.append(id)
-	if not save_progress(): return
+	if not save_progress("visit"): return
 	if object.get("location_id","")=="summoning_hut":
 		_map_diagnostic("event_routed",{"location_id":id,"event_id":"summon","source":"summoning_hut"})
 		application.ui._open_ritual()
 	else:
 		_map_diagnostic("event_unavailable",{"location_id":id,"reason":"此地点暂无已接入的事件。"})
 		application.ui._modal(str(object.name),func(body):
-			var page: Control = application.ui._text_screen(body,"ui.a7b6d7d13745")
+			var pending: Array=[]
+			if Catalog.is_hex():
+				for event: Dictionary in Catalog.world().events:
+					if event.id==object.get("event_id","") or object.get("event_links",[]).any(func(link): return link.get("event_id")==event.id): pending.append(event)
+			var message := "此地点的事件尚未配置执行流程，暂不开放。" if Catalog.is_hex() else "ui.a7b6d7d13745"
+			var page: Control = application.ui._text_screen(body,message)
+			for event: Dictionary in pending:
+				var button: Button=application.ui._btn(page.get_node("%Commands"),str(event.name)+" · 待接入",func(): pass)
+				button.disabled=true
+				button.tooltip_text=str(event.id)+"：执行图、条件和奖励尚未绑定。"
 			application.ui._btn(page.get_node("%Commands"),"ui.a56e8056bd25",func(): application.ui._close_modal()))
+
+func _destroy_hex_obstacle(object: Dictionary) -> void:
+	if runtime.busy or object.id in runtime.data.destroyed: return
+	runtime.hex.sync(runtime.data,runtime.party_count)
+	if runtime.hex.axial(runtime.player()) not in runtime.hex.obstacle_neighbors(object):
+		feedback.emit("需要先抵达石障相邻的可通行格。")
+		return
+	if not runtime.condition(str(object.get("condition_ref",""))):
+		feedback.emit("需要持有妖兽才能破坏石障。")
+		return
+	_destruction_serial+=1
+	_breaking_obstacle=str(object.id)
+	var serial := _destruction_serial
+	var distance := sqrt(3.0)*float(Catalog.world().hex_grid.cell_width)*0.5*float(object.destruction.get("walk_steps",3))
+	var seconds := distance/float(Catalog.world().travel_animation_speed)
+	runtime.busy=true
+	feedback.emit("正在破坏石障…")
+	_map_diagnostic("obstacle_break_started",{"location_id":object.id,"seconds":seconds,"travel_distance_cost":distance})
+	await get_tree().create_timer(seconds,false).timeout
+	if serial!=_destruction_serial: return
+	runtime.busy=false
+	_breaking_obstacle=""
+	if application.phase!="world" or not input_enabled:
+		_map_diagnostic("obstacle_break_cancelled",{"location_id":object.id})
+		return
+	var before: Dictionary=runtime.snapshot()
+	sync_party()
+	if not runtime.destroy_obstacle(object.id): return
+	application.session.advance_world_travel(distance)
+	if not save_progress(): runtime.restore_snapshot(before)
+	else: _map_diagnostic("obstacle_break_committed",{"location_id":object.id,"game_minutes":distance/float(application.session.data.world_time.travel_speed)*60.0})
+	_refresh_objects()
 
 func roster_error(id: String, kind: String) -> String:
 	var object := Catalog.location(id)
 	var config: Dictionary = object.get("encounter",{}) if kind=="encounter" else object
-	return application.delivery_battle_settings.availability_error(str(config.get("enemy_config_id",object.get("enemy_config_id",""))))
+	return application.get_delivery_battle_settings().availability_error(str(config.get("enemy_config_id",object.get("enemy_config_id",""))))
 
 func open_location(object: Dictionary) -> void:
 	if runtime.interaction_error(object).is_empty() and not application.session.record_task_arrival(str(runtime.data.map_id),str(object.id)):
 		application.ui._notice(application.session.last_error)
 	_map_diagnostic("location_panel_opened",{"location_id":object.id,"roster_error":roster_error(object.id,"clear"),"can_enter_battle":not application.session.monsters("team").is_empty() and roster_error(object.id,"clear").is_empty()})
 	application.ui._modal(str(object.name),func(body):
-		var page: Control = application.ui._text_screen(body,"ui.aaef0121bd42")
+		var message := "ui.aaef0121bd42"
+		if Catalog.is_hex():
+			message="敌方数量：%d\n%s" % [int(object.get("enemy_count",0)),roster_error(object.id,"clear")]
+		var page: Control = application.ui._text_screen(body,message)
 		var button: Button = application.ui._btn(page.get_node("%Commands"),"ui.e62745dce172",func(): begin_battle(object.id,"clear"))
 		button.name = "EnterBattle"
 		var error := roster_error(object.id,"clear")
@@ -195,7 +257,7 @@ func cancel_setup() -> bool:
 	var before: Dictionary = runtime.snapshot()
 	runtime.data.pending_battle_setup = {}
 	if save_progress(): _map_diagnostic("party_setup_cancelled",before.pending_battle_setup); return true
-	runtime.data = before
+	runtime.restore_snapshot(before)
 	return false
 
 func begin_battle(id: String, kind: String) -> bool:
@@ -210,13 +272,13 @@ func begin_battle(id: String, kind: String) -> bool:
 	var ids: Array = application.session.monsters("team").map(func(unit):return unit.id)
 	var request: Dictionary = runtime.begin_battle(id,kind,ids)
 	if request.is_empty():
-		runtime.data = before
+		runtime.restore_snapshot(before)
 		var reason: String = runtime.interaction_error(Catalog.location(id))
 		_map_diagnostic("battle_rejected",{"location_id":id,"kind":kind,"reason":reason if not reason.is_empty() else "运行时拒绝：检查入口路障和战场配置。"})
 		application.ui._notice("ui.afe977112fa3")
 		return false
 	if not application.session.save_delivery_world(runtime.snapshot(),request):
-		runtime.data = before
+		runtime.restore_snapshot(before)
 		runtime.busy = false
 		_map_diagnostic("battle_request_save_failed",{"location_id":id,"reason":application.session.last_error})
 		application.ui._notice(func(): return L10N.text(application.session.last_error))
@@ -237,7 +299,7 @@ func cancel_battle() -> bool:
 		_map_diagnostic("battle_cancelled",{"request_id":snapshot.active_battle.get("request_id",""),"location_id":snapshot.active_battle.get("location_id",active_location_id)})
 		return true
 	session.data = before
-	runtime.data = snapshot
+	runtime.restore_snapshot(snapshot)
 	runtime.busy = true
 	_map_diagnostic("battle_cancel_save_failed",{"reason":session.last_error})
 	return false
@@ -250,7 +312,7 @@ func commit_result(result: Dictionary) -> bool:
 	mapped.request_id = result.battle_id
 	if not runtime.complete_battle(mapped): _map_diagnostic("battle_result_rejected",{"battle_id":result.battle_id}); return false
 	if not session.commit_battle(result,runtime.snapshot()):
-		runtime.data = before
+		runtime.restore_snapshot(before)
 		_map_diagnostic("battle_result_save_failed",{"battle_id":result.battle_id,"reason":session.last_error})
 		return false
 	_last_saved = runtime.snapshot()

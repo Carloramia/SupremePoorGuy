@@ -1,0 +1,85 @@
+[gd_resource type="Resource" script_class="DeliveryBattleSettings" load_steps=41 format=3]
+[ext_resource type="Script" path="res://Scripts/Application/DeliveryBattleSettings.gd" id="script"]
+[ext_resource type="Resource" path="res://Content/Maps/FrontierEditor_20261019/Runtime/EnemyRosters/bandit_clear_team.tres" id="r0"]
+[ext_resource type="Resource" path="res://Content/Maps/FrontierEditor_20261019/Runtime/EnemyRosters/bandit_encounter_team_site_2.tres" id="r1"]
+[ext_resource type="Resource" path="res://Content/Maps/FrontierEditor_20261019/Runtime/EnemyRosters/bandit_encounter_team_site_3.tres" id="r2"]
+[ext_resource type="Resource" path="res://Content/Maps/FrontierEditor_20261019/Runtime/EnemyRosters/spider_clear_team.tres" id="r3"]
+[ext_resource type="Resource" path="res://Content/Maps/FrontierEditor_20261019/Runtime/EnemyRosters/spider_clear_team_site_2.tres" id="r4"]
+[ext_resource type="Resource" path="res://Content/Maps/FrontierEditor_20261019/Runtime/EnemyRosters/tree_clear_team.tres" id="r5"]
+[ext_resource type="Resource" path="res://Content/Maps/FrontierEditor_20261019/Runtime/EnemyRosters/wolf_encounter_team.tres" id="r6"]
+[ext_resource type="Resource" path="res://Content/Maps/FrontierEditor_20261019/Runtime/EnemyRosters/wolf_encounter_team_site_2.tres" id="r7"]
+[ext_resource type="Resource" path="res://Content/Maps/FrontierEditor_20261019/Runtime/EnemyRosters/rat_clear_team.tres" id="r8"]
+[ext_resource type="Resource" path="res://Content/Maps/FrontierEditor_20261019/Runtime/EnemyRosters/tree_clear_team_site_2.tres" id="r9"]
+[ext_resource type="Resource" path="res://Content/Maps/FrontierEditor_20261019/Runtime/EnemyRosters/enemy_giant_gong_beast.tres" id="r10"]
+[ext_resource type="Resource" path="res://Content/Maps/FrontierEditor_20261019/Runtime/EnemyRosters/forest_wolf_encounter_team.tres" id="r11"]
+[ext_resource type="Resource" path="res://Content/Maps/FrontierEditor_20261019/Runtime/EnemyRosters/forest_rat_encounter_team.tres" id="r12"]
+[ext_resource type="Resource" path="res://Content/Maps/FrontierEditor_20261019/Runtime/EnemyRosters/enemy_hex_camp_mv9y5d7s_7.tres" id="r13"]
+[ext_resource type="Resource" path="res://Content/Maps/FrontierEditor_20261019/Runtime/EnemyRosters/enemy_hex_camp_mv9ya347_12.tres" id="r14"]
+[ext_resource type="Resource" path="res://Content/Maps/FrontierEditor_20261019/Runtime/EnemyRosters/enemy_hex_camp_mv9ya5k6_13.tres" id="r15"]
+[ext_resource type="Resource" path="res://Content/Maps/FrontierEditor_20261019/Runtime/EnemyRosters/enemy_hex_camp_mv9ybtii_14.tres" id="r16"]
+[ext_resource type="Resource" path="res://Content/Maps/FrontierEditor_20261019/Runtime/EnemyRosters/enemy_hex_camp_mv9yc4ch_15.tres" id="r17"]
+[ext_resource type="Resource" path="res://Content/Maps/FrontierEditor_20261019/Runtime/EnemyRosters/enemy_hex_camp_mv9yd6wh_16.tres" id="r18"]
+[ext_resource type="Resource" path="res://Content/Maps/FrontierEditor_20261019/Runtime/EnemyRosters/enemy_hex_camp_mv9yd8e1_17.tres" id="r19"]
+[ext_resource type="Resource" path="res://Content/Maps/FrontierEditor_20261019/Runtime/EnemyRosters/enemy_hex_camp_mv9ydaf1_18.tres" id="r20"]
+[ext_resource type="Resource" path="res://Content/Maps/FrontierEditor_20261019/Runtime/EnemyRosters/enemy_hex_camp_mv9yvmyt_20.tres" id="r21"]
+[ext_resource type="Resource" path="res://Content/Maps/FrontierEditor_20261019/Runtime/EnemyRosters/enemy_hex_camp_mv9yvn9m_21.tres" id="r22"]
+[ext_resource type="Resource" path="res://Content/Maps/FrontierEditor_20261019/Runtime/EnemyRosters/enemy_hex_camp_mv9yvocx_22.tres" id="r23"]
+[ext_resource type="Resource" path="res://Content/Maps/FrontierEditor_20261019/Runtime/EnemyRosters/enemy_hex_camp_mv9yvqdc_23.tres" id="r24"]
+[ext_resource type="Resource" path="res://Content/Maps/FrontierEditor_20261019/Runtime/EnemyRosters/enemy_hex_camp_mv9yvuwh_24.tres" id="r25"]
+[ext_resource type="Resource" path="res://Content/Maps/FrontierEditor_20261019/Runtime/EnemyRosters/enemy_hex_camp_mv9yvyxw_25.tres" id="r26"]
+[ext_resource type="Resource" path="res://Content/Maps/FrontierEditor_20261019/Runtime/EnemyRosters/enemy_hex_camp_mv9yvzat_26.tres" id="r27"]
+[ext_resource type="Resource" path="res://Content/Maps/FrontierEditor_20261019/Runtime/EnemyRosters/enemy_hex_camp_mv9yw0bh_27.tres" id="r28"]
+[ext_resource type="Resource" path="res://Content/Maps/FrontierEditor_20261019/Runtime/EnemyRosters/enemy_hex_camp_mv9ywg7w_28.tres" id="r29"]
+[ext_resource type="Resource" path="res://Content/Maps/FrontierEditor_20261019/Runtime/EnemyRosters/enemy_hex_camp_mv9ywimo_29.tres" id="r30"]
+[ext_resource type="Resource" path="res://Content/Maps/FrontierEditor_20261019/Runtime/EnemyRosters/enemy_hex_camp_mv9yxjmq_30.tres" id="r31"]
+[ext_resource type="Resource" path="res://Content/Maps/FrontierEditor_20261019/Runtime/EnemyRosters/enemy_hex_camp_mv9z0rb9_32.tres" id="r32"]
+[ext_resource type="Resource" path="res://Content/Maps/FrontierEditor_20261019/Runtime/EnemyRosters/enemy_hex_camp_mv9z9e3y_35.tres" id="r33"]
+[ext_resource type="Resource" path="res://Content/Maps/FrontierEditor_20261019/Runtime/EnemyRosters/enemy_hex_camp_mv9z9fwg_36.tres" id="r34"]
+[ext_resource type="Resource" path="res://Content/Maps/FrontierEditor_20261019/Runtime/EnemyRosters/enemy_hex_camp_mv9z9jch_37.tres" id="r35"]
+[ext_resource type="Resource" path="res://Content/Maps/FrontierEditor_20261019/Runtime/EnemyRosters/enemy_hex_camp_mv9za92d_38.tres" id="r36"]
+[ext_resource type="Resource" path="res://Content/Maps/FrontierEditor_20261019/Runtime/EnemyRosters/enemy_hex_camp_mv9zabhy_39.tres" id="r37"]
+[ext_resource type="Resource" path="res://Content/Maps/FrontierEditor_20261019/Runtime/EnemyRosters/enemy_grass_sheep_boss.tres" id="r38"]
+[resource]
+script = ExtResource("script")
+unit_scale = 8.0
+enemy_rosters = {
+"bandit_clear_team": ExtResource("r0"),
+"bandit_encounter_team_site_2": ExtResource("r1"),
+"bandit_encounter_team_site_3": ExtResource("r2"),
+"spider_clear_team": ExtResource("r3"),
+"spider_clear_team_site_2": ExtResource("r4"),
+"tree_clear_team": ExtResource("r5"),
+"wolf_encounter_team": ExtResource("r6"),
+"wolf_encounter_team_site_2": ExtResource("r7"),
+"rat_clear_team": ExtResource("r8"),
+"tree_clear_team_site_2": ExtResource("r9"),
+"enemy_giant_gong_beast": ExtResource("r10"),
+"forest_wolf_encounter_team": ExtResource("r11"),
+"forest_rat_encounter_team": ExtResource("r12"),
+"enemy_hex_camp_mv9y5d7s_7": ExtResource("r13"),
+"enemy_hex_camp_mv9ya347_12": ExtResource("r14"),
+"enemy_hex_camp_mv9ya5k6_13": ExtResource("r15"),
+"enemy_hex_camp_mv9ybtii_14": ExtResource("r16"),
+"enemy_hex_camp_mv9yc4ch_15": ExtResource("r17"),
+"enemy_hex_camp_mv9yd6wh_16": ExtResource("r18"),
+"enemy_hex_camp_mv9yd8e1_17": ExtResource("r19"),
+"enemy_hex_camp_mv9ydaf1_18": ExtResource("r20"),
+"enemy_hex_camp_mv9yvmyt_20": ExtResource("r21"),
+"enemy_hex_camp_mv9yvn9m_21": ExtResource("r22"),
+"enemy_hex_camp_mv9yvocx_22": ExtResource("r23"),
+"enemy_hex_camp_mv9yvqdc_23": ExtResource("r24"),
+"enemy_hex_camp_mv9yvuwh_24": ExtResource("r25"),
+"enemy_hex_camp_mv9yvyxw_25": ExtResource("r26"),
+"enemy_hex_camp_mv9yvzat_26": ExtResource("r27"),
+"enemy_hex_camp_mv9yw0bh_27": ExtResource("r28"),
+"enemy_hex_camp_mv9ywg7w_28": ExtResource("r29"),
+"enemy_hex_camp_mv9ywimo_29": ExtResource("r30"),
+"enemy_hex_camp_mv9yxjmq_30": ExtResource("r31"),
+"enemy_hex_camp_mv9z0rb9_32": ExtResource("r32"),
+"enemy_hex_camp_mv9z9e3y_35": ExtResource("r33"),
+"enemy_hex_camp_mv9z9fwg_36": ExtResource("r34"),
+"enemy_hex_camp_mv9z9jch_37": ExtResource("r35"),
+"enemy_hex_camp_mv9za92d_38": ExtResource("r36"),
+"enemy_hex_camp_mv9zabhy_39": ExtResource("r37"),
+"enemy_grass_sheep_boss": ExtResource("r38"),
+}

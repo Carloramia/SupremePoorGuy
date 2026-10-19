@@ -2,6 +2,8 @@ extends Node
 ## Render saved creature visuals without entering any physics or controller nodes into the tree.
 const FACTORY = preload("res://Scripts/Application/CreatureFactory.gd")
 const IMAGE_SIZE := Vector2i(512,384)
+## Projected Head visual bounds should occupy about a quarter of the image.
+const HEAD_AREA_RATIO := 0.25
 var _cache: Dictionary = {}
 var _pending: Dictionary = {}
 var _queue: Array[Dictionary] = []
@@ -48,7 +50,7 @@ func _render_next() -> void:
 func _build_preview(record: Dictionary) -> Dictionary:
 	var model := Node3D.new()
 	model.name = "CreaturePortraitVisuals"
-	var result := {"model":model,"bounds":AABB(),"visuals":0}
+	var result := {"model":model,"bounds":AABB(),"visuals":0,"head_bounds":AABB(),"head_visuals":0}
 	var scene := load(FACTORY.DEFINITIONS[record.definition_id].scene) as PackedScene
 	if scene == null: return result
 	var actor := scene.instantiate()
@@ -69,11 +71,14 @@ func _build_preview(record: Dictionary) -> Dictionary:
 		var pose := Transform3D.IDENTITY
 		var visible := true
 		var is_part := false
+		var is_head := false
 		while current != actor and current != null:
 			if current is Node3D:
 				visible = visible and current.visible
 				pose = current.transform*pose
-			if current is PhysicalBodyPart3D: is_part = true
+			if current is PhysicalBodyPart3D:
+				is_part = true
+				is_head = is_head or PhysicalBodyPart3D.BodyPartTag.Head in current.tags
 			current = current.get_parent()
 		if not visible or not is_part: continue
 		var copy := node.duplicate(0) as GeometryInstance3D
@@ -88,8 +93,23 @@ func _build_preview(record: Dictionary) -> Dictionary:
 		var bounds: AABB = pose*copy.get_aabb()
 		result.bounds = bounds if result.visuals==0 else AABB(result.bounds).merge(bounds)
 		result.visuals += 1
+		if is_head:
+			result.head_bounds = bounds if result.head_visuals==0 else AABB(result.head_bounds).merge(bounds)
+			result.head_visuals += 1
 	actor.free()
 	return result
+
+func _framing(preview: Dictionary) -> Dictionary:
+	var bounds: AABB = preview.bounds
+	var aspect := float(IMAGE_SIZE.x) / IMAGE_SIZE.y
+	var extent := maxf(bounds.size.y, bounds.size.x / aspect) * 1.12
+	var head: AABB = preview.get("head_bounds", AABB())
+	if preview.get("head_visuals", 0) > 0 and head.size.x > 0.0 and head.size.y > 0.0:
+		bounds = head
+		extent = sqrt(head.size.x * head.size.y / (aspect * HEAD_AREA_RATIO))
+		# Extremely elongated heads must still fit inside the frame.
+		extent = maxf(extent, maxf(head.size.y, head.size.x / aspect) * 1.12)
+	return {"center":bounds.get_center(),"extent":maxf(extent, 0.1)}
 
 func _capture(record: Dictionary) -> ImageTexture:
 	var preview := _build_preview(record)
@@ -119,7 +139,9 @@ func _capture(record: Dictionary) -> ImageTexture:
 	light.shadow_enabled = false
 	viewport.add_child(light)
 	var bounds: AABB = preview.bounds
-	var extent := maxf(bounds.size.y,bounds.size.x*float(IMAGE_SIZE.y)/IMAGE_SIZE.x)*1.12
+	var framing := _framing(preview)
+	var extent: float = framing.extent
+	var center: Vector3 = framing.center
 	var distance := maxf(bounds.size.z,1.0)+extent*2.0
 	var camera := Camera3D.new()
 	camera.projection = Camera3D.PROJECTION_ORTHOGONAL
@@ -128,8 +150,8 @@ func _capture(record: Dictionary) -> ImageTexture:
 	camera.near = 0.01
 	camera.far = distance+bounds.size.z+100.0
 	viewport.add_child(camera)
-	camera.position = bounds.get_center()+Vector3(0,0,distance)
-	camera.look_at(bounds.get_center(),Vector3.UP)
+	camera.position = center+Vector3(0,0,distance)
+	camera.look_at(center,Vector3.UP)
 	camera.current = true
 	await RenderingServer.frame_post_draw
 	await RenderingServer.frame_post_draw

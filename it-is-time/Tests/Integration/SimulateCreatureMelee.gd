@@ -50,6 +50,12 @@ func _initialize() -> void:
 	OS.add_logger(capture)
 	call_deferred("run")
 
+func available_species() -> Array: return SPECIES
+func creature_record(species: String) -> Dictionary: return FACTORY.template(species)
+func creature_bounds(record: Dictionary) -> AABB: return FACTORY.local_bounds(record)
+func spawn_creature(record: Dictionary, host: Node3D, at: Vector3, team: int, yaw: float) -> Node3D: return FACTORY.spawn(record,host,at,team,yaw)
+func activate_creature(actor: Node3D) -> void: FACTORY.activate(actor)
+
 func _register_module(actor: Dictionary, node: Node, action: String, wolf: bool = false) -> void:
 	if node == null: return
 	modules.append({"actor": actor, "node": node, "action": action, "wolf": wolf, "current": -1, "final_event": ""})
@@ -107,8 +113,11 @@ func _active(row: Dictionary) -> bool:
 	return bool(row.node.active) if row.wolf else bool(row.node.is_npc_attack_active())
 
 func _phase(row: Dictionary) -> String:
-	if row.wolf or row.action == "snake_lunge_bite": return str(row.node.get("_phase"))
-	return str(row.node.get_script().get_script_constant_map().get("Phase", {}).find_key(row.node.phase))
+	var phase: Variant = row.node.get("_phase")
+	if phase != null: return str(phase)
+	phase = row.node.get("phase")
+	if phase != null: return str(row.node.get_script().get_script_constant_map().get("Phase", {}).find_key(phase))
+	return "charging" if row.node.get("npc_pressed") == true else "swing_or_recovery"
 
 func _target_actor(part: Variant) -> String:
 	if not is_instance_valid(part) or not part is Node: return ""
@@ -187,10 +196,11 @@ func _action_for_source(source: Node) -> int:
 func _on_damage(amount: float, hp: float, source: Node, actor: Dictionary, part: PhysicalBodyPart3D) -> void:
 	if not collecting or amount <= 0.0: return
 	var attacker := _source_actor(source)
-	var index := _action_for_source(source) if is_instance_valid(source) else -1
+	var passive: bool = source is SampleWeapon3D and not source.swing_damage_active
+	var index := _action_for_source(source) if is_instance_valid(source) and not passive else -1
 	var event := {"time": clock, "victim": actor.id, "victim_species": actor.species, "part": str(part.name), "amount": amount,
 		"hp": hp, "source": str(source.name) if is_instance_valid(source) else "none", "attacker": str(attacker.name) if attacker != null else "", "attack_id": index,
-		"friendly": attacker != null and attacker.get_faction_id() == actor.node.get_faction_id()}
+		"friendly": attacker != null and attacker.get_faction_id() == actor.node.get_faction_id(),"passive":passive}
 	damage_events.append(event)
 	if index >= 0:
 		var attack: Dictionary = attacks[index]
@@ -262,10 +272,11 @@ func run() -> void:
 	host.add_child(navigation)
 	await physics_frame
 	await physics_frame
-	var teams: Array = [SPECIES.duplicate(), SPECIES.duplicate()]
+	var population := available_species()
+	var teams: Array = [population.duplicate(), population.duplicate()]
 	if str(options.mode) == "duel":
 		var pair := str(options.get("pair", "wolf,snake")).split(",")
-		assert(pair.size() == 2 and pair[0] in SPECIES and pair[1] in SPECIES)
+		assert(pair.size() == 2 and pair[0] in population and pair[1] in population)
 		teams = [[pair[0]], [pair[1]]]
 	else:
 		teams[0].shuffle()
@@ -273,13 +284,13 @@ func run() -> void:
 	for team: int in 2:
 		for slot: int in teams[team].size():
 			var species: String = teams[team][slot]
-			var record := FACTORY.template(species)
+			var record := creature_record(species)
 			record.merge({"id": "%s_%s_%s" % [species, team, options.seed], "position": "team", "traits": []}, true)
 			var yaw := 0.0 if team == 0 else PI
-			var bounds: AABB = Transform3D(Basis(Vector3.UP, yaw), Vector3.ZERO) * FACTORY.local_bounds(record)
+			var bounds: AABB = Transform3D(Basis(Vector3.UP, yaw), Vector3.ZERO) * creature_bounds(record)
 			var center := Vector3(float(options.separation)*(-0.5 if team == 0 else 0.5), 0.0, (slot - (teams[team].size()-1)*0.5)*18.0)
 			var at := center - Vector3(bounds.get_center().x, bounds.position.y-0.1, bounds.get_center().z)
-			var actor := FACTORY.spawn(record, host, at, team, yaw)
+			var actor := spawn_creature(record, host, at, team, yaw)
 			assert(actor != null)
 			var ai: Node = actor.get_node("NPCStateMachine3D")
 			var row := {"id": str(actor.name), "species": species, "team": team, "node": actor, "ai": ai,
@@ -299,6 +310,9 @@ func run() -> void:
 				"horned_beast":
 					_register_module(row, actor.get_node("CreatureActionController3D"), "foreleg_stomp")
 					_register_module(row, actor.get_node("ChargeAttackController3D"), "ground_charge")
+				_:
+					for attack: Resource in ai.behavior.attacks:
+						_register_module(row,actor.get_node_or_null(attack.receiver_path),str(attack.action_id))
 	await physics_frame
 	await physics_frame
 	node_added.connect(_on_node_added)
@@ -307,7 +321,7 @@ func run() -> void:
 	sampler.process_physics_priority = 100000
 	host.add_child(sampler)
 	collecting = true
-	for row: Dictionary in actors: FACTORY.activate(row.node)
+	for row: Dictionary in actors: activate_creature(row.node)
 	while clock < float(options.seconds):
 		await physics_frame
 	collecting = false
@@ -336,7 +350,7 @@ func run() -> void:
 	file.store_string(JSON.stringify(report, "\t"))
 	file.close()
 	assert(damage_events.all(func(event: Dictionary): return not event.friendly), "Friendly damage violates combat rules")
-	assert(damage_events.all(func(event: Dictionary): return event.attack_id >= 0), "Damage attribution must be complete")
+	assert(damage_events.all(func(event: Dictionary): return event.attack_id >= 0 or event.get("passive",false)), "Active damage attribution must be complete")
 	print("MELEE_RESULT path=", path, " attacks=", attacks.size(), " damage_events=", damage_events.size(), " errors=", report.errors.size(), " wall_seconds=", report.wall_seconds)
 	viewport.queue_free()
 	await process_frame

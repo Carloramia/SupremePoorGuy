@@ -1,6 +1,7 @@
-[gd_resource type="Resource" format=3]
+[gd_resource type="Resource" format=3 uid="uid://dxm1wcarh8msk"]
 
-[ext_resource type="Script" path="res://Scripts/Creatures/CreatureActionData.gd" id="1"]
+[ext_resource type="Script" uid="uid://dvs35n8nwhq2x" path="res://Scripts/Creatures/CreatureActionData.gd" id="1"]
+[ext_resource type="Resource" path="res://Resources/Actions/ForeLegStompShockwave.tres" id="2_stmjj"]
 
 [resource]
 script = ExtResource("1")
@@ -11,3 +12,5 @@ rise_timeout = 2.5
 height_confirmation_ratio = 0.22
 position_gain = 1000.0
 maximum_acceleration = 1000.0
+damage_multiplier = null
+cooldown = 1.0

@@ -45,6 +45,7 @@ func capture(app: Node, state: String) -> void:
 	check(root.get_texture().get_image().save_png(output+"/"+state+"_"+suffix+".png") == OK,"Capture deployment UI: "+state)
 func create_app(delivery: bool) -> Node:
 	var app := preload("res://Scenes/Application/GameRoot.tscn").instantiate()
+	app.use_hex_map_for_new_games = false # This fixture verifies the retained 20261015 map.
 	app.use_delivery_map = delivery
 	app.save_path = output+"/session_"+str(Time.get_ticks_usec())+".json"
 	app.display_settings_path = output+"/display.cfg"

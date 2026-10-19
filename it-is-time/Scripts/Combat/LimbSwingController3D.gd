@@ -20,6 +20,8 @@ const ARM_TAG: int = 2
 @export_range(1.0, 90.0, 1.0) var npc_aim_tolerance_degrees: float = 12.0
 @export_range(0.0, 3.0, 0.01) var npc_aim_confirmation_time: float = 0.1
 @export_range(0.0, 5.0, 0.05) var npc_maximum_aim_wait: float = 1.0
+## Extra time after charging for walking into real strike range; aiming has its own timer.
+@export_range(0.1, 15.0, 0.1) var npc_maximum_charge_approach_wait: float = 5.0
 
 var _states: Array[Dictionary] = []
 var _body_owner_group: Dictionary = {}
@@ -29,6 +31,7 @@ var _npc_group := -1
 var _npc_charge_remaining := 0.0
 var _npc_target: Node3D
 var _npc_requested_charge := 0.0
+var _npc_range_wait_elapsed := 0.0
 var _npc_aim_wait_elapsed := 0.0
 var _npc_aim_stable_elapsed := 0.0
 var _npc_aim_release_reason: StringName = &"charging"
@@ -65,6 +68,7 @@ func _thrust_range(action_id: StringName, target: Node3D) -> Dictionary:
 	var key := str(action_id)+":"+str(target.get_instance_id())
 	if _npc_thrust_cache.has(key): return _npc_thrust_cache[key]
 	var maximum := 0.0
+	var charge_maximum := 0.0
 	var preferred := 0.0
 	var start_reach := 0.0
 	var end_reach := 0.0
@@ -92,12 +96,14 @@ func _thrust_range(action_id: StringName, target: Node3D) -> Dictionary:
 			var radius := 0.0
 			for collision: CollisionShape3D in HIT_PREDICTION.shapes(target):
 				for point: Vector3 in _shape_points(collision.shape): radius = maxf(radius,-(collision.global_transform*point-target.global_position).dot(horizontal))
-			maximum = maxf(maximum,maxf(front[0],maxf(front[1],front[2]))+radius)
+			var member_maximum := maxf(front[0],maxf(front[1],front[2]))+radius
+			maximum = maxf(maximum,member_maximum)
+			charge_maximum = maxf(charge_maximum,member_maximum*state.preset.npc_charge_range_multiplier)
 			preferred = maxf(preferred,lerpf(front[0],front[2],state.preset.npc_preferred_reach_ratio))
 			start_reach = maxf(start_reach,front[0])
 			end_reach = maxf(end_reach,front[2])
 			aim = direction
-	var result := {"maximum":maximum,"preferred":preferred,"preparation_tip_reach":start_reach,"strike_tip_reach":end_reach,"aim_direction":aim}
+	var result := {"maximum":maximum,"charge_maximum":charge_maximum,"preferred":preferred,"preparation_tip_reach":start_reach,"strike_tip_reach":end_reach,"aim_direction":aim}
 	_npc_thrust_cache[key] = result
 	return result
 
@@ -109,7 +115,7 @@ func get_npc_attack_range_diagnostics(action_id: StringName, target: Node3D) -> 
 ## can authorize an attack inside this envelope.
 func get_npc_attack_maximum_range(action_id: StringName, target: Node3D) -> float:
 	refresh_weapon_presets()
-	if uses_dynamic_npc_attack_range(action_id): return float(_thrust_range(action_id,target).get("maximum",0.0))
+	if uses_dynamic_npc_attack_range(action_id): return float(_thrust_range(action_id,target).get("charge_maximum",0.0))
 	if not npc_geometry_attack_range_enabled: return 0.0
 	if _npc_reach_frame != Engine.get_physics_frames():
 		_npc_reach_frame = Engine.get_physics_frames()
@@ -202,6 +208,19 @@ func predict_npc_attack(action_id: StringName, target: Node3D, charge: float, sa
 			if charge < preset.minimum_charge_time: reason = &"charge_too_short"; continue
 			if _uses_weapon_pose(member):
 				var prediction := _predict_weapon_pose(member,target,charge,samples,margin,space,excluded)
+				if not prediction.hit and prediction.reason == &"trajectory_misses" and member.preset.aim_in_3d and member.preset.npc_charge_range_multiplier > 1.0:
+					var profile := _thrust_range(action_id,target)
+					var origin: Node3D = get_parent().get_combat_anchor() if get_parent().has_method("get_combat_anchor") else member.anchor_body
+					if not is_instance_valid(origin): origin = member.anchor_body
+					var distance := (target.global_position-origin.global_position).slide(Vector3.UP).length()
+					if distance > profile.maximum and distance <= profile.charge_maximum:
+						# Validate the thrust at its intended approach position, without enlarging its hitbox.
+						var approach := (target.global_position+HIT_PREDICTION.velocity(target)*charge-origin.global_position).slide(Vector3.UP)
+						approach = approach.normalized()*clampf(approach.length()-profile.preferred,0.0,profile.charge_maximum-profile.preferred)
+						prediction = _predict_weapon_pose(member,target,charge,samples,margin,space,excluded,approach)
+						if prediction.hit:
+							prediction["reason"] = &"predicted_charge_approach_contact"
+							prediction["approach_distance"] = approach.length()
 				if prediction.hit: return prediction
 				reason = prediction.reason
 				continue
@@ -266,6 +285,7 @@ func try_start_npc_attack(action_id: StringName, target: Node3D, charge: float) 
 			_npc_target = target
 			_npc_charge_remaining = maxf(charge,0.0)
 			_npc_requested_charge = _npc_charge_remaining
+			_npc_range_wait_elapsed = 0.0
 			_npc_aim_wait_elapsed = 0.0
 			_npc_aim_stable_elapsed = 0.0
 			_npc_aim_release_reason = &"charging"
@@ -295,9 +315,16 @@ func cancel_npc_attack() -> void:
 	_npc_group = -1
 	_npc_target = null
 	_npc_charge_remaining = 0.0
+	_npc_range_wait_elapsed = 0.0
 	_npc_aim_wait_elapsed = 0.0
 	_npc_aim_stable_elapsed = 0.0
 	_npc_aim_release_reason = &"cancelled"
+
+func allows_npc_attack_movement() -> bool:
+	if _npc_group < 0 or get_group_state(_npc_group) != SwingState.CHARGING: return false
+	for member: Dictionary in _states[_npc_group].members:
+		if int(member.mode) == SwingState.CHARGING and _uses_weapon_pose(member) and member.preset.aim_in_3d and member.preset.npc_charge_range_multiplier > 1.0 and _chain_is_available(member): return true
+	return false
 
 func _npc_should_hold_charge(delta: float) -> bool:
 	if _npc_group < 0 or get_group_state(_npc_group) != SwingState.CHARGING:
@@ -306,6 +333,19 @@ func _npc_should_hold_charge(delta: float) -> bool:
 	if not is_instance_valid(target) or target.is_queued_for_deletion() or (target is PhysicalBodyPart3D and target.is_broken):
 		cancel_npc_attack()
 		return false
+	if allows_npc_attack_movement():
+		var profile := _thrust_range(control_groups[_npc_group].group_name,target)
+		var origin: Node3D = get_parent().get_combat_anchor() if get_parent().has_method("get_combat_anchor") else self
+		if not is_instance_valid(origin): origin = self
+		var distance := (target.global_position-origin.global_position).slide(Vector3.UP).length()
+		if distance > profile.maximum:
+			if _npc_charge_remaining <= 0.0: _npc_range_wait_elapsed += delta
+			if _npc_range_wait_elapsed >= npc_maximum_charge_approach_wait:
+				cancel_npc_attack()
+				_npc_aim_release_reason = &"approach_timeout"
+				if diagnostic_logging: print("[npc_swing_aim] character=%s reason=approach_timeout distance=%.3f strike_maximum=%.3f" % [get_parent().name,distance,profile.maximum])
+				return false
+			return true
 	var aligned := true
 	if npc_wait_for_aim and not _planar_mode_active():
 		for member: Dictionary in _states[_npc_group].members:
@@ -336,7 +376,7 @@ func _npc_should_hold_charge(delta: float) -> bool:
 	else:
 		return true
 	if diagnostic_logging:
-		print("[npc_swing_aim] character=%s target=%s reason=%s extra_wait=%.3f charge=%.3f" % [get_parent().name, target.name, _npc_aim_release_reason, _npc_aim_wait_elapsed, _npc_requested_charge])
+		print("[npc_swing_aim] character=%s target=%s reason=%s extra_wait=%.3f range_wait=%.3f charge=%.3f" % [get_parent().name, target.name, _npc_aim_release_reason, _npc_aim_wait_elapsed, _npc_range_wait_elapsed, _npc_requested_charge])
 	return false
 
 func _ready() -> void:
@@ -591,13 +631,18 @@ func _weapon_pose_direction(state: Dictionary, target_position: Variant = null) 
 	direction = direction.normalized() if state.preset is WeaponArmAttackPreset and state.preset.aim_in_3d else direction.slide(up).normalized()
 	return anchor.global_basis.x.normalized() if direction.is_zero_approx() else direction
 
-func _apply_weapon_pose(state: Dictionary, progress: float, delta: float, power: float = 1.0) -> void:
+func _apply_weapon_pose(state: Dictionary, progress: float, delta: float, power: float = 1.0, preparing: bool = false) -> void:
 	var targets := WEAPON_POSE.poses(state,state.preset,state.pose_direction,-_get_gravity_direction(state.body),progress)
-	WEAPON_POSE.apply(state,state.preset,targets,delta,power)
+	WEAPON_POSE.apply(state,state.preset,targets,delta,power,preparing)
+	if diagnostic_logging and state.has("hand_drive_diagnostics"):
+		state["hand_log_elapsed"] = float(state.get("hand_log_elapsed",0.0))+delta
+		if state.hand_log_elapsed >= 0.1:
+			state.hand_log_elapsed = 0.0
+			print("[spear_hand_drive] character=%s state=%d data=%s" % [get_parent().name,state.mode,state.hand_drive_diagnostics])
 
-func _predict_weapon_pose(state: Dictionary, target: Node3D, charge: float, samples: int, margin: float, space: PhysicsDirectSpaceState3D, excluded: Array[RID]) -> Dictionary:
+func _predict_weapon_pose(state: Dictionary, target: Node3D, charge: float, samples: int, margin: float, space: PhysicsDirectSpaceState3D, excluded: Array[RID], approach: Vector3 = Vector3.ZERO) -> Dictionary:
 	var preset := state.preset as WeaponArmAttackPreset
-	var direction := _weapon_pose_direction(state,target.global_position+HIT_PREDICTION.velocity(target)*charge)
+	var direction := _weapon_pose_direction(state,target.global_position+HIT_PREDICTION.velocity(target)*charge-approach)
 	var reason := &"trajectory_misses"
 	for sample: int in samples+1:
 		var progress := float(sample)/samples
@@ -608,7 +653,8 @@ func _predict_weapon_pose(state: Dictionary, target: Node3D, charge: float, samp
 			for collision: CollisionShape3D in HIT_PREDICTION.shapes(body):
 				if not collision.has_meta(&"equipped_item") or collision.get_meta(&"equipped_item") != state.weapon: continue
 				var pose: Transform3D = poses[index]*(body.global_transform.affine_inverse()*collision.global_transform)
-				if not state.anchor_body.freeze: pose.origin += state.anchor_body.linear_velocity*time
+				if not approach.is_zero_approx(): pose.origin += approach
+				elif not state.anchor_body.freeze: pose.origin += state.anchor_body.linear_velocity*time
 				if HIT_PREDICTION.terrain_blocked(space,collision.shape,pose,excluded):
 					return {"hit":false,"reason":&"terrain_blocks_thrust"}
 				if HIT_PREDICTION.target_hit(space,collision.shape,pose,target,time,margin):
@@ -748,7 +794,7 @@ func _process_member(group_index: int, member_state: Dictionary, pressed: bool, 
 				_release_member(group_index, member_state)
 			elif _uses_weapon_pose(member_state):
 				member_state.pose_direction = _weapon_pose_direction(member_state)
-				_apply_weapon_pose(member_state,0.0,delta)
+				_apply_weapon_pose(member_state,0.0,delta,1.0,true)
 			else:
 				_apply_charge_target_aim(group_index, member_state, delta)
 		SwingState.SWINGING, SwingState.FOLLOW_THROUGH, SwingState.RECOVERING:
@@ -840,6 +886,9 @@ func _apply_recovery_torque(state: Dictionary, delta: float = 1.0/60.0) -> void:
 	var body := state.body as PhysicalBodyPart3D
 	var anchor := state.anchor_body as PhysicalBodyPart3D
 	if _uses_weapon_pose(state) and is_instance_valid(anchor):
+		if WEAPON_POSE.uses_hand_drive(state,state.preset):
+			WEAPON_POSE.apply(state,state.preset,WEAPON_POSE.rest_poses(state),delta,0.5)
+			return
 		var targets: Array[Transform3D] = []
 		for link: Dictionary in state.pose_chain:
 			targets.append(Transform3D(anchor.global_basis*Basis(link.rest_basis),link.body.global_position))
@@ -1056,6 +1105,13 @@ func _begin_member(group_index: int, member_state: Dictionary) -> bool:
 		if is_instance_valid(inventory): inventory.suspend_idle_grip_pose()
 	_body_owner_group[body] = group_index
 	var preset := member_state.preset as LimbSwingPresetBase
+	# A new charge may start while another Arm is still recovering from the previous action.
+	if not _states[group_index].members.any(func(member: Dictionary): return member.mode == SwingState.CHARGING):
+		_states[group_index]["damage_context"] = get_node("/root/DamageService").create_attack_context(get_parent())
+	member_state["damage_context"] = _states[group_index].get("damage_context",{}).duplicate()
+	if not member_state.damage_context.is_empty():
+		member_state.damage_context.action_multiplier = preset.damage_multiplier
+		member_state.damage_context.multiplier = preset.damage_multiplier * float(member_state.damage_context.rune_multiplier)
 	member_state.mode = SwingState.CHARGING
 	member_state.charge_time = 0.0
 	member_state.swing_torque = 0.0
@@ -1256,7 +1312,9 @@ func _begin_damage_swing(state: Dictionary) -> void:
 	_active_damage_swings += 1
 	var weapon := _equipped_weapon_for(state.get("effector",state.body))
 	state["damage_weapon"] = weapon
-	if weapon != null: weapon.begin_damage_swing()
+	if weapon != null:
+		weapon.damage_multiplier = state.preset.damage_multiplier
+		weapon.begin_damage_swing(state.get("damage_context",{}))
 
 func _end_damage_swing(state: Dictionary) -> void:
 	_active_damage_swings = maxi(_active_damage_swings - 1, 0)

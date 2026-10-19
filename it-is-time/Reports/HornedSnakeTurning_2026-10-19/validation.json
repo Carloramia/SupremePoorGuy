@@ -1,0 +1,121 @@
+{
+  "date": "2026-10-19",
+  "scope": [
+    "HornedBeast stable turn admission",
+    "Snake independent raised turn and world-path facing markers",
+    "Turned bite world footprint and kinematic reference"
+  ],
+  "passed": true,
+  "runs": [
+    {
+      "test": "ValidateFreedCreatureJoints3D",
+      "exit_code": 0,
+      "errors": [],
+      "markers": [
+        "FREED_CREATURE_JOINTS_PASSED checks=333"
+      ],
+      "passed": true,
+      "log": "Verified_ValidateFreedCreatureJoints3D.log"
+    },
+    {
+      "test": "ValidateGroundCharge",
+      "exit_code": 0,
+      "errors": [],
+      "markers": [
+        "PASS: navigation gate without height limit, ground query box without solver collisions, locked +/-X with live target X, damage/once-per-part, braking and safety cancellation."
+      ],
+      "passed": true,
+      "log": "Verified_ValidateGroundCharge.log"
+    },
+    {
+      "test": "ValidateHornedTurnControl3D",
+      "exit_code": 0,
+      "errors": [],
+      "markers": [
+        "HORNED_TURN_CONTROL_PASSED"
+      ],
+      "passed": true,
+      "log": "Verified_ValidateHornedTurnControl3D.log"
+    },
+    {
+      "test": "ValidateSnakeAttackPathResume3D",
+      "exit_code": 0,
+      "errors": [],
+      "markers": [
+        "SNAKE_ATTACK_PATH_RESUME_PASSED"
+      ],
+      "passed": true,
+      "log": "Verified_ValidateSnakeAttackPathResume3D.log"
+    },
+    {
+      "test": "ValidateSnakeBrokenConnections3D",
+      "exit_code": 0,
+      "errors": [],
+      "markers": [
+        "SNAKE_BROKEN_CONNECTIONS_PASSED"
+      ],
+      "passed": true,
+      "log": "Verified_ValidateSnakeBrokenConnections3D.log"
+    },
+    {
+      "test": "ValidateSnakeConnectionRecovery3D",
+      "exit_code": 0,
+      "errors": [],
+      "markers": [
+        "SNAKE_CONNECTION_RECOVERY_PASSED"
+      ],
+      "passed": true,
+      "log": "Verified_ValidateSnakeConnectionRecovery3D.log"
+    },
+    {
+      "test": "ValidateSnakeGroundPath3D",
+      "exit_code": 0,
+      "errors": [],
+      "markers": [
+        "SNAKE_WORLD_ROUTE_VALIDATION_PASSED"
+      ],
+      "passed": true,
+      "log": "Verified_ValidateSnakeGroundPath3D.log"
+    },
+    {
+      "test": "ValidateSnakeIndependentTurning3D",
+      "exit_code": 0,
+      "errors": [],
+      "markers": [
+        "SNAKE_INDEPENDENT_TURNING_PASSED checks=139"
+      ],
+      "passed": true,
+      "log": "Verified_ValidateSnakeIndependentTurning3D.log"
+    },
+    {
+      "test": "ValidateSnakeSmoothCorners3D",
+      "exit_code": 0,
+      "errors": [],
+      "markers": [
+        "SNAKE_SMOOTH_CORNERS_VALIDATION_PASSED"
+      ],
+      "passed": true,
+      "log": "Verified_ValidateSnakeSmoothCorners3D.log"
+    },
+    {
+      "test": "ValidateSnakeTurnedBite3D",
+      "exit_code": 0,
+      "errors": [],
+      "markers": [
+        "SNAKE_TURNED_BITE_PASSED"
+      ],
+      "passed": true,
+      "log": "Verified_ValidateSnakeTurnedBite3D.log"
+    }
+  ],
+  "limits": [
+    "Headless fixed-step component and physical regression, not long mixed-combat FPS validation",
+    "Physical connections retain reaction forces; world poses are force targets, not teleports or absolute locks"
+  ],
+  "observations": {
+    "independent_turn_checks": 139,
+    "freed_joint_checks": 333,
+    "turned_bite_damage": 40.0,
+    "turned_bite_maximum_ground_drift": 0.16064482927322
+  }
+}

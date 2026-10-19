@@ -2808,7 +2808,8 @@ func get_generated_movement_diagnostics() -> Dictionary:
 		if is_leg_grounded(foot): support_count += 1
 		var required_torques: Array[float] = []
 		var torque_limits: Array[float] = []
-		for joint: Generic6DOFJoint3D in chain.get("joints", []):
+		for joint: Variant in chain.get("joints", []):
+			if not is_instance_valid(joint) or joint.is_queued_for_deletion(): continue
 			var load: Vector3 = _stance_joint_loads.get(joint, Vector3.ZERO)
 			required_torques.append(load.length())
 			torque_limits.append(minf(maximum_stance_torque, maxf(minimum_stance_torque, load.length() * stance_load_safety_factor + stance_dynamic_torque_reserve)))
@@ -3489,6 +3490,9 @@ func _update_support_foot_lock(leg: RigidBody3D, normal: Vector3) -> void:
 
 func _set_touchdown_pin_slack(leg: RigidBody3D, slack: float) -> void:
 	if not _support_pins.has(leg): return
+	if not is_instance_valid(_support_pins[leg].joint) or _support_pins[leg].joint.is_queued_for_deletion():
+		_release_support_pin(leg)
+		return
 	var pin: Generic6DOFJoint3D = _support_pins[leg].joint
 	for axis: String in ["x","y","z"]:
 		pin.call("set_param_"+axis,Generic6DOFJoint3D.PARAM_LINEAR_LOWER_LIMIT,-slack)

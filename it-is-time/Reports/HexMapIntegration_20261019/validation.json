@@ -1,0 +1,148 @@
+{
+  "date": "2026-10-19",
+  "status": "passed",
+  "runtime_activation": true,
+  "project": "D:/GameJamWorkspace/ItIsTime/it-is-time",
+  "engine": "Godot 4.7.2 stable Windows",
+  "new_game_map_version": "20261019",
+  "legacy_save_policy": "retain original backend and version",
+  "real_player_save_modified": false,
+  "content": {
+    "status": "compiled",
+    "runtime_activation": true,
+    "version": "20261019",
+    "battle_maps": 41,
+    "enabled_camps": 31,
+    "blocked_camps": 8,
+    "roster_errors": {
+      "wolf_encounter_team": "此战场缺少已绑定的生物：dog",
+      "rat_clear_team": "此战场缺少已绑定的生物：rat",
+      "enemy_giant_gong_beast": "此战场缺少已绑定的生物：gong_beast",
+      "forest_wolf_encounter_team": "此战场缺少已绑定的生物：rat",
+      "forest_rat_encounter_team": "此战场缺少已绑定的生物：rat",
+      "enemy_hex_camp_mv9yvmyt_20": "此战场缺少已绑定的生物：rat",
+      "enemy_hex_camp_mv9z0rb9_32": "此战场缺少已绑定的生物：mineral_bird",
+      "enemy_grass_sheep_boss": "此战场缺少已绑定的生物：dragonfang_archer、sheep"
+    },
+    "paper_assets": 50,
+    "hd_tiles": 48,
+    "default_for_new_games": true,
+    "legacy_saves": "keep_20261015"
+  },
+  "unbound_battle_effects_disabled": 40,
+  "godot_tests": [
+    {
+      "script": "ValidateHexWorldIntegration.gd",
+      "exit_code": 0,
+      "result": "passed",
+      "log": "integration_console.log",
+      "log_sha256": "c5db78b9263ca9c4e6e0446da6c3a686bc14a694a8624afe7452dba35fbcf6a5",
+      "cases_or_checks": 15150
+    },
+    {
+      "script": "ValidateHexWorldApplication.gd",
+      "exit_code": 0,
+      "result": "passed",
+      "log": "application_console.log",
+      "log_sha256": "911af4dbde50aa00a36e8dfdb9a73c53901d5ac1a4fab834b823231f91a5c8a0",
+      "cases_or_checks": 25
+    },
+    {
+      "script": "ValidateHexWorldApplication.gd --capture (OpenGL)",
+      "exit_code": 0,
+      "result": "passed",
+      "log": "graphical_console.log",
+      "log_sha256": "baaf4a659fbf3d520e6700323d7dae24d5dcfd3329d7ffd1ccca94c626f3fe75",
+      "cases_or_checks": 28
+    },
+    {
+      "script": "ValidateHexBattleDeployment.gd",
+      "exit_code": 0,
+      "result": "passed",
+      "log": "deployment_console.log",
+      "log_sha256": "17dabcd9c161e7beee778713c1d32407c19ee83a6603d99a13a4ce44ef40b543",
+      "cases_or_checks": 31
+    },
+    {
+      "script": "ValidateHexStoneActions.gd",
+      "exit_code": 0,
+      "result": "passed",
+      "log": "stone_console.log",
+      "log_sha256": "a4f5c936b911d5bd326ed23e149aff6ab0ee87588139b33f035f808fdd940348",
+      "cases_or_checks": 10
+    },
+    {
+      "script": "ValidateHexLegacySelection.gd",
+      "exit_code": 0,
+      "result": "passed",
+      "log": "legacy_selection_console.log",
+      "log_sha256": "d5d4bc3010ee491dbfc6e759c31b5d642f0dec1c08ce71dd2f175eb27b7dceac",
+      "cases_or_checks": 3
+    },
+    {
+      "script": "ValidateDeliverySaveAndEffects.gd",
+      "exit_code": 0,
+      "result": "passed",
+      "log": "legacy_save_console.log",
+      "log_sha256": "b869d9476aad090e19e3d8f0b0bf4aae8721cf1794a138c60d7b018fd1eeff87"
+    },
+    {
+      "script": "ValidateDeliveryApplication.gd",
+      "exit_code": 0,
+      "result": "passed",
+      "log": "legacy_application_console.log",
+      "log_sha256": "bfb1e98029f59e311f3994f7c0ea9fc7600a517cf0a16e66fc12ec42f1d9f85e"
+    },
+    {
+      "script": "ValidateHexMapHandoff.gd",
+      "exit_code": 0,
+      "result": "passed",
+      "log": "handoff_console.log",
+      "log_sha256": "bd300c3e5186ec368648d30957c4c8cecb6c86d9d70545cdec18386a7797886a",
+      "cases_or_checks": 2845
+    }
+  ],
+  "python_rule_tests": {
+    "tests": 6,
+    "failures": 0,
+    "exit_code": 0
+  },
+  "resource_verification": {
+    "status": "passed",
+    "runtime_activation": true,
+    "copied_files": 2246,
+    "unique_map_asset_files": 2224,
+    "asset_uri_aliases": 2642,
+    "raster_images_verified": 863,
+    "svg_files_verified": 1360,
+    "derived_json_files": 43,
+    "resolved_reference_occurrences": 105486,
+    "cells": 10877,
+    "sites": 631,
+    "battles": 41,
+    "hd_tiles": 48,
+    "protected_runtime_files_unchanged": 17,
+    "subsequently_adapted_files": [
+      "Modules/FrontierDelivery/Scripts/Map/MapCatalog.gd"
+    ],
+    "runtime_validation_report": "Reports/HexMapIntegration_20261019/validation.json"
+  },
+  "screenshots": [
+    "world_spawn.png",
+    "world_overview.png",
+    "battle_deployment.png"
+  ],
+  "environment_notes": [
+    "Graphical validation used OpenGL compatibility. The sandbox denied shader cache writes to user://; rendering and all 28 checks completed. See graphical_stderr.log."
+  ],
+  "not_validated": [
+    "Fresh Windows executable/PCK export",
+    "Full battles on all 41 maps or long-duration mixed-species stress tests",
+    "Execution of unconfigured story event graphs or binding missing species"
+  ],
+  "historical_logs": [
+    "import.log is the interrupted first import before ignoring the original asset library. Use import_runtime logs for the completed import.",
+    "legacy_selection_before.log intentionally reproduces the old backend-selection bug. Use legacy_selection.log for the fix."
+  ],
+  "implementation_record": "Docs/Systems/WorldMapUI/新版六边形地图接入_2026-10-19.md"
+}

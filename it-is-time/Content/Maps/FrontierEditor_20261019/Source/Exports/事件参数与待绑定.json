@@ -1,0 +1,1344 @@
+[
+  {
+    "id": "QST_MAIN_001_001",
+    "number": 1,
+    "name": "火速任命",
+    "auxiliary": false,
+    "publish_status": "pending_binding",
+    "runtime_bindings": {
+      "location": {
+        "icon_id": "layout_summoning_hut",
+        "position": [
+          3220,
+          11355
+        ],
+        "entry_role": "opening"
+      },
+      "trigger_policy": {
+        "type": "new_game_only",
+        "once_per_save": true
+      },
+      "flow_source": {
+        "document": "UI跳转原型/事件/事件总表.md",
+        "sha256": "988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5",
+        "event_number": 1
+      },
+      "parameters": {
+        "special_order_quantity": 1
+      },
+      "parameter_specs": {
+        "special_order_quantity": {
+          "label": "国王特令数量",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        }
+      }
+    },
+    "unresolved": "开局触发点；特令物品ID及功能；结束确认方式",
+    "execution_graph": null
+  },
+  {
+    "id": "QST_GRASS_002",
+    "number": 2,
+    "name": "小树守卫",
+    "auxiliary": false,
+    "publish_status": "pending_binding",
+    "runtime_bindings": {
+      "flow_source": {
+        "document": "UI跳转原型/事件/事件总表.md",
+        "sha256": "988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5",
+        "event_number": 2
+      },
+      "parameters": {
+        "minimum_summons": 1,
+        "minimum_party_size": 1,
+        "magic_reward": null,
+        "enemy_count": 1,
+        "enemy_health_multiplier": null,
+        "enemy_attack_multiplier": null
+      },
+      "parameter_specs": {
+        "minimum_summons": {
+          "label": "首次召唤成功数量",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        },
+        "minimum_party_size": {
+          "label": "最低出战数量",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        },
+        "magic_reward": {
+          "label": "胜利魔力奖励",
+          "type": "number",
+          "unit": "魔力",
+          "min": 0,
+          "allow_unconfigured": true
+        },
+        "enemy_count": {
+          "label": "敌军数量",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        },
+        "enemy_health_multiplier": {
+          "label": "敌军生命调整倍率",
+          "type": "number",
+          "unit": "倍",
+          "min": 0.01,
+          "allow_unconfigured": true
+        },
+        "enemy_attack_multiplier": {
+          "label": "敌军攻击调整倍率",
+          "type": "number",
+          "unit": "倍",
+          "min": 0.01,
+          "allow_unconfigured": true
+        }
+      }
+    },
+    "unresolved": "开战确认还是自动；卡洛德敌军配置；战后文本与奖励",
+    "execution_graph": null
+  },
+  {
+    "id": "QST_SIDE_001_001",
+    "number": 3,
+    "name": "图书馆开门日",
+    "auxiliary": false,
+    "publish_status": "pending_binding",
+    "runtime_bindings": {
+      "flow_source": {
+        "document": "UI跳转原型/事件/事件总表.md",
+        "sha256": "988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5",
+        "event_number": 3
+      },
+      "parameters": {
+        "private_money_magic": null,
+        "rune_unlock_count": 3
+      },
+      "parameter_specs": {
+        "private_money_magic": {
+          "label": "罗瓦援助魔力",
+          "type": "number",
+          "unit": "魔力",
+          "min": 0,
+          "allow_unconfigured": true
+        },
+        "rune_unlock_count": {
+          "label": "基础符文解锁种类",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        }
+      }
+    },
+    "unresolved": "3枚基础符文为本轮配置选择，见符文表；私房钱资源/数量；常驻入口启用条件",
+    "execution_graph": null
+  },
+  {
+    "id": "QST_SIDE_002_001",
+    "number": 4,
+    "name": "防卫预算",
+    "auxiliary": false,
+    "publish_status": "pending_binding",
+    "runtime_bindings": {
+      "flow_source": {
+        "document": "UI跳转原型/事件/事件总表.md",
+        "sha256": "988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5",
+        "event_number": 4
+      },
+      "parameters": {
+        "required_battle_wins": 1,
+        "relic_quantity": 1,
+        "enemy_count": null,
+        "enemy_health_multiplier": null,
+        "enemy_attack_multiplier": null
+      },
+      "parameter_specs": {
+        "required_battle_wins": {
+          "label": "指定清剿胜利次数",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        },
+        "relic_quantity": {
+          "label": "古老奇物数量",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        },
+        "enemy_count": {
+          "label": "清剿敌军数量",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        },
+        "enemy_health_multiplier": {
+          "label": "敌军生命调整倍率",
+          "type": "number",
+          "unit": "倍",
+          "min": 0.01,
+          "allow_unconfigured": true
+        },
+        "enemy_attack_multiplier": {
+          "label": "敌军攻击调整倍率",
+          "type": "number",
+          "unit": "倍",
+          "min": 0.01,
+          "allow_unconfigured": true
+        }
+      }
+    },
+    "unresolved": "清剿目标、地点和数量；关联战斗ID；奇物ID；回访入口",
+    "execution_graph": null
+  },
+  {
+    "id": "QST_GRASS_005",
+    "number": 5,
+    "name": "浑浊的大地",
+    "auxiliary": false,
+    "publish_status": "pending_binding",
+    "runtime_bindings": {
+      "location": {
+        "icon_id": "event_shepherd",
+        "position": [
+          12650,
+          12600
+        ],
+        "entry_role": ""
+      },
+      "flow_source": {
+        "document": "UI跳转原型/事件/事件总表.md",
+        "sha256": "988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5",
+        "event_number": 5
+      },
+      "parameters": {},
+      "parameter_specs": {}
+    },
+    "unresolved": "地图位置；结束按钮；是否写入东南线索任务",
+    "execution_graph": null
+  },
+  {
+    "id": "QST_GRASS_006",
+    "number": 6,
+    "name": "狼来了",
+    "auxiliary": false,
+    "publish_status": "pending_binding",
+    "runtime_bindings": {
+      "location": {
+        "icon_id": "event_stone_tower",
+        "position": [
+          8700,
+          12600
+        ],
+        "entry_role": ""
+      },
+      "flow_source": {
+        "document": "UI跳转原型/事件/事件总表.md",
+        "sha256": "988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5",
+        "event_number": 6
+      },
+      "parameters": {
+        "pickup_quantity": 1,
+        "enemy_count": null,
+        "extra_magic_reward": null,
+        "enemy_health_multiplier": null,
+        "enemy_attack_multiplier": null
+      },
+      "parameter_specs": {
+        "pickup_quantity": {
+          "label": "神秘物品拾取数量",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        },
+        "enemy_count": {
+          "label": "狼群数量",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        },
+        "extra_magic_reward": {
+          "label": "额外战斗魔力奖励",
+          "type": "number",
+          "unit": "魔力",
+          "min": 0,
+          "allow_unconfigured": true
+        },
+        "enemy_health_multiplier": {
+          "label": "敌军生命调整倍率",
+          "type": "number",
+          "unit": "倍",
+          "min": 0.01,
+          "allow_unconfigured": true
+        },
+        "enemy_attack_multiplier": {
+          "label": "敌军攻击调整倍率",
+          "type": "number",
+          "unit": "倍",
+          "min": 0.01,
+          "allow_unconfigured": true
+        }
+      }
+    },
+    "unresolved": "物品内容/正式ID暂搁置，不填默认物品；甲狼/草狼组成、数量；战后文本；失败后事件状态",
+    "execution_graph": null
+  },
+  {
+    "id": "QST_GRASS_007",
+    "number": 7,
+    "name": "年迈的驴子",
+    "auxiliary": false,
+    "publish_status": "pending_binding",
+    "runtime_bindings": {
+      "flow_source": {
+        "document": "UI跳转原型/事件/事件总表.md",
+        "sha256": "988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5",
+        "event_number": 7
+      },
+      "parameters": {
+        "relic_quantity": 2
+      },
+      "parameter_specs": {
+        "relic_quantity": {
+          "label": "归还后奇物数量",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        }
+      },
+      "locations": [
+        {
+          "icon_id": "event_donkey",
+          "position": [
+            7337.5,
+            10479.314464356496
+          ],
+          "entry_role": "donkey"
+        },
+        {
+          "icon_id": "event_donkey_merchant",
+          "position": [
+            7720,
+            10258.477986391465
+          ],
+          "entry_role": "merchant"
+        }
+      ],
+      "location": {
+        "icon_id": "event_donkey",
+        "position": [
+          7337.5,
+          10479.314464356496
+        ],
+        "entry_role": "donkey"
+      }
+    },
+    "unresolved": "两节点位置与交互ID；两件奇物具体内容；共用归还对话结束与发奖回执；不做实际护送",
+    "execution_graph": null
+  },
+  {
+    "id": "QST_GRASS_008",
+    "number": 8,
+    "name": "超大型巨人",
+    "auxiliary": false,
+    "publish_status": "pending_binding",
+    "runtime_bindings": {
+      "location": {
+        "icon_id": "layout_forest_wolf_den_001",
+        "position": [
+          4468.75,
+          2197.9465406678023
+        ],
+        "entry_role": "giant_beast"
+      },
+      "flow_source": {
+        "document": "UI跳转原型/事件/事件总表.md",
+        "sha256": "988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5",
+        "event_number": 8
+      },
+      "parameters": {
+        "enemy_size_multiplier": 3,
+        "enemy_count": 1,
+        "relic_quantity": 1,
+        "enemy_health_multiplier": null,
+        "enemy_attack_multiplier": null
+      },
+      "parameter_specs": {
+        "enemy_size_multiplier": {
+          "label": "拱兽体型倍率",
+          "type": "number",
+          "unit": "倍",
+          "min": 0.01,
+          "allow_unconfigured": true
+        },
+        "enemy_count": {
+          "label": "精英拱兽数量",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        },
+        "relic_quantity": {
+          "label": "奇物数量",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        },
+        "enemy_health_multiplier": {
+          "label": "敌军生命调整倍率",
+          "type": "number",
+          "unit": "倍",
+          "min": 0.01,
+          "allow_unconfigured": true
+        },
+        "enemy_attack_multiplier": {
+          "label": "敌军攻击调整倍率",
+          "type": "number",
+          "unit": "倍",
+          "min": 0.01,
+          "allow_unconfigured": true
+        }
+      }
+    },
+    "unresolved": "三倍大拱兽的实际敌军预设；战后对白；奇物ID/池",
+    "execution_graph": null
+  },
+  {
+    "id": "QST_GRASS_009",
+    "number": 9,
+    "name": "不对名单",
+    "auxiliary": false,
+    "publish_status": "pending_binding",
+    "runtime_bindings": {
+      "flow_source": {
+        "document": "UI跳转原型/事件/事件总表.md",
+        "sha256": "988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5",
+        "event_number": 9
+      },
+      "parameters": {
+        "magic_reward": null
+      },
+      "parameter_specs": {
+        "magic_reward": {
+          "label": "阅读领取魔力",
+          "type": "number",
+          "unit": "魔力",
+          "min": 0,
+          "allow_unconfigured": true
+        }
+      },
+      "locations": [
+        {
+          "icon_id": "event_abandoned_cart",
+          "position": [
+            9441.25,
+            12798.097482989331
+          ],
+          "entry_role": "cart"
+        }
+      ],
+      "location": {
+        "icon_id": "event_abandoned_cart",
+        "position": [
+          9441.25,
+          12798.097482989331
+        ],
+        "entry_role": "cart"
+      }
+    },
+    "unresolved": "魔力数量；纸条结束/领取按钮；地点ID",
+    "execution_graph": null
+  },
+  {
+    "id": "QST_GRASS_010",
+    "number": 10,
+    "name": "甲壳圣堂",
+    "auxiliary": false,
+    "publish_status": "pending_binding",
+    "runtime_bindings": {
+      "flow_source": {
+        "document": "UI跳转原型/事件/事件总表.md",
+        "sha256": "988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5",
+        "event_number": 10
+      },
+      "parameters": {
+        "attack_threshold": null,
+        "magic_reward": null,
+        "relic_quantity": 1,
+        "action_magic_cost": null
+      },
+      "parameter_specs": {
+        "attack_threshold": {
+          "label": "单只攻击力阈值",
+          "type": "number",
+          "unit": "正式攻击数值",
+          "min": 0,
+          "allow_unconfigured": true
+        },
+        "magic_reward": {
+          "label": "魔力奖励",
+          "type": "number",
+          "unit": "魔力",
+          "min": 0,
+          "allow_unconfigured": true
+        },
+        "relic_quantity": {
+          "label": "特别甲片数量",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        },
+        "action_magic_cost": {
+          "label": "出击魔力成本 待确认是否需要",
+          "type": "number",
+          "unit": "魔力",
+          "min": 0,
+          "allow_unconfigured": true
+        }
+      }
+    },
+    "unresolved": "攻击阈值与正式攻击字段口径；读取仓库和出战的持有怪物快照；是否有出击成本；奖励数值",
+    "execution_graph": null
+  },
+  {
+    "id": "QST_GRASS_011",
+    "number": 11,
+    "name": "废弃矿井",
+    "auxiliary": false,
+    "publish_status": "pending_binding",
+    "runtime_bindings": {
+      "flow_source": {
+        "document": "UI跳转原型/事件/事件总表.md",
+        "sha256": "988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5",
+        "event_number": 11
+      },
+      "parameters": {
+        "maximum_large_party_members": 0,
+        "minimum_party_size": 1,
+        "enemy_count": null,
+        "rune_unlock_count": null,
+        "enemy_health_multiplier": null,
+        "enemy_attack_multiplier": null
+      },
+      "parameter_specs": {
+        "maximum_large_party_members": {
+          "label": "可携带大型怪物上限",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 0,
+          "allow_unconfigured": true
+        },
+        "minimum_party_size": {
+          "label": "最低出战数量",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        },
+        "enemy_count": {
+          "label": "鼠群数量",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        },
+        "rune_unlock_count": {
+          "label": "符文解锁种类",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        },
+        "enemy_health_multiplier": {
+          "label": "敌军生命调整倍率",
+          "type": "number",
+          "unit": "倍",
+          "min": 0.01,
+          "allow_unconfigured": true
+        },
+        "enemy_attack_multiplier": {
+          "label": "敌军攻击调整倍率",
+          "type": "number",
+          "unit": "倍",
+          "min": 0.01,
+          "allow_unconfigured": true
+        }
+      }
+    },
+    "unresolved": "大型标签字段；鼠群预设/数量；可出战队伍不能为空；符文ID",
+    "execution_graph": null
+  },
+  {
+    "id": "QST_GRASS_012",
+    "number": 12,
+    "name": "过分敬业",
+    "auxiliary": false,
+    "publish_status": "pending_binding",
+    "runtime_bindings": {
+      "flow_source": {
+        "document": "UI跳转原型/事件/事件总表.md",
+        "sha256": "988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5",
+        "event_number": 12
+      },
+      "parameters": {
+        "direct_magic_reward": null,
+        "enchanter_magic_reward": null,
+        "enemy_count": null,
+        "enemy_health_multiplier": null,
+        "enemy_attack_multiplier": null
+      },
+      "parameter_specs": {
+        "direct_magic_reward": {
+          "label": "直接战斗路线魔力",
+          "type": "number",
+          "unit": "魔力",
+          "min": 0,
+          "allow_unconfigured": true
+        },
+        "enchanter_magic_reward": {
+          "label": "回城附魔师路线魔力",
+          "type": "number",
+          "unit": "魔力",
+          "min": 0,
+          "allow_unconfigured": true
+        },
+        "enemy_count": {
+          "label": "稻草人敌军数量",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        },
+        "enemy_health_multiplier": {
+          "label": "敌军生命调整倍率",
+          "type": "number",
+          "unit": "倍",
+          "min": 0.01,
+          "allow_unconfigured": true
+        },
+        "enemy_attack_multiplier": {
+          "label": "敌军攻击调整倍率",
+          "type": "number",
+          "unit": "倍",
+          "min": 0.01,
+          "allow_unconfigured": true
+        }
+      },
+      "locations": [
+        {
+          "icon_id": "event_diligent_farm",
+          "position": [
+            16326.25,
+            6614.676099968439
+          ],
+          "entry_role": "farm"
+        },
+        {
+          "icon_id": "layout_sargate_city",
+          "entry_role": "return_city_enchanter",
+          "position": [
+            19386.25,
+            8381.367923688693
+          ]
+        }
+      ],
+      "location": {
+        "icon_id": "event_diligent_farm",
+        "position": [
+          16326.25,
+          6614.676099968439
+        ],
+        "entry_role": "farm"
+      }
+    },
+    "unresolved": "两档奖励数值；稻草人敌军资源；城市附魔师入口；衣服统一为刚毕业学生的旧衣服",
+    "execution_graph": null
+  },
+  {
+    "id": "QST_GRASS_013",
+    "number": 13,
+    "name": "群星之底",
+    "auxiliary": false,
+    "publish_status": "pending_binding",
+    "runtime_bindings": {
+      "location": {
+        "icon_id": "event_star_well",
+        "position": [
+          13460,
+          9680
+        ],
+        "entry_role": ""
+      },
+      "flow_source": {
+        "document": "UI跳转原型/事件/事件总表.md",
+        "sha256": "988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5",
+        "event_number": 13
+      },
+      "parameters": {
+        "magic_reward": null
+      },
+      "parameter_specs": {
+        "magic_reward": {
+          "label": "记录星图魔力",
+          "type": "number",
+          "unit": "魔力",
+          "min": 0,
+          "allow_unconfigured": true
+        }
+      }
+    },
+    "unresolved": "魔力数量；地点ID",
+    "execution_graph": null
+  },
+  {
+    "id": "QST_GRASS_014",
+    "number": 14,
+    "name": "不便携式魔力扩充引擎",
+    "auxiliary": false,
+    "publish_status": "pending_binding",
+    "runtime_bindings": {
+      "location": {
+        "icon_id": "layout_sargate_city",
+        "position": [
+          19386.25,
+          8381.367923688693
+        ],
+        "entry_role": "engine_merchant"
+      },
+      "trigger_policy": {
+        "type": "interact",
+        "min_mana": 100,
+        "not_purchased": true,
+        "summoning_ring_can_expand": true,
+        "purchase_cost": 100,
+        "expand_rings": 1,
+        "record_game_time_on_success": true
+      },
+      "flow_source": {
+        "document": "UI跳转原型/事件/事件总表.md",
+        "sha256": "988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5",
+        "event_number": 14
+      },
+      "parameters": {
+        "purchase_cost": 100,
+        "expand_rings": 1,
+        "maximum_array_stage": null
+      },
+      "parameter_specs": {
+        "purchase_cost": {
+          "label": "引擎购买费用",
+          "type": "number",
+          "unit": "魔力",
+          "min": 0,
+          "allow_unconfigured": true
+        },
+        "expand_rings": {
+          "label": "召唤阵扩充圈数",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        },
+        "maximum_array_stage": {
+          "label": "召唤阵级别上限",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        }
+      },
+      "parameter_bindings": {
+        "min_mana": "purchase_cost",
+        "purchase_cost": "purchase_cost",
+        "expand_rings": "expand_rings"
+      }
+    },
+    "unresolved": "正式升级接口/级别上限；满级处理；扣费扩圈及购买时间统一保存；游戏时间服务",
+    "execution_graph": null
+  },
+  {
+    "id": "QST_GRASS_015",
+    "number": 15,
+    "name": "外行魔法师",
+    "auxiliary": false,
+    "publish_status": "pending_binding",
+    "runtime_bindings": {
+      "location": {
+        "icon_id": "layout_sargate_city",
+        "position": [
+          19386.25,
+          8381.367923688693
+        ],
+        "entry_role": "engine_ghost"
+      },
+      "trigger_policy": {
+        "type": "on_game_time",
+        "requires_completed_event": "QST_GRASS_014",
+        "elapsed_game_days": 4,
+        "location_id": "layout_sargate_city",
+        "once_per_save": true,
+        "time_basis": "game_time"
+      },
+      "flow_source": {
+        "document": "UI跳转原型/事件/事件总表.md",
+        "sha256": "988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5",
+        "event_number": 15
+      },
+      "parameters": {
+        "elapsed_game_days": 4,
+        "rune_unlock_count": null
+      },
+      "parameter_specs": {
+        "elapsed_game_days": {
+          "label": "引擎购买后延迟",
+          "type": "number",
+          "unit": "游戏日",
+          "min": 0,
+          "allow_unconfigured": true
+        },
+        "rune_unlock_count": {
+          "label": "符文解锁种类",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        }
+      },
+      "parameter_bindings": {
+        "elapsed_game_days": "elapsed_game_days"
+      }
+    },
+    "unresolved": "正式游戏时间和安全演出入口；符文ID/数量；卡罗拉后续不在本批；不以现实时间计时",
+    "execution_graph": null
+  },
+  {
+    "id": "QST_GRASS_016",
+    "number": 16,
+    "name": "看一眼不要钱",
+    "auxiliary": false,
+    "publish_status": "pending_binding",
+    "runtime_bindings": {
+      "location": {
+        "icon_id": "event_circus",
+        "position": [
+          9250,
+          9520
+        ],
+        "entry_role": ""
+      },
+      "flow_source": {
+        "document": "UI跳转原型/事件/事件总表.md",
+        "sha256": "988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5",
+        "event_number": 16
+      },
+      "parameters": {
+        "enemy_count": null,
+        "relic_quantity": 1,
+        "magic_eye_probability": null,
+        "enemy_health_multiplier": null,
+        "enemy_attack_multiplier": null
+      },
+      "parameter_specs": {
+        "enemy_count": {
+          "label": "魔眼拱兽敌军数量",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        },
+        "relic_quantity": {
+          "label": "结晶化眼球数量",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        },
+        "magic_eye_probability": {
+          "label": "魔眼特征产生概率",
+          "type": "number",
+          "unit": "0到1",
+          "min": 0,
+          "allow_unconfigured": true,
+          "max": 1
+        },
+        "enemy_health_multiplier": {
+          "label": "敌军生命调整倍率",
+          "type": "number",
+          "unit": "倍",
+          "min": 0.01,
+          "allow_unconfigured": true
+        },
+        "enemy_attack_multiplier": {
+          "label": "敌军攻击调整倍率",
+          "type": "number",
+          "unit": "倍",
+          "min": 0.01,
+          "allow_unconfigured": true
+        }
+      }
+    },
+    "unresolved": "魔眼拱兽战斗预设；眼球ID；概率/适用生成范围；退避后入口状态",
+    "execution_graph": null
+  },
+  {
+    "id": "QST_GRASS_017",
+    "number": 17,
+    "name": "富含矿物质",
+    "auxiliary": false,
+    "publish_status": "pending_binding",
+    "runtime_bindings": {
+      "location": {
+        "icon_id": "event_north_bridge",
+        "position": [
+          15109.84375,
+          6258.5
+        ],
+        "entry_role": ""
+      },
+      "flow_source": {
+        "document": "UI跳转原型/事件/事件总表.md",
+        "sha256": "988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5",
+        "event_number": 17
+      },
+      "parameters": {
+        "enemy_count": null,
+        "fight_magic_reward": null,
+        "wood_magic_reward": null,
+        "enemy_health_multiplier": null,
+        "enemy_attack_multiplier": null
+      },
+      "parameter_specs": {
+        "enemy_count": {
+          "label": "食矿鸟数量",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        },
+        "fight_magic_reward": {
+          "label": "战斗路线魔力",
+          "type": "number",
+          "unit": "魔力",
+          "min": 0,
+          "allow_unconfigured": true
+        },
+        "wood_magic_reward": {
+          "label": "木桥路线魔力",
+          "type": "number",
+          "unit": "魔力",
+          "min": 0,
+          "allow_unconfigured": true
+        },
+        "enemy_health_multiplier": {
+          "label": "敌军生命调整倍率",
+          "type": "number",
+          "unit": "倍",
+          "min": 0.01,
+          "allow_unconfigured": true
+        },
+        "enemy_attack_multiplier": {
+          "label": "敌军攻击调整倍率",
+          "type": "number",
+          "unit": "倍",
+          "min": 0.01,
+          "allow_unconfigured": true
+        }
+      }
+    },
+    "unresolved": "食矿鸟阵容/数量；两路奖励数值；木桥表现资源",
+    "execution_graph": null
+  },
+  {
+    "id": "QST_SIDE_003_001",
+    "number": 18,
+    "name": "血祭日",
+    "auxiliary": false,
+    "publish_status": "pending_binding",
+    "runtime_bindings": {
+      "flow_source": {
+        "document": "UI跳转原型/事件/事件总表.md",
+        "sha256": "988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5",
+        "event_number": 18
+      },
+      "parameters": {
+        "first_sacrifice_count": 1,
+        "second_sacrifice_count": 2,
+        "third_sacrifice_count": 3,
+        "minimum_remaining_monsters": 1,
+        "first_magic_reward": null,
+        "second_rune_unlock_count": null,
+        "third_rune_unlock_count": null,
+        "first_blood_rain_game_days": null,
+        "second_blood_rain_game_days": null,
+        "blood_rain_radius_cells": null,
+        "blood_rain_effect_strength": null
+      },
+      "parameter_specs": {
+        "first_sacrifice_count": {
+          "label": "第一阶段有皮毛怪物数量",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        },
+        "second_sacrifice_count": {
+          "label": "第二阶段飞行怪物数量",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        },
+        "third_sacrifice_count": {
+          "label": "第三阶段无手无足蛇类数量",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        },
+        "minimum_remaining_monsters": {
+          "label": "献祭后最低持有数量",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        },
+        "first_magic_reward": {
+          "label": "第一次献祭魔力",
+          "type": "number",
+          "unit": "魔力",
+          "min": 0,
+          "allow_unconfigured": true
+        },
+        "second_rune_unlock_count": {
+          "label": "第二次解锁符文种类",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        },
+        "third_rune_unlock_count": {
+          "label": "第三次解锁符文种类",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        },
+        "first_blood_rain_game_days": {
+          "label": "第一次血雨持续时间",
+          "type": "number",
+          "unit": "游戏日",
+          "min": 0,
+          "allow_unconfigured": true
+        },
+        "second_blood_rain_game_days": {
+          "label": "第二次血雨持续时间",
+          "type": "number",
+          "unit": "游戏日",
+          "min": 0,
+          "allow_unconfigured": true
+        },
+        "blood_rain_radius_cells": {
+          "label": "血雨作用半径",
+          "type": "number",
+          "unit": "格",
+          "min": 0,
+          "allow_unconfigured": true
+        },
+        "blood_rain_effect_strength": {
+          "label": "血雨效果强度",
+          "type": "number",
+          "unit": "按正式天气效果定义",
+          "min": 0,
+          "allow_unconfigured": true
+        }
+      }
+    },
+    "unresolved": "正式皮毛/飞行/蛇类及手足字段；可回收与锁定规则；奖励ID/量；血雨作用/范围/时长/覆盖待定，不套默认天气",
+    "execution_graph": null
+  },
+  {
+    "id": "QST_GRASS_019",
+    "number": 19,
+    "name": "谁会赢？",
+    "auxiliary": false,
+    "publish_status": "pending_binding",
+    "runtime_bindings": {
+      "location": {
+        "icon_id": "layout_forest_cave_001",
+        "position": [
+          5616.25,
+          5068.820754213216
+        ],
+        "entry_role": "cave_duel"
+      },
+      "flow_source": {
+        "document": "UI跳转原型/事件/事件总表.md",
+        "sha256": "988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5",
+        "event_number": 19
+      },
+      "parameters": {
+        "wolf_reward_quantity": 1,
+        "beast_reward_quantity": 1,
+        "watch_magic_reward": null,
+        "wolf_side_count": null,
+        "beast_side_count": null,
+        "enemy_health_multiplier": null,
+        "enemy_attack_multiplier": null
+      },
+      "parameter_specs": {
+        "wolf_reward_quantity": {
+          "label": "强化双头甲狼奖励数量",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        },
+        "beast_reward_quantity": {
+          "label": "强化魔眼拱兽奖励数量",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        },
+        "watch_magic_reward": {
+          "label": "旁观魔力奖励",
+          "type": "number",
+          "unit": "魔力",
+          "min": 0,
+          "allow_unconfigured": true
+        },
+        "wolf_side_count": {
+          "label": "狼方阵容总数量",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        },
+        "beast_side_count": {
+          "label": "拱兽方阵容总数量",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        },
+        "enemy_health_multiplier": {
+          "label": "敌军生命调整倍率",
+          "type": "number",
+          "unit": "倍",
+          "min": 0.01,
+          "allow_unconfigured": true
+        },
+        "enemy_attack_multiplier": {
+          "label": "敌军攻击调整倍率",
+          "type": "number",
+          "unit": "倍",
+          "min": 0.01,
+          "allow_unconfigured": true
+        }
+      }
+    },
+    "unresolved": "双方阵容/数量；奖励强化预设；库存与队伍容量安置；真实观战回执及平局处理；魔力数量",
+    "execution_graph": null
+  },
+  {
+    "id": "QST_GRASS_020",
+    "number": 20,
+    "name": "谁会输？",
+    "auxiliary": false,
+    "publish_status": "pending_binding",
+    "runtime_bindings": {
+      "location": {
+        "icon_id": "event_knight_bet",
+        "position": [
+          19886.25,
+          9081.367923688693
+        ],
+        "entry_role": ""
+      },
+      "trigger_policy": {
+        "max_settlements": 4,
+        "stakes": [
+          10,
+          20,
+          50,
+          100
+        ],
+        "gross_return_multiplier": 2,
+        "hide_after_final_settlement": true,
+        "requires_hand_authored_teams": true
+      },
+      "flow_source": {
+        "document": "UI跳转原型/事件/事件总表.md",
+        "sha256": "988d8f75cebea5b916d20319bddf58840d08cc24b063d49b5ad26ca6588887f5",
+        "event_number": 20
+      },
+      "parameters": {
+        "max_settlements": 4,
+        "stakes": [
+          10,
+          20,
+          50,
+          100
+        ],
+        "gross_return_multiplier": 2,
+        "enemy_health_multiplier": null,
+        "enemy_attack_multiplier": null,
+        "round_1_a_count": null,
+        "round_1_b_count": null,
+        "round_2_a_count": null,
+        "round_2_b_count": null,
+        "round_3_a_count": null,
+        "round_3_b_count": null,
+        "round_4_a_count": null,
+        "round_4_b_count": null
+      },
+      "parameter_specs": {
+        "max_settlements": {
+          "label": "最多结算轮次",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        },
+        "stakes": {
+          "label": "各轮下注本金",
+          "type": "number_array",
+          "unit": "魔力",
+          "min": 0,
+          "allow_unconfigured": true
+        },
+        "gross_return_multiplier": {
+          "label": "获胜总返还倍率 含本金",
+          "type": "number",
+          "unit": "倍",
+          "min": 0,
+          "allow_unconfigured": true
+        },
+        "enemy_health_multiplier": {
+          "label": "敌军生命调整倍率",
+          "type": "number",
+          "unit": "倍",
+          "min": 0.01,
+          "allow_unconfigured": true
+        },
+        "enemy_attack_multiplier": {
+          "label": "敌军攻击调整倍率",
+          "type": "number",
+          "unit": "倍",
+          "min": 0.01,
+          "allow_unconfigured": true
+        },
+        "round_1_a_count": {
+          "label": "第1轮A方怪物数量",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        },
+        "round_1_b_count": {
+          "label": "第1轮B方怪物数量",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        },
+        "round_2_a_count": {
+          "label": "第2轮A方怪物数量",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        },
+        "round_2_b_count": {
+          "label": "第2轮B方怪物数量",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        },
+        "round_3_a_count": {
+          "label": "第3轮A方怪物数量",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        },
+        "round_3_b_count": {
+          "label": "第3轮B方怪物数量",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        },
+        "round_4_a_count": {
+          "label": "第4轮A方怪物数量",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        },
+        "round_4_b_count": {
+          "label": "第4轮B方怪物数量",
+          "type": "integer",
+          "unit": "个或只",
+          "min": 1,
+          "allow_unconfigured": true
+        }
+      },
+      "parameter_bindings": {
+        "max_settlements": "max_settlements",
+        "stakes": "stakes",
+        "gross_return_multiplier": "gross_return_multiplier"
+      }
+    },
+    "unresolved": "四轮双方怪物阵容由策划手填，不随机；失败扣款、平局/中止；战斗预设；下注请求及已结算次数持久化",
+    "execution_graph": null
+  },
+  {
+    "id": "AUX_GRASS_FOSTER",
+    "number": null,
+    "name": "福斯特镇",
+    "auxiliary": true,
+    "publish_status": "pending_binding",
+    "runtime_bindings": {},
+    "unresolved": "待绑定：正式地点/图书馆交互ID",
+    "execution_graph": null
+  },
+  {
+    "id": "AUX_GRASS_SALGERT",
+    "number": null,
+    "name": "萨尔格特城",
+    "auxiliary": true,
+    "publish_status": "pending_binding",
+    "runtime_bindings": {},
+    "unresolved": "待绑定：正式地点/城中心/附魔师交互ID",
+    "execution_graph": null
+  },
+  {
+    "id": "AUX_GRASS_ROVA",
+    "number": null,
+    "name": "罗瓦常驻",
+    "auxiliary": true,
+    "publish_status": "pending_binding",
+    "runtime_bindings": {},
+    "unresolved": "待绑定：启用条件",
+    "execution_graph": null
+  }
+]

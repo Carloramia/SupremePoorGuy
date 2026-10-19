@@ -40,6 +40,7 @@ var _attack_entry_poses: Dictionary = {}
 var _attack_entry_elapsed := 0.0
 var _attack_slide_release_pending := false
 var _attack_ground_poses: Dictionary = {}
+var _attack_ground_world_poses: Dictionary = {}
 var _idle_ground_poses: Dictionary = {}
 var _held_heading := Vector3.RIGHT
 var _connection_diagnostics: Dictionary = {}
@@ -79,6 +80,9 @@ var _path_pose_basis := Basis.IDENTITY
 var _path_pose_yaw_speed := 0.0
 var _path_execution_speed_scale := 1.0
 var _command_heading := Vector3.RIGHT
+var _raised_heading := Vector3.RIGHT
+var _raised_root_index := -1
+var _path_facing_command := Vector3.RIGHT
 var _spacing_pairs: Array[Dictionary] = []
 var _spacing_anchor := 0
 var _spacing_phase := 0.0
@@ -171,6 +175,7 @@ func refresh_parts() -> void:
 	if not frame.is_empty(): _rest_heading = frame.heading
 	_held_heading = _rest_heading
 	_cache_trajectory_chain(container)
+	_raised_root_index = _parts.find(_belly[-1])+1 if not _belly.is_empty() else -1
 	_cache_sway_chain()
 	_configure_contacts(enabled and _character_enabled)
 	cancel_motion()
@@ -269,11 +274,71 @@ func get_pose_reference(use_attack_facing: bool = true) -> Transform3D:
 	if is_attack_support_locked(): return _attack_support_reference
 	var frame := _update_anchor()
 	if frame.is_empty(): return global_transform
+	if _independent_path_turning():
+		var root := _raised_turn_pivot()
+		var raised_basis := _turn_basis(_raised_heading)
+		return Transform3D(raised_basis,Vector3(root.world)-raised_basis*Vector3(root.rest))
 	var heading: Vector3 = _attack_facing if use_attack_facing and is_instance_valid(_attack_owner) and not _attack_facing.is_zero_approx() else frame.heading
 	if not is_instance_valid(_attack_owner) and not _idle_ground_poses.is_empty(): heading = _held_heading
 	var yaw := atan2(_rest_heading.cross(heading).y, _rest_heading.dot(heading))
 	var basis := Basis(Vector3.UP, yaw) * _rest_basis if locomotion_enabled else _rest_basis
 	return Transform3D(basis, frame.center - basis * _rest_center)
+
+func _independent_path_turning() -> bool:
+	return locomotion_enabled and motion_data != null and motion_data.ground_path_enabled and motion_data.sway_enabled and motion_data.trajectory_following_enabled and not motion_data.head_orbit_enabled
+
+func _turn_basis(heading: Vector3) -> Basis:
+	return Basis(Vector3.UP,atan2(_rest_heading.cross(heading).y,_rest_heading.dot(heading)))*_rest_basis
+
+func _raised_turn_pivot() -> Dictionary:
+	if _belly.is_empty() or not _live(_belly[-1]): return {"world":global_position,"rest":_rest_center}
+	var root: Dictionary = _belly[-1]
+	var local := Vector3.ZERO
+	var index := _raised_root_index
+	if index>=0 and index < _parts.size():
+		var joint := _live_joint(_parts[index])
+		if joint != null: local = Transform3D(joint.get_meta(&"generated_joint_frame_a")).origin
+	return {"world":root.body.global_position+_part_turn_basis(root)*Basis(root.rest.basis)*local,"rest":Transform3D(root.rest)*local}
+
+func _part_turn_basis(row: Dictionary) -> Basis:
+	return _turn_basis(row.get("turn_heading",_rest_heading)) if row.belly and _independent_path_turning() else _path_pose_basis
+
+func _update_path_turning(delta: float, facing: Vector3) -> void:
+	if not _independent_path_turning() or is_attack_support_locked() or _connection_recovery_active: return
+	var error := atan2(_raised_heading.cross(facing).y,_raised_heading.dot(facing))
+	if absf(error) > deg_to_rad(175.0): error = -absf(error) if _rest_heading.dot(facing)<0.0 else absf(error)
+	_turn_rate = clampf(error/motion_data.turn_response_time,-deg_to_rad(motion_data.turn_speed_degrees),deg_to_rad(motion_data.turn_speed_degrees))
+	var change := clampf(_turn_rate*delta,-absf(error),absf(error))
+	_raised_heading = (Basis(Vector3.UP,change)*_raised_heading).normalized()
+	_path_pose_basis = _turn_basis(_raised_heading)
+	_path_pose_yaw_speed = change/delta
+	_path_turning = absf(error)>deg_to_rad(5.0)
+	if is_instance_valid(_attack_owner): return
+	for index: int in _belly.size():
+		var row: Dictionary = _belly[index]
+		if not _live(row): continue
+		if not _direction.is_zero_approx() or _path_ready: row.erase("idle_turn_anchor")
+		elif absf(error)>deg_to_rad(1.0) and row.grounded and not row.has("idle_turn_anchor"): row["idle_turn_anchor"] = row.body.global_position
+		var goal: Vector3 = row.get("turn_heading",_rest_heading)
+		if _path_ready and row.has("path_distance"):
+			var radius := maxf(row.body.linear_velocity.length()*delta*2.0,_ground_path.step*2.0)
+			row["turn_distance"] = _ground_path.project(row.body.global_position,float(row.get("turn_distance",row.path_distance)),radius,true)
+			goal = _ground_path.facing_at(float(row.turn_distance))
+		var previous: Vector3 = row.get("turn_heading",_rest_heading)
+		var angle := atan2(previous.cross(goal).y,previous.dot(goal))
+		if absf(angle)>deg_to_rad(175.0): angle = -absf(angle) if _rest_heading.dot(goal)<0.0 else absf(angle)
+		var step := clampf(angle/motion_data.turn_response_time*delta,-deg_to_rad(motion_data.turn_speed_degrees)*delta,deg_to_rad(motion_data.turn_speed_degrees)*delta)
+		var heading := (Basis(Vector3.UP,step)*previous).normalized()
+		# A marked piece waits for its neighbor instead of fighting the passive yaw stop.
+		var joint := _live_joint(row)
+		if index>0 and joint!=null and _live(_belly[index-1]):
+			var neighbor: Vector3 = _belly[index-1].get("turn_heading",_rest_heading)
+			var relative := atan2(neighbor.cross(heading).y,neighbor.dot(heading))
+			var allowance := maxf(minf(absf(joint.get_param_y(Generic6DOFJoint3D.PARAM_ANGULAR_LOWER_LIMIT)),absf(joint.get_param_y(Generic6DOFJoint3D.PARAM_ANGULAR_UPPER_LIMIT)))-deg_to_rad(3.0),0.0)
+			heading = Basis(Vector3.UP,clampf(relative,-allowance,allowance))*neighbor
+		row["turn_goal"] = goal
+		row["turn_rate"] = atan2(previous.cross(heading).y,previous.dot(heading))/delta
+		row["turn_heading"] = heading
 
 func set_attack_control(owner_node: Node, poses: Dictionary, velocity: Vector3, facing: Vector3, acceleration: float, pose_acceleration: float, angular_acceleration: float = 60.0, response_time: float = 0.1, delta: float = 0.0, pose_speed_multiplier: float = 1.0, lock_ground: bool = false, support_reference: Transform3D = Transform3D.IDENTITY) -> bool:
 	if not locomotion_enabled or _connection_recovery_active: return false
@@ -282,6 +347,7 @@ func set_attack_control(owner_node: Node, poses: Dictionary, velocity: Vector3, 
 		_attack_support_locked = false
 		var old_inverse := get_pose_reference(false).affine_inverse()
 		_attack_ground_poses.clear()
+		_attack_ground_world_poses.clear()
 		for row: Dictionary in _belly:
 			if not _live(row): continue
 			var position: Vector3 = old_inverse*row.body.global_position
@@ -289,6 +355,7 @@ func set_attack_control(owner_node: Node, poses: Dictionary, velocity: Vector3, 
 			# Preserve the ground S footprint, not transient roll/pitch from the last contact.
 			var pose := Transform3D(row.rest.basis,position)
 			_attack_ground_poses[row.body] = pose
+			_attack_ground_world_poses[row.body] = row.body.global_transform
 		for row: Dictionary in _parts: row.erase("connection_target")
 		_idle_ground_poses.clear()
 		_attack_entry_elapsed = 0.0
@@ -308,6 +375,7 @@ func set_attack_control(owner_node: Node, poses: Dictionary, velocity: Vector3, 
 			var position: Vector3 = inverse*row.body.global_position
 			position.y = row.rest.origin.y
 			_attack_ground_poses[row.body] = Transform3D(row.rest.basis,position)
+			_attack_ground_world_poses[row.body] = row.body.global_transform
 		for row: Dictionary in _parts:
 			if _live(row): _attack_entry_poses[row.body] = inverse*row.body.global_transform
 		_attack_entry_elapsed = 0.0
@@ -315,8 +383,13 @@ func set_attack_control(owner_node: Node, poses: Dictionary, velocity: Vector3, 
 	_attack_entry_elapsed += delta
 	var blend := smoothstep(0.0,motion_data.path_transition_time,_attack_entry_elapsed)
 	var blended: Dictionary = {}
+	var ground_inverse := get_pose_reference().affine_inverse()
 	for row: Dictionary in _parts:
 		if _live(row): blended[row.body] = Transform3D(_attack_entry_poses.get(row.body,row.rest)).interpolate_with(_attack_ground_poses.get(row.body,poses.get(row.body,row.rest)),blend)
+		if _live(row) and row.belly and _independent_path_turning() and _attack_ground_world_poses.has(row.body):
+			# Re-express a fixed world footprint as the independent upper reference turns.
+			_attack_ground_poses[row.body] = ground_inverse*Transform3D(_attack_ground_world_poses[row.body])
+			blended[row.body] = _attack_ground_poses[row.body]
 	_attack_pose_velocities.clear()
 	if delta > 0.0 and _attack_owner == owner_node:
 		for body: Node in blended:
@@ -349,6 +422,7 @@ func end_attack_control(owner_node: Node) -> void:
 		_attack_slide_release_pending = true
 	_attack_owner = null
 	_attack_ground_poses.clear()
+	_attack_ground_world_poses.clear()
 	_attack_poses.clear()
 	_attack_pose_velocities.clear()
 	_attack_entry_poses.clear()
@@ -450,6 +524,8 @@ func get_attack_root_offset() -> Vector3:
 
 func get_attack_root_pose(fallback: Transform3D) -> Transform3D:
 	if _belly.is_empty(): return fallback
+	# The upper reference already follows the live root pivot; importing belly yaw would turn it twice.
+	if _independent_path_turning(): return fallback
 	var poses := _attack_ground_poses if is_instance_valid(_attack_owner) else _idle_ground_poses
 	if poses.is_empty() and _path_ready and _live(_belly[-1]):
 		var position: Vector3 = get_pose_reference().affine_inverse()*_belly[-1].body.global_position
@@ -464,7 +540,9 @@ func _held_root_delta() -> Transform3D:
 func _connection_pose(row: Dictionary) -> Transform3D:
 	if _path_ready and _uses_ground_path():
 		# Relative pair targets are frame-invariant; avoid rebuilding the belly frame per link.
-		return Transform3D(_path_pose_basis*Basis(row.rest.basis),row.path_target)
+		return Transform3D(_part_turn_basis(row)*Basis(row.rest.basis),row.path_target)
+	if _independent_path_turning() and not is_instance_valid(_attack_owner) and not _connection_recovery_active and row.belly:
+		return Transform3D(_part_turn_basis(row)*Basis(row.rest.basis),row.body.global_position)
 	var pose: Transform3D = _attack_poses.get(row.body,row.rest) if is_instance_valid(_attack_owner) else _idle_ground_poses.get(row.body,row.rest)
 	if not is_instance_valid(_attack_owner):
 		if not row.belly: pose = _held_root_delta()*pose
@@ -472,6 +550,7 @@ func _connection_pose(row: Dictionary) -> Transform3D:
 	return pose
 
 func _restore_bend_limit(joint: Generic6DOFJoint3D, actual: Basis, requested: Basis, angular_speed: float, delta: float) -> bool:
+	if joint.has_meta(&"snake_raised_turn_limits"): return true
 	var standing: Dictionary = joint.get_meta(&"snake_bend_restore",{})
 	if standing.is_empty() or (is_instance_valid(_attack_owner) and not standing.restoring): return true
 	var limits: Vector2 = standing.limits
@@ -516,6 +595,28 @@ func _update_connections(delta: float) -> void:
 		var fb: Transform3D = b.body.global_transform*Transform3D(joint.get_meta(&"generated_joint_frame_b"))
 		var desired_a := _connection_pose(a)*Transform3D(joint.get_meta(&"generated_joint_frame_a"))
 		var desired_b := _connection_pose(b)*Transform3D(joint.get_meta(&"generated_joint_frame_b"))
+		if a.belly and not b.belly:
+			var requested := desired_a.basis.inverse()*desired_b.basis
+			var actual_rotation := fa.basis.inverse()*fb.basis
+			var limit := minf(absf(joint.get_param_y(Generic6DOFJoint3D.PARAM_ANGULAR_LOWER_LIMIT)),absf(joint.get_param_y(Generic6DOFJoint3D.PARAM_ANGULAR_UPPER_LIMIT)))
+			var needs_swivel := _independent_path_turning() and requested.get_rotation_quaternion().get_angle()>maxf(limit-deg_to_rad(3.0),0.0)
+			if needs_swivel:
+				# This joint's local Y may be tilted; free its angular stops while pose forces steer the upper chain.
+				var saved: Array = []
+				for axis: String in ["x","y","z"]:
+					saved.append(joint.call("get_flag_"+axis,Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_LIMIT))
+					joint.call("set_flag_"+axis,Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_LIMIT,false)
+				if not joint.has_meta(&"snake_raised_turn_limits"): joint.set_meta(&"snake_raised_turn_limits",saved)
+			elif joint.has_meta(&"snake_raised_turn_limits"):
+				var inside := true
+				var angles := actual_rotation.get_euler()
+				for axis: int in 3:
+					var method: String = "get_param_"+["x","y","z"][axis]
+					inside = inside and angles[axis]>=joint.call(method,Generic6DOFJoint3D.PARAM_ANGULAR_LOWER_LIMIT)-deg_to_rad(1.0) and angles[axis]<=joint.call(method,Generic6DOFJoint3D.PARAM_ANGULAR_UPPER_LIMIT)+deg_to_rad(1.0)
+				if inside:
+					var saved: Array = joint.get_meta(&"snake_raised_turn_limits")
+					for axis: int in 3: joint.call("set_flag_"+["x","y","z"][axis],Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_LIMIT,saved[axis])
+					joint.remove_meta(&"snake_raised_turn_limits")
 		if joint.has_meta(&"snake_bend_restore"):
 			var angular_speed: float = (fa.basis.inverse()*(b.body.angular_velocity-a.body.angular_velocity)).z
 			if not _restore_bend_limit(joint,fa.basis.inverse()*fb.basis,desired_a.basis.inverse()*desired_b.basis,angular_speed,delta):
@@ -681,18 +782,7 @@ func _tick(delta: float) -> void:
 	_turn_rate = clampf(angle / motion_data.turn_response_time, -deg_to_rad(motion_data.turn_speed_degrees), deg_to_rad(motion_data.turn_speed_degrees))
 	if is_attack_support_locked(): _turn_rate = 0.0
 	if _connection_recovery_active: _turn_rate = 0.0
-	if motion_data.ground_path_enabled and motion_data.sway_enabled and locomotion_enabled and not attacking:
-		# A commanded whole-body turn starts a new route after the turn settles.
-		# A reverse movement input with unchanged facing stays on this route.
-		if not _path_turning and absf(angle) > deg_to_rad(35.0):
-			_path_turning = true
-			_path_reversing = false
-			_path_ready = false
-			_connection_recovery_resume_path = false
-			_ground_path.points.clear()
-			_ground_path.corners.clear()
-		elif _path_turning and absf(angle) < deg_to_rad(5.0):
-			_path_turning = false
+	_update_path_turning(delta,facing)
 	for row: Dictionary in _torsos:
 		if not _live(row): continue
 		var contact: Dictionary = row.body.get_support_surface_contact()
@@ -827,11 +917,15 @@ func _apply_movement(frame: Dictionary, target_velocity: Vector3) -> void:
 		if not _live(row) or _contact_count == 0 or not locomotion_enabled: continue
 		# Legacy attacks own the raised-chain velocity through their pose controller.
 		if attacking and not row.belly: continue
+		if attacking and _independent_path_turning() and row.belly: continue
 		var body: PhysicalBodyPart3D = row.body
 		var radius := body.global_position-rotation_center
 		var relative_velocity: Vector3 = reference.basis*(Vector3(row.trajectory_velocity)+Vector3(0,0,row.sway_velocity))-relative_mean
 		if attacking and _attack_pose_velocities.has(body): relative_velocity = reference.basis*Vector3(_attack_pose_velocities[body].linear)
 		var motion_velocity := target_velocity+Vector3.UP.cross(radius)*_turn_rate
+		if _independent_path_turning() and not attacking:
+			motion_velocity = target_velocity
+			if not row.belly: motion_velocity += Vector3.UP.cross(body.global_position-Vector3(_raised_turn_pivot().world))*_turn_rate
 		var desired_velocity := motion_velocity+relative_velocity
 		if _path_ready and _uses_ground_path():
 			desired_velocity = Vector3(row.path_velocity)
@@ -930,7 +1024,7 @@ func _update_sway(delta: float) -> void:
 func _uses_ground_path() -> bool:
 	return motion_data != null and motion_data.ground_path_enabled and motion_data.sway_enabled \
 		and motion_data.trajectory_following_enabled and not motion_data.head_orbit_enabled \
-		and not is_instance_valid(_attack_owner) and not _connection_recovery_active and _idle_ground_poses.is_empty() and locomotion_enabled and not _path_turning
+		and not is_instance_valid(_attack_owner) and not _connection_recovery_active and _idle_ground_poses.is_empty() and locomotion_enabled
 
 func _set_path_slide_limits(active: bool) -> void:
 	if is_instance_valid(_attack_owner) or not _idle_ground_poses.is_empty() or _attack_slide_release_pending: return
@@ -1019,9 +1113,9 @@ func _spacing_sample(index: int, distance: float, reference: Transform3D, drive_
 		var wave := _path_amplitude*(sin(upper_phase)-sin(phase))
 		var phase_speed := k*drive_speed*Vector3(anchor.tangent).dot(anchor.forward)
 		var wave_speed := _path_amplitude*phase_speed*(cos(upper_phase)-cos(phase))
-		var rest_offset: Vector3 = Vector3(row.rest.origin)-Vector3(_path_leader.rest.origin)
-		var offset := reference.basis*(rest_offset+Vector3(0,0,wave))
-		position = Vector3(anchor.position)+offset
+		var root := _raised_turn_pivot()
+		var offset := reference.basis*(Vector3(row.rest.origin)-Vector3(root.rest)+Vector3(0,0,wave))
+		position = Vector3(root.world)+(Vector3(anchor.position)-_path_leader.body.global_position).slide(Vector3.UP)+offset
 		frame_velocity += Vector3(anchor.tangent)*drive_speed+reference.basis.z*wave_speed+Vector3.UP.cross(offset)*yaw_speed
 		distance = _path_progress
 	position.y = (reference*Vector3(row.rest.origin)).y
@@ -1097,13 +1191,15 @@ func _start_ground_path(_speed: float) -> void:
 	_path_max_amplitude = max_slope*wavelength/TAU
 	_path_amplitude = _path_max_amplitude*motion_data.path_amplitude_ratio
 	var spacing := maxf(minf(shortest*0.15,wavelength/80.0),0.005)
-	var forward: Vector3 = get_pose_reference().basis.x.slide(Vector3.UP).normalized()
-	_path_pose_basis = Basis(Vector3.UP,atan2(_rest_heading.cross(forward).y,_rest_heading.dot(forward)))*_rest_basis
-	_path_pose_yaw_speed = 0.0
+	var forward: Vector3 = _part_turn_basis(_path_leader).x.slide(Vector3.UP).normalized()
+	if not _independent_path_turning():
+		_path_pose_basis = _turn_basis(forward)
+		_path_pose_yaw_speed = 0.0
 	_path_execution_speed_scale = 1.0
 	for row: Dictionary in _parts:
 		row["path_gap"] = float(_path_leader.rest.origin.x)-float(row.rest.origin.x)
 		row["path_target"] = row.body.global_position
+		row["path_start_position"] = row.body.global_position
 		row["path_velocity"] = row.body.linear_velocity.slide(Vector3.UP)
 		row["path_raw_target"] = row.path_target
 		row["path_raw_velocity"] = row.path_velocity
@@ -1112,6 +1208,7 @@ func _start_ground_path(_speed: float) -> void:
 		row["path_applied_force"] = Vector3.ZERO
 		row.erase("path_relative_offset")
 		row["path_distance"] = -float(row.path_gap)
+		row["turn_distance"] = row.path_distance
 		row["path_idle_offset"] = Vector3.ZERO
 	var gap := 0.0
 	for index: int in range(_sway_links+1,_sway_chain.size()):
@@ -1120,6 +1217,8 @@ func _start_ground_path(_speed: float) -> void:
 		gap += Vector3(a.rest.origin-b.rest.origin).slide(Vector3.UP).length()
 		b.path_gap = gap
 	_ground_path.reset(_path_leader.body.global_position,forward,maxf(_path_length*3.0,wavelength*2.0),wavelength,_path_amplitude,spacing)
+	_path_facing_command = _path_leader.get("turn_heading",_rest_heading)
+	_ground_path.turn_markers[0].facing = _path_facing_command
 	_path_reversing = false
 	_cache_spacing_wave()
 	_path_progress = 0.0
@@ -1184,6 +1283,14 @@ func _update_ground_path(delta: float, speed: float, frame: Dictionary) -> void:
 	var previous_progress := _path_progress
 	var radius := maxf(_path_leader.body.linear_velocity.length()*delta*2.0,_ground_path.step*2.0)
 	_path_progress = _ground_path.project(_path_leader.body.global_position,_path_progress,radius,true)
+	if _path_facing_command.dot(_command_heading)<0.999:
+		var marker_distance := maxf(occupied_high,_path_progress)
+		for row: Dictionary in _belly:
+			if not _live(row): continue
+			var actual := _ground_path.project(row.body.global_position,float(row.path_distance),maxf(float(row.size.x)*2.0,_ground_path.step*2.0),true)
+			marker_distance = maxf(marker_distance,actual)
+		_ground_path.mark_turn(marker_distance+_ground_path.step,_command_heading)
+		_path_facing_command = _command_heading
 	_path_speed = (_path_progress-previous_progress)/delta
 	var phase_travel := float(_ground_path.sample(_path_progress).u)-float(guide.u)
 	_path_frequency = absf(phase_travel)/delta/_ground_path.wavelength
@@ -1202,11 +1309,7 @@ func _update_ground_path(delta: float, speed: float, frame: Dictionary) -> void:
 		var allowance: float = row.size.z*motion_data.path_corner_rounding_widths
 		_path_execution_speed_scale = minf(_path_execution_speed_scale,sqrt(allowance/maxf(lag,allowance)))
 	drive_speed *= _path_execution_speed_scale
-	# The body heading changes only on an explicit whole-body turn, not when the route folds back.
-	var yaw := atan2(_rest_heading.cross(_command_heading).y,_rest_heading.dot(_command_heading))
-	var planned_basis := Basis(Vector3.UP,yaw)*_rest_basis
-	_path_pose_yaw_speed = atan2(_path_pose_basis.x.cross(planned_basis.x).y,_path_pose_basis.x.dot(planned_basis.x))/delta
-	_path_pose_basis = planned_basis
+	# The raised frame turns independently; grounded frames consume the route's turn markers.
 	reference.basis = _path_pose_basis
 	# The moving belly reference must not add last frame's vertical stretch a second time.
 	var wave_height := 0.0
@@ -1248,6 +1351,7 @@ func _update_ground_path(delta: float, speed: float, frame: Dictionary) -> void:
 		if not _live(row): continue
 		var sample: Dictionary = samples[index]
 		var initial: Vector3 = reference*(Vector3(row.rest.origin)+Vector3(0,0,row.sway_offset))
+		if row.belly: initial = row.path_start_position
 		row["path_raw_target"] = initial.lerp(Vector3(sample.position),blend)
 		row["path_route_target"] = sample.route_position
 		row.path_distance = sample.distance
@@ -1294,7 +1398,7 @@ func _smooth_path_targets(delta: float, drive_speed: float) -> void:
 		row.path_acceleration = acceleration
 	var poses: Dictionary = {}
 	for row: Dictionary in _parts:
-		poses[row.body] = Transform3D(_path_pose_basis*Basis(row.rest.basis),row.path_target)
+		poses[row.body] = Transform3D(_part_turn_basis(row)*Basis(row.rest.basis),row.path_target)
 	var constrained := _constrain_connection_poses(poses,true)
 	for row: Dictionary in _belly:
 		var pose: Transform3D = constrained[row.body]
@@ -1329,9 +1433,10 @@ func _apply_pose(frame: Dictionary, delta: float) -> void:
 		var rate := _attack_pose_speed_multiplier if is_instance_valid(_attack_owner) and not row.belly else 1.0
 		var gain: float = motion_data.raised_pose_strength*rate*rate
 		var damping: float = motion_data.raised_pose_damping*rate
-		var held := is_attack_support_locked() or _connection_recovery_active
+		var held: bool = is_attack_support_locked() or _connection_recovery_active or (_independent_path_turning() and is_instance_valid(_attack_owner) and row.belly)
 		if held and row.belly:
 			var support_response := (_attack_response_time if is_attack_support_locked() else motion_data.velocity_response_time)*0.5
+			if _independent_path_turning(): support_response = minf(support_response,_attack_response_time*0.5)
 			gain = 1.0/(support_response*support_response)
 			damping = 2.0/support_response
 		var denominator := 1.0+damping*delta+gain*delta*delta
@@ -1344,20 +1449,30 @@ func _apply_pose(frame: Dictionary, delta: float) -> void:
 		var world_path := _path_ready and _uses_ground_path()
 		if world_path: target_pose.origin = row.path_target
 		var target_basis := target_pose.basis
-		if world_path: target_basis = _path_pose_basis*Basis(row.rest.basis)
+		if world_path: target_basis = _part_turn_basis(row)*Basis(row.rest.basis)
+		if _independent_path_turning() and not is_instance_valid(_attack_owner) and not _connection_recovery_active and row.belly:
+			target_basis = _part_turn_basis(row)*Basis(row.rest.basis)
+			if not world_path:
+				var anchor: Vector3 = row.get("idle_turn_anchor",body.global_position)
+				target_pose.origin.x = anchor.x
+				target_pose.origin.z = anchor.z
 		# Keep the authored pitch/roll; damp yaw toward the shared grounded turn rate.
 		var error := target_basis.get_rotation_quaternion() * body.global_basis.orthonormalized().get_rotation_quaternion().inverse()
 		if error.w < 0.0: error = -error
 		var angular_error := error.get_axis() * error.get_angle()
-		if locomotion_enabled and not is_instance_valid(_attack_owner) and not world_path and _idle_ground_poses.is_empty(): angular_error = angular_error.slide(Vector3.UP)
+		if locomotion_enabled and not _independent_path_turning() and not is_instance_valid(_attack_owner) and not world_path and _idle_ground_poses.is_empty(): angular_error = angular_error.slide(Vector3.UP)
 		var desired_linear := Vector3.ZERO
 		if not is_instance_valid(_attack_owner): desired_linear = reference_pose.basis*(Vector3(row.trajectory_velocity)+Vector3(0,0,row.sway_velocity))
 		var desired_angular := Vector3.ZERO
 		desired_angular.y = _turn_rate if _contact_count > 0 else 0.0
+		if _independent_path_turning() and row.belly and not is_instance_valid(_attack_owner): desired_angular.y = float(row.get("turn_rate",0.0))
 		if is_instance_valid(_attack_owner) and _attack_pose_velocities.has(body):
 			desired_linear = reference_pose.basis*Vector3(_attack_pose_velocities[body].linear)
 			desired_angular = reference_pose.basis*Vector3(_attack_pose_velocities[body].angular)
 			desired_angular.y = _turn_rate if _contact_count > 0 else 0.0
+		if _independent_path_turning() and is_instance_valid(_attack_owner) and row.belly:
+			desired_linear = Vector3.ZERO
+			desired_angular = Vector3.ZERO
 		var angular_cap := _attack_angular_acceleration if is_instance_valid(_attack_owner) else motion_data.maximum_angular_acceleration
 		var angular_acceleration := ((angular_error * gain + (desired_angular-body.angular_velocity) * damping) / denominator).limit_length(angular_cap)
 		var inverse := body.get_inverse_inertia_tensor()
@@ -1372,9 +1487,11 @@ func _apply_pose(frame: Dictionary, delta: float) -> void:
 		if row.grounded and not world_path:
 			position_error = position_error.slide(reference_pose.basis.y) if ground_wave or is_instance_valid(_attack_owner) else reference_pose.basis.x*position_error.dot(reference_pose.basis.x)
 		var cap := _attack_pose_acceleration if is_instance_valid(_attack_owner) else motion_data.maximum_pose_acceleration
-		if held and row.belly: cap = _attack_acceleration if is_attack_support_locked() else motion_data.maximum_pose_acceleration
+		if held and row.belly: cap = _attack_acceleration if is_instance_valid(_attack_owner) else motion_data.maximum_pose_acceleration
 		var moving_frame_velocity := Vector3(frame.velocity)+Vector3.UP.cross(body.global_position-Vector3(frame.center))*float(frame.yaw_speed)
 		if held: moving_frame_velocity = Vector3.ZERO
+		if _independent_path_turning() and row.belly and row.has("idle_turn_anchor"): moving_frame_velocity = Vector3.ZERO
+		if _independent_path_turning() and is_instance_valid(_attack_owner) and row.belly: moving_frame_velocity = Vector3.ZERO
 		var velocity_error := moving_frame_velocity+desired_linear-body.linear_velocity
 		if world_path: velocity_error = Vector3(row.path_velocity)-body.linear_velocity
 		if row.grounded and not world_path:
@@ -1456,6 +1573,7 @@ func cancel_motion(_reason: StringName = &"cancelled") -> void:
 	_path_ready = false
 	_ground_path.points.clear()
 	_ground_path.corners.clear()
+	_ground_path.turn_markers.clear()
 	_path_progress = 0.0
 	_path_blend = 0.0
 	_path_speed = 0.0
@@ -1475,6 +1593,11 @@ func cancel_motion(_reason: StringName = &"cancelled") -> void:
 	_orbit_time = 0.0
 	_orbit_radius = 0.0
 	for row: Dictionary in _parts:
+		var heading := _rest_heading
+		if _live(row): heading = (row.body.global_basis*Basis(row.rest.basis).inverse()).x.slide(Vector3.UP).normalized()
+		row["turn_heading"] = heading
+		row["turn_goal"] = heading
+		row["turn_rate"] = 0.0
 		row["sway_offset"] = 0.0
 		row["sway_velocity"] = 0.0
 		row["trajectory_offset"] = Vector3.ZERO
@@ -1483,6 +1606,10 @@ func cancel_motion(_reason: StringName = &"cancelled") -> void:
 		row["grounded"] = false
 		row["history"] = []
 		row.erase("connection_target")
+		row.erase("idle_turn_anchor")
+	if not _parts.is_empty(): _raised_heading = _parts[-1].get("turn_heading",_rest_heading)
+	_path_pose_basis = _turn_basis(_raised_heading)
+	_path_pose_yaw_speed = 0.0
 	_direction = Vector3.ZERO
 	_drive_force = Vector3.ZERO
 	_turn_rate = 0.0
@@ -1522,7 +1649,12 @@ func get_ground_path_debug_snapshot(maximum_points: int = 128) -> Dictionary:
 		top = maxf(top,row.body.global_position.y+Vector3(row.size).length())
 		bottom = minf(bottom,row.body.global_position.y-Vector3(row.size).length())
 	if is_instance_valid(_jaw): excludes.append(_jaw.get_rid())
+	var turns: Array[Dictionary] = []
+	for marker: Dictionary in _ground_path.turn_markers:
+		if float(marker.s)<start or float(marker.s)>end: continue
+		turns.append({"distance":marker.s,"position":_ground_path.sample(float(marker.s)).position,"facing":marker.facing})
 	return {"points":points,"distances":distances,"progress":_path_progress,"excludes":excludes,
+		"turns":turns,
 		"ray_top":top+2.0,"ray_bottom":bottom-100.0,
 		"line_width":clampf(float(_path_leader.size.z)*0.5,0.06,0.25)}
 
@@ -1533,6 +1665,7 @@ func get_snake_motion_diagnostics(include_parts: bool = true) -> Dictionary:
 		var row: Dictionary = _parts[index]
 		if not _live(row): continue
 		var detail := {"part": row.body.name, "raised": not row.belly,
+			"turn_heading":row.get("turn_heading",_raised_heading) if row.belly else _raised_heading,"turn_goal":row.get("turn_goal",_command_heading) if row.belly else _command_heading,"turn_distance":row.get("turn_distance",0.0),"turn_rate_degrees":rad_to_deg(float(row.get("turn_rate",0.0))) if row.belly else rad_to_deg(_turn_rate),
 			"grounded": row.grounded, "leader": row.leader.body.name if not row.leader.is_empty() and _live(row.leader) else &"none",
 			"trajectory_offset": row.trajectory_offset, "trajectory_velocity": row.trajectory_velocity,
 			"actual_motion_offset": reference*row.body.global_position-Vector3(row.rest.origin),
@@ -1572,6 +1705,9 @@ func get_snake_motion_diagnostics(include_parts: bool = true) -> Dictionary:
 			if not row.belly and _live(_path_leader):
 				var rest_offset: Vector3 = row.rest.origin-_path_leader.rest.origin
 				var inverse := _path_pose_basis.inverse()
+				if _independent_path_turning():
+					var pivot := _raised_turn_pivot()
+					rest_offset = Vector3(row.rest.origin)-Vector3(pivot.rest)+inverse*(Vector3(pivot.world)-_path_leader.body.global_position)
 				var actual_offset: Vector3 = inverse*(row.body.global_position-_path_leader.body.global_position)
 				var target_offset: Vector3 = inverse*(Vector3(row.path_target)-Vector3(_path_leader.path_target))
 				detail.merge({"raised_rest_offset":rest_offset,"raised_target_offset":target_offset,
@@ -1603,6 +1739,7 @@ func get_snake_motion_diagnostics(include_parts: bool = true) -> Dictionary:
 		"ground_path_retained":(_path_ready or _connection_recovery_resume_path) and not _ground_path.points.is_empty(),"path_resume_pending":_connection_recovery_resume_path,
 		"raised_path_mode":"authored_xy", "spacing_scope":"grounded_layout",
 		"path_turning":_path_turning,"path_reversing":_path_reversing,
+		"turn_mode":"raised_independent_ground_markers" if _independent_path_turning() else "shared_heading","raised_heading":_raised_heading,"path_turn_markers":_ground_path.turn_markers.duplicate(true),
 		"path_speed":_path_speed,"path_amplitude":_path_amplitude,"path_wavelength":_ground_path.wavelength,
 		"path_points":_ground_path.points.size(),"path_blend":_path_blend,
 		"path_execution":"acceleration_and_jerk_limited", "path_corners":_ground_path.corners.size(),

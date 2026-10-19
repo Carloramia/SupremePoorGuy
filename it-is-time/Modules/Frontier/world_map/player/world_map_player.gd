@@ -6,6 +6,7 @@ signal movement_cancelled(reason: String)
 signal movement_paused(reason: String)
 signal movement_resumed
 signal movement_finished(position: Vector2)
+signal distance_travelled(distance: float)
 
 @export var base_speed: float = 165.0
 @export var visual_scene: PackedScene
@@ -111,7 +112,7 @@ func _physics_process(delta: float) -> void:
 	if not navigation.definition.contains(navigation.to_local(candidate)):
 		cancel_movement("map bounds")
 		return
-	move_and_slide()
+	_move_and_record_distance()
 	var actual := agent.get_current_navigation_path()
 	if not actual.is_empty():
 		var remaining := PackedVector2Array([global_position])
@@ -134,11 +135,17 @@ func _follow_route(delta: float) -> void:
 	if not navigation.definition.contains(navigation.to_local(global_position + velocity * delta)):
 		cancel_movement("map bounds")
 		return
-	move_and_slide()
+	_move_and_record_distance()
 	var remaining := PackedVector2Array([global_position])
 	for index in range(route_index, movement_route.size()):
 		remaining.append(movement_route[index])
 	path_line.points = remaining
+
+func _move_and_record_distance() -> void:
+	var from := global_position
+	move_and_slide()
+	var distance := from.distance_to(global_position)
+	if distance > 0.0: distance_travelled.emit(distance)
 
 func _finish_movement() -> void:
 	has_target = false

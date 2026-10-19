@@ -11,6 +11,7 @@ func check(ok: bool, message: String) -> void:
 	print("SAVE_EFFECT_CHECK ",ok," ",message)
 	if not ok: failed=true; push_error(message)
 func run() -> void:
+	root.get_node("RuntimeConsole").auto_getlogs_enabled=false
 	var session := SESSION.new()
 	session.save_path = "res://Tests/.runtime/integration/migration_"+str(Time.get_ticks_usec())+".json"
 	preload("res://Tests/Integration/ApplicationFixtures.gd").add_human(session)
@@ -70,6 +71,17 @@ func run() -> void:
 	record.id = "effects_human"
 	var actor := FACTORY.spawn(record,host,Vector3(-64,1,50),0)
 	host.actors.append(actor)
+	var unresolved := adapter.layout.duplicate(true)
+	for object: Dictionary in unresolved.objects: object.integration_unresolved=true
+	var blocked_effects := preload("res://Scripts/Application/BattleEnvironmentEffects3D.gd").new()
+	blocked_effects.configure(host,unresolved,adapter.scale)
+	host.add_child(blocked_effects)
+	check(blocked_effects.zones.is_empty(),"Unbound effect/condition references never activate demo effects")
+	for object: Dictionary in unresolved.objects:
+		if object.type not in ["mud","thorns","web","collision_damage"]: continue
+		var area := host._geometry.get_node_or_null("Objects/"+str(object.id)+"/region") as Area3D
+		if area!=null: check(not area.monitoring,"Unbound effect regions stop contact monitoring")
+	blocked_effects.free()
 	var effects := preload("res://Scripts/Application/BattleEnvironmentEffects3D.gd").new()
 	effects.configure(host,adapter.layout,adapter.scale)
 	host.add_child(effects)

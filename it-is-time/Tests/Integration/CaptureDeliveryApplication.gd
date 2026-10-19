@@ -13,6 +13,7 @@ func capture(title: String) -> void:
 func run() -> void:
 	root.size = Vector2i(1280,720)
 	app = preload("res://Scenes/Application/GameRoot.tscn").instantiate()
+	app.use_hex_map_for_new_games = false # This fixture verifies the retained 20261015 map.
 	app.save_path = "res://Tests/.runtime/integration/delivery_capture_"+str(Time.get_ticks_usec())+".json"
 	app.display_settings_path = "res://Tests/.runtime/integration/delivery_capture_display.cfg"
 	root.add_child(app)

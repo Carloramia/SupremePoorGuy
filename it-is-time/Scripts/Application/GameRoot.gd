@@ -9,15 +9,20 @@ const MAP_CATALOG = preload("res://Modules/FrontierDelivery/Scripts/Map/MapCatal
 @export var save_path := "user://saves/slot_01.json"
 @export var display_settings_path := "user://settings/display.cfg"
 @export var use_delivery_map := true
+@export var use_hex_map_for_new_games := true
 @export var delivery_battle_settings: DeliveryBattleSettings = preload("res://Resources/Application/FrontierDeliveryBattle.tres")
 @export var world_scene: PackedScene = preload("res://Modules/Frontier/world_map/demo/WorldMapDemo.tscn")
 @export var integration_logging := false
+@export var world_time_settings: WorldTimeSettings = preload("res://Resources/Application/DefaultWorldTime.tres")
+@export var world_time_hud_scene: PackedScene = preload("res://Scenes/Application/WorldTimeHUD.tscn")
+@export var summon_animation_settings: SummonAnimationSettings = preload("res://Resources/Application/DefaultSummonAnimation.tres")
 @export var ui_skin_preset: Resource = preload("res://Modules/PaperUI/TA/Presets/medium.tres")
 @export var battle_definitions: Dictionary = {}
 @export var default_battle_definition: SceneDefinition
 @export var monster_config_definitions: Dictionary = {"demo_guard":"human","human":"human","wolf":"wolf","snake":"snake"}
 var session := SESSION.new()
 var ui: Control
+var world_time_hud: Control
 var world_map: WorldMapController
 var delivery_map
 var battle: Node3D
@@ -42,9 +47,11 @@ var _open_tasks_on_world_entry := false
 var free_mouse_enabled := false
 var display_error := ""
 var returning_to_main_menu := false
+var _configured_delivery_map := true
 const DISPLAY_RESOLUTIONS := [Vector2i(1120,680),Vector2i(1280,720),Vector2i(1366,768),Vector2i(1600,900),Vector2i(1920,1080),Vector2i(2560,1440),Vector2i(3840,2160)]
 
 func _ready() -> void:
+	_configured_delivery_map=use_delivery_map
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	add_to_group(&"application_host")
 	_previous_minimum = get_window().min_size
@@ -56,7 +63,11 @@ func _ready() -> void:
 	get_window().close_requested.connect(_window_close_requested)
 	session.save_path = save_path
 	session.integration_logging = integration_logging
+	session.world_time_settings = world_time_settings if world_time_settings != null else session.DEFAULT_WORLD_TIME
+	session.reset()
 	if session.has_save() and not session.load_save(): _load_failed = true; push_warning(session.last_error)
+	if session.data.worlds.has(SESSION.DELIVERY_MAP): use_delivery_map=true
+	elif not session.data.worlds.is_empty(): use_delivery_map=false
 	if not session.data.battle.is_empty() and session.data.battle.get("map_id","")!="frontier_layout": use_delivery_map = false
 	var layer := CanvasLayer.new()
 	layer.name = "GameUI"
@@ -69,12 +80,19 @@ func _ready() -> void:
 	ui.get_node("AppShell/Layout/MainContent/Center/WorldView").set_script(VIEW)
 	add_child(layer)
 	layer.add_child(ui)
+	ui.view.summon_animation_settings = summon_animation_settings if summon_animation_settings != null else preload("res://Resources/Application/DefaultSummonAnimation.tres")
 	if _load_failed: ui.main_menu.get_node("%Continue").disabled = true
 	map_container = _content_view("WorldMapView",false)
 	map_viewport = map_container.get_child(0)
 	battle_container = _content_view("ScenarioView",true)
 	battle_viewport = battle_container.get_child(0)
+	if world_time_hud_scene != null:
+		world_time_hud = world_time_hud_scene.instantiate()
+		ui.view.add_child(world_time_hud)
+		world_time_hud.bind_session(session)
+		world_time_hud.hide()
 	session.changed.connect(_session_changed)
+	session.world_time_changed.connect(ui._update_header)
 	session.new_player_tasks_completed.connect(ui.queue_task_completion)
 	refresh_input_gate()
 	if "--verify-export" in OS.get_cmdline_user_args(): _verify_export.call_deferred()
@@ -231,6 +249,7 @@ func trace_map_event(event: String, detail: Dictionary = {}) -> void:
 	var console := get_tree().root.get_node_or_null("RuntimeConsole")
 	if console==null or not console.is_map_tracking_enabled(): return
 	var row := {"phase":phase,"backend":"delivery" if use_delivery_map else "legacy_frontier","battle_id":session.data.battle.get("battle_id","")}
+	row.world_time = session.world_time_status()
 	if is_instance_valid(delivery_map):
 		row.map_id = delivery_map.runtime.data.map_id
 		row.player = delivery_map.runtime.data.player.duplicate()
@@ -249,10 +268,14 @@ func trace_map_event(event: String, detail: Dictionary = {}) -> void:
 
 func get_map_diagnostics(location_id: String = "") -> Dictionary:
 	var report := {"phase":phase,"route":ui.route if ui!=null else "","backend":"delivery" if use_delivery_map else "legacy_frontier","map_ready":false,"owned_count":session.monsters().size(),"party_ids":session.monsters("team").map(func(unit):return unit.id),"battle":session.data.battle.duplicate(true)}
+	report.world_time = session.world_time_status()
 	var console := get_tree().root.get_node_or_null("RuntimeConsole")
 	report.console_open = console!=null and console.is_console_open()
 	if is_instance_valid(delivery_map):
 		var runtime = delivery_map.runtime
+		report.map_version=session.delivery_version()
+		if runtime.hex!=null:
+			report.hex_navigation={"nodes":runtime.hex.nav.get_point_count(),"visible_cells":runtime.visible_hexes.size(),"explored_cells":runtime.explored_hexes.size()}
 		report.merge({"map_ready":true,"map_id":runtime.data.map_id,"player":runtime.data.player.duplicate(),"input_enabled":delivery_map.input_enabled,"visible":delivery_map.is_visible_in_tree(),"paper_open":ui.overlay.visible,"busy":runtime.busy,"path_points":delivery_map.path.size(),"pending_interaction":delivery_map.pending_interaction,"pending_battle_setup":runtime.data.pending_battle_setup.duplicate(),"encounter_latched":runtime.data.encounter_latched.duplicate(),"opening_unlocked":runtime.data.get("opening_unlocked",false),"discovered_count":runtime.data.discovered.size(),"destroyed":runtime.data.destroyed.duplicate(),"cleared":runtime.data.cleared.duplicate()},true)
 		report.input_blockers = []
 		if phase!="world": report.input_blockers.append("phase="+phase)
@@ -282,13 +305,18 @@ func ui_route_changed(next: String) -> void:
 		map_container.visible = not use_delivery_map and next == "world" and phase in ["world","loading_world","main"]
 		battle_container.visible = next == "battle" and phase in ["deployment","battle","loading_battle","scenario"]
 	if is_instance_valid(delivery_map): delivery_map.visible = next=="world" and phase in ["world","loading_world","main","returning"]
+	if is_instance_valid(world_time_hud): world_time_hud.visible = next=="world" and phase in ["world","loading_world","returning"]
 	refresh_input_gate()
 
 func start_new_game() -> void:
 	if phase != "main": return
 	var previous := session.data.duplicate(true)
+	var previous_backend := use_delivery_map
+	# Continuing a legacy backend must not change the configured new-game default.
+	use_delivery_map=_configured_delivery_map
 	session.reset()
-	if not session.save(): session.data = previous; ui._notice(session.last_error); return
+	if use_delivery_map and use_hex_map_for_new_games: session.data.delivery_map_version="20261019"
+	if not session.save(): session.data = previous; use_delivery_map=previous_backend; ui._notice(session.last_error); return
 	_open_tasks_on_world_entry = true
 	ui._task_notifications.clear()
 	ui.rules.import_layout(session.data.layout)
@@ -335,6 +363,7 @@ func enter_world() -> void:
 	world_map.invalid_destination.connect(func(reason):trace_map_event("travel_rejected",{"reason":reason}))
 	map_viewport.add_child(world_map)
 	if not world_map.is_initialized: await world_map.initialized
+	world_map.player.distance_travelled.connect(session.advance_world_travel)
 	# The paper shell replaces only the duplicate debug HUD, not map interactions.
 	world_map.ui.get_child(0).get_child(0).hide()
 	world_map.ui.get_child(0).get_child(1).hide()
@@ -355,6 +384,7 @@ func enter_world() -> void:
 	refresh_input_gate()
 
 func _enter_delivery_world() -> void:
+	MAP_CATALOG.select_version(session.delivery_version())
 	phase = "loading_world"
 	ui.status.text = "正在准备边境地图…"
 	delivery_map = preload("res://Scripts/Application/DeliveryMapBridge.gd").new()
@@ -388,7 +418,7 @@ func _delivery_battle_requested(request: Dictionary) -> void:
 	battle.name = "BattleHost"
 	battle.application = self
 	battle.delivery_request = request.duplicate(true)
-	battle.delivery_settings = delivery_battle_settings
+	battle.delivery_settings = get_delivery_battle_settings()
 	battle.finished.connect(_battle_finished)
 	battle_viewport.add_child(battle)
 	ui._show("battle")
@@ -403,6 +433,11 @@ func _delivery_battle_requested(request: Dictionary) -> void:
 		_cancel_failed_delivery_battle(message)
 		return
 	_begin_deployment()
+
+func get_delivery_battle_settings() -> DeliveryBattleSettings:
+	if session.delivery_version()=="20261019":
+		return load("res://Content/Maps/FrontierEditor_20261019/Runtime/BattleSettings.tres") as DeliveryBattleSettings
+	return delivery_battle_settings
 
 func _cancel_failed_delivery_battle(message: String) -> void:
 	if not delivery_map.cancel_battle():
@@ -466,6 +501,7 @@ func _resolve_location(result: Dictionary) -> void:
 	if result.get("success",false) and result.get("reward",0)>0 and reward_id not in session.data.completed:
 		session.data.magic += int(result.reward)
 		session.data.completed.append(reward_id)
+	if result.get("success",false) and result.get("action","") != "visit": session.spend_world_action(result.get("action",""))
 	if not world_map.resolve_location_interaction(id,result):
 		session.data = before
 		ui._notice(session.last_error)
@@ -731,6 +767,14 @@ func _apply_pause() -> void:
 func save_session() -> bool:
 	if is_instance_valid(delivery_map): return delivery_map.save_progress()
 	return world_map.save_world_map() if world_map != null and world_map.is_initialized else session.save()
+
+## Flush travel before a speed change so position and elapsed time stay in the same save.
+func set_world_travel_speed(speed: float) -> bool:
+	if not is_finite(speed) or speed <= 0.0: return session.set_world_travel_speed(speed)
+	if not save_session(): return false
+	var success: bool = session.set_world_travel_speed(speed)
+	if success: trace_map_event("travel_speed_changed",session.world_time_status())
+	return success
 
 func _window_close_requested() -> void:
 	if save_session(): get_tree().quit()

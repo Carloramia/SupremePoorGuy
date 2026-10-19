@@ -10,6 +10,17 @@ class ArmorProbe:
 		return delegate.calculate_raw_damage(impulse)
 	func calculate_weapon_raw_damage(impulse: float, swinging: bool) -> float:
 		return delegate.calculate_weapon_raw_damage(impulse,swinging)
+	func calculate_attack_raw_damage(impulse: float, context: Dictionary, contact_mass: float = 1.0) -> float:
+		return delegate.calculate_attack_raw_damage(impulse,context,contact_mass)
+	func apply_defenses(raw: float, armor: float, resilience: float = 0.0) -> float:
+		var result: float = delegate.apply_defenses(raw,armor,resilience)
+		_record(raw,armor,result,raw,"shockwave",resilience)
+		return result
+	func apply_weapon_defenses(raw: float, armor: float, resilience: float, swinging: bool) -> float:
+		var result: float = delegate.apply_weapon_defenses(raw,armor,resilience,swinging)
+		var unarmored: float = delegate.apply_weapon_defenses(raw,0.0,0.0,swinging)
+		_record(raw,armor,result,unarmored,"swing" if swinging else "passive",resilience)
+		return result
 	func apply_armor(raw: float, armor: float) -> float:
 		var result: float = delegate.apply_armor(raw,armor)
 		_record(raw,armor,result,raw,"shockwave")
@@ -19,9 +30,9 @@ class ArmorProbe:
 		var unarmored: float = delegate.apply_weapon_armor(raw,0.0,swinging)
 		_record(raw,armor,result,unarmored,"swing" if swinging else "passive")
 		return result
-	func _record(raw: float, armor: float, result: float, unarmored: float, kind: String) -> void:
+	func _record(raw: float, armor: float, result: float, unarmored: float, kind: String, resilience: float = 0.0) -> void:
 		serial += 1
-		last = {"evaluation":serial,"frame":Engine.get_physics_frames(),"raw":raw,"armor":armor,
+		last = {"evaluation":serial,"frame":Engine.get_physics_frames(),"raw":raw,"armor":armor,"resilience":resilience,
 			"after_armor":result,"without_armor":unarmored,"profile":kind}
 
 var probe := ArmorProbe.new()
@@ -61,8 +72,8 @@ func _register_module(actor: Dictionary, node: Node, action: String, wolf: bool 
 	if not actor.has("initial_parts"):
 		actor["initial_parts"] = []
 		for part: PhysicalBodyPart3D in actor.node._get_physical_body_parts():
-			if str(options.armor)=="off": part.armor = 0.0
-			actor.initial_parts.append({"name":str(part.name),"hp":part.max_hp,"armor":part.armor,"tags":part.tags.duplicate(),"mass":part.mass})
+			if str(options.armor)=="off": part.armor = 0.0; part.resilience = 0.0
+			actor.initial_parts.append({"name":str(part.name),"hp":part.max_hp,"armor":part.armor,"resilience":part.resilience,"tags":part.tags.duplicate(),"mass":part.mass})
 	super._register_module(actor,node,action,wolf)
 
 func _on_damage(amount: float, hp: float, source: Node, actor: Dictionary, part: PhysicalBodyPart3D) -> void:
@@ -76,11 +87,12 @@ func _on_damage(amount: float, hp: float, source: Node, actor: Dictionary, part:
 	var event: Dictionary = damage_events[-1]
 	event.merge(evaluation,true)
 	event["hp_before"] = hp_before
-	event["armor_absorbed"] = minf(float(evaluation.raw),maxf(part.armor,0.0))
-	event["passive_suppression"] = maxf(float(evaluation.raw)-float(event.armor_absorbed)-float(evaluation.after_armor),0.0)
+	event["resilience_absorbed"] = float(evaluation.raw)*(part.resilience/(part.resilience+100.0))
+	event["armor_absorbed"] = minf(float(evaluation.raw)-float(event.resilience_absorbed),maxf(part.armor,0.0))
+	event["passive_suppression"] = maxf(float(evaluation.raw)-float(event.resilience_absorbed)-float(event.armor_absorbed)-float(evaluation.after_armor),0.0)
 	event["overkill"] = maxf(float(evaluation.after_armor)-amount,0.0)
 	event["effective_armor_hp_saved"] = minf(float(evaluation.without_armor),hp_before)-amount
-	assert(is_equal_approx(float(evaluation.raw),amount+float(event.armor_absorbed)+float(event.passive_suppression)+float(event.overkill)),"Damage decomposition must reconcile")
+	assert(is_equal_approx(float(evaluation.raw),amount+float(event.resilience_absorbed)+float(event.armor_absorbed)+float(event.passive_suppression)+float(event.overkill)),"Damage decomposition must reconcile")
 	audit_events += 1
 
 func sample() -> void:

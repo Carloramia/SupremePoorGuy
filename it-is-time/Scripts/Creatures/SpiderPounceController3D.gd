@@ -383,12 +383,13 @@ func _launch() -> void:
 		if row.front: row.knee.set_flag_z(Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_SPRING, row.knee_flags[Generic6DOFJoint3D.FLAG_ENABLE_ANGULAR_SPRING])
 	for part: RigidBody3D in _parts:
 		if _alive(part): part.apply_central_impulse((Vector3(_plan.velocity)-part.linear_velocity)*part.mass)
+	var damage_context: Dictionary = get_node("/root/DamageService").create_attack_context(get_parent(),data.damage_multiplier)
 	for row: Dictionary in _feet:
 		if not row.front: continue
 		var collision := row.body.get_node("CollisionShape3D") as CollisionShape3D
 		var hitbox := HITBOX.new()
 		hitbox.name = "SpiderForelegDamage_" + str(row.body.name)
-		hitbox.setup(row.body, get_parent(), collision.shape.size*collision.scale.abs()*data.hitbox_padding, collision.position, data.impulse_multiplier, 0.0)
+		hitbox.setup(row.body, get_parent(), collision.shape.size*collision.scale.abs()*data.hitbox_padding, collision.position, data.impulse_multiplier, 0.0,damage_context)
 		get_parent().add_child(hitbox)
 		_hitboxes.append(hitbox)
 		row["hitbox"] = hitbox

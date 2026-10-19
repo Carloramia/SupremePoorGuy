@@ -1,6 +1,6 @@
 extends SceneTree
 const FACTORY = preload("res://Scripts/Application/CreatureFactory.gd")
-const OUTPUT := "D:/GameJamWorkspace/Reports/CreaturePortraits_2026-10-16"
+const OUTPUT := "D:/GameJamWorkspace/Reports/CreatureHeadPortraits_2026-10-18"
 var failed := false
 func _initialize() -> void: call_deferred("run")
 func check(value: bool, message: String) -> void:
@@ -13,6 +13,7 @@ func wait_portrait(ui: Node) -> void:
 	await RenderingServer.frame_post_draw
 
 func run() -> void:
+	DirAccess.make_dir_recursive_absolute(OUTPUT)
 	root.get_node("RuntimeConsole").auto_getlogs_enabled = false
 	root.size = Vector2i(1280,800)
 	var app := preload("res://Scenes/Application/GameRoot.tscn").instantiate()

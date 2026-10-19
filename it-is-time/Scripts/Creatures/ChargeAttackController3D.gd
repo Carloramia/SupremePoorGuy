@@ -248,6 +248,7 @@ func _start_charge() -> void:
 	_unsupported_elapsed = 0.0
 	_speed = data.starting_speed
 	_weapon = WEAPON.instantiate()
+	_weapon.damage_multiplier = data.damage_multiplier
 	add_child(_weapon)
 	_weapon.attach_to_body(_body,data.weapon_length_ratio,data.weapon_radius_ratio)
 	_weapon.update_ground_box(_direction,data.obstacle_mask,false)

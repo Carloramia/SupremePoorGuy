@@ -23,6 +23,7 @@ func run() -> void:
 	check("waiting for GameRoot" in console.execute_command("trackmap ON"),"Tracing can be enabled before map initialization")
 	check("Usage:" in console.execute_command("trackmap on extra") and console.is_map_tracking_enabled(),"Malformed command does not change tracking state")
 	var app := preload("res://Scenes/Application/GameRoot.tscn").instantiate()
+	app.use_hex_map_for_new_games = false # This fixture verifies the retained 20261015 map.
 	app.save_path = "res://Tests/.runtime/integration/map_logging_"+str(Time.get_ticks_usec())+".json"
 	app.display_settings_path = "res://Tests/.runtime/integration/map_logging_display.cfg"
 	root.add_child(app)

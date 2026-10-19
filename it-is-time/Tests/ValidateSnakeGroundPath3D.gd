@@ -124,7 +124,13 @@ func check_spacing_guards(m: Node) -> void:
 	for direction: Vector3 in [Vector3.LEFT,Vector3.BACK]:
 		var changed_path := ROUTE.new()
 		changed_path.reset(Vector3.ZERO,direction,original_path.keep_length,original_path.wavelength,original_path.amplitude,original_path.step)
-		changed_path.ensure(m._path_progress,original_path.wavelength,direction)
+		# Rotate the same parameterized route, preserving its wave phase after earlier corners.
+		var rotation := Basis(Vector3.UP,atan2(Vector3(original_anchor.forward).cross(direction).y,Vector3(original_anchor.forward).dot(direction)))
+		changed_path.points = original_path.points.duplicate(true)
+		for point: Dictionary in changed_path.points:
+			point.position = rotation*Vector3(point.position)
+			point.center = rotation*Vector3(point.center)
+			point.forward = rotation*Vector3(point.forward)
 		m._ground_path = changed_path
 		var anchor: Dictionary = changed_path.sample(m._path_progress)
 		for index: int in m._parts.size():
@@ -134,7 +140,8 @@ func check_spacing_guards(m: Node) -> void:
 			var expected: Vector3 = Vector3(original_samples[index].position-original_anchor.position).slide(Vector3.UP)
 			check(offset.distance_to(expected) < .0001,"Upper body arrangement is unchanged by reverse or sideways ground travel")
 			var local: Vector3 = reference.basis.inverse()*(sample.position-anchor.position)
-			var rest: Vector3 = m._parts[index].rest.origin-m._path_leader.rest.origin
+			var pivot: Dictionary = m._raised_turn_pivot()
+			var rest: Vector3 = m._parts[index].rest.origin-Vector3(pivot.rest)+reference.basis.inverse()*(Vector3(pivot.world)-m._path_leader.body.global_position)
 			check(absf(local.x-rest.x) < .0001,"Upper body samples retain the original signed X offsets, including backward bends")
 			var relative_velocity: Vector3 = sample.tangent*5.0+sample.frame_velocity-Vector3(anchor.tangent)*5.0
 			var expected_velocity: Vector3 = original_samples[index].tangent*5.0+original_samples[index].frame_velocity-Vector3(original_anchor.tangent)*5.0
@@ -171,6 +178,7 @@ func run() -> void:
 		var height := head.global_position.y
 		for tick: int in 180: await physics_frame
 		check(not m._path_ready,"Idle does not invent a moving ground route")
+		var idle_sway_envelope: float = m._sway_max_amplitude
 		check(head.global_position.y > height*0.85,"Idle raised posture is preserved")
 		command.direction = command.facing
 		var distance := 0.0
@@ -223,7 +231,7 @@ func run() -> void:
 		check(spacing_high-spacing_low > .005*scenario.x,"The arc-length target alternately extends and contracts")
 		check(actual_spacing_high-actual_spacing_low > .002*scenario.x,"Physical parts actually change their route spacing")
 		check(absf(float(m._parts[m._spacing_anchor].path_distance)-m._path_progress) < .00001,"The leading grounded torso remains the route anchor")
-		check(is_equal_approx(m._sway_max_amplitude,.19318515374308*scenario.x),"Wider route sliders do not inflate the idle sway envelope")
+		check(is_equal_approx(m._sway_max_amplitude,idle_sway_envelope),"Wider route sliders do not inflate the idle sway envelope")
 		var debug: Dictionary = m.get_ground_path_debug_snapshot()
 		check(debug.points.size() == 128 and debug.excludes.size() == m._parts.size()+1,"Bounded debug snapshot includes the route and excludes every owned body")
 		distance = Vector3(m.get_control_anchor().global_position-initial).dot(command.direction)/2.0
@@ -266,14 +274,16 @@ func run() -> void:
 			check(m._update_anchor().heading.dot(command.facing) > .95,"Route reversal keeps the shared body facing")
 			command.direction = Vector3.ZERO
 			command.facing = Vector3.LEFT
-			for tick: int in 1500:
+			for tick: int in 300:
 				await physics_frame
-				if m._update_anchor().heading.x < -.995 and absf(m._actual_yaw_speed) < .1 and not m._path_turning: break
+				if m._raised_heading.x < -.995 and not m._path_turning: break
 			print("SNAKE_ROUTE_TURN heading=",m._update_anchor().heading," diag=",m.get_snake_motion_diagnostics(false))
-			check(m._update_anchor().heading.x < -.99,"Existing whole-body turn remains available with relative yaw locked")
+			check(m._raised_heading.x < -.99,"Raised body turns independently while the ground path remains active")
+			check(m._path_ready and not route.turn_markers.is_empty(),"Turning records facing markers without replacing the route")
+			check(route.sample(before_reverse-4.0).position.is_equal_approx(passed_point),"Turning retains visited geometry")
 			command.direction = Vector3.LEFT
 			for tick: int in 180: await physics_frame
-			check(m._path_ready and not m._path_turning,"A turn-around establishes a fresh compatible route")
+			check(m._path_ready and not m._path_turning,"Travel continues on the retained route after the upper turn")
 			if m._path_ready: check_spacing_guards(m)
 		actor.set_temporary_ragdoll(command,true)
 		check(not m._path_ready and m._ground_path.points.is_empty(),"Ragdoll releases the shared route")

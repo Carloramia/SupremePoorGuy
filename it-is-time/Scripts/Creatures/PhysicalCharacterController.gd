@@ -10,6 +10,18 @@ var _hit_ragdoll_timer: Timer
 var _control_components: Array[Node] = []
 var _control_components_dirty := true
 var _control_refresh_pending := false
+var _base_combat_mass := 0.0
+
+## Cached naked anatomy; equipment mass and later Broken parts cannot change an action's damage.
+func get_base_combat_mass() -> float:
+	if _base_combat_mass <= 0.0:
+		for part: PhysicalBodyPart3D in _get_physical_body_parts():
+			_base_combat_mass += part.base_combat_mass if part.base_combat_mass > 0.0 else part.mass
+	return _base_combat_mass
+
+func reset_combat_mass() -> void:
+	_base_combat_mass = 0.0
+	get_base_combat_mass()
 
 func _is_control_component(node: Node) -> bool:
 	if node is PhysicalBodyPart3D or node is Joint3D or node is CharacterDamageController3D: return false
@@ -184,6 +196,7 @@ func _ready() -> void:
 	add_to_group(&"physical_characters_3d")
 	if not get_tree().node_added.is_connected(_on_body_part_added): get_tree().node_added.connect(_on_body_part_added)
 	_configure_body_part_collision_exceptions()
+	get_base_combat_mass()
 	if not Engine.is_editor_hint(): call_deferred("_ensure_damage_controller")
 
 func _ensure_damage_controller() -> void:

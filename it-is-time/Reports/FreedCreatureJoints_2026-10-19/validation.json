@@ -1,0 +1,315 @@
+{
+  "scope": "Freed or queued joint references after damage; healthy physics values unchanged",
+  "lifecycle_checks": 333,
+  "species": [
+    "Spider",
+    "Wolf",
+    "StumpBeast",
+    "HornedBeast",
+    "Beast",
+    "Ratkin",
+    "Rat_1",
+    "Rat_2",
+    "Human",
+    "Bird"
+  ],
+  "baseline_directory": "D:/GameJamWorkspace/RuntimeChecks/FreedJointBaseline_20261019",
+  "baseline_expected_failure": true,
+  "old_test_notes": {
+    "WolfJointSafety": "Same anatomical-stop failure and angle outputs before/after this fix",
+    "WingPose3D": "Same three count assertions and pose-error outputs before/after this fix",
+    "HumanLimbPose3D": "TestLevel fixture no longer contains GenerateHumanNPC",
+    "BirdLandingCache3D": "First exit native crash after PASS; fixed-step rerun passed on both current and baseline"
+  },
+  "runs": [
+    {
+      "name": "ValidateFreedCreatureJoints3D",
+      "exit_code": 0,
+      "error_count": 0,
+      "errors": [],
+      "markers": [
+        "FREED_CREATURE_JOINTS_PASSED checks=333"
+      ],
+      "log": "ValidateFreedCreatureJoints3D.log",
+      "checks": 333
+    },
+    {
+      "name": "ValidateSharedLimbControl",
+      "exit_code": 0,
+      "error_count": 0,
+      "errors": [],
+      "markers": [
+        "SHARED_LIMB_CONTROL PASSED"
+      ],
+      "log": "ValidateSharedLimbControl.log"
+    },
+    {
+      "name": "ValidateSpiderPounce",
+      "exit_code": 0,
+      "error_count": 0,
+      "errors": [],
+      "markers": [
+        "PASS: Spider front-four selection, pause/lift/leap/sweep, impulse damage, friendly filtering, physical roots, cleanup and NPC wiring."
+      ],
+      "log": "ValidateSpiderPounce.log"
+    },
+    {
+      "name": "ValidateWolfJointSafety",
+      "exit_code": 0,
+      "error_count": 3,
+      "errors": [
+        "ERROR: Couldn't open directory at path \"user://logs\".",
+        "SCRIPT ERROR: Assertion failed: Limb must stop at its anatomical extension limit"
+      ],
+      "markers": [],
+      "log": "ValidateWolfJointSafety.log"
+    },
+    {
+      "name": "ValidateWingPose3D",
+      "exit_code": 1,
+      "error_count": 5,
+      "errors": [
+        "ERROR: All wing joints must be controlled, including the odd wing",
+        "ERROR: Couldn't open directory at path \"user://logs\".",
+        "ERROR: Every subdivided block must have a pose binding",
+        "ERROR: Regeneration must refresh bindings"
+      ],
+      "markers": [
+        "WING_POSE_FAILED"
+      ],
+      "log": "ValidateWingPose3D.log"
+    },
+    {
+      "name": "ValidateBirdLandingCache3D",
+      "exit_code": -1073741819,
+      "error_count": 0,
+      "errors": [],
+      "markers": [
+        "BIRD_LANDING_CACHE_PASSED"
+      ],
+      "log": "ValidateBirdLandingCache3D.log"
+    },
+    {
+      "name": "ValidateHumanLimbPose3D",
+      "exit_code": 0,
+      "error_count": 4,
+      "errors": [
+        "ERROR: Couldn't open directory at path \"user://logs\".",
+        "ERROR: Node not found: \"GenerateHumanNPC\" (relative to \"/root/TestLevel\").",
+        "SCRIPT ERROR: Cannot call method 'get_node' on a null value."
+      ],
+      "markers": [],
+      "log": "ValidateHumanLimbPose3D.log"
+    },
+    {
+      "name": "ValidateEquipmentMultiGrip3D",
+      "exit_code": 0,
+      "error_count": 0,
+      "errors": [],
+      "markers": [
+        "EQUIPMENT_MULTI_GRIP_PASSED"
+      ],
+      "log": "ValidateEquipmentMultiGrip3D.log"
+    },
+    {
+      "name": "ValidateSnakeBrokenConnections3D",
+      "exit_code": 0,
+      "error_count": 0,
+      "errors": [],
+      "markers": [
+        "SNAKE_BROKEN_CONNECTIONS_PASSED"
+      ],
+      "log": "ValidateSnakeBrokenConnections3D.log"
+    },
+    {
+      "name": "ValidateDamageSystem",
+      "exit_code": 0,
+      "error_count": 0,
+      "errors": [],
+      "markers": [
+        "DAMAGE_SYSTEM_VALIDATION_PASSED"
+      ],
+      "log": "ValidateDamageSystem.log"
+    },
+    {
+      "name": "Baseline_Fixed_ValidateWolfJointSafety",
+      "exit_code": 0,
+      "error_count": 1,
+      "errors": [
+        "SCRIPT ERROR: Assertion failed: Limb must stop at its anatomical extension limit"
+      ],
+      "markers": [],
+      "log": "Baseline_Fixed_ValidateWolfJointSafety.log"
+    },
+    {
+      "name": "Current_Fixed_ValidateWolfJointSafety",
+      "exit_code": 0,
+      "error_count": 1,
+      "errors": [
+        "SCRIPT ERROR: Assertion failed: Limb must stop at its anatomical extension limit"
+      ],
+      "markers": [],
+      "log": "Current_Fixed_ValidateWolfJointSafety.log"
+    },
+    {
+      "name": "Baseline_Fixed_ValidateWingPose3D",
+      "exit_code": 1,
+      "error_count": 3,
+      "errors": [
+        "ERROR: All wing joints must be controlled, including the odd wing",
+        "ERROR: Every subdivided block must have a pose binding",
+        "ERROR: Regeneration must refresh bindings"
+      ],
+      "markers": [
+        "WING_POSE_FAILED"
+      ],
+      "log": "Baseline_Fixed_ValidateWingPose3D.log"
+    },
+    {
+      "name": "Current_Fixed_ValidateWingPose3D",
+      "exit_code": 1,
+      "error_count": 3,
+      "errors": [
+        "ERROR: All wing joints must be controlled, including the odd wing",
+        "ERROR: Every subdivided block must have a pose binding",
+        "ERROR: Regeneration must refresh bindings"
+      ],
+      "markers": [
+        "WING_POSE_FAILED"
+      ],
+      "log": "Current_Fixed_ValidateWingPose3D.log"
+    },
+    {
+      "name": "Baseline_Fixed_ValidateBirdLandingCache3D",
+      "exit_code": 0,
+      "error_count": 0,
+      "errors": [],
+      "markers": [
+        "BIRD_LANDING_CACHE_PASSED"
+      ],
+      "log": "Baseline_Fixed_ValidateBirdLandingCache3D.log"
+    },
+    {
+      "name": "Current_Fixed_ValidateBirdLandingCache3D",
+      "exit_code": 0,
+      "error_count": 0,
+      "errors": [],
+      "markers": [
+        "BIRD_LANDING_CACHE_PASSED"
+      ],
+      "log": "Current_Fixed_ValidateBirdLandingCache3D.log"
+    },
+    {
+      "name": "Baseline_ValidateFreedCreatureJoints3D",
+      "exit_code": 1,
+      "error_count": 375,
+      "errors": [
+        "ERROR: Attempted to next an invalid (previously freed?) object instance into a 'TypedDictionary.Key'.",
+        "ERROR: Can't load dependency: 'res://Assets/2DResources/Human/Separated/HandStates/Human4/Left/01_human4_hand_left_open_palm.png'.",
+        "ERROR: Can't load dependency: 'res://Assets/2DResources/Human/Separated/HandStates/Human4/Left/03_human4_hand_left_grip_palm.png'.",
+        "ERROR: Can't load dependency: 'res://Assets/2DResources/Human/Separated/HandStates/Human4/Right/01_human4_hand_right_open_palm.png'.",
+        "ERROR: Can't load dependency: 'res://Assets/2DResources/Human/Separated/HandStates/Human4/Right/03_human4_hand_right_grip_palm.png'.",
+        "ERROR: Can't load dependency: 'res://Assets/3DResources/Creatures/StumpBeast/Textures/Head/HeadMain.png'.",
+        "ERROR: Can't load dependency: 'res://Assets/3DResources/Creatures/StumpBeast/Textures/Legs/Left/Foot.png'.",
+        "ERROR: Can't load dependency: 'res://Assets/3DResources/Creatures/StumpBeast/Textures/Legs/Left/LowerLeg.png'.",
+        "ERROR: Can't load dependency: 'res://Assets/3DResources/Creatures/StumpBeast/Textures/Legs/Left/MiddleLeg.png'.",
+        "ERROR: Can't load dependency: 'res://Assets/3DResources/Creatures/StumpBeast/Textures/Legs/Left/UpperLeg.png'.",
+        "ERROR: Can't load dependency: 'res://Assets/3DResources/Creatures/StumpBeast/Textures/Legs/Right/Foot.png'.",
+        "ERROR: Can't load dependency: 'res://Assets/3DResources/Creatures/StumpBeast/Textures/Legs/Right/LowerLeg.png'.",
+        "ERROR: Can't load dependency: 'res://Assets/3DResources/Creatures/StumpBeast/Textures/Legs/Right/MiddleLeg.png'.",
+        "ERROR: Can't load dependency: 'res://Assets/3DResources/Creatures/StumpBeast/Textures/Legs/Right/UpperLeg.png'.",
+        "ERROR: Can't load dependency: 'res://Assets/3DResources/Creatures/StumpBeast/Textures/Torso/SubTorsoPlate.png'.",
+        "ERROR: Can't load dependency: 'res://Assets/3DResources/Creatures/StumpBeast/Textures/Torso/TorsoMain.png'.",
+        "ERROR: Cannot load shader: res://Shaders/PaperHandBack.gdshader",
+        "ERROR: Cannot open file 'res://Scenes/Creatures/Characters/Generate_Beast.tscn'.",
+        "ERROR: Cannot open file 'res://Scenes/Creatures/Characters/Generate_Rat_1.tscn'.",
+        "ERROR: Cannot open file 'res://Scenes/Creatures/Characters/Generate_Rat_2.tscn'.",
+        "ERROR: Cannot open file 'res://Scenes/Creatures/Characters/Generate_Ratkin.tscn'.",
+        "ERROR: Condition \"!_p->typed_key.validate(key, \"next\")\" is true. Returning: nullptr",
+        "ERROR: Failed loading resource: res://Resources/Creatures/VisualStates/Human/GenerateHuman4HandLeftGrip.tres.",
+        "ERROR: Failed loading resource: res://Resources/Creatures/VisualStates/Human/GenerateHuman4HandRightGrip.tres.",
+        "ERROR: Failed loading resource: res://Resources/Creatures/VisualStates/Human/Human4HandLeftGrip.tres.",
+        "ERROR: Failed loading resource: res://Resources/Creatures/VisualStates/Human/Human4HandLeftOpen.tres.",
+        "ERROR: Failed loading resource: res://Resources/Creatures/VisualStates/Human/Human4HandRightGrip.tres.",
+        "ERROR: Failed loading resource: res://Resources/Creatures/VisualStates/Human/Human4HandRightOpen.tres.",
+        "ERROR: Failed loading resource: res://Resources/Meshes/Human/HandStates/Human4HandLeftGrip.res.",
+        "ERROR: Failed loading resource: res://Resources/Meshes/Human/HandStates/Human4HandLeftOpen.res.",
+        "ERROR: Failed loading resource: res://Resources/Meshes/Human/HandStates/Human4HandRightGrip.res.",
+        "ERROR: Failed loading resource: res://Resources/Meshes/Human/HandStates/Human4HandRightOpen.res.",
+        "ERROR: Failed loading resource: res://Resources/Meshes/PaperParts/ToSplit_1/Base/01_body_light_plate.res.",
+        "ERROR: Failed loading resource: res://Resources/Meshes/PaperParts/ToSplit_1/Base/02_body_main.res.",
+        "ERROR: Failed loading resource: res://Resources/Meshes/PaperParts/ToSplit_1/Base/05_head.res.",
+        "ERROR: Failed loading resource: res://Resources/Meshes/PaperParts/ToSplit_1/LeftLeg/01_upper_leg.res.",
+        "ERROR: Failed loading resource: res://Resources/Meshes/PaperParts/ToSplit_1/LeftLeg/02_middle_leg.res.",
+        "ERROR: Failed loading resource: res://Resources/Meshes/PaperParts/ToSplit_1/LeftLeg/03_lower_leg.res.",
+        "ERROR: Failed loading resource: res://Resources/Meshes/PaperParts/ToSplit_1/LeftLeg/04_foot.res.",
+        "ERROR: Failed loading resource: res://Resources/Meshes/PaperParts/ToSplit_1/RightLeg/01_upper_leg.res.",
+        "ERROR: Failed loading resource: res://Resources/Meshes/PaperParts/ToSplit_1/RightLeg/02_middle_leg.res.",
+        "ERROR: Failed loading resource: res://Resources/Meshes/PaperParts/ToSplit_1/RightLeg/03_lower_leg.res.",
+        "ERROR: Failed loading resource: res://Resources/Meshes/PaperParts/ToSplit_1/RightLeg/04_foot.res.",
+        "ERROR: Failed loading resource: res://Scenes/Creatures/Characters/Generate_Beast.tscn.",
+        "ERROR: Failed loading resource: res://Scenes/Creatures/Characters/Generate_Human.tscn.",
+        "ERROR: Failed loading resource: res://Scenes/Creatures/Characters/Generate_Rat_1.tscn.",
+        "ERROR: Failed loading resource: res://Scenes/Creatures/Characters/Generate_Rat_2.tscn.",
+        "ERROR: Failed loading resource: res://Scenes/Creatures/Characters/Generate_Ratkin.tscn.",
+        "ERROR: Failed loading resource: res://Shaders/PaperHandBack.gdshader.",
+        "ERROR: Resource file not found: res://Assets/2DResources/Human/Separated/HandStates/Human4/Left/01_human4_hand_left_open_palm.png (expected type: Texture2D)",
+        "ERROR: Resource file not found: res://Assets/2DResources/Human/Separated/HandStates/Human4/Left/02_human4_hand_left_open_back.png (expected type: Texture2D)",
+        "ERROR: Resource file not found: res://Assets/2DResources/Human/Separated/HandStates/Human4/Left/03_human4_hand_left_grip_palm.png (expected type: Texture2D)",
+        "ERROR: Resource file not found: res://Assets/2DResources/Human/Separated/HandStates/Human4/Left/04_human4_hand_left_grip_back.png (expected type: Texture2D)",
+        "ERROR: Resource file not found: res://Assets/2DResources/Human/Separated/HandStates/Human4/Right/01_human4_hand_right_open_palm.png (expected type: Texture2D)",
+        "ERROR: Resource file not found: res://Assets/2DResources/Human/Separated/HandStates/Human4/Right/02_human4_hand_right_open_back.png (expected type: Texture2D)",
+        "ERROR: Resource file not found: res://Assets/2DResources/Human/Separated/HandStates/Human4/Right/03_human4_hand_right_grip_palm.png (expected type: Texture2D)",
+        "ERROR: Resource file not found: res://Assets/2DResources/Human/Separated/HandStates/Human4/Right/04_human4_hand_right_grip_back.png (expected type: Texture2D)",
+        "ERROR: Resource file not found: res://Assets/3DResources/Creatures/StumpBeast/Textures/Head/HeadMain.png (expected type: Texture2D)",
+        "ERROR: Resource file not found: res://Assets/3DResources/Creatures/StumpBeast/Textures/Legs/Left/Foot.png (expected type: Texture2D)",
+        "ERROR: Resource file not found: res://Assets/3DResources/Creatures/StumpBeast/Textures/Legs/Left/LowerLeg.png (expected type: Texture2D)",
+        "ERROR: Resource file not found: res://Assets/3DResources/Creatures/StumpBeast/Textures/Legs/Left/MiddleLeg.png (expected type: Texture2D)",
+        "ERROR: Resource file not found: res://Assets/3DResources/Creatures/StumpBeast/Textures/Legs/Left/UpperLeg.png (expected type: Texture2D)",
+        "ERROR: Resource file not found: res://Assets/3DResources/Creatures/StumpBeast/Textures/Legs/Right/Foot.png (expected type: Texture2D)",
+        "ERROR: Resource file not found: res://Assets/3DResources/Creatures/StumpBeast/Textures/Legs/Right/LowerLeg.png (expected type: Texture2D)",
+        "ERROR: Resource file not found: res://Assets/3DResources/Creatures/StumpBeast/Textures/Legs/Right/MiddleLeg.png (expected type: Texture2D)",
+        "ERROR: Resource file not found: res://Assets/3DResources/Creatures/StumpBeast/Textures/Legs/Right/UpperLeg.png (expected type: Texture2D)",
+        "ERROR: Resource file not found: res://Assets/3DResources/Creatures/StumpBeast/Textures/Torso/SubTorsoPlate.png (expected type: Texture2D)",
+        "ERROR: Resource file not found: res://Assets/3DResources/Creatures/StumpBeast/Textures/Torso/TorsoMain.png (expected type: Texture2D)",
+        "ERROR: res://Resources/Creatures/VisualStates/Human/GenerateHuman4HandLeftGrip.tres:10 - Parse Error: [ext_resource] referenced non-existent resource at: res://Resources/Meshes/Human/HandStates/Human4HandLeftGrip.res.",
+        "ERROR: res://Resources/Creatures/VisualStates/Human/GenerateHuman4HandRightGrip.tres:10 - Parse Error: [ext_resource] referenced non-existent resource at: res://Resources/Meshes/Human/HandStates/Human4HandRightGrip.res.",
+        "ERROR: res://Resources/Creatures/VisualStates/Human/Human4HandLeftGrip.tres:10 - Parse Error: [ext_resource] referenced non-existent resource at: res://Resources/Meshes/Human/HandStates/Human4HandLeftGrip.res.",
+        "ERROR: res://Resources/Creatures/VisualStates/Human/Human4HandLeftOpen.tres:10 - Parse Error: [ext_resource] referenced non-existent resource at: res://Resources/Meshes/Human/HandStates/Human4HandLeftOpen.res.",
+        "ERROR: res://Resources/Creatures/VisualStates/Human/Human4HandRightGrip.tres:10 - Parse Error: [ext_resource] referenced non-existent resource at: res://Resources/Meshes/Human/HandStates/Human4HandRightGrip.res.",
+        "ERROR: res://Resources/Creatures/VisualStates/Human/Human4HandRightOpen.tres:10 - Parse Error: [ext_resource] referenced non-existent resource at: res://Resources/Meshes/Human/HandStates/Human4HandRightOpen.res.",
+        "ERROR: res://Scenes/Creatures/Bodyparts/Human/Arms/Left/Human4HandLeft.tscn:19 - Parse Error: [ext_resource] referenced non-existent resource at: res://Resources/Creatures/VisualStates/Human/Human4HandLeftOpen.tres.",
+        "ERROR: res://Scenes/Creatures/Bodyparts/Human/Arms/Right/Human4HandRight.tscn:19 - Parse Error: [ext_resource] referenced non-existent resource at: res://Resources/Creatures/VisualStates/Human/Human4HandRightOpen.tres.",
+        "ERROR: res://Scenes/Creatures/Bodyparts/PaperParts/ToSplit_1/Base/01_body_light_plate.tscn:40 - Parse Error: [ext_resource] referenced non-existent resource at: res://Resources/Meshes/PaperParts/ToSplit_1/Base/01_body_light_plate.res.",
+        "ERROR: res://Scenes/Creatures/Bodyparts/PaperParts/ToSplit_1/Base/02_body_main.tscn:40 - Parse Error: [ext_resource] referenced non-existent resource at: res://Resources/Meshes/PaperParts/ToSplit_1/Base/02_body_main.res.",
+        "ERROR: res://Scenes/Creatures/Bodyparts/PaperParts/ToSplit_1/Base/05_head.tscn:40 - Parse Error: [ext_resource] referenced non-existent resource at: res://Resources/Meshes/PaperParts/ToSplit_1/Base/05_head.res.",
+        "ERROR: res://Scenes/Creatures/Bodyparts/PaperParts/ToSplit_1/LeftLeg/01_upper_leg.tscn:40 - Parse Error: [ext_resource] referenced non-existent resource at: res://Resources/Meshes/PaperParts/ToSplit_1/LeftLeg/01_upper_leg.res.",
+        "ERROR: res://Scenes/Creatures/Bodyparts/PaperParts/ToSplit_1/LeftLeg/02_middle_leg.tscn:36 - Parse Error: [ext_resource] referenced non-existent resource at: res://Resources/Meshes/PaperParts/ToSplit_1/LeftLeg/02_middle_leg.res.",
+        "ERROR: res://Scenes/Creatures/Bodyparts/PaperParts/ToSplit_1/LeftLeg/03_lower_leg.tscn:40 - Parse Error: [ext_resource] referenced non-existent resource at: res://Resources/Meshes/PaperParts/ToSplit_1/LeftLeg/03_lower_leg.res.",
+        "ERROR: res://Scenes/Creatures/Bodyparts/PaperParts/ToSplit_1/LeftLeg/04_foot.tscn:40 - Parse Error: [ext_resource] referenced non-existent resource at: res://Resources/Meshes/PaperParts/ToSplit_1/LeftLeg/04_foot.res.",
+        "ERROR: res://Scenes/Creatures/Bodyparts/PaperParts/ToSplit_1/RightLeg/01_upper_leg.tscn:40 - Parse Error: [ext_resource] referenced non-existent resource at: res://Resources/Meshes/PaperParts/ToSplit_1/RightLeg/01_upper_leg.res.",
+        "ERROR: res://Scenes/Creatures/Bodyparts/PaperParts/ToSplit_1/RightLeg/02_middle_leg.tscn:40 - Parse Error: [ext_resource] referenced non-existent resource at: res://Resources/Meshes/PaperParts/ToSplit_1/RightLeg/02_middle_leg.res.",
+        "ERROR: res://Scenes/Creatures/Bodyparts/PaperParts/ToSplit_1/RightLeg/03_lower_leg.tscn:40 - Parse Error: [ext_resource] referenced non-existent resource at: res://Resources/Meshes/PaperParts/ToSplit_1/RightLeg/03_lower_leg.res.",
+        "ERROR: res://Scenes/Creatures/Bodyparts/PaperParts/ToSplit_1/RightLeg/04_foot.tscn:40 - Parse Error: [ext_resource] referenced non-existent resource at: res://Resources/Meshes/PaperParts/ToSplit_1/RightLeg/04_foot.res.",
+        "ERROR: res://Scenes/Creatures/Characters/Generate_Human.tscn:980 - Parse Error: Expected '}' or ','.",
+        "ERROR: res://Scenes/Creatures/Characters/Generate_Human.tscn:980 - Parse Error: [ext_resource] referenced non-existent resource at: res://Resources/Creatures/VisualStates/Human/GenerateHuman4HandRightGrip.tres.",
+        "ERROR: res://Scenes/Creatures/Characters/Generate_Human.tscn:980 - Parse Error: [ext_resource] referenced non-existent resource at: res://Resources/Creatures/VisualStates/Human/Human4HandRightOpen.tres.",
+        "SCRIPT ERROR: Attempt to call function 'instantiate' in base 'null instance' on a null instance.",
+        "SCRIPT ERROR: Cannot call method 'get_node' on a null value.",
+        "SCRIPT ERROR: Cannot call method 'surface_get_material' on a null value.",
+        "SCRIPT ERROR: Trying to assign invalid previously freed instance.",
+        "SCRIPT ERROR: Trying to cast a freed object."
+      ],
+      "markers": [
+        "FREED_JOINT_CHECK_FAILED Generate_Spider queued joint must not expand disconnected chains",
+        "FREED_JOINT_CHECK_FAILED Generate_Wolf queued joint must not expand disconnected chains",
+        "FREED_JOINT_CHECK_FAILED Generate_HornedBeast queued joint must not expand disconnected chains",
+        "FREED_CREATURE_JOINTS_FAILED checks=167"
+      ],
+      "log": "Baseline_ValidateFreedCreatureJoints3D.log"
+    }
+  ],
+  "baseline_temporary_project_removed": true,
+  "baseline_source_snapshot": "BaselineScripts/",
+  "git_head_for_nine_clean_baseline_scripts": "9bbfba391fd7962389cb3f6f1429638d4466f1bd"
+}

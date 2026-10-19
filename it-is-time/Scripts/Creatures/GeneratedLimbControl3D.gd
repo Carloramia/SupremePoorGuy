@@ -12,15 +12,17 @@ func reset_standing() -> void:
 
 func restore_action_limits() -> void:
 	for joint: Variant in action_joint_limits:
-		if is_instance_valid(joint):
+		if is_instance_valid(joint) and not joint.is_queued_for_deletion():
 			joint.set_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_LOWER_LIMIT, -float(action_joint_limits[joint]))
 			joint.set_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_UPPER_LIMIT, float(action_joint_limits[joint]))
 	action_joint_limits.clear()
 
 func expand_action_limits(movement: Node, feet: Array[RigidBody3D], degrees: float, protected_metadata: Array[StringName] = []) -> void:
 	for foot: RigidBody3D in feet:
+		if not movement._chain_is_intact(foot): continue
 		var chain: Dictionary = movement._chains.get(foot, {})
-		for joint: Generic6DOFJoint3D in chain.get("joints", []):
+		for joint: Variant in chain.get("joints", []):
+			if not is_instance_valid(joint) or joint.is_queued_for_deletion(): continue
 			var protected_bend := false
 			for key: StringName in protected_metadata:
 				if joint.has_meta(key): protected_bend = true; break

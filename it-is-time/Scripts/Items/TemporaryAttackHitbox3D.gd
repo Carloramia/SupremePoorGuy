@@ -13,7 +13,7 @@ var _excluded: Array[RID] = []
 var _debug_shape: CollisionShape3D
 var _debug_damage_active := false
 
-func setup(part: PhysicalBodyPart3D, character: Node, size: Vector3, offset: Vector3, multiplier: float, ragdoll_duration: float = 1.0) -> void:
+func setup(part: PhysicalBodyPart3D, character: Node, size: Vector3, offset: Vector3, multiplier: float, ragdoll_duration: float = 1.0, context: Dictionary = {}) -> void:
 	body = part
 	prepare_temporary_attack(character)
 	box.size = size.max(Vector3.ONE*0.02)
@@ -27,12 +27,13 @@ func setup(part: PhysicalBodyPart3D, character: Node, size: Vector3, offset: Vec
 	_debug_shape.disabled = true
 	_debug_shape.set_meta(&"equipped_item",self)
 	add_child(_debug_shape)
-	begin_damage_swing()
+	begin_damage_swing(context)
 
 func pose() -> Transform3D:
 	return Transform3D(body.global_basis.orthonormalized(),body.to_global(center_offset))
 
 func effective_mass() -> float: return body.mass
+func damage_contact_mass() -> float: return effective_mass()
 
 func get_attack_debug_shapes() -> Array[Dictionary]:
 	if not is_instance_valid(body) or not body.is_inside_tree() or body.is_queued_for_deletion() or body.is_broken: return []

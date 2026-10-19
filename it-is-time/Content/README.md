@@ -2,11 +2,12 @@
 
 | 目录 | 地位 |
 |---|---|
-| [FrontierDelivery_20261015](Maps/FrontierDelivery_20261015) | 当前默认地图包，含运行时 JSON、转换出的场景与素材 |
+| [FrontierDelivery_20261015](Maps/FrontierDelivery_20261015) | 旧档兼容地图包，含原运行时 JSON、转换出的场景与素材 |
+| [FrontierEditor_20261019](Maps/FrontierEditor_20261019/README.md) | 新游戏默认地图；Runtime 为实际接入产物，其余为资源快照与对应表；[接入记录](../Docs/Systems/WorldMapUI/新版六边形地图接入_2026-10-19.md) |
 | [IntegrationFrontier_v1](Maps/IntegrationFrontier_v1) | 保留的 Frontier 集成地图与 SceneDefinition 资源 |
 | [Sources](Maps/Sources) | 原始关卡编辑工程及来源资料，不直接等同运行时地图 |
 
-正式地图索引是 [Data/Maps/index.json](Maps/FrontierDelivery_20261015/Data/Maps/index.json)，通过 [MapCatalog](../Modules/FrontierDelivery/Scripts/Map/MapCatalog.gd) 读取其 `.maps[id].data`。地图文件通常位于同目录，Scenes/Maps 与 Scenes/Maps3D 为相应预览/实例化包装。不要只改预览场景而遗漏 JSON。
+新游戏索引为 [Runtime/index.json](Maps/FrontierEditor_20261019/Runtime/index.json)；旧档索引是 [Data/Maps/index.json](Maps/FrontierDelivery_20261015/Data/Maps/index.json)。[MapCatalog](../Modules/FrontierDelivery/Scripts/Map/MapCatalog.gd) 按显式版本读取 `.maps[id].data`，同 ID 的两版内容不混用。不要只改场景而遗漏 JSON。
 
 [FrontierDeliveryBattle.tres](../Resources/Application/FrontierDeliveryBattle.tres) 指定敌方阵容资源和战场适配比例；[EnemyRosters](../Resources/Application/EnemyRosters) 的定义 ID 最终由 CreatureFactory 解析。地图资源 ID、配置 ID、地点 ID 和生物 definition_id 是不同键，应在各自映射处修改。
 

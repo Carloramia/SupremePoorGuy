@@ -329,6 +329,9 @@ func _alignment(target: PhysicalBodyPart3D, aim_point: Vector3 = Vector3.INF, mo
 	var angle := atan2(reference.basis.x.cross(direction).y,reference.basis.x.dot(direction))
 	var aligned_basis := Basis(Vector3.UP,angle)*reference.basis
 	var aligned := Transform3D(aligned_basis,center-aligned_basis*movement._rest_center)
+	if movement._independent_path_turning():
+		var pivot: Dictionary = movement._raised_turn_pivot()
+		aligned.origin = Vector3(pivot.world)-aligned_basis*Vector3(pivot.rest)
 	var half_width := 0.0
 	var lateral_axis := aligned_basis.z if axis_facing else reference.basis.z
 	var bounds := GEOMETRY.bounds(target)
@@ -588,6 +591,7 @@ func try_start_npc_attack(action_id: StringName, target: Node3D, charge: float) 
 	_jaw_joint.set_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_LOWER_LIMIT,minf(_joint_state.lower,-deg_to_rad(data.jaw_open_degrees+5.0)))
 	_jaw_joint.set_param_z(Generic6DOFJoint3D.PARAM_ANGULAR_UPPER_LIMIT,maxf(_joint_state.upper,deg_to_rad(data.jaw_open_degrees+5.0)))
 	_weapon = HITBOX.new()
+	_weapon.damage_multiplier = data.damage_multiplier
 	_weapon.name = "SnakeBiteHitbox"
 	_weapon.head = head
 	_weapon.setup(jaw,get_parent(),_box().size,_mouth_offset(),data.impulse_multiplier,0.0)
@@ -683,7 +687,8 @@ func _tick(delta: float) -> void:
 		# Judge the physically settled Head, not the walking belly's averaged residual yaw.
 		var frame: Dictionary = movement._update_anchor()
 		var stopped: bool = Vector3(frame.velocity).slide(Vector3.UP).length()<maxf(_head_size.x*0.05,0.1) and absf(frame.yaw_speed)<deg_to_rad(5.0)
-		var facing_ready: bool = reference.basis.x.dot(_forward) >= cos(deg_to_rad(0.1)) and (not alignment.axis_facing or Vector3(frame.heading).dot(_forward) >= cos(deg_to_rad(5.0)))
+		var facing_heading: Vector3 = movement._raised_heading if movement._independent_path_turning() else frame.heading
+		var facing_ready: bool = reference.basis.x.dot(_forward) >= cos(deg_to_rad(0.1)) and (not alignment.axis_facing or facing_heading.dot(_forward) >= cos(deg_to_rad(5.0)))
 		if stopped and chain_aligned and head_aimed and facing_ready and _elapsed >= movement.motion_data.path_transition_time and _head_error < maxf(minf(_chain_length*0.04,float(alignment.tolerance)*0.5),_head_size.length()*0.05):
 			var snapshot := _support_snapshot(data.preparation_time*time_scale)
 			_prediction_cache.clear()

@@ -1,0 +1,2206 @@
+[gd_scene load_steps=197 format=3]
+
+[ext_resource type="Script" path="res://Modules/FrontierDelivery/Scripts/Map/BattleMap3D.gd" id="BattleScript"]
+[ext_resource type="Shader" path="res://Modules/FrontierDelivery/Scripts/Map/BattleGround.gdshader" id="GroundShader"]
+[ext_resource type="Shader" path="res://Modules/FrontierDelivery/Scripts/Map/BattleExterior.gdshader" id="ExteriorShader"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/ab9c81065282fdeff6da9f81.png" id="Texture_0"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/8cd45c95370edb05239b822a.png" id="Texture_1"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/c025a08d754497a712639f1e.png" id="Texture_2"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/642ec382fd8c506ec02bdd89.png" id="Texture_3"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/3b03ce4131ca22683e5304b3.png" id="Texture_4"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/7c0ae5bd2d528b6b36bf837c.png" id="Texture_5"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/e199aeb0bd0e555a4164e384.png" id="Texture_6"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/battle_leaf_litter.tscn" id="Part_0"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_07_013.tscn" id="Part_1"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_07_014.tscn" id="Part_2"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_02_024.tscn" id="Part_3"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/web.tscn" id="Part_4"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/mud.tscn" id="Part_5"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/demo_thorn_large.tscn" id="Part_6"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_08_021.tscn" id="Part_7"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_03_012.tscn" id="Part_8"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/ab9c81065282fdeff6da9f81.png" id="Texture_7"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/8cd45c95370edb05239b822a.png" id="Texture_8"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/c025a08d754497a712639f1e.png" id="Texture_9"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/642ec382fd8c506ec02bdd89.png" id="Texture_10"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/3b03ce4131ca22683e5304b3.png" id="Texture_11"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/7c0ae5bd2d528b6b36bf837c.png" id="Texture_12"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/e199aeb0bd0e555a4164e384.png" id="Texture_13"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_08_022.tscn" id="Part_9"]
+
+[sub_resource type="StandardMaterial3D" id="R0"]
+shading_mode = 0
+albedo_color = Color(0.380392157, 0.466666667, 0.411764706, 1)
+
+[sub_resource type="PrismMesh" id="R1"]
+left_to_right = 0.5
+size = Vector3(1, 1, 1)
+
+[sub_resource type="ShaderMaterial" id="R2"]
+shader = ExtResource("GroundShader")
+shader_parameter/ground_color = Color(0.380392157, 0.466666667, 0.411764706, 1)
+shader_parameter/radius = 20
+shader_parameter/feather = 0.736121593
+shader_parameter/orientation = 0
+
+[sub_resource type="PlaneMesh" id="R3"]
+size = Vector2(46, 46)
+
+[sub_resource type="StandardMaterial3D" id="R4"]
+shading_mode = 0
+albedo_color = Color(0.188235294, 0.282352941, 0.247058824, 1)
+
+[sub_resource type="PlaneMesh" id="R5"]
+size = Vector2(120, 120)
+
+[sub_resource type="ShaderMaterial" id="R6"]
+shader = ExtResource("GroundShader")
+shader_parameter/ground_color = Color(0.0352941176, 0.0862745098, 0.0509803922, 0.6)
+shader_parameter/radius = 20
+shader_parameter/feather = 0.736121593
+shader_parameter/orientation = 0
+shader_parameter/halo = true
+
+[sub_resource type="ShaderMaterial" id="R7"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_0")
+shader_parameter/blur_uv = Vector2(0.0689655172, 0.0555555556)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R8"]
+size = Vector2(6.435, 7.98827586)
+
+[sub_resource type="ShaderMaterial" id="R9"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_1")
+shader_parameter/blur_uv = Vector2(0.140350877, 0.142857143)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R10"]
+size = Vector2(3.25, 3.19298246)
+
+[sub_resource type="ShaderMaterial" id="R11"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_2")
+shader_parameter/blur_uv = Vector2(0.0280701754, 0.0298507463)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R12"]
+size = Vector2(5.98, 5.62329825)
+
+[sub_resource type="ShaderMaterial" id="R13"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_3")
+shader_parameter/blur_uv = Vector2(0.140350877, 0.129032258)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R14"]
+size = Vector2(3.25, 3.53508772)
+
+[sub_resource type="ShaderMaterial" id="R15"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_0")
+shader_parameter/blur_uv = Vector2(0.0689655172, 0.0555555556)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R16"]
+size = Vector2(6.89, 8.55310345)
+
+[sub_resource type="ShaderMaterial" id="R17"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_4")
+shader_parameter/blur_uv = Vector2(0.111111111, 0.145454545)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R18"]
+size = Vector2(3.25, 2.48263889)
+
+[sub_resource type="ShaderMaterial" id="R19"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_5")
+shader_parameter/blur_uv = Vector2(0.0484848485, 0.039800995)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R20"]
+size = Vector2(6.89, 8.39327273)
+
+[sub_resource type="ShaderMaterial" id="R21"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_4")
+shader_parameter/blur_uv = Vector2(0.111111111, 0.145454545)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R22"]
+size = Vector2(3.25, 2.48263889)
+
+[sub_resource type="ShaderMaterial" id="R23"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_6")
+shader_parameter/blur_uv = Vector2(0.0200501253, 0.0206718346)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R24"]
+size = Vector2(6.435, 6.24146617)
+
+[sub_resource type="ShaderMaterial" id="R25"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_1")
+shader_parameter/blur_uv = Vector2(0.140350877, 0.142857143)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R26"]
+size = Vector2(3.25, 3.19298246)
+
+[sub_resource type="ShaderMaterial" id="R27"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_5")
+shader_parameter/blur_uv = Vector2(0.0484848485, 0.039800995)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R28"]
+size = Vector2(5.98, 7.28472727)
+
+[sub_resource type="ShaderMaterial" id="R29"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_3")
+shader_parameter/blur_uv = Vector2(0.140350877, 0.129032258)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R30"]
+size = Vector2(3.25, 3.53508772)
+
+[sub_resource type="ShaderMaterial" id="R31"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_2")
+shader_parameter/blur_uv = Vector2(0.0280701754, 0.0298507463)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R32"]
+size = Vector2(5.98, 5.62329825)
+
+[sub_resource type="ShaderMaterial" id="R33"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_3")
+shader_parameter/blur_uv = Vector2(0.140350877, 0.129032258)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R34"]
+size = Vector2(3.25, 3.53508772)
+
+[sub_resource type="ShaderMaterial" id="R35"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_0")
+shader_parameter/blur_uv = Vector2(0.0689655172, 0.0555555556)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R36"]
+size = Vector2(6.89, 8.55310345)
+
+[sub_resource type="ShaderMaterial" id="R37"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_4")
+shader_parameter/blur_uv = Vector2(0.111111111, 0.145454545)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R38"]
+size = Vector2(3.25, 2.48263889)
+
+[sub_resource type="ShaderMaterial" id="R39"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_2")
+shader_parameter/blur_uv = Vector2(0.0280701754, 0.0298507463)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R40"]
+size = Vector2(6.435, 6.05115789)
+
+[sub_resource type="ShaderMaterial" id="R41"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_1")
+shader_parameter/blur_uv = Vector2(0.140350877, 0.142857143)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R42"]
+size = Vector2(3.25, 3.19298246)
+
+[sub_resource type="ShaderMaterial" id="R43"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_6")
+shader_parameter/blur_uv = Vector2(0.0200501253, 0.0206718346)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R44"]
+size = Vector2(6.435, 6.24146617)
+
+[sub_resource type="ShaderMaterial" id="R45"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_1")
+shader_parameter/blur_uv = Vector2(0.140350877, 0.142857143)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R46"]
+size = Vector2(3.25, 3.19298246)
+
+[sub_resource type="ShaderMaterial" id="R47"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_5")
+shader_parameter/blur_uv = Vector2(0.0484848485, 0.039800995)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R48"]
+size = Vector2(5.98, 7.28472727)
+
+[sub_resource type="ShaderMaterial" id="R49"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_3")
+shader_parameter/blur_uv = Vector2(0.140350877, 0.129032258)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R50"]
+size = Vector2(3.25, 3.53508772)
+
+[sub_resource type="ShaderMaterial" id="R51"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_6")
+shader_parameter/blur_uv = Vector2(0.0200501253, 0.0206718346)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R52"]
+size = Vector2(6.89, 6.68278195)
+
+[sub_resource type="ShaderMaterial" id="R53"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_4")
+shader_parameter/blur_uv = Vector2(0.111111111, 0.145454545)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R54"]
+size = Vector2(3.25, 2.48263889)
+
+[sub_resource type="ShaderMaterial" id="R55"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_0")
+shader_parameter/blur_uv = Vector2(0.0689655172, 0.0555555556)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R56"]
+size = Vector2(6.89, 8.55310345)
+
+[sub_resource type="ShaderMaterial" id="R57"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_4")
+shader_parameter/blur_uv = Vector2(0.111111111, 0.145454545)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R58"]
+size = Vector2(3.25, 2.48263889)
+
+[sub_resource type="ShaderMaterial" id="R59"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_2")
+shader_parameter/blur_uv = Vector2(0.0280701754, 0.0298507463)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R60"]
+size = Vector2(6.435, 6.05115789)
+
+[sub_resource type="ShaderMaterial" id="R61"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_1")
+shader_parameter/blur_uv = Vector2(0.140350877, 0.142857143)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R62"]
+size = Vector2(3.25, 3.19298246)
+
+[sub_resource type="ShaderMaterial" id="R63"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_0")
+shader_parameter/blur_uv = Vector2(0.0689655172, 0.0555555556)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R64"]
+size = Vector2(5.98, 7.42344828)
+
+[sub_resource type="ShaderMaterial" id="R65"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_3")
+shader_parameter/blur_uv = Vector2(0.140350877, 0.129032258)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R66"]
+size = Vector2(3.25, 3.53508772)
+
+[sub_resource type="ShaderMaterial" id="R67"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_5")
+shader_parameter/blur_uv = Vector2(0.0484848485, 0.039800995)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R68"]
+size = Vector2(5.98, 7.28472727)
+
+[sub_resource type="ShaderMaterial" id="R69"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_3")
+shader_parameter/blur_uv = Vector2(0.140350877, 0.129032258)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R70"]
+size = Vector2(3.25, 3.53508772)
+
+[sub_resource type="ShaderMaterial" id="R71"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_6")
+shader_parameter/blur_uv = Vector2(0.0200501253, 0.0206718346)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R72"]
+size = Vector2(6.89, 6.68278195)
+
+[sub_resource type="ShaderMaterial" id="R73"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_4")
+shader_parameter/blur_uv = Vector2(0.111111111, 0.145454545)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R74"]
+size = Vector2(3.25, 2.48263889)
+
+[sub_resource type="ShaderMaterial" id="R75"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_5")
+shader_parameter/blur_uv = Vector2(0.0484848485, 0.039800995)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R76"]
+size = Vector2(6.435, 7.839)
+
+[sub_resource type="ShaderMaterial" id="R77"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_1")
+shader_parameter/blur_uv = Vector2(0.140350877, 0.142857143)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R78"]
+size = Vector2(3.25, 3.19298246)
+
+[sub_resource type="ConvexPolygonShape3D" id="R79"]
+points = PackedVector3Array(1.848, 0, 0, 1.848, 2, 0, 1.8124912, 0, 0.296537289, 1.8124912, 2, 0.296537289, 1.70732938, 0, 0.581678817, 1.70732938, 2, 0.581678817, 1.53655584, 0, 0.844466754, 1.53655584, 2, 0.844466754, 1.30673333, 0, 1.07480231, 1.30673333, 2, 1.07480231, 1.02669379, 0, 1.26383381, 1.02669379, 2, 1.26383381, 0.707198983, 0, 1.40429689, 0.707198983, 2, 1.40429689, 0.360526915, 0, 1.49079363, 0.360526915, 2, 1.49079363, 1.13157364e-16, 0, 1.52, 1.13157364e-16, 2, 1.52, -0.360526915, 0, 1.49079363, -0.360526915, 2, 1.49079363, -0.707198983, 0, 1.40429689, -0.707198983, 2, 1.40429689, -1.02669379, 0, 1.26383381, -1.02669379, 2, 1.26383381, -1.30673333, 0, 1.07480231, -1.30673333, 2, 1.07480231, -1.53655584, 0, 0.844466754, -1.53655584, 2, 0.844466754, -1.70732938, 0, 0.581678817, -1.70732938, 2, 0.581678817, -1.8124912, 0, 0.296537289, -1.8124912, 2, 0.296537289, -1.848, 0, 1.86146313e-16, -1.848, 2, 1.86146313e-16, -1.8124912, 0, -0.296537289, -1.8124912, 2, -0.296537289, -1.70732938, 0, -0.581678817, -1.70732938, 2, -0.581678817, -1.53655584, 0, -0.844466754, -1.53655584, 2, -0.844466754, -1.30673333, 0, -1.07480231, -1.30673333, 2, -1.07480231, -1.02669379, 0, -1.26383381, -1.02669379, 2, -1.26383381, -0.707198983, 0, -1.40429689, -0.707198983, 2, -1.40429689, -0.360526915, 0, -1.49079363, -0.360526915, 2, -1.49079363, -3.39472093e-16, 0, -1.52, -3.39472093e-16, 2, -1.52, 0.360526915, 0, -1.49079363, 0.360526915, 2, -1.49079363, 0.707198983, 0, -1.40429689, 0.707198983, 2, -1.40429689, 1.02669379, 0, -1.26383381, 1.02669379, 2, -1.26383381, 1.30673333, 0, -1.07480231, 1.30673333, 2, -1.07480231, 1.53655584, 0, -0.844466754, 1.53655584, 2, -0.844466754, 1.70732938, 0, -0.581678817, 1.70732938, 2, -0.581678817, 1.8124912, 0, -0.296537289, 1.8124912, 2, -0.296537289)
+
+[sub_resource type="ConvexPolygonShape3D" id="R80"]
+points = PackedVector3Array(1.764, 0, 0, 1.764, 2, 0, 1.73010523, 0, 0.274296993, 1.73010523, 2, 0.274296993, 1.6297235, 0, 0.538052906, 1.6297235, 2, 0.538052906, 1.4667124, 0, 0.781131748, 1.4667124, 2, 0.781131748, 1.24733636, 0, 0.994192134, 1.24733636, 2, 0.994192134, 0.980025891, 0, 1.16904627, 0.980025891, 2, 1.16904627, 0.675053575, 0, 1.29897462, 0.675053575, 2, 1.29897462, 0.344139328, 0, 1.3789841, 0.344139328, 2, 1.3789841, 1.08013848e-16, 0, 1.406, 1.08013848e-16, 2, 1.406, -0.344139328, 0, 1.3789841, -0.344139328, 2, 1.3789841, -0.675053575, 0, 1.29897462, -0.675053575, 2, 1.29897462, -0.980025891, 0, 1.16904627, -0.980025891, 2, 1.16904627, -1.24733636, 0, 0.994192134, -1.24733636, 2, 0.994192134, -1.4667124, 0, 0.781131748, -1.4667124, 2, 0.781131748, -1.6297235, 0, 0.538052906, -1.6297235, 2, 0.538052906, -1.73010523, 0, 0.274296993, -1.73010523, 2, 0.274296993, -1.764, 0, 1.7218534e-16, -1.764, 2, 1.7218534e-16, -1.73010523, 0, -0.274296993, -1.73010523, 2, -0.274296993, -1.6297235, 0, -0.538052906, -1.6297235, 2, -0.538052906, -1.4667124, 0, -0.781131748, -1.4667124, 2, -0.781131748, -1.24733636, 0, -0.994192134, -1.24733636, 2, -0.994192134, -0.980025891, 0, -1.16904627, -0.980025891, 2, -1.16904627, -0.675053575, 0, -1.29897462, -0.675053575, 2, -1.29897462, -0.344139328, 0, -1.3789841, -0.344139328, 2, -1.3789841, -3.24041543e-16, 0, -1.406, -3.24041543e-16, 2, -1.406, 0.344139328, 0, -1.3789841, 0.344139328, 2, -1.3789841, 0.675053575, 0, -1.29897462, 0.675053575, 2, -1.29897462, 0.980025891, 0, -1.16904627, 0.980025891, 2, -1.16904627, 1.24733636, 0, -0.994192134, 1.24733636, 2, -0.994192134, 1.4667124, 0, -0.781131748, 1.4667124, 2, -0.781131748, 1.6297235, 0, -0.538052906, 1.6297235, 2, -0.538052906, 1.73010523, 0, -0.274296993, 1.73010523, 2, -0.274296993)
+
+[sub_resource type="ConvexPolygonShape3D" id="R81"]
+points = PackedVector3Array(2.268, 0, 0, 2.268, 2, 0, 2.22442102, 0, 0.237229832, 2.22442102, 2, 0.237229832, 2.09535878, 0, 0.465343054, 2.09535878, 2, 0.465343054, 1.88577308, 0, 0.675573403, 1.88577308, 2, 0.675573403, 1.60371818, 0, 0.859841846, 1.60371818, 2, 0.859841846, 1.26003329, 0, 1.01106705, 1.26003329, 2, 1.01106705, 0.867926025, 0, 1.12343751, 0.867926025, 2, 1.12343751, 0.44246485, 0, 1.1926349, 0.44246485, 2, 1.1926349, 1.38874947e-16, 0, 1.216, 1.38874947e-16, 2, 1.216, -0.44246485, 0, 1.1926349, -0.44246485, 2, 1.1926349, -0.867926025, 0, 1.12343751, -0.867926025, 2, 1.12343751, -1.26003329, 0, 1.01106705, -1.26003329, 2, 1.01106705, -1.60371818, 0, 0.859841846, -1.60371818, 2, 0.859841846, -1.88577308, 0, 0.675573403, -1.88577308, 2, 0.675573403, -2.09535878, 0, 0.465343054, -2.09535878, 2, 0.465343054, -2.22442102, 0, 0.237229832, -2.22442102, 2, 0.237229832, -2.268, 0, 1.48917051e-16, -2.268, 2, 1.48917051e-16, -2.22442102, 0, -0.237229832, -2.22442102, 2, -0.237229832, -2.09535878, 0, -0.465343054, -2.09535878, 2, -0.465343054, -1.88577308, 0, -0.675573403, -1.88577308, 2, -0.675573403, -1.60371818, 0, -0.859841846, -1.60371818, 2, -0.859841846, -1.26003329, 0, -1.01106705, -1.26003329, 2, -1.01106705, -0.867926025, 0, -1.12343751, -0.867926025, 2, -1.12343751, -0.44246485, 0, -1.1926349, -0.44246485, 2, -1.1926349, -4.16624841e-16, 0, -1.216, -4.16624841e-16, 2, -1.216, 0.44246485, 0, -1.1926349, 0.44246485, 2, -1.1926349, 0.867926025, 0, -1.12343751, 0.867926025, 2, -1.12343751, 1.26003329, 0, -1.01106705, 1.26003329, 2, -1.01106705, 1.60371818, 0, -0.859841846, 1.60371818, 2, -0.859841846, 1.88577308, 0, -0.675573403, 1.88577308, 2, -0.675573403, 2.09535878, 0, -0.465343054, 2.09535878, 2, -0.465343054, 2.22442102, 0, -0.237229832, 2.22442102, 2, -0.237229832)
+
+[sub_resource type="ConvexPolygonShape3D" id="R82"]
+points = PackedVector3Array(1.428, 0, 0, 1.428, 2, 0, 1.40056138, 0, 0.170508941, 1.40056138, 2, 0.170508941, 1.31929997, 0, 0.33446532, 1.31929997, 2, 0.33446532, 1.18733861, 0, 0.485568384, 1.18733861, 2, 0.485568384, 1.00974848, 0, 0.618011327, 1.00974848, 2, 0.618011327, 0.793354293, 0, 0.726704441, 0.793354293, 2, 0.726704441, 0.546471941, 0, 0.807470711, 0.546471941, 2, 0.807470711, 0.27858898, 0, 0.857206335, 0.27858898, 2, 0.857206335, 8.74397815e-17, 0, 0.874, 8.74397815e-17, 2, 0.874, -0.27858898, 0, 0.857206335, -0.27858898, 2, 0.857206335, -0.546471941, 0, 0.807470711, -0.546471941, 2, 0.807470711, -0.793354293, 0, 0.726704441, -0.793354293, 2, 0.726704441, -1.00974848, 0, 0.618011327, -1.00974848, 2, 0.618011327, -1.18733861, 0, 0.485568384, -1.18733861, 2, 0.485568384, -1.31929997, 0, 0.33446532, -1.31929997, 2, 0.33446532, -1.40056138, 0, 0.170508941, -1.40056138, 2, 0.170508941, -1.428, 0, 1.0703413e-16, -1.428, 2, 1.0703413e-16, -1.40056138, 0, -0.170508941, -1.40056138, 2, -0.170508941, -1.31929997, 0, -0.33446532, -1.31929997, 2, -0.33446532, -1.18733861, 0, -0.485568384, -1.18733861, 2, -0.485568384, -1.00974848, 0, -0.618011327, -1.00974848, 2, -0.618011327, -0.793354293, 0, -0.726704441, -0.793354293, 2, -0.726704441, -0.546471941, 0, -0.807470711, -0.546471941, 2, -0.807470711, -0.27858898, 0, -0.857206335, -0.27858898, 2, -0.857206335, -2.62319344e-16, 0, -0.874, -2.62319344e-16, 2, -0.874, 0.27858898, 0, -0.857206335, 0.27858898, 2, -0.857206335, 0.546471941, 0, -0.807470711, 0.546471941, 2, -0.807470711, 0.793354293, 0, -0.726704441, 0.793354293, 2, -0.726704441, 1.00974848, 0, -0.618011327, 1.00974848, 2, -0.618011327, 1.18733861, 0, -0.485568384, 1.18733861, 2, -0.485568384, 1.31929997, 0, -0.33446532, 1.31929997, 2, -0.33446532, 1.40056138, 0, -0.170508941, 1.40056138, 2, -0.170508941)
+
+[sub_resource type="ConvexPolygonShape3D" id="R83"]
+points = PackedVector3Array(2.2, 0, 0, 2.2, 2, 0, 2.15772762, 0, 0.331653547, 2.15772762, 2, 0.331653547, 2.03253497, 0, 0.650561835, 2.03253497, 2, 0.650561835, 1.82923315, 0, 0.944469396, 1.82923315, 2, 0.944469396, 1.55563492, 0, 1.20208153, 1.55563492, 2, 1.20208153, 1.22225451, 0, 1.41349834, 1.22225451, 2, 1.41349834, 0.841903551, 0, 1.57059521, 0.841903551, 2, 1.57059521, 0.429198708, 0, 1.66733498, 0.429198708, 2, 1.66733498, 1.34711148e-16, 0, 1.7, 1.34711148e-16, 2, 1.7, -0.429198708, 0, 1.66733498, -0.429198708, 2, 1.66733498, -0.841903551, 0, 1.57059521, -0.841903551, 2, 1.57059521, -1.22225451, 0, 1.41349834, -1.22225451, 2, 1.41349834, -1.55563492, 0, 1.20208153, -1.55563492, 2, 1.20208153, -1.82923315, 0, 0.944469396, -1.82923315, 2, 0.944469396, -2.03253497, 0, 0.650561835, -2.03253497, 2, 0.650561835, -2.15772762, 0, 0.331653547, -2.15772762, 2, 0.331653547, -2.2, 0, 2.08189956e-16, -2.2, 2, 2.08189956e-16, -2.15772762, 0, -0.331653547, -2.15772762, 2, -0.331653547, -2.03253497, 0, -0.650561835, -2.03253497, 2, -0.650561835, -1.82923315, 0, -0.944469396, -1.82923315, 2, -0.944469396, -1.55563492, 0, -1.20208153, -1.55563492, 2, -1.20208153, -1.22225451, 0, -1.41349834, -1.22225451, 2, -1.41349834, -0.841903551, 0, -1.57059521, -0.841903551, 2, -1.57059521, -0.429198708, 0, -1.66733498, -0.429198708, 2, -1.66733498, -4.04133444e-16, 0, -1.7, -4.04133444e-16, 2, -1.7, 0.429198708, 0, -1.66733498, 0.429198708, 2, -1.66733498, 0.841903551, 0, -1.57059521, 0.841903551, 2, -1.57059521, 1.22225451, 0, -1.41349834, 1.22225451, 2, -1.41349834, 1.55563492, 0, -1.20208153, 1.55563492, 2, -1.20208153, 1.82923315, 0, -0.944469396, 1.82923315, 2, -0.944469396, 2.03253497, 0, -0.650561835, 2.03253497, 2, -0.650561835, 2.15772762, 0, -0.331653547, 2.15772762, 2, -0.331653547)
+
+[sub_resource type="ConvexPolygonShape3D" id="R84"]
+points = PackedVector3Array(-2.7, 0, -2.1, -2.7, 2, -2.1, 2.7, 0, -2.1, 2.7, 2, -2.1, 2.7, 0, 2.1, 2.7, 2, 2.1, -2.7, 0, 2.1, -2.7, 2, 2.1)
+
+[sub_resource type="ConvexPolygonShape3D" id="R85"]
+points = PackedVector3Array(1.1, 0, 0, 1.1, 2, 0, 0.55, 0, 0.952627944, 0.55, 2, 0.952627944, -0.55, 0, 0.952627944, -0.55, 2, 0.952627944, -1.1, 0, 1.34711148e-16, -1.1, 2, 1.34711148e-16, -0.55, 0, -0.952627944, -0.55, 2, -0.952627944, 0.55, 0, -0.952627944, 0.55, 2, -0.952627944)
+
+[sub_resource type="ConvexPolygonShape3D" id="R86"]
+points = PackedVector3Array(2.75, 0, 0.952627944, 2.75, 2, 0.952627944, 2.2, 0, 1.90525589, 2.2, 2, 1.90525589, 1.1, 0, 1.90525589, 1.1, 2, 1.90525589, 0.55, 0, 0.952627944, 0.55, 2, 0.952627944, 1.1, 0, -6.66133815e-16, 1.1, 2, -6.66133815e-16, 2.2, 0, -7.77156117e-16, 2.2, 2, -7.77156117e-16)
+
+[sub_resource type="ConvexPolygonShape3D" id="R87"]
+points = PackedVector3Array(4.4, 0, 0, 4.4, 2, 0, 3.85, 0, 0.952627944, 3.85, 2, 0.952627944, 2.75, 0, 0.952627944, 2.75, 2, 0.952627944, 2.2, 0, 1.34711148e-16, 2.2, 2, 1.34711148e-16, 2.75, 0, -0.952627944, 2.75, 2, -0.952627944, 3.85, 0, -0.952627944, 3.85, 2, -0.952627944)
+
+[sub_resource type="ConvexPolygonShape3D" id="R88"]
+points = PackedVector3Array(2.75, 0, -0.952627944, 2.75, 2, -0.952627944, 2.2, 0, -1.11022302e-16, 2.2, 2, -1.11022302e-16, 1.1, 0, 0, 1.1, 2, 0, 0.55, 0, -0.952627944, 0.55, 2, -0.952627944, 1.1, 0, -1.90525589, 1.1, 2, -1.90525589, 2.2, 0, -1.90525589, 2.2, 2, -1.90525589)
+
+[sub_resource type="StandardMaterial3D" id="R89"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_7")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R90"]
+size = Vector2(4.95, 6.14482759)
+
+[sub_resource type="StandardMaterial3D" id="R91"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_8")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R92"]
+size = Vector2(2.5, 2.45614035)
+
+[sub_resource type="StandardMaterial3D" id="R93"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_9")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R94"]
+size = Vector2(4.6, 4.32561404)
+
+[sub_resource type="StandardMaterial3D" id="R95"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_10")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R96"]
+size = Vector2(2.5, 2.71929825)
+
+[sub_resource type="StandardMaterial3D" id="R97"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_7")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R98"]
+size = Vector2(5.3, 6.57931034)
+
+[sub_resource type="StandardMaterial3D" id="R99"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_11")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R100"]
+size = Vector2(2.5, 1.90972222)
+
+[sub_resource type="StandardMaterial3D" id="R101"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_12")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R102"]
+size = Vector2(5.3, 6.45636364)
+
+[sub_resource type="StandardMaterial3D" id="R103"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_11")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R104"]
+size = Vector2(2.5, 1.90972222)
+
+[sub_resource type="StandardMaterial3D" id="R105"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_13")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R106"]
+size = Vector2(4.95, 4.80112782)
+
+[sub_resource type="StandardMaterial3D" id="R107"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_8")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R108"]
+size = Vector2(2.5, 2.45614035)
+
+[sub_resource type="StandardMaterial3D" id="R109"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_12")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R110"]
+size = Vector2(4.6, 5.60363636)
+
+[sub_resource type="StandardMaterial3D" id="R111"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_10")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R112"]
+size = Vector2(2.5, 2.71929825)
+
+[sub_resource type="StandardMaterial3D" id="R113"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_9")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R114"]
+size = Vector2(4.6, 4.32561404)
+
+[sub_resource type="StandardMaterial3D" id="R115"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_10")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R116"]
+size = Vector2(2.5, 2.71929825)
+
+[sub_resource type="StandardMaterial3D" id="R117"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_7")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R118"]
+size = Vector2(5.3, 6.57931034)
+
+[sub_resource type="StandardMaterial3D" id="R119"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_11")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R120"]
+size = Vector2(2.5, 1.90972222)
+
+[sub_resource type="StandardMaterial3D" id="R121"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_9")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R122"]
+size = Vector2(4.95, 4.65473684)
+
+[sub_resource type="StandardMaterial3D" id="R123"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_8")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R124"]
+size = Vector2(2.5, 2.45614035)
+
+[sub_resource type="StandardMaterial3D" id="R125"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_13")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R126"]
+size = Vector2(4.95, 4.80112782)
+
+[sub_resource type="StandardMaterial3D" id="R127"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_8")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R128"]
+size = Vector2(2.5, 2.45614035)
+
+[sub_resource type="StandardMaterial3D" id="R129"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_12")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R130"]
+size = Vector2(4.6, 5.60363636)
+
+[sub_resource type="StandardMaterial3D" id="R131"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_10")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R132"]
+size = Vector2(2.5, 2.71929825)
+
+[sub_resource type="StandardMaterial3D" id="R133"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_13")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R134"]
+size = Vector2(5.3, 5.1406015)
+
+[sub_resource type="StandardMaterial3D" id="R135"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_11")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R136"]
+size = Vector2(2.5, 1.90972222)
+
+[sub_resource type="StandardMaterial3D" id="R137"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_7")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R138"]
+size = Vector2(5.3, 6.57931034)
+
+[sub_resource type="StandardMaterial3D" id="R139"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_11")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R140"]
+size = Vector2(2.5, 1.90972222)
+
+[sub_resource type="StandardMaterial3D" id="R141"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_9")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R142"]
+size = Vector2(4.95, 4.65473684)
+
+[sub_resource type="StandardMaterial3D" id="R143"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_8")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R144"]
+size = Vector2(2.5, 2.45614035)
+
+[sub_resource type="StandardMaterial3D" id="R145"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_7")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R146"]
+size = Vector2(4.6, 5.71034483)
+
+[sub_resource type="StandardMaterial3D" id="R147"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_10")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R148"]
+size = Vector2(2.5, 2.71929825)
+
+[sub_resource type="StandardMaterial3D" id="R149"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_12")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R150"]
+size = Vector2(4.6, 5.60363636)
+
+[sub_resource type="StandardMaterial3D" id="R151"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_10")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R152"]
+size = Vector2(2.5, 2.71929825)
+
+[sub_resource type="StandardMaterial3D" id="R153"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_13")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R154"]
+size = Vector2(5.3, 5.1406015)
+
+[sub_resource type="StandardMaterial3D" id="R155"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_11")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R156"]
+size = Vector2(2.5, 1.90972222)
+
+[sub_resource type="StandardMaterial3D" id="R157"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_12")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R158"]
+size = Vector2(4.95, 6.03)
+
+[sub_resource type="StandardMaterial3D" id="R159"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_8")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R160"]
+size = Vector2(2.5, 2.45614035)
+
+[sub_resource type="ConvexPolygonShape3D" id="R161"]
+points = PackedVector3Array(0.832, 0, 0, 0.832, 2.6, 0, 0.816013353, 0, 0.134417232, 0.816013353, 2.6, 0.134417232, 0.768667771, 0, 0.263668885, 0.768667771, 2.6, 0.263668885, 0.691782717, 0, 0.382787891, 0.691782717, 2.6, 0.382787891, 0.588312842, 0, 0.487196572, 0.588312842, 2.6, 0.487196572, 0.462234434, 0, 0.572882563, 0.462234434, 2.6, 0.572882563, 0.318392616, 0, 0.636552998, 0.318392616, 2.6, 0.636552998, 0.162315148, 0, 0.675761058, 0.162315148, 2.6, 0.675761058, 5.09453068e-17, 0, 0.689, 5.09453068e-17, 2.6, 0.689, -0.162315148, 0, 0.675761058, -0.162315148, 2.6, 0.675761058, -0.318392616, 0, 0.636552998, -0.318392616, 2.6, 0.636552998, -0.462234434, 0, 0.572882563, -0.462234434, 2.6, 0.572882563, -0.588312842, 0, 0.487196572, -0.588312842, 2.6, 0.487196572, -0.691782717, 0, 0.382787891, -0.691782717, 2.6, 0.382787891, -0.768667771, 0, 0.263668885, -0.768667771, 2.6, 0.263668885, -0.816013353, 0, 0.134417232, -0.816013353, 2.6, 0.134417232, -0.832, 0, 8.43781645e-17, -0.832, 2.6, 8.43781645e-17, -0.816013353, 0, -0.134417232, -0.816013353, 2.6, -0.134417232, -0.768667771, 0, -0.263668885, -0.768667771, 2.6, -0.263668885, -0.691782717, 0, -0.382787891, -0.691782717, 2.6, -0.382787891, -0.588312842, 0, -0.487196572, -0.588312842, 2.6, -0.487196572, -0.462234434, 0, -0.572882563, -0.462234434, 2.6, -0.572882563, -0.318392616, 0, -0.636552998, -0.318392616, 2.6, -0.636552998, -0.162315148, 0, -0.675761058, -0.162315148, 2.6, -0.675761058, -1.52835921e-16, 0, -0.689, -1.52835921e-16, 2.6, -0.689, 0.162315148, 0, -0.675761058, 0.162315148, 2.6, -0.675761058, 0.318392616, 0, -0.636552998, 0.318392616, 2.6, -0.636552998, 0.462234434, 0, -0.572882563, 0.462234434, 2.6, -0.572882563, 0.588312842, 0, -0.487196572, 0.588312842, 2.6, -0.487196572, 0.691782717, 0, -0.382787891, 0.691782717, 2.6, -0.382787891, 0.768667771, 0, -0.263668885, 0.768667771, 2.6, -0.263668885, 0.816013353, 0, -0.134417232, 0.816013353, 2.6, -0.134417232)
+
+[sub_resource type="BoxShape3D" id="R162"]
+size = Vector3(20, 12, 0.45)
+
+[sub_resource type="BoxShape3D" id="R163"]
+size = Vector3(20, 12, 0.45)
+
+[sub_resource type="BoxShape3D" id="R164"]
+size = Vector3(20, 12, 0.45)
+
+[sub_resource type="BoxShape3D" id="R165"]
+size = Vector3(20, 12, 0.45)
+
+[sub_resource type="BoxShape3D" id="R166"]
+size = Vector3(20, 12, 0.45)
+
+[sub_resource type="BoxShape3D" id="R167"]
+size = Vector3(20, 12, 0.45)
+
+[sub_resource type="Environment" id="R168"]
+background_mode = 1
+background_color = Color(0.188235294, 0.282352941, 0.247058824, 1)
+ambient_light_source = 3
+ambient_light_color = Color(1,1,1,1)
+ambient_light_energy = 0.8
+
+[node name="battle_spider_tree_site_2" type="Node3D"]
+script = ExtResource("BattleScript")
+map_id = "battle_spider_tree_site_2"
+data_path = "res://Content/Maps/FrontierEditor_20261019/Runtime/Maps/battle_spider_tree_site_2.json"
+[node name="Ground" type="CSGPolygon3D" parent="."]
+visible = false
+rotation = Vector3(-1.570796327, 0, 0)
+polygon = PackedVector2Array(20, 0, 10, 17.3205081, -10, 17.3205081, -20, 2.4492936e-15, -10, -17.3205081, 10, -17.3205081)
+depth = 0.15
+material = SubResource("R0")
+use_collision = true
+[node name="GroundVisual" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.005, 0)
+mesh = SubResource("R3")
+material_override = SubResource("R2")
+cast_shadow = 0
+[node name="ExteriorBackground" type="Node3D" parent="."]
+metadata/authored_blur = 8
+[node name="Backdrop" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(0,-0.7,0)
+mesh = SubResource("R5")
+material_override = SubResource("R4")
+cast_shadow = 0
+[node name="Halo" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(0,-0.2,0)
+mesh = SubResource("R3")
+material_override = SubResource("R6")
+cast_shadow = 0
+[node name="Edge_64" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(21.1929, -0.3936, 1.29888)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R8")
+material_override = SubResource("R7")
+cast_shadow = 0
+[node name="Edge_65" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(19.37496, -0.3935, 4.95936)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R10")
+material_override = SubResource("R9")
+cast_shadow = 0
+[node name="Edge_66" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(17.92356, -0.3934, 7.98516)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R12")
+material_override = SubResource("R11")
+cast_shadow = 0
+[node name="Edge_67" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(15.17205, -0.3933, 11.2176)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R14")
+material_override = SubResource("R13")
+cast_shadow = 0
+[node name="Edge_68" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(13.7145, -0.3932, 14.25201)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R16")
+material_override = SubResource("R15")
+cast_shadow = 0
+[node name="Edge_69" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(12.21267, -0.3931, 17.36514)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R18")
+material_override = SubResource("R17")
+cast_shadow = 0
+[node name="Edge_70" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(9.18195, -0.393, 18.74766)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R20")
+material_override = SubResource("R19")
+cast_shadow = 0
+[node name="Edge_71" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(5.15616, -0.3929, 19.0035)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R22")
+material_override = SubResource("R21")
+cast_shadow = 0
+[node name="Edge_72" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(1.85361, -0.3928, 19.25934)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R24")
+material_override = SubResource("R23")
+cast_shadow = 0
+[node name="Edge_73" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(-1.53996, -0.3927, 19.51518)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R26")
+material_override = SubResource("R25")
+cast_shadow = 0
+[node name="Edge_74" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(-5.57436, -0.3926, 18.74766)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R28")
+material_override = SubResource("R27")
+cast_shadow = 0
+[node name="Edge_75" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(-8.979, -0.3925, 19.0035)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R30")
+material_override = SubResource("R29")
+cast_shadow = 0
+[node name="Edge_76" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(-12.20529, -0.3924, 17.88789)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R32")
+material_override = SubResource("R31")
+cast_shadow = 0
+[node name="Edge_77" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(-13.36764, -0.3923, 14.3418)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R34")
+material_override = SubResource("R33")
+cast_shadow = 0
+[node name="Edge_78" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(-15.62592, -0.3922, 10.94331)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R36")
+material_override = SubResource("R35")
+cast_shadow = 0
+[node name="Edge_79" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(-17.52258, -0.3921, 8.16843)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R38")
+material_override = SubResource("R37")
+cast_shadow = 0
+[node name="Edge_80" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(-19.88541, -0.392, 4.58544)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R40")
+material_override = SubResource("R39")
+cast_shadow = 0
+[node name="Edge_81" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(-20.74641, -0.3919, 1.5621)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R42")
+material_override = SubResource("R41")
+cast_shadow = 0
+[node name="Edge_82" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(-21.22857, -0.3918, -1.74906)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R44")
+material_override = SubResource("R43")
+cast_shadow = 0
+[node name="Edge_83" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(-19.80177, -0.3917, -4.73181)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R46")
+material_override = SubResource("R45")
+cast_shadow = 0
+[node name="Edge_84" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(-16.97523, -0.3916, -8.09217)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R48")
+material_override = SubResource("R47")
+cast_shadow = 0
+[node name="Edge_85" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(-15.54351, -0.3915, -11.08476)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R50")
+material_override = SubResource("R49")
+cast_shadow = 0
+[node name="Edge_86" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(-14.06628, -0.3914, -14.15484)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R52")
+material_override = SubResource("R51")
+cast_shadow = 0
+[node name="Edge_87" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(-12.12165, -0.3913, -18.03426)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R54")
+material_override = SubResource("R53")
+cast_shadow = 0
+[node name="Edge_88" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(-8.81418, -0.3912, -19.0035)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R56")
+material_override = SubResource("R55")
+cast_shadow = 0
+[node name="Edge_89" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(-5.5596, -0.3911, -19.25934)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R58")
+material_override = SubResource("R57")
+cast_shadow = 0
+[node name="Edge_90" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(-2.21523, -0.391, -19.51518)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R60")
+material_override = SubResource("R59")
+cast_shadow = 0
+[node name="Edge_91" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(1.96677, -0.3909, -18.74766)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R62")
+material_override = SubResource("R61")
+cast_shadow = 0
+[node name="Edge_92" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(5.32098, -0.3908, -19.0035)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R64")
+material_override = SubResource("R63")
+cast_shadow = 0
+[node name="Edge_93" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(9.60015, -0.3907, -19.25934)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R66")
+material_override = SubResource("R65")
+cast_shadow = 0
+[node name="Edge_94" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(11.56323, -0.3906, -17.46723)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R68")
+material_override = SubResource("R67")
+cast_shadow = 0
+[node name="Edge_95" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(13.79691, -0.3905, -14.11056)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R70")
+material_override = SubResource("R69")
+cast_shadow = 0
+[node name="Edge_96" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(15.66897, -0.3904, -11.37873)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R72")
+material_override = SubResource("R71")
+cast_shadow = 0
+[node name="Edge_97" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(18.00843, -0.3903, -7.83879)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R74")
+material_override = SubResource("R73")
+cast_shadow = 0
+[node name="Edge_98" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(18.942, -0.3902, -4.68753)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R76")
+material_override = SubResource("R75")
+cast_shadow = 0
+[node name="Edge_99" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(20.86449, -0.3901, -1.86837)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R78")
+material_override = SubResource("R77")
+cast_shadow = 0
+[node name="Objects" type="Node3D" parent="."]
+[node name="battle_spider_tree_site_2_object_001" type="Node3D" parent="Objects"]
+position = Vector3(-7, 0, -7.6)
+rotation = Vector3(0, 0.261401894, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_object_001"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2_object_001" instance=ExtResource("Part_0")]
+position = Vector3(0, 2.47833333, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(9.2, 4.90666667, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_spider_tree_site_2_object_002" type="Node3D" parent="Objects"]
+position = Vector3(6.8, 0, 6.4)
+rotation = Vector3(0, -0.135698712, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_object_002"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2_object_002" instance=ExtResource("Part_0")]
+position = Vector3(0, 2.47833333, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(9.2, 4.90666667, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_spider_tree_site_2_object_003" type="Node3D" parent="Objects"]
+position = Vector3(-9, 0, 2.4)
+rotation = Vector3(0, 0.108009917, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_object_003"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2_object_003" instance=ExtResource("Part_0")]
+position = Vector3(0, 2.47833333, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(9.2, 4.90666667, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_spider_tree_site_2_object_004" type="Node3D" parent="Objects"]
+position = Vector3(8, 0, -4.8)
+rotation = Vector3(0, 0.00572670632, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_object_004"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2_object_004" instance=ExtResource("Part_0")]
+position = Vector3(0, 2.47833333, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(9.2, 4.90666667, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_spider_tree_site_2_object_005" type="Node3D" parent="Objects"]
+position = Vector3(0.4, 0, 11.6)
+rotation = Vector3(0, -0.0934215559, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_object_005"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2_object_005" instance=ExtResource("Part_0")]
+position = Vector3(0, 2.47833333, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(9.2, 4.90666667, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_spider_tree_site_2_object_006" type="Node3D" parent="Objects"]
+position = Vector3(-7.829, 0, 1.71)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_object_006"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2_object_006" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.378508772, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.707017544, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_spider_tree_site_2_object_007" type="Node3D" parent="Objects"]
+position = Vector3(11.753, 0, 4.461)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_object_007"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2_object_007" instance=ExtResource("Part_2")]
+position = Vector3(0, 0.344298246, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.638596491, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_spider_tree_site_2_object_008" type="Node3D" parent="Objects"]
+position = Vector3(-3.498, 0, 2.798)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_object_008"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2_object_008" instance=ExtResource("Part_3")]
+position = Vector3(0, 0.273263889, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.496527778, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_spider_tree_site_2_object_009" type="Node3D" parent="Objects"]
+position = Vector3(-9.427, 0, -3.215)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_object_009"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2_object_009" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.378508772, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.707017544, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_spider_tree_site_2_object_010" type="Node3D" parent="Objects"]
+position = Vector3(7.402, 0, -8.334)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_object_010"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2_object_010" instance=ExtResource("Part_2")]
+position = Vector3(0, 0.344298246, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.638596491, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_spider_tree_site_2_object_011" type="Node3D" parent="Objects"]
+position = Vector3(-0.116, 0, 3.158)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_object_011"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2_object_011" instance=ExtResource("Part_3")]
+position = Vector3(0, 0.273263889, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.496527778, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_spider_tree_site_2_object_012" type="Node3D" parent="Objects"]
+position = Vector3(-7.43, 0, -11.389)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_object_012"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2_object_012" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.378508772, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.707017544, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_spider_tree_site_2_object_013" type="Node3D" parent="Objects"]
+position = Vector3(12.618, 0, -1.886)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_object_013"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2_object_013" instance=ExtResource("Part_2")]
+position = Vector3(0, 0.344298246, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.638596491, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_spider_tree_site_2_object_014" type="Node3D" parent="Objects"]
+position = Vector3(-14.535, 0, -5.37)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_object_014"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2_object_014" instance=ExtResource("Part_3")]
+position = Vector3(0, 0.273263889, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.496527778, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_spider_tree_site_2_object_015" type="Node3D" parent="Objects"]
+position = Vector3(-1.262, 0, 2.81)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_object_015"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2_object_015" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.378508772, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.707017544, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_spider_tree_site_2_object_016" type="Node3D" parent="Objects"]
+position = Vector3(10.162, 0, -3.62)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_object_016"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2_object_016" instance=ExtResource("Part_2")]
+position = Vector3(0, 0.344298246, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.638596491, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_spider_tree_site_2_object_017" type="Node3D" parent="Objects"]
+position = Vector3(-11.081, 0, -1.678)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_object_017"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2_object_017" instance=ExtResource("Part_3")]
+position = Vector3(0, 0.273263889, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.496527778, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_spider_tree_site_2_object_018" type="Node3D" parent="Objects"]
+position = Vector3(-5.779, 0, -10.852)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_object_018"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2_object_018" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.378508772, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.707017544, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_spider_tree_site_2_object_019" type="Node3D" parent="Objects"]
+position = Vector3(-9.081, 0, -12.136)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_object_019"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2_object_019" instance=ExtResource("Part_2")]
+position = Vector3(0, 0.344298246, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.638596491, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_spider_tree_site_2_object_020" type="Node3D" parent="Objects"]
+position = Vector3(9.498, 0, -1.273)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_object_020"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2_object_020" instance=ExtResource("Part_3")]
+position = Vector3(0, 0.273263889, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.496527778, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_spider_tree_site_2_object_021" type="Node3D" parent="Objects"]
+position = Vector3(-4.5, 0, -4.321)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_object_021"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2_object_021" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.378508772, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.707017544, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_spider_tree_site_2_object_022" type="Node3D" parent="Objects"]
+position = Vector3(4.979, 0, 9.415)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_object_022"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2_object_022" instance=ExtResource("Part_2")]
+position = Vector3(0, 0.344298246, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.638596491, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_spider_tree_site_2_object_023" type="Node3D" parent="Objects"]
+position = Vector3(-9.234, 0, -11.538)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_object_023"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2_object_023" instance=ExtResource("Part_3")]
+position = Vector3(0, 0.273263889, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.496527778, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_spider_tree_site_2_object_024" type="Node3D" parent="Objects"]
+position = Vector3(11.242, 0, 6.786)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_object_024"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2_object_024" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.378508772, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.707017544, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_spider_tree_site_2_object_025" type="Node3D" parent="Objects"]
+position = Vector3(-12.59, 0, 12.047)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_object_025"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2_object_025" instance=ExtResource("Part_2")]
+position = Vector3(0, 0.344298246, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.638596491, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_spider_tree_site_2_object_026" type="Node3D" parent="Objects"]
+position = Vector3(12.472, 0, 8.532)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_object_026"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2_object_026" instance=ExtResource("Part_3")]
+position = Vector3(0, 0.273263889, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.496527778, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_spider_tree_site_2_object_027" type="Node3D" parent="Objects"]
+position = Vector3(12.994, 0, -9.351)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_object_027"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2_object_027" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.378508772, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.707017544, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_spider_tree_site_2_object_028" type="Node3D" parent="Objects"]
+position = Vector3(-7.146, 0, 10.177)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_object_028"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2_object_028" instance=ExtResource("Part_2")]
+position = Vector3(0, 0.344298246, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.638596491, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_spider_tree_site_2_object_029" type="Node3D" parent="Objects"]
+position = Vector3(-3.435, 0, -12.116)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_object_029"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2_object_029" instance=ExtResource("Part_3")]
+position = Vector3(0, 0.273263889, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.496527778, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_spider_tree_site_2_object_030" type="Node3D" parent="Objects"]
+position = Vector3(10.744, 0, 9.906)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_object_030"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2_object_030" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.378508772, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.707017544, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_spider_tree_site_2_object_051" type="Node3D" parent="Objects"]
+position = Vector3(-7, 0, -0.5)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_object_051"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2_object_051" instance=ExtResource("Part_4")]
+position = Vector3(0, 0.025, 0)
+rotation = Vector3(-1.57079633, 0, 0)
+scale = Vector3(4.4, 4, 0.025)
+metadata/decoration_collision_enabled = false
+[node name="region" type="Area3D" parent="Objects/battle_spider_tree_site_2_object_051"]
+position = Vector3(0, 0, 0)
+rotation = Vector3(0, -0, 0)
+collision_layer = 0
+collision_mask = 1
+[node name="Shape" type="CollisionShape3D" parent="Objects/battle_spider_tree_site_2_object_051/region"]
+shape = SubResource("R79")
+[node name="battle_spider_tree_site_2_object_052" type="Node3D" parent="Objects"]
+position = Vector3(7, 0, -3)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_object_052"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2_object_052" instance=ExtResource("Part_4")]
+position = Vector3(0, 0.025, 0)
+rotation = Vector3(-1.57079633, 0, 0)
+scale = Vector3(4.2, 3.7, 0.025)
+metadata/decoration_collision_enabled = false
+[node name="region" type="Area3D" parent="Objects/battle_spider_tree_site_2_object_052"]
+position = Vector3(0, 0, 0)
+rotation = Vector3(0, -0, 0)
+collision_layer = 0
+collision_mask = 1
+[node name="Shape" type="CollisionShape3D" parent="Objects/battle_spider_tree_site_2_object_052/region"]
+shape = SubResource("R80")
+[node name="battle_spider_tree_site_2_object_053" type="Node3D" parent="Objects"]
+position = Vector3(1.3, 0, 5.7)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_object_053"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2_object_053" instance=ExtResource("Part_5")]
+position = Vector3(0, 0.025, 0)
+rotation = Vector3(-1.57079633, 0, 0)
+scale = Vector3(5.4, 3.2, 0.025)
+metadata/decoration_collision_enabled = false
+[node name="region" type="Area3D" parent="Objects/battle_spider_tree_site_2_object_053"]
+position = Vector3(0, 0, 0)
+rotation = Vector3(0, -0, 0)
+collision_layer = 0
+collision_mask = 1
+[node name="Shape" type="CollisionShape3D" parent="Objects/battle_spider_tree_site_2_object_053/region"]
+shape = SubResource("R81")
+[node name="battle_spider_tree_site_2_object_054" type="Node3D" parent="Objects"]
+position = Vector3(-3, 0, -5.4)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_object_054"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2_object_054" instance=ExtResource("Part_6")]
+position = Vector3(0, 0.025, 0)
+rotation = Vector3(-1.57079633, 0, 0)
+scale = Vector3(3.4, 1.72251656, 0.025)
+metadata/decoration_collision_enabled = false
+[node name="region" type="Area3D" parent="Objects/battle_spider_tree_site_2_object_054"]
+position = Vector3(0, 0, 0)
+rotation = Vector3(0, -0, 0)
+collision_layer = 0
+collision_mask = 1
+[node name="Shape" type="CollisionShape3D" parent="Objects/battle_spider_tree_site_2_object_054/region"]
+shape = SubResource("R82")
+[node name="battle_spider_tree_site_2_object_046" type="Node3D" parent="Objects"]
+position = Vector3(0, 0, 0)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_object_046"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2_object_046" instance=ExtResource("Part_7")]
+position = Vector3(0, 1.06199422, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(5.2, 2.07398844, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="click_area" type="Area3D" parent="Objects/battle_spider_tree_site_2_object_046"]
+position = Vector3(0, 0, 0)
+rotation = Vector3(0, -0, 0)
+collision_layer = 0
+collision_mask = 1
+[node name="Shape" type="CollisionShape3D" parent="Objects/battle_spider_tree_site_2_object_046/click_area"]
+shape = SubResource("R83")
+[node name="battle_spider_tree_site_2_object_045" type="Node3D" parent="Objects"]
+position = Vector3(-12.64983, 0, -1.95497)
+rotation = Vector3(0, 1.41746392, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_object_045"
+[node name="region" type="Area3D" parent="Objects/battle_spider_tree_site_2_object_045"]
+position = Vector3(0, 0, 0)
+rotation = Vector3(0, -0, 0)
+collision_layer = 0
+collision_mask = 1
+[node name="Shape" type="CollisionShape3D" parent="Objects/battle_spider_tree_site_2_object_045/region"]
+shape = SubResource("R84")
+[node name="web_5" type="Node3D" parent="Objects"]
+position = Vector3(-1.65, 0, -8.5736515)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "web_5"
+[node name="PhysicalPart" parent="Objects/web_5" instance=ExtResource("Part_4")]
+position = Vector3(0, 0.025, 0)
+rotation = Vector3(-1.57079633, 0, 0)
+scale = Vector3(2.2, 2.2, 0.025)
+metadata/decoration_collision_enabled = false
+[node name="region" type="Area3D" parent="Objects/web_5"]
+position = Vector3(0, 0, 0)
+rotation = Vector3(0, -0, 0)
+collision_layer = 0
+collision_mask = 1
+[node name="Shape" type="CollisionShape3D" parent="Objects/web_5/region"]
+shape = SubResource("R85")
+[node name="web_5__hex_1" type="Node3D" parent="Objects"]
+position = Vector3(-1.65, 0, -8.5736515)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "web_5__hex_1"
+[node name="region" type="Area3D" parent="Objects/web_5__hex_1"]
+position = Vector3(0, 0, 0)
+rotation = Vector3(0, -0, 0)
+collision_layer = 0
+collision_mask = 1
+[node name="Shape" type="CollisionShape3D" parent="Objects/web_5__hex_1/region"]
+shape = SubResource("R86")
+[node name="web_5__hex_2" type="Node3D" parent="Objects"]
+position = Vector3(-1.65, 0, -8.5736515)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "web_5__hex_2"
+[node name="region" type="Area3D" parent="Objects/web_5__hex_2"]
+position = Vector3(0, 0, 0)
+rotation = Vector3(0, -0, 0)
+collision_layer = 0
+collision_mask = 1
+[node name="Shape" type="CollisionShape3D" parent="Objects/web_5__hex_2/region"]
+shape = SubResource("R87")
+[node name="web_5__hex_3" type="Node3D" parent="Objects"]
+position = Vector3(-1.65, 0, -8.5736515)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "web_5__hex_3"
+[node name="region" type="Area3D" parent="Objects/web_5__hex_3"]
+position = Vector3(0, 0, 0)
+rotation = Vector3(0, -0, 0)
+collision_layer = 0
+collision_mask = 1
+[node name="Shape" type="CollisionShape3D" parent="Objects/web_5__hex_3/region"]
+shape = SubResource("R88")
+[node name="battle_spider_tree_site_2__enemy_1" type="Node3D" parent="Objects"]
+position = Vector3(6.6, 0, 1.90525589)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__enemy_1"
+[node name="battle_spider_tree_site_2__enemy_2" type="Node3D" parent="Objects"]
+position = Vector3(8.25, 0, -0.952627944)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__enemy_2"
+[node name="battle_spider_tree_site_2__enemy_3" type="Node3D" parent="Objects"]
+position = Vector3(4.95, 0, -0.952627944)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__enemy_3"
+[node name="battle_spider_tree_site_2__enemy_4" type="Node3D" parent="Objects"]
+position = Vector3(9.9, 0, 1.90525589)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__enemy_4"
+[node name="battle_spider_tree_site_2__enemy_5" type="Node3D" parent="Objects"]
+position = Vector3(3.3, 0, 1.90525589)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__enemy_5"
+[node name="battle_spider_tree_site_2__enemy_6" type="Node3D" parent="Objects"]
+position = Vector3(8.25, 0, 4.76313972)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__enemy_6"
+[node name="battle_spider_tree_site_2__enemy_7" type="Node3D" parent="Objects"]
+position = Vector3(4.95, 0, 4.76313972)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__enemy_7"
+[node name="battle_spider_tree_site_2__enemy_8" type="Node3D" parent="Objects"]
+position = Vector3(6.6, 0, -3.81051178)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__enemy_8"
+[node name="battle_spider_tree_site_2__art_037" type="Node3D" parent="Objects"]
+position = Vector3(-9.8, 0, -7)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__art_037"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2__art_037" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.949561404, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(1.7, 1.84912281, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_spider_tree_site_2__art_038" type="Node3D" parent="Objects"]
+position = Vector3(1.2, 0, -13)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__art_038"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2__art_038" instance=ExtResource("Part_2")]
+position = Vector3(0, 0.860087719, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(1.7, 1.67017544, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_spider_tree_site_2__art_039" type="Node3D" parent="Objects"]
+position = Vector3(-3.6, 0, 12.4)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__art_039"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2__art_039" instance=ExtResource("Part_3")]
+position = Vector3(0, 0.674305556, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(1.7, 1.29861111, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_spider_tree_site_2__art_040" type="Node3D" parent="Objects"]
+position = Vector3(7, 0, 9.4)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__art_040"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2__art_040" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.949561404, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(1.7, 1.84912281, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_spider_tree_site_2_object_047" type="Node3D" parent="Objects"]
+position = Vector3(0, 0, -9.6)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_object_047"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2_object_047" instance=ExtResource("Part_8")]
+position = Vector3(0, 3.03412281, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(6.4, 6.01824561, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_spider_tree_site_2__art_001" type="Node3D" parent="Objects"]
+position = Vector3(17.23, 0, 1.056)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__art_001"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_site_2__art_001"]
+position = Vector3(0, 0.179, 0)
+mesh = SubResource("R90")
+material_override = SubResource("R89")
+cast_shadow = 0
+visible = true
+[node name="battle_spider_tree_site_2__art_002" type="Node3D" parent="Objects"]
+position = Vector3(15.752, 0, 4.032)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__art_002"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_site_2__art_002"]
+position = Vector3(0, 0.182, 0)
+mesh = SubResource("R92")
+material_override = SubResource("R91")
+cast_shadow = 0
+visible = true
+[node name="battle_spider_tree_site_2__art_003" type="Node3D" parent="Objects"]
+position = Vector3(14.572, 0, 6.492)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__art_003"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_site_2__art_003"]
+position = Vector3(0, 0.185, 0)
+mesh = SubResource("R94")
+material_override = SubResource("R93")
+cast_shadow = 0
+visible = true
+[node name="battle_spider_tree_site_2__art_004" type="Node3D" parent="Objects"]
+position = Vector3(12.335, 0, 9.12)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__art_004"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_site_2__art_004"]
+position = Vector3(0, 0.188, 0)
+mesh = SubResource("R96")
+material_override = SubResource("R95")
+cast_shadow = 0
+visible = true
+[node name="battle_spider_tree_site_2__art_005" type="Node3D" parent="Objects"]
+position = Vector3(11.15, 0, 11.587)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__art_005"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_site_2__art_005"]
+position = Vector3(0, 0.191, 0)
+mesh = SubResource("R98")
+material_override = SubResource("R97")
+cast_shadow = 0
+visible = true
+[node name="battle_spider_tree_site_2__art_006" type="Node3D" parent="Objects"]
+position = Vector3(9.929, 0, 14.118)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__art_006"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_site_2__art_006"]
+position = Vector3(0, 0.194, 0)
+mesh = SubResource("R100")
+material_override = SubResource("R99")
+cast_shadow = 0
+visible = true
+[node name="battle_spider_tree_site_2__art_007" type="Node3D" parent="Objects"]
+position = Vector3(7.465, 0, 15.242)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__art_007"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_site_2__art_007"]
+position = Vector3(0, 0.197, 0)
+mesh = SubResource("R102")
+material_override = SubResource("R101")
+cast_shadow = 0
+visible = true
+[node name="battle_spider_tree_site_2__art_008" type="Node3D" parent="Objects"]
+position = Vector3(4.192, 0, 15.45)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__art_008"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_site_2__art_008"]
+position = Vector3(0, 0.2, 0)
+mesh = SubResource("R104")
+material_override = SubResource("R103")
+cast_shadow = 0
+visible = true
+[node name="battle_spider_tree_site_2__art_009" type="Node3D" parent="Objects"]
+position = Vector3(1.507, 0, 15.658)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__art_009"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_site_2__art_009"]
+position = Vector3(0, 0.203, 0)
+mesh = SubResource("R106")
+material_override = SubResource("R105")
+cast_shadow = 0
+visible = true
+[node name="battle_spider_tree_site_2__art_010" type="Node3D" parent="Objects"]
+position = Vector3(-1.252, 0, 15.866)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__art_010"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_site_2__art_010"]
+position = Vector3(0, 0.206, 0)
+mesh = SubResource("R108")
+material_override = SubResource("R107")
+cast_shadow = 0
+visible = true
+[node name="battle_spider_tree_site_2__art_011" type="Node3D" parent="Objects"]
+position = Vector3(-4.532, 0, 15.242)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__art_011"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_site_2__art_011"]
+position = Vector3(0, 0.209, 0)
+mesh = SubResource("R110")
+material_override = SubResource("R109")
+cast_shadow = 0
+visible = true
+[node name="battle_spider_tree_site_2__art_012" type="Node3D" parent="Objects"]
+position = Vector3(-7.3, 0, 15.45)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__art_012"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_site_2__art_012"]
+position = Vector3(0, 0.212, 0)
+mesh = SubResource("R112")
+material_override = SubResource("R111")
+cast_shadow = 0
+visible = true
+[node name="battle_spider_tree_site_2__art_013" type="Node3D" parent="Objects"]
+position = Vector3(-9.923, 0, 14.543)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__art_013"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_site_2__art_013"]
+position = Vector3(0, 0.215, 0)
+mesh = SubResource("R114")
+material_override = SubResource("R113")
+cast_shadow = 0
+visible = true
+[node name="battle_spider_tree_site_2__art_014" type="Node3D" parent="Objects"]
+position = Vector3(-10.868, 0, 11.66)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__art_014"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_site_2__art_014"]
+position = Vector3(0, 0.218, 0)
+mesh = SubResource("R116")
+material_override = SubResource("R115")
+cast_shadow = 0
+visible = true
+[node name="battle_spider_tree_site_2__art_015" type="Node3D" parent="Objects"]
+position = Vector3(-12.704, 0, 8.897)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__art_015"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_site_2__art_015"]
+position = Vector3(0, 0.221, 0)
+mesh = SubResource("R118")
+material_override = SubResource("R117")
+cast_shadow = 0
+visible = true
+[node name="battle_spider_tree_site_2__art_016" type="Node3D" parent="Objects"]
+position = Vector3(-14.246, 0, 6.641)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__art_016"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_site_2__art_016"]
+position = Vector3(0, 0.224, 0)
+mesh = SubResource("R120")
+material_override = SubResource("R119")
+cast_shadow = 0
+visible = true
+[node name="battle_spider_tree_site_2__art_017" type="Node3D" parent="Objects"]
+position = Vector3(-16.167, 0, 3.728)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__art_017"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_site_2__art_017"]
+position = Vector3(0, 0.227, 0)
+mesh = SubResource("R122")
+material_override = SubResource("R121")
+cast_shadow = 0
+visible = true
+[node name="battle_spider_tree_site_2__art_018" type="Node3D" parent="Objects"]
+position = Vector3(-16.867, 0, 1.27)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__art_018"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_site_2__art_018"]
+position = Vector3(0, 0.23, 0)
+mesh = SubResource("R124")
+material_override = SubResource("R123")
+cast_shadow = 0
+visible = true
+[node name="battle_spider_tree_site_2__art_019" type="Node3D" parent="Objects"]
+position = Vector3(-17.259, 0, -1.422)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__art_019"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_site_2__art_019"]
+position = Vector3(0, 0.233, 0)
+mesh = SubResource("R126")
+material_override = SubResource("R125")
+cast_shadow = 0
+visible = true
+[node name="battle_spider_tree_site_2__art_020" type="Node3D" parent="Objects"]
+position = Vector3(-16.099, 0, -3.847)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__art_020"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_site_2__art_020"]
+position = Vector3(0, 0.236, 0)
+mesh = SubResource("R128")
+material_override = SubResource("R127")
+cast_shadow = 0
+visible = true
+[node name="battle_spider_tree_site_2__art_021" type="Node3D" parent="Objects"]
+position = Vector3(-13.801, 0, -6.579)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__art_021"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_site_2__art_021"]
+position = Vector3(0, 0.239, 0)
+mesh = SubResource("R130")
+material_override = SubResource("R129")
+cast_shadow = 0
+visible = true
+[node name="battle_spider_tree_site_2__art_022" type="Node3D" parent="Objects"]
+position = Vector3(-12.637, 0, -9.012)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__art_022"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_site_2__art_022"]
+position = Vector3(0, 0.242, 0)
+mesh = SubResource("R132")
+material_override = SubResource("R131")
+cast_shadow = 0
+visible = true
+[node name="battle_spider_tree_site_2__art_023" type="Node3D" parent="Objects"]
+position = Vector3(-11.436, 0, -11.508)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__art_023"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_site_2__art_023"]
+position = Vector3(0, 0.245, 0)
+mesh = SubResource("R134")
+material_override = SubResource("R133")
+cast_shadow = 0
+visible = true
+[node name="battle_spider_tree_site_2__art_024" type="Node3D" parent="Objects"]
+position = Vector3(-9.855, 0, -14.662)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__art_024"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_site_2__art_024"]
+position = Vector3(0, 0.248, 0)
+mesh = SubResource("R136")
+material_override = SubResource("R135")
+cast_shadow = 0
+visible = true
+[node name="battle_spider_tree_site_2__art_025" type="Node3D" parent="Objects"]
+position = Vector3(-7.166, 0, -15.45)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__art_025"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_site_2__art_025"]
+position = Vector3(0, 0.251, 0)
+mesh = SubResource("R138")
+material_override = SubResource("R137")
+cast_shadow = 0
+visible = true
+[node name="battle_spider_tree_site_2__art_026" type="Node3D" parent="Objects"]
+position = Vector3(-4.52, 0, -15.658)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__art_026"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_site_2__art_026"]
+position = Vector3(0, 0.254, 0)
+mesh = SubResource("R140")
+material_override = SubResource("R139")
+cast_shadow = 0
+visible = true
+[node name="battle_spider_tree_site_2__art_027" type="Node3D" parent="Objects"]
+position = Vector3(-1.801, 0, -15.866)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__art_027"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_site_2__art_027"]
+position = Vector3(0, 0.257, 0)
+mesh = SubResource("R142")
+material_override = SubResource("R141")
+cast_shadow = 0
+visible = true
+[node name="battle_spider_tree_site_2__art_028" type="Node3D" parent="Objects"]
+position = Vector3(1.599, 0, -15.242)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__art_028"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_site_2__art_028"]
+position = Vector3(0, 0.26, 0)
+mesh = SubResource("R144")
+material_override = SubResource("R143")
+cast_shadow = 0
+visible = true
+[node name="battle_spider_tree_site_2__art_029" type="Node3D" parent="Objects"]
+position = Vector3(4.326, 0, -15.45)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__art_029"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_site_2__art_029"]
+position = Vector3(0, 0.263, 0)
+mesh = SubResource("R146")
+material_override = SubResource("R145")
+cast_shadow = 0
+visible = true
+[node name="battle_spider_tree_site_2__art_030" type="Node3D" parent="Objects"]
+position = Vector3(7.805, 0, -15.658)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__art_030"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_site_2__art_030"]
+position = Vector3(0, 0.266, 0)
+mesh = SubResource("R148")
+material_override = SubResource("R147")
+cast_shadow = 0
+visible = true
+[node name="battle_spider_tree_site_2__art_031" type="Node3D" parent="Objects"]
+position = Vector3(9.401, 0, -14.201)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__art_031"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_site_2__art_031"]
+position = Vector3(0, 0.269, 0)
+mesh = SubResource("R150")
+material_override = SubResource("R149")
+cast_shadow = 0
+visible = true
+[node name="battle_spider_tree_site_2__art_032" type="Node3D" parent="Objects"]
+position = Vector3(11.217, 0, -11.472)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__art_032"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_site_2__art_032"]
+position = Vector3(0, 0.272, 0)
+mesh = SubResource("R152")
+material_override = SubResource("R151")
+cast_shadow = 0
+visible = true
+[node name="battle_spider_tree_site_2__art_033" type="Node3D" parent="Objects"]
+position = Vector3(12.739, 0, -9.251)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__art_033"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_site_2__art_033"]
+position = Vector3(0, 0.275, 0)
+mesh = SubResource("R154")
+material_override = SubResource("R153")
+cast_shadow = 0
+visible = true
+[node name="battle_spider_tree_site_2__art_034" type="Node3D" parent="Objects"]
+position = Vector3(14.641, 0, -6.373)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__art_034"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_site_2__art_034"]
+position = Vector3(0, 0.278, 0)
+mesh = SubResource("R156")
+material_override = SubResource("R155")
+cast_shadow = 0
+visible = true
+[node name="battle_spider_tree_site_2__art_035" type="Node3D" parent="Objects"]
+position = Vector3(15.4, 0, -3.811)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__art_035"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_site_2__art_035"]
+position = Vector3(0, 0.281, 0)
+mesh = SubResource("R158")
+material_override = SubResource("R157")
+cast_shadow = 0
+visible = true
+[node name="battle_spider_tree_site_2__art_036" type="Node3D" parent="Objects"]
+position = Vector3(16.963, 0, -1.519)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2__art_036"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_spider_tree_site_2__art_036"]
+position = Vector3(0, 0.284, 0)
+mesh = SubResource("R160")
+material_override = SubResource("R159")
+cast_shadow = 0
+visible = true
+[node name="battle_spider_tree_site_2_object_049" type="Node3D" parent="Objects"]
+position = Vector3(-6.5, 0, -3.5)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_object_049"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2_object_049" instance=ExtResource("Part_8")]
+position = Vector3(0, 1.62359649, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(3.4, 3.19719298, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_spider_tree_site_2_object_048" type="Node3D" parent="Objects"]
+position = Vector3(0, 0, -12.4)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_object_048"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2_object_048" instance=ExtResource("Part_8")]
+position = Vector3(0, 3.03412281, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(6.4, 6.01824561, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_spider_tree_site_2_object_050" type="Node3D" parent="Objects"]
+position = Vector3(7, 0, 4.5)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_object_050"
+[node name="PhysicalPart" parent="Objects/battle_spider_tree_site_2_object_050" instance=ExtResource("Part_9")]
+position = Vector3(0, 1.09462025, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(2.6, 2.13924051, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="collision" type="StaticBody3D" parent="Objects/battle_spider_tree_site_2_object_050"]
+position = Vector3(0, 0, 0)
+rotation = Vector3(0, -0, 0)
+collision_layer = 1
+collision_mask = 0
+[node name="Shape" type="CollisionShape3D" parent="Objects/battle_spider_tree_site_2_object_050/collision"]
+shape = SubResource("R161")
+[node name="battle_spider_tree_site_2_biome_edge_01" type="Node3D" parent="Objects"]
+position = Vector3(16.3085917, 0, 4.62989667)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_biome_edge_01"
+[node name="battle_spider_tree_site_2_biome_edge_02" type="Node3D" parent="Objects"]
+position = Vector3(10.8660837, 0, 14.2339188)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_biome_edge_02"
+[node name="battle_spider_tree_site_2_biome_edge_03" type="Node3D" parent="Objects"]
+position = Vector3(3.94423462, 0, 16.10588)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_biome_edge_03"
+[node name="battle_spider_tree_site_2_biome_edge_04" type="Node3D" parent="Objects"]
+position = Vector3(-3.67648667, 0, 16.6601933)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_biome_edge_04"
+[node name="battle_spider_tree_site_2_biome_edge_05" type="Node3D" parent="Objects"]
+position = Vector3(-10.6037683, 0, 14.8870767)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_biome_edge_05"
+[node name="battle_spider_tree_site_2_biome_edge_06" type="Node3D" parent="Objects"]
+position = Vector3(-15.9340308, 0, 3.45433231)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_biome_edge_06"
+[node name="battle_spider_tree_site_2_biome_edge_07" type="Node3D" parent="Objects"]
+position = Vector3(-15.625299, 0, -3.518988)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_biome_edge_07"
+[node name="battle_spider_tree_site_2_biome_edge_08" type="Node3D" parent="Objects"]
+position = Vector3(-12.7342715, 0, -10.80151)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_biome_edge_08"
+[node name="battle_spider_tree_site_2_biome_edge_09" type="Node3D" parent="Objects"]
+position = Vector3(-3.14792, 0, -16.482142)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_biome_edge_09"
+[node name="battle_spider_tree_site_2_biome_edge_10" type="Node3D" parent="Objects"]
+position = Vector3(2.606437, 0, -16.874276)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_biome_edge_10"
+[node name="battle_spider_tree_site_2_biome_edge_11" type="Node3D" parent="Objects"]
+position = Vector3(11.0587929, 0, -13.3699443)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_biome_edge_11"
+[node name="battle_spider_tree_site_2_biome_edge_12" type="Node3D" parent="Objects"]
+position = Vector3(16.0809031, 0, -4.394835)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_spider_tree_site_2_biome_edge_12"
+[node name="Boundary0" type="StaticBody3D" parent="."]
+position = Vector3(15, 6, 8.66025404)
+rotation = Vector3(0, -2.0943951, 0)
+collision_layer = 1
+collision_mask = 0
+[node name="Shape" type="CollisionShape3D" parent="Boundary0"]
+shape = SubResource("R162")
+[node name="Boundary1" type="StaticBody3D" parent="."]
+position = Vector3(2.66453526e-15, 6, 17.3205081)
+rotation = Vector3(0, -3.14159265, 0)
+collision_layer = 1
+collision_mask = 0
+[node name="Shape" type="CollisionShape3D" parent="Boundary1"]
+shape = SubResource("R163")
+[node name="Boundary2" type="StaticBody3D" parent="."]
+position = Vector3(-15, 6, 8.66025404)
+rotation = Vector3(0, 2.0943951, 0)
+collision_layer = 1
+collision_mask = 0
+[node name="Shape" type="CollisionShape3D" parent="Boundary2"]
+shape = SubResource("R164")
+[node name="Boundary3" type="StaticBody3D" parent="."]
+position = Vector3(-15, 6, -8.66025404)
+rotation = Vector3(0, 1.04719755, 0)
+collision_layer = 1
+collision_mask = 0
+[node name="Shape" type="CollisionShape3D" parent="Boundary3"]
+shape = SubResource("R165")
+[node name="Boundary4" type="StaticBody3D" parent="."]
+position = Vector3(-3.55271368e-15, 6, -17.3205081)
+rotation = Vector3(0, -0, 0)
+collision_layer = 1
+collision_mask = 0
+[node name="Shape" type="CollisionShape3D" parent="Boundary4"]
+shape = SubResource("R166")
+[node name="Boundary5" type="StaticBody3D" parent="."]
+position = Vector3(15, 6, -8.66025404)
+rotation = Vector3(0, -1.04719755, 0)
+collision_layer = 1
+collision_mask = 0
+[node name="Shape" type="CollisionShape3D" parent="Boundary5"]
+shape = SubResource("R167")
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("R168")
+[node name="Camera" type="Camera3D" parent="."]
+position = Vector3(0, 60, 0)
+rotation = Vector3(-1.570796327, 0, 0)
+projection = 1
+size = 48
+current = true
+[node name="Party" type="Node3D" parent="."]

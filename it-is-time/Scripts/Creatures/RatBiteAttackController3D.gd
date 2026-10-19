@@ -207,6 +207,7 @@ func _physics_process(delta: float) -> void:
 		opening *= smoothstep(0.0,data.preparation_time,_phase_elapsed)
 		if _phase_elapsed>=data.preparation_time and (absf(_angle_error)<5.0 or _phase_elapsed>=data.preparation_time+data.preparation_extra_wait):
 			_weapon = HITBOX.new()
+			_weapon.damage_multiplier = data.damage_multiplier
 			_weapon.name = "RatBiteHitbox"
 			_weapon.damage_label = &"rat_bite_hit"
 			var size: Vector3 = jaw.get_meta(&"generated_size",Vector3.ONE)

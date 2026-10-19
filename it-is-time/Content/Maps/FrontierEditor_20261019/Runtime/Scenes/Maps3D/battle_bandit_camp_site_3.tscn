@@ -1,0 +1,2012 @@
+[gd_scene load_steps=173 format=3]
+
+[ext_resource type="Script" path="res://Modules/FrontierDelivery/Scripts/Map/BattleMap3D.gd" id="BattleScript"]
+[ext_resource type="Shader" path="res://Modules/FrontierDelivery/Scripts/Map/BattleGround.gdshader" id="GroundShader"]
+[ext_resource type="Shader" path="res://Modules/FrontierDelivery/Scripts/Map/BattleExterior.gdshader" id="ExteriorShader"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/a5bebf1f88ea1c2bce2d23ab.png" id="Texture_0"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/602770b268be2f93cdb6ad7b.png" id="Texture_1"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/1986bb39e0d9af20dcc4c3c0.png" id="Texture_2"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/58908ba1a1cea84e384726d7.png" id="Texture_3"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/67bda0daff55c798104dddff.png" id="Texture_4"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/d49de230f58be456c6382069.png" id="Texture_5"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/battle_dry_patch.tscn" id="Part_0"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_11_018.tscn" id="Part_1"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_03_025.tscn" id="Part_2"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_11_016.tscn" id="Part_3"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/demo_thorn_large.tscn" id="Part_4"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_08_021.tscn" id="Part_5"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_09_020.tscn" id="Part_6"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_05_014.tscn" id="Part_7"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/a5bebf1f88ea1c2bce2d23ab.png" id="Texture_6"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/602770b268be2f93cdb6ad7b.png" id="Texture_7"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/1986bb39e0d9af20dcc4c3c0.png" id="Texture_8"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/58908ba1a1cea84e384726d7.png" id="Texture_9"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/67bda0daff55c798104dddff.png" id="Texture_10"]
+[ext_resource type="Texture2D" path="res://Content/Maps/FrontierEditor_20261019/Runtime/Textures/Assets/d49de230f58be456c6382069.png" id="Texture_11"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_03_021.tscn" id="Part_8"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_04_033.tscn" id="Part_9"]
+[ext_resource type="PackedScene" path="res://Content/Maps/FrontierEditor_20261019/Runtime/PaperParts/art1018_08_019.tscn" id="Part_10"]
+
+[sub_resource type="StandardMaterial3D" id="R0"]
+shading_mode = 0
+albedo_color = Color(0.57254902, 0.607843137, 0.4, 1)
+
+[sub_resource type="PrismMesh" id="R1"]
+left_to_right = 0.5
+size = Vector3(1, 1, 1)
+
+[sub_resource type="ShaderMaterial" id="R2"]
+shader = ExtResource("GroundShader")
+shader_parameter/ground_color = Color(0.57254902, 0.607843137, 0.4, 1)
+shader_parameter/radius = 22
+shader_parameter/feather = 0.736121593
+shader_parameter/orientation = 0
+
+[sub_resource type="PlaneMesh" id="R3"]
+size = Vector2(50.6, 50.6)
+
+[sub_resource type="StandardMaterial3D" id="R4"]
+shading_mode = 0
+albedo_color = Color(0.349019608, 0.423529412, 0.247058824, 1)
+
+[sub_resource type="PlaneMesh" id="R5"]
+size = Vector2(132, 132)
+
+[sub_resource type="ShaderMaterial" id="R6"]
+shader = ExtResource("GroundShader")
+shader_parameter/ground_color = Color(0.0352941176, 0.0862745098, 0.0509803922, 0.6)
+shader_parameter/radius = 22
+shader_parameter/feather = 0.736121593
+shader_parameter/orientation = 0
+shader_parameter/halo = true
+
+[sub_resource type="ShaderMaterial" id="R7"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_0")
+shader_parameter/blur_uv = Vector2(0.102564103, 0.115942029)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R8"]
+size = Vector2(3.51, 3.105)
+
+[sub_resource type="ShaderMaterial" id="R9"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_1")
+shader_parameter/blur_uv = Vector2(0.170212766, 0.13559322)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R10"]
+size = Vector2(3.51, 4.40617021)
+
+[sub_resource type="ShaderMaterial" id="R11"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_2")
+shader_parameter/blur_uv = Vector2(0.0247678019, 0.0252365931)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R12"]
+size = Vector2(5.85, 5.74133127)
+
+[sub_resource type="ShaderMaterial" id="R13"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_0")
+shader_parameter/blur_uv = Vector2(0.102564103, 0.115942029)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R14"]
+size = Vector2(3.51, 3.105)
+
+[sub_resource type="ShaderMaterial" id="R15"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_1")
+shader_parameter/blur_uv = Vector2(0.170212766, 0.13559322)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R16"]
+size = Vector2(3.51, 4.40617021)
+
+[sub_resource type="ShaderMaterial" id="R17"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_1")
+shader_parameter/blur_uv = Vector2(0.170212766, 0.13559322)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R18"]
+size = Vector2(3.51, 4.40617021)
+
+[sub_resource type="ShaderMaterial" id="R19"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_3")
+shader_parameter/blur_uv = Vector2(0.0792079208, 0.0808080808)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R20"]
+size = Vector2(3.51, 3.44049505)
+
+[sub_resource type="ShaderMaterial" id="R21"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_0")
+shader_parameter/blur_uv = Vector2(0.102564103, 0.115942029)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R22"]
+size = Vector2(3.51, 3.105)
+
+[sub_resource type="ShaderMaterial" id="R23"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_1")
+shader_parameter/blur_uv = Vector2(0.170212766, 0.13559322)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R24"]
+size = Vector2(3.51, 4.40617021)
+
+[sub_resource type="ShaderMaterial" id="R25"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_3")
+shader_parameter/blur_uv = Vector2(0.0792079208, 0.0808080808)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R26"]
+size = Vector2(3.51, 3.44049505)
+
+[sub_resource type="ShaderMaterial" id="R27"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_3")
+shader_parameter/blur_uv = Vector2(0.0792079208, 0.0808080808)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R28"]
+size = Vector2(3.51, 3.44049505)
+
+[sub_resource type="ShaderMaterial" id="R29"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_0")
+shader_parameter/blur_uv = Vector2(0.102564103, 0.115942029)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R30"]
+size = Vector2(3.51, 3.105)
+
+[sub_resource type="ShaderMaterial" id="R31"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_4")
+shader_parameter/blur_uv = Vector2(0.0384615385, 0.0347826087)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R32"]
+size = Vector2(5.85, 6.46875)
+
+[sub_resource type="ShaderMaterial" id="R33"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_3")
+shader_parameter/blur_uv = Vector2(0.0792079208, 0.0808080808)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R34"]
+size = Vector2(3.51, 3.44049505)
+
+[sub_resource type="ShaderMaterial" id="R35"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_0")
+shader_parameter/blur_uv = Vector2(0.102564103, 0.115942029)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R36"]
+size = Vector2(3.51, 3.105)
+
+[sub_resource type="ShaderMaterial" id="R37"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_0")
+shader_parameter/blur_uv = Vector2(0.102564103, 0.115942029)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R38"]
+size = Vector2(3.51, 3.105)
+
+[sub_resource type="ShaderMaterial" id="R39"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_1")
+shader_parameter/blur_uv = Vector2(0.170212766, 0.13559322)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R40"]
+size = Vector2(3.51, 4.40617021)
+
+[sub_resource type="ShaderMaterial" id="R41"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_3")
+shader_parameter/blur_uv = Vector2(0.0792079208, 0.0808080808)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R42"]
+size = Vector2(3.51, 3.44049505)
+
+[sub_resource type="ShaderMaterial" id="R43"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_0")
+shader_parameter/blur_uv = Vector2(0.102564103, 0.115942029)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R44"]
+size = Vector2(3.51, 3.105)
+
+[sub_resource type="ShaderMaterial" id="R45"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_1")
+shader_parameter/blur_uv = Vector2(0.170212766, 0.13559322)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R46"]
+size = Vector2(3.51, 4.40617021)
+
+[sub_resource type="ShaderMaterial" id="R47"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_1")
+shader_parameter/blur_uv = Vector2(0.170212766, 0.13559322)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R48"]
+size = Vector2(3.51, 4.40617021)
+
+[sub_resource type="ShaderMaterial" id="R49"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_3")
+shader_parameter/blur_uv = Vector2(0.0792079208, 0.0808080808)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R50"]
+size = Vector2(3.51, 3.44049505)
+
+[sub_resource type="ShaderMaterial" id="R51"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_5")
+shader_parameter/blur_uv = Vector2(0.037037037, 0.0298507463)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R52"]
+size = Vector2(5.85, 7.25833333)
+
+[sub_resource type="ShaderMaterial" id="R53"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_1")
+shader_parameter/blur_uv = Vector2(0.170212766, 0.13559322)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R54"]
+size = Vector2(3.51, 4.40617021)
+
+[sub_resource type="ShaderMaterial" id="R55"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_3")
+shader_parameter/blur_uv = Vector2(0.0792079208, 0.0808080808)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R56"]
+size = Vector2(3.51, 3.44049505)
+
+[sub_resource type="ShaderMaterial" id="R57"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_3")
+shader_parameter/blur_uv = Vector2(0.0792079208, 0.0808080808)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R58"]
+size = Vector2(3.51, 3.44049505)
+
+[sub_resource type="ShaderMaterial" id="R59"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_0")
+shader_parameter/blur_uv = Vector2(0.102564103, 0.115942029)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R60"]
+size = Vector2(3.51, 3.105)
+
+[sub_resource type="ShaderMaterial" id="R61"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_1")
+shader_parameter/blur_uv = Vector2(0.170212766, 0.13559322)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R62"]
+size = Vector2(3.51, 4.40617021)
+
+[sub_resource type="ShaderMaterial" id="R63"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_3")
+shader_parameter/blur_uv = Vector2(0.0792079208, 0.0808080808)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R64"]
+size = Vector2(3.51, 3.44049505)
+
+[sub_resource type="ShaderMaterial" id="R65"]
+shader = ExtResource("ExteriorShader")
+shader_parameter/artwork = ExtResource("Texture_0")
+shader_parameter/blur_uv = Vector2(0.102564103, 0.115942029)
+shader_parameter/opacity = 0.55
+
+[sub_resource type="PlaneMesh" id="R66"]
+size = Vector2(3.51, 3.105)
+
+[sub_resource type="ConvexPolygonShape3D" id="R67"]
+points = PackedVector3Array(1.806, 0, 0, 1.806, 2, 0, 1.77129822, 0, 0.185335806, 1.77129822, 2, 0.185335806, 1.66852644, 0, 0.363549261, 1.66852644, 2, 0.363549261, 1.50163412, 0, 0.527791721, 1.50163412, 2, 0.527791721, 1.27703485, 0, 0.671751442, 1.27703485, 2, 0.671751442, 1.00335984, 0, 0.789896132, 1.00335984, 2, 0.789896132, 0.691126279, 0, 0.877685556, 0.691126279, 2, 0.877685556, 0.352333122, 0, 0.931746016, 0.352333122, 2, 0.931746016, 1.10585606e-16, 0, 0.95, 1.10585606e-16, 2, 0.95, -0.352333122, 0, 0.931746016, -0.352333122, 2, 0.931746016, -0.691126279, 0, 0.877685556, -0.691126279, 2, 0.877685556, -1.00335984, 0, 0.789896132, -1.00335984, 2, 0.789896132, -1.27703485, 0, 0.671751442, -1.27703485, 2, 0.671751442, -1.50163412, 0, 0.527791721, -1.50163412, 2, 0.527791721, -1.66852644, 0, 0.363549261, -1.66852644, 2, 0.363549261, -1.77129822, 0, 0.185335806, -1.77129822, 2, 0.185335806, -1.806, 0, 1.16341446e-16, -1.806, 2, 1.16341446e-16, -1.77129822, 0, -0.185335806, -1.77129822, 2, -0.185335806, -1.66852644, 0, -0.363549261, -1.66852644, 2, -0.363549261, -1.50163412, 0, -0.527791721, -1.50163412, 2, -0.527791721, -1.27703485, 0, -0.671751442, -1.27703485, 2, -0.671751442, -1.00335984, 0, -0.789896132, -1.00335984, 2, -0.789896132, -0.691126279, 0, -0.877685556, -0.691126279, 2, -0.877685556, -0.352333122, 0, -0.931746016, -0.352333122, 2, -0.931746016, -3.31756818e-16, 0, -0.95, -3.31756818e-16, 2, -0.95, 0.352333122, 0, -0.931746016, 0.352333122, 2, -0.931746016, 0.691126279, 0, -0.877685556, 0.691126279, 2, -0.877685556, 1.00335984, 0, -0.789896132, 1.00335984, 2, -0.789896132, 1.27703485, 0, -0.671751442, 1.27703485, 2, -0.671751442, 1.50163412, 0, -0.527791721, 1.50163412, 2, -0.527791721, 1.66852644, 0, -0.363549261, 1.66852644, 2, -0.363549261, 1.77129822, 0, -0.185335806, 1.77129822, 2, -0.185335806)
+
+[sub_resource type="ConvexPolygonShape3D" id="R68"]
+points = PackedVector3Array(2.2, 0, 0, 2.2, 2, 0, 2.15772762, 0, 0.331653547, 2.15772762, 2, 0.331653547, 2.03253497, 0, 0.650561835, 2.03253497, 2, 0.650561835, 1.82923315, 0, 0.944469396, 1.82923315, 2, 0.944469396, 1.55563492, 0, 1.20208153, 1.55563492, 2, 1.20208153, 1.22225451, 0, 1.41349834, 1.22225451, 2, 1.41349834, 0.841903551, 0, 1.57059521, 0.841903551, 2, 1.57059521, 0.429198708, 0, 1.66733498, 0.429198708, 2, 1.66733498, 1.34711148e-16, 0, 1.7, 1.34711148e-16, 2, 1.7, -0.429198708, 0, 1.66733498, -0.429198708, 2, 1.66733498, -0.841903551, 0, 1.57059521, -0.841903551, 2, 1.57059521, -1.22225451, 0, 1.41349834, -1.22225451, 2, 1.41349834, -1.55563492, 0, 1.20208153, -1.55563492, 2, 1.20208153, -1.82923315, 0, 0.944469396, -1.82923315, 2, 0.944469396, -2.03253497, 0, 0.650561835, -2.03253497, 2, 0.650561835, -2.15772762, 0, 0.331653547, -2.15772762, 2, 0.331653547, -2.2, 0, 2.08189956e-16, -2.2, 2, 2.08189956e-16, -2.15772762, 0, -0.331653547, -2.15772762, 2, -0.331653547, -2.03253497, 0, -0.650561835, -2.03253497, 2, -0.650561835, -1.82923315, 0, -0.944469396, -1.82923315, 2, -0.944469396, -1.55563492, 0, -1.20208153, -1.55563492, 2, -1.20208153, -1.22225451, 0, -1.41349834, -1.22225451, 2, -1.41349834, -0.841903551, 0, -1.57059521, -0.841903551, 2, -1.57059521, -0.429198708, 0, -1.66733498, -0.429198708, 2, -1.66733498, -4.04133444e-16, 0, -1.7, -4.04133444e-16, 2, -1.7, 0.429198708, 0, -1.66733498, 0.429198708, 2, -1.66733498, 0.841903551, 0, -1.57059521, 0.841903551, 2, -1.57059521, 1.22225451, 0, -1.41349834, 1.22225451, 2, -1.41349834, 1.55563492, 0, -1.20208153, 1.55563492, 2, -1.20208153, 1.82923315, 0, -0.944469396, 1.82923315, 2, -0.944469396, 2.03253497, 0, -0.650561835, 2.03253497, 2, -0.650561835, 2.15772762, 0, -0.331653547, 2.15772762, 2, -0.331653547)
+
+[sub_resource type="ConvexPolygonShape3D" id="R69"]
+points = PackedVector3Array(-2.7, 0, -2.1, -2.7, 2, -2.1, 2.7, 0, -2.1, 2.7, 2, -2.1, 2.7, 0, 2.1, 2.7, 2, 2.1, -2.7, 0, 2.1, -2.7, 2, 2.1)
+
+[sub_resource type="ConvexPolygonShape3D" id="R70"]
+points = PackedVector3Array(1.1, 0, 0, 1.1, 3, 0, 0.55, 0, 0.952627944, 0.55, 3, 0.952627944, -0.55, 0, 0.952627944, -0.55, 3, 0.952627944, -1.1, 0, 1.34711148e-16, -1.1, 3, 1.34711148e-16, -0.55, 0, -0.952627944, -0.55, 3, -0.952627944, 0.55, 0, -0.952627944, 0.55, 3, -0.952627944)
+
+[sub_resource type="ConvexPolygonShape3D" id="R71"]
+points = PackedVector3Array(1.1, 0, 0, 1.1, 3, 0, 0.55, 0, 0.952627944, 0.55, 3, 0.952627944, -0.55, 0, 0.952627944, -0.55, 3, 0.952627944, -1.1, 0, 1.34711148e-16, -1.1, 3, 1.34711148e-16, -0.55, 0, -0.952627944, -0.55, 3, -0.952627944, 0.55, 0, -0.952627944, 0.55, 3, -0.952627944)
+
+[sub_resource type="ConvexPolygonShape3D" id="R72"]
+points = PackedVector3Array(1.1, 0, 0, 1.1, 3, 0, 0.55, 0, 0.952627944, 0.55, 3, 0.952627944, -0.55, 0, 0.952627944, -0.55, 3, 0.952627944, -1.1, 0, 1.34711148e-16, -1.1, 3, 1.34711148e-16, -0.55, 0, -0.952627944, -0.55, 3, -0.952627944, 0.55, 0, -0.952627944, 0.55, 3, -0.952627944)
+
+[sub_resource type="ConvexPolygonShape3D" id="R73"]
+points = PackedVector3Array(1.1, 0, 0, 1.1, 3, 0, 0.55, 0, 0.952627944, 0.55, 3, 0.952627944, -0.55, 0, 0.952627944, -0.55, 3, 0.952627944, -1.1, 0, 1.34711148e-16, -1.1, 3, 1.34711148e-16, -0.55, 0, -0.952627944, -0.55, 3, -0.952627944, 0.55, 0, -0.952627944, 0.55, 3, -0.952627944)
+
+[sub_resource type="ConvexPolygonShape3D" id="R74"]
+points = PackedVector3Array(1.1, 0, 0, 1.1, 3, 0, 0.55, 0, 0.952627944, 0.55, 3, 0.952627944, -0.55, 0, 0.952627944, -0.55, 3, 0.952627944, -1.1, 0, 1.34711148e-16, -1.1, 3, 1.34711148e-16, -0.55, 0, -0.952627944, -0.55, 3, -0.952627944, 0.55, 0, -0.952627944, 0.55, 3, -0.952627944)
+
+[sub_resource type="ConvexPolygonShape3D" id="R75"]
+points = PackedVector3Array(1.1, 0, 0, 1.1, 3, 0, 0.55, 0, 0.952627944, 0.55, 3, 0.952627944, -0.55, 0, 0.952627944, -0.55, 3, 0.952627944, -1.1, 0, 1.34711148e-16, -1.1, 3, 1.34711148e-16, -0.55, 0, -0.952627944, -0.55, 3, -0.952627944, 0.55, 0, -0.952627944, 0.55, 3, -0.952627944)
+
+[sub_resource type="ConvexPolygonShape3D" id="R76"]
+points = PackedVector3Array(1.1, 0, 0, 1.1, 3, 0, 0.55, 0, 0.952627944, 0.55, 3, 0.952627944, -0.55, 0, 0.952627944, -0.55, 3, 0.952627944, -1.1, 0, 1.34711148e-16, -1.1, 3, 1.34711148e-16, -0.55, 0, -0.952627944, -0.55, 3, -0.952627944, 0.55, 0, -0.952627944, 0.55, 3, -0.952627944)
+
+[sub_resource type="StandardMaterial3D" id="R77"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_6")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R78"]
+size = Vector2(2.7, 2.38846154)
+
+[sub_resource type="StandardMaterial3D" id="R79"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_7")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R80"]
+size = Vector2(2.7, 3.3893617)
+
+[sub_resource type="StandardMaterial3D" id="R81"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_8")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R82"]
+size = Vector2(4.5, 4.41640867)
+
+[sub_resource type="StandardMaterial3D" id="R83"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_6")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R84"]
+size = Vector2(2.7, 2.38846154)
+
+[sub_resource type="StandardMaterial3D" id="R85"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_7")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R86"]
+size = Vector2(2.7, 3.3893617)
+
+[sub_resource type="StandardMaterial3D" id="R87"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_7")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R88"]
+size = Vector2(2.7, 3.3893617)
+
+[sub_resource type="StandardMaterial3D" id="R89"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_9")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R90"]
+size = Vector2(2.7, 2.64653465)
+
+[sub_resource type="StandardMaterial3D" id="R91"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_6")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R92"]
+size = Vector2(2.7, 2.38846154)
+
+[sub_resource type="StandardMaterial3D" id="R93"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_7")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R94"]
+size = Vector2(2.7, 3.3893617)
+
+[sub_resource type="StandardMaterial3D" id="R95"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_9")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R96"]
+size = Vector2(2.7, 2.64653465)
+
+[sub_resource type="StandardMaterial3D" id="R97"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_9")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R98"]
+size = Vector2(2.7, 2.64653465)
+
+[sub_resource type="StandardMaterial3D" id="R99"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_6")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R100"]
+size = Vector2(2.7, 2.38846154)
+
+[sub_resource type="StandardMaterial3D" id="R101"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_10")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R102"]
+size = Vector2(4.5, 4.97596154)
+
+[sub_resource type="StandardMaterial3D" id="R103"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_9")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R104"]
+size = Vector2(2.7, 2.64653465)
+
+[sub_resource type="StandardMaterial3D" id="R105"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_6")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R106"]
+size = Vector2(2.7, 2.38846154)
+
+[sub_resource type="StandardMaterial3D" id="R107"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_6")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R108"]
+size = Vector2(2.7, 2.38846154)
+
+[sub_resource type="StandardMaterial3D" id="R109"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_7")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R110"]
+size = Vector2(2.7, 3.3893617)
+
+[sub_resource type="StandardMaterial3D" id="R111"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_9")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R112"]
+size = Vector2(2.7, 2.64653465)
+
+[sub_resource type="StandardMaterial3D" id="R113"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_6")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R114"]
+size = Vector2(2.7, 2.38846154)
+
+[sub_resource type="StandardMaterial3D" id="R115"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_7")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R116"]
+size = Vector2(2.7, 3.3893617)
+
+[sub_resource type="StandardMaterial3D" id="R117"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_7")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R118"]
+size = Vector2(2.7, 3.3893617)
+
+[sub_resource type="StandardMaterial3D" id="R119"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_9")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R120"]
+size = Vector2(2.7, 2.64653465)
+
+[sub_resource type="StandardMaterial3D" id="R121"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_11")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R122"]
+size = Vector2(4.5, 5.58333333)
+
+[sub_resource type="StandardMaterial3D" id="R123"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_7")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R124"]
+size = Vector2(2.7, 3.3893617)
+
+[sub_resource type="StandardMaterial3D" id="R125"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_9")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R126"]
+size = Vector2(2.7, 2.64653465)
+
+[sub_resource type="StandardMaterial3D" id="R127"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_9")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R128"]
+size = Vector2(2.7, 2.64653465)
+
+[sub_resource type="StandardMaterial3D" id="R129"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_6")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R130"]
+size = Vector2(2.7, 2.38846154)
+
+[sub_resource type="StandardMaterial3D" id="R131"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_7")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R132"]
+size = Vector2(2.7, 3.3893617)
+
+[sub_resource type="StandardMaterial3D" id="R133"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_9")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R134"]
+size = Vector2(2.7, 2.64653465)
+
+[sub_resource type="StandardMaterial3D" id="R135"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("Texture_6")
+albedo_color = Color(1,1,1,1)
+texture_filter = 1
+
+[sub_resource type="PlaneMesh" id="R136"]
+size = Vector2(2.7, 2.38846154)
+
+[sub_resource type="ConvexPolygonShape3D" id="R137"]
+points = PackedVector3Array(1.056, 0, 0, 1.056, 2.6, 0, 1.03570926, 0, 0.170606487, 1.03570926, 2.6, 0.170606487, 0.975616786, 0, 0.334656662, 0.975616786, 2.6, 0.334656662, 0.878031911, 0, 0.485846169, 0.878031911, 2.6, 0.485846169, 0.746704761, 0, 0.61836488, 0.746704761, 2.6, 0.61836488, 0.586682166, 0, 0.727120176, 0.586682166, 2.6, 0.727120176, 0.404113705, 0, 0.807932651, 0.404113705, 2.6, 0.807932651, 0.20601538, 0, 0.857696728, 0.20601538, 2.6, 0.857696728, 6.4661351e-17, 0, 0.8745, 6.4661351e-17, 2.6, 0.8745, -0.20601538, 0, 0.857696728, -0.20601538, 2.6, 0.857696728, -0.404113705, 0, 0.807932651, -0.404113705, 2.6, 0.807932651, -0.586682166, 0, 0.727120176, -0.586682166, 2.6, 0.727120176, -0.746704761, 0, 0.61836488, -0.746704761, 2.6, 0.61836488, -0.878031911, 0, 0.485846169, -0.878031911, 2.6, 0.485846169, -0.975616786, 0, 0.334656662, -0.975616786, 2.6, 0.334656662, -1.03570926, 0, 0.170606487, -1.03570926, 2.6, 0.170606487, -1.056, 0, 1.07095363e-16, -1.056, 2.6, 1.07095363e-16, -1.03570926, 0, -0.170606487, -1.03570926, 2.6, -0.170606487, -0.975616786, 0, -0.334656662, -0.975616786, 2.6, -0.334656662, -0.878031911, 0, -0.485846169, -0.878031911, 2.6, -0.485846169, -0.746704761, 0, -0.61836488, -0.746704761, 2.6, -0.61836488, -0.586682166, 0, -0.727120176, -0.586682166, 2.6, -0.727120176, -0.404113705, 0, -0.807932651, -0.404113705, 2.6, -0.807932651, -0.20601538, 0, -0.857696728, -0.20601538, 2.6, -0.857696728, -1.93984053e-16, 0, -0.8745, -1.93984053e-16, 2.6, -0.8745, 0.20601538, 0, -0.857696728, 0.20601538, 2.6, -0.857696728, 0.404113705, 0, -0.807932651, 0.404113705, 2.6, -0.807932651, 0.586682166, 0, -0.727120176, 0.586682166, 2.6, -0.727120176, 0.746704761, 0, -0.61836488, 0.746704761, 2.6, -0.61836488, 0.878031911, 0, -0.485846169, 0.878031911, 2.6, -0.485846169, 0.975616786, 0, -0.334656662, 0.975616786, 2.6, -0.334656662, 1.03570926, 0, -0.170606487, 1.03570926, 2.6, -0.170606487)
+
+[sub_resource type="ConvexPolygonShape3D" id="R138"]
+points = PackedVector3Array(0.992, 0, 0, 0.992, 2.6, 0, 0.972938998, 0, 0.1602667, 0.972938998, 2.6, 0.1602667, 0.916488496, 0, 0.31437444, 0.916488496, 2.6, 0.31437444, 0.824817855, 0, 0.456400946, 0.824817855, 2.6, 0.456400946, 0.701449927, 0, 0.580888221, 0.701449927, 2.6, 0.580888221, 0.551125671, 0, 0.683052287, 0.551125671, 2.6, 0.683052287, 0.379621965, 0, 0.758967036, 0.379621965, 2.6, 0.758967036, 0.193529599, 0, 0.805715108, 0.193529599, 2.6, 0.805715108, 6.07424812e-17, 0, 0.8215, 6.07424812e-17, 2.6, 0.8215, -0.193529599, 0, 0.805715108, -0.193529599, 2.6, 0.805715108, -0.379621965, 0, 0.758967036, -0.379621965, 2.6, 0.758967036, -0.551125671, 0, 0.683052287, -0.551125671, 2.6, 0.683052287, -0.701449927, 0, 0.580888221, -0.701449927, 2.6, 0.580888221, -0.824817855, 0, 0.456400946, -0.824817855, 2.6, 0.456400946, -0.916488496, 0, 0.31437444, -0.916488496, 2.6, 0.31437444, -0.972938998, 0, 0.1602667, -0.972938998, 2.6, 0.1602667, -0.992, 0, 1.00604735e-16, -0.992, 2.6, 1.00604735e-16, -0.972938998, 0, -0.1602667, -0.972938998, 2.6, -0.1602667, -0.916488496, 0, -0.31437444, -0.916488496, 2.6, -0.31437444, -0.824817855, 0, -0.456400946, -0.824817855, 2.6, -0.456400946, -0.701449927, 0, -0.580888221, -0.701449927, 2.6, -0.580888221, -0.551125671, 0, -0.683052287, -0.551125671, 2.6, -0.683052287, -0.379621965, 0, -0.758967036, -0.379621965, 2.6, -0.758967036, -0.193529599, 0, -0.805715108, -0.193529599, 2.6, -0.805715108, -1.82227444e-16, 0, -0.8215, -1.82227444e-16, 2.6, -0.8215, 0.193529599, 0, -0.805715108, 0.193529599, 2.6, -0.805715108, 0.379621965, 0, -0.758967036, 0.379621965, 2.6, -0.758967036, 0.551125671, 0, -0.683052287, 0.551125671, 2.6, -0.683052287, 0.701449927, 0, -0.580888221, 0.701449927, 2.6, -0.580888221, 0.824817855, 0, -0.456400946, 0.824817855, 2.6, -0.456400946, 0.916488496, 0, -0.31437444, 0.916488496, 2.6, -0.31437444, 0.972938998, 0, -0.1602667, 0.972938998, 2.6, -0.1602667)
+
+[sub_resource type="BoxShape3D" id="R139"]
+size = Vector3(22, 12, 0.45)
+
+[sub_resource type="BoxShape3D" id="R140"]
+size = Vector3(22, 12, 0.45)
+
+[sub_resource type="BoxShape3D" id="R141"]
+size = Vector3(22, 12, 0.45)
+
+[sub_resource type="BoxShape3D" id="R142"]
+size = Vector3(22, 12, 0.45)
+
+[sub_resource type="BoxShape3D" id="R143"]
+size = Vector3(22, 12, 0.45)
+
+[sub_resource type="BoxShape3D" id="R144"]
+size = Vector3(22, 12, 0.45)
+
+[sub_resource type="Environment" id="R145"]
+background_mode = 1
+background_color = Color(0.349019608, 0.423529412, 0.247058824, 1)
+ambient_light_source = 3
+ambient_light_color = Color(1,1,1,1)
+ambient_light_energy = 0.8
+
+[node name="battle_bandit_camp_site_3" type="Node3D"]
+script = ExtResource("BattleScript")
+map_id = "battle_bandit_camp_site_3"
+data_path = "res://Content/Maps/FrontierEditor_20261019/Runtime/Maps/battle_bandit_camp_site_3.json"
+[node name="Ground" type="CSGPolygon3D" parent="."]
+visible = false
+rotation = Vector3(-1.570796327, 0, 0)
+polygon = PackedVector2Array(22, 0, 11, 19.0525589, -11, 19.0525589, -22, 2.69422296e-15, -11, -19.0525589, 11, -19.0525589)
+depth = 0.15
+material = SubResource("R0")
+use_collision = true
+[node name="GroundVisual" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.005, 0)
+mesh = SubResource("R3")
+material_override = SubResource("R2")
+cast_shadow = 0
+[node name="ExteriorBackground" type="Node3D" parent="."]
+metadata/authored_blur = 8
+[node name="Backdrop" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(0,-0.7,0)
+mesh = SubResource("R5")
+material_override = SubResource("R4")
+cast_shadow = 0
+[node name="Halo" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(0,-0.2,0)
+mesh = SubResource("R3")
+material_override = SubResource("R6")
+cast_shadow = 0
+[node name="Edge_64" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(23.23962, -0.3936, 2.11806)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R8")
+material_override = SubResource("R7")
+cast_shadow = 0
+[node name="Edge_65" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(21.29253, -0.3935, 6.05406)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R10")
+material_override = SubResource("R9")
+cast_shadow = 0
+[node name="Edge_66" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(17.75259, -0.3934, 10.49682)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R12")
+material_override = SubResource("R11")
+cast_shadow = 0
+[node name="Edge_67" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(15.79812, -0.3933, 14.44389)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R14")
+material_override = SubResource("R13")
+cast_shadow = 0
+[node name="Edge_68" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(13.23357, -0.3932, 19.44753)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R16")
+material_override = SubResource("R15")
+cast_shadow = 0
+[node name="Edge_69" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(9.43779, -0.3931, 20.90385)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R18")
+material_override = SubResource("R17")
+cast_shadow = 0
+[node name="Edge_70" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(5.11311, -0.393, 21.18552)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R20")
+material_override = SubResource("R19")
+cast_shadow = 0
+[node name="Edge_71" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(-0.44649, -0.3929, 21.46596)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R22")
+material_override = SubResource("R21")
+cast_shadow = 0
+[node name="Edge_72" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(-4.76256, -0.3928, 20.62218)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R24")
+material_override = SubResource("R23")
+cast_shadow = 0
+[node name="Edge_73" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(-9.22008, -0.3927, 20.90385)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R26")
+material_override = SubResource("R25")
+cast_shadow = 0
+[node name="Edge_74" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(-13.31106, -0.3926, 18.18924)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R28")
+material_override = SubResource("R27")
+cast_shadow = 0
+[node name="Edge_75" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(-15.68988, -0.3925, 14.63208)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R30")
+material_override = SubResource("R29")
+cast_shadow = 0
+[node name="Edge_76" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(-18.12651, -0.3924, 10.97406)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R32")
+material_override = SubResource("R31")
+cast_shadow = 0
+[node name="Edge_77" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(-21.1806, -0.3923, 6.24717)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R34")
+material_override = SubResource("R33")
+cast_shadow = 0
+[node name="Edge_78" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(-22.51515, -0.3922, 2.24844)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R36")
+material_override = SubResource("R35")
+cast_shadow = 0
+[node name="Edge_79" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(-23.77098, -0.3921, -1.76013)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R38")
+material_override = SubResource("R37")
+cast_shadow = 0
+[node name="Edge_80" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(-20.13387, -0.392, -6.37263)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R40")
+material_override = SubResource("R39")
+cast_shadow = 0
+[node name="Edge_81" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(-18.21138, -0.3919, -10.26312)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R42")
+material_override = SubResource("R41")
+cast_shadow = 0
+[node name="Edge_82" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(-15.68004, -0.3918, -15.21018)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R44")
+material_override = SubResource("R43")
+cast_shadow = 0
+[node name="Edge_83" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(-13.63332, -0.3917, -19.31961)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R46")
+material_override = SubResource("R45")
+cast_shadow = 0
+[node name="Edge_84" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(-10.00482, -0.3916, -21.18552)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R48")
+material_override = SubResource("R47")
+cast_shadow = 0
+[node name="Edge_85" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(-4.51164, -0.3915, -21.46596)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R50")
+material_override = SubResource("R49")
+cast_shadow = 0
+[node name="Edge_86" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(0, -0.3914, -20.62218)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R52")
+material_override = SubResource("R51")
+cast_shadow = 0
+[node name="Edge_87" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(4.39356, -0.3913, -20.90385)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R54")
+material_override = SubResource("R53")
+cast_shadow = 0
+[node name="Edge_88" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(10.00482, -0.3912, -21.18552)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R56")
+material_override = SubResource("R55")
+cast_shadow = 0
+[node name="Edge_89" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(13.27539, -0.3911, -18.81285)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R58")
+material_override = SubResource("R57")
+cast_shadow = 0
+[node name="Edge_90" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(15.68004, -0.391, -15.21018)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R60")
+material_override = SubResource("R59")
+cast_shadow = 0
+[node name="Edge_91" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(18.70215, -0.3909, -10.53987)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R62")
+material_override = SubResource("R61")
+cast_shadow = 0
+[node name="Edge_92" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(20.13387, -0.3908, -6.37263)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R64")
+material_override = SubResource("R63")
+cast_shadow = 0
+[node name="Edge_93" type="MeshInstance3D" parent="ExteriorBackground"]
+position = Vector3(23.14737, -0.3907, -1.71462)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+mesh = SubResource("R66")
+material_override = SubResource("R65")
+cast_shadow = 0
+[node name="Objects" type="Node3D" parent="."]
+[node name="battle_bandit_camp_site_3_object_001" type="Node3D" parent="Objects"]
+position = Vector3(-7.7, 0, -8.36)
+rotation = Vector3(0, 0.261336328, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_object_001"
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_site_3_object_001" instance=ExtResource("Part_0")]
+position = Vector3(0, 2.555, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(10.12, 5.06, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_bandit_camp_site_3_object_002" type="Node3D" parent="Objects"]
+position = Vector3(7.48, 0, 7.04)
+rotation = Vector3(0, -0.190469558, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_object_002"
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_site_3_object_002" instance=ExtResource("Part_0")]
+position = Vector3(0, 2.555, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(10.12, 5.06, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_bandit_camp_site_3_object_003" type="Node3D" parent="Objects"]
+position = Vector3(-9.9, 0, 2.64)
+rotation = Vector3(0, 0.06105088, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_object_003"
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_site_3_object_003" instance=ExtResource("Part_0")]
+position = Vector3(0, 2.555, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(10.12, 5.06, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_bandit_camp_site_3_object_004" type="Node3D" parent="Objects"]
+position = Vector3(8.8, 0, -5.28)
+rotation = Vector3(0, -0.171460225, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_object_004"
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_site_3_object_004" instance=ExtResource("Part_0")]
+position = Vector3(0, 2.555, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(10.12, 5.06, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_bandit_camp_site_3_object_005" type="Node3D" parent="Objects"]
+position = Vector3(0.44, 0, 12.76)
+rotation = Vector3(0, 0.155667053, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_object_005"
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_site_3_object_005" instance=ExtResource("Part_0")]
+position = Vector3(0, 2.555, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(10.12, 5.06, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_bandit_camp_site_3_object_006" type="Node3D" parent="Objects"]
+position = Vector3(7.999, 0, -5.464)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_object_006"
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_site_3_object_006" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.3125, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.575, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_bandit_camp_site_3_object_007" type="Node3D" parent="Objects"]
+position = Vector3(8.596, 0, 3.573)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_object_007"
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_site_3_object_007" instance=ExtResource("Part_2")]
+position = Vector3(0, 0.432978723, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.815957447, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_bandit_camp_site_3_object_008" type="Node3D" parent="Objects"]
+position = Vector3(6.404, 0, 11.853)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_object_008"
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_site_3_object_008" instance=ExtResource("Part_3")]
+position = Vector3(0, 0.343564356, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.637128713, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_bandit_camp_site_3_object_009" type="Node3D" parent="Objects"]
+position = Vector3(-15.142, 0, 10.577)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_object_009"
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_site_3_object_009" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.3125, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.575, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_bandit_camp_site_3_object_010" type="Node3D" parent="Objects"]
+position = Vector3(12.207, 0, -5.169)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_object_010"
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_site_3_object_010" instance=ExtResource("Part_2")]
+position = Vector3(0, 0.432978723, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.815957447, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_bandit_camp_site_3_object_011" type="Node3D" parent="Objects"]
+position = Vector3(-10.695, 0, 3.128)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_object_011"
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_site_3_object_011" instance=ExtResource("Part_3")]
+position = Vector3(0, 0.343564356, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.637128713, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_bandit_camp_site_3_object_012" type="Node3D" parent="Objects"]
+position = Vector3(-11.902, 0, 3.471)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_object_012"
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_site_3_object_012" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.3125, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.575, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_bandit_camp_site_3_object_013" type="Node3D" parent="Objects"]
+position = Vector3(-3.563, 0, 11.667)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_object_013"
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_site_3_object_013" instance=ExtResource("Part_2")]
+position = Vector3(0, 0.432978723, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.815957447, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_bandit_camp_site_3_object_014" type="Node3D" parent="Objects"]
+position = Vector3(-8.76, 0, 10.878)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_object_014"
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_site_3_object_014" instance=ExtResource("Part_3")]
+position = Vector3(0, 0.343564356, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.637128713, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_bandit_camp_site_3_object_015" type="Node3D" parent="Objects"]
+position = Vector3(5.187, 0, -4.054)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_object_015"
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_site_3_object_015" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.3125, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.575, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_bandit_camp_site_3_object_016" type="Node3D" parent="Objects"]
+position = Vector3(-13.515, 0, -0.352)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_object_016"
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_site_3_object_016" instance=ExtResource("Part_2")]
+position = Vector3(0, 0.432978723, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.815957447, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_bandit_camp_site_3_object_017" type="Node3D" parent="Objects"]
+position = Vector3(16.078, 0, -6.437)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_object_017"
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_site_3_object_017" instance=ExtResource("Part_3")]
+position = Vector3(0, 0.343564356, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.637128713, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_bandit_camp_site_3_object_018" type="Node3D" parent="Objects"]
+position = Vector3(-15.57, 0, 4.771)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_object_018"
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_site_3_object_018" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.3125, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.575, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_bandit_camp_site_3_object_019" type="Node3D" parent="Objects"]
+position = Vector3(4.013, 0, -8.509)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_object_019"
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_site_3_object_019" instance=ExtResource("Part_2")]
+position = Vector3(0, 0.432978723, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.815957447, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_bandit_camp_site_3_object_020" type="Node3D" parent="Objects"]
+position = Vector3(15.573, 0, 9.392)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_object_020"
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_site_3_object_020" instance=ExtResource("Part_3")]
+position = Vector3(0, 0.343564356, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.637128713, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_bandit_camp_site_3_object_021" type="Node3D" parent="Objects"]
+position = Vector3(3.759, 0, 14.366)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_object_021"
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_site_3_object_021" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.3125, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.575, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_bandit_camp_site_3_object_022" type="Node3D" parent="Objects"]
+position = Vector3(-14.372, 0, 2.879)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_object_022"
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_site_3_object_022" instance=ExtResource("Part_2")]
+position = Vector3(0, 0.432978723, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.815957447, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_bandit_camp_site_3_object_023" type="Node3D" parent="Objects"]
+position = Vector3(15.723, 0, -1.926)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_object_023"
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_site_3_object_023" instance=ExtResource("Part_3")]
+position = Vector3(0, 0.343564356, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.637128713, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_bandit_camp_site_3_object_024" type="Node3D" parent="Objects"]
+position = Vector3(11.344, 0, -8.144)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_object_024"
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_site_3_object_024" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.3125, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.575, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_bandit_camp_site_3_object_025" type="Node3D" parent="Objects"]
+position = Vector3(-5.247, 0, -13.344)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_object_025"
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_site_3_object_025" instance=ExtResource("Part_2")]
+position = Vector3(0, 0.432978723, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.815957447, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_bandit_camp_site_3_object_026" type="Node3D" parent="Objects"]
+position = Vector3(10.539, 0, -12.642)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_object_026"
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_site_3_object_026" instance=ExtResource("Part_3")]
+position = Vector3(0, 0.343564356, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.637128713, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_bandit_camp_site_3_object_027" type="Node3D" parent="Objects"]
+position = Vector3(-13.287, 0, -4.941)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_object_027"
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_site_3_object_027" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.3125, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.575, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_bandit_camp_site_3_object_028" type="Node3D" parent="Objects"]
+position = Vector3(-3.034, 0, -5.636)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_object_028"
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_site_3_object_028" instance=ExtResource("Part_2")]
+position = Vector3(0, 0.432978723, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.815957447, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_bandit_camp_site_3_object_029" type="Node3D" parent="Objects"]
+position = Vector3(11.928, 0, -0.523)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_object_029"
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_site_3_object_029" instance=ExtResource("Part_3")]
+position = Vector3(0, 0.343564356, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.637128713, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_bandit_camp_site_3_object_030" type="Node3D" parent="Objects"]
+position = Vector3(5.263, 0, -13.332)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_object_030"
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_site_3_object_030" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.3125, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(0.65, 0.575, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_bandit_camp_site_3_object_053" type="Node3D" parent="Objects"]
+position = Vector3(-9, 0, -0.8)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_object_053"
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_site_3_object_053" instance=ExtResource("Part_4")]
+position = Vector3(0, 0.025, 0)
+rotation = Vector3(-1.57079633, 0, 0)
+scale = Vector3(4.3, 2.17847682, 0.025)
+metadata/decoration_collision_enabled = false
+[node name="region" type="Area3D" parent="Objects/battle_bandit_camp_site_3_object_053"]
+position = Vector3(0, 0, 0)
+rotation = Vector3(0, -0, 0)
+collision_layer = 0
+collision_mask = 1
+[node name="Shape" type="CollisionShape3D" parent="Objects/battle_bandit_camp_site_3_object_053/region"]
+shape = SubResource("R67")
+[node name="battle_bandit_camp_site_3_object_046" type="Node3D" parent="Objects"]
+position = Vector3(0, 0, 0)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_object_046"
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_site_3_object_046" instance=ExtResource("Part_5")]
+position = Vector3(0, 1.06199422, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(5.2, 2.07398844, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="click_area" type="Area3D" parent="Objects/battle_bandit_camp_site_3_object_046"]
+position = Vector3(0, 0, 0)
+rotation = Vector3(0, -0, 0)
+collision_layer = 0
+collision_mask = 1
+[node name="Shape" type="CollisionShape3D" parent="Objects/battle_bandit_camp_site_3_object_046/click_area"]
+shape = SubResource("R68")
+[node name="battle_bandit_camp_site_3_object_045" type="Node3D" parent="Objects"]
+position = Vector3(-8.04864, 0, -11.55274)
+rotation = Vector3(0, 0.608498572, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_object_045"
+[node name="region" type="Area3D" parent="Objects/battle_bandit_camp_site_3_object_045"]
+position = Vector3(0, 0, 0)
+rotation = Vector3(0, -0, 0)
+collision_layer = 0
+collision_mask = 1
+[node name="Shape" type="CollisionShape3D" parent="Objects/battle_bandit_camp_site_3_object_045/region"]
+shape = SubResource("R69")
+[node name="collision_damage_4" type="Node3D" parent="Objects"]
+position = Vector3(-4.95, 0, -2.85788383)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "collision_damage_4"
+[node name="PhysicalPart" parent="Objects/collision_damage_4" instance=ExtResource("Part_6")]
+position = Vector3(0, 0.733482143, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(2.3, 1.41696429, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="collision" type="StaticBody3D" parent="Objects/collision_damage_4"]
+position = Vector3(0, 0, 0)
+rotation = Vector3(0, -0, 0)
+collision_layer = 1
+collision_mask = 0
+[node name="Shape" type="CollisionShape3D" parent="Objects/collision_damage_4/collision"]
+shape = SubResource("R70")
+[node name="collision_damage_5" type="Node3D" parent="Objects"]
+position = Vector3(-1.65, 0, -4.76313972)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "collision_damage_5"
+[node name="PhysicalPart" parent="Objects/collision_damage_5" instance=ExtResource("Part_7")]
+position = Vector3(0, 0.766530055, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(2.3, 1.48306011, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="collision" type="StaticBody3D" parent="Objects/collision_damage_5"]
+position = Vector3(0, 0, 0)
+rotation = Vector3(0, -0, 0)
+collision_layer = 1
+collision_mask = 0
+[node name="Shape" type="CollisionShape3D" parent="Objects/collision_damage_5/collision"]
+shape = SubResource("R71")
+[node name="collision_damage_6" type="Node3D" parent="Objects"]
+position = Vector3(-1.65, 0, -6.66839561)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "collision_damage_6"
+[node name="PhysicalPart" parent="Objects/collision_damage_6" instance=ExtResource("Part_6")]
+position = Vector3(0, 0.733482143, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(2.3, 1.41696429, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="collision" type="StaticBody3D" parent="Objects/collision_damage_6"]
+position = Vector3(0, 0, 0)
+rotation = Vector3(0, -0, 0)
+collision_layer = 1
+collision_mask = 0
+[node name="Shape" type="CollisionShape3D" parent="Objects/collision_damage_6/collision"]
+shape = SubResource("R72")
+[node name="collision_damage_7" type="Node3D" parent="Objects"]
+position = Vector3(4.95, 0, 8.5736515)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "collision_damage_7"
+[node name="PhysicalPart" parent="Objects/collision_damage_7" instance=ExtResource("Part_7")]
+position = Vector3(0, 0.766530055, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(2.3, 1.48306011, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="collision" type="StaticBody3D" parent="Objects/collision_damage_7"]
+position = Vector3(0, 0, 0)
+rotation = Vector3(0, -0, 0)
+collision_layer = 1
+collision_mask = 0
+[node name="Shape" type="CollisionShape3D" parent="Objects/collision_damage_7/collision"]
+shape = SubResource("R73")
+[node name="collision_damage_8" type="Node3D" parent="Objects"]
+position = Vector3(4.95, 0, 6.66839561)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "collision_damage_8"
+[node name="PhysicalPart" parent="Objects/collision_damage_8" instance=ExtResource("Part_6")]
+position = Vector3(0, 0.733482143, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(2.3, 1.41696429, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="collision" type="StaticBody3D" parent="Objects/collision_damage_8"]
+position = Vector3(0, 0, 0)
+rotation = Vector3(0, -0, 0)
+collision_layer = 1
+collision_mask = 0
+[node name="Shape" type="CollisionShape3D" parent="Objects/collision_damage_8/collision"]
+shape = SubResource("R74")
+[node name="collision_damage_9" type="Node3D" parent="Objects"]
+position = Vector3(3.3, 0, 9.52627944)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "collision_damage_9"
+[node name="PhysicalPart" parent="Objects/collision_damage_9" instance=ExtResource("Part_7")]
+position = Vector3(0, 0.766530055, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(2.3, 1.48306011, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="collision" type="StaticBody3D" parent="Objects/collision_damage_9"]
+position = Vector3(0, 0, 0)
+rotation = Vector3(0, -0, 0)
+collision_layer = 1
+collision_mask = 0
+[node name="Shape" type="CollisionShape3D" parent="Objects/collision_damage_9/collision"]
+shape = SubResource("R75")
+[node name="collision_damage_10" type="Node3D" parent="Objects"]
+position = Vector3(1.65, 0, 8.5736515)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "collision_damage_10"
+[node name="PhysicalPart" parent="Objects/collision_damage_10" instance=ExtResource("Part_6")]
+position = Vector3(0, 0.733482143, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(2.3, 1.41696429, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="collision" type="StaticBody3D" parent="Objects/collision_damage_10"]
+position = Vector3(0, 0, 0)
+rotation = Vector3(0, -0, 0)
+collision_layer = 1
+collision_mask = 0
+[node name="Shape" type="CollisionShape3D" parent="Objects/collision_damage_10/collision"]
+shape = SubResource("R76")
+[node name="battle_bandit_camp_site_3__enemy_1" type="Node3D" parent="Objects"]
+position = Vector3(3.3, 0, 5.71576766)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3__enemy_1"
+[node name="battle_bandit_camp_site_3__enemy_2" type="Node3D" parent="Objects"]
+position = Vector3(6.6, 0, 7.62102355)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3__enemy_2"
+[node name="battle_bandit_camp_site_3__enemy_3" type="Node3D" parent="Objects"]
+position = Vector3(6.6, 0, 3.81051178)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3__enemy_3"
+[node name="battle_bandit_camp_site_3__enemy_4" type="Node3D" parent="Objects"]
+position = Vector3(1.65, 0, 2.85788383)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3__enemy_4"
+[node name="battle_bandit_camp_site_3__enemy_5" type="Node3D" parent="Objects"]
+position = Vector3(0, 0, 5.71576766)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3__enemy_5"
+[node name="battle_bandit_camp_site_3__enemy_6" type="Node3D" parent="Objects"]
+position = Vector3(4.95, 0, 10.4789074)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3__enemy_6"
+[node name="battle_bandit_camp_site_3__art_031" type="Node3D" parent="Objects"]
+position = Vector3(1.32, 0, -14.3)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3__art_031"
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_site_3__art_031" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.776923077, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(1.7, 1.50384615, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_bandit_camp_site_3__art_032" type="Node3D" parent="Objects"]
+position = Vector3(12.76, 0, 1.76)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3__art_032"
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_site_3__art_032" instance=ExtResource("Part_2")]
+position = Vector3(0, 1.09202128, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(1.7, 2.13404255, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_bandit_camp_site_3__art_033" type="Node3D" parent="Objects"]
+position = Vector3(-3.96, 0, 13.64)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3__art_033"
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_site_3__art_033" instance=ExtResource("Part_3")]
+position = Vector3(0, 0.858168317, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(1.7, 1.66633663, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_bandit_camp_site_3__art_034" type="Node3D" parent="Objects"]
+position = Vector3(-13.86, 0, 0.88)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3__art_034"
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_site_3__art_034" instance=ExtResource("Part_1")]
+position = Vector3(0, 0.776923077, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(1.7, 1.50384615, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_bandit_camp_site_3__art_001" type="Node3D" parent="Objects"]
+position = Vector3(18.894, 0, 1.722)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3__art_001"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_site_3__art_001"]
+position = Vector3(0, 0.17, 0)
+mesh = SubResource("R78")
+material_override = SubResource("R77")
+cast_shadow = 0
+visible = true
+[node name="battle_bandit_camp_site_3__art_002" type="Node3D" parent="Objects"]
+position = Vector3(17.311, 0, 4.922)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3__art_002"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_site_3__art_002"]
+position = Vector3(0, 0.173, 0)
+mesh = SubResource("R80")
+material_override = SubResource("R79")
+cast_shadow = 0
+visible = true
+[node name="battle_bandit_camp_site_3__art_003" type="Node3D" parent="Objects"]
+position = Vector3(14.433, 0, 8.534)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3__art_003"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_site_3__art_003"]
+position = Vector3(0, 0.176, 0)
+mesh = SubResource("R82")
+material_override = SubResource("R81")
+cast_shadow = 0
+visible = true
+[node name="battle_bandit_camp_site_3__art_004" type="Node3D" parent="Objects"]
+position = Vector3(12.844, 0, 11.743)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3__art_004"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_site_3__art_004"]
+position = Vector3(0, 0.179, 0)
+mesh = SubResource("R84")
+material_override = SubResource("R83")
+cast_shadow = 0
+visible = true
+[node name="battle_bandit_camp_site_3__art_005" type="Node3D" parent="Objects"]
+position = Vector3(10.759, 0, 15.811)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3__art_005"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_site_3__art_005"]
+position = Vector3(0, 0.182, 0)
+mesh = SubResource("R86")
+material_override = SubResource("R85")
+cast_shadow = 0
+visible = true
+[node name="battle_bandit_camp_site_3__art_006" type="Node3D" parent="Objects"]
+position = Vector3(7.673, 0, 16.995)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3__art_006"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_site_3__art_006"]
+position = Vector3(0, 0.185, 0)
+mesh = SubResource("R88")
+material_override = SubResource("R87")
+cast_shadow = 0
+visible = true
+[node name="battle_bandit_camp_site_3__art_007" type="Node3D" parent="Objects"]
+position = Vector3(4.157, 0, 17.224)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3__art_007"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_site_3__art_007"]
+position = Vector3(0, 0.188, 0)
+mesh = SubResource("R90")
+material_override = SubResource("R89")
+cast_shadow = 0
+visible = true
+[node name="battle_bandit_camp_site_3__art_008" type="Node3D" parent="Objects"]
+position = Vector3(-0.363, 0, 17.452)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3__art_008"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_site_3__art_008"]
+position = Vector3(0, 0.191, 0)
+mesh = SubResource("R92")
+material_override = SubResource("R91")
+cast_shadow = 0
+visible = true
+[node name="battle_bandit_camp_site_3__art_009" type="Node3D" parent="Objects"]
+position = Vector3(-3.872, 0, 16.766)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3__art_009"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_site_3__art_009"]
+position = Vector3(0, 0.194, 0)
+mesh = SubResource("R94")
+material_override = SubResource("R93")
+cast_shadow = 0
+visible = true
+[node name="battle_bandit_camp_site_3__art_010" type="Node3D" parent="Objects"]
+position = Vector3(-7.496, 0, 16.995)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3__art_010"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_site_3__art_010"]
+position = Vector3(0, 0.197, 0)
+mesh = SubResource("R96")
+material_override = SubResource("R95")
+cast_shadow = 0
+visible = true
+[node name="battle_bandit_camp_site_3__art_011" type="Node3D" parent="Objects"]
+position = Vector3(-10.822, 0, 14.788)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3__art_011"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_site_3__art_011"]
+position = Vector3(0, 0.2, 0)
+mesh = SubResource("R98")
+material_override = SubResource("R97")
+cast_shadow = 0
+visible = true
+[node name="battle_bandit_camp_site_3__art_012" type="Node3D" parent="Objects"]
+position = Vector3(-12.756, 0, 11.896)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3__art_012"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_site_3__art_012"]
+position = Vector3(0, 0.203, 0)
+mesh = SubResource("R100")
+material_override = SubResource("R99")
+cast_shadow = 0
+visible = true
+[node name="battle_bandit_camp_site_3__art_013" type="Node3D" parent="Objects"]
+position = Vector3(-14.737, 0, 8.922)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3__art_013"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_site_3__art_013"]
+position = Vector3(0, 0.206, 0)
+mesh = SubResource("R102")
+material_override = SubResource("R101")
+cast_shadow = 0
+visible = true
+[node name="battle_bandit_camp_site_3__art_014" type="Node3D" parent="Objects"]
+position = Vector3(-17.22, 0, 5.079)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3__art_014"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_site_3__art_014"]
+position = Vector3(0, 0.209, 0)
+mesh = SubResource("R104")
+material_override = SubResource("R103")
+cast_shadow = 0
+visible = true
+[node name="battle_bandit_camp_site_3__art_015" type="Node3D" parent="Objects"]
+position = Vector3(-18.305, 0, 1.828)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3__art_015"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_site_3__art_015"]
+position = Vector3(0, 0.212, 0)
+mesh = SubResource("R106")
+material_override = SubResource("R105")
+cast_shadow = 0
+visible = true
+[node name="battle_bandit_camp_site_3__art_016" type="Node3D" parent="Objects"]
+position = Vector3(-19.326, 0, -1.431)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3__art_016"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_site_3__art_016"]
+position = Vector3(0, 0.215, 0)
+mesh = SubResource("R108")
+material_override = SubResource("R107")
+cast_shadow = 0
+visible = true
+[node name="battle_bandit_camp_site_3__art_017" type="Node3D" parent="Objects"]
+position = Vector3(-16.369, 0, -5.181)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3__art_017"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_site_3__art_017"]
+position = Vector3(0, 0.218, 0)
+mesh = SubResource("R110")
+material_override = SubResource("R109")
+cast_shadow = 0
+visible = true
+[node name="battle_bandit_camp_site_3__art_018" type="Node3D" parent="Objects"]
+position = Vector3(-14.806, 0, -8.344)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3__art_018"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_site_3__art_018"]
+position = Vector3(0, 0.221, 0)
+mesh = SubResource("R112")
+material_override = SubResource("R111")
+cast_shadow = 0
+visible = true
+[node name="battle_bandit_camp_site_3__art_019" type="Node3D" parent="Objects"]
+position = Vector3(-12.748, 0, -12.366)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3__art_019"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_site_3__art_019"]
+position = Vector3(0, 0.224, 0)
+mesh = SubResource("R114")
+material_override = SubResource("R113")
+cast_shadow = 0
+visible = true
+[node name="battle_bandit_camp_site_3__art_020" type="Node3D" parent="Objects"]
+position = Vector3(-11.084, 0, -15.707)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3__art_020"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_site_3__art_020"]
+position = Vector3(0, 0.227, 0)
+mesh = SubResource("R116")
+material_override = SubResource("R115")
+cast_shadow = 0
+visible = true
+[node name="battle_bandit_camp_site_3__art_021" type="Node3D" parent="Objects"]
+position = Vector3(-8.134, 0, -17.224)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3__art_021"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_site_3__art_021"]
+position = Vector3(0, 0.23, 0)
+mesh = SubResource("R118")
+material_override = SubResource("R117")
+cast_shadow = 0
+visible = true
+[node name="battle_bandit_camp_site_3__art_022" type="Node3D" parent="Objects"]
+position = Vector3(-3.668, 0, -17.452)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3__art_022"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_site_3__art_022"]
+position = Vector3(0, 0.233, 0)
+mesh = SubResource("R120")
+material_override = SubResource("R119")
+cast_shadow = 0
+visible = true
+[node name="battle_bandit_camp_site_3__art_023" type="Node3D" parent="Objects"]
+position = Vector3(0, 0, -16.766)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3__art_023"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_site_3__art_023"]
+position = Vector3(0, 0.236, 0)
+mesh = SubResource("R122")
+material_override = SubResource("R121")
+cast_shadow = 0
+visible = true
+[node name="battle_bandit_camp_site_3__art_024" type="Node3D" parent="Objects"]
+position = Vector3(3.572, 0, -16.995)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3__art_024"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_site_3__art_024"]
+position = Vector3(0, 0.239, 0)
+mesh = SubResource("R124")
+material_override = SubResource("R123")
+cast_shadow = 0
+visible = true
+[node name="battle_bandit_camp_site_3__art_025" type="Node3D" parent="Objects"]
+position = Vector3(8.134, 0, -17.224)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3__art_025"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_site_3__art_025"]
+position = Vector3(0, 0.242, 0)
+mesh = SubResource("R126")
+material_override = SubResource("R125")
+cast_shadow = 0
+visible = true
+[node name="battle_bandit_camp_site_3__art_026" type="Node3D" parent="Objects"]
+position = Vector3(10.793, 0, -15.295)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3__art_026"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_site_3__art_026"]
+position = Vector3(0, 0.245, 0)
+mesh = SubResource("R128")
+material_override = SubResource("R127")
+cast_shadow = 0
+visible = true
+[node name="battle_bandit_camp_site_3__art_027" type="Node3D" parent="Objects"]
+position = Vector3(12.748, 0, -12.366)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3__art_027"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_site_3__art_027"]
+position = Vector3(0, 0.248, 0)
+mesh = SubResource("R130")
+material_override = SubResource("R129")
+cast_shadow = 0
+visible = true
+[node name="battle_bandit_camp_site_3__art_028" type="Node3D" parent="Objects"]
+position = Vector3(15.205, 0, -8.569)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3__art_028"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_site_3__art_028"]
+position = Vector3(0, 0.251, 0)
+mesh = SubResource("R132")
+material_override = SubResource("R131")
+cast_shadow = 0
+visible = true
+[node name="battle_bandit_camp_site_3__art_029" type="Node3D" parent="Objects"]
+position = Vector3(16.369, 0, -5.181)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3__art_029"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_site_3__art_029"]
+position = Vector3(0, 0.254, 0)
+mesh = SubResource("R134")
+material_override = SubResource("R133")
+cast_shadow = 0
+visible = true
+[node name="battle_bandit_camp_site_3__art_030" type="Node3D" parent="Objects"]
+position = Vector3(18.819, 0, -1.394)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3__art_030"
+[node name="Visual" type="MeshInstance3D" parent="Objects/battle_bandit_camp_site_3__art_030"]
+position = Vector3(0, 0.257, 0)
+mesh = SubResource("R136")
+material_override = SubResource("R135")
+cast_shadow = 0
+visible = true
+[node name="battle_bandit_camp_site_3_object_047" type="Node3D" parent="Objects"]
+position = Vector3(0, 0, -13.42)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_object_047"
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_site_3_object_047" instance=ExtResource("Part_8")]
+position = Vector3(0, 3.38671429, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(7.4, 6.72342857, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_bandit_camp_site_3_object_048" type="Node3D" parent="Objects"]
+position = Vector3(12.54, 0, -7.26)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_object_048"
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_site_3_object_048" instance=ExtResource("Part_9")]
+position = Vector3(0, 1.98333333, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(4.7, 3.91666667, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_bandit_camp_site_3_object_049" type="Node3D" parent="Objects"]
+position = Vector3(-4, 0, -3.7)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_object_049"
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_site_3_object_049" instance=ExtResource("Part_7")]
+position = Vector3(0, 1.08893443, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(3.3, 2.12786885, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="collision" type="StaticBody3D" parent="Objects/battle_bandit_camp_site_3_object_049"]
+position = Vector3(0, 0, 0)
+rotation = Vector3(0, -0, 0)
+collision_layer = 1
+collision_mask = 0
+[node name="Shape" type="CollisionShape3D" parent="Objects/battle_bandit_camp_site_3_object_049/collision"]
+shape = SubResource("R137")
+[node name="battle_bandit_camp_site_3_object_050" type="Node3D" parent="Objects"]
+position = Vector3(6, 0, 5.6)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_object_050"
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_site_3_object_050" instance=ExtResource("Part_6")]
+position = Vector3(0, 0.979910714, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(3.1, 1.90982143, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="collision" type="StaticBody3D" parent="Objects/battle_bandit_camp_site_3_object_050"]
+position = Vector3(0, 0, 0)
+rotation = Vector3(0, -0, 0)
+collision_layer = 1
+collision_mask = 0
+[node name="Shape" type="CollisionShape3D" parent="Objects/battle_bandit_camp_site_3_object_050/collision"]
+shape = SubResource("R138")
+[node name="battle_bandit_camp_site_3_object_051" type="Node3D" parent="Objects"]
+position = Vector3(-6, 0, -5.2)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_object_051"
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_site_3_object_051" instance=ExtResource("Part_10")]
+position = Vector3(0, 1.35833333, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(2.4, 2.66666667, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_bandit_camp_site_3_object_052" type="Node3D" parent="Objects"]
+position = Vector3(8, 0, 1.8)
+rotation = Vector3(0, -0.157079633, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_object_052"
+[node name="PhysicalPart" parent="Objects/battle_bandit_camp_site_3_object_052" instance=ExtResource("Part_10")]
+position = Vector3(0, 1.19166667, 0)
+rotation = Vector3(0, 0, 0)
+scale = Vector3(2.1, 2.33333333, 0.08)
+metadata/decoration_collision_enabled = false
+[node name="battle_bandit_camp_site_3_biome_edge_01" type="Node3D" parent="Objects"]
+position = Vector3(18.3019337, 0, 3.947815)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_biome_edge_01"
+[node name="battle_bandit_camp_site_3_biome_edge_02" type="Node3D" parent="Objects"]
+position = Vector3(13.1817273, 0, 12.3898082)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_biome_edge_02"
+[node name="battle_bandit_camp_site_3_biome_edge_03" type="Node3D" parent="Objects"]
+position = Vector3(5.24737222, 0, 18.2607256)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_biome_edge_03"
+[node name="battle_bandit_camp_site_3_biome_edge_04" type="Node3D" parent="Objects"]
+position = Vector3(-4.236459, 0, 17.642361)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_biome_edge_04"
+[node name="battle_bandit_camp_site_3_biome_edge_05" type="Node3D" parent="Objects"]
+position = Vector3(-12.21595, 0, 13.647005)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_biome_edge_05"
+[node name="battle_bandit_camp_site_3_biome_edge_06" type="Node3D" parent="Objects"]
+position = Vector3(-17.7875942, 0, 5.86081167)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_biome_edge_06"
+[node name="battle_bandit_camp_site_3_biome_edge_07" type="Node3D" parent="Objects"]
+position = Vector3(-17.8723609, 0, -4.80650273)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_biome_edge_07"
+[node name="battle_bandit_camp_site_3_biome_edge_08" type="Node3D" parent="Objects"]
+position = Vector3(-12.3736189, 0, -14.3083611)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_biome_edge_08"
+[node name="battle_bandit_camp_site_3_biome_edge_09" type="Node3D" parent="Objects"]
+position = Vector3(-5.84796333, 0, -17.3333144)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_biome_edge_09"
+[node name="battle_bandit_camp_site_3_biome_edge_10" type="Node3D" parent="Objects"]
+position = Vector3(3.96940818, 0, -17.7870282)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_biome_edge_10"
+[node name="battle_bandit_camp_site_3_biome_edge_11" type="Node3D" parent="Objects"]
+position = Vector3(12.6236733, 0, -12.4693156)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_biome_edge_11"
+[node name="battle_bandit_camp_site_3_biome_edge_12" type="Node3D" parent="Objects"]
+position = Vector3(18.1458709, 0, -4.63864636)
+rotation = Vector3(0, -0, 0)
+scale = Vector3(1, 1, 1)
+metadata/source_id = "battle_bandit_camp_site_3_biome_edge_12"
+[node name="Boundary0" type="StaticBody3D" parent="."]
+position = Vector3(16.5, 6, 9.52627944)
+rotation = Vector3(0, -2.0943951, 0)
+collision_layer = 1
+collision_mask = 0
+[node name="Shape" type="CollisionShape3D" parent="Boundary0"]
+shape = SubResource("R139")
+[node name="Boundary1" type="StaticBody3D" parent="."]
+position = Vector3(3.55271368e-15, 6, 19.0525589)
+rotation = Vector3(0, -3.14159265, 0)
+collision_layer = 1
+collision_mask = 0
+[node name="Shape" type="CollisionShape3D" parent="Boundary1"]
+shape = SubResource("R140")
+[node name="Boundary2" type="StaticBody3D" parent="."]
+position = Vector3(-16.5, 6, 9.52627944)
+rotation = Vector3(0, 2.0943951, 0)
+collision_layer = 1
+collision_mask = 0
+[node name="Shape" type="CollisionShape3D" parent="Boundary2"]
+shape = SubResource("R141")
+[node name="Boundary3" type="StaticBody3D" parent="."]
+position = Vector3(-16.5, 6, -9.52627944)
+rotation = Vector3(0, 1.04719755, 0)
+collision_layer = 1
+collision_mask = 0
+[node name="Shape" type="CollisionShape3D" parent="Boundary3"]
+shape = SubResource("R142")
+[node name="Boundary4" type="StaticBody3D" parent="."]
+position = Vector3(-4.4408921e-15, 6, -19.0525589)
+rotation = Vector3(0, 1.61486985e-16, 0)
+collision_layer = 1
+collision_mask = 0
+[node name="Shape" type="CollisionShape3D" parent="Boundary4"]
+shape = SubResource("R143")
+[node name="Boundary5" type="StaticBody3D" parent="."]
+position = Vector3(16.5, 6, -9.52627944)
+rotation = Vector3(0, -1.04719755, 0)
+collision_layer = 1
+collision_mask = 0
+[node name="Shape" type="CollisionShape3D" parent="Boundary5"]
+shape = SubResource("R144")
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("R145")
+[node name="Camera" type="Camera3D" parent="."]
+position = Vector3(0, 60, 0)
+rotation = Vector3(-1.570796327, 0, 0)
+projection = 1
+size = 52.8
+current = true
+[node name="Party" type="Node3D" parent="."]

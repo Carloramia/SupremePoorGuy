@@ -494,6 +494,7 @@ func _update_landing_transition(delta: float) -> void:
 	var speed := deg_to_rad(joint_limit_recovery_speed_degrees)*delta
 	var margin := deg_to_rad(joint_limit_safety_margin_degrees)
 	for binding: Dictionary in _joints:
+		if not is_instance_valid(binding.joint) or binding.joint.is_queued_for_deletion(): continue
 		var joint: Generic6DOFJoint3D = binding.joint
 		if not is_instance_valid(joint) or not _alive(binding.a) or not _alive(binding.b): continue
 		var frame_a: Transform3D = joint.get_meta(&"generated_joint_frame_a",binding.a.global_transform.affine_inverse()*joint.global_transform)

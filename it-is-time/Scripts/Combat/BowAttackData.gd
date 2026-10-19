@@ -1,4 +1,5 @@
 extends Resource
+@export_range(0.0, 20.0, 0.01, "or_greater") var damage_multiplier: float = 1.0
 ## Distances scale with the equipped character's actual arm reach (reference 4.5 units).
 @export_group("Holding Pose")
 @export_range(0.1,1.0,0.01) var holding_reach_ratio := 0.8

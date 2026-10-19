@@ -27,6 +27,8 @@ signal selection_changed(character: Node3D)
 @export var movement_anchor: Node3D
 @export var follow_anchor_translation: bool = true
 @export var ignore_motion_while_orbiting: bool = true
+## Empty means unrestricted; otherwise clamp the free cursor to this world X/Z rectangle.
+@export var world_horizontal_bounds := Rect2()
 
 @export_group("Ground Detection")
 @export_flags_3d_physics var terrain_collision_mask: int = 1
@@ -215,6 +217,7 @@ func _reset_desired_position() -> void:
 	if free_cursor_mode:
 		_desired_horizontal_position = Vector2(global_position.x,global_position.z)
 		_has_desired_position = true
+		_clamp_to_anchor()
 		return
 	if not is_instance_valid(movement_anchor):
 		return
@@ -235,6 +238,8 @@ func _resolve_movement_anchor() -> void:
 	movement_anchor = get_tree().get_first_node_in_group(&"npc_navigation_target") as Node3D
 
 func _clamp_to_anchor() -> void:
+	if world_horizontal_bounds.has_area():
+		_desired_horizontal_position = _desired_horizontal_position.clamp(world_horizontal_bounds.position,world_horizontal_bounds.end)
 	if is_instance_valid(_charge_follow_target) or maximum_anchor_distance <= 0.0 or not is_instance_valid(movement_anchor):
 		return
 	var anchor_position := Vector2(

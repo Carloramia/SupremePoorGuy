@@ -87,6 +87,11 @@ enum BodyPartTag {
 @export_group("Durability")
 @export_range(1.0, 100000.0, 1.0, "or_greater") var max_hp: float = 100.0
 @export_range(0.0, 10000.0, 0.1, "or_greater") var armor: float = 10.0
+## Percentage mitigation before fixed Armor: resilience / (resilience + 100).
+@export_range(0.0, 10000.0, 0.1, "or_greater") var resilience: float = 0.0
+## Runtime HP is derived from naked body mass using the global damage rules.
+@export var mass_based_health: bool = true
+var base_combat_mass: float = 0.0
 @export var is_broken: bool = false:
 	set(value):
 		is_broken = value
@@ -235,6 +240,9 @@ func get_foot_contact_impact(collider: Object, since_frame: int) -> Dictionary:
 
 func _ready() -> void:
 	sync_foot_rotation_lock()
+	if not Engine.is_editor_hint():
+		base_combat_mass = mass
+		if mass_based_health: max_hp = preload("res://Resources/Damage/DefaultDamageRules.tres").health_for_mass(base_combat_mass)
 	current_hp = 0.0 if is_broken else max_hp
 	contact_monitor = true
 	max_contacts_reported = maxi(max_contacts_reported, 8)
@@ -368,6 +376,7 @@ func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
 		weapon.apply_contact_damage(self, float(weapon_impulses[weapon]))
 
 func apply_damage(amount: float, source: Node = null) -> float:
+	if get_meta(&"summon_presentation",false): return 0.0
 	if is_broken or amount <= 0.0:
 		return 0.0
 	var applied := minf(amount, current_hp)
@@ -415,6 +424,7 @@ func sync_foot_rotation_lock() -> void:
 		remove_meta(&"foot_previous_locks")
 
 func break_part(source: Node = null) -> void:
+	if get_meta(&"summon_presentation",false): return
 	if is_broken:
 		return
 	current_hp = 0.0

@@ -1,0 +1,48 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[auto_getlogs] enabled=true cooldown=30.0s debugger_attached=false
+[generated_collision] { "enabled": true, "parts": 39, "pairs": 741, "missing_pairs": 0, "missing_examples": [] }
+[generated_creature] character=Generate_Bird parts=39 physical_joints=38 segment_springs=0 connected=true internal_collisions_ignored=true
+ERROR: All wing joints must be controlled, including the odd wing
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] check (res://Tests/ValidateWingPose3D.gd:9)
+       [1] run (res://Tests/ValidateWingPose3D.gd:41)
+ERROR: Couldn't open directory at path "user://logs".
+   at: get_files_at (core/io/dir_access.cpp:578)
+   GDScript backtrace (most recent call first):
+       [0] _collect_files_recursive (res://Scripts/Debug/RuntimeConsole.gd:1071)
+       [1] create_logs_archive (res://Scripts/Debug/RuntimeConsole.gd:572)
+       [2] _try_auto_archive (res://Scripts/Debug/RuntimeConsole.gd:152)
+       [3] _process (res://Scripts/Debug/RuntimeConsole.gd:188)
+ERROR: Couldn't open directory at path "user://logs".
+   at: get_directories_at (core/io/dir_access.cpp:588)
+   GDScript backtrace (most recent call first):
+       [0] _collect_files_recursive (res://Scripts/Debug/RuntimeConsole.gd:1073)
+       [1] create_logs_archive (res://Scripts/Debug/RuntimeConsole.gd:572)
+       [2] _try_auto_archive (res://Scripts/Debug/RuntimeConsole.gd:152)
+       [3] _process (res://Scripts/Debug/RuntimeConsole.gd:188)
+Runtime logs archived to: D:/GameJamWorkspace/ItIsTime/it-is-time/runtime_logs_2026-10-19_04-14-49_67012_2625535.zip
+[wing_test] open_error=0.05754438042641
+[wing_test] closed_error=0.03880466893315
+[generated_collision] { "enabled": true, "parts": 39, "pairs": 741, "missing_pairs": 0, "missing_examples": [] }
+[generated_creature] character=Generate_Bird parts=39 physical_joints=38 segment_springs=0 connected=true internal_collisions_ignored=true
+ERROR: Regeneration must refresh bindings
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] check (res://Tests/ValidateWingPose3D.gd:9)
+       [1] run (res://Tests/ValidateWingPose3D.gd:73)
+       [2] frames (res://Tests/ValidateWingPose3D.gd:12)
+[player_controller] event=attached character=Generate_Bird position=(0.0, 1.9, 0.0)
+[player_controller] event=detached character=Generate_Bird position=(-0.000204, 1.843872, 0.000159)
+[generated_collision] { "enabled": true, "parts": 39, "pairs": 741, "missing_pairs": 0, "missing_examples": [] }
+[generated_creature] character=Generate_Bird parts=39 physical_joints=38 segment_springs=0 connected=true internal_collisions_ignored=true
+ERROR: Every subdivided block must have a pose binding
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] check (res://Tests/ValidateWingPose3D.gd:9)
+       [1] run (res://Tests/ValidateWingPose3D.gd:90)
+       [2] frames (res://Tests/ValidateWingPose3D.gd:12)
+[wing_test] six_block_open_error=0.04096905142069
+[wing_test] six_block_closed_error=0.03506297245622
+WING_POSE_FAILED

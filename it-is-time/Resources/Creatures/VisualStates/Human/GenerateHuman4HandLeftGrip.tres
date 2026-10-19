@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="BodyPartVisualState3D" load_steps=3 format=3]
+
+[ext_resource type="ArrayMesh" path="res://Resources/Meshes/Human/HandStates/Human4HandLeftGrip.res" id="1_mesh"]
+[ext_resource type="Script" path="res://Scripts/Creatures/BodyPartVisualState3D.gd" id="2_script"]
+
+[resource]
+resource_name = "Generate Human4 left grip aligned to wrist joint"
+script = ExtResource("2_script")
+state_name = &"grip"
+mesh = ExtResource("1_mesh")
+anchor_path = NodePath("JointIn_Arm_L_Limb_1")

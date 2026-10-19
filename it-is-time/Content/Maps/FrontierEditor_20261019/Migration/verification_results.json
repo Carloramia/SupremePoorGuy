@@ -1,0 +1,34 @@
+{
+  "date": "2026-10-19",
+  "runtime_activation": false,
+  "handoff_integrity": {
+    "command": "python 校验交付包.py",
+    "exit_code": 0,
+    "result": "PASS 10320 files"
+  },
+  "migration_verification": {
+    "command": "python Tools/Integration/ImportHexMapHandoff.py --verify",
+    "exit_code": 0,
+    "result": "passed; see validation.json"
+  },
+  "conversion_rule_tests": {
+    "command": "python Tools/Integration/test_import_hex_map_handoff.py",
+    "exit_code": 0,
+    "tests": 4,
+    "failures": 0
+  },
+  "godot_validation": {
+    "script": "res://Tests/Integration/ValidateHexMapHandoff.gd",
+    "exit_code": 0,
+    "checks": 2846,
+    "failures": 0,
+    "result": "HEX_MAP_HANDOFF_PASSED"
+  },
+  "not_validated": [
+    "new-world rendering, HD seams and visual alignment in Godot",
+    "new-world navigation, fog and save migration",
+    "live combat and all new event execution"
+  ],
+  "phase": "resource_migration_before_runtime_integration",
+  "current_status_file": "../Runtime/integration.json"
+}

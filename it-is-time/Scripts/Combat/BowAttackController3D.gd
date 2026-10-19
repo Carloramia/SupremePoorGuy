@@ -459,6 +459,7 @@ func _fire() -> void:
 	arrow.global_basis = Basis(Quaternion(Vector3.RIGHT,Vector3(solution.velocity).normalized()))
 	arrow.global_position = origin-arrow.global_basis.x*ARROW.HALF_LENGTH
 	var flight_lifetime := maxf(preset.arrow_lifetime,float(solution.time)*1.25+0.5)
+	arrow.damage_multiplier = preset.damage_multiplier
 	arrow.launch(get_parent(),solution.velocity,flight_lifetime)
 	CombatAudio3D.play_at(_bow, &"bow")
 	arrow.impacted.connect(_on_impact)

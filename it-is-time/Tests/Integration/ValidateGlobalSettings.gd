@@ -33,6 +33,7 @@ func click(control: Control) -> void:
 		await process_frame
 func create_app(delivery: bool) -> Node:
 	var app := preload("res://Scenes/Application/GameRoot.tscn").instantiate()
+	app.use_hex_map_for_new_games = false # This fixture verifies the retained 20261015 map.
 	app.use_delivery_map = delivery
 	app.save_path = output+"/session_"+str(Time.get_ticks_usec())+".json"
 	app.display_settings_path = output+"/display.cfg"

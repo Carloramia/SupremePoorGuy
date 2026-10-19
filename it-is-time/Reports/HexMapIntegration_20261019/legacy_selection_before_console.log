@@ -1,0 +1,17 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[auto_getlogs] enabled=true cooldown=30.0s debugger_attached=false
+HEX_LEGACY true legacy Frontier fixture saves
+HEX_LEGACY false legacy save without a pending battle retains its original backend
+ERROR: legacy save without a pending battle retains its original backend
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] check (res://Tests/Integration/ValidateHexLegacySelection.gd:8)
+       [1] run (res://Tests/Integration/ValidateHexLegacySelection.gd:21)
+HEX_LEGACY false starting a new game restores configured new-map defaults
+ERROR: starting a new game restores configured new-map defaults
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] check (res://Tests/Integration/ValidateHexLegacySelection.gd:8)
+       [1] run (res://Tests/Integration/ValidateHexLegacySelection.gd:23)
+HEX_LEGACY_SELECTION_FAILED

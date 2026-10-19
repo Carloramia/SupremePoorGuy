@@ -17,6 +17,7 @@ func actor(id: int, at: Vector3, frozen: bool = true) -> Node3D:
 	body.name = "Torso"
 	body.tags.append(PhysicalBodyPart3D.BodyPartTag.Torso)
 	body.max_hp = 1000.0
+	body.mass_based_health = false
 	body.armor = 10.0
 	body.gravity_scale = 0.0
 	body.freeze = frozen
@@ -40,6 +41,8 @@ func wave(source: Node3D, data: Resource, normal: Vector3 = Vector3.UP, measured
 	root.add_child(node)
 	return node
 func run() -> void:
+	root.get_node("CombatAudio").settings = root.get_node("CombatAudio").settings.duplicate()
+	root.get_node("CombatAudio").settings.enabled = false
 	root.get_node("RuntimeConsole")._damage_tracking_enabled = true
 	var source := actor(0,Vector3.ZERO)
 	var ally := actor(0,Vector3(1,0.5,0))
@@ -60,7 +63,7 @@ func run() -> void:
 	for frame: int in range(8): await physics_frame
 	check(enemy.get_node("Torso").current_hp == 1000.0,"Enemy must not be damaged before the expanding wave reaches it")
 	for frame: int in range(42): await physics_frame
-	var expected_damage: float = root.get_node("DamageService").calculate_damage(55.0,10.0)
+	var expected_damage: float = root.get_node("DamageService").apply_armor(effect.raw_impact_damage,10.0)
 	check(enemy.get_node("Torso").current_hp == 1000.0-expected_damage,"Measured impulse must use global damage rules and Armor, once per wave")
 	check(effect.hit_count == 2,"Sphere must also hit an airborne enemy inside its 3D radius")
 	check(ally.get_node("Torso").current_hp == 1000.0 and source.get_node("Torso").current_hp == 1000.0,"Self and friendly factions must be ignored")
@@ -108,8 +111,8 @@ func run() -> void:
 	var slope_wave := wave(source,data,tilted)
 	check(slope_wave.global_basis.y.is_equal_approx(tilted),"Visual must align with sloped surfaces")
 	slope_wave.free()
-	var low_impact := wave(source,data,Vector3.UP,12.0)
-	check(low_impact.raw_impact_damage < impact_wave.raw_impact_damage and low_impact.raw_impact_damage == root.get_node("DamageService").calculate_raw_damage(12.0),"Lower measured impulses must produce lower raw damage according to the global rules")
+	var low_impact := wave(source,data,Vector3.UP,1.0)
+	check(low_impact.raw_impact_damage < impact_wave.raw_impact_damage and low_impact.raw_impact_damage > 0.0,"Weak real stomps use bounded quality instead of the passive impulse threshold")
 	low_impact.free()
 	var zero_impact := wave(source,data,Vector3.UP,0.0)
 	check(zero_impact.raw_impact_damage == 0.0,"No measured impulse must not manufacture fixed damage")

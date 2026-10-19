@@ -15,6 +15,7 @@ func wait_phase(app: Node, wanted: String) -> bool:
 func run() -> void:
 	root.size = Vector2i(1280,720)
 	var app := preload("res://Scenes/Application/GameRoot.tscn").instantiate()
+	app.use_hex_map_for_new_games = false # This fixture verifies the retained 20261015 map.
 	app.save_path = "res://Tests/.runtime/integration/delivery_"+str(Time.get_ticks_usec())+".json"
 	app.display_settings_path = "res://Tests/.runtime/integration/delivery_display.cfg"
 	app.integration_logging = true
@@ -130,6 +131,7 @@ func run() -> void:
 	await process_frame
 	await process_frame
 	app = preload("res://Scenes/Application/GameRoot.tscn").instantiate()
+	app.use_hex_map_for_new_games = false # This fixture verifies the retained 20261015 map.
 	app.save_path = real_path
 	app.display_settings_path = "res://Tests/.runtime/integration/delivery_display.cfg"
 	root.add_child(app)

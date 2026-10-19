@@ -120,6 +120,10 @@ func _update_idle_pose(delta: float) -> void:
 	elif _primary.freeze: blocked = "frozen_primary"
 	elif swing != null and swing.is_body_attacking(_primary): blocked = "attacking"
 	if blocked.is_empty():
+		for body: Variant in _idle_bodies:
+			if not is_instance_valid(body) or body.is_queued_for_deletion() or body.is_broken: blocked = "broken_chain"
+		for joint: Variant in _idle_joints:
+			if not is_instance_valid(joint) or joint.is_queued_for_deletion(): blocked = "broken_chain"
 		for grip: Dictionary in _idle_pair:
 			if not is_instance_valid(grip.hand) or not is_instance_valid(grip.socket) or grip.hand.is_broken or not _item.is_grip_enabled(grip.point) or grip.point >= _item.grip_point_poses.size():
 				blocked = "unbound_pair"

@@ -25,9 +25,14 @@ func configure(battle: Node3D, layout: Dictionary, scale: float) -> void:
 	for object: Dictionary in layout.objects:
 		if object.type not in ["mud","thorns","web","collision_damage"]: continue
 		var origin := battle._geometry.get_node("Objects/"+str(object.id)) as Node3D
+		var area := origin.get_node_or_null("region") as Area3D
+		# Unbound handoff references must not fall back to demo slow/control values.
+		if bool(object.get("integration_unresolved",false)):
+			if area!=null: area.monitoring=false
+			if host.application!=null: host.application.session.trace("environment_effect_disabled",{"id":object.id,"effect_ref":object.get("effect_ref",""),"condition_ref":object.get("condition_ref","")})
+			continue
 		# Effect volumes use the authored region, never the paper model's concave mesh.
 		var obstacle := origin.get_node_or_null("collision") as StaticBody3D
-		var area := origin.get_node_or_null("region") as Area3D
 		if area==null and object.type=="collision_damage" and obstacle!=null:
 			for collision: CollisionShape3D in obstacle.find_children("*","CollisionShape3D",true,false):
 				area = Area3D.new()
@@ -113,7 +118,7 @@ func _physics_process(delta: float) -> void:
 			elif float(object.get("damage",0.0))>0.0:
 				if object.type=="collision_damage": continue
 				var part: PhysicalBodyPart3D = members[actor]
-				var damage: float = get_node("/root/DamageService").apply_armor(float(object.damage),part.armor)
+				var damage: float = get_node("/root/DamageService").apply_armor(float(object.damage),part.armor,part.resilience)
 				part.apply_damage(damage,self)
 	for actor: Node3D in desired: _set_speed(actor,desired[actor])
 
@@ -133,7 +138,7 @@ func _apply_collision_damage(zone: Dictionary, actor: Node3D) -> float:
 func _apply_impact(part: PhysicalBodyPart3D, impulse: float, multiplier: float) -> float:
 	var service := get_node("/root/DamageService")
 	var raw: float = service.calculate_raw_damage(impulse)*multiplier
-	return part.apply_damage(service.apply_armor(raw,part.armor),self)
+	return part.apply_damage(service.apply_armor(raw,part.armor,part.resilience),self)
 
 func _set_speed(actor: Node3D, multiplier: float) -> void:
 	if not is_instance_valid(actor) or is_equal_approx(float(multipliers[actor]),multiplier): return

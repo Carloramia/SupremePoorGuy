@@ -19,6 +19,7 @@ func character(team: int, point: Vector3) -> Node3D:
 	part.name = "Torso"
 	part.freeze = true
 	part.max_hp = 10000.0
+	part.mass_based_health = false
 	part.current_hp = 10000.0
 	part.armor = 0.0
 	actor.add_child(part)
@@ -64,6 +65,8 @@ func verify_impact(friendly: bool, wall: bool) -> void:
 	await process_frame
 
 func run() -> void:
+	root.get_node("CombatAudio").settings = root.get_node("CombatAudio").settings.duplicate()
+	root.get_node("CombatAudio").settings.enabled = false
 	root.get_node("RuntimeConsole").auto_getlogs_enabled = false
 	for point: Vector3 in [Vector3(25,4,0),Vector3(-25,-3,1),Vector3(15,15,2)]:
 		var solution := FLIGHT.solve_velocity(Vector3.ZERO,point,42.0,FLIGHT.gravity_vector())

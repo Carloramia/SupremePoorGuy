@@ -76,8 +76,8 @@ var _spider_angle_joints: Array[Generic6DOFJoint3D] = []
 func _physics_process(_delta: float) -> void:
 	if Engine.is_editor_hint(): return
 	_update_spider_root_anchors(_delta)
-	for joint: Generic6DOFJoint3D in _spider_angle_joints:
-		if is_instance_valid(joint): _update_spider_world_limits(joint)
+	for joint: Variant in _spider_angle_joints:
+		if is_instance_valid(joint) and not joint.is_queued_for_deletion(): _update_spider_world_limits(joint)
 
 func _update_spider_world_limits(joint: Generic6DOFJoint3D) -> void:
 	if joint.is_queued_for_deletion() or joint.node_a.is_empty() or joint.node_b.is_empty(): return
@@ -282,7 +282,7 @@ func _activate_parts(container: Node) -> void:
 
 func _bind_spider_root_anchors() -> void:
 	if not Engine.is_editor_hint() and spider_independent_torso_support and not planar_constraints_enabled:
-		for joint: Generic6DOFJoint3D in _spider_angle_joints:
+		for joint: Variant in _spider_angle_joints:
 			if not is_instance_valid(joint) or joint.is_queued_for_deletion() or joint.node_a.is_empty() or joint.node_b.is_empty(): continue
 			if not joint.get_meta(&"spider_independent_root", false): continue
 			var torso := joint.get_node(joint.node_b) as RigidBody3D

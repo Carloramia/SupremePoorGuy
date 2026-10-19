@@ -3,6 +3,7 @@ extends RefCounted
 # World-space horizontal route. Only the unvisited preview can be replanned.
 var points: Array[Dictionary] = []
 var corners: Array[Dictionary] = []
+var turn_markers: Array[Dictionary] = []
 var wavelength := 1.0
 var amplitude := 0.0
 var step := 0.1
@@ -31,6 +32,26 @@ func reset(origin: Vector3, forward: Vector3, length: float, wave_length: float,
 		points.append({"s": distance, "u": u, "position": position, "center": center, "forward": requested_heading})
 		previous = position
 	points.reverse()
+	turn_markers.assign([{"s": float(points[0].s), "facing": requested_heading}])
+
+func mark_turn(distance: float, facing: Vector3) -> void:
+	facing = facing.slide(Vector3.UP).normalized()
+	if facing.is_zero_approx(): return
+	if not turn_markers.is_empty() and Vector3(turn_markers[-1].facing).dot(facing) > 0.999: return
+	# An unvisited marker at the same place can be replaced without changing history.
+	while turn_markers.size() > 1 and float(turn_markers[-1].s) >= distance-0.000001: turn_markers.pop_back()
+	if not turn_markers.is_empty() and Vector3(turn_markers[-1].facing).dot(facing)>0.999: return
+	turn_markers.append({"s": distance, "facing": facing})
+
+func facing_at(distance: float) -> Vector3:
+	if turn_markers.is_empty(): return requested_heading
+	var low := 0
+	var high := turn_markers.size()-1
+	while low < high:
+		var middle := (low+high+1)/2
+		if float(turn_markers[middle].s) <= distance: low = middle
+		else: high = middle-1
+	return turn_markers[low].facing
 
 func _index(distance: float) -> int:
 	var low := 0
@@ -98,6 +119,7 @@ func ensure(progress: float, preview: float, heading: Vector3, occupied_high: fl
 	_visited_high = minf(_visited_high,float(points[-1].s))
 	while not corners.is_empty() and float(corners[0].s) < float(points[0].s): corners.pop_front()
 	while not corners.is_empty() and float(corners[-1].s) > float(points[-1].s): corners.pop_back()
+	while turn_markers.size() > 1 and float(turn_markers[1].s) < float(points[0].s): turn_markers.pop_front()
 
 func corner_speed_limit(distance: float, speed: float, acceleration: float, jerk: float, rounding: float) -> float:
 	if speed <= 0.0 or acceleration <= 0.0: return 0.0

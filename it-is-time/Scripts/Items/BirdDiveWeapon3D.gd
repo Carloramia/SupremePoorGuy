@@ -3,12 +3,13 @@ extends SampleWeapon3D
 ## A weapon identity whose physical shape is rigidly attached to the Head.
 var attached_shape: CollisionShape3D
 var attached_head: PhysicalBodyPart3D
+func damage_contact_mass() -> float: return attached_head.mass if is_instance_valid(attached_head) else mass
 
 func get_attack_debug_shapes() -> Array[Dictionary]:
 	if not is_instance_valid(attached_shape) or attached_shape.is_queued_for_deletion() or not is_instance_valid(attached_head) or attached_head.is_broken: return []
 	return [{"shape":attached_shape.shape,"transform":attached_shape.global_transform,"active":swing_damage_active and not attached_shape.disabled}]
 
-func attach_to_head(head: PhysicalBodyPart3D, length_ratio: float, radius_ratio: float) -> void:
+func attach_to_head(head: PhysicalBodyPart3D, length_ratio: float, radius_ratio: float, context: Dictionary = {}) -> void:
 	attached_head = head
 	var character: Node = preload("res://Scripts/Player/PlayerControlContext.gd").character_of(head)
 	prepare_temporary_attack(character)
@@ -18,7 +19,7 @@ func attach_to_head(head: PhysicalBodyPart3D, length_ratio: float, radius_ratio:
 	attached_shape.shape = make_cone_shape(head, length_ratio, radius_ratio)
 	attached_shape.set_meta(&"equipped_item", self)
 	head.add_child(attached_shape)
-	begin_damage_swing()
+	begin_damage_swing(context)
 
 static func make_cone_shape(head: PhysicalBodyPart3D, length_ratio: float, radius_ratio: float) -> ConvexPolygonShape3D:
 	var size: Vector3 = head.get_meta(&"generated_size", Vector3.ONE)
