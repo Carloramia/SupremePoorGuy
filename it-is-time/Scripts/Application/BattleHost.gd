@@ -462,8 +462,12 @@ func finish(outcome: String) -> void:
 	for actor: Node3D in actors:
 		if not is_instance_valid(actor) or actor.get_faction_id()!=0: continue
 		var parts := {}
-		for part: PhysicalBodyPart3D in actor.find_children("*","PhysicalBodyPart3D",true,false):
-			parts[str(part.get_meta(&"creature_part_key",str(part.name)))] = {"hp":part.current_hp,"max_hp":part.max_hp,"broken":part.is_broken}
+		var damage_controller := actor.get_node_or_null("CharacterDamageController3D") as CharacterDamageController3D
+		if damage_controller != null:
+			parts = damage_controller.get_part_damage_states()
+		else:
+			for part: PhysicalBodyPart3D in actor.find_children("*","PhysicalBodyPart3D",true,false):
+				parts[str(part.get_meta(&"creature_part_key",str(part.name)))] = {"hp":part.current_hp,"max_hp":part.max_hp,"broken":part.is_broken}
 		damage[str(actor.get_meta(&"creature_instance_id"))] = parts
 	var casualties: Array = application.session.data.battle.get("casualties",[]).duplicate() if is_instance_valid(application) else []
 	var result := {"battle_id":battle_id,"outcome":outcome,"reward":20 if outcome=="victory" else 0,"parts":damage,"duration":elapsed,"casualties":casualties}

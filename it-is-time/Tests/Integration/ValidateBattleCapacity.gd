@@ -16,9 +16,11 @@ func run() -> void:
 	root.get_node("RuntimeConsole").auto_getlogs_enabled = false
 	root.size = Vector2i(1280,720)
 	var settings := SETTINGS.new()
-	check(settings.total_capacity == 50 and load("res://Resources/Application/DefaultBattleCapacity.tres").total_capacity == 50,"Default friendly capacity is 50 in both script and preset")
-	check(settings.evaluate(["horned_beast","horned_beast","horned_beast","horned_beast","horned_beast"]).error.is_empty(),"Five horned beasts exactly fit the default 50")
-	check(not settings.evaluate(["horned_beast","horned_beast","horned_beast","horned_beast","horned_beast","horned_beast"]).error.is_empty(),"Six horned beasts exceed 50 despite fitting six party slots")
+	check(settings.total_capacity == 30 and load("res://Resources/Application/DefaultBattleCapacity.tres").total_capacity == 30,"Both faction budgets default to 30 in script and preset")
+	check(settings.creature_cost({"definition_id":"snake"}) == 12 and load("res://Resources/Application/DefaultBattleCapacity.tres").creature_cost({"definition_id":"snake"}) == 12,"Snake costs 12 in script and preset")
+	check(settings.evaluate(["horned_beast","horned_beast","horned_beast"]).error.is_empty(),"Three horned beasts exactly fit the default 30")
+	check(not settings.evaluate(["horned_beast","horned_beast","horned_beast","horned_beast"]).error.is_empty(),"Four horned beasts exceed 30 despite fitting party slots")
+	check(settings.initial_roster([{"definition_id":"snake"},{"definition_id":"snake"},{"definition_id":"wolf"},{"definition_id":"wolf"}]).records.size() == 3,"Two Snakes and one Wolf use 30; excess units remain in reserve")
 	settings.total_capacity = 12
 	var wolf := {"definition_id":"wolf"}
 	var status := settings.evaluate([wolf,wolf])
@@ -107,7 +109,7 @@ func _application_flow() -> void:
 	check(not map.begin_battle(selected.id,"clear"),"Map rejects an overbudget friendly party")
 	check(map.runtime.snapshot() == snapshot and app.session.data.battle.is_empty() and app.battle == null,"Rejected entry leaves map, pending battle and actors unchanged")
 	app.ui._close_all()
-	app.battle_capacity_settings.total_capacity = 50
+	app.battle_capacity_settings.total_capacity = 30
 	check(map.begin_battle(selected.id,"clear"),"Normal capacity enters battle with independent enemy validation")
 	for tick: int in 900:
 		if app.phase == "deployment": break
@@ -129,7 +131,7 @@ func _application_flow() -> void:
 		app.battle_capacity_settings.total_capacity = budget.used
 		app.refresh_input_gate()
 		check(app.battle.capacity_status().error.is_empty() and app.ui.start_battle_button.disabled and not app.battle.start_combat(),"Enemy over-cap deployment also blocks combat start")
-		app.battle_capacity_settings.total_capacity = 50
+		app.battle_capacity_settings.total_capacity = 30
 		app.start_battle()
 		check(app.phase == "battle","Valid deployment starts combat")
 	app.queue_free()

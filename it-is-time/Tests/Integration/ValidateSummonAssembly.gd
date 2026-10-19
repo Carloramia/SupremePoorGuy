@@ -106,6 +106,8 @@ func run() -> void:
 	var cadence_valid := true
 	var last_emissions: int = stage.decorations_emitted
 	var last_emission_time: float = stage.last_decoration_time
+	var name_fading_seen := false
+	var name_pause_checked := false
 	for frame: int in 3600:
 		view.advance(1.0/60.0)
 		maximum_concurrent = maxi(maximum_concurrent,stage.creatures.filter(func(creature): return creature.state=="assembling").size())
@@ -130,6 +132,17 @@ func run() -> void:
 					collision_masks = collision_masks and piece.body.collision_layer==1 and piece.body.collision_mask==2
 					emergence_valid = emergence_valid and piece.emergence_bounds.position.y>=floor_box.end.y+view.settings.emergence_clearance-0.001
 		for creature: Dictionary in stage.creatures:
+			if creature.state=="idle" and stage.elapsed-creature.idle_time<view.settings.name_fade_in_duration:
+				var label: Label3D = creature.label
+				name_fading_seen = name_fading_seen or (label.modulate.a>0.0 and label.modulate.a<1.0 and label.position.y<creature.label_target.y)
+				if not name_pause_checked and label.modulate.a>0.0:
+					var name_position := label.position
+					var name_color := label.modulate
+					view.set_paused(true)
+					for pause_frame: int in 4: await physics_frame
+					check(label.position==name_position and label.modulate==name_color,"Settings pause freezes the name reveal as well as the creature")
+					view.set_paused(false)
+					name_pause_checked = true
 			if creature.state=="assembling" and creature.next_part>=creature.parts.size()/2: await capture("assembly_middle")
 			if creature.state!="idle":
 				suspended = suspended and creature.joints.all(func(row): return row.node.node_a.is_empty() and row.node.node_b.is_empty()) and creature.springs.all(func(row): return not row.node.can_process())
@@ -150,6 +163,8 @@ func run() -> void:
 		if view.phase=="finished": break
 		await physics_frame
 	check(view.phase=="finished" and completed[0]==1,"All five creatures assemble and completion emits exactly once")
+	check(name_fading_seen and name_pause_checked,"Creature names ease upward while fading in after assembly")
+	check(stage.creatures.all(func(creature): return creature.label.visible and creature.label.position.is_equal_approx(creature.label_target) and creature.label.modulate.a==1.0 and creature.label.outline_modulate.a==1.0),"Names settle above their creatures and remain opaque")
 	check(observed_fade and stage.pieces.is_empty() and decorations.all(func(ref): return ref.get_ref()==null),"Decoration visuals fade before their bodies are destroyed")
 	check(planar and hidden,"Parts keep their sheet plane; pending parts remain hidden and frozen")
 	check(suspended,"All solver joints and cross-segment springs stay suspended throughout assembly")

@@ -463,7 +463,7 @@ func _add_character_collision_exceptions(item: SampleItem3D) -> void:
 
 func _remove_character_collision_exceptions(item: SampleItem3D) -> void:
 	for record: Dictionary in _equipped_collision_exceptions:
-		var body := record.get(&"body") as PhysicsBody3D
+		var body: Variant = record.get(&"body")
 		if record.has("holder"):
 			if is_instance_valid(record.holder) and not record.holder_had_body:
 				PhysicsServer3D.body_remove_collision_exception(record.holder.get_rid(), record.body_rid)

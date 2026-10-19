@@ -97,7 +97,12 @@ var base_combat_mass: float = 0.0
 		is_broken = value
 		if is_node_ready() and not Engine.is_editor_hint():
 			call_deferred("_sync_limb_terrain_collisions")
+			if value: _start_broken_cleanup()
 @export var damage_logging_enabled: bool = false
+
+@export_group("Broken Cleanup")
+@export_range(0.0, 60.0, 0.5, "or_greater") var broken_linger_duration: float = 10.0
+@export_range(0.05, 5.0, 0.05, "or_greater") var broken_fade_duration: float = 1.0
 
 @export_group("Damage Feedback")
 @export var damage_number_scene: PackedScene = DEFAULT_DAMAGE_NUMBER_SCENE
@@ -187,6 +192,8 @@ var _damage_service: Node
 var _collision_logging_enabled: bool = false
 var _foot_contact_samples: Array[Dictionary] = []
 var _ignored_limb_terrain: Array[StaticBody3D] = []
+var _broken_cleanup_tween: Tween
+var _broken_visuals: Array[Dictionary] = []
 
 func _sync_limb_terrain_collisions() -> void:
 	if not is_inside_tree() or Engine.is_editor_hint(): return
@@ -262,6 +269,7 @@ func _ready() -> void:
 		body_exited.connect(_on_collision_body_exited)
 		if console != null and console.has_method("is_collision_tracking_enabled"):
 			set_collision_logging_enabled(bool(console.call("is_collision_tracking_enabled")))
+		if is_broken: _start_broken_cleanup()
 
 func set_collision_logging_enabled(enabled: bool) -> void:
 	_collision_logging_enabled = enabled
@@ -376,6 +384,14 @@ func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
 		weapon.apply_contact_damage(self, float(weapon_impulses[weapon]))
 
 func apply_damage(amount: float, source: Node = null) -> float:
+	if get_meta(&"summon_presentation",false) or is_broken or amount <= 0.0: return 0.0
+	var character := preload("res://Scripts/Player/PlayerControlContext.gd").character_of(self)
+	if character != null and character.has_method("distribute_part_damage"):
+		return character.distribute_part_damage(self, amount, source)
+	return apply_local_damage(amount, source)
+
+## Final HP settlement for an already calculated share; bypasses further redistribution.
+func apply_local_damage(amount: float, source: Node = null) -> float:
 	if get_meta(&"summon_presentation",false): return 0.0
 	if is_broken or amount <= 0.0:
 		return 0.0
@@ -429,6 +445,7 @@ func break_part(source: Node = null) -> void:
 		return
 	current_hp = 0.0
 	is_broken = true
+	_start_broken_cleanup()
 	sync_foot_rotation_lock()
 	broken.emit(source)
 	CombatAudio3D.play_at(self, &"break")
@@ -437,6 +454,50 @@ func break_part(source: Node = null) -> void:
 			"[part_broken] target=%s source=%s"
 			% [name, source.name if source != null else &"None"]
 		)
+
+func _start_broken_cleanup() -> void:
+	if Engine.is_editor_hint() or not is_inside_tree() or get_meta(&"summon_presentation",false) or _broken_cleanup_tween != null: return
+	# Cleanup must outlive disabled character controllers, while still respecting battle pause.
+	_broken_cleanup_tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_STOP)
+	_broken_cleanup_tween.tween_interval(maxf(broken_linger_duration,0.0))
+	_broken_cleanup_tween.tween_callback(_capture_broken_visuals)
+	_broken_cleanup_tween.tween_method(_set_broken_fade,0.0,1.0,maxf(broken_fade_duration,0.001)).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	_broken_cleanup_tween.tween_callback(_finish_broken_cleanup)
+
+func _capture_broken_visuals() -> void:
+	for visual: GeometryInstance3D in find_children("*","GeometryInstance3D",true,false):
+		var entry := {"node":visual,"transparency":visual.transparency}
+		if visual is Sprite3D or visual is Label3D:
+			entry["alpha"] = visual.modulate.a
+		elif visual is MeshInstance3D and DisplayServer.get_name() != "headless":
+			# Paper cutout materials must use alpha blending instead of disappearing at the cut threshold.
+			if visual.material_override != null:
+				visual.material_override = _broken_fade_material(visual.material_override)
+			elif visual.mesh != null:
+				for surface: int in visual.mesh.get_surface_count():
+					var material: Material = visual.get_active_material(surface)
+					if material != null:
+						visual.set_surface_override_material(surface,_broken_fade_material(material))
+			if visual.material_overlay != null:
+				visual.material_overlay = _broken_fade_material(visual.material_overlay)
+		_broken_visuals.append(entry)
+	if damage_logging_enabled: print("[part_cleanup] part=%s event=fade_begin" % get_path())
+
+func _broken_fade_material(source: Material) -> Material:
+	if not source is BaseMaterial3D: return source
+	var material := source.duplicate() as BaseMaterial3D
+	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	return material
+
+func _set_broken_fade(progress: float) -> void:
+	for entry: Dictionary in _broken_visuals:
+		if not is_instance_valid(entry.node): continue
+		if entry.has("alpha"): entry.node.modulate.a = entry.alpha*(1.0-progress)
+		else: entry.node.transparency = lerpf(entry.transparency,1.0,progress)
+
+func _finish_broken_cleanup() -> void:
+	if damage_logging_enabled: print("[part_cleanup] part=%s event=removed" % get_path())
+	queue_free()
 
 func set_damage_logging_enabled(enabled: bool) -> void:
 	damage_logging_enabled = enabled

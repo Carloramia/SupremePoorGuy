@@ -146,6 +146,7 @@ func _update_outline(sprite: Sprite3D, body: Node) -> void:
 		_entries[sprite] = {"container": container, "mesh": mesh_node, "signature": []}
 	var entry: Dictionary = _entries[sprite]
 	entry.container.visible = sprite.is_visible_in_tree() and outline_width > 0.0
+	entry.mesh.transparency = 1.0-(1.0-sprite.transparency)*sprite.modulate.a
 	var distances := Vector4.ZERO
 	var custom_edges: bool = body.has_method("get_outline_edge_distances")
 	if custom_edges:

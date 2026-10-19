@@ -425,6 +425,7 @@ func get_leg_motion_profile(leg: RigidBody3D) -> Dictionary:
 	return _automatic_profiles[leg]
 
 func get_automatic_motion_diagnostics() -> Dictionary:
+	_remove_invalid_legs()
 	var legs: Array[Dictionary] = []
 	for leg: RigidBody3D in _legs:
 		var profile := get_leg_motion_profile(leg).duplicate()

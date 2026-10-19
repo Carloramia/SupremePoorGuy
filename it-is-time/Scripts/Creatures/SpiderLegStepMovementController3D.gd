@@ -56,7 +56,7 @@ func _reinforce_spider_hinge_axes() -> void:
 	# Exponential velocity correction avoids a stiff explicit torque servo.
 	var omega := TAU * 4.0
 	var delta := maxf(get_physics_process_delta_time(), 0.000001)
-	for foot: RigidBody3D in _chains:
+	for foot: Variant in _chains:
 		if not _chain_is_intact(foot): continue
 		var chain: Dictionary = _chains[foot]
 		for index: int in range(chain.joints.size() - 1, -1, -1):
@@ -244,6 +244,7 @@ func get_planned_step_frequency() -> float:
 	return float(_spider_motion_summary.frequency)
 
 func _ensure_spider_motion_budget() -> void:
+	_remove_invalid_legs()
 	if _spider_motion_summary.has("budget") or _spider_motion_summary.has("budget_blocked") or not _automatic_motion_enabled() or _legs.is_empty(): return
 	if recovery_control_active or simplified_physics_mode or _layout_turn_owned:
 		_spider_motion_summary["budget_blocked"] = true
@@ -695,7 +696,7 @@ func _keep_touchdown_support_pin(leg: RigidBody3D) -> bool:
 func update_leg_surface_adhesion() -> void:
 	super.update_leg_surface_adhesion()
 	var character := get_parent()
-	for foot: RigidBody3D in _chains:
+	for foot: Variant in _chains:
 		if not _chain_is_intact(foot): continue
 		var stepping := is_leg_stepping(foot)
 		var ratio := stepping_joint_stiffness_ratio if stepping else grounded_joint_stiffness_ratio

@@ -40,7 +40,7 @@ func apply_standing(movement: Node, physics: Resource, scale: float, delta: floa
 		_standing_blends.clear()
 		return
 	var torque_limit: float = physics.standing_maximum_torque * pow(scale, 5.0)
-	for foot: RigidBody3D in movement._chains:
+	for foot: Variant in movement._chains:
 		var eligible: bool = movement._chain_is_intact(foot) and not foot.freeze and movement.is_leg_grounded(foot) and not movement.is_leg_stepping(foot) and not movement.is_leg_slipping(foot) and movement._support_pins.has(foot)
 		if not eligible:
 			_standing_blends.erase(foot)

@@ -49,7 +49,7 @@ func apply(movement: Node, delta: float) -> void:
 	if blocked:
 		_blends.clear()
 		return
-	for foot: RigidBody3D in movement._chains:
+	for foot: Variant in movement._chains:
 		if not movement._chain_is_intact(foot): continue
 		var chain: Dictionary = movement._chains[foot]
 		var stepping: bool = movement.is_leg_stepping(foot) or movement._turn_command_pending

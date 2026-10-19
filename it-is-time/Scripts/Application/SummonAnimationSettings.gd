@@ -33,6 +33,9 @@ extends Resource
 @export_range(0.1, 8.0, 0.1) var free_motion_duration := 2.4
 @export_range(0.1, 5.0, 0.1) var decoration_fade_duration := 1.0
 @export_range(0.1, 3.0, 0.1) var reveal_duration := 1.0
+@export_group("Creature Names")
+@export_range(0.05, 2.0, 0.05) var name_fade_in_duration := 0.45
+@export_range(0.0, 5.0, 0.05) var name_rise_distance := 0.6
 @export_group("Launch")
 @export_range(1.0, 30.0, 0.1) var minimum_upward_speed := 10.0
 @export_range(1.0, 30.0, 0.1) var maximum_upward_speed := 14.0

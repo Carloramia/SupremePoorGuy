@@ -1,6 +1,37 @@
 @tool
 extends "res://Scripts/Creatures/GeneratedCreatureCharacter3D.gd"
 
+const TAIL_DAMAGE_TRANSFER_RATIO := 0.9
+
+## Incoming damage has already passed the struck part's resilience and armor.
+func distribute_part_damage(target: PhysicalBodyPart3D, amount: float, source: Node = null) -> float:
+	if PhysicalBodyPart3D.BodyPartTag.Torso not in target.tags:
+		return target.apply_local_damage(amount, source)
+	var tailward: Dictionary = {}
+	for node: Node in get_body_connections():
+		if not node is Joint3D or node.get_meta(&"generated_connection_kind", "") != "SnakeSpine": continue
+		# SnakeSpine is generated from tail (A) to head (B); never infer direction from world X.
+		var rear := node.get_node_or_null(node.node_a) as PhysicalBodyPart3D
+		var front := node.get_node_or_null(node.node_b) as PhysicalBodyPart3D
+		if is_instance_valid(rear) and is_instance_valid(front): tailward[front] = rear
+	var current := target
+	var remaining := amount
+	var applied := 0.0
+	var visited: Dictionary = {}
+	while is_instance_valid(current) and not current.is_queued_for_deletion() and not current.is_broken:
+		visited[current] = true
+		var next := tailward.get(current) as PhysicalBodyPart3D
+		var transfer := is_instance_valid(next) and not next.is_queued_for_deletion() and not next.is_broken and not visited.has(next) and PhysicalBodyPart3D.BodyPartTag.Torso in next.tags
+		var forwarded := remaining * TAIL_DAMAGE_TRANSFER_RATIO if transfer else 0.0
+		var local := remaining - forwarded
+		applied += current.apply_local_damage(local, source)
+		if current.damage_logging_enabled:
+			print("[snake_damage_share] character=%s part=%s incoming=%.3f local=%.3f forwarded=%.3f next=%s" % [name,current.name,remaining,local,forwarded,next.name if transfer else &"None"])
+		if not transfer: break
+		current = next
+		remaining = forwarded
+	return applied
+
 @export_group("Snake Passive Joints")
 ## Relative Z bending around the generated pose.
 @export_range(0.0, 90.0, 0.1) var snake_bend_limit_degrees: float = 25.0

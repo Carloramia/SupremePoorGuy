@@ -695,7 +695,8 @@ func _capture_chains() -> void:
 			rest_rotations.append(rest)
 		_chains[foot] = {"bodies": bodies, "joints": joints, "root": current, "anchor": previous_local, "length": length, "rest_rotations": rest_rotations, "stance_weight": 0.0, "stance_torques": []}
 
-func _chain_is_intact(foot: RigidBody3D) -> bool:
+func _chain_is_intact(foot: Variant) -> bool:
+	if not is_instance_valid(foot) or foot.is_queued_for_deletion(): return false
 	if not _movement_batch_active: return _check_chain_is_intact(foot)
 	if not _batch_intact_chains.has(foot): _batch_intact_chains[foot] = _check_chain_is_intact(foot)
 	return _batch_intact_chains[foot]
@@ -886,14 +887,14 @@ func _update_segment_metrics() -> void:
 		segment.center = Vector3.ZERO
 		segment.torso_center = Vector3.ZERO
 		var torso_mass := 0.0
-		for body: RigidBody3D in segment.bodies:
+		for body: Variant in segment.bodies:
 			if not is_instance_valid(body) or _is_body_broken(body): continue
 			segment.mass += body.mass
 			segment.center += _stance_body_center(body) * body.mass
 			segment.torso_center += _stance_body_center(body) * body.mass
 			torso_mass += body.mass
 		if torso_mass > 0.0: segment.torso_center /= torso_mass
-		for foot: RigidBody3D in segment.feet:
+		for foot: Variant in segment.feet:
 			if not _chain_is_intact(foot): continue
 			for body: RigidBody3D in _chains[foot].bodies:
 				if _has_body_tag(body, TORSO_TAG): continue
@@ -1645,8 +1646,8 @@ func _apply_torso_response() -> void:
 		var carries_limbs := _height_support_carries_limb_weight()
 		var passive_leg_bodies := {}
 		for chain: Dictionary in _chains.values():
-			for body: RigidBody3D in chain.bodies:
-				if not _has_body_tag(body, TORSO_TAG): passive_leg_bodies[body] = true
+			for body: Variant in chain.bodies:
+				if is_instance_valid(body) and not _has_body_tag(body, TORSO_TAG): passive_leg_bodies[body] = true
 		for body: Node in get_node(parts_root_path).get_children():
 			# Default support excludes leg weight; full-flight support carries the whole assembly.
 			if body is RigidBody3D and (carries_limbs or not passive_leg_bodies.has(body)) and not _is_body_broken(body) and not body.freeze: assembly_mass += body.mass
@@ -2034,7 +2035,8 @@ func _apply_stance_stabilization(delta: float) -> void:
 	# Keep contact/load diagnostics, but intermediate links are entirely passive.
 	_stance_last_applied_frame = Engine.get_physics_frames()
 	_update_stance_allocation(delta)
-	for foot: RigidBody3D in _chains:
+	for foot: Variant in _chains:
+		if not is_instance_valid(foot): continue
 		_chains[foot].stance_weight = 0.0
 		_chains[foot].stance_torques = []
 		_chains[foot].stance_torque_vectors = []
@@ -2049,7 +2051,7 @@ func _apply_passive_limb_damping() -> void:
 	# Exponential decay cannot over-brake and reverse the hinge in one step.
 	var dt := maxf(get_physics_process_delta_time(), 0.000001)
 	var seen: Array[RigidBody3D] = []
-	for foot: RigidBody3D in _chains:
+	for foot: Variant in _chains:
 		if not _chain_is_intact(foot): continue
 		var damping := _get_passive_limb_damping(foot)
 		var effective_damping := (1.0-exp(-damping*dt))/dt
@@ -2823,7 +2825,7 @@ func get_stance_support_diagnostics() -> Dictionary:
 	var applied_age := current_frame - _stance_last_applied_frame if _stance_last_applied_frame >= 0 else -1
 	var allocation_age := current_frame - _stance_last_allocation_frame if _stance_last_allocation_frame >= 0 else -1
 	var normal_control := not recovery_control_active and is_physics_processing() and applied_age >= 0 and applied_age <= 1
-	for foot: RigidBody3D in _chains.keys():
+	for foot: Variant in _chains.keys():
 		if not is_instance_valid(foot) or not _chains.has(foot): continue
 		var chain: Dictionary = _chains[foot]
 		var eligible := normal_control and _stance_chain_can_support(foot)

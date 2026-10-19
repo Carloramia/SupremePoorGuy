@@ -77,7 +77,7 @@ func _ready() -> void:
 	process_physics_priority = -10
 	refresh_physics_query_cache()
 
-func _alive(body: PhysicalBodyPart3D) -> bool:
+func _alive(body: Variant) -> bool:
 	return is_instance_valid(body) and not body.is_broken and not body.is_queued_for_deletion()
 
 func is_airborne() -> bool:

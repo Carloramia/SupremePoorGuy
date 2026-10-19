@@ -347,6 +347,9 @@ func _physics_process(delta: float) -> void:
 		_change_state(creature,"assembling")
 		_next_creature += 1
 	for creature: Dictionary in creatures:
+		if creature.state=="idle":
+			_animate_creature_label(creature)
+			continue
 		if creature.state!="assembling": continue
 		var next: int = creature.next_part
 		if next < creature.parts.size() and (next==0 or elapsed-creature.parts[next-1].launch_time >= settings.part_interval-0.000001):
@@ -423,9 +426,18 @@ func _complete_creature(creature: Dictionary) -> void:
 	# Completed exhibition copies stay frozen in their authored idle pose, independent of gameplay forces.
 	creature.idle_time = elapsed
 	var envelope := _creature_envelope(creature,true)
-	creature.label.position = Vector3(envelope.get_center().x,envelope.end.y+0.8,envelope.get_center().z)
+	creature["label_target"] = Vector3(envelope.get_center().x,envelope.end.y+0.8,envelope.get_center().z)
+	_animate_creature_label(creature)
 	creature.label.show()
 	_change_state(creature,"idle")
+
+func _animate_creature_label(creature: Dictionary) -> void:
+	var progress := clampf((elapsed-float(creature.idle_time))/maxf(settings.name_fade_in_duration,0.001),0.0,1.0)
+	var eased := 1.0-pow(1.0-progress,3.0)
+	var label: Label3D = creature.label
+	label.position = creature.label_target-Vector3.UP*settings.name_rise_distance*(1.0-eased)
+	label.modulate.a = eased
+	label.outline_modulate.a = eased
 
 func _change_part_state(creature: Dictionary, part: Dictionary, state: String) -> void:
 	part.state = state

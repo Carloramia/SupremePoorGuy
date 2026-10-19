@@ -770,7 +770,7 @@ func _apply_passive_limb_damping() -> void:
 	_wolf_joint_torques.clear()
 	var preset = get_parent().get("wolf_physics")
 	if preset == null or not preset.enabled or recovery_control_active or _planar_mode_active(): return
-	for foot: RigidBody3D in _chains:
+	for foot: Variant in _chains:
 		if not _chain_is_intact(foot) or _action_feet.has(foot): continue
 		var chain: Dictionary = _chains[foot]
 		if chain.joints.size()<2: continue

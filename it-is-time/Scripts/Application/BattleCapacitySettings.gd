@@ -1,10 +1,10 @@
 extends Resource
 const L10N = preload("res://Scripts/Localization/GameText.gd")
 ## Each faction has its own budget; reserves do not consume deployed capacity.
-@export_range(1,10000,1) var total_capacity: int = 50
+@export_range(1,10000,1) var total_capacity: int = 30
 @export_range(0.1,60.0,0.1) var enemy_reinforcement_interval: float = 3.0
 @export var creature_costs: Dictionary[String,int] = {
-	"human":4, "stump_beast":6, "wolf":6, "snake":8, "horned_beast":10, "spider":8
+	"human":4, "stump_beast":6, "wolf":6, "snake":12, "horned_beast":10, "spider":8
 }
 
 func creature_cost(record: Dictionary) -> int:

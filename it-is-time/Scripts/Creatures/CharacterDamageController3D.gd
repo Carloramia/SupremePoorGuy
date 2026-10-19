@@ -18,6 +18,7 @@ var _parts: Array[PhysicalBodyPart3D] = []
 var _character_disabled: bool = false
 var _integrity_check_pending: bool = false
 var _integrity_source: Node
+var _broken_part_states: Dictionary = {}
 
 func _ready() -> void:
 	add_to_group(&"damage_components")
@@ -29,7 +30,7 @@ func _ready() -> void:
 		set_damage_logging_enabled(bool(console.call("is_damage_tracking_enabled")))
 
 func _discover_parts() -> void:
-	for part: PhysicalBodyPart3D in _parts:
+	for part: Variant in _parts:
 		if is_instance_valid(part):
 			var callback := _on_part_broken.bind(part)
 			if part.broken.is_connected(callback): part.broken.disconnect(callback)
@@ -41,6 +42,7 @@ func _discover_parts() -> void:
 		if part == null:
 			continue
 		_parts.append(part)
+		if part.is_broken: _remember_broken_part(part)
 		part.broken.connect(_on_part_broken.bind(part))
 		_watch_structure_node(part)
 	for node: Node in _get_body_connections(): _watch_structure_node(node)
@@ -122,9 +124,14 @@ func _validate_body_integrity() -> void:
 	if not _parts.is_empty() and not any_living: _disable_character_controllers()
 
 func _on_part_broken(source: Node, part: PhysicalBodyPart3D) -> void:
+	_remember_broken_part(part)
 	_integrity_source = source
 	call_deferred("_handle_part_broken", part, source)
 	_request_integrity_check()
+
+func _remember_broken_part(part: PhysicalBodyPart3D) -> void:
+	var key := str(part.get_meta(&"creature_part_key",str(part.name)))
+	_broken_part_states[key] = {"hp":0.0,"max_hp":part.max_hp,"broken":true}
 
 func _handle_part_broken(part: PhysicalBodyPart3D, source: Node) -> void:
 	# Regeneration may remove this controller before an already queued break callback runs.
@@ -182,7 +189,7 @@ func _get_connected_parts(part: PhysicalBodyPart3D) -> Array[PhysicalBodyPart3D]
 ## A character without Head parts does not trigger the whole-body cascade.
 func _all_heads_broken() -> bool:
 	var found_head := false
-	for part: PhysicalBodyPart3D in _parts:
+	for part: Variant in _parts:
 		if not is_instance_valid(part) or HEAD_TAG not in part.tags:
 			continue
 		found_head = true
@@ -200,11 +207,21 @@ func is_character_disabled() -> bool:
 	return _character_disabled
 
 func get_parts() -> Array[PhysicalBodyPart3D]:
-	return _parts.duplicate()
+	var result: Array[PhysicalBodyPart3D] = []
+	for part: Variant in _parts:
+		if is_instance_valid(part) and not part.is_queued_for_deletion(): result.append(part)
+	return result
+
+## Preserve damage receipts after Broken bodies have faded out of the scene tree.
+func get_part_damage_states() -> Dictionary:
+	var result := _broken_part_states.duplicate(true)
+	for part: PhysicalBodyPart3D in get_parts():
+		result[str(part.get_meta(&"creature_part_key",str(part.name)))] = {"hp":part.current_hp,"max_hp":part.max_hp,"broken":part.is_broken}
+	return result
 
 func set_damage_logging_enabled(enabled: bool) -> void:
 	damage_logging_enabled = enabled
-	for part: PhysicalBodyPart3D in _parts:
+	for part: Variant in _parts:
 		if is_instance_valid(part):
 			part.set_damage_logging_enabled(enabled)
 

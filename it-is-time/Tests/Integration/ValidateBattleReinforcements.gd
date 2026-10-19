@@ -50,7 +50,7 @@ func run() -> void:
 	var roster: Array = []
 	for index: int in 6: roster.append(creature("horned_beast","horn_"+str(index)))
 	var initial: Dictionary = settings.initial_roster(roster)
-	check(initial.error.is_empty() and initial.records.size()==5 and settings.evaluate(initial.records).used==50,"Initial roster caps each side at 50 and leaves excess in reserve")
+	check(initial.error.is_empty() and initial.records.size()==3 and settings.evaluate(initial.records).used==30,"Initial roster caps each side at 30 and leaves excess in reserve")
 	check(not settings.initial_roster([{"definition_id":"unknown"}]).error.is_empty(),"Unknown capacity fails closed")
 	await _enemy_reserves()
 	await _player_flow()
